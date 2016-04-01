@@ -1,0 +1,17 @@
+.classpath
+.project
+.idea/
+.settings/
+bin/
+logs/application.log
+logs/
+logback/
+project/project/
+project/target/
+target/
+target/.history
+conf/evolutions
+.DS_Store
+*.iml
+*/target
+
