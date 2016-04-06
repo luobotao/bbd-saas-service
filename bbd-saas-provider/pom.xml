@@ -10,7 +10,7 @@
     <artifactId>bbd-saas-provider</artifactId>
     <packaging>war</packaging>
     <name>${project.artifactId}</name>
-    <description>The provider module of saas project</description>
+    <description>The demo provider module of dubbo project</description>
     <properties>
         <skip_maven_deploy>false</skip_maven_deploy>
     </properties>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.bbd</groupId>
             <artifactId>bbd-saas-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -178,6 +178,12 @@
         <dependency>
             <groupId>de.ruedigermoeller</groupId>
             <artifactId>fst</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.0.4</version>
         </dependency>
     </dependencies>
     <!--<build>-->
