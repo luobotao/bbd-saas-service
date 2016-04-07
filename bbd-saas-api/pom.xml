@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <description>The api module of saas project</description>
     <properties>
+    	<springdatamongdb.version>1.5.0.RELEASE</springdatamongdb.version>
         <skip_maven_deploy>true</skip_maven_deploy>
     </properties>
     <dependencies>
@@ -17,8 +18,13 @@
             <artifactId>dubbo</artifactId>
             <version>2.8.4</version>
         </dependency>
-
-
+        
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>${springdatamongdb.version}</version>
+		</dependency>
+		
         <dependency>
             <groupId>org.mongodb.morphia</groupId>
             <artifactId>morphia</artifactId>
