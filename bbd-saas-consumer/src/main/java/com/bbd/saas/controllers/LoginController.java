@@ -49,6 +49,7 @@ public class LoginController {
 			return null;
 		}
 
+
 		System.out.println("============="+adminUserService.findAdminUserByUserName("adsf").getAppkey());
 		String message = "Form submitted successfully.  Bound " + loginForm;
 		if (ajaxRequest) {
