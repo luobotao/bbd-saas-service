@@ -124,7 +124,7 @@
 			<version>3.7.0.Final</version>
 		</dependency>
 		<!-- @Inject -->
-		<dependency>
+		<dependency>5555555
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
