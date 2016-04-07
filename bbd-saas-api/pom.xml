@@ -11,6 +11,16 @@
     <properties>
         <skip_maven_deploy>true</skip_maven_deploy>
     </properties>
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <url>http://123.56.46.162:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <url>http://123.56.46.162:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>com.alibaba</groupId>
