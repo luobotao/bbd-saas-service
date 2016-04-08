@@ -16,7 +16,7 @@
 		<li><a href="<c:url value="/packageDispatch" />" target="content-main">包裹分派</a></li>
 		<li><a href="<c:url value="/handleAbnormal" />" target="content-main">异常件处理</a></li>
 		<li><a href="<c:url value="/dataQuery" />" target="content-main">数据查询</a></li>
-		<li><a href="<c:url value="/deliverRegion/map" />" target="content-main">系统设置-配送范围</a></li>
+		<li><a href="<c:url value="/deliverRegion/range" />" target="content-main">系统设置-配送范围</a></li>
 		<li><a href="<c:url value="/userManage" />" target="content-main">系统设置-用户管理</a></li>
 		<li><a href="<c:url value="/roleManage" />" target="content-main">系统设置-角色管理</a></li>
 	</ul>

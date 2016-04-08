@@ -21,9 +21,9 @@
 		<div class="m20">
 			<span>状态:
 				<select>  
-				  <option value ="1">全部</option>  
-				  <option value ="2">未到站</option>  
-				  <option value="3">已扫描到站</option>  
+				  <option value ="-1">全部</option>  
+				  <option value ="0">未分派</option>  
+				  <option value="1">已分派</option>  
 				</select>  
 			</span> 
 			<span class="pl20">到站时间：<input id="toSiteTime" name="toSiteTime" type="text" value="2016-04-05"/></span>
@@ -87,8 +87,8 @@
 
 <!-- 选择派件员弹出窗-开始 -->
 <div  id="chooseSender_div" class="popDiv_small" >
-	<div>选择派件员</div>
-	<div>
+	<div class="title_div">选择派件员</div>
+	<div class="m20">
 		<span>派件员:
 			<select id="sender_select">  
 				<option value ="张三">张三</option>  
@@ -103,14 +103,8 @@
 	</div>
 <div>
 <!-- 选择派件员弹出窗-结束 -->
+<script type="text/javascript" src="<c:url value="/resources/jquery/jquery-1.12.3.min.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/resources/jquery/1.6/jquery.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryform/2.8/jquery.form.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.core.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.widget.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.tabs.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/json2.js" />"></script>
-	
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#sender_select").change(function(){
@@ -120,7 +114,7 @@ $(document).ready(function() {
 
 });
 //显示选择派件员div
-function showSenderDiv() {
+function showSenderDiv(waybillId) {
 	$("#chooseSender_div").show();
 }
 //隐藏选择派件员div

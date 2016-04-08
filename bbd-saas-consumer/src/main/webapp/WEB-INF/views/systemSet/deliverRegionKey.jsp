@@ -23,8 +23,10 @@
 		<div class="m20" >
 			站点名称：<span class="pl20">立水桥 ${sitename}</span><br><br>
 			站点地址：<span class="pl20">北京市-朝阳区-立水桥-xxx ${sitename}</span><br><br>
-			<span><a href="<c:url value="/deliverRegion/map" />" >绘制电子围栏</a></span>
+			<span><a href="<c:url value="/deliverRegion/range" />" >配送范围</a></span>
+			<span class="pl20"><a href="<c:url value="/deliverRegion/map" />" >绘制电子围栏</a></span>
 			<span class="pl20">导入地址关键词</span>
+			
 		</div>
 	</div>
 		
@@ -59,6 +61,9 @@
 					<td>新华路</td>
 					<td><button  onclick="deleteKeyword()">删除</button></td>
 				</tr>
+				<tr>
+					<td colspan="7"><input type="checkbox">全选</td>
+				<tr>
 			</table>
 			<br>
 			<button id="batchDelete" >批量删除</button>
@@ -66,13 +71,8 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<c:url value="/resources/jquery/1.6/jquery.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryform/2.8/jquery.form.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.core.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.widget.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.tabs.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/json2.js" />"></script>
-	
+<script type="text/javascript" src="<c:url value="/resources/jquery/jquery-1.12.3.min.js" />"></script>
+
 <script type="text/javascript">
 $(document).ready(function() {
 	

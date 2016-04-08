@@ -9,12 +9,7 @@
 	<meta name="description" content="棒棒哒-系统设置-角色管理页面" />
 	<title>系统设置-角色管理页面</title>
 	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />	
-	 <style type="text/css">
-		/* .popDiv_small1{display: none; position: absolute; top: 25%; left: 22%; width: 20%; height: 20%; padding: 8px; border: 8px solid #E8E9F7; background-color: white; z-index:20; overflow: auto;}
-		.popDiv_big1{display: none;  position: absolute; top: 25%; left: 22%; width: 30%; height: 55%; padding: 8px; border: 8px solid #E8E9F7; background-color: white; z-index:15; overflow: auto;}
-		 */
-		.panel_content1{margin-top:20px;padding-left:50px}
-	</style>	
+	 
 </head>
 <body>
 <div>
@@ -69,7 +64,7 @@
 				</tr>
 				
 			</table>
-			<div class="fr200"> 
+			<div class="fr300"> 
 				<a href="">上页</a>
 				<a href="">1</a>
 				<a href="">2</a>
@@ -81,13 +76,11 @@
 	</div>
 </div>
 
-<!-- class="popDiv_big" -->
-
 
 <!-- 新建角色面板-开始 -->
- <div  id="role_div" class="popDiv_small" >
-	<div class="m20">新建</div>
-	<div class="panel_content1">
+ <div  id="role_div" class="popDiv" >
+	<div class="title_div">新建</div>
+	<div class="m20">
 		
 		<span>
 			角色:<input id="realName" name="realName" type="text" />	
@@ -102,18 +95,32 @@
 
 <!-- 设置权限面板-开始 -->
 <div  id="permission_div" class="popDiv_big" >
-	<div class="m20">设置权限</div>
-	<div class="panel_content">
+	<div class="title_div">设置权限</div>
+	<div class="m20">
 		一级菜单名
 		<ul>
 			<li><a href="<c:url value="/" />"  target="content-main">二级菜单</a></li>
+			<span>
+				<input type="checkbox" id="" name=""/>具体功能1
+				<input type="checkbox" id="" name=""/>具体功能2
+				<input type="checkbox" id="" name=""/>具体功能2
+			</span>
 			<li><a href="<c:url value="/" />"  target="content-main">二级菜单</a></li>
+			<span>
+				<input type="checkbox" id="" name=""/>具体功能1
+				<input type="checkbox" id="" name=""/>具体功能2
+				<input type="checkbox" id="" name=""/>具体功能2
+			</span>
 		</ul>
 		<br>
 		一级菜单名
 		<ul>
 			<li><a href="<c:url value="/" />"  target="content-main">二级菜单</a></li>
-			<li><a href="<c:url value="/" />"  target="content-main">二级菜单</a></li>
+			<span>
+				<input type="checkbox" id="" name=""/>具体功能1
+				<input type="checkbox" id="" name=""/>具体功能2
+				<input type="checkbox" id="" name=""/>具体功能2
+			</span>
 		</ul>
 		<div>
 			<button onclick="saveRolePermission()">保存</button>
@@ -122,14 +129,8 @@
 </div>
 <!-- 设置权限面板-结束 -->
 
+<script type="text/javascript" src="<c:url value="/resources/jquery/jquery-1.12.3.min.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/resources/jquery/1.6/jquery.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryform/2.8/jquery.form.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.core.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.widget.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/jqueryui/1.8/jquery.ui.tabs.js" />"></script>
-<script type="text/javascript" src="<c:url value="/resources/json2.js" />"></script>
-	
 <script type="text/javascript">
 $(document).ready(function() {
 	

@@ -59,7 +59,12 @@
 					<td>周七</td>
 					<td>123456xxx</td>
 					<td>滞留（滞留原因）</td>
-					<td><button>重新分派</button></td>
+					<td>
+						<button onclick="showSenderDiv()">重新分派</button>
+						<button onclick="showOtherExpressDiv()">转其他快递</button>
+						<button onclick="showOtherSiteDiv()">转其他站点</button>
+						<button onclick="showApplyReturnDiv()">申请退货</button>
+					</td>
 				</tr>
 				<tr>
 					<td>包裹号xxx</td>
@@ -102,5 +107,157 @@
 	</div>
 </div>
 
+<!-- 重新分派面板-开始 -->
+<div  id="chooseSender_div" class="popDiv" >
+	<div class="title_div">重新分派</div>
+	<div class="m20">
+		<span>派件员:
+			<select id="sender_select">  
+				<option value ="张三">张三</option>  
+				<option value ="李四">李四</option>  
+				<option value="王五">王五</option>  
+			</select>				  
+		</span> 
+	</div>
+	<div class="m20">
+		<button onclick="hideSenderDiv()">取消</button>
+		<button onclick="chooseSender()">确定</button>
+	</div>
+</div>
+<!-- 重新分派面板-结束 -->
+
+<!-- 转其他快递面板-开始 -->
+<div  id="chooseOtherExpress_div" class="popDiv" >
+	<div class="title_div">转其他快递</div>
+	<div class="m20">
+		<span>快递公司:
+			<select id="express_select">  
+				<option value ="中通">中通</option>  
+				<option value ="申通">申通</option>  
+				<option value="顺风">顺风</option>  
+			</select>				  
+		</span> <br><br>
+		<span>运单号：<input id="waybillId" name="waybillId" type="text" value="" placeholder="请输入运单号"/></span>
+	</div>
+	<div class="m20">
+		<button onclick="hideOtherExpressDiv()">取消</button>
+		<button onclick="chooseOtherExpress()">确定</button>
+	</div>
+</div>
+<!-- 转其他快递面板-结束 -->
+
+
+<!-- 转其他站点面板-开始 -->
+<div  id="chooseOtherSite_div" class="popDiv" >
+	<div class="title_div">转其他站点</div>
+	<div class="m20">
+		<span>站点:
+			<select id="other_site_select">  
+				<option value ="站点A">站点A</option>  
+				<option value ="站点B">站点B</option>  
+				<option value="站点C">站点C</option>  
+			</select>				  
+		</span> <br>
+	</div>
+	<div class="m20">
+		<button onclick="hideOtherSiteDiv()">取消</button>
+		<button onclick="chooseOtherSite('waybillId')">确定</button>
+	</div>
+</div>
+<!-- 转其他站点面板-结束 -->
+
+<!-- 申请退货-开始 -->
+<div  id="apply_return_div" class="popDiv" >
+	<div class="title_div">申请退货</div>
+	<div class="m20">
+		<span>选择退货原因:
+			<select id="return_reason_select">  
+				<option value ="货物破损">货物破损</option>  
+				<option value ="超时配送">超时配送</option>  
+				<option value="客户端要求退换">客户端要求退换</option>  
+				<option value="其他">其他</option>  
+			</select>				  
+		</span> <br><br>
+		<span>
+			<textarea style="display: none;" rows="5" cols="50" id="returnReason" name="returnReason" placeholder="请输入退货原因">
+				
+			</textarea>
+		</span>
+	</div>
+	<div class="m20">
+		<button onclick="hideApplyReturnDiv()">取消</button>
+		<button onclick="applyReturn('waybillId')">确定</button>
+	</div>
+</div>
+<!-- 转其他站点面板-结束 -->
+
+<script type="text/javascript" src="<c:url value="/resources/jquery/jquery-1.12.3.min.js" />"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#return_reason_select").change(function(){
+		if(this.value == "其他"){
+			$("#returnReason").show();
+		} else {
+			$("#returnReason").hide();
+		}
+	});
+
+});
+//显示选择派件员div
+function showSenderDiv(waybillId) {
+	$("#chooseSender_div").show();
+}
+//隐藏选择派件员div
+function hideSenderDiv() {
+	$("#chooseSender_div").hide();
+}
+//选择派件员
+function chooseSender() {
+	$("#sender").text($("#sender_select").val());
+	$("#chooseSender_div").hide();
+}
+
+//显示转其他快递公司div
+function showOtherExpressDiv(waybillId) {
+	$("#chooseOtherExpress_div").show();
+	
+}
+//隐藏转其他快递公司div
+function hideOtherExpressDiv() {
+	$("#chooseOtherExpress_div").hide();
+}
+//选择其他快递
+function chooseOtherExpress() {
+	$("#chooseOtherExpress_div").hide();
+}
+
+//显示转其他站点div
+function showOtherSiteDiv(waybillId) {
+	$("#chooseOtherSite_div").show();
+}
+//隐藏转其他站点div
+function hideOtherSiteDiv() {
+	$("#chooseOtherSite_div").hide();
+}
+//转其他站点
+function chooseOtherSite() {
+	$("#chooseOtherSite_div").hide();
+}
+
+//显示申请退货div
+function showApplyReturnDiv(waybillId) {
+	$("#apply_return_div").show();
+}
+//隐藏申请退货div
+function hideApplyReturnDiv() {
+	$("#apply_return_div").hide();
+}
+//确定退货
+function applyReturn() {
+	$("#apply_return_div").hide();
+}
+
+</script>
 </body>
 </html>
