@@ -38,11 +38,13 @@
 		</div>
 		<div class="m20">
 			<span>扫描包裹号：<input id="packageId" name="packageId" type="text" /></span>
-			<span class="pl20">扫描运单号：<input id="waybillId" name="waybillId" type="text" /></span>
+			<span class="pl20">扫描运单号：<input id="waybillId" name="waybillId" type="text" /></span><br><br>
+			<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
 		</div>
 		<div class="m20">
 			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
 				<tr>
+					<td>选择</td>
 					<td>包裹号</td>
 					<td>运单号</td>
 					<td>订单号</td>
@@ -55,6 +57,7 @@
 					<td>状态</td>
 				</tr>
 				<tr>
+					<td><input type="checkbox"></td>
 					<td>包裹号1</td>
 					<td>运单号1</td>
 					<td>订单号1</td>
@@ -67,6 +70,7 @@
 					<td>未到站</td>
 				</tr>
 				<tr>
+					<td><input type="checkbox"></td>
 					<td>包裹号1</td>
 					<td>运单号1</td>
 					<td>订单号1</td>
@@ -79,6 +83,7 @@
 					<td>未到站</td>
 				</tr>
 				<tr>
+					<td><input type="checkbox"></td>
 					<td>包裹号1</td>
 					<td>运单号1</td>
 					<td>订单号1</td>
@@ -90,6 +95,9 @@
 					<td>2016-04-06</td>
 					<td>未到站</td>
 				</tr>
+				<tr>
+					<td colspan="11"><input type="checkbox">全选</td>
+				<tr>
 			</table>
 			<div class="fr50"> 
 				<a href="">上页</a>

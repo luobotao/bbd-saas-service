@@ -47,7 +47,8 @@
 					  <option value="20">20</option>  
 					</select>  
 				</span> <br><br>
-				<span>绘制电子围栏</span>
+				<span><a href="<c:url value="/deliverRegion/range" />" >配送范围</a></span>
+				<span class="pl20">绘制电子围栏</span>
 				<span class="pl20"><a href="<c:url value="/deliverRegion/key" />" >导入地址关键词</a></span>
 			</div>
 		</div>

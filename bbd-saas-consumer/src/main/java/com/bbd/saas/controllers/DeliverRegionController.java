@@ -12,6 +12,18 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 public class DeliverRegionController {
 	
 	/**
+	 * Description: 跳转到系统设置-配送区域-配送范围
+	 * @param model
+	 * @return
+	 * @author: liyanlei
+	 * 2016年4月8日下午2:44:47
+	 */
+	@RequestMapping(value="/range", method=RequestMethod.GET)
+	public String toRangePage(Model model) {
+		model.addAttribute("username", "张三");
+		return "systemSet/deliverRegionRange";
+	}
+	/**
 	 * description: 跳转到系统设置-配送区域-绘制电子地图页面
 	 * 2016年4月5日下午4:05:01
 	 * @author: liyanlei

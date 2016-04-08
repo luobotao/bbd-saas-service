@@ -88,9 +88,9 @@
 </div>
 
 <!-- 新建用户面板-开始 -->
-<div  id="user_div" class="popDiv_big" >
-	<div class="m20">新建</div>
-	<div class="panel_content">
+<div  id="user_div" class="popDiv" >
+	<div class="title_div">新建</div>
+	<div class="m20">
 		<span>角色:
 			<select id="role">  
 				<option value ="初级">初级</option>  

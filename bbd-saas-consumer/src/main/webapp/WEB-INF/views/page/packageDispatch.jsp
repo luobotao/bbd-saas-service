@@ -87,8 +87,8 @@
 
 <!-- 选择派件员弹出窗-开始 -->
 <div  id="chooseSender_div" class="popDiv_small" >
-	<div>选择派件员</div>
-	<div>
+	<div class="title_div">选择派件员</div>
+	<div class="m20">
 		<span>派件员:
 			<select id="sender_select">  
 				<option value ="张三">张三</option>  
@@ -114,7 +114,7 @@ $(document).ready(function() {
 
 });
 //显示选择派件员div
-function showSenderDiv() {
+function showSenderDiv(waybillId) {
 	$("#chooseSender_div").show();
 }
 //隐藏选择派件员div
