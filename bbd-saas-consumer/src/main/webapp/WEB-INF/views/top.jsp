@@ -15,7 +15,7 @@
 	<span style="float:right;">
 		<span><a href="<c:url value="/" />"  target="_parent">首页</a></span>
 		<span>${username}</span> 
-		<span><a href="<c:url value="/" />"  target="_parent">退出</a></span>
+		<span><a href="<c:url value="/logout" />"  target="_parent">退出</a></span>
 	</span> 
 </div>  
 </body>

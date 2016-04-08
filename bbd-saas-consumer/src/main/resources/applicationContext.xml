@@ -2,6 +2,7 @@
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
@@ -41,8 +42,16 @@
 	<!-- Only needed because we require fileupload in the org.springframework.samples.mvc.fileupload package -->
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
+	<beans:bean id="jedisConnFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:usePool="true" p:hostName="182.92.227.140" p:port="6379" p:password="redisAdminMaster123"/>
+
+	<!-- redis template definition -->
+	<beans:bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" p:connectionFactory-ref="jedisConnFactory"/>
+
+
+
 	<!-- Imports user-defined @Controller beans that process client requests -->
 	<beans:import resource="spring-mvc.xml" />
+
 
 	<task:annotation-driven />
 	
