@@ -1,11 +1,13 @@
 package com.bbd.saas.vo;
 
+import java.io.Serializable;
+
 /**
  * Created by luo on 2016/2/29.
  * 发件人基本信息
  * 供adminUser使用
  */
-public class Sender {
+public class Sender implements Serializable{
     private String name;
     private String phone;
     private String province;
