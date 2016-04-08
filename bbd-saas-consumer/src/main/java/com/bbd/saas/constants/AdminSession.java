@@ -26,9 +26,11 @@ public class AdminSession {
 
     public static String get(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (Constants.ADMIN_SESSION_NAME.equals(cookie.getName())) {
-                return cookie.getValue();
+        if(cookies!=null){
+            for (Cookie cookie : cookies) {
+                if (Constants.ADMIN_SESSION_NAME.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
             }
         }
         return null;
