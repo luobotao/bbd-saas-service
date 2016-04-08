@@ -1,8 +1,8 @@
 package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.vo.Sender;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,11 +13,14 @@ import java.util.Date;
  * @author luobotao
  * @date 16-2-22
  */
-@Document(collection = "user")
+@Entity("adminUser")
+@Indexes(
+        @Index(value = "userName", fields = @Field("userName"))
+)
 public class AdminUser implements Serializable {
 
     @Id
-    private String id;
+    private ObjectId id;
     private String userName;
     private String realName;
     private String phone;
@@ -34,11 +37,11 @@ public class AdminUser implements Serializable {
     private String sessionkey;
     private String secret;
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

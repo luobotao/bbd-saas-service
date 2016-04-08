@@ -19,8 +19,8 @@
 	</properties>
 	<modules>
 		<module>bbd-saas-api</module>
-		<module>bbd-saas-provider</module>
 		<module>bbd-saas-consumer</module>
+		<module>bbd-saas-provider</module>
 	</modules>
 	<repositories>
 		<repository>

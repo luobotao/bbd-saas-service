@@ -19,7 +19,7 @@ public class AdminUserServiceImpl implements AdminUserService {
      * @return
      */
     public AdminUser findAdminUserByUserName(String userName){
-        return adminUserDao.findAdminUserByUserName(userName);
+        return adminUserDao.findOne("userName",userName);
     }
 
 
