@@ -3,11 +3,10 @@ package com.bbd.saas.vo;
 import java.io.Serializable;
 
 /**
+ * 收件人信息
  * Created by luobotao on 2016/4/8.
- * 发件人基本信息
- * 供adminUser使用
  */
-public class Sender implements Serializable{
+public class Reciever implements Serializable {
     private String name;
     private String phone;
     private String province;
