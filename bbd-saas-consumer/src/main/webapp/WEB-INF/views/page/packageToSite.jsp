@@ -118,30 +118,63 @@
 								for(int i=0;i<orderPage.getTotalPages()-1;i++){
 									if(orderPage.getTotalPages()<8){
 							%>
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
+							<li class="<c:if test="$(i==orderPage.getPageNo())">active</c:if>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
 							<%
 							}else {
 								if(orderPage.getPageNo()<7){
 
 									if(i<8){
 							%>
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
+							<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
 							<%
-							}else{
-								if(i==(orderPage.getTotalPages()-1)){
+								}else{
+									if(i==(orderPage.getTotalPages()-1)){
 							%>
-							<li class=""><a href="javascript:">...</a></li>
+								<li class=""><a href="javascript:">...</a></li>
 							<%
+									}
+									if(i==(orderPage.getTotalPages())){
+							%>
+								<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+							<%
+									}
 								}
-								if(i==(orderPage.getTotalPages())){
-							%>
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
+
+							}else{
+								if(orderPage.getPageNo()<(orderPage.getTotalPages()-4)){
+									if(i==0||i>(orderPage.getPageNo()-4)&&i<(orderPage.getPageNo()+5)){
+										%>
+							<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
 							<%
-												}
-											}
-
-										}else{
-
+									}else{
+										if(i==2){
+											%>
+											<li class=""><a href="javascript:">...</a></li>
+							<%
+										}
+										if(i==(orderPage.getTotalPages()-1)){
+										%>
+										<li class=""><a href="javascript:">...</a></li>
+										<%
+										}
+										if(i==(orderPage.getTotalPages())){
+										%>
+										<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+										<%
+										}
+									}
+								}else{
+									if(i==0||i>(orderPage.getTotalPages()-8)){
+									%>
+									<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+									<li class=""><a href="javascript:">...</a></li>
+									<%
+									}else if(i==2){
+									%>
+									<li class=""><a href="javascript:">...</a></li>
+									<%
+									}
+								}
 
 										}
 
@@ -150,48 +183,6 @@
 								}
 							%>
 
-							@for( index <- 0 to (pages - 1)) {
-							@if(pages < 8) {
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
-							} else {
-							@if(formPage.page < 7) {
-							@if(index < 8) {
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
-							} else {
-							@if(index == (pages - 1)) {
-							<li class=""><a href="javascript:">...</a></li>
-							}
-							@if(index == (pages - 1)) {
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
-							}
-							}
-							} else {
-							@if(formPage.page < (pages - 4)) {
-							@if(index == 0 || index > (formPage.page - 4) && index < (formPage.page + 5)) {
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
-							} else {
-							@if(index == 2) {
-							<li class=""><a href="javascript:">...</a></li>
-							}
-							@if(index == (pages - 1)) {
-							<li class=""><a href="javascript:">...</a></li>
-							}
-							@if(index == pages) {
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
-							}
-							}
-							} else {
-							@if(index == 0 || index > (pages - 8)) {
-							<li class="@if(index == formPage.page) {active}"><a href="@searchParam()page=@index">@(index + 1)</a></li>
-							} else {
-							@if(index == 2) {
-							<li class=""><a href="javascript:">...</a></li>
-							}
-							}
-							}
-							}
-							}
-							}
 							<%
 								if(orderPage.getTotalPages()==orderPage.getPageNo()){
 							%>

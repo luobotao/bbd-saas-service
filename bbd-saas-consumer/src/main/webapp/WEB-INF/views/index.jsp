@@ -106,7 +106,7 @@
 						<a href=" javascript:;" class="active"><i class="ico-user"></i>@adminUser.realName</a>
 					</li>
 					<li>
-						<a href="/admin/logout">退出登录</a>
+						<a href="/logout">退出登录</a>
 					</li>
 				</ul>
 			</div>
@@ -114,15 +114,8 @@
 	</header>
 	<!-- Left side column. contains the logo and sidebar -->
 	<aside class="main-sidebar">
-		<div class="subnav">
-			<a href="<c:url value="/packageToSite" />" target="mainFrame" class="subnav-city active">包裹到站</a>
-			<a href="<c:url value="/packageDispatch" />" target="mainFrame" class="subnav-search  ">包裹分派</a>
-			<a href="<c:url value="/handleAbnormal" />" target="mainFrame" class="subnav-dollar">异常件处理</a>
-			<a href="<c:url value="/dataQuery" />" target="mainFrame" class="subnav-rmb  ">数据查询</a>
-			<a href="<c:url value="/deliverRegion/map" />" target="mainFrame" class="subnav-query">系统设置</a>
-		</div>
 		<!-- sidebar: style can be found in sidebar.less -->
-		@*<section class="sidebar">
+		<section class="sidebar">
 		<div class="user-panel">
 			<div class="pull-left info">
 				<p>您好，@adminUser.realName</p>
@@ -131,24 +124,28 @@
 		</div>
 		<ul class="sidebar-menu">
 			<li class="treeview">
-				<a href="#">
-					<i class="fa fa-dashboard"></i> <span>订单管理</span> <i class="fa fa-angle-left pull-right"></i>
-				</a>
-				<ul class="treeview-menu">
-					<li ><a href="/order/printExpressManage" target="mainFrame">电子面单打印</a></li>
-				</ul>
-
+				<a href="<c:url value="/packageToSite" />" target="mainFrame" class="subnav-city active">包裹到站</a>
+			</li>
+			<li class="treeview">
+				<a href="<c:url value="/packageDispatch" />" target="mainFrame" class="subnav-search  ">包裹分派</a>
+			</li>
+			<li class="treeview">
+				<a href="<c:url value="/handleAbnormal" />" target="mainFrame" class="subnav-dollar">异常件处理</a>
+			</li>
+			<li class="treeview">
+				<a href="<c:url value="/dataQuery" />" target="mainFrame" class="subnav-rmb  ">数据查询</a>
 			</li>
 			<li class="treeview">
 				<a href="#">
-					<i class="fa fa-dashboard"></i> <span>基础信息</span> <i class="fa fa-angle-left pull-right"></i>
+					<i class="fa fa-dashboard"></i> <span>系统设置</span> <i class="fa fa-angle-left pull-right"></i>
 				</a>
 				<ul class="treeview-menu">
-					<li ><a href="/order/senderManage" target="mainFrame">寄件人信息</a></li>
+					<li ><a href="<c:url value="/deliverRegion/map" />" target="mainFrame" class="subnav-query">配送区域</a></li>
+					<li ><a href="<c:url value="/deliverRegion/map" />" target="mainFrame" class="subnav-query">用户管理</a></li>
 				</ul>
 			</li>
 		</ul>
-	</section>*@
+	</section>
 		<!-- /.sidebar -->
 	</aside>
 
