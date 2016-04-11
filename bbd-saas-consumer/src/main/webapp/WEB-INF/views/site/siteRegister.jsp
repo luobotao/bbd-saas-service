@@ -8,7 +8,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
 	<h1 style="float:left; margin-left:40px">
-		站点注册<small><a href="/site/toViewSite">查看已注册站点</a></small>
+		站点注册
 	</h1>
 </section>
 
@@ -18,7 +18,8 @@
 		<div class="row-fluid">
 			<div class="span12">
 				<div class="tab-content" style="height:800px;">
-					<form role="form" enctype="multipart/form-data" action="/site/saveSite" method="post" id="siteForm" >
+					<c:url var="actionUrl" value="?${_csrf.parameterName}=${_csrf.token}"/>
+					<form role="form" enctype="multipart/form-data" action="${actionUrl}" method="post" id="siteForm" >
 						<div class="box-body">
 							<div class="row" id="usernameDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
@@ -136,7 +137,7 @@
 				data: {},
 				success: function(response){
 					console.log(response);
-					if(response=="true"){
+					if(response=="flase"){
 						alert("您输入的帐号目前已存在，请重新输入");
 						$("#usernameFlag").val(0);
 					}else{
