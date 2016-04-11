@@ -3,19 +3,11 @@
  * ----------
  */
 .skin-blue .main-header .navbar {
-  background-color: #3c8dbc;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f7;
 }
 .skin-blue .main-header .navbar .nav > li > a {
-  color: #ffffff;
-}
-.skin-blue .main-header .navbar .nav > li > a:hover,
-.skin-blue .main-header .navbar .nav > li > a:active,
-.skin-blue .main-header .navbar .nav > li > a:focus,
-.skin-blue .main-header .navbar .nav .open > a,
-.skin-blue .main-header .navbar .nav .open > a:hover,
-.skin-blue .main-header .navbar .nav .open > a:focus {
-  background: rgba(0, 0, 0, 0.1);
-  color: #f6f6f6;
+  color:#141e35;
 }
 .skin-blue .main-header .navbar .navbar-custom-menu > .nav {
   margin-right: 10px;
@@ -45,7 +37,7 @@
   }
 }
 .skin-blue .main-header .logo {
-  background-color: #367fa9;
+  background-color: #fff;
   color: #ffffff;
   border-bottom: 0px solid transparent;
 }
@@ -53,7 +45,7 @@
   color: #ffffff;
 }
 .skin-blue .main-header .logo:hover {
-  background: #357ca5;
+  background: #fff;
 }
 .skin-blue .main-header li.user-header {
   background-color: #3c8dbc;
@@ -63,7 +55,7 @@
 }
 .skin-blue .user-panel > .info,
 .skin-blue .user-panel > .info > a {
-  color: #fff;
+  color: #141e35;
 }
 .skin-blue .sidebar-menu > li.header {
   color: #4b646f;
@@ -75,31 +67,31 @@
 }
 .skin-blue .sidebar-menu > li > a:hover,
 .skin-blue .sidebar-menu > li.active > a {
-  color: #ffffff;
-  background: #1e282c;
+  color: #141e35;
+  background: #b8b9bf;
   border-left-color: #3c8dbc;
 }
 .skin-blue .sidebar-menu > li > .treeview-menu {
   margin: 0 1px;
-  background: #2c3b41;
+  background: #dcdde5;
 }
 .skin-blue .wrapper,
 .skin-blue .main-sidebar,
 .skin-blue .left-side {
-  background: #222d32;
+  background: #f0f0f7;
 }
 .skin-blue .sidebar a {
-  color: #b8c7ce;
+  color: #141e35;
 }
 .skin-blue .sidebar a:hover {
   text-decoration: none;
 }
 .skin-blue .treeview-menu > li > a {
-  color: #8aa4af;
+  color: #141e35;
 }
 .skin-blue .treeview-menu > li.active > a,
 .skin-blue .treeview-menu > li > a:hover {
-  color: #ffffff;
+  color: #141e35;
 }
 .skin-blue .sidebar-form {
   border-radius: 3px;

@@ -1,0 +1,248 @@
+@charset "utf-8";
+/* base */
+body,ol,ul,h1,h2,h3,h4,h5,h6,p,div,th,td,dl,dd,form,fieldset,legend,input,textarea,select,fieldset{ margin:0px; padding:0px; box-sizing: content-box;}
+body{
+	font:12px/18px Helvetica,Arial,"Hiragino Sans GB","Microsoft Yahei","微软雅黑",STHeiti,"华文细黑",sans-serif;
+	background:#f6f7f9;
+	color:#636568;}
+h1,h2,h3,h4,h5,h6,i,samp,strong,b,span,a,li,em,th,input,div,p{font-family:Helvetica,Arial,"Hiragino Sans GB","Microsoft Yahei","微软雅黑",STHeiti,"华文细黑",sans-serif;}
+h1,h2,h3,h4,h5,h6,i,samp,strong,span,a,li{font-size:inherit; font-weight:normal;}
+address,cite,code,em,th,i{font-weight:normal; font-style:normal;} 
+a{color:#2d374b;text-decoration:none;}
+a:hover{text-decoration:none;}
+li{list-style:none}
+img{border:0;vertical-align:middle;}
+table{border-collapse:collapse;border-spacing:0}
+p{word-wrap:break-word;}
+textarea{resize:none;}
+fieldset {border: 0;}
+
+
+/*ico图标*/
+i,.ico{
+	display:inline-block;
+	background:url(../../images/admin/ico-1.png) no-repeat left top;
+	}
+.ico-High,.ico-information,.ico-fast,.ico-city,.ico-query,.ico-clearing{
+	width: 140px;
+	height: 144px;
+	display: block;
+	margin:60px auto 0;
+	background:url(../../images/admin/ico-2.png) no-repeat center top;
+	}
+.ico-information{
+	background-position:center -153px;
+	}
+.ico-fast{
+	background-position:center -306px;
+	}
+.ico-city{
+	background-position:center -458px;
+	}	
+.ico-query{
+	background-position:center -608px;
+	}
+.ico-clearing{
+	background-position:center -757px;
+	}
+.ico-user{
+	width:20px;
+	height:20px;
+	background-position:left -195px;
+	vertical-align:middle;
+	}							
+/*公用布局*/	
+.container{
+	width:100%;
+	}
+.wrap{
+	width:1140px;
+	background:#FFF;
+	overflow:hidden;
+	margin:0 auto;
+	}
+.fl{
+	float:left;
+	}
+.fr{
+	float:right;
+	}
+/*导航*/
+.head{
+	background:#FFF;
+	}
+.logo{
+	margin-top:7px;
+	}
+.nav li{
+	float:left;
+	width:130px;
+	text-align:right;
+	}
+.nav li a{
+	line-height:60px;
+	font-size:16px;
+	}
+.nav li a:hover,.nav li a.active{
+	color:#47d4fd;
+	font-weight:bold;
+	}	
+/*banner*/
+.banner{
+	background:url(../../images/admin/bannerbg.png) repeat-x center top;
+	height:662px;
+	overflow:hidden;
+	}				
+.banner-info{
+	width:1140px;
+	margin:95px auto 0;
+	min-height:400px;
+	background:url(../../images/admin/banner.png) no-repeat left top;
+	}
+.user-login{
+	float:right;
+	width:373px;
+	background:rgba(0,0,0,.2);
+	filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr=#20000000, endColorstr=#20000000);
+	padding:60px 40px 45px;
+	border-radius:10px;
+	overflow:hidden;
+	}
+.user-name,.user-password{
+	width:270px;
+	line-height:60px;
+	height:60px;
+	border:1px solid #ffffff;
+	background:url(../../images/admin/ico-1.png) no-repeat 16px 21px;
+	padding:0 50px;
+	border-radius:3px;
+	margin-bottom:12px;
+	font-size:15px;
+	color:#FFF;
+	}
+.user-password{
+	background-position:16px -39px;
+	}	
+input.user-name:focus,input.user-password:focus{
+	outline:none;
+	border:1px solid #ffffff;
+	color:#fff;
+	}
+input.user-name::-webkit-input-placeholder,input.user-password::-webkit-input-placeholder,input.phcolor{ 
+color: #beddee;
+} 
+input.user-name::-moz-placeholder,input.user-password:-moz-placeholder { 
+color: #beddee;  
+} 
+input.user-name::-moz-placeholder,input.user-password::-moz-placeholder { 
+color: #beddee; 
+} 
+input.user-name:-ms-input-placeholder,input.user-password:-ms-input-placeholder { 
+color: #beddee; 
+}
+.btn-logi-wrap{
+	height:96px;
+	background:url(../../images/admin/border.png) no-repeat center bottom;
+	}
+.service-phone{
+	color:#FFF;
+	text-align:center;
+	font-size:15px;
+	line-height:35px;
+	}
+/*关于我们*/	
+.about{
+	background:#FFF;
+	overflow:hidden;
+	}
+.about-info{
+	width:1160px;
+	margin:80px auto 125px;
+	overflow:hidden;
+	}	
+.about-info li{
+	float:left;
+	width:360px;
+	text-align:center;
+	height:420px;
+	background:#FFF;
+	border:1px solid #efeff3;
+	margin:0 12px;
+	border-radius:10px;
+	}
+.about-info li b{
+	display:block;
+	font-size:24px;
+	line-height:30px;
+	padding:40px 0 20px;
+	color:#686868;
+	}
+.about-info li p{
+	font-size:16px;
+	line-height:24px;
+	}
+/*合作伙伴*/
+.cooperate{
+	text-align:center;
+	position:relative;
+	padding:140px 0 180px;
+	}
+.cooperate h2{
+	width:480px;
+	background:#FFF;
+	position:absolute;
+	top:-30px;
+	left:50%;
+	margin-left:-240px;
+	font-size:24px;
+	line-height:58px;
+	border:1px solid #e6e9ee;
+	border-radius:3px;
+	}								
+/*btn*/	
+.btn-login{
+	display:inline-block;
+	width:100%;
+	background:url(../../images/admin/ico-1.png) no-repeat 318px -106px #47d4fd;
+	border-radius:3px;
+	line-height:60px;
+	text-align:center;
+	font-size:22px;
+	font-weight:bold;
+	color:#FFF;
+	border:none;
+	cursor:pointer;
+	}
+.btn-login:focus{
+	outline:none;
+	}			
+.foot{
+	text-align:center;
+	line-height:50px;
+	overflow:hidden;
+	color:#a7aaaf;
+	}
+/*登录后首页*/
+.aboutbg{
+  background:url(../../images/admin/bg.png) repeat-x center top #FFF;
+  min-height:870px;
+  }	   
+.about-info-m{
+  margin:150px auto 300px;
+  }
+.about-info-m li{
+	cursor:pointer;
+	transition:all .3s;
+	} 
+.about-info-m li:hover i{
+	opacity:.75;
+	filter:alpha(opacity=75); 
+	} 
+.nav-user li{
+  width:auto;
+  padding-left:45px;
+  padding-right:5px;
+  }	
+.footbg{
+  background:#FFF;
+  }

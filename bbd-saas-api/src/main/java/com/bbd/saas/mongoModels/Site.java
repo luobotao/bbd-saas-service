@@ -4,6 +4,7 @@ import com.bbd.saas.enums.SiteStatus;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
 @Indexes(
         @Index(value = "username", fields = @Field("username"))
 )
-public class Site {
+public class Site implements Serializable {
     @Id
     private ObjectId id;
     private String name;         //站点名称
@@ -29,7 +30,8 @@ public class Site {
     private String licensePic;   //营业执照
     private String username;     //账号
     private String password;     //密码
-    private String Company;      //所属公司
+    @Reference("company")
+    private Company company;      //所属公司
     private SiteStatus status;       //状态
     private String memo;       //备注
     private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
@@ -140,12 +142,12 @@ public class Site {
         this.password = password;
     }
 
-    public String getCompany() {
-        return Company;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setCompany(String company) {
-        Company = company;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public SiteStatus getStatus() {
