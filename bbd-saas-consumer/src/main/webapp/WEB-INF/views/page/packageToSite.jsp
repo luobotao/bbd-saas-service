@@ -8,8 +8,6 @@
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body >
-<div>
-</div>
 <section class="content">
 	<div class="col-xs-12">
 		<!-- 订单数显示 开始 -->
@@ -106,7 +104,7 @@
 					<div class="dataTables_paginate paging_bootstrap">
 						<ul class="pagination">
 							<%
-								if(orderPage.getPageNo()<1){
+							if(orderPage.getPageNo()<1){
 							%>
 							<li class="prev disabled"><a href="javascript:">首页</a></li>
 							<%
@@ -114,87 +112,80 @@
 							%>
 							<li class="prev"><a href="@searchParam()page=0">首页</a></li>
 							<%
-								}
-								for(int i=0;i<orderPage.getTotalPages()-1;i++){
-									if(orderPage.getTotalPages()<8){
+							}
+							for(int i=0;i<orderPage.getTotalPages();i++){
+
+							if(orderPage.getTotalPages()<8){
 							%>
-							<li class="<c:if test="$(i==orderPage.getPageNo())">active</c:if>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
 							<%
 							}else {
 								if(orderPage.getPageNo()<7){
-
 									if(i<8){
-							%>
-							<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-							<%
-								}else{
-									if(i==(orderPage.getTotalPages()-1)){
-							%>
-								<li class=""><a href="javascript:">...</a></li>
-							<%
-									}
-									if(i==(orderPage.getTotalPages())){
-							%>
-								<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-							<%
-									}
-								}
-
-							}else{
-								if(orderPage.getPageNo()<(orderPage.getTotalPages()-4)){
-									if(i==0||i>(orderPage.getPageNo()-4)&&i<(orderPage.getPageNo()+5)){
-										%>
-							<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-							<%
+									%>
+									<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
+									<%
 									}else{
-										if(i==2){
+										if(i==(orderPage.getTotalPages()-3)){
+										%>
+											<li class=""><a href="javascript:">...</a></li>
+										<%
+										}
+										if(i==(orderPage.getTotalPages()-2)){
+										%>
+										<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+										<%
+										}
+									}
+								}else{
+									if(orderPage.getPageNo()<(orderPage.getTotalPages()-4)){
+										if(i==0||i>(orderPage.getPageNo()-4)&&i<(orderPage.getPageNo()+5)){
+									%>
+									<	li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+									<%
+										}else{
+											if(i==2){
 											%>
 											<li class=""><a href="javascript:">...</a></li>
-							<%
+											<%
+											}
+											if(i==(orderPage.getTotalPages()-1)){
+											%>
+											<li class=""><a href="javascript:">...</a></li>
+											<%
+											}
+											if(i==(orderPage.getTotalPages())){
+											%>
+											<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+											<%
+											}
 										}
-										if(i==(orderPage.getTotalPages()-1)){
+									}else{
+										if(i==0||i>(orderPage.getTotalPages()-8)){
+										%>
+										<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+										<%
+										}else if(i==2){
 										%>
 										<li class=""><a href="javascript:">...</a></li>
 										<%
 										}
-										if(i==(orderPage.getTotalPages())){
-										%>
-										<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-										<%
-										}
-									}
-								}else{
-									if(i==0||i>(orderPage.getTotalPages()-8)){
-									%>
-									<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-									<li class=""><a href="javascript:">...</a></li>
-									<%
-									}else if(i==2){
-									%>
-									<li class=""><a href="javascript:">...</a></li>
-									<%
-									}
-								}
-
-										}
-
 									}
 
 								}
-							%>
 
-							<%
-								if(orderPage.getTotalPages()==orderPage.getPageNo()){
-							%>
-							<li class="next disabled"><a href="javascript:">尾页</a></li>
-							<%
-								}else{
-							%>
-							<li class="next"><a href="@searchParam()page=@{ pages - 1}">尾页</a></li>
-							<%
-								}
-							%>
-
+							}
+						}
+						if(orderPage.getTotalPages()==orderPage.getPageNo()){
+						%>
+						<li class="next disabled"><a href="javascript:">尾页</a></li>
+						<%
+							}else{
+						%>
+						<li class="next"><a href="@searchParam()page=@{ pages - 1}">尾页</a></li>
+						<%
+							}
+						%>
 						</ul>
 					</div>
 				</div>

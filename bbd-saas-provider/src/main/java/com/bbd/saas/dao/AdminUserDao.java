@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 
 /**
  * Created by luobotao on 2016/4/1.
- * 管理员接口
  */
 @Repository
 public class AdminUserDao extends BaseDAO<AdminUser, ObjectId> {
