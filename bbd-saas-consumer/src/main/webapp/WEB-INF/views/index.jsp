@@ -106,7 +106,7 @@
 						<a href=" javascript:;" class="active"><i class="ico-user"></i>@adminUser.realName</a>
 					</li>
 					<li>
-						<a href="/admin/logout">退出登录</a>
+						<a href="/logout">退出登录</a>
 					</li>
 				</ul>
 			</div>
