@@ -153,10 +153,26 @@
 							<%
 										}
 										if(i==(orderPage.getTotalPages()-1)){
+										%>
+										<li class=""><a href="javascript:">...</a></li>
+										<%
+										}
+										if(i==(orderPage.getTotalPages())){
+										%>
+										<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+										<%
+										}
+									}
+								}else{
+									if(i==0||i>(orderPage.getTotalPages()-8)){
+									%>
+									<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
+									<li class=""><a href="javascript:">...</a></li>
+									<%
+									}else if(i==2){
 									%>
 									<li class=""><a href="javascript:">...</a></li>
 									<%
-															}
 									}
 								}
 
