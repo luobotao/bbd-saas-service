@@ -28,6 +28,8 @@ public class User implements Serializable {
     private UserRole role;
     @Reference("site")
     private Site site;
+    @Reference("user")
+    private User operate;//用户创建者
     private String lastIp;
     private int loginCount;
     private int state;//状态标识 1审核中 2审核通过 3驳回
@@ -129,4 +131,12 @@ public class User implements Serializable {
     public void setDateLogin(Date dateLogin) {
         this.dateLogin = dateLogin;
     }
+
+	public User getOperate() {
+		return operate;
+	}
+
+	public void setOperate(User operate) {
+		this.operate = operate;
+	}
 }
