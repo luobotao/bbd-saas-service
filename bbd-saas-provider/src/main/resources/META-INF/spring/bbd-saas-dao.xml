@@ -12,4 +12,8 @@
     <bean id="adminUserDao" class="com.bbd.saas.dao.AdminUserDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- order DAO-->
+    <bean id="orderDao" class="com.bbd.saas.dao.OrderDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 </beans>

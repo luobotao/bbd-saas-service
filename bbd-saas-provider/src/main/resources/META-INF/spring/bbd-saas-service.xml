@@ -14,4 +14,10 @@
             <ref bean="adminUserDao"/>
         </property>
     </bean>
+    <!-- order Service-->
+    <bean id="orderService" class="com.bbd.saas.api.impl.OrderServiceImpl">
+        <property name="orderDao">
+            <ref bean="orderDao"/>
+        </property>
+    </bean>
 </beans>
