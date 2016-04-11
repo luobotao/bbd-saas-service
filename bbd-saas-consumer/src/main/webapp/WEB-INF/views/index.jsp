@@ -151,7 +151,7 @@
 
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper" height="100%">
-		<iframe id="mainFrame" name="mainFrame" src="" width="100%" height="100%" frameborder="0"></iframe>
+		<iframe id="mainFrame" name="mainFrame" src="<c:url value="/packageToSite" />" width="100%" height="100%" frameborder="0"></iframe>
 	</div><!-- /.content-wrapper -->
 	<footer class="main-footer">
 		<div class="pull-right hidden-xs">

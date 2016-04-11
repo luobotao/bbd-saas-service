@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
@@ -28,12 +29,14 @@ public class PackageToSiteController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model) {
+	public String index(Model model,@RequestParam(value = "page", required = false) Integer page) {
+		if(page==null) page =0 ;
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageSize(2);
-		pageModel.setPageNo(3);
+		pageModel.setPageNo(page);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel);
-		logger.info(orderPage+"=========");
+
+		logger.info(orderPage+"========="+page);
 		model.addAttribute("username", "张三");
 		model.addAttribute("orderPage", orderPage);
 		//未到站订单数

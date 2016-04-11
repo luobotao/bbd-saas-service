@@ -15,8 +15,8 @@ import java.util.List;
 
 
 /**
- * Created by luobotao on 2016/4/1.
- * 管理员接口
+ * Created by luobotao on 2016/4/11.
+ * 订单DAO
  */
 @Repository
 public class OrderDao extends BaseDAO<Order, ObjectId> {
@@ -27,11 +27,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     public PageModel<Order> findOrders(PageModel<Order> pageModel) {
-        PageModel<Order> result = new PageModel<Order>();
         List<Order> orderList = find(createQuery().filter("adminUserId", new ObjectId("56d013f156f6c3ba9fe959cb")).order("dateUpd").offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-        result.setDatas(orderList);
-        result.setPageNo(2);
-        result.setTotalPages(12);
-        return result;
+        pageModel.setDatas(orderList);
+        pageModel.setTotalPages(12);
+        return pageModel;
     }
 }
