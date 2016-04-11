@@ -14,6 +14,7 @@
     <dubbo:protocol name="dubbo" port="20880" />
     <!-- 声明需要暴露的服务接口-->
     <dubbo:service interface="com.bbd.saas.api.AdminUserService" ref="adminUserService" />
+    <dubbo:service interface="com.bbd.saas.api.OrderService" ref="orderService" />
 
     <import resource="classpath:META-INF/spring/bbd-saas-service.xml" />
 </beans>

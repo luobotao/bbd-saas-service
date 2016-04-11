@@ -1,5 +1,7 @@
 package com.bbd.saas.vo;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -7,6 +9,7 @@ import java.util.Date;
  * 物流信息
  * Created by luobotao on 2016/4/8.
  */
+@Embedded
 public class Express implements Serializable {
     private String remark;
     private Date dateAdd;

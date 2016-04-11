@@ -8,7 +8,8 @@
     <dubbo:application name="bbd-saas-consumer" owner="saas" organization="bbd"/>
 
     <dubbo:registry address="zookeeper://182.92.227.140:2181"/>
-
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.AdminUserService"/>
+    <!--订单Service-->
+    <dubbo:reference id="orderService" interface="com.bbd.saas.api.OrderService"/>
 
 </beans>

@@ -13,6 +13,7 @@
 html,
 body {
   min-height: 100%;
+  background-color: #fafbff;
 }
 .layout-boxed html,
 .layout-boxed body {
@@ -272,21 +273,19 @@ a:focus {
 .main-header .logo {
   display: block;
   float: left;
-  height: 50px;
-  font-size: 20px;
-  line-height: 50px;
   text-align: center;
-  width: 230px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  padding: 0 15px;
-  font-weight: 300;
+  width: 230px;
+  height: 50px;
+  padding: 2px 0 0;
 }
 .main-header .navbar-brand {
   color: #fff;
 }
 .content-header {
   position: relative;
-  padding: 15px 15px 0 15px;
+  padding: 30px 15px 0 15px;
+  text-align: center;
 }
 .content-header > h1 {
   margin: 0;

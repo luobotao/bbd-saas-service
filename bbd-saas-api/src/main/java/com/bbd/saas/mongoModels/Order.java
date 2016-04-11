@@ -11,6 +11,7 @@ import com.bbd.saas.vo.Sender;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
 @Indexes(
         @Index(value = "orderNo", fields = @Field("orderNo"))
 )
-public class Order {
+public class Order implements Serializable {
     @Id
     private ObjectId id;
     private ObjectId adminUserId;
@@ -33,7 +34,9 @@ public class Order {
     private String areaName;
     private String areaCode;//站点编码
     private String areaRemark;//站点地址
+    @Embedded
     private Sender sender;
+    @Embedded
     private Reciever reciever;
     private Srcs src;
     private ExpressStatus expressStatus;
@@ -45,8 +48,8 @@ public class Order {
     private Date orderCreate;//订单创建时间
     private Date orderPay;     //订单支付时间
     private Date dateAdd;
-    private Date datePrint;//物流单打印时间
-    private Date dateUpd;
+    private Date datePrint;//暂时未设置
+    private Date dateUpd;//物流单打印时间
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
 
     public ObjectId getId() {
