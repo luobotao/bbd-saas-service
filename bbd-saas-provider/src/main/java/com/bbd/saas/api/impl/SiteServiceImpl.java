@@ -8,6 +8,8 @@ import com.bbd.saas.dao.SiteDao;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.Key;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,8 +20,13 @@ import org.springframework.stereotype.Service;
 public class SiteServiceImpl implements SiteService {
     private SiteDao siteDao;
 
-    public void save(Site site){
-       siteDao.save(site);
+    public Key<Site> save(Site site){
+       return siteDao.save(site);
+    }
+
+    @Override
+    public Site findSite(String id) {
+        return siteDao.findOne("id",new ObjectId(id));
     }
 
     public SiteDao getSiteDao() {

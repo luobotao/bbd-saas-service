@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 根据用户名查找是否存在此管理员
-     * @param userName
+     * @param loginName
      * @return
      */
     public User findUserByLoginName(String loginName) {
@@ -41,10 +41,11 @@ public class UserServiceImpl implements UserService {
     public Key<User> save(User user){
     	return userDao.save(user);
     }
+
     /**
      * 获取用户列表信息
-     * @param PageModel<User> 
-     * @return PageModel<User> 
+     * @param pageModel
+     * @return
      */
     public PageModel<User> findUserList(PageModel<User> pageModel){
     	return userDao.findUserList(pageModel);

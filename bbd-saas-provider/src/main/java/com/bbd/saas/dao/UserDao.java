@@ -37,15 +37,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     	User user = findOne(userName,"56d013f156f6c3ba9fe959ce");
     	return user;
     }
-    /**
-     * 保存用户对象信息
-     * @param user
-     * @return Key<User>
-     */
-    public Key<User> save(final User user){
-    	Key<User> kuser = save(user);
-    	return kuser;
-    }
+
     /**
      * 获取用户列表信息
      * @param PageModel<User>
