@@ -38,6 +38,8 @@ public class Order implements Serializable {
     private Sender sender;
     @Embedded
     private Reciever reciever;
+    @Embedded
+    private User user;
     private Srcs src;
     private ExpressStatus expressStatus;
     private PrintStatus printStatus;
@@ -123,8 +125,16 @@ public class Order implements Serializable {
     public void setReciever(Reciever reciever) {
         this.reciever = reciever;
     }
+    
+    public User getUser() {
+		return user;
+	}
 
-    public Srcs getSrc() {
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Srcs getSrc() {
         return src;
     }
 
