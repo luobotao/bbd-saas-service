@@ -2,6 +2,7 @@ package com.bbd.saas.Services;
 
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.mongoModels.AdminUser;
+import com.bbd.saas.mongoModels.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,18 +15,18 @@ import org.springframework.stereotype.Service;
 public class AdminService {
 
     @Autowired
-    RedisTemplate<String, AdminUser> redisTemplate;
+    RedisTemplate<String, User> redisTemplate;
 
 
-    public void put(AdminUser adminUser) {
-        redisTemplate.opsForHash().put(Constants.REDIS_ADMIN_ID, adminUser.getId().toHexString(), adminUser);
+    public void put(User user) {
+        redisTemplate.opsForHash().put(Constants.REDIS_ADMIN_ID, user.getId().toHexString(), user);
     }
 
-    public void delete(AdminUser adminUser) {
-        redisTemplate.opsForHash().delete(Constants.REDIS_ADMIN_ID, adminUser.getId());
+    public void delete(User user) {
+        redisTemplate.opsForHash().delete(Constants.REDIS_ADMIN_ID, user.getId());
     }
 
-    public AdminUser get(Object key) {
-        return (AdminUser) redisTemplate.opsForHash().get(Constants.REDIS_ADMIN_ID, key);
+    public User get(Object key) {
+        return (User) redisTemplate.opsForHash().get(Constants.REDIS_ADMIN_ID, key);
     }
 }

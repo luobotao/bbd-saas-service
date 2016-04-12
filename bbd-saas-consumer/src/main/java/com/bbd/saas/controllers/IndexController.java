@@ -1,8 +1,9 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.constants.AdminSession;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.AdminUser;
+import com.bbd.saas.mongoModels.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,16 +30,17 @@ public class IndexController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model) {
-		model.addAttribute("username", "张三");
+	public String index(Model model,HttpServletRequest request) {
+		User user = adminService.get(UserSession.get(request));
+		model.addAttribute("user", user);
 		return "index";
 	}
 
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(Model model, HttpServletRequest request, HttpServletResponse response) {
-		AdminUser adminUser = adminService.get(AdminSession.get(request));
-		AdminSession.remove(response);//remove from cookies
-		adminService.delete(adminUser);//remove adminUser from redis
+		User user = adminService.get(UserSession.get(request));
+		UserSession.remove(response);//remove from cookies
+		adminService.delete(user);//remove adminUser from redis
 		return "redirect:/login";
 	}
 

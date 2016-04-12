@@ -1,3 +1,5 @@
+<%@ page import="com.bbd.saas.utils.Dates" %>
+<%@ page import="java.util.Date" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -103,7 +105,7 @@
 			<div class="navbar-custom-menu">
 				<ul class="nav-user">
 					<li>
-						<a href=" javascript:;" class="active"><i class="ico-user"></i>@adminUser.realName</a>
+						<a href=" javascript:;" class="active"><i class="ico-user"></i>${user.realName}</a>
 					</li>
 					<li>
 						<a href="/logout">退出登录</a>
@@ -118,8 +120,8 @@
 		<section class="sidebar">
 		<div class="user-panel">
 			<div class="pull-left info">
-				<p>您好，@adminUser.realName</p>
-				今天@Dates.formatDate(new Date())
+				<p>您好，${user.realName}</p>
+				今天<%=Dates.formatDate(new Date())%>
 			</div>
 		</div>
 		<ul class="sidebar-menu">
