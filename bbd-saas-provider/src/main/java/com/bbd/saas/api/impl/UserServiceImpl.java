@@ -4,6 +4,7 @@ package com.bbd.saas.api.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,12 +71,31 @@ public class UserServiceImpl implements UserService {
 			for(User user : userList){
 				UserVO userVo = new UserVO();
 				userVo.setId(user.getId().toString());
-				userVo.setRealName(user.getRealName());
+				userVo.setRealName(init(user.getRealName(), "张三"));
 				//userVo.setLoginName(user.getLoginName());
 				//userVo.setPhone(user.getPhone());
 				userVoList.add(userVo);
 			}
 		}
 		return userVoList;
+	}
+	private String init(String value, String defalut){
+		if(value == null){
+			return defalut;
+		}
+		return value;
+	}
+	
+	/**
+     * Description: 根据用户id查询
+     * @param userId 用户id
+     * @return
+     * @author: liyanlei
+     * 2016年4月12日下午6:10:40
+     */
+	@Override
+	public User findOne(String userId) {
+		return userDao.findOne("id",new ObjectId(userId));
+		
 	}
 }
