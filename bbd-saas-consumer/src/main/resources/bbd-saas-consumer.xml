@@ -6,13 +6,14 @@
 	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="bbd-saas-consumer" owner="saas" organization="bbd"/>
-
-    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
+    <!-- 启动时不去校验提供者 -->
+	<dubbo:consumer check="false"/> 
+    <!-- <dubbo:registry address="zookeeper://127.0.0.1:2181"/> -->
     <dubbo:registry address="zookeeper://182.92.227.140:2181"/>
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.AdminUserService"/>
     <!--订单Service-->
     <dubbo:reference id="orderService" interface="com.bbd.saas.api.OrderService"/>
-    <!--用户Service-->
+    <!--用户Service-->          
     <dubbo:reference id="userService" interface="com.bbd.saas.api.UserService"/>
     <!--site Service-->
     <dubbo:reference id="siteService" interface="com.bbd.saas.api.SiteService"/>

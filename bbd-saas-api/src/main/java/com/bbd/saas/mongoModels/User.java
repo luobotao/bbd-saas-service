@@ -26,7 +26,6 @@ public class User implements Serializable {
     private String passWord;
     private String realName;
     private String phone;
-    @Reference("userRole")
     private Roles role;
     @Reference("site")
     private Site site;
