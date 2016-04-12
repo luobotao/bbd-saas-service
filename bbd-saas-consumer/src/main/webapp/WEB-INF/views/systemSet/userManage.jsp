@@ -9,12 +9,52 @@
 	<meta name="description" content="棒棒哒-系统设置-用户管理页面" />
 	<title>系统设置-用户管理页面</title>
 	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />	
-		
+	<script type="text/javascript" src="/js/plugins/dialog/dialog.js"></script>	
 </head>
 <body>
 <div>
-	<jsp:include page="../top.jsp" flush="true" />	
+	<%--<jsp:include page="../top.jsp" flush="true" /> --%>	
+	<jsp:include page="../main.jsp" flush="true" />
 </div>
+<!-- 添加员工 -->
+	<div id="add_user">
+	    <div class="pop_style add_staff">
+	        <div class="title">添加用户</div>
+	        <div class="close"></div>
+	        <div class="form">
+	        	<form id="addForm">
+	            <div class="item">
+	                <label>账号：</label>
+	                <input type="hidden" id="merchantId" name="merchantId" value="${merchantId}">
+	                <input class="ipt" type="text" name="account" id="addStaffAccout" />
+	                <span id="account"></span>
+	            </div>
+	            <div class="item">
+	                <label>密码：</label>
+	                <input class="ipt" type="password" name="password" placeholder="默认为123456">
+	            </div>
+	            <div class="item">
+	                <label>姓名：</label>
+	                <input class="ipt" type="text" name="name">
+	            </div>
+	            <div class="item">
+	                <label>角色：</label>
+	                <p style="width: 380px; font: 12px/30px &quot;Microsoft Yahei&quot;" id="aRoleItem"></p>
+	            </div>
+	            <div class="btn">
+	                <button class="submit submit_save" type="button" data-value="save" onclick="add()">保 存</button>
+	            </div>
+	            </form>
+	        </div>
+	        <div class="msg">
+	            <h3>温馨提示</h3>
+	            <p>1、店长：全面负责药房的管理，拥有接收订单、应答咨询、配送、验证优惠券、客户沟通等全部权限。</p>
+	            <p>2、营业员：拥有接单、验证优惠券、客户沟通的权限。</p>
+	            <p>3、药剂师：负责应答咨询，在店员端APP上回复顾客的问题。同时拥有营业员全部权限</p>
+	            <p>4、配送员：负责接收订单、配送药品。</p>
+	        </div>
+	    </div>
+	</div>
 <div class="content">
 	<div class="content-left" id="content-left"><jsp:include page="../leftMenu.jsp" flush="true" /></div>
 	<div class="content-main" id="content-main">
@@ -39,7 +79,7 @@
 			</span>
 			<br><br>
 			<button id="queryData" name="queryData">查询</button>
-			<button id="newUser" name="newUser"  onClick="showUserDiv()">新建</button>
+			<button id="newUser" name="newUser"  onClick="addUserDiv()">新建</button>
 		</div>
 		
 		<div class="m20">
@@ -123,13 +163,43 @@
 <script type="text/javascript" src="<c:url value="/resources/jquery/jquery-1.12.3.min.js" />"></script>
 
 <script type="text/javascript">
-$(document).ready(function() {
-	
+var XSQdialog;
+$(function() {
 
+	XSQdialog = {
+    mask: $(".mask"),
+    main: $(".ui_dialog"),
+    colse:$(".colse"),
+    cntbox: $("#wrapBox"),
+    show: function(html) {
+        this.cntbox.html(html);
+        this.cntbox.find('.pop_style').show();
+        this.mask.fadeIn(300);
+        this.main.css({'margin-top': - (this.main.outerHeight(true)) / 2 + 'px', 'margin-left': - (this.main.outerWidth(true)) / 2 + 'px'}).fadeIn(300);
+    },
+    hide: function() {
+        this.cntbox.html('');
+        this.mask.fadeOut(200);
+        this.main.fadeOut(200).removeAttr('style');
+    }
+    
+	};
+	$('#wrapBox').on("click", '.close', function(){
+	    MPHdialog.hide();
+	});
+	$('#wrapBox').on("click", 'button.cancel', function(){
+	    MPHdialog.hide();
+	});
 });
 //显示用户编辑面板
 function showUserDiv(userId) {
 	$("#user_div").show();
+}
+//添加用户编辑面板
+function addUserDiv(userId) {
+	//$("#user_div").show();
+	var html = $('#add_user').html();
+	MPHdialog.show(html);
 }
 //停用
 function disableUser(userId) {

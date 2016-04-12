@@ -11,7 +11,7 @@
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.AdminUserService"/>
     <!--订单Service-->
     <dubbo:reference id="orderService" interface="com.bbd.saas.api.OrderService"/>
-    <!--订单Service-->
+    <!--用户Service-->
     <dubbo:reference id="userService" interface="com.bbd.saas.api.UserService"/>
 
 </beans>
