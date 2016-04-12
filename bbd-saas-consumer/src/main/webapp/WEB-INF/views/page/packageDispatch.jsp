@@ -42,7 +42,7 @@
 	String pageInfo = pageNav(path+"/packageDispatch", totalPage, currentPage,count, "GET", null);
 %>
 <body >
-<div>============realName================================${user.realName }
+<div>============realName===============${user }=================${user.loginName }
 </div>
 <section class="content">
 	<div class="col-xs-12">
@@ -74,7 +74,7 @@
 				<button onclick="showCourierDiv()">选择派件员</button>	
 				<span class="ft12 pt20">已选择：<span id="courierName"></span></span>
 				<input id="courierId1" type="hidden" value="">
-				<input id="courierId" type="text" value="" /> 	
+				<input id="courierId" type="text" value="" style="width:200px"/> 	
 			</div>
 			
 			<div class="col-xs-4">

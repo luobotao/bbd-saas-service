@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.api.UserService;
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
@@ -94,15 +95,41 @@ public class PackageDispatchController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		//====================start================================
-		orderService.findOneByMailNum(mailNum);
+		//查询运单信息
+		Order order = orderService.findOneByMailNum(mailNum);
+		if(order != null){
+			//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
+			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
+				||ExpressStatus.Delay.equals(order.getExpressStatus())
+				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
+				if(order.getUser() == null){//未分派，可以分派
+					saveOrderMail(order, courierId, map);
+				}else{//重复扫描，此运单已分派过了
+					map.put("operFlag", 2);
+				}
+			}else{//重复扫描，此运单已分派过了
+				map.put("operFlag", 2);
+			}
+		}else{
+			map.put("erroFlag", 0);//0:运单号不存在
+		}
 		
 		//=====================end================================
 				
-		Order order = new Order();
+		//Order order = new Order();
 		map.put("order", order); //刷新列表，添加此运单
-		map.put("success", true); //1:分派成功;
-		map.put("erroFlag", 2); //0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:拒收运单重新分派。
+		map.put("success", true); //0:分派成功;
+		map.put("operFlag", 2); //0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:拒收运单重新分派--。
 		return map;
+	}
+	private void saveOrderMail(Order order, String courierId, Map<String, Object> map){
+		//查询派件员信息
+		User user = userService.findOne(courierId);
+		//运单分派给派件员
+		order.setUser(user);
+		//更新运单
+		orderService.update(order);
+		map.put("operFlag", 1);//1:分派成功
 	}
 	
 	/**
