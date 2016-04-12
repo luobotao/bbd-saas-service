@@ -1,3 +1,8 @@
+<%@ page import="com.bbd.saas.mongoModels.User" %>
+<%@ page import="com.bbd.saas.enums.Roles" %>
+<%@ page import="com.bbd.saas.enums.UserStatus" %>
+<%@ page import="com.bbd.saas.utils.PageModel" %>
+<%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -25,21 +30,18 @@
 	<div class="content-main" id="content-main">
 	
 		<div class="m20">
-			<span>角色:
-				<select>  
-				  <option value ="1">全部</option>  
-				  <option value ="2">初级</option>  
-				  <option value="3">普通</option> 
-				  <option value="4">高级</option>
-				</select>  
+			<span>
+				<label>角色:</label>
+						<select id="src" name="src" class="form-control">
+							<%=Roles.Srcs2HTML(-1)%>
+						</select>  
 			</span> 
-			<span class="pl20">状态:
-				<select>  
-				  <option value ="1">全部</option>  
-				  <option value ="2">有效</option>  
-				  <option value="3">无效</option> 
-				</select>  
-			</span> 
+			<span>
+			<label>状态：</label>
+						<select id="src" name="src" class="form-control">
+							<%=UserStatus.Srcs2HTML(-1)%>
+						</select>
+			</span>
 			<span class="pl20">
 				关键词：<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" />
 			</span>
@@ -50,6 +52,7 @@
 		
 		<div class="m20">
 			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
+				<thead>
 				<tr>
 					<td>角色</td>
 					<td>真实姓名</td>
@@ -58,28 +61,43 @@
 					<td>状态</td>
 					<td>操作</td>
 				</tr>
+				</thead>
+				
+				<tbody>
+				<%-- 
+				<%
+					PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
+					for(User user : userPage.getDatas()){
+				%>
 				<tr>
-					<td>角色xxx</td>
-					<td>张三</td>
-					<td>12345xxx</td>
-					<td>zhangsan</td>
-					<td>有效</td>
-					<td>
-						<button onClick="showUserDiv('userId')">修改</button>
-						<button onClick="disableUser('userId')">停用</button>
+					<td><input type="checkbox" value="<%=user.getId()%>" name="id"></td>
+					<td><%=user.getRole().getRoleName()%></td>
+					<td><%=user.getRealName()%></td>
+					<td><%=user.getPhone()%></td>
+					<td><%=user.getLoginName()%></td>
+					<td><%=user.getState()%></td>
+			
+					<td>修改|
+					if(user.getState()==1){
+						停用
+					}else{
+						启用
+					}
 					</td>
+					
 				</tr>
-				<tr>
-					<td>角色xxx</td>
-					<td>张三</td>
-					<td>12345xxx</td>
-					<td>zhangsan</td>
-					<td>有效</td>
-					<td>
-						<button onClick="showUserDiv('userId')">修改</button>
-						<button onClick="activeUser('userId')">激活</button>
-					</td>
-				</tr>
+				<%
+					}
+				%>
+				</tbody>
+				<tfoot>
+				<th colspan="13">
+					<input id="selectAll" name="selectAll" type="checkbox"> <label for="selectAll">
+					全选</label> &nbsp;
+				</th>
+				</tfoot>
+				--%>
+				
 			</table>
 			<div class="fr50"> 
 				<a href="">上页</a>
@@ -109,12 +127,13 @@
             </h4>
          </div>
          <div class="modal-body">
-		<form role="form" enctype="multipart/form-data" action="<c:url value="/userManage/saveUser" />" method="post" id="userForm" >
+         <c:url var="actionUrl" value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}"/>
+		 <form role="form" action="${actionUrl}" method="post" id="userForm" >
 						<div class="box-body">
 						<div class="row" id="usernameDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
 									<label for="title">角色:</label>
-									<select name="roleId">
+									<select id="roleId" name="roleId">
 									  <option value="1">站长</option>
 									  <option value="2">派件员</option>
 									</select>
@@ -173,10 +192,11 @@ function saveUser1() {
 	});
 }
 
-function checkUser() {
-	alert("ssss");
+function checkUser(username) {
+	alert("ssss");alert(loginName);
+	var url = "<c:url value="/userManage/checkUser" />";alert(url);
 	$.ajax({
-		url: '/site/checkSiteWithLoginName?loginName='+loginName,
+		url: url+'?username='+username,
 		type: 'GET',
 		cache: false,
 		dataType: "text",
@@ -199,7 +219,6 @@ $("#saveUserBtn").click(function(){alert("ssss");
 	var flag = true;
 	var phone = $("#phone").val();
 	var realName = $("#realName").val();
-	var phone = $("#phone").val();
 	var loginName = $("#loginName").val();
 	var loginPass = $("#loginPass").val();
 	var confirmPass = $("#confirmPass").val();
