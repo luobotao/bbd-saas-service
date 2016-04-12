@@ -17,7 +17,7 @@ import java.util.Map;
 public class UserForm {
 	
 	@NotEmpty
-	private Integer roleId;
+	private String roleId;
 	@NotEmpty
 	private String userName;
 	@NotEmpty
@@ -26,10 +26,10 @@ public class UserForm {
 	private String loginName;
 	@NotEmpty
 	private String loginPass;
-	public Integer getRoleId() {
+	public String getRoleId() {
 		return roleId;
 	}
-	public void setRoleId(Integer roleId) {
+	public void setRoleId(String roleId) {
 		this.roleId = roleId;
 	}
 	public String getUserName() {
