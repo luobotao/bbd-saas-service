@@ -1,6 +1,7 @@
 package com.bbd.saas.api;
 
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
 
 /**
@@ -9,6 +10,10 @@ import com.bbd.saas.utils.PageModel;
  */
 public interface SiteService {
 
-
-    PageModel<Order> findOrders(PageModel<Order> pageModel);
+    /**
+     * 保存站点
+     * @param site
+     * @return
+     */
+    void save(Site site);
 }

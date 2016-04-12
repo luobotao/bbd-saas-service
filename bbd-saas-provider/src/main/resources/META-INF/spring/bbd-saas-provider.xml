@@ -17,6 +17,7 @@
     <dubbo:service interface="com.bbd.saas.api.AdminUserService" ref="adminUserService" />
     <dubbo:service interface="com.bbd.saas.api.OrderService" ref="orderService" />
     <dubbo:service interface="com.bbd.saas.api.UserService" ref="userService" />
+    <dubbo:service interface="com.bbd.saas.api.SiteService" ref="siteService" />
 
     <import resource="classpath:META-INF/spring/bbd-saas-service.xml" />
 </beans>

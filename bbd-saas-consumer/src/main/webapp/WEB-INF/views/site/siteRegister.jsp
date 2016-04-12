@@ -18,6 +18,9 @@
 		<div class="row-fluid">
 			<div class="span12">
 				<div class="tab-content" style="height:800px;">
+					<c:if test="${not empty message}">
+						<div id="message" class="success">${message}</div>
+					</c:if>
 					<c:url var="actionUrl" value="?${_csrf.parameterName}=${_csrf.token}"/>
 					<form role="form" enctype="multipart/form-data" action="${actionUrl}" method="post" id="siteForm" >
 						<div class="box-body">
@@ -70,7 +73,7 @@
 									<p class="help-block" id="emailP" style="display:none;">请输入邮箱且格式正确</p>
 								</div>
 							</div>
-							<div class="row" id="siteAddressDiv" style="margin-top:10px;">
+							<div class="row" id="addressDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
 									<label>地址:</label>
 									<div id="city_4" >
@@ -78,23 +81,23 @@
 										<select class="city" name="city" disabled="disabled"></select>
 										<select class="dist" name="dist" disabled="disabled"></select>
 									</div>
-									<input id="siteProvince" name="siteProvince" placeholder="请输入省市区" type="hidden" class="form-control" />
-									<input id="siteCity" name="siteCity" placeholder="请输入省市区" type="hidden" class="form-control" />
-									<input id="siteArea" name="siteArea" placeholder="请输入省市区" type="hidden" class="form-control" />
-									<input style="margin-top: 10px;" id="siteAddress" name="siteAddress" placeholder="请输入地址" type="text" class="form-control" />
-									<p class="help-block" id="siteAddressP" style="display:none;">请输入详细地址</p>
+									<input id="province" name="province" placeholder="请输入省市区" type="hidden" class="form-control" />
+									<input id="city" name="city" placeholder="请输入省市区" type="hidden" class="form-control" />
+									<input id="area" name="area" placeholder="请输入省市区" type="hidden" class="form-control" />
+									<input style="margin-top: 10px;" id="address" name="address" placeholder="请输入地址" type="text" class="form-control" />
+									<p class="help-block" id="addressP" style="display:none;">请输入详细地址</p>
 								</div>
 							</div>
 							<div class="row" id="licensePicDiv" style="margin-top: 10px;">
 								<div class="col-xs-4">
-									<label for="exampleInputFile">公司营业执照图片：</label>
+									<label >公司营业执照图片：</label>
 									<input id="licensePic" name="licensePic" class="file" type="file" >
 									<p class="help-block" id="licensePicP" style="display:none;">请上传公司营业执照</p>
 								</div>
 							</div>
 							<div class="row" id="proDiv" style="margin-top: 10px;">
 								<div class="col-xs-4">
-									<label for="exampleInputFile"><input type="checkbox" id="agreeCheck"/>同意<a href="#">《棒棒达快递注册协议》</a></label>
+									<label ><input type="checkbox" id="agreeCheck"/>同意<a href="#">《棒棒达快递注册协议》</a></label>
 								</div>
 							</div>
 
@@ -115,10 +118,10 @@
 	var defprov = "北京";
 	var defcity = "北京";
 	var defdist = "朝阳区";
-	if($("#siteProvince").val()!=""){
-		defprov = $("#siteProvince").val();
-		defcity = $("#siteCity").val();
-		defdist = $("#siteArea").val();
+	if($("#province").val()!=""){
+		defprov = $("#province").val();
+		defcity = $("#city").val();
+		defdist = $("#area").val();
 	}
 	$("#city_4").citySelect({
 		prov:defprov,
@@ -165,14 +168,14 @@
 		var phone = $("#phone").val();
 		var telephone = $("#telephone").val();
 		var email = $("#email").val();
-		var siteProvince = $(".prov").val();
-		var siteCity = $(".city").val();
-		var siteArea = $(".dist").val();
-		$("#siteProvince").val(siteProvince);
-		$("#siteCity").val(siteCity);
-		$("#siteArea").val(siteArea);
-		console.log(siteProvince+":"+siteCity+":"+siteArea);
-		var siteAddress = $("#siteAddress").val();
+		var province = $(".prov").val();
+		var city = $(".city").val();
+		var area = $(".dist").val();
+		$("#province").val(province);
+		$("#city").val(city);
+		$("#area").val(area);
+		console.log(province+":"+city+":"+area);
+		var address = $("#address").val();
 		var licensePic = $("#licensePic").val();
 		if(username==""||usernameFlag==0){
 			$("#usernameP").attr("style","color:red");
@@ -209,11 +212,11 @@
 		} else{
 			$("#emailP").attr("style","display:none");
 		}
-		if(siteAddress==""){
-			$("#siteAddressP").attr("style","color:red");
+		if(address==""){
+			$("#addressP").attr("style","color:red");
 			flag = false;
 		} else{
-			$("#siteAddressP").attr("style","display:none");
+			$("#addressP").attr("style","display:none");
 		}
 		if(licensePic==""){
 			$("#licensePicP").attr("style","color:red");
