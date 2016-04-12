@@ -20,4 +20,8 @@
     <bean id="userDao" class="com.bbd.saas.dao.UserDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- site DAO-->
+    <bean id="siteDao" class="com.bbd.saas.dao.SiteDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 </beans>

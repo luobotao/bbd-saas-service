@@ -15,8 +15,8 @@ import java.util.List;
 
 
 /**
- * Created by luobotao on 2016/4/11.
- * 订单DAO
+ * Created by luobotao on 2016/4/1.
+ * 管理员接口
  */
 @Repository
 public class OrderDao extends BaseDAO<Order, ObjectId> {
