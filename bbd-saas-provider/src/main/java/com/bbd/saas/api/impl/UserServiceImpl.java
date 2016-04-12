@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 		if(userList != null && userList.size() > 0){
 			for(User user : userList){
 				UserVO userVo = new UserVO();
-				userVo.setId(user.getId());
+				userVo.setId(user.getId().toString());
 				userVo.setRealName(user.getRealName());
 				//userVo.setLoginName(user.getLoginName());
 				//userVo.setPhone(user.getPhone());

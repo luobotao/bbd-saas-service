@@ -11,15 +11,15 @@ import org.bson.types.ObjectId;
  */
 public class UserVO implements Serializable{
 	
-	private ObjectId id;
+	private String id;
     private String loginName;
     private String realName;
     private String phone;
     
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(ObjectId id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getLoginName() {
