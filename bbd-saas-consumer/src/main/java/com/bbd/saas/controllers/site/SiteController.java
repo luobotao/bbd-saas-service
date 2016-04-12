@@ -73,6 +73,7 @@ public class SiteController {
 		user.setPassWord(site.getPassword());
 		user.setDateAdd(new Date());
 		user.setRealName(site.getName());
+		userService.save(user);
 		return "redirect:/login";
 	}
 
