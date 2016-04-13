@@ -204,6 +204,9 @@ $(document).ready(function() {
 	});
 
 });
+
+	
+	
 //显示选择派件员div
 function showSenderDiv(waybillId) {
 	$("#chooseSender_div").show();

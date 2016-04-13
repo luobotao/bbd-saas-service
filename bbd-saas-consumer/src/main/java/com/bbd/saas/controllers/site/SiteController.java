@@ -37,7 +37,6 @@ public class SiteController {
 	@Autowired
 	UserService userService;
 
-
 	@RequestMapping(value="/register", method=RequestMethod.GET)
 	public String register(Model model) {
 		return "site/siteRegister";
