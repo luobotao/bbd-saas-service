@@ -16,6 +16,7 @@ import java.util.Date;
         @Index(value = "username", fields = @Field("username"))
 )
 public class Site implements Serializable {
+    private static final long serialVersionUID = -5141450760876419376L;
     @Id
     private ObjectId id;
     private String name;         //站点名称
@@ -30,6 +31,7 @@ public class Site implements Serializable {
     private String licensePic;   //营业执照
     private String username;     //账号
     private String password;     //密码
+    private String areaCode;    //区域（站点）编码
     @Reference("company")
     private Company company;      //所属公司
     private SiteStatus status;       //状态
@@ -38,6 +40,7 @@ public class Site implements Serializable {
 
     private String lat;         //纬度
     private String lng;         //经度
+    private String deliveryArea;//配送範圍
     private Date dateAdd;      //充值时间
     private Date dateUpd;      //更新时间
 
@@ -145,6 +148,14 @@ public class Site implements Serializable {
         this.password = password;
     }
 
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
+
     public Company getCompany() {
         return company;
     }
@@ -177,6 +188,22 @@ public class Site implements Serializable {
         this.flag = flag;
     }
 
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
     public Date getDateAdd() {
         return dateAdd;
     }
@@ -193,19 +220,11 @@ public class Site implements Serializable {
         this.dateUpd = dateUpd;
     }
 
-    public String getLng() {
-        return lng;
+    public String getDeliveryArea() {
+        return deliveryArea;
     }
 
-    public void setLng(String lng) {
-        this.lng = lng;
-    }
-
-    public String getLat() {
-        return lat;
-    }
-
-    public void setLat(String lat) {
-        this.lat = lat;
+    public void setDeliveryArea(String deliveryArea) {
+        this.deliveryArea = deliveryArea;
     }
 }

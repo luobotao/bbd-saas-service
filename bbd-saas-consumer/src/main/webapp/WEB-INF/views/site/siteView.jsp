@@ -92,6 +92,10 @@
 								</div>
 							</div>
 						</div><!-- /.box-body -->
+						<div class="box-footer">
+							<button type="button" class="btn btn-primary" id="saveSiteBtn" style="margin-left: 170px ;" onclick="window.location.href='/login'">
+								返回</button>
+						</div>
 				</div>
 			</div>
 		</div>

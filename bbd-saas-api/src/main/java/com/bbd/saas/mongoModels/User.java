@@ -21,6 +21,7 @@ import java.util.Date;
 )
 public class User implements Serializable {
 
+    private static final long serialVersionUID = 7757716632879758078L;
     @Id
     private ObjectId id;
     private String loginName;

@@ -1,6 +1,7 @@
 package com.bbd.saas.api.impl;
 
 
+import com.bbd.saas.vo.OrderQueryVO;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,6 @@ public class OrderServiceImpl implements OrderService {
 	
     private OrderDao orderDao;
 
-    public PageModel<Order> findOrders( PageModel<Order> pageModel){
-      return orderDao.findOrders(pageModel);
-    }
-    
     public OrderDao getOrderDao() {
         return orderDao;
     }
@@ -31,7 +28,11 @@ public class OrderServiceImpl implements OrderService {
         this.orderDao = orderDao;
     }
 
-	
+	public PageModel<Order> findOrders( PageModel<Order> pageModel,OrderQueryVO orderQueryVO){
+		return orderDao.findOrders(pageModel,orderQueryVO);
+	}
+
+
     /**
 	 * Description: 根据运单号查询订单信息
 	 * @param mailNum 运单号

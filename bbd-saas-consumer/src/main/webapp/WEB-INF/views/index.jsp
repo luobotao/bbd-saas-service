@@ -92,7 +92,7 @@
 
 	<header class="main-header">
 		<!-- Logo -->
-		<a href="/admin" class="logo"><img src="<c:url value="/resources/images/admin/logo.png" />"/></a>
+		<a href="/" class="logo"><img src="<c:url value="/resources/images/admin/logo.png" />"/></a>
 		<!-- Header Navbar: style can be found in header.less -->
 		<nav class="navbar navbar-static-top" role="navigation">
 			<!-- Sidebar toggle button-->

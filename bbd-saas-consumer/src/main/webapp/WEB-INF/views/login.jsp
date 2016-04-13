@@ -44,6 +44,7 @@
 	
 
 			<p><button type="submit">登录</button></p>
+			<p><button type="button" onclick="window.location.href='/site/register'">注册站点</button></p>
 		</form:form>
 		<script type="text/javascript">
 			$(document).ready(function() {

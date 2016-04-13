@@ -48,10 +48,11 @@
 			</span>
 			<br><br>
 			<button id="queryData" name="queryData" onclick="search()">查询</button>
-			<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
+			
 		</div>
 		<input type="hidden" name="page" id="page" value="<s:property value="#request.page" />" />
 		</form>
+		<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
 		<div class="m20">
 			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
 				<thead>
@@ -80,7 +81,7 @@
 					<td><%=user.getState()%></td>
 					
 					<td>修改|
-					<c:set var="state" value="<%=user.getState()%>"/>
+					<c:set var="state" value="<%=user.getUserStatus().getStatus()%>"/>
 					<c:if test="${state=='0'}">
 				　　
 					<a href="javascript:void(0);" staffId="<%=user.getId()%>"  onclick="changeStatus(this,'<%=user.getId()%>',0)" >启用</a>
@@ -95,12 +96,7 @@
 					}
 				%>
 				</tbody>
-				<tfoot>
-				<th colspan="13">
-					<input id="selectAll" name="selectAll" type="checkbox"> <label for="selectAll">
-					全选</label> &nbsp;
-				</th>
-				</tfoot>
+				
 				
 			</table>
 			<div class="fr50"> 
@@ -137,10 +133,10 @@
 						<div class="row" id="usernameDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
 									<label for="title">角色:</label>
-									<select id="saasrolen" name="saasrolen" class="form-control">
+									<select id="roleId" name="roleId" class="form-control">
 										<%=UserRole.Srcs2HTML(-1)%>
 									</select> 
-									<p class="help-block" id="saasrolenP" style="display:none;">请选中一个角色</p>
+									<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
 								</div>
 								<div class="col-xs-4">
 									<label for="title">真实姓名:</label>
@@ -154,8 +150,8 @@
 								</div>
 								<div class="col-xs-4">
 									<label for="title">登录名:</label>
-									<input type="text" class="form-control" id="loginName" name="loginName" onblur="checkLognName(this.value)">
-									<p class="help-block" id="loginNameP" style="display:none;">请输入姓名</p>
+									<input type="text" class="form-control" id="loginName" name="loginName" onblur="checkLoginName(this.value)">
+									<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
 								</div>
 								<div class="col-xs-4">
 									<label for="title">登录密码:</label>
@@ -196,8 +192,33 @@ function saveUser1() {
 	});
 }
 
+function checkLoginName(loginName) {
+
+	var url = "<c:url value="/userManage/checkLognName" />";
+	$.ajax({
+		url: url+'?loginName='+loginName,
+		type: 'GET',
+		cache: false,
+		dataType: "text",
+		data: {},
+		success: function(response){
+			console.log(response);
+			if(response=="true"){
+				alert("您输入的登录名目前已存在，请重新输入");
+				document.getElementById("userForm").reset();
+			}
+			
+			//$("#usernameFlag").val(0);
+			
+		},
+		error: function(){
+			alert('服务器繁忙，请稍后再试！');
+		}
+	});
+}
+
 function checkUser(realname) {
-	alert(realname);
+
 	var url = "<c:url value="/userManage/checkUser" />";
 	$.ajax({
 		url: url+'?realname='+realname,
@@ -209,10 +230,11 @@ function checkUser(realname) {
 			console.log(response);
 			if(response=="true"){
 				alert("您输入的用户名目前已存在，请重新输入");
-				//$("#usernameFlag").val(0);
-			}else{
-				//$("#usernameFlag").val(1);
+				document.getElementById("userForm").reset();
 			}
+			
+			//$("#usernameFlag").val(0);
+			
 		},
 		error: function(){
 			alert('服务器繁忙，请稍后再试！');
@@ -231,25 +253,77 @@ $("#saveUserBtn1").click(function(){alert("ssss");
 	
 })
 
-$("#saveUserBtn").click(function(){alert("ssss");
+$("#saveUserBtn").click(function(){
 	var url = "${actionUrl}";
 	var flag = true;
-	var saasrolen = $("#saasrolen").val();
+	var roleId = $("#roleId").val();
 	var phone = $("#phone").val();
 	var realName = $("#realName").val();
 	var loginName = $("#loginName").val();
 	var loginPass = $("#loginPass").val();
 	var confirmPass = $("#confirmPass").val();
 	var tel_reg = /^1[34578]{1}\d{9}/;
-	if (saasrolen=="-1") {
-	    $("#saasrolenP").attr("style","color:red");
+	if (roleId=="-1") {
+	    $("#roleIdP").attr("style","color:red");
 		flag = false;
 	}else{
-		$("#saasrolenP").attr("style","display:none");
+		$("#roleIdP").attr("style","display:none");
 	}
-	alert(flag);
+	if (!phone) {
+	    $("#phoneP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#phoneP").attr("style","display:none");
+	}
+	if (!tel_reg.test(phone)) {
+		$("#phoneP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#phoneP").attr("style","display:none");
+	}
+	if (!realName) {
+	    $("#realNameP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#realNameP").attr("style","display:none");
+	}
+	if (!loginName) {
+	    $("#loginNameP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#loginNameP").attr("style","display:none");
+	}
+	if (!loginPass) {
+	    $("#loginpassP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#loginpassP").attr("style","display:none");
+	}
+	if (!confirmPass) {
+	    $("#confirmPassP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#confirmPassP").attr("style","display:none");
+	}
 	if(flag){
-		alert("sss");
+		console.log("succeful , submit");
+		$("#userForm").ajaxSubmit({  
+	        type: 'post',  
+	        url: url ,  
+	        success: function(data){  
+	        	if(data=="true"){
+	        		alert( "添加用户成功");  
+	        		document.getElementById("userForm").reset();
+	        	}else{
+	        		alert( "添加用户失败");  
+	        	}
+	            
+	            //$( "#wfAuditForm").resetForm();  
+	        },  
+	        error: function(JsonHttpRequest, textStatus, errorThrown){  
+	            alert( "error");  
+	        }  
+	    });  
 	}else{
 		alert("有非法内容，请检查内容合法性！");
 		return false;

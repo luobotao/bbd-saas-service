@@ -17,6 +17,7 @@
 			<div class="col-xs-3"><span>${arrived_num}</span><br><span>今日已到站订单数</span></div>
 		</div>
 	</div>
+
 	<div class="col-xs-12">
 		<!-- 订单数显示 结束   -->
 		<div class="box-body">
@@ -24,7 +25,7 @@
 				<div class="row">
 					<div class="col-xs-3">
 						<label>状态：</label>
-						<select id="src" name="src" class="form-control">
+						<select id="arriveStatus" name="arriveStatus" class="form-control">
 							<%=ArriveStatus.Srcs2HTML(-1)%>
 						</select>
 					</div>
@@ -34,18 +35,24 @@
 					</div>
 					<div >
 						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="submit">查询</button>
-
 					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label>扫描包裹号：</label>
+						<input id="parcelCode" name="parcelCode" type="text" />
+					</div>
+					<div class="col-xs-3">
+						<label>扫描运单号：</label>
+						<input id="mailNum" name="mailNum" type="text" />
+					</div>
+					<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
 				</div>
 			</form>
 		</div>
 	</div>
 	<div class="col-xs-12">
-		<div class="m20">
-			<span>扫描包裹号：<input id="packageId" name="packageId" type="text" /></span>
-			<span class="pl20">扫描运单号：<input id="waybillId" name="waybillId" type="text" /></span><br><br>
-			<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
-		</div>
+
 		<div class="box-body table-responsive">
 			<table id="orderTable" class="table table-bordered table-hover">
 				<thead>
@@ -70,7 +77,7 @@
 				%>
 				<tr>
 					<td><input type="checkbox" value="<%=order.getId()%>" name="id"></td>
-					<td><%=order.getAreaName()%></td>
+					<td><%=order.getParcelCode()%></td>
 					<td><%=order.getMailNum()%></td>
 					<td><%=order.getOrderNo()%></td>
 					<td><%=order.getSrc()%></td>
@@ -141,7 +148,7 @@
 								if(orderPage.getPageNo()<(orderPage.getTotalPages()-4)){
 									if(i==0||i>(orderPage.getPageNo()-4)&&i<(orderPage.getPageNo()+5)){
 							%>
-							<	li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
+							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
 							<%
 							}else{
 								if(i==2){
