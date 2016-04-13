@@ -23,6 +23,20 @@ public interface UserService {
     User findUserByLoginName(String loginName);
     
     /**
+     * 根据用户名检索站点用户
+     * @param loginName
+     * @return
+     */
+    User findUserByRealName(String realName);
+    
+    /**
+     * 根据用户id查找是否存在此用户
+     * @param id
+     * @return
+     */
+    User findUserById(String id); 
+    
+    /**
      * 保存用户对象信息
      * @param user
      * @return Key<User>

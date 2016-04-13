@@ -31,11 +31,27 @@ public class UserServiceImpl implements UserService {
 	}
 	/**
      * 根据用户名查找是否存在此管理员
-     * @param userName
+     * @param loginName
      * @return
      */
     public User findUserByLoginName(String loginName) {
         return userDao.findOne("loginName",loginName);
+    }
+    /**
+     * 根据用户名查找是否存在此用户
+     * @param realName
+     * @return
+     */
+    public User findUserByRealName(String realName) {
+        return userDao.findOne("realName",realName);
+    }
+    /**
+     * 根据用户id查找是否存在此用户
+     * @param id
+     * @return
+     */
+    public User findUserById(String id) {
+        return userDao.findOne("id",id);
     }
     /**
      * 保存用户对象信息

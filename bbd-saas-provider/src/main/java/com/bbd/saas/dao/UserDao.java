@@ -38,23 +38,14 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     	return user;
     }
     /**
-     * 保存用户对象信息
-     * @param user
-     * @return Key<User>
-     */
-    public Key<User> save(final User user){
-    	Key<User> kuser = save(user);
-    	return kuser;
-    }
-    /**
      * 获取用户列表信息
      * @param PageModel<User>
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel) {
         PageModel<User> result = new PageModel<User>();
-        List<User> orderList = find(createQuery().filter("adminUserId", new ObjectId("56d013f156f6c3ba9fe959cb")).order("dateUpd").offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-        result.setDatas(orderList);
+        List<User> userList = find(createQuery().offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        result.setDatas(userList);
         result.setPageNo(2);
         result.setTotalPages(12);
         return result;

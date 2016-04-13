@@ -19,7 +19,7 @@ public class UserForm {
 	@NotEmpty
 	private String roleId;
 	@NotEmpty
-	private String userName;
+	private String realName;
 	@NotEmpty
 	private String phone;
 	@NotEmpty
@@ -32,11 +32,12 @@ public class UserForm {
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
 	}
-	public String getUserName() {
-		return userName;
+	
+	public String getRealName() {
+		return realName;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setRealName(String realName) {
+		this.realName = realName;
 	}
 	public String getPhone() {
 		return phone;

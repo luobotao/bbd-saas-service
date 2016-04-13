@@ -1,5 +1,5 @@
 <%@ page import="com.bbd.saas.mongoModels.User" %>
-<%@ page import="com.bbd.saas.enums.Roles" %>
+<%@ page import="com.bbd.saas.enums.UserRole" %>
 <%@ page import="com.bbd.saas.enums.UserStatus" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
@@ -28,17 +28,18 @@
 <div class="content">
 	<div class="content-left" id="content-left"></div>
 	<div class="content-main" id="content-main">
-	
+		<c:url var="userListAction" value="/userManage/userListpost?${_csrf.parameterName}=${_csrf.token}"/>
+		<form id="userListForm" action="${userListAction}" method="post">     
 		<div class="m20">
 			<span>
 				<label>角色:</label>
-						<select id="src" name="src" class="form-control">
-							<%=Roles.Srcs2HTML(-1)%>
+						<select id="saasrole" name="saasrole" class="form-control">
+							<%=UserRole.Srcs2HTML(-1)%>
 						</select>  
 			</span> 
 			<span>
 			<label>状态：</label>
-						<select id="src" name="src" class="form-control">
+						<select id="state" name="state" class="form-control">
 							<%=UserStatus.Srcs2HTML(-1)%>
 						</select>
 			</span>
@@ -46,10 +47,11 @@
 				关键词：<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" />
 			</span>
 			<br><br>
-			<button id="queryData" name="queryData">查询</button>
+			<button id="queryData" name="queryData" onclick="search()">查询</button>
 			<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
 		</div>
-		
+		<input type="hidden" name="page" id="page" value="<s:property value="#request.page" />" />
+		</form>
 		<div class="m20">
 			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
 				<thead>
@@ -64,25 +66,28 @@
 				</thead>
 				
 				<tbody>
-				<%-- 
+			
 				<%
 					PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					for(User user : userPage.getDatas()){
 				%>
 				<tr>
-					<td><input type="checkbox" value="<%=user.getId()%>" name="id"></td>
-					<td><%=user.getRole().getRoleName()%></td>
+					
+					<td><%=user.getRole()%></td>
 					<td><%=user.getRealName()%></td>
 					<td><%=user.getPhone()%></td>
 					<td><%=user.getLoginName()%></td>
 					<td><%=user.getState()%></td>
-			
+					
 					<td>修改|
-					if(user.getState()==1){
-						停用
-					}else{
-						启用
-					}
+					<c:set var="state" value="<%=user.getState()%>"/>
+					<c:if test="${state=='0'}">
+				　　
+					<a href="javascript:void(0);" staffId="<%=user.getId()%>"  onclick="changeStatus(this,'<%=user.getId()%>',0)" >启用</a>
+				　　</c:if>
+					<c:if test="${state=='1'}">
+				　　停用
+				　　</c:if>
 					</td>
 					
 				</tr>
@@ -96,7 +101,6 @@
 					全选</label> &nbsp;
 				</th>
 				</tfoot>
-				--%>
 				
 			</table>
 			<div class="fr50"> 
@@ -133,10 +137,10 @@
 						<div class="row" id="usernameDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
 									<label for="title">角色:</label>
-									<select id="roleId" name="roleId">
-									  <option value="1">站长</option>
-									  <option value="2">派件员</option>
-									</select>
+									<select id="saasrolen" name="saasrolen" class="form-control">
+										<%=UserRole.Srcs2HTML(-1)%>
+									</select> 
+									<p class="help-block" id="saasrolenP" style="display:none;">请选中一个角色</p>
 								</div>
 								<div class="col-xs-4">
 									<label for="title">真实姓名:</label>
@@ -192,11 +196,11 @@ function saveUser1() {
 	});
 }
 
-function checkUser(username) {
-	alert("ssss");alert(loginName);
-	var url = "<c:url value="/userManage/checkUser" />";alert(url);
+function checkUser(realname) {
+	alert(realname);
+	var url = "<c:url value="/userManage/checkUser" />";
 	$.ajax({
-		url: url+'?username='+username,
+		url: url+'?realname='+realname,
 		type: 'GET',
 		cache: false,
 		dataType: "text",
@@ -204,7 +208,7 @@ function checkUser(username) {
 		success: function(response){
 			console.log(response);
 			if(response=="true"){
-				alert("您输入的帐号目前已存在，请重新输入");
+				alert("您输入的用户名目前已存在，请重新输入");
 				//$("#usernameFlag").val(0);
 			}else{
 				//$("#usernameFlag").val(1);
@@ -215,7 +219,7 @@ function checkUser(username) {
 		}
 	});
 }
-$("#saveUserBtn").click(function(){alert("ssss");
+$("#saveUserBtn1").click(function(){alert("ssss");
 	var flag = true;
 	var phone = $("#phone").val();
 	var realName = $("#realName").val();
@@ -226,6 +230,66 @@ $("#saveUserBtn").click(function(){alert("ssss");
 	$("#userForm").submit();
 	
 })
+
+$("#saveUserBtn").click(function(){alert("ssss");
+	var url = "${actionUrl}";
+	var flag = true;
+	var saasrolen = $("#saasrolen").val();
+	var phone = $("#phone").val();
+	var realName = $("#realName").val();
+	var loginName = $("#loginName").val();
+	var loginPass = $("#loginPass").val();
+	var confirmPass = $("#confirmPass").val();
+	var tel_reg = /^1[34578]{1}\d{9}/;
+	if (saasrolen=="-1") {
+	    $("#saasrolenP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#saasrolenP").attr("style","display:none");
+	}
+	alert(flag);
+	if(flag){
+		alert("sss");
+	}else{
+		alert("有非法内容，请检查内容合法性！");
+		return false;
+	}
+	
+})
+
+function changeStatus(a,id,status){
+			alert(id);
+			alert(status);
+		//var url = "<c:url value="/userManage/changestatus" />";
+		if(status==0){
+			//表示当前为停用，要启用
+			$.ajax({
+				type : "GET",  
+	            url : "<c:url value="/userManage/changestatus" />", 
+	            data : {  
+	                "id" : id,"status" : status 
+	            },
+	            success : function(data) {
+					if(data != null){
+					} 
+	            },
+	            error : function() {  
+	           		alert("异常！");  
+	      		}    
+	        });
+		}
+		if(status==1){
+			//表示当前为启用，要停用
+		}
+}
+
+function search(){alert("ss");
+	//document.getElementById("page").value= page;
+	document.getElementById('userListForm').submit();
+}
+
+
+
 </script>
 
 </body>
