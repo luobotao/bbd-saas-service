@@ -2,8 +2,9 @@ package com.bbd.saas.interceptor;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.constants.AdminSession;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.AdminUser;
+import com.bbd.saas.mongoModels.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -31,9 +32,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             }
         }
         if (!flag) {
-            if(StringUtils.isNotEmpty(AdminSession.get(request))){
-                AdminUser adminUser = adminService.get(AdminSession.get(request));
-                if (adminUser != null) return true;
+            if(StringUtils.isNotEmpty(UserSession.get(request))){
+                User user = adminService.get(UserSession.get(request));
+                if (user != null) return true;
             }
             response.sendRedirect("login");
         }

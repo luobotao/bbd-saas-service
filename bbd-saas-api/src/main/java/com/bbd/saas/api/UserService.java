@@ -14,6 +14,15 @@ import com.bbd.saas.vo.UserVO;
  */
 public interface UserService {
 
+	
+    /**
+     * Description: 根据用户id查询
+     * @param userId 用户id
+     * @return
+     * @author: liyanlei
+     * 2016年4月12日下午6:10:40
+     */
+    User findOne(String userId);
 
     /**
      * 根据用户名检索站点用户

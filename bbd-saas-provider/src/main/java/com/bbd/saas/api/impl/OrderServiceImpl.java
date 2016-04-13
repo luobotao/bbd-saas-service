@@ -1,6 +1,7 @@
 package com.bbd.saas.api.impl;
 
 
+import org.mongodb.morphia.query.UpdateOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,21 @@ public class OrderServiceImpl implements OrderService {
 	 */
 	@Override
 	public Order findOneByMailNum(String mailNum) {
+		return orderDao.findOne("mailNum", mailNum);
+	}
+
+	/**
+     * Description: 更新
+     * @param order
+     * @return
+     * @author: liyanlei
+     * 2016年4月12日下午5:59:03
+     */
+	@Override
+	public Order update(Order order) {
 		
+		//UpdateOperations<Order> ops 
+		//orderDao.updateFirst(query, ops);
 		return null;
 	}
 }

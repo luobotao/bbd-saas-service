@@ -19,7 +19,14 @@ public interface OrderService {
 	 */
 	Order findOneByMailNum(String mailNum);
 	
-	
-
     PageModel<Order> findOrders(PageModel<Order> pageModel);
+    
+    /**
+     * Description: 更新
+     * @param order
+     * @return
+     * @author: liyanlei
+     * 2016年4月12日下午5:59:03
+     */
+    Order update(Order order);
 }

@@ -26,7 +26,7 @@
 						<div class="box-body">
 							<div class="row" id="usernameDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
-									<label for="title">账号:</label>
+									<label for="username">账号:</label>
 									<input type="text" class="form-control" id="username" name="username" onblur="checkSiteWithUsername(this.value)">
 									<input type="text" class="form-control" id="usernameFlag" name="usernameFlag" value="1" style="display:none;">
 									<p class="help-block" id="usernameP" style="display:none;">请输入账号,不允许重复</p>
@@ -34,7 +34,7 @@
 							</div>
 							<div class="row" id="passwordDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
-									<label for="title">密码:</label>
+									<label for="password">密码:</label>
 									<input type="text" class="form-control" id="password" name="password" >
 									<p class="help-block" id="passwordP" style="display:none;">请输入密码</p>
 								</div>
@@ -55,20 +55,20 @@
 							</div>
 							<div class="row" id="phoneDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
-									<label for="title">负责人电话:</label>
+									<label for="phone">负责人电话:</label>
 									<input type="text" class="form-control" id="phone" name="phone" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="this.value=this.value.replace(/[^\d]/g,'')" maxlength="11">
 								</div>
 							</div>
 							<div class="row" id="telephoneDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
-									<label for="title">固定电话:</label>
+									<label for="telephone">固定电话:</label>
 									<input type="text" class="form-control" id="telephone" name="telephone" onkeyup="this.value=this.value.replace(/[^\d\-]/g,'')" onblur="this.value=this.value.replace(/[^\d\-]/g,'')">
 									<p class="help-block" id="sitePhoneP" style="display:none;">负责人电话或固定电话必填一个</p>
 								</div>
 							</div>
 							<div class="row" id="emailDiv" style="margin-top:10px;">
 								<div class="col-xs-4">
-									<label for="title">邮箱:</label>
+									<label for="email">邮箱:</label>
 									<input type="text" class="form-control" id="email" name="email" onkeyup="value=value.replace(/[^a-zA-Z\-_@@\.0-9]/g,'')">
 									<p class="help-block" id="emailP" style="display:none;">请输入邮箱且格式正确</p>
 								</div>
@@ -224,13 +224,14 @@
 		} else{
 			$("#licensePicP").attr("style","display:none");
 		}
-		if(flag){
-			console.log("succeful , submit");
-			$("#siteForm").submit();
-		}else{
-			alert("有非法内容，请检查内容合法性！");
-			return false;
-		}
+		$("#siteForm").submit();
+//		if(flag){
+//			console.log("succeful , submit");
+//			$("#siteForm").submit();
+//		}else{
+//			alert("有非法内容，请检查内容合法性！");
+//			return false;
+//		}
 	})
 
 </script>
