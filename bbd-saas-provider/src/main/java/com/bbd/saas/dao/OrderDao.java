@@ -1,9 +1,12 @@
 package com.bbd.saas.dao;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderQueryVO;
 import com.sun.org.apache.xpath.internal.operations.Or;
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -27,13 +30,24 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         super(datastores);
     }
 
-    public PageModel<Order> findOrders(PageModel<Order> pageModel) {
+    public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("dateUpd");
+        if(orderQueryVO!=null){
+            if(orderQueryVO.arriveStatus!=-1){
+                if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站
+                    query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
+                }else{
+                    query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+                }
+            }
+            if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
+                query.filter("mailNum", orderQueryVO.mailNum);
+            }
+        }
         List<Order> orderList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
 
         pageModel.setDatas(orderList);
         pageModel.setTotalCount(count(query));
-//        pageModel.setTotalPages(count(query));
         return pageModel;
     }
 }
