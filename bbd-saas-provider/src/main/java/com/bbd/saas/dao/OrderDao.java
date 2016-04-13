@@ -33,7 +33,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("dateUpd");
         if(orderQueryVO!=null){
-            if(orderQueryVO.arriveStatus!=-1){
+            if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){
                 if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站
                     query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
                 }else{
@@ -42,6 +42,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             }
             if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
                 query.filter("mailNum", orderQueryVO.mailNum);
+            }
+            if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
+                query.filter("parcelCode", orderQueryVO.parcelCode);
             }
         }
         List<Order> orderList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();

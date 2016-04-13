@@ -1,6 +1,7 @@
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
+<%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
@@ -88,7 +89,17 @@
 					<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 					<td><%=order.getDatePrint()%></td>
 					<td>2016-04-06</td>
-					<td>未到站</td>
+					<%
+						if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
+					%>
+					<td><%=ArriveStatus.NOTARR.getMessage()%></td>
+					<%
+						}else{
+					%>
+					<td><%=ArriveStatus.ARRIVED.getMessage()%></td>
+					<%
+						}
+					%>
 				</tr>
 				<%
 					}
@@ -144,7 +155,7 @@
 
 
 	//加载带有查询条件的指定页的数据
-	function gotoPage(pageIndex) {
+	function gotoPage(pageIndex,parcelCode,mailNum) {
 		//查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式
@@ -152,7 +163,8 @@
 			data : {
 				"pageIndex" : pageIndex,
 				"status" : -1,
-				"courierId" : ""
+				"parcelCode" : parcelCode,
+				"mailNum" : mailNum
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据根据结果进行相应的处理
 				var tbody = $("#dataList");
@@ -168,8 +180,11 @@
 					tbody.html(datastr);
 				}
 				//更新分页条
-				var pageStr = paginNav(pageIndex,  <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
+				var pageStr = paginNav(pageIndex,  dataObject.totalPages, dataObject.totalCount);
 				$("#pagin").html(pageStr);
+				$("input[type='checkbox']").iCheck({
+					checkboxClass : 'icheckbox_square-blue'
+				});
 			},
 			error : function() {
 				alert("加载分页数据异常！");
@@ -191,6 +206,11 @@
 		row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 		row += "<td>" + data.src + "</td>";
 		row += "<td>" + data.src + "</td>";
+		if(data.orderStatus=="<%=OrderStatus.NOTARR%>"){
+			row += "<td>" + <%=ArriveStatus.NOTARR.getMessage()%> + "</td>";
+		}else{
+			row += "<td>" + <%=ArriveStatus.ARRIVED.getMessage()%> + "</td>";
+		}
 		row += "</tr>";
 		return row;
 	}
@@ -206,10 +226,7 @@
 			if($("#parcelCode").val()!=null && $("#parcelCode").val()!=""){
 				checkOrderParcelByParcelCode($("#parcelCode").val());
 			}
-//			if($("#mailNumP").html()==""){
-//				$("#searchOrderForm").submit();
-//			}
-//			$("#searchOrderForm").submit();
+			gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
 		}
 	}
 

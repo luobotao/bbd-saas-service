@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.api.UserService;
@@ -146,7 +144,7 @@ public class PackageDispatchController {
 		//运单分派给派件员
 		order.setUser(user);
 		//更新运单
-		orderService.update(order);
+		orderService.save(order);
 		map.put("operFlag", 1);//1:分派成功
 	}
 	

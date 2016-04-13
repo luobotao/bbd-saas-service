@@ -1,13 +1,10 @@
 package com.bbd.saas.controllers.orerParcel;
 
-import com.bbd.saas.api.AdminUserService;
 import com.bbd.saas.api.OrderPacelService;
 import com.bbd.saas.api.OrderService;
-import com.bbd.saas.controllers.LoginController;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
-import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderQueryVO;
 import org.apache.commons.lang.StringUtils;
@@ -43,23 +40,29 @@ public class PackageToSiteController {
 		else
 			return true;
 	}
+
 	@ResponseBody
-	@RequestMapping(value="/getOrderPage", method=RequestMethod.GET)
-	public PageModel<Order> getOrderPage(@RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-				@RequestParam(value = "arriveStatus", required = false, defaultValue = "-1") Integer arriveStatus,
-				@RequestParam(value = "between", required = false) String between,
-				@RequestParam(value = "mailNum", required = false) String mailNum) {
+	@RequestMapping(value = "/getOrderPage", method = RequestMethod.GET)
+	public PageModel<Order> getOrderPage(Integer pageIndex, Integer arriveStatus,String between,String parcelCode, String mailNum) {
 		if (pageIndex==null) pageIndex =0 ;
 		logger.info(arriveStatus+"========="+between);
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
 		orderQueryVO.arriveStatus = arriveStatus;
 		orderQueryVO.between = between;
+		orderQueryVO.parcelCode = parcelCode;
 		orderQueryVO.mailNum = mailNum;
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
 		for(Order order : orderPage.getDatas()){
 			order.setParcelCode(orderPacelService.findParcelCodeByOrderId(order.getId().toHexString()));//设置包裹号
+		}
+		if(StringUtils.isNotBlank(mailNum)){//进行运单到站操作
+			Order order = orderService.findOneByMailNum(mailNum);
+			if(order!=null){
+				order.setOrderStatus(OrderStatus.NOTDISPATCH);
+				orderService.save(order);
+			}
 		}
 		return orderPage;
 	}
@@ -72,33 +75,15 @@ public class PackageToSiteController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model, @RequestParam(value = "page", required = false) Integer page,
+	public String index(Model model,
 						@RequestParam(value = "arriveStatus", required = false, defaultValue = "-1") Integer arriveStatus,
 						@RequestParam(value = "between", required = false) String between,
+						@RequestParam(value = "parcelCode", required = false) String parcelCode,
 						@RequestParam(value = "mailNum", required = false) String mailNum) {
-		if (page==null) page =0 ;
-		logger.info(arriveStatus+"========="+between);
-		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.arriveStatus = arriveStatus;
-		orderQueryVO.between = between;
-		orderQueryVO.mailNum = mailNum;
 
-		if(StringUtils.isNotBlank(mailNum)){
-			Order order = orderService.findOneByMailNum(mailNum);
-			if(order!=null){
-				if(order.getOrderStatus()!= OrderStatus.NOTARR){
-					model.addAttribute("mailNumError", "重复扫描，此运单已经扫描过啦");
-				}
-				logger.info(order.getOrderNo());
-			}
-		}
 
-		PageModel<Order> pageModel = new PageModel<>();
-		pageModel.setPageNo(page);
-		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
-		for(Order order : orderPage.getDatas()){
-			order.setParcelCode(orderPacelService.findParcelCodeByOrderId(order.getId().toHexString()));//设置包裹号
-		}
+		PageModel<Order> orderPage = getOrderPage(0,arriveStatus,between,parcelCode,mailNum);
+
 		model.addAttribute("orderPage", orderPage);
 		//未到站订单数
 		model.addAttribute("non_arrival_num", "76");

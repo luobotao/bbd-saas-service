@@ -19,6 +19,9 @@
         <property name="orderDao">
             <ref bean="orderDao"/>
         </property>
+        <property name="orderParcelDao">
+            <ref bean="orderParcelDao"/>
+        </property>
     </bean>
     <!-- order Service-->
     <bean id="orderPacelService" class="com.bbd.saas.api.impl.OrderParcelServiceImpl">

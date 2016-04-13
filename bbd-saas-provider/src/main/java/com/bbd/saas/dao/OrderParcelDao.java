@@ -1,9 +1,12 @@
 package com.bbd.saas.dao;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
+import com.bbd.saas.utils.PageModel;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -28,5 +31,10 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
             return orderParcel.getParcelCode();
         else
             return "";
+    }
+
+
+    public OrderParcel findOrderParcelByParcelCode(String parcelCode) {
+        return findOne(createQuery().filter("parcelCode",parcelCode));
     }
 }
