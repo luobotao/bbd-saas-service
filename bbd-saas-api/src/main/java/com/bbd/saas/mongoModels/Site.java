@@ -35,6 +35,9 @@ public class Site implements Serializable {
     private SiteStatus status;       //状态
     private String memo;       //备注
     private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
+
+    private String lat;         //纬度
+    private String lng;         //经度
     private Date dateAdd;      //充值时间
     private Date dateUpd;      //更新时间
 
@@ -188,5 +191,21 @@ public class Site implements Serializable {
 
     public void setDateUpd(Date dateUpd) {
         this.dateUpd = dateUpd;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
     }
 }
