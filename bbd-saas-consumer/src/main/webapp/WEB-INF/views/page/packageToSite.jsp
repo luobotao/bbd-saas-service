@@ -25,7 +25,7 @@
 				<div class="row">
 					<div class="col-xs-3">
 						<label>状态：</label>
-						<select id="src" name="src" class="form-control">
+						<select id="arriveStatus" name="arriveStatus" class="form-control">
 							<%=ArriveStatus.Srcs2HTML(-1)%>
 						</select>
 					</div>
@@ -37,15 +37,22 @@
 						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="submit">查询</button>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label>扫描包裹号：</label>
+						<input id="parcelCode" name="parcelCode" type="text" />
+					</div>
+					<div class="col-xs-3">
+						<label>扫描运单号：</label>
+						<input id="mailNum" name="mailNum" type="text" />
+					</div>
+					<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
+				</div>
 			</form>
 		</div>
 	</div>
 	<div class="col-xs-12">
-		<div class="m20">
-			<span>扫描包裹号：<input id="packageId" name="packageId" type="text" /></span>
-			<span class="pl20">扫描运单号：<input id="waybillId" name="waybillId" type="text" /></span><br><br>
-			<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
-		</div>
+
 		<div class="box-body table-responsive">
 			<table id="orderTable" class="table table-bordered table-hover">
 				<thead>

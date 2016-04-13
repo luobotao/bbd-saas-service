@@ -6,6 +6,7 @@ import com.bbd.saas.api.OrderService;
 import com.bbd.saas.controllers.LoginController;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderQueryVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,24 +34,28 @@ public class PackageToSiteController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model,@RequestParam(value = "page", required = false) Integer page,@RequestParam(value = "src", required = false) Integer src,@RequestParam(value = "between", required = false) String between) {
-		if(page==null) page =0 ;
-		logger.info(src+"========="+between);
+	public String index(Model model, @RequestParam(value = "page", required = false) Integer page,
+						@RequestParam(value = "arriveStatus", required = false, defaultValue = "-1") Integer arriveStatus,
+						@RequestParam(value = "between", required = false) String between,
+						@RequestParam(value = "mailNum", required = false) String mailNum) {
+		if (page==null) page =0 ;
+		logger.info(arriveStatus+"========="+between);
+		OrderQueryVO orderQueryVO = new OrderQueryVO();
+		orderQueryVO.arriveStatus = arriveStatus;
+		orderQueryVO.between = between;
+
 		PageModel<Order> pageModel = new PageModel<>();
-		pageModel.setPageSize(2);
 		pageModel.setPageNo(page);
-		PageModel<Order> orderPage = orderService.findOrders(pageModel);
+		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
 		for(Order order : orderPage.getDatas()){
 			order.setParcelCode(orderPacelService.findParcelCodeByOrderId(order.getId().toHexString()));
 			logger.info(order.getParcelCode()+"===========");
 		}
-		model.addAttribute("username", "张三");
 		model.addAttribute("orderPage", orderPage);
 		//未到站订单数
 		model.addAttribute("non_arrival_num", "76");
 		model.addAttribute("history_non_arrival_num", "78");
 		model.addAttribute("arrived_num", "80");
-		model.addAttribute("username", "张三");
 		return "page/packageToSite";
 	}
 

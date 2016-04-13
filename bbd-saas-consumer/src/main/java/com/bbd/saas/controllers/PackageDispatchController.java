@@ -54,7 +54,7 @@ public class PackageDispatchController {
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageSize(2);
 		pageModel.setPageNo(currPage);
-		PageModel<Order> orderPage = orderService.findOrders(pageModel);
+		PageModel<Order> orderPage = orderService.findOrders(pageModel,null);
 		List<Order> datas = orderPage.getDatas();
 		User user = new User();
 		user.setRealName("张XX");
@@ -134,8 +134,8 @@ public class PackageDispatchController {
 	
 	/**
 	 * Description: 获取本站点下的所有派件员
-	 * @param mailNum 运单号
-	 * @param senderId 派件员id
+	 *  mailNum 运单号
+	 *  senderId 派件员id
 	 * @param model
 	 * @return
 	 * @author: liyanlei
