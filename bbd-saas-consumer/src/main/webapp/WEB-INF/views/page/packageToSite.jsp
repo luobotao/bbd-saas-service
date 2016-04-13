@@ -37,18 +37,19 @@
 						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="submit">查询</button>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-xs-3">
-						<label>扫描包裹号：</label>
-						<input id="parcelCode" name="parcelCode" type="text" />
-					</div>
-					<div class="col-xs-3">
-						<label>扫描运单号：</label>
-						<input id="mailNum" name="mailNum" type="text" />
-					</div>
-					<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
-				</div>
 			</form>
+			<div class="row">
+				<div class="col-xs-3">
+					<label>扫描包裹号：</label>
+					<input id="parcelCode" name="parcelCode" type="text" />
+				</div>
+				<div class="col-xs-3">
+					<label>扫描运单号：</label>
+					<input id="mailNum" name="mailNum" type="text" onkeypress="enterPress(event)"/>
+					<p class="help-block" id="mailNumP" style="display:none;"></p>
+				</div>
+				<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
+			</div>
 		</div>
 	</div>
 	<div class="col-xs-12">
@@ -229,6 +230,54 @@
 	}).on('ifChecked', function() {
 		$("input[type='checkbox']", "#orderTable").iCheck("check");
 	});
+
+	//回车事件
+	function enterPress(e){
+		if(!e) e = window.event;//火狐中是 window.event
+		if((e.keyCode || e.which) == 13){
+			var flg = true;
+			if($("#mailNum").val()!=null && $("#mailNum").val()!=""){
+				flg = checkOrderByMailNum($("#mailNum").val());
+			}
+			if(flg){
+				$("#searchOrderForm").submit();
+			}
+//			$("#searchOrderForm").submit();
+		}
+	}
+
+
+	function checkOrderByMailNum(mailNum){
+		if(mailNum!=""){
+			$.ajax({
+				url: '/packageToSite/checkOrderByMailNum?mailNum='+mailNum,
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					if(response!=null &&  response!=""){
+						if(response.orderStatus!="NOTARR" && response.orderStatus!=null){
+							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
+							$("#mailNumP").attr("style","color:red");
+							return false;
+						}else{
+							$("#mailNumP").attr("style","display:none");
+							return true;
+						}
+					}else{
+						$("#mailNumP").html("【异常扫描】包裹号不存在") ;
+						$("#mailNumP").attr("style","color:red");
+						return false;
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+					return false;
+				}
+			});
+		}
+	}
 </script>
 </body>
 </html>
