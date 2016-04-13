@@ -69,14 +69,17 @@ public class UserManageController {
      * @return
      */
 	@RequestMapping(value="userList", method=RequestMethod.GET)
-	public String listUser(Model model,HttpServletRequest request) {
+	public String listUser(Integer page,Model model,HttpServletRequest request) {
 		String a = request.getParameter("saasrole");
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageSize(2);
-		pageModel.setPageNo(1);
+		pageModel.setPageNo(page-1);
 		PageModel<User> userPage = userService.findUserList(pageModel);
 		List<User> datas = userPage.getDatas();
-
+		userPage.setPageSize(2);
+		userPage.setTotalCount(5);
+		userPage.setPageNo(page);
+		
 		logger.info(userPage+"=========");
 		model.addAttribute("userPage", userPage);
 		return "systemSet/userManageUserList";
@@ -92,15 +95,18 @@ public class UserManageController {
 		String saasrole = request.getParameter("saasrole");
 		String state = request.getParameter("state");
 		String keyword = request.getParameter("keyword");
+		String page = request.getParameter("page");
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageSize(2);
-		pageModel.setPageNo(3);
+		pageModel.setPageNo(Integer.parseInt(page)-1);
 		PageModel<User> userPage = userService.findUserList(pageModel);
 		List<User> datas = userPage.getDatas();
-
+		userPage.setPageSize(2);
+		userPage.setTotalCount(5);
+		userPage.setPageNo(Integer.parseInt(page));
 		logger.info(userPage+"=========");
 		model.addAttribute("userPage", userPage);
-		return "systemSet/userManageUserList";
+		return "systemSet/userManageUserListpost";
 	}
 	
 	/**
@@ -123,6 +129,7 @@ public class UserManageController {
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(0));
+		System.out.println("============="+user.getUserStatus().getStatus());
 		Key<User> kuser = userService.save(user);
 		
 		if(kuser!=null && !kuser.getId().equals("")){
