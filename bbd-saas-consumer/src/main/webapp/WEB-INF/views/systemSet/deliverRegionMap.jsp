@@ -3,62 +3,127 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="keywords" content="棒棒哒-系统设置-配送区域-绘制电子地图页面" />
-	<meta name="description" content="棒棒哒-系统设置-配送区域-绘制电子地图页面" />
-	<title>系统设置-配送区域-绘制电子地图</title>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />	
-		
+	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body>
-<div>
-	<jsp:include page="../top.jsp" flush="true" />	
-</div>
 <div class="content">
-	<div class="content-left" id="content-left"><jsp:include page="../leftMenu.jsp" flush="true" /></div>
-	<div class="content-main" id="content-main">
-		<div  style="border-bottom:solid 1px gray;width:1200px">
-			<div class="m20">
-				站点名称：<span class="pl20">立水桥 ${sitename}</span><br><br>
-				站点地址：<span class="pl20">北京市-朝阳区-立水桥-xxx ${sitename}</span><br><br>
-				配送范围：
-				<span class="pl20">站点周围
-					<select>  
-					  <option value ="1">1</option>  
-					  <option value ="2">2</option>  
-					  <option value="3">3</option> 
-					  <option value="4">4</option>
-					  <option value="5">5</option>
-					  <option value="6">6</option>
-					  <option value="7">7</option>
-					  <option value="8">8</option>
-					  <option value="9">9</option>
-					  <option value="10">10</option>
-					  <option value ="11">11</option>  
-					  <option value ="12">12</option>  
-					  <option value="13">13</option> 
-					  <option value="14">14</option>
-					  <option value="15">15</option>
-					  <option value="16">16</option>
-					  <option value="17">17</option>
-					  <option value="18">18</option>
-					  <option value="19">19</option>
-					  <option value="20">20</option>  
-					</select>  
-				</span> <br><br>
-				<span><a href="<c:url value="/deliverRegion/range" />" >配送范围</a></span>
-				<span class="pl20">绘制电子围栏</span>
-				<span class="pl20"><a href="<c:url value="/deliverRegion/key" />" >导入地址关键词</a></span>
+	<section class="content-header" >
+		<div class="row">
+			<div class="col-xs-12" >
+				<label for="siteNameLabel" class="col-md-2 control-label">站点名称：</label>
+				<div class="col-md-10">
+					<span id="siteNameLabel"  style="float:left">立水桥  </span>
+				</div>
 			</div>
 		</div>
-		
-		
-		
-		<div class="m20" style="height:500px;width:600px; background-color:#dda;">
-			电子地图
+		<div class="row">
+			<div class="col-xs-12" >
+				<label for="siteAddressLabel" class="col-md-2 control-label">站点地址：</label>
+				<div class="col-md-10">
+					<span id="siteAddressLabel" style="float:left">北京市-朝阳区-立水桥-xxx</span>
+				</div>
+			</div>
 		</div>
-	</div>
+
+	</section>
+	<section class="content">
+		<ul class="nav nav-tabs">
+			<li <c:if test="${activeNum eq '1'}">class="active"</c:if>>
+				<a href="#panel-1" data-toggle="tab">配送范围</a>
+			</li>
+			<li <c:if test="${activeNum eq '2'}">class="active"</c:if>>
+				<a href="#panel-2" data-toggle="tab">绘制电子围栏</a>
+			</li>
+			<li <c:if test="${activeNum eq '3'}">class="active"</c:if>>
+				<a href="#panel-3" data-toggle="tab">导入地址关键词</a>
+			</li>
+		</ul>
+		<div class="tab-content" style="height:800px;">
+			<div class="tab-pane <c:if test="${activeNum eq '1'}">active</c:if>" id="panel-1">
+				<div class="box box-primary">
+					<div class="row">
+						<p2>设置配送范围后，将优先匹配站点附近的订单</p2>
+					</div>
+					<div class="row">
+						<div class="col-xs-12" >
+							<label for="siteRangeLabel" class="control-label">站点周围：</label>
+							<label >
+								<c:set var="count" value="20"/>
+								<select id="siteRangeLabel"  style="float:left">
+									<option value="">请选择</option>
+									<c:forEach var = "temp" begin="1" step="1" end="${count}">
+										<option value ="${temp}" <c:if test="${temp eq 2}">selected</c:if>>${temp}</option>
+									</c:forEach>
+								</select>公里
+							</label>
+						</div>
+					</div>
+					<div id="allmap" style="width: 400px;height: 400px;margin-left:15px;margin-top:10px; display:none;"></div>
+				</div>
+			</div>
+			<div class="tab-pane <c:if test="${activeNum eq '2'}">active</c:if>" id="panel-2">
+				<div class="box box-primary">
+					<div class="m20" style="height:500px;width:600px; background-color:#dda;">
+						电子围栏
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane <c:if test="${activeNum eq '3'}">active</c:if>" id="panel-3">
+				<div class="box box-primary">
+					地址关键词
+				</div>
+			</div>
+		</div>
+	</section>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
+	<script type="text/javascript">
+		showMap();
+		function showMap(){
+			$("#allmap").css("display","block");
+			// 百度地图API功能
+			var map = new BMap.Map("allmap");
+			var point = new BMap.Point(116.331398,39.897445);
+			map.centerAndZoom(point,12);
+			// 创建地址解析器实例
+			var myGeo = new BMap.Geocoder();
+			// 将地址解析结果显示在地图上,并调整地图视野
+			var prov="北京";
+			var addressStr = $("#address").val();
+			if(id==0){
+			var prov = $(".prov").val();
+			var city = $(".city").val();
+			var dist = $(".dist").val();
+			var str = prov+city+addressStr;
+			if(dist!=null){
+			str = prov+city+dist+addressStr;
+			}
+			}else{
+			str = addressStr;
+			}
+			console.log(str);
+			myGeo.getPoint(str, function(point){
+			if (point) {
+			map.centerAndZoom(point, 16);
+			map.addOverlay(new BMap.Marker(point));
+			$("#lng").val(point.lng);
+			$("#lat").val(point.lat);
+			}else{
+			alertify.error("您选择地址没有解析到结果!");
+			}
+			}, prov);
+			function showInfo(e){
+			map.clearOverlays();
+			console.log(e.point.lng + ", " + e.point.lat);
+			$("#lng").val(e.point.lng);
+			$("#lat").val(e.point.lat);
+			var point = new BMap.Point(e.point.lng, e.point.lat);
+			var marker = new BMap.Marker(point);  // 创建标注
+			map.addOverlay(marker);               // 将标注添加到地图中
+			marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+			}
+			map.addEventListener("click", showInfo);
+		}
+	</script>
 </div>
 </body>
 </html>
