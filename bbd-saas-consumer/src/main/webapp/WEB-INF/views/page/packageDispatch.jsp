@@ -2,47 +2,30 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.DispatchStatus" %>
 <%@ page import="com.bbd.saas.vo.UserVO" %>
+<%@ page import="com.bbd.saas.vo.Reciever" %>
+<%@ page import="com.bbd.saas.mongoModels.User" %>
+<%@ page import="com.bbd.saas.mongoModels.Site" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="../../common/pages.jsp"%>
 <html>
 <head>
 	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
-/* 
-	int count = 0,totalPage = 0,pagesize = 0;
-	if (p != null){
-		count = p.getCount();
-		totalPage = p.getTotalPage();
-		pagesize = p.getPageSize();
-	}
-	
-	String pageIndex = StrTool.initStr(request.getParameter("pageIndex"),"1");
-	int currentPage = Integer.parseInt(pageIndex);
-	Map<String,String> map = new HashMap<String,String>();
-	map.put("pageIndex",currentPage + "");
-	
-	if(StringUtils.isNotEmpty(search.getsTime())){
-		map.put("sTime",search.getsTime());
-	}
-	if(StringUtils.isNotEmpty(search.geteTime())){
-		map.put("eTime",search.geteTime());
-	} */
+
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
 	
 	PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
-	int count = orderPage.getTotalCount();
+	long count = orderPage.getTotalCount();
 	int totalPage = orderPage.getTotalPages();
 	int pagesize = orderPage.getPageSize();
 	int currentPage = orderPage.getPageNo();
-	Map<String,String> map = new HashMap<String,String>();
-	String pageInfo = pageNav(path+"/packageDispatch", totalPage, currentPage,count, "GET", null);
+	
 %>
 <body >
-<div>============realName===============${user }=================${user.loginName }
+<div>
 </div>
 <section class="content">
 	<div class="col-xs-12">
@@ -96,7 +79,7 @@
 						<td>状态</td>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="dataList">
 				<%
 					
 					for(Order order : orderPage.getDatas()){
@@ -117,7 +100,7 @@
 			</table>
 			
 			<!--页码 start-->
-				<%=pageInfo%>
+			<div id="pagin"></div>	
 			<!--页码 end-->
 			
 		</div>
@@ -131,9 +114,7 @@
 	<div class="m20">
 		<span>派件员:
 			<select id="courier_select">  
-				<option value ="CourierId1">张三</option>  
-				<option value ="CourierId2">李四</option>  
-				<option value="courierId3">王五</option>  
+				  
 			</select>				  
 		</span> 
 	</div>
@@ -143,6 +124,8 @@
 	</div>
 <div>
 <!-- 选择派件员弹出窗-结束 -->
+<!-- 分页js -->
+<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 
 <script type="text/javascript">
 
@@ -193,37 +176,97 @@ $(document).ready(function() {
       		}    
         }); 
 	});
+	//显示分页条
+	var pageStr = paginNav(<%=currentPage%>, <%=totalPage%>, <%=count%>);
+	console.log("totalPage==="+<%=totalPage%>);
+	$("#pagin").html(pageStr);
+	//$("#pagin").html(paginNav(currPage, totalPage, count))
+	
 	//初始化派件员下拉框（快递员）
 	initCourier();  
 
 });
 
-	//初始化派件员下拉框（快递员）
-	function initCourier() {
-		//查询所有派件员
-		$.ajax({
-			type : "GET",  //提交方式  
-            url : "<%=path%>/packageDispatch/getAllUserList",//路径  
-            data : {  
-                "siteId" : "siteId" //$("#waybillId").val()
-            },//数据，这里使用的是Json格式进行传输  
-            success : function(dataList) {//返回数据根据结果进行相应的处理  
-            	
-				var courier_select = $("#courier_select");
-				// 清空select  
-				courier_select.empty(); 
-				if(dataList != null){
-					for(var i = 0; i < dataList.length; i++){
-						data = dataList[i];
-						courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
-					}
-				} 
-            },
-            error : function() {  
-           		alert("异常！");  
-      		}    
-        });
-	}
+//加载带有查询条件的指定页的数据
+function gotoPage(pageIndex) {
+	//查询所有派件员
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/packageDispatch/getList",//路径  
+        data : {  
+            "pageIndex" : pageIndex,
+            "status" : -1, 
+            "courierId" : ""
+            /* "status" : $("#status").val(), 
+            "between" : $("#between").val(), 
+            "courierId" : $("#courierId").val(), */ 
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(dataObject) {//返回数据根据结果进行相应的处理 
+            console.log("dataObject==="+dataObject);
+            var tbody = $("#dataList");
+            // 清空表格数据
+            tbody.html("");
+            
+            var dataList = dataObject.datas;
+			if(dataList != null){
+				var datastr = "";
+				for(var i = 0; i < dataList.length; i++){
+					datastr += getRowHtml(dataList[i]);
+				}
+				tbody.html(datastr);
+			} 
+			//更新分页条
+			var pageStr = paginNav(pageIndex, <%=totalPage%>, <%=count%>);
+			console.log("pageIndex===" + pageIndex + "  totalPage===" + <%=totalPage%> + "  count===" + <%=count%>);
+			$("#pagin").html(pageStr);
+		},
+        error : function() {  
+           	alert("加载分页数据异常！");  
+      	}    
+    });	
+}	
+//封装一行的数据
+function getRowHtml(data){
+	var row = "<tr>";
+	row +=  "<td>" + data.mailNum + "</td>";
+	row += "<td>" + data.reciever.name + "</td>";
+	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+	row += "<td>到站时间2016-04-06 15:22:10" + data.reciever.name + "</td>";
+	row += "<td>" + data.user.realName + "</td>";
+	row += "<td>" + data.user.phone + "</td>";
+	row += "<td>" + data.user.expressStatus + "</td>";			
+	row += "</tr>";
+	return row;
+}
+
+//初始化派件员下拉框（快递员）
+function initCourier() {
+	//查询所有派件员
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/packageDispatch/getAllUserList",//路径  
+        data : {  
+            "siteId" : "siteId" //$("#waybillId").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(dataList) {//返回数据根据结果进行相应的处理  
+        	
+		var courier_select = $("#courier_select");
+		// 清空select  
+		courier_select.empty(); 
+		if(dataList != null){
+			for(var i = 0; i < dataList.length; i++){
+				data = dataList[i];
+				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			}
+		} 
+        },
+        error : function() {  
+       		alert("派件员列表加载异常！");  
+  		}    
+    });
+}	
+	
+	
 
 // 添加  
 function col_add() {  

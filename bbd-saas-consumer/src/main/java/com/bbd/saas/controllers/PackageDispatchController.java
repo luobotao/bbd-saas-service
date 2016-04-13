@@ -22,6 +22,7 @@ import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserVO;
 
 @Controller
@@ -47,14 +48,40 @@ public class PackageDispatchController {
 	 * 2016年4月12日下午3:25:07
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer currPage, String status, String between, String courier, RedirectAttributes redirectAttrs, Model model) {
-		if(currPage==null){
-			currPage = 1;
+	public String index(Integer pageIndex, Integer status, String between, String courierId, Model model) {
+		PageModel<Order> orderPage = getList(pageIndex, status, between, courierId);
+		logger.info(orderPage+"=========");
+		model.addAttribute("username", "张三");
+		model.addAttribute("orderPage", orderPage);
+		
+		UserVO uservo = new UserVO();
+		//uservo.setId(new ObjectId("5546548"));
+		uservo.setLoginName("loginName");
+		uservo.setPhone("12345678945");
+		
+		return "page/packageDispatch";
+	}
+	
+	//分页Ajax更新
+	@ResponseBody
+	@RequestMapping(value="/getList", method=RequestMethod.GET)
+	public PageModel<Order> getList(Integer pageIndex, Integer status, String between, String courierId) {
+		if(pageIndex == null){
+			pageIndex = 1;
 		}
+		if(status == null){
+			status = -1;
+		}
+		
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageSize(2);
-		pageModel.setPageNo(currPage);
-		PageModel<Order> orderPage = orderService.findOrders(pageModel,null);
+		pageModel.setPageNo(pageIndex);
+		
+		OrderQueryVO orderQueryVO = new OrderQueryVO();
+		orderQueryVO.arriveStatus = status;
+		orderQueryVO.between = between;
+		
+		PageModel<Order> orderPage = orderService.findOrders(pageModel, orderQueryVO);
 		List<Order> datas = orderPage.getDatas();
 		User user = new User();
 		user.setRealName("张XX");
@@ -65,19 +92,10 @@ public class PackageDispatchController {
 		//分页信息
 		orderPage.setPageSize(10);
 		orderPage.setTotalCount(25);
-		orderPage.setPageNo(currPage);
-//		orderPage.setTotalPages(10);
-		logger.info(orderPage+"=========");
-		model.addAttribute("username", "张三");
-		model.addAttribute("orderPage", orderPage);
+		orderPage.setPageNo(pageIndex);
+		//orderPage.setTotalPages(10);
 		
-		UserVO uservo = new UserVO();
-		//uservo.setId(new ObjectId("5546548"));
-		uservo.setLoginName("loginName");
-		uservo.setPhone("12345678945");
-		redirectAttrs.addFlashAttribute("user", uservo);
-		
-		return "page/packageDispatch";
+		return orderPage;
 	}
 	
 	/**
@@ -134,8 +152,8 @@ public class PackageDispatchController {
 	
 	/**
 	 * Description: 获取本站点下的所有派件员
-	 *  mailNum 运单号
-	 *  senderId 派件员id
+	 * @param mailNum 运单号
+	 * @param senderId 派件员id
 	 * @param model
 	 * @return
 	 * @author: liyanlei
