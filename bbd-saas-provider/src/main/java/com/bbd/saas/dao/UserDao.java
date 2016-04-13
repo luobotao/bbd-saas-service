@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 
@@ -43,12 +44,12 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel) {
-        PageModel<User> result = new PageModel<User>();
+    	
+    	Query<User> query = createQuery();
         List<User> userList = find(createQuery().offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-        result.setDatas(userList);
-        result.setPageNo(2);
-        result.setPageNo(1);
-        return result;
+        pageModel.setDatas(userList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
     }
     
     /**
