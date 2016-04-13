@@ -66,7 +66,7 @@ public class PackageDispatchController {
 		orderPage.setPageSize(10);
 		orderPage.setTotalCount(25);
 		orderPage.setPageNo(currPage);
-		orderPage.setTotalPages(10);
+//		orderPage.setTotalPages(10);
 		logger.info(orderPage+"=========");
 		model.addAttribute("username", "张三");
 		model.addAttribute("orderPage", orderPage);

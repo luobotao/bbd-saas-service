@@ -19,10 +19,6 @@ public class OrderServiceImpl implements OrderService {
 	
     private OrderDao orderDao;
 
-    public PageModel<Order> findOrders( PageModel<Order> pageModel){
-      return orderDao.findOrders(pageModel);
-    }
-    
     public OrderDao getOrderDao() {
         return orderDao;
     }
@@ -31,7 +27,11 @@ public class OrderServiceImpl implements OrderService {
         this.orderDao = orderDao;
     }
 
-	
+	public PageModel<Order> findOrders( PageModel<Order> pageModel){
+		return orderDao.findOrders(pageModel);
+	}
+
+
     /**
 	 * Description: 根据运单号查询订单信息
 	 * @param mailNum 运单号

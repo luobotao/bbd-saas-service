@@ -24,4 +24,8 @@
     <bean id="siteDao" class="com.bbd.saas.dao.SiteDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- orderParcel DAO-->
+    <bean id="orderParcelDao" class="com.bbd.saas.dao.OrderParcelDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 </beans>

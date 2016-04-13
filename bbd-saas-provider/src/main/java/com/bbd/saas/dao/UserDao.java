@@ -46,14 +46,14 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         PageModel<User> result = new PageModel<User>();
         List<User> userList = find(createQuery().offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
         result.setDatas(userList);
+        result.setPageNo(2);
         result.setPageNo(1);
-        result.setTotalPages(3);
         return result;
     }
     
     /**
      * 获取用户列表信息
-     * @param PageModel<User>
+     * @param siteId
      * @return PageModel<User>
      */
     public List<User> findUserListBySite(String siteId) {

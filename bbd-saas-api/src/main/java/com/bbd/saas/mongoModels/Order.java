@@ -1,9 +1,6 @@
 package com.bbd.saas.mongoModels;
 
-import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.PrintStatus;
-import com.bbd.saas.enums.Srcs;
-import com.bbd.saas.enums.SynsFlag;
+import com.bbd.saas.enums.*;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.Goods;
 import com.bbd.saas.vo.Reciever;
@@ -17,15 +14,15 @@ import java.util.List;
 
 /**
  * Order
- *
- * @author luobotao
- * @date 16-2-23
+ * 订单表
+ * Created by luobotao on 2016/4/10.
  */
 @Entity("order")
 @Indexes(
         @Index(value = "orderNo", fields = @Field("orderNo"))
 )
 public class Order implements Serializable {
+    private static final long serialVersionUID = -6802839001275501390L;
     @Id
     private ObjectId id;
     private ObjectId adminUserId;
@@ -41,6 +38,7 @@ public class Order implements Serializable {
     @Embedded
     private User user;
     private Srcs src;
+    private OrderStatus orderStatus;
     private ExpressStatus expressStatus;
     private PrintStatus printStatus;
     private int errorFlag;//异常面单？ 0否 1是
@@ -53,7 +51,8 @@ public class Order implements Serializable {
     private Date datePrint;//暂时未设置
     private Date dateUpd;//物流单打印时间
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
-
+    @Transient
+    private String parcelCode;
     public ObjectId getId() {
         return id;
     }
@@ -236,5 +235,21 @@ public class Order implements Serializable {
 
     public void setSynsFlag(SynsFlag synsFlag) {
         this.synsFlag = synsFlag;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getParcelCode() {
+        return parcelCode;
+    }
+
+    public void setParcelCode(String parcelCode) {
+        this.parcelCode = parcelCode;
     }
 }

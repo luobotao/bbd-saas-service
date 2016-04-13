@@ -16,5 +16,7 @@
     <dubbo:reference id="userService" interface="com.bbd.saas.api.UserService"/>
     <!--site Service-->
     <dubbo:reference id="siteService" interface="com.bbd.saas.api.SiteService"/>
+    <!--orderPacel Service-->
+    <dubbo:reference id="orderPacelService" interface="com.bbd.saas.api.OrderPacelService"/>
 
 </beans>

@@ -16,6 +16,7 @@ import java.util.Date;
         @Index(value = "username", fields = @Field("username"))
 )
 public class Company implements Serializable {
+    private static final long serialVersionUID = -1853993953815783534L;
     @Id
     private ObjectId id;
     private String name;         //公司名称
