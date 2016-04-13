@@ -143,7 +143,7 @@
 				</a>
 				<ul class="treeview-menu">--%>
 					<li ><a href="<c:url value="/deliverRegion/map/1" />" target="mainFrame" class="subnav-query">配送区域</a></li>
-					<li ><a href="<c:url value="/userManage/userList" />" target="mainFrame" class="subnav-query">用户管理</a></li>
+					<li ><a href="<c:url value="/userManage/userList?page=1" />" target="mainFrame" class="subnav-query">用户管理</a></li>
 			<%--</ul>
         </li>--%>
 		</ul>

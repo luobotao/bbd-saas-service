@@ -84,14 +84,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					<td><%=user.getState()%></td>
 					
 					<td>修改|
-					<c:set var="state" value="<%=user.getUserStatus().getStatus()%>"/>
-					<c:if test="${state=='0'}">
-				　　
-					<a href="javascript:void(0);" staffId="<%=user.getId()%>"  onclick="changeStatus(this,'<%=user.getId()%>',0)" >启用</a>
-				　　</c:if>
-					<c:if test="${state=='1'}">
-				　　停用
-				　　</c:if>
+					
 					</td>
 					
 				</tr>
@@ -117,7 +110,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						            <span>第&nbsp;<i><%=userPage.getPageNo()%></i>&nbsp;页-共&nbsp;<em><%=userPage.getTotalPages()%></em>&nbsp;页</span><b></b>
 						            <span>转到&nbsp;<select  onchange="gotoPage(this.value)">
 						            		<%
-									 			long pages = userPage.getTotalPages();
+									 			long pages = userPage.getTotalCount();
 									 			int p  = userPage.getPageNo();
 									 			for(int i=1 ;i<=pages;i++){
 									 		%>
@@ -388,7 +381,7 @@ function search(){alert("ss");
 	document.getElementById('userListForm').submit();
 }
 
-function gotoPage(page){
+function gotoPage(page){alert(page);
 	document.getElementById("page").value= page;
 	document.getElementById('userListForm').submit();
 }
