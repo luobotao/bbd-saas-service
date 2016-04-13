@@ -47,7 +47,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         List<User> userList = find(createQuery().offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
         result.setDatas(userList);
         result.setPageNo(2);
-//        result.setTotalPages(12);
+        result.setPageNo(1);
         return result;
     }
     /**
