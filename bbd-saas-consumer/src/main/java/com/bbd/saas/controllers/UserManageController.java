@@ -73,7 +73,7 @@ public class UserManageController {
 		String a = request.getParameter("saasrole");
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageSize(2);
-		pageModel.setPageNo(3);
+		pageModel.setPageNo(1);
 		PageModel<User> userPage = userService.findUserList(pageModel);
 		List<User> datas = userPage.getDatas();
 
@@ -161,6 +161,7 @@ public class UserManageController {
 		
 	}
 	
+	@ResponseBody
 	@RequestMapping(value="/changestatus", method=RequestMethod.GET)
 	public void changestatus(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "status", required = true) String status,HttpServletResponse response) {

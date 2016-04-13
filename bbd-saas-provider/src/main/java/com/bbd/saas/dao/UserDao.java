@@ -50,6 +50,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         result.setTotalPages(3);
         return result;
     }
+    
     /**
      * 获取用户列表信息
      * @param PageModel<User>

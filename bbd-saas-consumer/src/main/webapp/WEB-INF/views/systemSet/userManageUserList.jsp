@@ -81,7 +81,7 @@
 					<td><%=user.getState()%></td>
 					
 					<td>修改|
-					<c:set var="state" value="<%=user.getState()%>"/>
+					<c:set var="state" value="<%=user.getUserStatus().getStatus()%>"/>
 					<c:if test="${state=='0'}">
 				　　
 					<a href="javascript:void(0);" staffId="<%=user.getId()%>"  onclick="changeStatus(this,'<%=user.getId()%>',0)" >启用</a>
