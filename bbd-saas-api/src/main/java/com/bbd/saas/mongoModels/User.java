@@ -142,4 +142,13 @@ public class User implements Serializable {
 	public void setOperate(User operate) {
 		this.operate = operate;
 	}
+
+	public UserStatus getUserStatus() {
+		return userStatus;
+	}
+
+	public void setUserStatus(UserStatus userStatus) {
+		this.userStatus = userStatus;
+	}
+	
 }
