@@ -6,6 +6,7 @@ import com.bbd.saas.api.OrderService;
 import com.bbd.saas.controllers.LoginController;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderQueryVO;
@@ -31,8 +32,36 @@ public class PackageToSiteController {
 	@ResponseBody
 	@RequestMapping(value="/checkOrderByMailNum", method=RequestMethod.GET)
 	public Order checkOrderByMailNum(@RequestParam(value = "mailNum", required = true) String mailNum) {
-		Order order = orderService.findOneByMailNum(mailNum);
-		return order;
+		return orderService.findOneByMailNum(mailNum);
+	}
+	@ResponseBody
+	@RequestMapping(value="/checkOrderParcelByParcelCode", method=RequestMethod.GET)
+	public boolean checkOrderParcelByParcelCode(@RequestParam(value = "parcelCode", required = true) String parcelCode) {
+		OrderParcel orderParcel =  orderPacelService.findOrderParcelByParcelCode(parcelCode);
+		if(orderParcel==null)
+			return false;
+		else
+			return true;
+	}
+	@ResponseBody
+	@RequestMapping(value="/getOrderPage", method=RequestMethod.GET)
+	public PageModel<Order> getOrderPage(@RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+				@RequestParam(value = "arriveStatus", required = false, defaultValue = "-1") Integer arriveStatus,
+				@RequestParam(value = "between", required = false) String between,
+				@RequestParam(value = "mailNum", required = false) String mailNum) {
+		if (pageIndex==null) pageIndex =0 ;
+		logger.info(arriveStatus+"========="+between);
+		OrderQueryVO orderQueryVO = new OrderQueryVO();
+		orderQueryVO.arriveStatus = arriveStatus;
+		orderQueryVO.between = between;
+		orderQueryVO.mailNum = mailNum;
+		PageModel<Order> pageModel = new PageModel<>();
+		pageModel.setPageNo(pageIndex);
+		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
+		for(Order order : orderPage.getDatas()){
+			order.setParcelCode(orderPacelService.findParcelCodeByOrderId(order.getId().toHexString()));//设置包裹号
+		}
+		return orderPage;
 	}
 
 	/**

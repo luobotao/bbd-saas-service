@@ -30,6 +30,11 @@ public class OrderParcelServiceImpl implements OrderPacelService {
 	public String findParcelCodeByOrderId(String orderId){
       return orderParcelDao.findParcelCodeByOrderId(orderId);
     }
-    
+
+	@Override
+	public OrderParcel findOrderParcelByParcelCode(String parcelCode) {
+		return orderParcelDao.findOne("parcelCode",parcelCode);
+	}
+
 
 }
