@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
 import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -34,6 +35,7 @@ public class User implements Serializable {
     private String lastIp;
     private int loginCount;
     private int state;//状态标识 1审核中 2审核通过 3驳回
+    private UserStatus userStatus;//状态标识 1启用,0停用 
     private Date dateAdd;//创建时间
     private Date dateLogin;//最后一次登录时间
 
