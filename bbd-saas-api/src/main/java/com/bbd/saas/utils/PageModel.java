@@ -15,7 +15,7 @@ public class PageModel<T> implements Serializable{
     //第几页 从0开始
     private int pageNo = 0;
     //总条数
-    private int totalCount = 0;
+    private long totalCount = 0;
     //总页数
     private int totalPages = 0;
 
@@ -43,19 +43,16 @@ public class PageModel<T> implements Serializable{
         this.pageNo = pageNo;
     }
 
-    public int getTotalCount() {
+    public long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(int totalCount) {
+    public void setTotalCount(long totalCount) {
         this.totalCount = totalCount;
     }
 
     public int getTotalPages() {
-        return totalPages;
+        return (int) (totalCount % pageSize >0 ? (totalCount/pageSize+1) :(totalCount / pageSize));
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
 }

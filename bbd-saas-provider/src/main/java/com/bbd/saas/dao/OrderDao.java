@@ -6,6 +6,7 @@ import com.bbd.saas.utils.PageModel;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -27,9 +28,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     public PageModel<Order> findOrders(PageModel<Order> pageModel) {
-        List<Order> orderList = find(createQuery().order("dateUpd").offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        Query<Order> query = createQuery().order("dateUpd");
+        List<Order> orderList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+
         pageModel.setDatas(orderList);
-        pageModel.setTotalPages(12);
+        pageModel.setTotalCount(count(query));
+//        pageModel.setTotalPages(count(query));
         return pageModel;
     }
 }

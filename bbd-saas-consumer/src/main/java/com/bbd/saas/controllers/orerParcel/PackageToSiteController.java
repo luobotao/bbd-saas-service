@@ -33,17 +33,17 @@ public class PackageToSiteController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model,@RequestParam(value = "page", required = false) Integer page) {
+	public String index(Model model,@RequestParam(value = "page", required = false) Integer page,@RequestParam(value = "src", required = false) Integer src,@RequestParam(value = "between", required = false) String between) {
 		if(page==null) page =0 ;
+		logger.info(src+"========="+between);
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageSize(2);
 		pageModel.setPageNo(page);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel);
-for(Order order : orderPage.getDatas()){
-	String parcelCode = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-	logger.info(parcelCode+"===========");
-}
-		logger.info(orderPage+"========="+page);
+		for(Order order : orderPage.getDatas()){
+			order.setParcelCode(orderPacelService.findParcelCodeByOrderId(order.getId().toHexString()));
+			logger.info(order.getParcelCode()+"===========");
+		}
 		model.addAttribute("username", "张三");
 		model.addAttribute("orderPage", orderPage);
 		//未到站订单数

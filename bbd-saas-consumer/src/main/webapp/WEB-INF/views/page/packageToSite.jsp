@@ -17,6 +17,7 @@
 			<div class="col-xs-3"><span>${arrived_num}</span><br><span>今日已到站订单数</span></div>
 		</div>
 	</div>
+
 	<div class="col-xs-12">
 		<!-- 订单数显示 结束   -->
 		<div class="box-body">
@@ -34,7 +35,6 @@
 					</div>
 					<div >
 						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="submit">查询</button>
-
 					</div>
 				</div>
 			</form>
@@ -70,7 +70,7 @@
 				%>
 				<tr>
 					<td><input type="checkbox" value="<%=order.getId()%>" name="id"></td>
-					<td><%=order.getAreaName()%></td>
+					<td><%=order.getParcelCode()%></td>
 					<td><%=order.getMailNum()%></td>
 					<td><%=order.getOrderNo()%></td>
 					<td><%=order.getSrc()%></td>
@@ -141,7 +141,7 @@
 								if(orderPage.getPageNo()<(orderPage.getTotalPages()-4)){
 									if(i==0||i>(orderPage.getPageNo()-4)&&i<(orderPage.getPageNo()+5)){
 							%>
-							<	li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
+							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
 							<%
 							}else{
 								if(i==2){
