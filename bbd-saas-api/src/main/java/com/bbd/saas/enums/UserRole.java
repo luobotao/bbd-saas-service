@@ -6,12 +6,12 @@ import com.bbd.saas.utils.Htmls;
  * 包裹到站状态
  * Created by liyanlei on 2016/4/11.
  */
-public enum Roles {
+public enum UserRole {
 	SITEMASTER(0, "站长"),
     SENDMEM(1, "派件员");
     private int status;
     private String message;
-    private Roles(int status, String message) {
+    private UserRole(int status, String message) {
         this.status = status;
         this.message = message;
     }
@@ -23,9 +23,9 @@ public enum Roles {
     }
     public static String Srcs2HTML(Integer id) {
         StringBuilder sb = new StringBuilder();
-        Roles[] returnReason = Roles.values();
+        UserRole[] returnReason = UserRole.values();
         sb.append(Htmls.generateOption(-1, "全部"));
-        for (Roles rr : returnReason) {
+        for (UserRole rr : returnReason) {
             if (id == rr.status) {
                 sb.append(Htmls.generateSelectedOption(rr.status,rr.message));
             } else {
@@ -34,9 +34,9 @@ public enum Roles {
         }
         return sb.toString();
     }
-    public static Roles status2Obj(int value) {
-    	Roles[] returnReason = Roles.values();
-        for (Roles rr : returnReason) {
+    public static UserRole status2Obj(int value) {
+    	UserRole[] returnReason = UserRole.values();
+        for (UserRole rr : returnReason) {
             if (value == rr.status) {
                 return rr;
             }

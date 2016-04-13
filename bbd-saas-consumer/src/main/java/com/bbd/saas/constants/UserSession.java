@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author luobotao
  * Date: 2015年4月14日 下午6:18:12
  */
-public class AdminSession {
+public class UserSession {
 
     public static void put(HttpServletResponse response,String value) {
         Cookie cookie = new Cookie(Constants.ADMIN_SESSION_NAME, value);

@@ -11,6 +11,8 @@
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
+	
+	
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven conversion-service="conversionService" >
 		<argument-resolvers>
@@ -31,7 +33,18 @@
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
-	
+
+	<beans:bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<beans:property name="locations">
+			<beans:list>
+				<beans:value>classpath:config.properties</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+	<beans:bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<beans:property name="properties" ref="configProperties" />
+	</beans:bean>
+
 	<!-- Only needed because we install custom converters to support the examples in the org.springframewok.samples.mvc.convert package -->
 	<beans:bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
 		<beans:property name="formatters">

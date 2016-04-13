@@ -1,6 +1,7 @@
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.DispatchStatus" %>
+<%@ page import="com.bbd.saas.vo.UserVO" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="../../common/pages.jsp"%>
@@ -10,7 +11,6 @@
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
-	String type= (String)request.getAttribute("type");
 /* 
 	int count = 0,totalPage = 0,pagesize = 0;
 	if (p != null){
@@ -30,12 +30,19 @@
 	if(StringUtils.isNotEmpty(search.geteTime())){
 		map.put("eTime",search.geteTime());
 	} */
-	int count = 120, totalPage = 1, pagesize = 0, currentPage=1;
+	String proPath = request.getContextPath();
+	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
+	
+	PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+	int count = orderPage.getTotalCount();
+	int totalPage = orderPage.getTotalPages();
+	int pagesize = orderPage.getPageSize();
+	int currentPage = orderPage.getPageNo();
 	Map<String,String> map = new HashMap<String,String>();
-	String pageInfo = pageNav("/packageDispatch", totalPage, currentPage,count, "POST", map);
+	String pageInfo = pageNav(path+"/packageDispatch", totalPage, currentPage,count, "GET", null);
 %>
 <body >
-<div>
+<div>============realName===============${user }=================${user.loginName }
 </div>
 <section class="content">
 	<div class="col-xs-12">
@@ -64,10 +71,10 @@
 	<div class="col-xs-12">
 		<div class="row">
 			<div class="col-xs-3">
-				<button onclick="showSenderDiv()">选择派件员</button>	
-				<span class="ft12 pt20">已选择：<span id="senderName"></span></span>
-				<input id="senderId1" type="hidden" value="">
-				<input id="senderId" type="text" value="" /> 	
+				<button onclick="showCourierDiv()">选择派件员</button>	
+				<span class="ft12 pt20">已选择：<span id="courierName"></span></span>
+				<input id="courierId1" type="hidden" value="">
+				<input id="courierId" type="text" value="" style="width:200px"/> 	
 			</div>
 			
 			<div class="col-xs-4">
@@ -91,7 +98,7 @@
 				</thead>
 				<tbody>
 				<%
-					PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+					
 					for(Order order : orderPage.getDatas()){
 				%>
 				<tr>
@@ -112,141 +119,33 @@
 			<!--页码 start-->
 				<%=pageInfo%>
 			<!--页码 end-->
-				
-			<%-- <%
-				if(orderPage.getDatas().size()>0){
-			%>
-			<div>
-				<div class="col-xs-6">
-					<div class="dataTables_info" id="userTable_info">页码：
-						<%=(orderPage.getPageNo()+1)%>/<%=orderPage.getTotalPages()%> 共计<%=orderPage.getTotalCount()%>条记录</div>
-				</div>
-				<div >
-					<div class="dataTables_paginate paging_bootstrap">
-						<ul class="pagination">
-							<%
-								if(orderPage.getPageNo()<1){
-							%>
-							<li class="prev disabled"><a href="javascript:">首页</a></li>
-							<%
-							}else{
-							%>
-							<li class="prev"><a href="@searchParam()page=0">首页</a></li>
-							<%
-								}
-								for(int i=0;i<orderPage.getTotalPages()-1;i++){
-									if(orderPage.getTotalPages()<8){
-							%>
-							<li class="<c:if test="$(i==orderPage.getPageNo())">active</c:if>"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-							<%
-							}else {
-								if(orderPage.getPageNo()<7){
-
-									if(i<8){
-							%>
-							<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-							<%
-								}else{
-									if(i==(orderPage.getTotalPages()-1)){
-							%>
-								<li class=""><a href="javascript:">...</a></li>
-							<%
-									}
-									if(i==(orderPage.getTotalPages())){
-							%>
-								<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-							<%
-									}
-								}
-
-							}else{
-								if(orderPage.getPageNo()<(orderPage.getTotalPages()-4)){
-									if(i==0||i>(orderPage.getPageNo()-4)&&i<(orderPage.getPageNo()+5)){
-										%>
-							<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-							<%
-									}else{
-										if(i==2){
-											%>
-											<li class=""><a href="javascript:">...</a></li>
-							<%
-										}
-										if(i==(orderPage.getTotalPages()-1)){
-										%>
-										<li class=""><a href="javascript:">...</a></li>
-										<%
-										}
-										if(i==(orderPage.getTotalPages())){
-										%>
-										<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-										<%
-										}
-									}
-								}else{
-									if(i==0||i>(orderPage.getTotalPages()-8)){
-									%>
-									<li class="active"><a href="@searchParam()page=@index"><%=i+1%></a></li>
-									<li class=""><a href="javascript:">...</a></li>
-									<%
-									}else if(i==2){
-									%>
-									<li class=""><a href="javascript:">...</a></li>
-									<%
-									}
-								}
-
-										}
-
-									}
-
-								}
-							%>
-
-							<%
-								if(orderPage.getTotalPages()==orderPage.getPageNo()){
-							%>
-							<li class="next disabled"><a href="javascript:">尾页</a></li>
-							<%
-								}else{
-							%>
-							<li class="next"><a href="@searchParam()page=@{ pages - 1}">尾页</a></li>
-							<%
-								}
-							%>
-
-						</ul>
-					</div>
-				</div>
-			</div>
-			<%
-				}
-			%>
- --%>
+			
 		</div>
 	</div>
 </section>
 
 
 <!-- 选择派件员弹出窗-开始 -->
-<div  id="chooseSender_div" class="popDiv" >
+<div  id="chooseCourier_div" class="popDiv" >
 	<div class="title_div">选择派件员</div>
 	<div class="m20">
 		<span>派件员:
-			<select id="sender_select">  
-				<option value ="senderId1">张三</option>  
-				<option value ="senderId2">李四</option>  
-				<option value="senderId3">王五</option>  
+			<select id="courier_select">  
+				<option value ="CourierId1">张三</option>  
+				<option value ="CourierId2">李四</option>  
+				<option value="courierId3">王五</option>  
 			</select>				  
 		</span> 
 	</div>
 	<div>
-		<button onclick="hideSenderDiv()">取消</button>
-		<button onclick="chooseSender()">确定</button>
+		<button onclick="hideCourierDiv()">取消</button>
+		<button onclick="chooseCourier()">确定</button>
 	</div>
 <div>
 <!-- 选择派件员弹出窗-结束 -->
-<i
+
 <script type="text/javascript">
+
 $(document).ready(function() {
 	$("#between").daterangepicker({
 		locale: {
@@ -262,28 +161,19 @@ $(document).ready(function() {
 	});
 	//扫描运单号  focus事件
 	$("#waybillId").focus(function(){
-		if($("#senderId").val() == null || $("#senderId").val() == ""){
+		if($("#courierId").val() == null || $("#courierId").val() == ""){
 	  		$("#waybillId_check").text("请选择派件员！");
 	  	}
 	});
 
-	$("input[type='checkbox']").iCheck({
-		checkboxClass : 'icheckbox_square-blue'
-	});
-
-	$("#selectAll").on('ifUnchecked', function() {
-		$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
-	}).on('ifChecked', function() {
-		$("input[type='checkbox']", "#orderTable").iCheck("check");
-	});
-	//扫描运单号
+	//扫描运单号--把快递分派给派件员
 	$("#waybillId").on('input',function(e){  		
-	       $.ajax({
+	    $.ajax({
 			type : "GET",  //提交方式  
-            url : "/packageDispatch/checkMailNum",//路径  
+            url : "<%=path%>/packageDispatch/dispatch",//路径  
             data : {  
                 "mailNum" : $("#waybillId").val(),
-                "senderId" : $("#sender_select").val()  
+                "courierId" : $("#courier_select").val()  
             },//数据，这里使用的是Json格式进行传输  
             success : function(data) {//返回数据根据结果进行相应的处理  
                 if ( data.success ) { 
@@ -302,25 +192,74 @@ $(document).ready(function() {
            		alert("异常！");  
       		}    
         }); 
-	});  
+	});
+	//初始化派件员下拉框（快递员）
+	initCourier();  
 
 });
-	
-	
+
+	//初始化派件员下拉框（快递员）
+	function initCourier() {
+		//查询所有派件员
+		$.ajax({
+			type : "GET",  //提交方式  
+            url : "<%=path%>/packageDispatch/getAllUserList",//路径  
+            data : {  
+                "siteId" : "siteId" //$("#waybillId").val()
+            },//数据，这里使用的是Json格式进行传输  
+            success : function(dataList) {//返回数据根据结果进行相应的处理  
+            	
+				var courier_select = $("#courier_select");
+				// 清空select  
+				courier_select.empty(); 
+				if(dataList != null){
+					for(var i = 0; i < dataList.length; i++){
+						data = dataList[i];
+						courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+					}
+				} 
+            },
+            error : function() {  
+           		alert("异常！");  
+      		}    
+        });
+	}
+
+// 添加  
+function col_add() {  
+    var selObj = $("#mySelect");  
+    var value="value";  
+    var text="text";  
+    selObj.append("<option value='"+value+"'>"+text+"</option>");  
+}  
+// 删除  
+function col_delete() {  
+    var selOpt = $("#mySelect option:selected");  
+    selOpt.remove();  
+}  
+// 清空  
+function col_clear() {  
+    var selOpt = $("#mySelect option");  
+    selOpt.remove();  
+}  
+//显示选择派件员div
+	function showCourierDiv(waybillId) {
+	}	
 	//显示选择派件员div
-	function showSenderDiv(waybillId) {
-		$("#chooseSender_div").show();
+	function showCourierDiv(waybillId) {
+		
+		$("#chooseCourier_div").show();
 	}
 	//隐藏选择派件员div
-	function hideSenderDiv() {
-		$("#chooseSender_div").hide();
+	function hideCourierDiv() {
+		$("#chooseCourier_div").hide();
 	}
 	//选择派件员
-	function chooseSender() {
+	function chooseCourier() {
 	$("#ddlregtype").find("option:selected").text(); 
-		$("#senderName").text($("#sender_select").find("option:selected").text());
-		$("#senderId").val($("#sender_select").val());
-		$("#chooseSender_div").hide();
+		$("#courierName").text($("#courier_select").find("option:selected").text());
+		$("#courierId").val($("#courier_select").val());
+		$("#chooseCourier_div").hide();
 	}
 	
 </script>

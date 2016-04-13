@@ -27,7 +27,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     public PageModel<Order> findOrders(PageModel<Order> pageModel) {
-        List<Order> orderList = find(createQuery().filter("adminUserId", new ObjectId("56d013f156f6c3ba9fe959cb")).order("dateUpd").offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        List<Order> orderList = find(createQuery().order("dateUpd").offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
         pageModel.setDatas(orderList);
         pageModel.setTotalPages(12);
         return pageModel;

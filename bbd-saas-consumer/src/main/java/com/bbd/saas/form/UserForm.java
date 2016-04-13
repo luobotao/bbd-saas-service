@@ -17,26 +17,27 @@ import java.util.Map;
 public class UserForm {
 	
 	@NotEmpty
-	private Integer roleId;
+	private String roleId;
 	@NotEmpty
-	private String userName;
+	private String realName;
 	@NotEmpty
 	private String phone;
 	@NotEmpty
 	private String loginName;
 	@NotEmpty
 	private String loginPass;
-	public Integer getRoleId() {
+	public String getRoleId() {
 		return roleId;
 	}
-	public void setRoleId(Integer roleId) {
+	public void setRoleId(String roleId) {
 		this.roleId = roleId;
 	}
-	public String getUserName() {
-		return userName;
+	
+	public String getRealName() {
+		return realName;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setRealName(String realName) {
+		this.realName = realName;
 	}
 	public String getPhone() {
 		return phone;

@@ -3,6 +3,8 @@ package com.bbd.saas.mongoModels;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
+import com.bbd.saas.enums.UserRole;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,7 +26,6 @@ public class User implements Serializable {
     private String passWord;
     private String realName;
     private String phone;
-    @Reference("userRole")
     private UserRole role;
     @Reference("site")
     private Site site;
@@ -76,15 +77,15 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-    public UserRole getRole() {
-        return role;
-    }
+	public UserRole getRole() {
+		return role;
+	}
 
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
+	public void setRole(UserRole role) {
+		this.role = role;
+	}
 
-    public Site getSite() {
+	public Site getSite() {
         return site;
     }
 
