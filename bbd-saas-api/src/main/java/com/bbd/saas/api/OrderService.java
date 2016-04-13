@@ -6,7 +6,7 @@ import com.bbd.saas.utils.PageModel;
 
 /**
  * Created by luobotao on 2016/4/8.
- * 管理员接口
+ * 订单接口
  */
 public interface OrderService {
 

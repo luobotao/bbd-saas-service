@@ -1,7 +1,9 @@
-package com.bbd.saas.controllers;
+package com.bbd.saas.controllers.orerParcel;
 
 import com.bbd.saas.api.AdminUserService;
+import com.bbd.saas.api.OrderPacelService;
 import com.bbd.saas.api.OrderService;
+import com.bbd.saas.controllers.LoginController;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import org.slf4j.Logger;
@@ -21,6 +23,8 @@ public class PackageToSiteController {
 	public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@Autowired
 	OrderService orderService;
+	@Autowired
+	OrderPacelService orderPacelService;
 	/**
 	 * description: 跳转到包裹到站页面
 	 * 2016年4月1日下午6:13:46
@@ -35,7 +39,10 @@ public class PackageToSiteController {
 		pageModel.setPageSize(2);
 		pageModel.setPageNo(page);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel);
-
+for(Order order : orderPage.getDatas()){
+	String parcelCode = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+	logger.info(parcelCode+"===========");
+}
 		logger.info(orderPage+"========="+page);
 		model.addAttribute("username", "张三");
 		model.addAttribute("orderPage", orderPage);

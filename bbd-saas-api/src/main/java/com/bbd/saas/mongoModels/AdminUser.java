@@ -19,6 +19,7 @@ import java.util.Date;
 )
 public class AdminUser implements Serializable {
 
+    private static final long serialVersionUID = -2302410767888348936L;
     @Id
     private ObjectId id;
     private String userName;
