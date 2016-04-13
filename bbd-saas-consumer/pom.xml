@@ -180,12 +180,26 @@
         </dependency>
 
         <!-- Jackson JSON Processor -->
-        <dependency>
+<!-- Jackson JSON Processor  -->
+        <!--@response 返回值 不支持List  -->
+        <!-- <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.5.3</version>
         </dependency>
-
+         -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+        
+ 		<!-- <dependency>
+        	<groupId>org.codehaus.jackson</groupId>
+        	<artifactId>jackson-core-asl</artifactId>
+        	<version>1.9.13</version>
+        </dependency>
+         -->
         <!-- Rome Atom+RSS -->
         <dependency>
             <groupId>com.rometools</groupId>
@@ -326,13 +340,13 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <!-- Have to use version 1.2 since version 1.3 does not appear to work with ITDs -->
+                Have to use version 1.2 since version 1.3 does not appear to work with ITDs
                 <version>1.2</version>
                 <dependencies>
-                    <!-- You must use Maven 2.0.9 or above or these are ignored (see MNG-2972) -->
+                    You must use Maven 2.0.9 or above or these are ignored (see MNG-2972)
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjrt</artifactId>
@@ -357,7 +371,7 @@
                     <source>${java-version}</source>
                     <target>${java-version}</target>
                 </configuration>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
