@@ -25,6 +25,12 @@
             <artifactId>bbd-saas-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- bbd poi-->
+      <!--  <dependency>
+            <groupId>com.bbd</groupId>
+            <artifactId>bbd-poi-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
@@ -261,22 +267,27 @@
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
     <repositories>
-        <!-- For testing against latest Spring snapshots -->
         <repository>
-            <id>org.springframework.maven.snapshot</id>
-            <name>Spring Maven Snapshot Repository</name>
-            <url>http://repo.spring.io/snapshot</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <id>spring-milestone</id>
+            <name>Spring Maven MILESTONE Repository</name>
+            <url>http://repo.spring.io/libs-milestone</url>
         </repository>
-        <!-- For developing against latest Spring milestones -->
         <repository>
-            <id>org.springframework.maven.milestone</id>
-            <name>Spring Maven Milestone Repository</name>
-            <url>http://repo.spring.io/milestone</url>
+            <id>nexus-releases</id>
+            <name>nexus-releases Repository</name>
+            <url>http://123.56.46.162:8081/nexus/content/repositories/releases</url>
+            <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>nexus-snapshots</id>
+            <name>nexus-snapshots Repository</name>
+            <url>http://123.56.46.162:8081/nexus/content/repositories/snapshots</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
     <build>

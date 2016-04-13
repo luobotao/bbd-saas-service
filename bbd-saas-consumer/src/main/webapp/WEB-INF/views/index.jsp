@@ -135,15 +135,15 @@
 			<li class="treeview">
 				<a href="<c:url value="/dataQuery" />" target="mainFrame" class="subnav-rmb  ">数据查询</a>
 			</li>
-			<li class="treeview">
+			<%--<li class="treeview">
 				<a href="#">
 					<i class="fa fa-dashboard"></i> <span>系统设置</span> <i class="fa fa-angle-left pull-right"></i>
 				</a>
-				<ul class="treeview-menu">
-					<li ><a href="<c:url value="/deliverRegion/map" />" target="mainFrame" class="subnav-query">配送区域</a></li>
+				<ul class="treeview-menu">--%>
+					<li ><a href="<c:url value="/deliverRegion/map/1" />" target="mainFrame" class="subnav-query">配送区域</a></li>
 					<li ><a href="<c:url value="/userManage/userList" />" target="mainFrame" class="subnav-query">用户管理</a></li>
-				</ul>
-			</li>
+			<%--</ul>
+        </li>--%>
 		</ul>
 	</section>
 		<!-- /.sidebar -->
