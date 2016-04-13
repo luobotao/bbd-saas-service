@@ -6,6 +6,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.sun.org.apache.xpath.internal.operations.Or;
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -38,6 +39,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }else{
                     query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
                 }
+            }
+            if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
+                query.filter("mailNum", orderQueryVO.mailNum);
             }
         }
         List<Order> orderList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
