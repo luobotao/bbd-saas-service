@@ -6,7 +6,7 @@
 	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="bbd-saas-consumer" owner="saas" organization="bbd"/>
-
+	<dubbo:consumer check="false"></dubbo:consumer>
     <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
     <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.AdminUserService"/>
