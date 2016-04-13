@@ -1,6 +1,7 @@
 package com.bbd.saas.controllers;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bbd.saas.api.UserService;
 import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.LoginForm;
 import com.bbd.saas.form.SiteForm;
 import com.bbd.saas.form.UserForm;
@@ -105,10 +108,12 @@ public class UserManageController {
      * @param model
      * @return
      */
+	@ResponseBody
 	@RequestMapping(value="saveUser", method=RequestMethod.POST)
-	public void saveUser(@Valid UserForm userForm, BindingResult result,Model model,RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
+	public String saveUser(@Valid UserForm userForm, BindingResult result,Model model,RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
 		System.out.println("ssss");
 		Map<String, Object> map = new HashMap<String, Object>();
+	    java.util.Date dateAdd = new java.util.Date();
 		User user = new User();
 		user.setRealName(userForm.getRealName());
 		user.setLoginName(userForm.getLoginName());
@@ -116,28 +121,42 @@ public class UserManageController {
 		user.setPassWord(userForm.getLoginPass());
 		user.setOperate(null);
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
+		user.setDateAdd(dateAdd);
+		user.setUserStatus(UserStatus.status2Obj(0));
 		Key<User> kuser = userService.save(user);
 		
 		if(kuser!=null && !kuser.getId().equals("")){
-			map.put("success", true); 
+			/*map.put("success", true); 
 			map.put("message", "success"); 
-			response.setStatus(200); 
+			response.setStatus(200); */
+			return "true";
 		}else{
-			map.put("success", false); 
+			/*map.put("success", false); 
 			map.put("message", "error"); 
-			response.setStatus(400); 
+			response.setStatus(400); */
+			return "false";
 		}
-		//return map;
 	}
 	
+	@ResponseBody
 	@RequestMapping(value="/checkUser", method=RequestMethod.GET)
-	public Boolean checkUser(Model model,@RequestParam(value = "realname", required = true) String realname) {
-		User user = userService.findUserByRealName(realname);
+	public String checkUser(Model model,@RequestParam(value = "realname", required = true) String realname,HttpServletResponse response) {
+		String checkRealName = "";
+		try {
+			checkRealName=new String(realname.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		User user = userService.findUserByRealName(checkRealName);
 		logger.info("realname"+realname);
 		if(user!=null && !user.getId().equals("")){
-			return true;
-		}else{
-			return false;
+			return "true";
+			
+		}else{ 
+			return "false";
+			
 		}
 		
 	}
@@ -157,11 +176,19 @@ public class UserManageController {
 		
 	}
 	
+	
+	@ResponseBody
 	@RequestMapping(value="/checkLognName", method=RequestMethod.GET)
 	public String checkLognName(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
 		User user = userService.findUserByLoginName(loginName);
 		logger.info("loginName"+loginName);
-		return "site/siteRegister";
+		if(user!=null && !user.getId().equals("")){
+			return "true";
+			
+		}else{ 
+			return "false";
+			
+		}
 	}
 	
 }
