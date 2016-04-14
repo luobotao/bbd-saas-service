@@ -27,7 +27,7 @@ function paginNav(currPage, totalPage, count){
 			pagestr += setPageString((currPage - 2) , currPage, currPage);
 		}
 
-		if (currPage>=totalPage-3 || totalPage-3<=0){
+		if (currPage>=totalPage-4 || totalPage-4<=0){
 			pagestr += setPageString((currPage + 1), totalPage, currPage);
 		}else{
 			pagestr += setPageString((currPage + 1), (currPage + 4), currPage);
