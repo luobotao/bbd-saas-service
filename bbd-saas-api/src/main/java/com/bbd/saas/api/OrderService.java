@@ -1,9 +1,9 @@
 package com.bbd.saas.api;
 
-import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderQueryVO;
+import org.mongodb.morphia.Key;
 
 /**
  * Created by luobotao on 2016/4/8.
@@ -35,5 +35,6 @@ public interface OrderService {
      * @author: liyanlei
      * 2016年4月12日下午5:59:03
      */
-    Order update(Order order);
+    Key<Order> save(Order order);
+
 }

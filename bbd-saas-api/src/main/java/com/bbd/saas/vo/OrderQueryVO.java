@@ -8,8 +8,8 @@ import java.io.Serializable;
  */
 public class OrderQueryVO implements Serializable{
 	
-	public int arriveStatus;//-1全部 0未到站 1已到站
+	public Integer arriveStatus;//-1全部 0未到站 1已到站
 	public String between;
-	public String mailNum;
-
+	public String parcelCode;//包裹号
+	public String mailNum;//运单号
 }

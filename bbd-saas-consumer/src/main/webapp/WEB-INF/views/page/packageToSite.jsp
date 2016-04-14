@@ -1,6 +1,7 @@
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
+<%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
@@ -41,7 +42,8 @@
 			<div class="row">
 				<div class="col-xs-3">
 					<label>扫描包裹号：</label>
-					<input id="parcelCode" name="parcelCode" type="text" />
+					<input id="parcelCode" name="parcelCode" type="text" onkeypress="enterPress(event)" />
+					<p class="help-block" id="parcelCodeP" style="display:none;"></p>
 				</div>
 				<div class="col-xs-3">
 					<label>扫描运单号：</label>
@@ -71,7 +73,7 @@
 					<td>状态</td>
 				</tr>
 				</thead>
-				<tbody>
+				<tbody id="dataList">
 				<%
 					PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
 					for(Order order : orderPage.getDatas()){
@@ -87,7 +89,17 @@
 					<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 					<td><%=order.getDatePrint()%></td>
 					<td>2016-04-06</td>
-					<td>未到站</td>
+					<%
+						if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
+					%>
+					<td><%=ArriveStatus.NOTARR.getMessage()%></td>
+					<%
+						}else{
+					%>
+					<td><%=ArriveStatus.ARRIVED.getMessage()%></td>
+					<%
+						}
+					%>
 				</tr>
 				<%
 					}
@@ -100,115 +112,20 @@
 				</th>
 				</tfoot>
 			</table>
-			<%
-				if(orderPage.getDatas().size()>0){
-			%>
-			<div>
-				<div class="col-xs-6">
-					<div class="dataTables_info" id="userTable_info">页码：
-						<%=(orderPage.getPageNo()+1)%>/<%=orderPage.getTotalPages()%> 共计<%=orderPage.getTotalCount()%>条记录</div>
-				</div>
-				<div >
-					<div class="dataTables_paginate paging_bootstrap">
-						<ul class="pagination">
-							<%
-								if(orderPage.getPageNo()<1){
-							%>
-							<li class="prev disabled"><a href="javascript:">首页</a></li>
-							<%
-							}else{
-							%>
-							<li class="prev"><a href="?page=0">首页</a></li>
-							<%
-								}
-								for(int i=0;i<orderPage.getTotalPages();i++){
 
-									if(orderPage.getTotalPages()<8){
-							%>
-							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
-							<%
-							}else {
-								if(orderPage.getPageNo()<7){
-									if(i<8){
-							%>
-							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
-							<%
-							}else{
-								if(i==(orderPage.getTotalPages()-3)){
-							%>
-							<li class=""><a href="javascript:">...</a></li>
-							<%
-								}
-								if(i==(orderPage.getTotalPages()-2)){
-							%>
-							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
-							<%
-									}
-								}
-							}else{
-								if(orderPage.getPageNo()<(orderPage.getTotalPages()-4)){
-									if(i==0||i>(orderPage.getPageNo()-4)&&i<(orderPage.getPageNo()+5)){
-							%>
-							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
-							<%
-							}else{
-								if(i==2){
-							%>
-							<li class=""><a href="javascript:">...</a></li>
-							<%
-								}
-								if(i==(orderPage.getTotalPages()-1)){
-							%>
-							<li class=""><a href="javascript:">...</a></li>
-							<%
-								}
-								if(i==(orderPage.getTotalPages())){
-							%>
-							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
-							<%
-									}
-								}
-							}else{
-								if(i==0||i>(orderPage.getTotalPages()-8)){
-							%>
-							<li class="<%if(i==orderPage.getPageNo()){%>active<%}%>"><a href="?page=<%=i%>"><%=i+1%></a></li>
-							<%
-							}else if(i==2){
-							%>
-							<li class=""><a href="javascript:">...</a></li>
-							<%
-												}
-											}
-
-										}
-
-									}
-								}
-								if(orderPage.getTotalPages()==orderPage.getPageNo()){
-							%>
-							<li class="next disabled"><a href="javascript:">尾页</a></li>
-							<%
-							}else{
-							%>
-							<li class="next"><a href="@searchParam()page=@{ pages - 1}">尾页</a></li>
-							<%
-								}
-							%>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<%
-				}
-			%>
+			<!--页码 start-->
+			<div id="pagin"></div>
+			<!--页码 end-->
 
 		</div>
 	</div>
 </section>
 
-
+<!-- 分页js -->
+<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 
 <script type="text/javascript">
+	var flag = true;
 	$("#between").daterangepicker({
 		locale: {
 			applyLabel: '确定',
@@ -231,18 +148,85 @@
 		$("input[type='checkbox']", "#orderTable").iCheck("check");
 	});
 
+	//显示分页条
+	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
+	$("#pagin").html(pageStr);
+
+
+
+	//加载带有查询条件的指定页的数据
+	function gotoPage(pageIndex,parcelCode,mailNum) {
+		//查询所有派件员
+		$.ajax({
+			type : "GET",  //提交方式
+			url : "/packageToSite/getOrderPage",//路径
+			data : {
+				"pageIndex" : pageIndex,
+				"status" : -1,
+				"parcelCode" : parcelCode,
+				"mailNum" : mailNum
+			},//数据，这里使用的是Json格式进行传输
+			success : function(dataObject) {//返回数据根据结果进行相应的处理
+				var tbody = $("#dataList");
+				// 清空表格数据
+				tbody.html("");
+
+				var dataList = dataObject.datas;
+				if(dataList != null){
+					var datastr = "";
+					for(var i = 0; i < dataList.length; i++){
+						datastr += getRowHtml(dataList[i]);
+					}
+					tbody.html(datastr);
+				}
+				//更新分页条
+				var pageStr = paginNav(pageIndex,  dataObject.totalPages, dataObject.totalCount);
+				$("#pagin").html(pageStr);
+				$("input[type='checkbox']").iCheck({
+					checkboxClass : 'icheckbox_square-blue'
+				});
+			},
+			error : function() {
+				alert("加载分页数据异常！");
+			}
+		});
+	}
+
+
+	//封装一行的数据
+	function getRowHtml(data){
+		var row = "<tr>";
+		row +=  "<td><input type='checkbox' value='" + data.id + "' name='id'></td>";
+		row +=  "<td>" + data.parcelCode + "</td>";
+		row += "<td>" + data.mailNum + "</td>";
+		row += "<td>" + data.orderNo + "</td>";
+		row += "<td>" + data.src + "</td>";
+		row += "<td>" + data.reciever.name + "</td>";
+		row += "<td>" + data.reciever.phone + "</td>";
+		row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+		row += "<td>" + data.src + "</td>";
+		row += "<td>" + data.src + "</td>";
+		if(data.orderStatus=="<%=OrderStatus.NOTARR%>"){
+			row += "<td>" + <%=ArriveStatus.NOTARR.getMessage()%> + "</td>";
+		}else{
+			row += "<td>" + <%=ArriveStatus.ARRIVED.getMessage()%> + "</td>";
+		}
+		row += "</tr>";
+		return row;
+	}
+
+
 	//回车事件
 	function enterPress(e){
 		if(!e) e = window.event;//火狐中是 window.event
 		if((e.keyCode || e.which) == 13){
-			var flg = true;
 			if($("#mailNum").val()!=null && $("#mailNum").val()!=""){
-				flg = checkOrderByMailNum($("#mailNum").val());
+				checkOrderByMailNum($("#mailNum").val());
 			}
-			if(flg){
-				$("#searchOrderForm").submit();
+			if($("#parcelCode").val()!=null && $("#parcelCode").val()!=""){
+				checkOrderParcelByParcelCode($("#parcelCode").val());
 			}
-//			$("#searchOrderForm").submit();
+			gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
 		}
 	}
 
@@ -260,20 +244,48 @@
 						if(response.orderStatus!="NOTARR" && response.orderStatus!=null){
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
-							return false;
+							flag = false;
 						}else{
+							$("#mailNumP").html("");
 							$("#mailNumP").attr("style","display:none");
-							return true;
+							flag = true;
 						}
 					}else{
-						$("#mailNumP").html("【异常扫描】包裹号不存在") ;
+						$("#mailNumP").html("【异常扫描】不存在此运单号") ;
 						$("#mailNumP").attr("style","color:red");
-						return false;
+						flag = false;
 					}
 				},
 				error: function(){
 					alert('服务器繁忙，请稍后再试！');
-					return false;
+					flag = false;
+				}
+			});
+		}
+	}
+	function checkOrderParcelByParcelCode(parcelCode){
+		if(parcelCode!=""){
+			$.ajax({
+				url: '/packageToSite/checkOrderParcelByParcelCode?parcelCode='+parcelCode,
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					if(response=="false"){
+						$("#parcelCodeP").html("【异常扫描】包裹号不存在") ;
+						$("#parcelCodeP").attr("style","color:red");
+						flag = false;
+					}else{
+						$("#parcelCodeP").html("扫描成功，请扫描运单号");
+						$("#parcelCodeP").attr("style","color:red");
+						flag = true;
+
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+					flag = false;
 				}
 			});
 		}

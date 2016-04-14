@@ -140,7 +140,7 @@
 				data: {},
 				success: function(response){
 					console.log(response);
-					if(response=="flase"){
+					if(response=="false"){
 						alert("您输入的帐号目前已存在，请重新输入");
 						$("#usernameFlag").val(0);
 					}else{
