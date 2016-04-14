@@ -13,6 +13,7 @@ import com.bbd.saas.api.UserService;
 import com.bbd.saas.dao.UserDao;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
 
 /**
@@ -68,8 +69,8 @@ public class UserServiceImpl implements UserService {
      * @param pageModel
      * @return
      */
-    public PageModel<User> findUserList(PageModel<User> pageModel){
-    	return userDao.findUserList(pageModel);
+    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO){
+    	return userDao.findUserList(pageModel,userQueryVO);
     }
     
     /**

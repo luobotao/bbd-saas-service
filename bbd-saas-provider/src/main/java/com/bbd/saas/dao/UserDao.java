@@ -3,6 +3,7 @@ package com.bbd.saas.dao;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
@@ -12,9 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.UserQueryVO;
 
 
 /**
@@ -43,12 +48,27 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @param PageModel<User>
      * @return PageModel<User>
      */
-    public PageModel<User> findUserList(PageModel<User> pageModel) {
+    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO) {
     	
     	Query<User> query = createQuery();
-        List<User> userList = find(createQuery().offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        
+    	if(userQueryVO!=null){
+    		if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
+    			query.filter("role", UserRole.status2Obj(userQueryVO.roleId)).filter("role <>", null);
+    		}
+    		if(userQueryVO.status!=null && userQueryVO.status!=-1){
+    			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status)).filter("userStatus <>", null);
+    		}
+    		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
+    			query.or(query.criteria("realName").equal(userQueryVO.keyword),query.criteria("realName").equal(null));
+    			query.or(query.criteria("phone").equal(userQueryVO.keyword),query.criteria("phone").equal(null));
+    		}
+        }
+    	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+
         pageModel.setDatas(userList);
         pageModel.setTotalCount(count(query));
+    	
         return pageModel;
     }
     

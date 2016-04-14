@@ -6,6 +6,7 @@ import org.mongodb.morphia.Key;
 
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
 
 /**
@@ -57,7 +58,7 @@ public interface UserService {
      * @param PageModel<User>
      * @return PageModel<User>
      */
-    public PageModel<User> findUserList(PageModel<User> pageModel);
+    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO);
     
     /**
      * Description: 获取指定站点下的所有用户
