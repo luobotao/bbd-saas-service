@@ -15,31 +15,32 @@ function paginNav(currPage, totalPage, count){
 		pagestr += "<li class='prev disabled'><a href='#'>上一页</a></li>";
 	}else{
 		pagestr += "<li class='prev'><a href='#' onclick=\"gotoPage(0);\">首页</a></li>";
-		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage(" + (currPage + 1) + ");\" title='上一页'>上一页</a></li>";
+		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage(" + (currPage - 1) + ");\" title='上一页'>上一页</a></li>";
 	}
 
 	if (totalPage > 1){
 		if (currPage<=5){
 			pagestr += setPageString(1, currPage, currPage);
 		}else{
+			pagestr += "<li><a href='#' onclick=\"gotoPage(0);\">1</a></li>";
 			pagestr += "<li><a>...</a></li>";
-			pagestr += setPageString((currPage - 3) , currPage, currPage);
+			pagestr += setPageString((currPage - 2) , currPage, currPage);
 		}
 
-		if (currPage>=totalPage-4 || totalPage-4<=0){
+		if (currPage>=totalPage-3 || totalPage-3<=0){
 			pagestr += setPageString((currPage + 1), totalPage, currPage);
 		}else{
-			pagestr += setPageString((currPage + 1), (currPage + 3), currPage);
+			pagestr += setPageString((currPage + 1), (currPage + 4), currPage);
 			pagestr += "<li><a>...</a></li>";
-			pagestr += "<li><a href='#' onclick=\"gotoPage("+totalPage+"\);\"'>"+totalPage+"</a></li> ";
+			pagestr += "<li><a href='#' onclick=\"gotoPage("+(totalPage - 1)+"\);\"'>"+totalPage+"</a></li> ";
 		}
 	}
-	if (currPage >= totalPage){
+	if (currPage >=(totalPage - 1)){
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>下一页</a></li>";
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>尾页</a></li>";
 	}else{
 		pagestr += "<li><a href='#' title='下一页'  onclick=\"gotoPage(" + (currPage + 1) + ");\">下一页</a></li>";
-		pagestr += "<li><a href='#' onclick=\"gotoPage(" + totalPage + ");\" title='尾页'>尾页</a></li>";
+		pagestr += "<li><a href='#' onclick=\"gotoPage(" + (totalPage - 1) + ");\" title='尾页'>尾页</a></li>";
 	}
 	pagestr += "</ul></div></div>";
 	return pagestr;
