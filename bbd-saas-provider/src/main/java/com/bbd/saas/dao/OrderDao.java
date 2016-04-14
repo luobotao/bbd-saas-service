@@ -31,7 +31,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
-        Query<Order> query = createQuery().order("dateUpd");
+        Query<Order> query = createQuery().order("-dateUpd");
         if(orderQueryVO!=null){
             if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){
                 if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站

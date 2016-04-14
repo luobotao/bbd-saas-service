@@ -203,7 +203,7 @@
 		row += "<td>" + data.reciever.name + "</td>";
 		row += "<td>" + data.reciever.phone + "</td>";
 		row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
-		row += "<td>" + data.src + "</td>";
+		row += "<td>" + data.datePrint + "</td>";
 		row += "<td>" + data.src + "</td>";
 		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){
 			row += "<td>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
@@ -225,7 +225,6 @@
 			if($("#parcelCode").val()!=null && $("#parcelCode").val()!=""){
 				checkOrderParcelByParcelCode($("#parcelCode").val());
 			}
-			gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
 		}
 	}
 
@@ -236,28 +235,28 @@
 				url: '<%=request.getContextPath()%>/packageToSite/checkOrderByMailNum?mailNum='+mailNum,
 				type: 'GET',
 				cache: false,
-				dataType: "text",
+				dataType: "json",
 				data: {},
 				success: function(response){
 					if(response!=null &&  response!=""){
+						console.log(response.orderStatus);
+						console.log(response.src);
+						console.log(response);
 						if(response.orderStatus!="NOTARR" && response.orderStatus!=null){
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
-							flag = false;
 						}else{
 							$("#mailNumP").html("");
 							$("#mailNumP").attr("style","display:none");
-							flag = true;
+							gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
 						}
 					}else{
 						$("#mailNumP").html("【异常扫描】不存在此运单号") ;
 						$("#mailNumP").attr("style","color:red");
-						flag = false;
 					}
 				},
 				error: function(){
 					alert('服务器繁忙，请稍后再试！');
-					flag = false;
 				}
 			});
 		}
@@ -265,7 +264,7 @@
 	function checkOrderParcelByParcelCode(parcelCode){
 		if(parcelCode!=""){
 			$.ajax({
-				url: '/packageToSite/checkOrderParcelByParcelCode?parcelCode='+parcelCode,
+				url: '<%=request.getContextPath()%>/packageToSite/checkOrderParcelByParcelCode?parcelCode='+parcelCode,
 				type: 'GET',
 				cache: false,
 				dataType: "text",
@@ -274,17 +273,14 @@
 					if(response=="false"){
 						$("#parcelCodeP").html("【异常扫描】包裹号不存在") ;
 						$("#parcelCodeP").attr("style","color:red");
-						flag = false;
 					}else{
 						$("#parcelCodeP").html("扫描成功，请扫描运单号");
 						$("#parcelCodeP").attr("style","color:red");
-						flag = true;
-
+						gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
 					}
 				},
 				error: function(){
 					alert('服务器繁忙，请稍后再试！');
-					flag = false;
 				}
 			});
 		}

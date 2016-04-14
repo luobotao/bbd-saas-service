@@ -31,15 +31,15 @@ function paginNav(currPage, totalPage, count){
 		}else{
 			pagestr += setPageString((parseInt(currPage) + 1), (parseInt(currPage) + 3), currPage);
 			pagestr += "<li><a>...</a></li>";
-			pagestr += "<li><a href='#' onclick=\"gotoPage('"+totalPage+"\');\"'>"+totalPage+"</a></li> ";
+			pagestr += "<li><a href='#' onclick=\"gotoPage('"+(parseInt(totalPage) - 1)+"\');\"'>"+totalPage+"</a></li> ";
 		}
 	}
-	if (currPage >= totalPage){
+	if (currPage >=(parseInt(totalPage) - 1)){
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>下一页</a></li>";
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>尾页</a></li>";
 	}else{
 		pagestr += "<li><a href='#' title='下一页'  onclick=\"gotoPage('" + (parseInt(currPage) + 1) + "');\">下一页</a></li>";
-		pagestr += "<li><a href='#' onclick=\"gotoPage('" + totalPage + "');\" title='尾页'>尾页</a></li>";
+		pagestr += "<li><a href='#' onclick=\"gotoPage('" + (parseInt(totalPage) - 1) + "');\" title='尾页'>尾页</a></li>";
 	}
 	pagestr += "</ul></div></div>";
 	return pagestr;
