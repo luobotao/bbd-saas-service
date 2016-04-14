@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Dates {
-    private static final Map<String, SimpleDateFormat> formatCache = new ConcurrentHashMap<>();
+    private static final Map<String, SimpleDateFormat> formatCache = new ConcurrentHashMap<String, SimpleDateFormat>();
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
     private static final SimpleDateFormat CHINESE_DATE_FORMAT = new SimpleDateFormat("yyyy年MM月dd日");

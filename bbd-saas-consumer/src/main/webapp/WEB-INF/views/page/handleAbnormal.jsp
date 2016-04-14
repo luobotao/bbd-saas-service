@@ -80,10 +80,10 @@
 					<td><%=order.getUser().getPhone()%></td>
 					<td><%=order.getExpressStatus()%></td>
 					<td>
-						<button onclick="showCourierDiv()">重新分派</button>
-						<button onclick="showOtherExpressDiv()">转其他快递</button>
-						<button onclick="showOtherSiteDiv()">转其他站点</button>
-						<button onclick="showApplyReturnDiv()">申请退货</button>
+						<a href="javascript:void(0);" onclick="showCourierDiv()">重新分派</a>
+						<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
+						<a href="javascript:void(0);" onclick="showOtherSiteDiv()">转其他站点</a>
+						<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
 					</td>
 					
 				</tr>
@@ -233,23 +233,9 @@ function gotoPage(pageIndex) {
             "courierId" : $("#courierId").val(), */ 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
-            console.log("dataObject==="+dataObject);
-            var tbody = $("#dataList");
-            // 清空表格数据
-            tbody.html("");
-            
             var dataList = dataObject.datas;
-			if(dataList != null){
-				var datastr = "";
-				for(var i = 0; i < dataList.length; i++){
-					datastr += getRowHtml(dataList[i]);
-				}
-				tbody.html(datastr);
-			} 
-			//更新分页条
-			var pageStr = paginNav(pageIndex, <%=totalPage%>, <%=count%>);
-			console.log("pageIndex===" + pageIndex + "  totalPage===" + <%=totalPage%> + "  count===" + <%=count%>);
-			$("#pagin").html(pageStr);
+            //刷新列表和分页条
+            refreshTable(dataList, pageIndex);
 		},
         error : function() {  
            	alert("加载分页数据异常，请重试！");  
@@ -266,10 +252,29 @@ function getRowHtml(data){
 	row += "<td>" + data.user.realName + "</td>";
 	row += "<td>" + data.user.phone + "</td>";
 	row += "<td>" + data.user.expressStatus + "</td>";
-	row += "<td>" + data.user.expressStatus + "</td>";			
+	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(" + data.user.expressStatus + ")'>重新分派</a>";
+	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(" + data.user.expressStatus + ")'>转其他快递</a>";
+	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(" + data.user.expressStatus + ")'>转其他站点</a>";
+	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(" + data.user.expressStatus + ")'>申请退货</a></td>";
 	row += "</tr>";
 	return row;
 }
+//刷新列表和分页条
+function refreshTable(dataList, pageIndex){
+	//更新列表
+	var tbody = $("#dataList");
+    if(dataList != null){
+		var datastr = "";
+		for(var i = 0; i < dataList.length; i++){
+			datastr += getRowHtml(dataList[i]);
+		}
+		tbody.html(datastr);
+	} 
+	//更新分页条
+	var pageStr = paginNav(pageIndex, <%=totalPage%>, <%=count%>);
+	$("#pagin").html(pageStr);        
+}
+
 /************************分页条***************结束***************************************/	
 
 /************************初始化各个操作面板***************开始***************************************/
@@ -365,7 +370,6 @@ function hideCourierDiv() {
 }
 //重新分派
 function chooseCourier(mailNum) {
-	//$("#courier").text($("#courier_select").val());
 	//保存分派信息
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -378,7 +382,10 @@ function chooseCourier(mailNum) {
         	if(data.success){
         		alert("分派成功，刷新列表！");  
         		//分派成功，刷新列表！
-        		
+        		//获取当前页
+    			var pageIndex = parseInt($(".pagination .active a").html())-1;
+    			//console.log("pageIndex==="+pageIndex);
+        		gotoPage(pageIndex);
         	}else{
         		alert("重新分派失败，请重新分派！");  
         	}
@@ -401,7 +408,7 @@ function hideOtherExpressDiv() {
 	$("#chooseOtherExpress_div").hide();
 }
 //选择其他快递
-function chooseOtherExpress() {
+function chooseOtherExpress(mailNum) {
 	//转其他快递公司
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -414,7 +421,10 @@ function chooseOtherExpress() {
         	if(data.success){
         		alert("已转到其他快递！");  
         		//已转到其他快递，刷新列表！
-        		
+        		//获取当前页
+    			var pageIndex = parseInt($(".pagination .active a").html())-1;
+    			//console.log("pageIndex==="+pageIndex);
+        		gotoPage(pageIndex);
         	}else{
         		alert("转到其他快递失败，请重新选择快递公司！");  
         	}
@@ -436,7 +446,7 @@ function hideOtherSiteDiv() {
 	$("#chooseOtherSite_div").hide();
 }
 //转其他站点
-function chooseOtherSite() {
+function chooseOtherSite(mailNum) {
 	//转其他站点
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -449,7 +459,10 @@ function chooseOtherSite() {
         	if(data.success){
         		alert("已转到其他站点！");  
         		//已转到其他快递，刷新列表！
-        		
+        		//获取当前页
+    			var pageIndex = parseInt($(".pagination .active a").html())-1;
+    			//console.log("pageIndex==="+pageIndex);
+        		gotoPage(pageIndex);
         	}else{
         		alert("转到其他站点失败，请重新选择站点公司！");  
         	}
@@ -471,7 +484,7 @@ function hideApplyReturnDiv() {
 	$("#apply_return_div").hide();
 }
 //确定退货
-function applyReturn() {
+function applyReturn(mailNum) {
 	//保存退货信息
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -485,7 +498,10 @@ function applyReturn() {
         	if(data.success){
         		alert("退货成功！");  
         		//退货成功，刷新列表！
-        		
+        		//获取当前页
+    			var pageIndex = parseInt($(".pagination .active a").html())-1;
+    			//console.log("pageIndex==="+pageIndex);
+        		gotoPage(pageIndex);
         	}else{
         		alert("退货失败，请重试！");  
         	}

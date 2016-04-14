@@ -111,7 +111,7 @@ public class PackageDispatchController {
 		
 		//====================start================================
 		//查询运单信息
-		Order order = orderService.findOneByMailNum(mailNum);
+		Order order = orderService.findOneByMailNum("", mailNum);
 		if(order != null){
 			//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
 			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())

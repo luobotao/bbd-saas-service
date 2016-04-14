@@ -32,28 +32,33 @@
 	<div class="col-xs-12">
 		<!-- 订单数显示 结束   -->
 		<div class="box-body">
-			<form action="<%=path%>/dataQuery/exportData" method="post" id="searchOrderForm" name="searchOrderForm">
-				<div class="row">
-					<div class="col-xs-3">
-						<label>状态：</label>
-						<select id="status" name="status" class="form-control">
-							<%=OrderStatus.Srcs2HTML(-1)%>
-						</select>
-					</div>
-					<div class="col-xs-3">
-						<label>到站时间：</label>
-						<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value="${between}"/>
-					</div>
-					<div class="col-xs-3">
-						<label>运单号：</label>
-						<input id="mailNum" name="mailNum" type="text"  class="form-control" placeholder="请输入运单号"/>
-					</div>
+					
+			<div class="row">
+				<div class="col-xs-3">
+					<label>状态：</label>
+					<select id="status" name="status" class="form-control">
+						<%=OrderStatus.Srcs2HTML(-1)%>
+					</select>
 				</div>
-				<div class="row">
-					<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="gotoPage(0);">查询</button>
-					<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="exportData();">导出</button>
+				<div class="col-xs-3">
+					<label>到站时间：</label>
+					<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value="${between}"/>
 				</div>
-			</form>
+				<div class="col-xs-3">
+					<label>运单号：</label>
+					<input id="mailNum" name="mailNum" type="text"  class="form-control" placeholder="请输入运单号"/>
+				</div>
+			</div>
+			<div class="row">
+				<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="gotoPage(0);">查询</button>
+				<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="exportData();">导出</button>
+				<!-- 用于导出 -->
+				<form action="<%=request.getContextPath()%>/dataQuery/exportData" method="post" id="exptForm">
+					<input id="status_expt" name="status" type="hidden" />
+					<input id="between_expt" name="between" type="hidden" />
+					<input id="mailNum_expt" name="mailNum" type="hidden" />
+				</form>
+			</div>
 		</div>
 	</div>
 	<div class="col-xs-12">
@@ -161,7 +166,7 @@ function gotoPage(pageIndex) {
             "courierId" : $("#courierId").val(), */ 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
-            console.log("dataObject==="+dataObject);
+            //console.log("dataObject==="+dataObject);
             var tbody = $("#dataList");
             // 清空表格数据
             tbody.html("");
@@ -176,7 +181,7 @@ function gotoPage(pageIndex) {
 			} 
 			//更新分页条
 			var pageStr = paginNav(pageIndex, <%=totalPage%>, <%=count%>);
-			console.log("pageIndex===" + pageIndex + "  totalPage===" + <%=totalPage%> + "  count===" + <%=count%>);
+			//console.log("pageIndex===" + pageIndex + "  totalPage===" + <%=totalPage%> + "  count===" + <%=count%>);
 			$("#pagin").html(pageStr);
 		},
         error : function() {  
@@ -212,7 +217,10 @@ function getRowHtml(data){
 
 //导出数据
 function exportData() {
-	
+	$("#status_expt").val($("#status").val());
+	$("#between_expt").val($("#between").val());
+	$("#mailNum_expt").val($("#mailNum").val());
+	$("#exptForm").submit();
 }	
 	
 	
