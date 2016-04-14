@@ -44,8 +44,7 @@
 						<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value="${between}"/>
 					</div>
 					<div >
-						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="submit">查询</button>
-
+						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="gotoPage(0);">查询</button>
 					</div>
 				</div>
 			</form>
@@ -61,7 +60,7 @@
 			</div>
 			
 			<div class="col-xs-4">
-				扫描运单号：<input id="waybillId" name="waybillId" type="text" /></span>
+				扫描运单号：<input id="waybillId" name="waybillId" type="text" placeholder="请扫描运单号"/></span>
 			    <span class="pl20 ft12" id="waybillId_check"> </span>		
 			</div>
 		</div>
