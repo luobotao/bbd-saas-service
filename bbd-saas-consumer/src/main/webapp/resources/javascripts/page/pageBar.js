@@ -15,13 +15,14 @@ function paginNav(currPage, totalPage, count){
 		pagestr += "<li class='prev disabled'><a href='#'>上一页</a></li>";
 	}else{
 		pagestr += "<li class='prev'><a href='#' onclick=\"gotoPage('0');\">首页</a></li>";
-		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage('" + (parseInt(currPage) + 1) + "');\" title='上一页'>上一页</a></li>";
+		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage('" + (parseInt(currPage) - 1) + "');\" title='上一页'>上一页</a></li>";
 	}
 
 	if (totalPage > 1){
 		if (currPage<=5){
 			pagestr += setPageString(1, currPage, currPage);
 		}else{
+			pagestr += "<li><a href='#' onclick=\"gotoPage('0');\">1</a></li>";
 			pagestr += "<li><a>...</a></li>";
 			pagestr += setPageString((parseInt(currPage) - 3) , currPage, currPage);
 		}
