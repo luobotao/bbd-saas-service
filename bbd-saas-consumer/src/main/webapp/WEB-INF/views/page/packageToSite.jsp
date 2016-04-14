@@ -2,6 +2,7 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
+<%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
@@ -22,7 +23,6 @@
 	<div class="col-xs-12">
 		<!-- 订单数显示 结束   -->
 		<div class="box-body">
-			<form action="?" method="get" id="searchOrderForm" name="searchOrderForm">
 				<div class="row">
 					<div class="col-xs-3">
 						<label>状态：</label>
@@ -35,10 +35,9 @@
 						<input id="between" name="between" type="text" class="form-control" placeholder="请选择预计到站时间" value=""/>
 					</div>
 					<div >
-						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="submit">查询</button>
+						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="button" onclick="searchOrder()">查询</button>
 					</div>
 				</div>
-			</form>
 			<div class="row">
 				<div class="col-xs-3">
 					<label>扫描包裹号：</label>
@@ -50,7 +49,6 @@
 					<input id="mailNum" name="mailNum" type="text" onkeypress="enterPress(event)"/>
 					<p class="help-block" id="mailNumP" style="display:none;"></p>
 				</div>
-				<span class=""><input id="batchToSite" name="batchToSite" type="button" value="批量到站"/></span>
 			</div>
 		</div>
 	</div>
@@ -79,7 +77,7 @@
 					for(Order order : orderPage.getDatas()){
 				%>
 				<tr>
-					<td><input type="checkbox" value="<%=order.getId()%>" name="id"></td>
+					<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
 					<td><%=order.getParcelCode()%></td>
 					<td><%=order.getMailNum()%></td>
 					<td><%=order.getOrderNo()%></td>
@@ -87,8 +85,8 @@
 					<td><%=order.getReciever().getName()%></td>
 					<td><%=order.getReciever().getPhone()%></td>
 					<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-					<td><%=order.getDatePrint()%></td>
-					<td>2016-04-06</td>
+					<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>
+					<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 					<%
 						if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
 					%>
@@ -106,10 +104,31 @@
 				%>
 				</tbody>
 				<tfoot>
-				<th colspan="13">
-					<input id="selectAll" name="selectAll" type="checkbox"> <label for="selectAll">
-					全选</label> &nbsp;
-				</th>
+					<th colspan="13">
+						<input id="selectAll" name="selectAll" type="checkbox"> <label for="selectAll">
+						全选</label> &nbsp;
+						<a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#batchToSite"><i class="fa fa-bolt"></i> 批量到站</a>
+					</th>
+					<div class="modal fade" id="batchToSite" tabindex="-1" role="dialog" aria-hidden="true">
+						<div class="modal_wrapper">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+										<h4 class="modal-title" id="activeUserLabel">确认信息</h4>
+									</div>
+									<div class="modal-body">
+										确认批量到站？<br>
+										该操作会把选中的订单设置为已到站。
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+										<button id="enableSelect" type="button" class="btn btn-primary">确认</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</tfoot>
 			</table>
 
@@ -123,6 +142,7 @@
 
 <!-- 分页js -->
 <script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
+<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 
 <script type="text/javascript">
 	var flag = true;
@@ -155,13 +175,14 @@
 
 
 	//加载带有查询条件的指定页的数据
-	function gotoPage(pageIndex,parcelCode,mailNum) {
+	function gotoPage(pageIndex,parcelCode,mailNum,arriveStatus,between) {
 		$.ajax({
 			type : "GET",  //提交方式
 			url : "<%=request.getContextPath()%>/packageToSite/getOrderPage",//路径
 			data : {
 				"pageIndex" : pageIndex,
-				"status" : -1,
+				"arriveStatus" : arriveStatus,
+				"between" : between,
 				"parcelCode" : parcelCode,
 				"mailNum" : mailNum
 			},//数据，这里使用的是Json格式进行传输
@@ -195,7 +216,7 @@
 	//封装一行的数据
 	function getRowHtml(data){
 		var row = "<tr>";
-		row +=  "<td><input type='checkbox' value='" + data.id + "' name='id'></td>";
+		row +=  "<td><input type='checkbox' value='" + data.mailNum + "' name='id'></td>";
 		row +=  "<td>" + data.parcelCode + "</td>";
 		row += "<td>" + data.mailNum + "</td>";
 		row += "<td>" + data.orderNo + "</td>";
@@ -203,8 +224,8 @@
 		row += "<td>" + data.reciever.name + "</td>";
 		row += "<td>" + data.reciever.phone + "</td>";
 		row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
-		row += "<td>" + data.datePrint + "</td>";
-		row += "<td>" + data.src + "</td>";
+		row += "<td>" + getDate1(data.datePrint) + "</td>";
+		row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){
 			row += "<td>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
 		}else{
@@ -215,11 +236,18 @@
 	}
 
 
+	//查询按钮事件
+	function searchOrder(){
+		$("#parcelCode").val("");
+		$("#mailNum").val("");
+		gotoPage(0,'','',$('#arriveStatus option:selected').val(),$("#between").val());
+	}
 	//回车事件
 	function enterPress(e){
 		if(!e) e = window.event;//火狐中是 window.event
 		if((e.keyCode || e.which) == 13){
 			if($("#mailNum").val()!=null && $("#mailNum").val()!=""){
+				$("#parcelCode").val("");
 				checkOrderByMailNum($("#mailNum").val());
 			}
 			if($("#parcelCode").val()!=null && $("#parcelCode").val()!=""){
@@ -239,9 +267,6 @@
 				data: {},
 				success: function(response){
 					if(response!=null &&  response!=""){
-						console.log(response.orderStatus);
-						console.log(response.src);
-						console.log(response);
 						if(response.orderStatus!="NOTARR" && response.orderStatus!=null){
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
@@ -256,7 +281,8 @@
 					}
 				},
 				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+					$("#mailNumP").html("【异常扫描】不存在此运单号") ;
+					$("#mailNumP").attr("style","color:red");
 				}
 			});
 		}
@@ -280,10 +306,50 @@
 					}
 				},
 				error: function(){
+					$("#parcelCodeP").html("【异常扫描】不存在此包裹号");
+					$("#parcelCodeP").attr("style","color:red");
+				}
+			});
+		}
+	}
+
+
+	//批量到货确认button
+	$('#enableSelect').on('click', confirmFunction);
+
+	function confirmFunction(){
+		var checkids = $('input[name="id"]:checked');
+		var ids = [];
+		var flag=true;
+		if(checkids.length) {
+			$.each(checkids, function(i, n){
+				if(!$(n).closest('tr').find('.status .label').hasClass('label-success')) {
+					ids.push($(n).val());
+				}
+			});
+		}
+		if(ids.length>0){
+			var url = "<c:url value="/packageToSite/arriveBatch?${_csrf.parameterName}=${_csrf.token}" />";
+			$.ajax({
+				url: url,
+				type: 'POST',
+				cache: false,
+				dataType: "json",
+				data: {
+					"ids" : JSON.stringify(ids)
+				},
+				success: function(json){
+					alert('aaa！');
+					location.reload();
+
+				},
+				error: function(){
 					alert('服务器繁忙，请稍后再试！');
 				}
 			});
 		}
+
+
 	}
 </script>
 </body>
