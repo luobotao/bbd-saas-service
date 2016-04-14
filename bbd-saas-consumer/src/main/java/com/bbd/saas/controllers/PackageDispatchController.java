@@ -1,5 +1,6 @@
 package com.bbd.saas.controllers;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,9 @@ import com.bbd.saas.api.UserService;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.FormatDate;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.StrTool;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserVO;
 
@@ -47,15 +50,11 @@ public class PackageDispatchController {
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String between, String courierId, Model model) {
+		between = StrTool.initStr(between, FormatDate.getBetweenTime(new Date(), -2));
 		PageModel<Order> orderPage = getList(pageIndex, status, between, courierId);
 		logger.info(orderPage+"=========");
-		model.addAttribute("username", "张三");
 		model.addAttribute("orderPage", orderPage);
-		
-		UserVO uservo = new UserVO();
-		//uservo.setId(new ObjectId("5546548"));
-		uservo.setLoginName("loginName");
-		uservo.setPhone("12345678945");
+		model.addAttribute("between", between);
 		
 		return "page/packageDispatch";
 	}
@@ -69,6 +68,10 @@ public class PackageDispatchController {
 		}
 		if(status == null){
 			status = -1;
+		}
+		//功能做完需要删除between
+		if(between != null){
+			between = null;
 		}
 		
 		PageModel<Order> pageModel = new PageModel<>();
@@ -88,11 +91,10 @@ public class PackageDispatchController {
 			order.setUser(user);
 		}
 		//分页信息
-		orderPage.setPageSize(10);
+		/*orderPage.setPageSize(10);
 		orderPage.setTotalCount(25);
 		orderPage.setPageNo(pageIndex);
-		//orderPage.setTotalPages(10);
-		
+		*/
 		return orderPage;
 	}
 	

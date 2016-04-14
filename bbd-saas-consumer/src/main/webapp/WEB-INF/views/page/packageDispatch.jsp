@@ -41,7 +41,7 @@
 					</div>
 					<div class="col-xs-3">
 						<label>到站时间：</label>
-						<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value=""/>
+						<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value="${between}"/>
 					</div>
 					<div >
 						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="submit">查询</button>
