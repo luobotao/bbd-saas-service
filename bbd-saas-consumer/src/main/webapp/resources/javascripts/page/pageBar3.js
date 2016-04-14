@@ -1,5 +1,6 @@
-//***************分页条******开始**********/
 
+/********currPage, totalPage, count 传入数字类型的参数*********/
+//***************分页条******开始**********/
 function paginNav(currPage, totalPage, count){
 	var pagestr = "";
 	pagestr += "<div class='col-xs-6'>"; /* pagecon pagination pagination-centered */
@@ -9,7 +10,7 @@ function paginNav(currPage, totalPage, count){
 	pagestr += "<div>";
 	pagestr += "<div class='dataTables_paginate paging_bootstrap'>";
 	pagestr += "<ul class='pagination'>";
-
+	//首页和上一页
 	if (currPage < 1){
 		pagestr += "<li class='prev disabled'><a href='#'>首页</a></li>";
 		pagestr += "<li class='prev disabled'><a href='#'>上一页</a></li>";
@@ -17,8 +18,9 @@ function paginNav(currPage, totalPage, count){
 		pagestr += "<li class='prev'><a href='#' onclick=\"gotoPage(0);\">首页</a></li>";
 		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage(" + (currPage - 1) + ");\" title='上一页'>上一页</a></li>";
 	}
-
+	//当前页之前的页数-当前页-当前页之后的页数
 	if (totalPage > 1){
+		//当前页之前的页数
 		if (currPage<=5){
 			pagestr += setPageString(1, currPage, currPage);
 		}else{
@@ -26,7 +28,7 @@ function paginNav(currPage, totalPage, count){
 			pagestr += "<li><a>...</a></li>";
 			pagestr += setPageString((currPage - 2) , currPage, currPage);
 		}
-
+		//当前页之后的页数
 		if (currPage>=totalPage-4 || totalPage-4<=0){
 			pagestr += setPageString((currPage + 1), totalPage, currPage);
 		}else{
@@ -35,6 +37,7 @@ function paginNav(currPage, totalPage, count){
 			pagestr += "<li><a href='#' onclick=\"gotoPage("+(totalPage - 1)+"\);\"'>"+totalPage+"</a></li> ";
 		}
 	}
+	//下一页和尾页
 	if (currPage >=(totalPage - 1)){
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>下一页</a></li>";
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>尾页</a></li>";

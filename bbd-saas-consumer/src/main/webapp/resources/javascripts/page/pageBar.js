@@ -1,5 +1,5 @@
+/********currPage, totalPage, count 传入字符串类型的参数*********/
 //***************分页条******开始**********/
-
 function paginNav(currPage, totalPage, count){
 	var pagestr = "";
 	pagestr += "<div class='col-xs-6'>"; /* pagecon pagination pagination-centered */
