@@ -156,10 +156,9 @@
 
 	//加载带有查询条件的指定页的数据
 	function gotoPage(pageIndex,parcelCode,mailNum) {
-		//查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式
-			url : "/packageToSite/getOrderPage",//路径
+			url : "<%=request.getContextPath()%>/packageToSite/getOrderPage",//路径
 			data : {
 				"pageIndex" : pageIndex,
 				"status" : -1,
@@ -206,7 +205,7 @@
 		row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 		row += "<td>" + data.src + "</td>";
 		row += "<td>" + data.src + "</td>";
-		if(data.orderStatus=="<%=OrderStatus.NOTARR%>"){
+		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){
 			row += "<td>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
 		}else{
 			row += "<td>" + "<%=ArriveStatus.ARRIVED.getMessage()%>" + "</td>";
@@ -234,7 +233,7 @@
 	function checkOrderByMailNum(mailNum){
 		if(mailNum!=""){
 			$.ajax({
-				url: '/packageToSite/checkOrderByMailNum?mailNum='+mailNum,
+				url: '<%=request.getContextPath()%>/packageToSite/checkOrderByMailNum?mailNum='+mailNum,
 				type: 'GET',
 				cache: false,
 				dataType: "text",
