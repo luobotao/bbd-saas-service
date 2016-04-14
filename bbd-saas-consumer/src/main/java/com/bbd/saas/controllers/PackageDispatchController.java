@@ -30,7 +30,9 @@ import com.bbd.saas.vo.UserVO;
 @RequestMapping("/packageDispatch")
 @SessionAttributes("packageDispatch")
 public class PackageDispatchController {
-	public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+	
+	public static final Logger logger = LoggerFactory.getLogger(PackageDispatchController.class);
+	
 	@Autowired
 	OrderService orderService;
 	@Autowired
@@ -90,7 +92,6 @@ public class PackageDispatchController {
 		for(Order order : datas){
 			order.setUser(user);
 		}
-		
 		return orderPage;
 	}
 	
