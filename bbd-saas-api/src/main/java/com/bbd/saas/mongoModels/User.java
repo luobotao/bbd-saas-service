@@ -39,6 +39,8 @@ public class User implements Serializable {
     private UserStatus userStatus;//状态标识 1启用,0停用 
     private Date dateAdd;//创建时间
     private Date dateLogin;//最后一次登录时间
+    @Transient 
+    private int roleStatus;
 
     public ObjectId getId() {
         return id;
@@ -151,5 +153,14 @@ public class User implements Serializable {
 	public void setUserStatus(UserStatus userStatus) {
 		this.userStatus = userStatus;
 	}
+
+	public int getRoleStatus() {
+		return roleStatus;
+	}
+
+	public void setRoleStatus(int roleStatus) {
+		this.roleStatus = roleStatus;
+	}
+
 	
 }
