@@ -64,7 +64,7 @@ public class PackageDispatchController {
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<Order> getList(Integer pageIndex, Integer status, String between, String courierId) {
 		if(pageIndex == null){
-			pageIndex = 1;
+			pageIndex = 0;
 		}
 		if(status == null){
 			status = -1;
@@ -75,7 +75,7 @@ public class PackageDispatchController {
 		}
 		
 		PageModel<Order> pageModel = new PageModel<>();
-		pageModel.setPageSize(2);
+		pageModel.setPageSize(10);
 		pageModel.setPageNo(pageIndex);
 		
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
@@ -90,11 +90,7 @@ public class PackageDispatchController {
 		for(Order order : datas){
 			order.setUser(user);
 		}
-		//分页信息
-		/*orderPage.setPageSize(10);
-		orderPage.setTotalCount(25);
-		orderPage.setPageNo(pageIndex);
-		*/
+		
 		return orderPage;
 	}
 	
@@ -140,6 +136,14 @@ public class PackageDispatchController {
 		map.put("operFlag", 2); //0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:拒收运单重新分派--。
 		return map;
 	}
+	/**
+	 * Description: 保存派件员信息
+	 * @param order 订单
+	 * @param courierId 派件员
+	 * @param map
+	 * @author: liyanlei
+	 * 2016年4月14日上午11:00:59
+	 */
 	private void saveOrderMail(Order order, String courierId, Map<String, Object> map){
 		//查询派件员信息
 		User user = userService.findOne(courierId);

@@ -34,9 +34,11 @@ public class Constants implements Serializable {
 	//日期格式==>年-月-日
 	public static final String DATE_PATTERN_YM3 = "MM-dd";
 	//日期格式==>年-月-日
-	public static final String DATE_PATTERN_YMD = "yyyy-MM-dd";
-	public static final String DATE_PATTERN_YMDT = "yyyy-MM-dd HH:mm:ss";
-	public static final String DATE_PATTERN_YMDT2 = "yyyyMMddHHmmss";
+	public static final String DATE_PATTERN_YMD = "yyyy/MM/dd";
+	public static final String DATE_PATTERN_YMD2 = "yyyy-MM-dd";
+	public static final String DATE_PATTERN_YMDT = "yyyy/MM/dd HH:mm:ss";
+	public static final String DATE_PATTERN_YMDT2 = "yyyy-MM-dd HH:mm:ss";
+	public static final String DATE_PATTERN_YMDT3 = "yyyyMMddHHmmss";
 		
 	//日期格式==>年-月-日
 	public static final String DATE_PATTERN_YYYY = "yyyy年MM月dd日";

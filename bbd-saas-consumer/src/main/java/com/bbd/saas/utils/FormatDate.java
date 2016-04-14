@@ -2986,7 +2986,7 @@ public class FormatDate {
 	public static String getBetweenTime(Date date, int diff){
 		StringBuffer between = new StringBuffer();
 		between.append(dateToString(date, Constants.DATE_PATTERN_YMD));
-		between.append("--");
+		between.append(" - ");
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		calendar.add(Calendar.DATE, diff);// 把日期往后增加diff天.整数往后推,负数往前移动

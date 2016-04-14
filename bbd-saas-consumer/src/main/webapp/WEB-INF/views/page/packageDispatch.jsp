@@ -178,9 +178,7 @@ $(document).ready(function() {
 	});
 	//显示分页条
 	var pageStr = paginNav(<%=currentPage%>, <%=totalPage%>, <%=count%>);
-	console.log("totalPage==="+<%=totalPage%>);
 	$("#pagin").html(pageStr);
-	//$("#pagin").html(paginNav(currPage, totalPage, count))
 	
 	//初始化派件员下拉框（快递员）
 	initCourier();  
