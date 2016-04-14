@@ -37,7 +37,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("-dateUpd");
         if(orderQueryVO!=null){
-            if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
+            if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
             if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){

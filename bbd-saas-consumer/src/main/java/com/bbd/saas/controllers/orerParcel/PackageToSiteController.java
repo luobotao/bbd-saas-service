@@ -5,10 +5,12 @@ import com.bbd.saas.api.OrderPacelService;
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.api.UserService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.ArriveStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
@@ -24,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
 import java.util.Date;
 
 @Controller
@@ -107,18 +110,26 @@ public class PackageToSiteController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model,HttpServletRequest request,
-						@RequestParam(value = "arriveStatus", required = false, defaultValue = "-1") Integer arriveStatus,
-						@RequestParam(value = "between", required = false) String between,
-						@RequestParam(value = "parcelCode", required = false) String parcelCode,
-						@RequestParam(value = "mailNum", required = false)String mailNum) {
+	public String index(Model model,HttpServletRequest request) {
 
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.add(Calendar.DATE, -1);
+		String start = Dates.formatSimpleDate(cal.getTime());
+		cal.add(Calendar.DATE, 2);
+		String end = Dates.formatSimpleDate(cal.getTime());
+		String between =start+" - "+end;
 		User user = adminService.get(UserSession.get(request));
 		OrderNumVO orderNumVO = orderService.getOrderNumVO(user.getSite().getAreaCode());
 
-		PageModel<Order> orderPage = getOrderPage(request,0,arriveStatus,between,parcelCode,mailNum);
+		PageModel<Order> orderPage = getOrderPage(request,0, -1,between,"","");
 
 		model.addAttribute("orderPage", orderPage);
+		model.addAttribute("between", between);
 		//未到站订单数
 		model.addAttribute("non_arrival_num", orderNumVO.getNoArrive());
 		model.addAttribute("history_non_arrival_num", orderNumVO.getNoArriveHis());
