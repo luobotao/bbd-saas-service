@@ -16,12 +16,13 @@ public interface OrderService {
 
 	/**
 	 * Description: 根据运单号查询订单信息
+	 * @param areaCode 站点编码（可为空，为空则所有站点）
 	 * @param mailNum 运单号
 	 * @return
 	 * @author: liyanlei
 	 * 2016年4月12日下午3:38:38
 	 */
-	Order findOneByMailNum(String mailNum);
+	Order findOneByMailNum(String areaCode,String mailNum);
 
 	/**
 	 * 带查询条件去检索订单

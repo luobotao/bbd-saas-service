@@ -32,8 +32,8 @@ public class OrderParcelServiceImpl implements OrderPacelService {
     }
 
 	@Override
-	public OrderParcel findOrderParcelByParcelCode(String parcelCode) {
-		return orderParcelDao.findOne("parcelCode",parcelCode);
+	public OrderParcel findOrderParcelByParcelCode(String areaCode,String parcelCode) {
+		return orderParcelDao.findOrderParcelByParcelCode(areaCode,parcelCode);
 	}
 
 

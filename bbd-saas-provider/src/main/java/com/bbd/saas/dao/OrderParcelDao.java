@@ -4,6 +4,7 @@ import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -33,8 +34,11 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
             return "";
     }
 
-
-    public OrderParcel findOrderParcelByParcelCode(String parcelCode) {
-        return findOne(createQuery().filter("parcelCode",parcelCode));
+    public OrderParcel findOrderParcelByParcelCode(String areaCode,String parcelCode) {
+        Query<OrderParcel> query = createQuery();
+        if(StringUtils.isNotBlank(areaCode))
+            query.filter("areaCode",areaCode);
+        query.filter("parcelCode",parcelCode);
+        return findOne(query);
     }
 }

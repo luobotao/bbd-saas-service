@@ -7,12 +7,10 @@ import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +24,7 @@ import java.util.List;
 
 /**
  * Created by luobotao on 2016/4/1.
- * 管理员接口
+ * 订单DAO
  */
 @Repository
 public class OrderDao extends BaseDAO<Order, ObjectId> {
@@ -39,6 +37,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("-dateUpd");
         if(orderQueryVO!=null){
+            if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
+                query.filter("areaCode", orderQueryVO.areaCode);
+            }
             if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){
                 if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站
                     query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
@@ -67,9 +68,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
 
     public OrderNumVO getOrderNumVO(String areaCode) {
         OrderNumVO orderNumVO = new OrderNumVO();
-        Query<Order> query = createQuery();
-        Query<Order> queryArrive = createQuery();
-//        Query<Order> query = createQuery().filter("areaCode",areaCode);
+        Query<Order> query = createQuery().filter("areaCode",areaCode);
+        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode);
         query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         query.filter("dateUpd <=",new Date());
@@ -94,5 +94,13 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.or(query.criteria("orderStatus").equal(orderStatusOld),query.criteria("orderStatus").equal(null));
         }
         return update(query,createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date()));
+    }
+
+    public Order findOneByMailNum(String areaCode, String mailNum) {
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(areaCode))
+            query.filter("areaCode",areaCode);
+        query.filter("mailNum",mailNum);
+        return findOne(query);
     }
 }

@@ -41,13 +41,15 @@ public class PackageToSiteController {
 
 	@ResponseBody
 	@RequestMapping(value="/checkOrderByMailNum", method=RequestMethod.GET)
-	public Order checkOrderByMailNum(@RequestParam(value = "mailNum", required = true) String mailNum) {
-		return orderService.findOneByMailNum(mailNum);
+	public Order checkOrderByMailNum(HttpServletRequest request,@RequestParam(value = "mailNum", required = true) String mailNum) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		return orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum);
 	}
 	@ResponseBody
 	@RequestMapping(value="/checkOrderParcelByParcelCode", method=RequestMethod.GET)
-	public boolean checkOrderParcelByParcelCode(@RequestParam(value = "parcelCode", required = true) String parcelCode) {
-		OrderParcel orderParcel =  orderPacelService.findOrderParcelByParcelCode(parcelCode);
+	public boolean checkOrderParcelByParcelCode(HttpServletRequest request,@RequestParam(value = "parcelCode", required = true) String parcelCode) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		OrderParcel orderParcel =  orderPacelService.findOrderParcelByParcelCode(user.getSite().getAreaCode(),parcelCode);
 		if(orderParcel==null)
 			return false;
 		else
@@ -56,10 +58,10 @@ public class PackageToSiteController {
 
 	@ResponseBody
 	@RequestMapping(value = "/getOrderPage", method = RequestMethod.GET)
-	public PageModel<Order> getOrderPage(Integer pageIndex, Integer arriveStatus,String between,String parcelCode, String mailNum) {
-
+	public PageModel<Order> getOrderPage(HttpServletRequest request,Integer pageIndex, Integer arriveStatus,String between,String parcelCode, String mailNum) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		if(StringUtils.isNotBlank(mailNum)){//进行运单到站操作
-			Order order = orderService.findOneByMailNum(mailNum);
+			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum);
 			if(order!=null){
 				order.setOrderStatus(OrderStatus.NOTDISPATCH);
 				order.setDateUpd(new Date());
@@ -72,7 +74,7 @@ public class PackageToSiteController {
 		orderQueryVO.between = between;
 		orderQueryVO.parcelCode = parcelCode;
 		orderQueryVO.mailNum = mailNum;
-
+		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
@@ -114,7 +116,7 @@ public class PackageToSiteController {
 		User user = adminService.get(UserSession.get(request));
 		OrderNumVO orderNumVO = orderService.getOrderNumVO(user.getSite().getAreaCode());
 
-		PageModel<Order> orderPage = getOrderPage(0,arriveStatus,between,parcelCode,mailNum);
+		PageModel<Order> orderPage = getOrderPage(request,0,arriveStatus,between,parcelCode,mailNum);
 
 		model.addAttribute("orderPage", orderPage);
 		//未到站订单数

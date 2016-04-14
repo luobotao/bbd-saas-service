@@ -48,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 				return orderDao.findOrders(pageModel,orderQueryVO);
 			}else{
 				if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
-					OrderParcel orderParcel = orderParcelDao.findOrderParcelByParcelCode(orderQueryVO.parcelCode);
+					OrderParcel orderParcel = orderParcelDao.findOrderParcelByParcelCode(orderQueryVO.areaCode,orderQueryVO.parcelCode);
 					if(orderParcel!=null){
 						pageModel.setDatas(orderParcel.getOrderList());
 						pageModel.setPageNo(0);
@@ -71,8 +71,8 @@ public class OrderServiceImpl implements OrderService {
 	 * 2016年4月12日下午3:38:38
 	 */
 	@Override
-	public Order findOneByMailNum(String mailNum) {
-		return orderDao.findOne("mailNum", mailNum);
+	public Order findOneByMailNum(String areaCode,String mailNum) {
+		return orderDao.findOneByMailNum(areaCode,mailNum);
 	}
 
 	/**
