@@ -207,9 +207,9 @@
 		row += "<td>" + data.src + "</td>";
 		row += "<td>" + data.src + "</td>";
 		if(data.orderStatus=="<%=OrderStatus.NOTARR%>"){
-			row += "<td>" + <%=ArriveStatus.NOTARR.getMessage()%> + "</td>";
+			row += "<td>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
 		}else{
-			row += "<td>" + <%=ArriveStatus.ARRIVED.getMessage()%> + "</td>";
+			row += "<td>" + "<%=ArriveStatus.ARRIVED.getMessage()%>" + "</td>";
 		}
 		row += "</tr>";
 		return row;
