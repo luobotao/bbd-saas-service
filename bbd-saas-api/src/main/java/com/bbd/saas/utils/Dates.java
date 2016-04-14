@@ -1,13 +1,11 @@
 package com.bbd.saas.utils;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.lang.StringUtils;
+import com.alibaba.dubbo.common.utils.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,40 +13,25 @@ public class Dates {
     private static final Map<String, SimpleDateFormat> formatCache = new ConcurrentHashMap<>();
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
-    private static final SimpleDateFormat DATE_FORMAT_IMPORT = new SimpleDateFormat("yyyy/MM/dd hh:mm");
     private static final SimpleDateFormat CHINESE_DATE_FORMAT = new SimpleDateFormat("yyyy年MM月dd日");
+    private static final SimpleDateFormat ENGLISH_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat CHINESE_DATE_TIME_FORMAT = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
-    private static final SimpleDateFormat CHINESE_DATE_TIME_FORMAT_NEW = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat DATE_FORMAT_New = new SimpleDateFormat("yyyy.MM.dd");
-    private static final SimpleDateFormat DATE_FORMAT2 = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat TIME_FORMAT_New = new SimpleDateFormat("HH:mm");
     private static final SimpleDateFormat MONTHANDDAY_FORMAT = new SimpleDateFormat("MM月dd日");
     private static final SimpleDateFormat DATE_TIME_FORMAT_New = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+    private static final SimpleDateFormat DATE_TIME_FORMAT_To_Hour = new SimpleDateFormat("yyyy-MM-dd HH");
     private static final SimpleDateFormat WEEK_FORMAT = new SimpleDateFormat("EEEE");
-    private static final SimpleDateFormat DATE_TIME_FORMAT_NEW = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final SimpleDateFormat ENGLISH_DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static String formatSimpleDate(Date date) {
-        if(date==null){
-            return "";
-        }
-        return DATE_FORMAT.format(date);
-    }
-    public static String formatDateTimeNewWithOut(Date date) {
-        if(date==null){
-            return "";
-        }
-        return DATE_TIME_FORMAT_NEW.format(date);
-    }
-    /**
-     * yyyy年MM月dd日
-     * @param date
-     * @return
-     */
     public static String formatDate(Date date) {
-        if(date==null){
-            return "";
-        }
         return CHINESE_DATE_FORMAT.format(date);
+    }
+    public static String formatEnglishDate(Date date) {
+    	return ENGLISH_DATE_FORMAT.format(date);
+    }
+    public static String formatSimpleDate(Date date) {
+    	return DATE_FORMAT.format(date);
     }
 
     /**
@@ -57,75 +40,16 @@ public class Dates {
      * @return
      */
     public static String formatDateTime(Date date) {
-        if(date==null){
-            return "";
-        }
         return CHINESE_DATE_TIME_FORMAT.format(date);
     }
-    /**
-     * yyyy-MM-dd HH:mm:ss
-     * @param date
-     * @return
-     */
-    public static String formatDateTime_New(Date date) {
-        if(date==null){
-            return "";
-        }
-        return CHINESE_DATE_TIME_FORMAT_NEW.format(date);
-    } /**
-     * yyyy/MM/dd HH:mm:ss
-     * @param date
-     * @return
-     */
-    public static String formatDateTime_New1(Date date) {
-        if(date==null){
-            return "";
-        }
-        return DATE_FORMAT_IMPORT.format(date);
-    }
-    /**
-     * yyyy.MM.dd
-     * @param date
-     * @return
-     */
     public static String formatDateNew(Date date) {
-        if(date==null){
-            return "";
-        }
-        return DATE_FORMAT_New.format(date);
+    	return DATE_FORMAT_New.format(date);
     }
-    /**
-     * yyyy-MM-dd
-     * @param date
-     * @return
-     */
-    public static String formatDate2(Date date) {
-        if(date==null){
-            return "";
-        }
-    	return DATE_FORMAT2.format(date);
-    }
-    /**
-     * HH:mm
-     * @param date
-     * @return
-     */
     public static String formatTimeNew(Date date) {
-        if(date==null){
-            return "";
-        }
-        return TIME_FORMAT_New.format(date);
+    	return TIME_FORMAT_New.format(date);
     }
-    /**
-     * yyyy.MM.dd HH:mm
-     * @param date
-     * @return
-     */
     public static String formatDateTimeNew(Date date) {
-        if(date==null){
-            return "";
-        }
-        return DATE_TIME_FORMAT_New.format(date);
+    	return DATE_TIME_FORMAT_New.format(date);
     }
     /**
      * 转成类似11月5日
@@ -133,28 +57,24 @@ public class Dates {
      * @return
      */
     public static String formatMonthAndDay(Date date) {
-        if(date==null){
-            return "";
-        }
     	return MONTHANDDAY_FORMAT.format(date);
+    }
+    /**
+     * 转成类似2016-01-27 15
+     * @param date
+     * @return
+     */
+    public static String formatDATE_TIME_FORMAT_To_Hour(Date date) {
+    	return DATE_TIME_FORMAT_To_Hour.format(date);
     }
     /**
      * 转成星期几
      * @param date
      * @return
      */
-	public static String format2Week(Date date) {
-        if(date==null){
-            return "";
-        }
-		final String dayNames[] = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-
-		return dayNames[dayOfWeek - 1];
-		// return WEEK_FORMAT.format(date);
-	}
+    public static String format2Week(Date date) {
+    	return WEEK_FORMAT.format(date);
+    }
 
     public static String formatDate(Date date, String format) {
         if (null == date || StringUtils.isBlank(format)) {
@@ -175,36 +95,6 @@ public class Dates {
             return DATE_FORMAT.parse(str);
         } catch (ParseException e) {
             return null;
-        }
-    }
-
-    public static Date parseFullDate(String str) {
-        try {
-            return CHINESE_DATE_TIME_FORMAT_NEW.parse(str);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
-    public static Date parseImportDate(String str) {
-        try {
-            return DATE_FORMAT_IMPORT.parse(str);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
-    /**
-     * 根据导入订单，更改格式
-     * @param str
-     * @return
-     */
-    public static String parseDateWithImportOrder(String str) {
-        try {
-            Date date = DATE_FORMAT_IMPORT.parse(str);
-            return formatDateTime_New(date);
-        } catch (ParseException e) {
-            return "";
         }
     }
 
@@ -235,11 +125,6 @@ public class Dates {
     }
 
 
-    /**
-     * 获取当前日期的0点0分0秒
-     * @param date
-     * @return
-     */
     public static Date getBeginOfDay(Date date) {
         if (null == date) {
             return date;
@@ -254,11 +139,6 @@ public class Dates {
         return calendar.getTime();
     }
 
-    /**
-     * 获取当前时间的23点59分59秒
-     * @param date
-     * @return
-     */
     public static Date getEndOfDay(Date date) {
         if (null == date) {
             return date;
@@ -273,6 +153,13 @@ public class Dates {
         return calendar.getTime();
     }
 
+    /**
+     * 验证一个时间是否处在两个时间中间
+     * @param date
+     * @param begin
+     * @param end
+     * @return
+     */
     public static boolean isBetween(Date date, Date begin, Date end) {
         if (null == date) {
             return false;
@@ -310,31 +197,58 @@ public class Dates {
         calendar.setTimeInMillis(time);
     	return calendar.getTime();
     }
-    
+
+	 public static String formatEngLishDateTime(Date date) {
+    	if(date==null){
+    		return "";
+    	}
+    	return ENGLISH_DATE_TIME_FORMAT.format(date);
+    }
+
+	 /**
+	  * 
+	  * <p>Title: SevenBeforeformatEngLishDateTime</p> 
+	  * <p>Description:获取当前时间的七天前的日期 </p> 
+	  * @param date
+	  * @return
+	  */
+	public static String SevenBeforeformatEngLishDateTime(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DAY_OF_MONTH, -7);
+		String start = DATE_FORMAT.format(cal.getTime());
+		return start;
+	}
+
     /**
-     * 获取指定时间后的addDate天内的所有时间
-     * @param dBegin
-     * @param addDate
+     * yyyy年MM月dd日 HH:mm:ss
+     * @param str
      * @return
      */
-    public static List<Date> findDates(Date dBegin,int addDate) {  
-    	List<Date> lDate = Lists.newArrayList();
-        Calendar calBegin = Calendar.getInstance();  
-        // 使用给定的 Date 设置此 Calendar 的时间    
-        calBegin.setTime(dBegin);  
-        Calendar calEnd = Calendar.getInstance();  
-        calEnd.setTime(calBegin.getTime());  
-        while (addDate-->0) {  
-            // 根据日历的规则，为给定的日历字段添加或减去指定的时间量    
-            calBegin.add(Calendar.DAY_OF_MONTH, 1);  
-            lDate.add(calBegin.getTime());  
-        }  
-        return lDate;  
-    }  
-    public static void main(String[] args) {
-    	List<Date> a = findDates(new Date(), 7);
-    	for(Date b:a){
-    		System.out.println(b);
-    	}
+	public static Date parseChinaseDate(String str) {
+		try {
+            return CHINESE_DATE_TIME_FORMAT.parse(str);
+        } catch (ParseException e) {
+            return null;
+        }
 	}
+
+    /**
+     * 传入一个时间获取该时间与当前时间相关的分钟数
+     * @param date
+     * @return
+     */
+    public static int afterNowMinutes(Date date){
+        long beginTime = date.getTime();
+        long now = System.currentTimeMillis();
+        return (int) ((now - beginTime) / (1000 * 60 ));
+    }
+
+    public static void main(String args[]){
+        Calendar date = Calendar.getInstance();
+        date.set(2016,0,13,14,23,12);
+        System.out.println(date.getTime()+"======================");
+        System.out.println(new Date());
+        System.out.println(afterNowMinutes(date.getTime()));
+    }
 }

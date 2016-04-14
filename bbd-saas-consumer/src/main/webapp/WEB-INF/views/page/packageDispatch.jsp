@@ -35,7 +35,7 @@
 				<div class="row">
 					<div class="col-xs-3">
 						<label>状态：</label>
-						<select id="src" name="src" class="form-control">
+						<select id="status" name="status" class="form-control">
 							<%=DispatchStatus.Srcs2HTML(-1)%>
 						</select>
 					</div>
@@ -105,7 +105,6 @@
 		</div>
 	</div>
 </section>
-
 
 <!-- 选择派件员弹出窗-开始 -->
 <div  id="chooseCourier_div" class="popDiv" >

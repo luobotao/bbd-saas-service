@@ -49,6 +49,7 @@ public class Order implements Serializable {
     private Date orderPay;     //订单支付时间
     private Date dateAdd;
     private Date datePrint;//物流单打印时间
+    private Date dateMayArrive;//预计到站时间
     private Date dateUpd;//
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
     @Transient
@@ -251,5 +252,13 @@ public class Order implements Serializable {
 
     public void setParcelCode(String parcelCode) {
         this.parcelCode = parcelCode;
+    }
+
+    public Date getDateMayArrive() {
+        return dateMayArrive;
+    }
+
+    public void setDateMayArrive(Date dateMayArrive) {
+        this.dateMayArrive = dateMayArrive;
     }
 }

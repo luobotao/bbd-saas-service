@@ -29,12 +29,12 @@
 		  	<fieldset>
 		  		<legend>个人信息</legend>
 		  		<form:label path="userName">
-		  			用户名 <form:errors path="userName" cssClass="error" />
+		  			用户名 <form:errors path="userName" value="admin" cssClass="error" />
 		 		</form:label>
 		  		<form:input path="userName" />
 	
 		  		<form:label path="passWord">
-		  			密码 <form:errors path="passWord" cssClass="error" />
+		  			密码 <form:errors path="passWord" value="jiubugaosunimima" cssClass="error" />
 		 		</form:label>
 		  		<form:input path="passWord" />
 		  		

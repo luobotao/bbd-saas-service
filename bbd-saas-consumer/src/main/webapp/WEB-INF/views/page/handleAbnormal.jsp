@@ -1,127 +1,120 @@
+<%@ page import="com.bbd.saas.mongoModels.Order" %>
+<%@ page import="com.bbd.saas.utils.PageModel" %>
+<%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
+<%@ page import="com.bbd.saas.vo.UserVO" %>
+<%@ page import="com.bbd.saas.vo.Reciever" %>
+<%@ page import="com.bbd.saas.mongoModels.User" %>
+<%@ page import="com.bbd.saas.mongoModels.Site" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="keywords" content="棒棒哒-异常件处理页面" />
-	<meta name="description" content="棒棒哒-异常件处理页面" />
-	<title>异常件处理页面</title>
 	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
-	
+	<jsp:include page="../main.jsp" flush="true" />
 </head>
-<body>
+<%
+
+	String proPath = request.getContextPath();
+	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
+	
+	PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+	long count = orderPage.getTotalCount();
+	int totalPage = orderPage.getTotalPages();
+	int pagesize = orderPage.getPageSize();
+	int currentPage = orderPage.getPageNo();
+	
+%>
+<body >
 <div>
-	<jsp:include page="../top.jsp" flush="true" />	
 </div>
-<div class="content">
-	<div class="content-left" id="content-left"><jsp:include page="../leftMenu.jsp" flush="true" /></div>
-	<div class="content-main" id="content-main">
-		<div class="m20">
-			<span>状态:
-				<select>  
-				  <option value ="1">全部</option>  
-				  <option value ="2">滞留</option>  
-				  <option value="3">拒收</option>  
-				</select>  
-			</span> 
-			<span class="pl20">到站时间：<input id="toSiteTime" name="toSiteTime" type="text" value="2016-04-05" /></span>
-			<br><br>
-			<button id="queryData" name="queryData">查询</button>
+<section class="content">
+	<div class="col-xs-12">
+		<!-- 订单数显示 结束   -->
+		<div class="box-body">
+			<form action="?" method="get" id="searchOrderForm" name="searchOrderForm">
+				<div class="row">
+					<div class="col-xs-3">
+						<label>状态：</label>
+						<select id="status" name="status" class="form-control">
+							<%=AbnormalStatus.Srcs2HTML(-1)%>
+						</select>
+					</div>
+					<div class="col-xs-3">
+						<label>到站时间：</label>
+						<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value="${between}"/>
+					</div>
+				</div>
+				<div class="row">
+					<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="gotoPage(0);">查询</button>
+				</div>
+			</form>
 		</div>
+	</div>
+	<div class="col-xs-12">
 		
-		<div class="m20">
-			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
+		<div class="box-body table-responsive">
+			<table id="orderTable" class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<td>运单号</td>
+						<td>收货人</td>
+						<td>收货人地址</td>
+						<td>到站时间</td>
+						<td>派送员姓名</td>
+						<td>派送员手机</td>
+						<td>状态</td>
+						<td>操作</td>
+					</tr>
+				</thead>
+				<tbody id="dataList">
+				<%
+					
+					for(Order order : orderPage.getDatas()){
+				%>
 				<tr>
-					<td>包裹号</td>
-					<td>运单号</td>
-					<td>订单号</td>
-					<td>来源</td>
-					<td>收货人</td>
-					<td>收货人电话</td>
-					<td>地址</td>
-					<td>到站时间</td>
-					<td>派送员姓名</td>
-					<td>派送员手机</td>
-					<td>状态</td>
-					<td>操作</td>
-				</tr>
-				<tr>
-					<td>包裹号xxx</td>
-					<td>运单号xxx</td>
-					<td>订单号xxx</td>
-					<td>京东</td>
-					<td>李四</td>
-					<td>123456xxx</td>
-					<td>北京市-朝阳区-xxxx</td>
-					<td>2016-04-03 15:2:23</td>
-					<td>周七</td>
-					<td>123456xxx</td>
-					<td>滞留（滞留原因）</td>
+					<td><%=order.getMailNum()%></td>
+					<td><%=order.getReciever().getName()%></td>
+					<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+					<td>到站时间2016-04-06 15:22:10<%=order.getDatePrint()%></td>
+					<td><%=order.getUser().getRealName()%></td>
+					<td><%=order.getUser().getPhone()%></td>
+					<td><%=order.getExpressStatus()%></td>
 					<td>
-						<button onclick="showSenderDiv()">重新分派</button>
+						<button onclick="showCourierDiv()">重新分派</button>
 						<button onclick="showOtherExpressDiv()">转其他快递</button>
 						<button onclick="showOtherSiteDiv()">转其他站点</button>
 						<button onclick="showApplyReturnDiv()">申请退货</button>
 					</td>
+					
 				</tr>
-				<tr>
-					<td>包裹号xxx</td>
-					<td>运单号xxx</td>
-					<td>订单号xxx</td>
-					<td>京东</td>
-					<td>李四</td>
-					<td>123456xxx</td>
-					<td>北京市-朝阳区-xxxx</td>
-					<td>2016-04-03 15:2:23</td>
-					<td>周七</td>
-					<td>123456xxx</td>
-					<td>滞留（滞留原因）</td>
-					<td><button>重新分派</button></td>
-				</tr>
-				<tr>
-					<td>包裹号xxx</td>
-					<td>运单号xxx</td>
-					<td>订单号xxx</td>
-					<td>京东</td>
-					<td>李四</td>
-					<td>123456xxx</td>
-					<td>北京市-朝阳区-xxxx</td>
-					<td>2016-04-03 15:2:23</td>
-					<td>周七</td>
-					<td>123456xxx</td>
-					<td>滞留（滞留原因）</td>
-					<td><button>重新分派</button></td>
-				</tr>
+				<%
+					}
+				%>
+				</tbody>
 			</table>
-			<div class="fr"> 
-				<a href="">上页</a>
-				<a href="">1</a>
-				<a href="">2</a>
-				<a href="">3</a>
-				<a href="">4</a>
-				<a href="">下页</a>
-			</div>
+			
+			<!--页码 start-->
+			<div id="pagin"></div>	
+			<!--页码 end-->
+			
 		</div>
 	</div>
-</div>
+</section>
+
 
 <!-- 重新分派面板-开始 -->
-<div  id="chooseSender_div" class="popDiv" >
+<div  id="chooseCourier_div" class="popDiv" >
 	<div class="title_div">重新分派</div>
 	<div class="m20">
 		<span>派件员:
-			<select id="sender_select">  
-				<option value ="张三">张三</option>  
-				<option value ="李四">李四</option>  
-				<option value="王五">王五</option>  
+			<select id="courier_select" >  
+				 
 			</select>				  
 		</span> 
 	</div>
 	<div class="m20">
-		<button onclick="hideSenderDiv()">取消</button>
-		<button onclick="chooseSender()">确定</button>
+		<button onclick="hideCourierDiv()">取消</button>
+		<button onclick="chooseCourier()">确定</button>
 	</div>
 </div>
 <!-- 重新分派面板-结束 -->
@@ -152,7 +145,7 @@
 	<div class="title_div">转其他站点</div>
 	<div class="m20">
 		<span>站点:
-			<select id="other_site_select">  
+			<select id="site_select">  
 				<option value ="站点A">站点A</option>  
 				<option value ="站点B">站点B</option>  
 				<option value="站点C">站点C</option>  
@@ -171,7 +164,7 @@
 	<div class="title_div">申请退货</div>
 	<div class="m20">
 		<span>选择退货原因:
-			<select id="return_reason_select">  
+			<select id="reasonType" name="reasonType">  
 				<option value ="货物破损">货物破损</option>  
 				<option value ="超时配送">超时配送</option>  
 				<option value="客户端要求退换">客户端要求退换</option>  
@@ -179,7 +172,7 @@
 			</select>				  
 		</span> <br><br>
 		<span>
-			<textarea style="display: none;" rows="5" cols="50" id="returnReason" name="returnReason" placeholder="请输入退货原因">
+			<textarea style="display: none;" rows="5" cols="50" id="reasonInfo" name="reasonInfo" placeholder="请输入退货原因">
 				
 			</textarea>
 		</span>
@@ -191,34 +184,211 @@
 </div>
 <!-- 转其他站点面板-结束 -->
 
-<script type="text/javascript" src="<c:url value="/resources/jquery/jquery-1.12.3.min.js" />"></script>
+<!-- 分页js -->
+<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 
 <script type="text/javascript">
+
+
 $(document).ready(function() {
-	$("#return_reason_select").change(function(){
+	//显示分页条
+	var pageStr = paginNav(<%=currentPage%>, <%=totalPage%>, <%=count%>);
+	$("#pagin").html(pageStr);
+	//到站时间，选择时间
+	$("#between").daterangepicker({
+		locale: {
+			applyLabel: '确定',
+			cancelLabel: '取消',
+			fromLabel: '开始',
+			toLabel: '结束',
+			weekLabel: 'W',
+			customRangeLabel: 'Custom Range',
+			showDropdowns: true
+		},
+		format: 'YYYY/MM/DD'
+	});
+	//退货原因，选择其他的原因弹出详情输入框
+	$("#reasonType").change(function(){
 		if(this.value == "其他"){
-			$("#returnReason").show();
+			$("#reasonInfo").show();
 		} else {
-			$("#returnReason").hide();
+			$("#reasonInfo").hide();
 		}
 	});
 
 });
+/************************分页条***************开始***************************************/
+//加载带有查询条件的指定页的数据
+function gotoPage(pageIndex) {
+	//查询所有派件员
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/getList",//路径  
+        data : {  
+            "pageIndex" : pageIndex,
+            "status" : -1, 
+            "courierId" : ""
+            /* "status" : $("#status").val(), 
+            "between" : $("#between").val(), 
+            "courierId" : $("#courierId").val(), */ 
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(dataObject) {//返回数据根据结果进行相应的处理 
+            console.log("dataObject==="+dataObject);
+            var tbody = $("#dataList");
+            // 清空表格数据
+            tbody.html("");
+            
+            var dataList = dataObject.datas;
+			if(dataList != null){
+				var datastr = "";
+				for(var i = 0; i < dataList.length; i++){
+					datastr += getRowHtml(dataList[i]);
+				}
+				tbody.html(datastr);
+			} 
+			//更新分页条
+			var pageStr = paginNav(pageIndex, <%=totalPage%>, <%=count%>);
+			console.log("pageIndex===" + pageIndex + "  totalPage===" + <%=totalPage%> + "  count===" + <%=count%>);
+			$("#pagin").html(pageStr);
+		},
+        error : function() {  
+           	alert("加载分页数据异常，请重试！");  
+      	}    
+    });	
+}	
+//封装一行的数据
+function getRowHtml(data){
+	var row = "<tr>";
+	row +=  "<td>" + data.mailNum + "</td>";
+	row += "<td>" + data.reciever.name + "</td>";
+	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+	row += "<td>到站时间2016-04-06 15:22:10" + data.reciever.name + "</td>";
+	row += "<td>" + data.user.realName + "</td>";
+	row += "<td>" + data.user.phone + "</td>";
+	row += "<td>" + data.user.expressStatus + "</td>";
+	row += "<td>" + data.user.expressStatus + "</td>";			
+	row += "</tr>";
+	return row;
+}
+/************************分页条***************结束***************************************/	
 
-	
-	
+/************************初始化各个操作面板***************开始***************************************/
+
+
+//初始化派件员下拉框（快递员）
+function initCourier() {
+	//查询所有派件员
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/getAllUserList",//路径  
+        data : {  
+            "siteId" : "siteId" //$("#waybillId").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(dataList) {//返回数据根据结果进行相应的处理  
+        	
+		var courier_select = $("#courier_select");
+		// 清空select  
+		courier_select.empty(); 
+		if(dataList != null){
+			for(var i = 0; i < dataList.length; i++){
+				data = dataList[i];
+				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			}
+		} 
+        },
+        error : function() {  
+       		alert("派件员列表加载异常，请重试！");  
+  		}    
+    });
+}	
+//初始化快递公司
+function initExpressCompany() {
+	//查询所有派件员
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/getAllExpressCompanyList",//路径  
+        data : {  
+            "siteId" : "siteId" //$("#waybillId").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(dataList) {//返回数据根据结果进行相应的处理  
+        	
+		var express_select = $("#express_select");
+		// 清空select  
+		courier_select.empty(); 
+		if(dataList != null){
+			for(var i = 0; i < dataList.length; i++){
+				data = dataList[i];
+				express_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			}
+		} 
+        },
+        error : function() {  
+       		alert("快递公司列表加载异常，请重试！");  
+  		}    
+    });
+}	
+//初始化站点
+function initSite() {
+	//查询所有站点
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/getAllSiteList",//路径  
+        data : {  
+            "siteId" : "siteId" //$("#waybillId").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(dataList) {//返回数据根据结果进行相应的处理  
+        	
+		var site_select = $("#site_select");
+		// 清空select  
+		courier_select.empty(); 
+		if(dataList != null){
+			for(var i = 0; i < dataList.length; i++){
+				data = dataList[i];
+				site_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			}
+		} 
+        },
+        error : function() {  
+       		alert("站点列表加载异常，请重试！");  
+  		}    
+    });
+}	
+
+/************************初始化各个操作面板***************结束***************************************/
 //显示选择派件员div
-function showSenderDiv(waybillId) {
-	$("#chooseSender_div").show();
+function showCourierDiv(waybillId) {
+	$("#chooseCourier_div").show();
 }
 //隐藏选择派件员div
-function hideSenderDiv() {
-	$("#chooseSender_div").hide();
+function hideCourierDiv() {
+	$("#chooseCourier_div").hide();
 }
-//选择派件员
-function chooseSender() {
-	$("#sender").text($("#sender_select").val());
-	$("#chooseSender_div").hide();
+//重新分派
+function chooseCourier(mailNum) {
+	//$("#courier").text($("#courier_select").val());
+	//保存分派信息
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/reDispatch",//路径  
+        data : {  
+            "mailNum" : mailNum, //
+            "courierId" : $("#sender_select").val() //$("#waybillId").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(data) {//返回数据根据结果进行相应的处理  
+        	if(data.success){
+        		alert("分派成功，刷新列表！");  
+        		//分派成功，刷新列表！
+        		
+        	}else{
+        		alert("重新分派失败，请重新分派！");  
+        	}
+        },
+        error : function() {  
+       		alert("重新分派发生异常，请重试！");  
+  		}    
+    });
+    //隐藏面板
+	$("#chooseCourier_div").hide();
 }
 
 //显示转其他快递公司div
@@ -232,6 +402,28 @@ function hideOtherExpressDiv() {
 }
 //选择其他快递
 function chooseOtherExpress() {
+	//转其他快递公司
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/toOtherExpress",//路径  
+        data : {  
+            "mailNum" : mailNum, //
+            "expressId" : $("#express_select").val() //$("#waybillId").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(data) {//返回数据根据结果进行相应的处理  
+        	if(data.success){
+        		alert("已转到其他快递！");  
+        		//已转到其他快递，刷新列表！
+        		
+        	}else{
+        		alert("转到其他快递失败，请重新选择快递公司！");  
+        	}
+        },
+        error : function() {  
+       		alert("转到其他快递发生异常，请重试！");  
+  		}    
+    });
+    //隐藏面板
 	$("#chooseOtherExpress_div").hide();
 }
 
@@ -245,6 +437,28 @@ function hideOtherSiteDiv() {
 }
 //转其他站点
 function chooseOtherSite() {
+	//转其他站点
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
+        data : {  
+            "mailNum" : mailNum, //
+            "siteId" : $("#site_select").val() //$("#waybillId").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(data) {//返回数据根据结果进行相应的处理  
+        	if(data.success){
+        		alert("已转到其他站点！");  
+        		//已转到其他快递，刷新列表！
+        		
+        	}else{
+        		alert("转到其他站点失败，请重新选择站点公司！");  
+        	}
+        },
+        error : function() {  
+       		alert("转到其他站点发生异常，请重试！");  
+  		}    
+    });
+    //隐藏面板
 	$("#chooseOtherSite_div").hide();
 }
 
@@ -258,6 +472,29 @@ function hideApplyReturnDiv() {
 }
 //确定退货
 function applyReturn() {
+	//保存退货信息
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/saveReturn",//路径  
+        data : {  
+            "mailNum" : mailNum, //
+            "reasonType" : $("#reasonType").val(), 
+            "reasonInfo" : $("#reasonInfo").val() 
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(data) {//返回数据根据结果进行相应的处理  
+        	if(data.success){
+        		alert("退货成功！");  
+        		//退货成功，刷新列表！
+        		
+        	}else{
+        		alert("退货失败，请重试！");  
+        	}
+        },
+        error : function() {  
+       		alert("退货发生异常，请重试！");  
+  		}    
+    });
+    //隐藏面板
 	$("#apply_return_div").hide();
 }
 
