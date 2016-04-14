@@ -24,13 +24,13 @@ function paginNav(currPage, totalPage, count){
 		}else{
 			pagestr += "<li><a href='#' onclick=\"gotoPage('0');\">1</a></li>";
 			pagestr += "<li><a>...</a></li>";
-			pagestr += setPageString((parseInt(currPage) - 3) , currPage, currPage);
+			pagestr += setPageString((parseInt(currPage) - 2) , currPage, currPage);
 		}
 
 		if (currPage>=totalPage-4 || totalPage-4<=0){
 			pagestr += setPageString((parseInt(currPage) + 1), totalPage, currPage);
 		}else{
-			pagestr += setPageString((parseInt(currPage) + 1), (parseInt(currPage) + 3), currPage);
+			pagestr += setPageString((parseInt(currPage) + 1), (parseInt(currPage) + 4), currPage);
 			pagestr += "<li><a>...</a></li>";
 			pagestr += "<li><a href='#' onclick=\"gotoPage('"+(parseInt(totalPage) - 1)+"\');\"'>"+totalPage+"</a></li> ";
 		}
