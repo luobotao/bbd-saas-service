@@ -9,7 +9,7 @@ function paginNav(currPage, totalPage, count){
 	pagestr += "<div>";
 	pagestr += "<div class='dataTables_paginate paging_bootstrap'>";
 	pagestr += "<ul class='pagination'>";
-
+	//首页和上一页
 	if (currPage < 1){
 		pagestr += "<li class='prev disabled'><a href='#'>首页</a></li>";
 		pagestr += "<li class='prev disabled'><a href='#'>上一页</a></li>";
@@ -17,8 +17,9 @@ function paginNav(currPage, totalPage, count){
 		pagestr += "<li class='prev'><a href='#' onclick=\"gotoPage('0');\">首页</a></li>";
 		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage('" + (parseInt(currPage) - 1) + "');\" title='上一页'>上一页</a></li>";
 	}
-
+	//当前页之前的页数-当前页-当前页之后的页数
 	if (totalPage > 1){
+		//当前页之前的页数
 		if (currPage<=5){
 			pagestr += setPageString(1, currPage, currPage);
 		}else{
@@ -26,7 +27,7 @@ function paginNav(currPage, totalPage, count){
 			pagestr += "<li><a>...</a></li>";
 			pagestr += setPageString((parseInt(currPage) - 2) , currPage, currPage);
 		}
-
+		//当前页之后的页数
 		if (currPage>=totalPage-4 || totalPage-4<=0){
 			pagestr += setPageString((parseInt(currPage) + 1), totalPage, currPage);
 		}else{
@@ -35,6 +36,7 @@ function paginNav(currPage, totalPage, count){
 			pagestr += "<li><a href='#' onclick=\"gotoPage('"+(parseInt(totalPage) - 1)+"\');\"'>"+totalPage+"</a></li> ";
 		}
 	}
+	//下一页和尾页
 	if (currPage >=(parseInt(totalPage) - 1)){
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>下一页</a></li>";
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>尾页</a></li>";
