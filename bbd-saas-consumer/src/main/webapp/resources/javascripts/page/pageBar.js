@@ -1,10 +1,11 @@
-/********currPage, totalPage, count 传入字符串类型的参数*********/
+
+/********currPage, totalPage, count 传入数字类型的参数*********/
 //***************分页条******开始**********/
 function paginNav(currPage, totalPage, count){
 	var pagestr = "";
 	pagestr += "<div class='col-xs-6'>"; /* pagecon pagination pagination-centered */
 	pagestr += "<div class='dataTables_info' id='userTable_info'>页码：";
-	pagestr += (parseInt(currPage) + 1) + "/" + totalPage + " &nbsp;&nbsp; 共计" + count + "条记录";
+	pagestr += (currPage + 1) + "/" + totalPage + " &nbsp;&nbsp; 共计" + count + "条记录";
 	pagestr += "</div></div>";
 	pagestr += "<div>";
 	pagestr += "<div class='dataTables_paginate paging_bootstrap'>";
@@ -14,8 +15,8 @@ function paginNav(currPage, totalPage, count){
 		pagestr += "<li class='prev disabled'><a href='#'>首页</a></li>";
 		pagestr += "<li class='prev disabled'><a href='#'>上一页</a></li>";
 	}else{
-		pagestr += "<li class='prev'><a href='#' onclick=\"gotoPage('0');\">首页</a></li>";
-		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage('" + (parseInt(currPage) - 1) + "');\" title='上一页'>上一页</a></li>";
+		pagestr += "<li class='prev'><a href='#' onclick=\"gotoPage(0);\">首页</a></li>";
+		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage(" + (currPage - 1) + ");\" title='上一页'>上一页</a></li>";
 	}
 	//当前页之前的页数-当前页-当前页之后的页数
 	if (totalPage > 1){
@@ -23,26 +24,26 @@ function paginNav(currPage, totalPage, count){
 		if (currPage<=5){
 			pagestr += setPageString(1, currPage, currPage);
 		}else{
-			pagestr += "<li><a href='#' onclick=\"gotoPage('0');\">1</a></li>";
+			pagestr += "<li><a href='#' onclick=\"gotoPage(0);\">1</a></li>";
 			pagestr += "<li><a>...</a></li>";
-			pagestr += setPageString((parseInt(currPage) - 2) , currPage, currPage);
+			pagestr += setPageString((currPage - 2) , currPage, currPage);
 		}
 		//当前页之后的页数
 		if (currPage>=totalPage-4 || totalPage-4<=0){
-			pagestr += setPageString((parseInt(currPage) + 1), totalPage, currPage);
+			pagestr += setPageString((currPage + 1), totalPage, currPage);
 		}else{
-			pagestr += setPageString((parseInt(currPage) + 1), (parseInt(currPage) + 4), currPage);
+			pagestr += setPageString((currPage + 1), (currPage + 4), currPage);
 			pagestr += "<li><a>...</a></li>";
-			pagestr += "<li><a href='#' onclick=\"gotoPage('"+(parseInt(totalPage) - 1)+"\');\"'>"+totalPage+"</a></li> ";
+			pagestr += "<li><a href='#' onclick=\"gotoPage("+(totalPage - 1)+"\);\"'>"+totalPage+"</a></li> ";
 		}
 	}
 	//下一页和尾页
-	if (currPage >=(parseInt(totalPage) - 1)){
+	if (currPage >=(totalPage - 1)){
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>下一页</a></li>";
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>尾页</a></li>";
 	}else{
-		pagestr += "<li><a href='#' title='下一页'  onclick=\"gotoPage('" + (parseInt(currPage) + 1) + "');\">下一页</a></li>";
-		pagestr += "<li><a href='#' onclick=\"gotoPage('" + (parseInt(totalPage) - 1) + "');\" title='尾页'>尾页</a></li>";
+		pagestr += "<li><a href='#' title='下一页'  onclick=\"gotoPage(" + (currPage + 1) + ");\">下一页</a></li>";
+		pagestr += "<li><a href='#' onclick=\"gotoPage(" + (totalPage - 1) + ");\" title='尾页'>尾页</a></li>";
 	}
 	pagestr += "</ul></div></div>";
 	return pagestr;
@@ -56,7 +57,7 @@ function setPageString(start, end, currPage){
 		if(currPage == (i-1)){
 			numstr += "<li class='active'><a href='#'>" + i + "</a></li>";
 		}else{
-			numstr += "<li><a href='#' onclick=\"gotoPage('" + (i-1) + "');\">" + i + "</a></li>";
+			numstr += "<li><a href='#' onclick=\"gotoPage(" + (i-1) + ");\">" + i + "</a></li>";
 		}
 	}
 	return numstr;
