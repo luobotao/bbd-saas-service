@@ -42,12 +42,36 @@ public class PackageToSiteController {
 	AdminService adminService;
 
 
+	/**
+	 * 根据运单号检查是否存在此订单
+	 * @param request
+	 * @param mailNum
+     * @return
+     */
 	@ResponseBody
 	@RequestMapping(value="/checkOrderByMailNum", method=RequestMethod.GET)
 	public Order checkOrderByMailNum(HttpServletRequest request,@RequestParam(value = "mailNum", required = true) String mailNum) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		return orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum);
 	}
+
+	/**
+	 * 重新计算到站的数据统计
+	 * @param request
+	 * @return
+     */
+	@ResponseBody
+	@RequestMapping(value="/updateOrderNumVO", method=RequestMethod.GET)
+	public OrderNumVO updateOrderNumVO(HttpServletRequest request) {
+		return orderService.getOrderNumVO(adminService.get(UserSession.get(request)).getSite().getAreaCode());
+	}
+
+	/**
+	 * 根据包裹号检查当前登录用户是否有此包裹
+	 * @param request
+	 * @param parcelCode
+     * @return
+     */
 	@ResponseBody
 	@RequestMapping(value="/checkOrderParcelByParcelCode", method=RequestMethod.GET)
 	public boolean checkOrderParcelByParcelCode(HttpServletRequest request,@RequestParam(value = "parcelCode", required = true) String parcelCode) {
@@ -59,6 +83,16 @@ public class PackageToSiteController {
 			return true;
 	}
 
+	/**
+	 * 分页展示数据并
+	 * @param request
+	 * @param pageIndex
+	 * @param arriveStatus
+	 * @param between
+	 * @param parcelCode
+	 * @param mailNum
+     * @return
+     */
 	@ResponseBody
 	@RequestMapping(value = "/getOrderPage", method = RequestMethod.GET)
 	public PageModel<Order> getOrderPage(HttpServletRequest request,Integer pageIndex, Integer arriveStatus,String between,String parcelCode, String mailNum) {

@@ -127,7 +127,7 @@
 </section>
 
 <!-- 分页js -->
-<script src="<c:url value="/resources/javascripts/page/pageBar3.js" />"> </script>
+<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 
 <script type="text/javascript">
 

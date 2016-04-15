@@ -79,7 +79,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.DATE, -1);
         query.filter("dateUpd >=",cal.getTime());
         orderNumVO.setNoArrive(count(query));//今天未到站
         queryArrive.filter("dateUpd <=",new Date()).filter("dateUpd >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
