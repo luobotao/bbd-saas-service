@@ -1,13 +1,10 @@
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
-<%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.vo.UserVO" %>
-<%-- <%@ page import="com.bbd.saas.vo.Reciever" %>
-<%@ page import="com.bbd.saas.mongoModels.User" %> --%>
+<%@ page import="com.bbd.saas.vo.Reciever" %>
+<%@ page import="com.bbd.saas.mongoModels.User" %>
 <%@ page import="com.bbd.saas.mongoModels.Site" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
@@ -25,7 +22,7 @@
 	int totalPage = orderPage.getTotalPages();
 	int pagesize = orderPage.getPageSize();
 	int currentPage = orderPage.getPageNo();
-	List<Order> orderList = orderPage.getDatas();
+	
 %>
 <body >
 <div>
@@ -43,7 +40,7 @@
 				</div>
 				<div class="col-xs-3">
 					<label>到站时间：</label>
-					<input id="arriveBetween" name="arriveBetween" type="text" class="form-control" placeholder="请选择到站时间" value="${arriveBetween}"/>
+					<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value="${between}"/>
 				</div>
 			</div>
 			<div class="row">
@@ -69,52 +66,27 @@
 				</thead>
 				<tbody id="dataList">
 				<%
-					if(orderList == null){
+					
+					for(Order order : orderPage.getDatas()){
 				%>
-					<tr>
-						<td colspan="7">没有符合查询条件的数据</td>
-					</tr>
+				<tr>
+					<td><%=order.getMailNum()%></td>
+					<td><%=order.getReciever().getName()%></td>
+					<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+					<td>到站时间2016-04-06 15:22:10<%=order.getDatePrint()%></td>
+					<td><%=order.getUser().getRealName()%></td>
+					<td><%=order.getUser().getPhone()%></td>
+					<td><%=order.getExpressStatus()%></td>
+					<td>
+						<a href="javascript:void(0);" onclick="showCourierDiv()">重新分派</a>
+						<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
+						<a href="javascript:void(0);" onclick="showOtherSiteDiv()">转其他站点</a>
+						<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
+					</td>
+					
+				</tr>
 				<%
-					}else{
-						for(Order order : orderList){
-				%>
-					<tr>
-						<td><%=order.getMailNum()%></td>
-						<td><%=order.getReciever().getName()%></td>
-						<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-						<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
-						<%
-							if(order.getUser() == null){//未分派
-						%>
-								<td></td>
-								<td></td>
-						<%
-							}else{
-						%>
-								<td><%=order.getUser().getRealName()%></td>
-								<td><%=order.getUser().getPhone()%></td>
-						<%
-							}
-							if(order.getOrderStatus() == OrderStatus.RETENTION){
-						%>
-							<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
-						<%
-							}else{
-						%>
-							<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
-						<%
-							}
-						%>
-						<td>
-							<a href="javascript:void(0);" onclick="showCourierDiv()">重新分派</a>
-							<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
-							<a href="javascript:void(0);" onclick="showOtherSiteDiv()">转其他站点</a>
-							<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
-						</td>
-					</tr>
-				<%
-					}//for
-				}//else
+					}
 				%>
 				</tbody>
 			</table>
@@ -210,7 +182,8 @@
 </div>
 <!-- 转其他站点面板-结束 -->
 
-<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
+<!-- 分页js -->
+<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 
 <script type="text/javascript">
 
@@ -220,7 +193,7 @@ $(document).ready(function() {
 	var pageStr = paginNav(<%=currentPage%>, <%=totalPage%>, <%=count%>);
 	$("#pagin").html(pageStr);
 	//到站时间，选择时间
-	$("#arriveBetween").daterangepicker({
+	$("#between").daterangepicker({
 		locale: {
 			applyLabel: '确定',
 			cancelLabel: '取消',
@@ -251,8 +224,11 @@ function gotoPage(pageIndex) {
         url : "<%=path%>/handleAbnormal/getList",//路径  
         data : {  
             "pageIndex" : pageIndex,
-            "status" : $("#status").val(), 
-            "arriveBetween" : $("#arriveBetween").val() 
+            "status" : -1, 
+            "courierId" : ""
+            /* "status" : $("#status").val(), 
+            "between" : $("#between").val(), 
+            "courierId" : $("#courierId").val(), */ 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             var dataList = dataObject.datas;
@@ -270,22 +246,14 @@ function getRowHtml(data){
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
-	
-	row += "<td>" + getDate1(data.dateArrived) + "</td>";
-	//派件员姓名和电话
+	row += "<td>到站时间2016-04-06 15:22:10" + data.reciever.name + "</td>";
 	row += "<td>" + data.user.realName + "</td>";
 	row += "<td>" + data.user.phone + "</td>";
-	//状态
-	if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
-		row += "<td>" + "<%=AbnormalStatus.RETENTION.getMessage()%>" + "</td>";
-	}else{
-		row += "<td>" + "<%=AbnormalStatus.REJECTION.getMessage()%>" + "</td>";
-	}
-	
-	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(" + data.mailNum + ")'>重新分派</a>";
-	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(" + data.mailNum + ")'>转其他快递</a>";
-	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(" + data.mailNum + ")'>转其他站点</a>";
-	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(" + data.mailNum + ")'>申请退货</a></td>";
+	row += "<td>" + data.user.expressStatus + "</td>";
+	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(" + data.user.expressStatus + ")'>重新分派</a>";
+	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(" + data.user.expressStatus + ")'>转其他快递</a>";
+	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(" + data.user.expressStatus + ")'>转其他站点</a>";
+	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(" + data.user.expressStatus + ")'>申请退货</a></td>";
 	row += "</tr>";
 	return row;
 }

@@ -9,136 +9,189 @@
 <head>
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
-<body >
-<section class="content">
-	<div class="col-xs-12">
-		<!-- 订单数显示 开始 -->
+<body class="fbg">
+<!-- S content -->
+<div class="clearfix b-branch">
+	<div class="container">
 		<div class="row">
-			<div class="col-xs-3"><span>${non_arrival_num}</span><br><span>今日未到站订单数</span></div>
-			<div class="col-xs-3"><span>${history_non_arrival_num}</span><br><span>历史未到站订单数</span></div>
-			<div class="col-xs-3"><span>${arrived_num}</span><br><span>今日已到站订单数</span></div>
-		</div>
-	</div>
-
-	<div class="col-xs-12">
-		<!-- 订单数显示 结束   -->
-		<div class="box-body">
-				<div class="row">
-					<div class="col-xs-3">
-						<label>状态：</label>
-						<select id="arriveStatus" name="arriveStatus" class="form-control">
-							<%=ArriveStatus.Srcs2HTML(-1)%>
-						</select>
-					</div>
-					<div class="col-xs-3">
-						<label>预计到站时间：</label>
-						<input id="between" name="between" type="text" class="form-control" placeholder="请选择预计到站时间" value="${between}"/>
-					</div>
-					<div >
-						<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" type="button" onclick="searchOrder()">查询</button>
-					</div>
-				</div>
-			<div class="row">
-				<div class="col-xs-3">
-					<label>扫描包裹号：</label>
-					<input id="parcelCode" name="parcelCode" type="text" onkeypress="enterPress(event)" />
-					<p class="help-block" id="parcelCodeP" style="display:none;"></p>
-				</div>
-				<div class="col-xs-3">
-					<label>扫描运单号：</label>
-					<input id="mailNum" name="mailNum" type="text" onkeypress="enterPress(event)"/>
-					<p class="help-block" id="mailNumP" style="display:none;"></p>
-				</div>
+			<!-- S sidebar -->
+			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="opacity:0;">
+				<ul class="b-sidebar">
+					<li class="lv1 side-cur"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
+					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
+					<li class="lv1"><a href="exception-processing.html"><i class="b-icon p-error"></i>异常件处理</a></li>
+					<li class="lv1"><a href="data-query.html"><i class="b-icon p-query"></i>数据查询</a></li>
+					<li class="lv1"><a href="system-distribution.html"><i class="b-icon p-set"></i>系统设置</a></li>
+					<ul class="menu dn">
+						<li><a href="system-distribution.html">配送区域</a></li>
+						<li><a href="system-usermanage.html">用户管理</a></li>
+						<li><a href="system-role.html">角色管理</a></li>
+					</ul>
+				</ul>
 			</div>
-		</div>
-	</div>
-	<div class="col-xs-12">
-
-		<div class="box-body table-responsive">
-			<table id="orderTable" class="table table-bordered table-hover">
-				<thead>
-				<tr>
-					<td>选择</td>
-					<td>包裹号</td>
-					<td>运单号</td>
-					<td>订单号</td>
-					<td>来源</td>
-					<td>收货人</td>
-					<td>收货人电话</td>
-					<td>地址</td>
-					<td>库房打单时间</td>
-					<td>预计到站时间</td>
-					<td>状态</td>
-				</tr>
-				</thead>
-				<tbody id="dataList">
-				<%
-					PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
-					for(Order order : orderPage.getDatas()){
-				%>
-				<tr>
-					<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
-					<td><%=order.getParcelCode()%></td>
-					<td><%=order.getMailNum()%></td>
-					<td><%=order.getOrderNo()%></td>
-					<td><%=order.getSrc()%></td>
-					<td><%=order.getReciever().getName()%></td>
-					<td><%=order.getReciever().getPhone()%></td>
-					<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-					<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>
-					<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
-					<%
-						if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
-					%>
-					<td><%=ArriveStatus.NOTARR.getMessage()%></td>
-					<%
-						}else{
-					%>
-					<td><%=ArriveStatus.ARRIVED.getMessage()%></td>
-					<%
-						}
-					%>
-				</tr>
-				<%
-					}
-				%>
-				</tbody>
-				<tfoot>
-					<th colspan="13">
-						<input id="selectAll" name="selectAll" type="checkbox"> <label for="selectAll">
-						全选</label> &nbsp;
-						<a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#batchToSite"><i class="fa fa-bolt"></i> 批量到站</a>
-					</th>
-					<div class="modal fade" id="batchToSite" tabindex="-1" role="dialog" aria-hidden="true">
-						<div class="modal_wrapper">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-										<h4 class="modal-title" id="activeUserLabel">确认信息</h4>
-									</div>
-									<div class="modal-body">
-										确认批量到站？<br>
-										该操作会把选中的订单设置为已到站。
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-										<button id="enableSelect" type="button" class="btn btn-primary">确认</button>
-									</div>
-								</div>
+			<!-- E sidebar -->
+			<!-- S detail -->
+			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+				<!-- S 状态 -->
+				<ul class="row">
+					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<dl class="arrive-status  c1">
+							<dt class="b-order" id="non_arrival_num">${non_arrival_num}</dt>
+							<dd>今日未到站 </dd>
+							<dd>订单数</dd>
+						</dl>
+					</li>
+					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<dl class="arrive-status c2">
+							<dt class="b-order" id="history_non_arrival_num">${history_non_arrival_num}</dt>
+							<dd>历史未到站 </dd>
+							<dd>订单数</dd>
+						</dl>
+					</li>
+					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<dl class="arrive-status c3">
+							<dt class="b-order"id="arrived_num">${arrived_num}</dt>
+							<dd>今日已到站 </dd>
+							<dd>订单数</dd>
+						</dl>
+					</li>
+				</ul>
+				<!-- E 状态 -->
+				<!-- S 搜索区域 -->
+				<form class="form-inline form-inline-n">
+					<div class="search-area">
+						<div class="row pb20">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+								<label>状态：</label>
+								<select id="arriveStatus" name="arriveStatus" class="form-control form-con-new">
+									<%=ArriveStatus.Srcs2HTML(-1)%>
+								</select>
+							</div>
+							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+								<label>预计到站时间：</label>
+								<input id="between" name="between" type="text" class="form-control" placeholder="请选择预计到站时间" value="${between}"/>
+							</div>
+							<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>搜索</a>
+							</div>
+						</div>
+						<div class="row pb20">
+							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+								<label>扫描包裹号：</label>
+								<input id="parcelCode" name="parcelCode" type="text" onkeypress="enterPress(event)" />
+								<p class="help-block" id="parcelCodeP" style="display:none;"></p>
+							</div>
+							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+								<label>扫描运单号：</label>
+								<input id="mailNum" name="mailNum" type="text" onkeypress="enterPress(event)"/>
+								<p class="help-block" id="mailNumP" style="display:none;"></p>
 							</div>
 						</div>
 					</div>
-				</tfoot>
-			</table>
+				</form>
+				<!-- E 搜索区域 -->
+				<div class="tab-bod mt20">
+					<!-- S table -->
+					<div class="table-responsive">
+						<table id="orderTable" class="table">
+							<thead>
+							<tr>
+								<th><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all"  /></th>
+								<th>包裹号</th>
+								<th>运单号</th>
+								<th>订单号</th>
+								<th>来源</th>
+								<th>收货人</th>
+								<th>收货人电话</th>
+								<th width="10%">地址</th>
+								<th>库房打单时间</th>
+								<th>库房打单时间</th>
+								<th>状态</th>
+							</tr>
+							</thead>
+							<tbody id="dataList">
+							<%
+								PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+								for(Order order : orderPage.getDatas()){
+							%>
+							<tr>
+								<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
+								<td><%=order.getParcelCode()%></td>
+								<td><%=order.getMailNum()%></td>
+								<td><%=order.getOrderNo()%></td>
+								<td><%=order.getSrc()%></td>
+								<td><%=order.getReciever().getName()%></td>
+								<td><%=order.getReciever().getPhone()%></td>
+								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+								<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>
+								<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
+								<%
+									if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
+								%>
+								<td><%=ArriveStatus.NOTARR.getMessage()%></td>
+								<%
+								}else{
+								%>
+								<td><%=ArriveStatus.ARRIVED.getMessage()%></td>
+								<%
+									}
+								%>
+							</tr>
+							<%
+								}
+							%>
+							</tbody>
+							<tfoot>
+								<div class="modal fade" id="batchToSite" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="modal_wrapper">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+													<h4 class="modal-title" id="activeUserLabel">确认信息</h4>
+												</div>
+												<div class="modal-body">
+													确认批量到站？<br>
+													该操作会把选中的订单设置为已到站。
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+													<button id="enableSelect" type="button" class="btn btn-primary">确认</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</tfoot>
+						</table>
+					</div>
+					<!-- E table -->
+					<!-- S tableBot -->
+					<div class="clearfix pad20">
+						<!-- S button -->
+						<div class="clearfix fl">
+							<a href="#" data-toggle="modal" data-target="#batchToSite" class="ser-btn l">批量到站</a>
+						</div>
+						<!-- E button -->
+						<!-- S page -->
+						<div id="pagin"></div>
+						<!-- E page -->
+					</div>
+					<!-- E tableBot -->
+				</div>
 
-			<!--页码 start-->
-			<div id="pagin"></div>
-			<!--页码 end-->
-
+			</div>
+			<!-- E detail -->
 		</div>
 	</div>
-</section>
+</div>
+<!-- E content -->
+<!-- S footer -->
+<footer class="pos-footer tc">
+	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
+</footer>
+<!-- E footer -->
+
 
 <!-- 分页js -->
 <script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
@@ -205,6 +258,7 @@
 				$("input[type='checkbox']").iCheck({
 					checkboxClass : 'icheckbox_square-blue'
 				});
+				updateOrderNumVO();
 			},
 			error : function() {
 				alert("加载分页数据异常！");
@@ -256,7 +310,7 @@
 		}
 	}
 
-
+	//检查运单号
 	function checkOrderByMailNum(mailNum){
 		if(mailNum!=""){
 			$.ajax({
@@ -287,6 +341,26 @@
 			});
 		}
 	}
+	//更新数据统计的数据
+	function updateOrderNumVO(){
+		$.ajax({
+			url: '<%=request.getContextPath()%>/packageToSite/updateOrderNumVO',
+			type: 'GET',
+			cache: false,
+			dataType: "json",
+			data: {},
+			success: function(response){
+				if(response!=null &&  response!="") {
+					$("#non_arrival_num").html(response.noArrive);
+					$("#history_non_arrival_num").html(response.noArriveHis);
+					$("#arrived_num").html(response.arrived);
+				}
+			},
+			error: function(){
+			}
+		});
+	}
+	//检查包裹号
 	function checkOrderParcelByParcelCode(parcelCode){
 		if(parcelCode!=""){
 			$.ajax({

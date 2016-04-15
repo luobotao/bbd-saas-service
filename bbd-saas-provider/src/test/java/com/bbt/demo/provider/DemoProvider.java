@@ -28,29 +28,29 @@ import java.util.Set;
 public class DemoProvider {
 
     public static void main(String[] args) throws IOException {
-//        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-//        ctx.register(ProviderConfig.class);
-//        ctx.refresh();
-//        System.in.read();
+        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
+        ctx.register(ProviderConfig.class);
+        ctx.refresh();
+        System.in.read();
 
-        try {
-            ServerAddress serverAddress = new ServerAddress("182.92.227.140", 27017);
-            MongoCredential mongoCredential = MongoCredential.createCredential("expressadmin","express","expressadminpass".toCharArray());
-            List<MongoCredential> mongoCredentialList = Lists.newArrayList();
-            mongoCredentialList.add(mongoCredential);
-            // 连接到 mongodb 服务
-            MongoClient mongoClient = new MongoClient(serverAddress,mongoCredentialList);
-            //根据mongodb数据库的名称获取mongodb对象 ,
-            MongoDatabase db = mongoClient.getDatabase("express");
-            MongoIterable<String> collectionNames = db.listCollectionNames();
-            // 打印出test中的集合
-            for (String name : collectionNames) {
-                System.out.println("collectionName===" + name);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            ServerAddress serverAddress = new ServerAddress("182.92.227.140", 27017);
+//            MongoCredential mongoCredential = MongoCredential.createCredential("expressadmin","express","expressadminpass".toCharArray());
+//            List<MongoCredential> mongoCredentialList = Lists.newArrayList();
+//            mongoCredentialList.add(mongoCredential);
+//            // 连接到 mongodb 服务
+//            MongoClient mongoClient = new MongoClient(serverAddress,mongoCredentialList);
+//            //根据mongodb数据库的名称获取mongodb对象 ,
+//            MongoDatabase db = mongoClient.getDatabase("express");
+//            MongoIterable<String> collectionNames = db.listCollectionNames();
+//            // 打印出test中的集合
+//            for (String name : collectionNames) {
+//                System.out.println("collectionName===" + name);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 }

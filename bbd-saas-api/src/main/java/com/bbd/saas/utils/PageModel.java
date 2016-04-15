@@ -11,7 +11,7 @@ public class PageModel<T> implements Serializable{
     //结果集
     private List<T> datas;
     //每页多少条数据
-    private int pageSize = 20;
+    private int pageSize = 10;
     //第几页 从0开始
     private int pageNo = 0;
     //总条数

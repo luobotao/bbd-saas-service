@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.DATE, -1);
         query.filter("dateUpd >=",cal.getTime());
         orderNumVO.setNoArrive(count(query));//今天未到站
         queryArrive.filter("dateUpd <=",new Date()).filter("dateUpd >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
@@ -94,7 +94,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(orderStatusOld!=null){//旧状态不为空，则需要加入旧状态的判断
             query.or(query.criteria("orderStatus").equal(orderStatusOld),query.criteria("orderStatus").equal(null));
         }
-        return update(query,createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date()));
+        UpdateOperations<Order> ops = createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date());
+        if(orderStatusOld==OrderStatus.NOTARR){//若是做到站操作，需要更新下到站时间
+            ops.set("dateArrived",new Date());
+        }
+        return update(query,ops);
     }
 
     public Order findOneByMailNum(String areaCode, String mailNum) {

@@ -1,13 +1,10 @@
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
-<%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.enums.DispatchStatus" %>
 <%@ page import="com.bbd.saas.vo.UserVO" %>
 <%@ page import="com.bbd.saas.vo.Reciever" %>
 <%@ page import="com.bbd.saas.mongoModels.User" %>
 <%@ page import="com.bbd.saas.mongoModels.Site" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
@@ -25,7 +22,6 @@
 	int totalPage = orderPage.getTotalPages();
 	int pagesize = orderPage.getPageSize();
 	int currentPage = orderPage.getPageNo();
-	List<Order> orderList = orderPage.getDatas();
 	
 %>
 <body >
@@ -44,7 +40,7 @@
 				</div>
 				<div class="col-xs-3">
 					<label>到站时间：</label>
-					<input id="arriveBetween" name="arriveBetween" type="text" class="form-control" placeholder="请选择到站时间" value="${arriveBetween}"/>
+					<input id="between" name="between" type="text" class="form-control" placeholder="请选择到站时间" value="${between}"/>
 				</div>
 				<div >
 					<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="gotoPage(0);">查询</button>
@@ -82,46 +78,20 @@
 				</thead>
 				<tbody id="dataList">
 				<%
-					if(orderList == null){
+					
+					for(Order order : orderPage.getDatas()){
 				%>
-					<tr>
-						<td colspan="7">没有符合查询条件的数据</td>
-					</tr>
+				<tr>
+					<td><%=order.getMailNum()%></td>
+					<td><%=order.getReciever().getName()%></td>
+					<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+					<td>到站时间2016-04-06 15:22:10<%=order.getDatePrint()%></td>
+					<td><%=order.getUser().getRealName()%></td>
+					<td><%=order.getUser().getPhone()%></td>
+					<td><%=order.getExpressStatus()%></td>
+				</tr>
 				<%
-					}else{
-						for(Order order : orderList){
-				%>
-					<tr>
-						<td><%=order.getMailNum()%></td>
-						<td><%=order.getReciever().getName()%></td>
-						<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-						<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
-						<%
-							if(order.getUser() == null){//未分派
-						%>
-								<td></td>
-								<td></td>
-						<%
-							}else{
-						%>
-								<td><%=order.getUser().getRealName()%></td>
-								<td><%=order.getUser().getPhone()%></td>
-						<%
-							}
-							if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
-						%>
-							<td><%=DispatchStatus.NOTDISPATCH.getMessage()%></td>
-						<%
-							}else{
-						%>
-							<td><%=DispatchStatus.DISPATCHED.getMessage()%></td>
-						<%
-							}
-						%>
-					</tr>
-				<%
-					}//for
-				}//else
+					}
 				%>
 				</tbody>
 			</table>
@@ -150,13 +120,13 @@
 	</div>
 <div>
 <!-- 选择派件员弹出窗-结束 -->
-
-<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
+<!-- 分页js -->
+<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 
 <script type="text/javascript">
-var courierIsLoadSuccess = 0;
+
 $(document).ready(function() {
-	$("#arriveBetween").daterangepicker({
+	$("#between").daterangepicker({
 		locale: {
 			applyLabel: '确定',
 			cancelLabel: '取消',
@@ -198,7 +168,7 @@ $(document).ready(function() {
                 }  
             },
             error : function() {  
-           		alert("服务器繁忙，请稍后再试！");  
+           		alert("异常！");  
       		}    
         }); 
 	});
@@ -213,32 +183,35 @@ $(document).ready(function() {
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
-console.log($("#status").val());
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/packageDispatch/getList",//路径  
         data : {  
             "pageIndex" : pageIndex,
-            "status" : $("#status").val(), 
-            "arriveBetween" : $("#arriveBetween").val(), 
-            "courierId" : $("#courierId").val()
+            "status" : -1, 
+            "courierId" : ""
+            /* "status" : $("#status").val(), 
+            "between" : $("#between").val(), 
+            "courierId" : $("#courierId").val(), */ 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
+            console.log("dataObject==="+dataObject);
             var tbody = $("#dataList");
-            var datastr = "";
+            // 清空表格数据
+            tbody.html("");
+            
             var dataList = dataObject.datas;
 			if(dataList != null){
+				var datastr = "";
 				for(var i = 0; i < dataList.length; i++){
 					datastr += getRowHtml(dataList[i]);
 				}
-			} else{
-				datastr += "<tr><td colspan='7'>没有符合查询条件的数据</td></tr>"
-			}
-			tbody.html(datastr);
+				tbody.html(datastr);
+			} 
 			//更新分页条
 			var pageStr = paginNav(pageIndex, <%=totalPage%>, <%=count%>);
-			//console.log("pageIndex===" + pageIndex + "  totalPage===" + <%=totalPage%> + "  count===" + <%=count%>);
+			console.log("pageIndex===" + pageIndex + "  totalPage===" + <%=totalPage%> + "  count===" + <%=count%>);
 			$("#pagin").html(pageStr);
 		},
         error : function() {  
@@ -252,20 +225,10 @@ function getRowHtml(data){
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
-	row += "<td>" + getDate1(data.dateArrived) + "</td>";
-	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.user == null){
-		row += "<td></td><td></td>";
-	}else{
-		row += "<td>" + data.user.realName + "</td>";
-		row += "<td>" + data.user.phone + "</td>";
-	}
-	//状态
-	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
-		row += "<td>" + "<%=DispatchStatus.NOTDISPATCH.getMessage()%>" + "</td>";
-	}else{
-		row += "<td>" + "<%=DispatchStatus.DISPATCHED.getMessage()%>" + "</td>";
-	}
+	row += "<td>到站时间2016-04-06 15:22:10" + data.reciever.name + "</td>";
+	row += "<td>" + data.user.realName + "</td>";
+	row += "<td>" + data.user.phone + "</td>";
+	row += "<td>" + data.user.expressStatus + "</td>";			
 	row += "</tr>";
 	return row;
 }
@@ -280,23 +243,24 @@ function initCourier() {
             "siteId" : "siteId" //$("#waybillId").val()
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataList) {//返回数据根据结果进行相应的处理  
-        	var courier_select = $("#courier_select");
-			// 清空select  
-			courier_select.empty(); 
-			if(dataList != null){
-				for(var i = 0; i < dataList.length; i++){
-					data = dataList[i];
-					courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
-				}
-			} 
-			courierIsLoadSuccess = 1;
+        	
+		var courier_select = $("#courier_select");
+		// 清空select  
+		courier_select.empty(); 
+		if(dataList != null){
+			for(var i = 0; i < dataList.length; i++){
+				data = dataList[i];
+				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			}
+		} 
         },
         error : function() {  
-        	courierIsLoadSuccess = 0;
-       		//alert("派件员列表加载异常！");  
+       		alert("派件员列表加载异常！");  
   		}    
     });
 }	
+	
+	
 
 // 添加  
 function col_add() {  
@@ -305,25 +269,35 @@ function col_add() {
     var text="text";  
     selObj.append("<option value='"+value+"'>"+text+"</option>");  
 }  
-	
+// 删除  
+function col_delete() {  
+    var selOpt = $("#mySelect option:selected");  
+    selOpt.remove();  
+}  
+// 清空  
+function col_clear() {  
+    var selOpt = $("#mySelect option");  
+    selOpt.remove();  
+}  
 //显示选择派件员div
-function showCourierDiv(waybillId) {
-	if(courierIsLoadSuccess == 0){//派件员加载失败的话，重新加载
-		initCourier();
+	function showCourierDiv(waybillId) {
+	}	
+	//显示选择派件员div
+	function showCourierDiv(waybillId) {
+		
+		$("#chooseCourier_div").show();
 	}
-	$("#chooseCourier_div").show();
-}
-//隐藏选择派件员div
-function hideCourierDiv() {
-	$("#chooseCourier_div").hide();
-}
-//选择派件员
-function chooseCourier() {
-$("#ddlregtype").find("option:selected").text(); 
-	$("#courierName").text($("#courier_select").find("option:selected").text());
-	$("#courierId").val($("#courier_select").val());
-	$("#chooseCourier_div").hide();
-}
+	//隐藏选择派件员div
+	function hideCourierDiv() {
+		$("#chooseCourier_div").hide();
+	}
+	//选择派件员
+	function chooseCourier() {
+	$("#ddlregtype").find("option:selected").text(); 
+		$("#courierName").text($("#courier_select").find("option:selected").text());
+		$("#courierId").val($("#courier_select").val());
+		$("#chooseCourier_div").hide();
+	}
 	
 </script>
 </body>
