@@ -173,7 +173,7 @@ public class UserManageController {
 		user.setPhone(userForm.getPhone());
 		user.setPassWord(userForm.getLoginPass());
 		user.setSite(getuser.getSite());
-		user.setOperate(getuser.getOperate());
+		user.setOperate(getuser);
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(0));
