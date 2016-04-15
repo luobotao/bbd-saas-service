@@ -210,8 +210,6 @@
 </div>
 <!-- 转其他站点面板-结束 -->
 
-<!-- 分页js -->
-<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 <script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 
 <script type="text/javascript">

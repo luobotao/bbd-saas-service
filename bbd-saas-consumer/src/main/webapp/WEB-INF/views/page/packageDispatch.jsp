@@ -150,8 +150,7 @@
 	</div>
 <div>
 <!-- 选择派件员弹出窗-结束 -->
-<!-- 分页js -->
-<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
+
 <script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 
 <script type="text/javascript">
