@@ -34,6 +34,9 @@
         <property name="userDao">
             <ref bean="userDao"/>
         </property>
+        <property name="siteDao">
+            <ref bean="siteDao"/>
+        </property>
     </bean>
     <!-- site Service-->
     <bean id="siteService" class="com.bbd.saas.api.impl.SiteServiceImpl">

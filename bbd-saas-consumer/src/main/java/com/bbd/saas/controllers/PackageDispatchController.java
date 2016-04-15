@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.api.UserService;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
@@ -37,6 +41,8 @@ public class PackageDispatchController {
 	OrderService orderService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	AdminService adminService;
 	
 	/**
 	 * Description: 跳转到包裹分派页面
@@ -51,7 +57,8 @@ public class PackageDispatchController {
 	 * 2016年4月12日下午3:25:07
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, Integer status, String between, String courierId, Model model) {
+	public String index(Integer pageIndex, Integer status, String between, String courierId, final HttpServletRequest request, Model model) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		between = StrTool.initStr(between, FormatDate.getBetweenTime(new Date(), -2));
 		PageModel<Order> orderPage = getList(pageIndex, status, between, courierId);
 		logger.info(orderPage+"=========");
@@ -156,25 +163,26 @@ public class PackageDispatchController {
 	}
 	
 	/**
-	 * Description: 获取本站点下的所有派件员
-	 * @param mailNum 运单号
-	 * @param senderId 派件员id
-	 * @param model
+	 * Description: 获取本站点下的所有状态为有效的派件员
+	 * @param request
 	 * @return
 	 * @author: liyanlei
-	 * 2016年4月11日下午4:15:05
+	 * 2016年4月15日上午11:06:19
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
-	public List<UserVO> getAllUserList(String siteId, Model model) {
-		UserVO uservo = new UserVO();
-		//uservo.setId(new ObjectId("5546548"));
-		uservo.setLoginName("loginName");
-		uservo.setPhone("12345678945");
-		List<UserVO> userVoList = userService.findUserListBySite(siteId);
-		if(userVoList == null || userVoList.size() == 0){
+	public List<UserVO> getAllUserList(final HttpServletRequest request) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		//查询
+		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
+		/*if(userVoList == null || userVoList.size() == 0){
+			UserVO uservo = new UserVO();
+			//uservo.setId(new ObjectId("5546548"));
+			uservo.setRealName("张三");
+			uservo.setLoginName("loginName");
+			uservo.setPhone("12345678945");
 			userVoList.add(uservo);
-		}
+		}*/
 		return userVoList;
 	}
 
