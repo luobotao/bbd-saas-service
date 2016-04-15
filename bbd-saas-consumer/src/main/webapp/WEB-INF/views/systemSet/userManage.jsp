@@ -28,35 +28,47 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 
 
 
-<div class="content">
-	<div class="content-left" id="content-left"></div>
-	<div class="content-main" id="content-main">
-		<c:url var="userListAction" value="/userManage"/>
-		<input type="hidden" name="page" id="page" value="<%=userPage.getPageNo() %>" />  
-		<div class="m20">
-			<span>
-				<label>角色:</label>
+<section class="content">
+		<c:url var="userListAction" value="/userManage"/> 
+		
+		<div class="col-xs-12">
+			<div class="box-body">
+				<div class="row">
+					<div class="col-xs-3">
+						<label>角色：</label>
 						<select id="saasrole" name="saasrole" class="form-control">
 							<%=UserRole.Srcs2HTML(-1)%>
-						</select>  
-			</span> 
-			<span>
-			<label>状态：</label>
+						</select>
+					</div>
+					<div class="col-xs-3">
+						<label>状态：</label>
 						<select id="status" name="status" class="form-control">
 							<%=UserStatus.Srcs2HTML(-1)%>
 						</select>
-			</span>
-			<span class="pl20">
-				关键词：<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" />
-			</span>
-			<br><br>
-			<button id="queryData" name="queryData" onclick="search()">查询</button>
-			
-		</div>
+					</div>
 
-		<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
-		<div class="m20">
-			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
+					<div class="col-xs-3">
+						<label>关键词：</label>
+						<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" class="form-control"/>
+					</div>
+
+				</div>
+			<div class="row">
+				<div class="col-xs-3">
+					<button id="queryData" name="queryData" onclick="search()">查询</button>
+				</div>
+				<div class="col-xs-3">
+					<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
+				</div>
+			</div>
+		</div>
+	</div>	
+				
+
+	<div class="col-xs-12">
+
+		<div class="box-body table-responsive">
+			<table id="orderTable" class="table table-bordered table-hover">
 				<thead>
 				<tr>
 					<td>角色</td>
@@ -64,14 +76,11 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					<td>手机号</td>
 					<td>登录名</td>
 					<td>状态</td>
-					<td size="30px">操作</td>
+					<td>操作</td>
 				</tr>
 				</thead>
-				
 				<tbody id="dataList">
-			
 				<%
-					
 					for(User user : userPage.getDatas()){
 				%>
 				<tr>
@@ -125,17 +134,16 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					}
 				%>
 				</tbody>
-
+				
 			</table>
+
 			<!--页码 start-->
 			<div id="pagin"></div>
 			<!--页码 end-->
 
-			
-			
 		</div>
 	</div>
-</div>
+		
 
 
 
@@ -199,7 +207,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
          </div>
       </div><!-- /.modal-content -->
 </div><!-- /.modal -->
-</div>
+</section>
 <!-- 分页js -->
 <script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 <script type="text/javascript">
