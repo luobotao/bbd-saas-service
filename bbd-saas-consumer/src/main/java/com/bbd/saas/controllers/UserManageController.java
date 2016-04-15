@@ -252,11 +252,18 @@ public class UserManageController {
 			@RequestParam(value = "status", required = true) String status,
 			@RequestParam(value = "realName", required = true) String realName,HttpServletResponse response) {
 		User user = null;
+		
+		try {
+			realName=new String(realName.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+
+		}
+		
 		if(id!=null && !id.equals("")){
 			user = userService.findOne(id);
 		}else if(realName!=null && !realName.equals("")){
 			user = userService.findUserByRealName(realName);
-		}
+		}System.out.println("================="+UserStatus.status2Obj(Integer.parseInt(status)));
 		user.setUserStatus(UserStatus.status2Obj(Integer.parseInt(status)));
 		logger.info("id"+id);
 		logger.info("realName"+realName);

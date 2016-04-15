@@ -1,20 +1,21 @@
 package com.bbd.saas.api.impl;
 
 
-import com.bbd.saas.dao.OrderParcelDao;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.mongoModels.OrderParcel;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.UpdateResults;
 import org.springframework.stereotype.Service;
 
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.dao.OrderDao;
+import com.bbd.saas.dao.OrderParcelDao;
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderNumVO;
+import com.bbd.saas.vo.OrderQueryVO;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -95,5 +96,20 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public void updateOrderOrderStatu(String mailNum,OrderStatus orderStatusOld, OrderStatus orderStatusNew){
 		orderDao.updateOrderOrderStatu(mailNum,orderStatusOld,orderStatusNew);
+	}
+
+	@Override
+	public PageModel<Order> findPageOrders(Integer pageIndex, OrderQueryVO orderQueryVO) {
+		if(orderQueryVO == null){
+			return null;
+		}
+		PageModel<Order> pageModel = new PageModel<Order>();
+		pageModel.setPageNo(pageIndex);
+		return orderDao.findPageOrders(pageModel, orderQueryVO);
+	}
+
+	@Override
+	public List<Order> findOrders(OrderQueryVO orderQueryVO) {
+		return orderDao.findOrders(orderQueryVO);
 	}
 }

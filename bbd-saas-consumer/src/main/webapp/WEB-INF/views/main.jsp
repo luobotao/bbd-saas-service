@@ -44,7 +44,7 @@ folder instead of downloading all of them to reduce the load. -->
 	<!-- jQuery UI 1.11.2 -->
 	<script src="<c:url value="/resources/adminLTE/plugins/src/jquery-ui.min.js" />"> </script>
 	<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-	<script>
+	<script type="text/javascript">
 		$.widget.bridge('uibutton', $.ui.button);
 	</script>
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>

@@ -7,10 +7,12 @@ import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
+
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +94,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(orderStatusOld!=null){//旧状态不为空，则需要加入旧状态的判断
             query.or(query.criteria("orderStatus").equal(orderStatusOld),query.criteria("orderStatus").equal(null));
         }
-        return update(query,createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date()));
+        UpdateOperations<Order> ops = createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date());
+        if(orderStatusOld==OrderStatus.NOTARR){//若是做到站操作，需要更新下到站时间
+            ops.set("dateArrived",new Date());
+        }
+        return update(query,ops);
     }
 
     public Order findOneByMailNum(String areaCode, String mailNum) {
@@ -102,4 +108,89 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("mailNum",mailNum);
         return findOne(query);
     }
+    private Query<Order> getQuery(OrderQueryVO orderQueryVO){
+    	Query<Order> query = createQuery().order("-dateUpd");
+    	if(orderQueryVO != null){
+    		//站点查询
+            if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
+                query.filter("areaCode", orderQueryVO.areaCode);
+            }
+            //到站状态
+            if(orderQueryVO.arriveStatus != null && orderQueryVO.arriveStatus != -1){
+                if(orderQueryVO.arriveStatus == 1){//已到站 即只要不是未到站，则全为已到站
+                    query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
+                }else{
+                    query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+                }
+            }
+            //预计到站时间
+            if(StringUtils.isNotBlank(orderQueryVO.between)){
+                DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                query.filter("dateMayArrive >=",dateBetween.getStart());
+                query.filter("dateMayArrive <=",dateBetween.getEnd());
+            }
+            //运单号
+            if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
+                query.filter("mailNum", orderQueryVO.mailNum);
+            }
+            //包裹号
+            if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
+                query.filter("parcelCode", orderQueryVO.parcelCode);
+            }
+            //包裹分派状态
+            if(orderQueryVO.dispatchStatus != null){
+            	if(orderQueryVO.dispatchStatus == -1){//全部（1-未分派，2-已分派）
+                	query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(1)), query.criteria("orderStatus").equal(OrderStatus.status2Obj(2)));
+                }else{
+                	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.dispatchStatus));
+                }
+            }
+        	//派件员
+            if(StringUtils.isNotBlank(orderQueryVO.userId)){
+                query.filter("user._id", new ObjectId(orderQueryVO.userId));
+            }
+        	//到站时间
+            if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
+                DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                query.filter("dateArrived >=",dateBetween.getStart());
+                query.filter("dateArrived <=",dateBetween.getEnd());
+            }
+            //异常状态
+            if(orderQueryVO.abnormalStatus != null){
+            	if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
+                	query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(3)), query.criteria("orderStatus").equal(OrderStatus.status2Obj(4)));
+                }else{
+                	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.dispatchStatus));
+                }
+            }
+            //订单状态--用于数据查询页面(-1未全部状态，就相当于不需要按状态字段查询)
+            if(orderQueryVO.orderStatus != null && orderQueryVO.orderStatus != -1){
+            	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+            }
+        }
+    	return query;
+    }
+    public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
+        //设置查询条件
+    	Query<Order> query = getQuery(orderQueryVO);
+        //分页信息
+        query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
+        //设置排序
+    	//query.order("-dateUpd");
+        //查询数据
+        List<Order> orderList = find(query).asList();
+        pageModel.setDatas(orderList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
+    }
+    public List<Order> findOrders(OrderQueryVO orderQueryVO) {
+    	//创建Query对象和设置排序
+    	Query<Order> query = createQuery().order("-dateUpd");
+        //设置查询条件
+        getQuery(orderQueryVO);
+        //查询数据
+        List<Order> orderList = find(query).asList();
+        return orderList;
+    }
+    
 }

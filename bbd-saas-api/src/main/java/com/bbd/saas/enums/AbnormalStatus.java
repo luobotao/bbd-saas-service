@@ -8,8 +8,8 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum AbnormalStatus {
 
-	RETENTION(0, "滞留"),
-    REJECTION(1, "拒收");
+	RETENTION(3, "滞留"),
+    REJECTION(4, "拒收");
     private int status;
     private String message;
     private AbnormalStatus(int status, String message) {

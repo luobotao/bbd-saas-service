@@ -102,6 +102,7 @@ public class PackageToSiteController {
 			if(order!=null){
 				order.setOrderStatus(OrderStatus.NOTDISPATCH);
 				order.setDateUpd(new Date());
+				order.setDateArrived(new Date());
 				orderService.save(order);
 			}
 		}

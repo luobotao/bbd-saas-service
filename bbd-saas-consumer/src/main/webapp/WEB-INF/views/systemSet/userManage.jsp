@@ -53,14 +53,14 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					</div>
 
 				</div>
-			<div class="row">
-				<div class="col-xs-3">
-					<button id="queryData" name="queryData" onclick="search()">查询</button>
+				<div class="row">
+					<div class="col-xs-3">
+						<button id="queryData" name="queryData" onclick="search()">查询</button>
+					</div>
+					<div class="col-xs-3">
+						<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal" href="javascript:void(0)" onclick="restUserModel()">新建</button>
+					</div>
 				</div>
-				<div class="col-xs-3">
-					<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
-				</div>
-			</div>
 		</div>
 	</div>	
 				
@@ -112,14 +112,14 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
 						
 						%>
-						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">停用</a>
+						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">&nbsp;&nbsp停用&nbsp;&nbsp;</a>
 					
 						<% 
 					}else{
 						
 						%>
 						
-						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">启用</a>
+						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">&nbsp;&nbsp启用&nbsp;&nbsp;</a>
 						<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')">删除</a>
 						<% 
 					}
@@ -163,49 +163,68 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
          <div class="modal-body">
          
 		 <form role="form" action="" method="post" id="userForm" >
-						<div class="box-body">
-						<div class="row" id="usernameDiv" style="margin-top:10px;">
-								<div class="col-xs-4">
-									<label for="title">角色:</label>
-									<select id="roleId" name="roleId" class="roleId">
-										<%=UserRole.Srcs2HTML(-1)%>
-									</select> 
-									<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">真实姓名:</label>
-									<input type="text" class="form-control" id="realName" name="realName" onblur="checkUser(this.value)">
-									<p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">手机号:</label>
-									<input type="text" class="form-control" id="phone" name="phone">
-									<p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">登录名:</label>
-									<input type="text" class="form-control" id="loginName" name="loginName" onblur="checkLoginName(this.value)">
-									<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">登录密码:</label>
-									<input type="text" class="form-control" id="loginPass" name="loginPass">
-									<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">确认密码:</label>
-									<input type="text" class="form-control" id="confirmPass" name="confirmPass">
-									<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
-								</div>
-								<input type="hidden" class="form-control" id="sign" name="sign">
-								<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
-							</div>
-							<div class="box-footer">
-							&nbsp;&nbsp;<button type="button" class="btn btn-primary" id="saveUserBtn" style="margin-left: 10px;">保存</button>
-						</div>
-					</form>
-         </div>
-      </div><!-- /.modal-content -->
+		 
+		 
+		 <div class="modal-body">
+			<div class="box-body">
+				<div class="row">
+					<div class="col-xs-4">
+						<label>角色：</label>
+						<select id="roleId" name="roleId" class="roleId">
+								<%=UserRole.Srcs2HTML(-1)%>
+						</select> 
+						<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-xs-4">
+						<label for="title">真实姓名:</label>
+						<input type="text" class="form-control" id="realName" name="realName" onblur="checkUser(this.value)">
+						<p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">手机号:</label>
+						<input type="text" class="form-control" id="phone" name="phone">
+						<p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">登录名:</label>
+						<input type="text" class="form-control" id="loginName" name="loginName" onblur="checkLoginName(this.value)">
+						<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">登录密码:</label>
+						<input type="text" class="form-control" id="loginPass" name="loginPass">
+						<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
+					</div>
+				</div>
+				<input type="hidden" class="form-control" id="sign" name="sign">
+				<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">确认密码:</label>
+						<input type="text" class="form-control" id="confirmPass" name="confirmPass">
+						<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col-xs-3">
+						<button type="button" class="btn btn-primary" id="saveUserBtn" style="margin-left: 10px;">保存</button>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</form>
+    </div>
+    </div><!-- /.modal-content -->
 </div><!-- /.modal -->
 </section>
 <!-- 分页js -->
@@ -275,9 +294,9 @@ function getRowHtml(data){
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >停用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >&nbsp;&nbsp停用&nbsp;&nbsp</a>";
 	}else{
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >启用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >&nbsp;&nbsp启用&nbsp;&nbsp</a>";
 		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" >删除</a></td>";
 	}
 
@@ -290,7 +309,7 @@ function getRowHtml(data){
 $("#saveUserBtn").click(function(){
 	
 	var url = "";
-	var getSign = document.getElementById("sign").value;alert(getSign);
+	var getSign = document.getElementById("sign").value;
 	
 	if(getSign=='edit'){
 		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
@@ -347,6 +366,12 @@ $("#saveUserBtn").click(function(){
 	}else{
 		$("#confirmPassP").attr("style","display:none");
 	}
+	if(loginPass==confirmPass){
+		$("#confirmPassP").attr("style","display:none");
+	}else{
+		$("#confirmPassP").attr("style","color:red");
+		flag = false;
+	}
 	if(flag){
 		console.log("succeful , submit");
 		$("#userForm").ajaxSubmit({  
@@ -360,15 +385,14 @@ $("#saveUserBtn").click(function(){
 	        	}else{
 	        		alert( "保存用户失败");  
 	        	}
-	            
-	            //$( "#wfAuditForm").resetForm();  
+
 	        },  
 	        error: function(JsonHttpRequest, textStatus, errorThrown){  
 	            alert( "error");  
 	        }  
 	    });  
 	}else{
-		alert("有非法内容，请检查内容合法性！");
+		//alert("有非法内容，请检查内容合法性！");
 		return false;
 	}
 	
@@ -425,9 +449,6 @@ function checkUser(realname) {
 
 
 function changeStatus(status,id,realName){
-			alert(id);
-			alert(status);
-			alert(realName);
 			$.ajax({
 				type : "GET",  
 	            url : "<c:url value="/userManage/changestatus" />", 
@@ -449,12 +470,7 @@ function changeStatus(status,id,realName){
 
 function delUser(id){
 	
-	alert(id);
-	alert(status);
-	
 	var ret = false;
-	
-	
 	if(confirm('确定要执行此操作吗?')){ 
 		ret = true; 
 	} 
@@ -491,9 +507,6 @@ function search(){
 }
 
 function searchUser(id,realName){
-	
-	alert("sss11");
-	alert(id);
 	$.ajax({
 		type : "GET",  
         url : "<c:url value="/userManage/getOneUser" />", 
@@ -523,6 +536,12 @@ function searchUser(id,realName){
 	
 	
 }
+
+function restUserModel(){
+	
+	document.getElementById("userForm").reset();
+}
+
 </script>
 
 </body>

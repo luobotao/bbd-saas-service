@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +18,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.api.UserService;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.FormatDate;
+import com.bbd.saas.utils.NumberUtil;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.StrTool;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserVO;
 
@@ -37,6 +42,8 @@ public class HandleAbnormalController {
 	OrderService orderService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	AdminService adminService;
 	/**
 	 * description: 跳转到异常件处理页面
 	 * 2016年4月1日下午6:13:46
@@ -45,12 +52,16 @@ public class HandleAbnormalController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, Integer status, String between, Model model) {
-		between = StrTool.initStr(between, FormatDate.getBetweenTime(new Date(), -2));
-		PageModel<Order> orderPage = getList(pageIndex, status, between);
-		logger.info(orderPage+"=========");
+	public String index(Integer pageIndex, Integer status, String arriveBetween, final HttpServletRequest request, Model model) {
+		//设置默认查询条件
+		status = NumberUtil.defaultIfNull(status, -1);//全部，滞留和拒收
+		//到站时间前天、昨天和今天
+		arriveBetween = StringUtils.defaultIfBlank(arriveBetween, FormatDate.getBetweenTime(new Date(), -2));
+		//查询数据
+		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, request);
+		logger.info("=====异常件处理页面列表====" + orderPage);
 		model.addAttribute("orderPage", orderPage);
-		model.addAttribute("between", between);
+		model.addAttribute("arriveBetween", arriveBetween);		
 		return "page/handleAbnormal";
 	}
 	
@@ -59,57 +70,35 @@ public class HandleAbnormalController {
 	//分页Ajax更新
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<Order> getList(Integer pageIndex, Integer status, String between) {
-		if(pageIndex == null){
-			pageIndex = 0;
-		}
-		if(status == null){
-			status = -1;
-		}
-		//功能做完需要删除between
-		if(between != null){
-			between = null;
-		}
-		
-		PageModel<Order> pageModel = new PageModel<>();
-		pageModel.setPageSize(10);
-		pageModel.setPageNo(pageIndex);
-		
+	public PageModel<Order> getList(Integer pageIndex, Integer status, String arriveBetween, final HttpServletRequest request) {
+		//参数为空时，默认值设置
+		pageIndex = NumberUtil.defaultIfNull(pageIndex, 0);
+		status = NumberUtil.defaultIfNull(status, -1);
+		//当前登录的用户信息
+		User user = adminService.get(UserSession.get(request));
+		//设置查询条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.arriveStatus = status;
-		orderQueryVO.between = between;
-		
-		PageModel<Order> orderPage = orderService.findOrders(pageModel, orderQueryVO);
-		List<Order> datas = orderPage.getDatas();
-		User user = new User();
-		user.setRealName("张XX");
-		user.setPhone("13256478978");
-		for(Order order : datas){
-			order.setUser(user);
-		}
-		return orderPage;
+		orderQueryVO.abnormalStatus = status;
+		orderQueryVO.arriveBetween = arriveBetween;
+		orderQueryVO.areaCode = user.getSite().getAreaCode();
+		//查询数据
+		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		return orderPage;		
 	}
 	
 	/**
-	 * Description: 获取本站点下的所有派件员
-	 * @param mailNum 运单号
-	 * @param senderId 派件员id
-	 * @param model
+	 * Description: 获取本站点下的所有状态为有效的派件员
+	 * @param request
 	 * @return
 	 * @author: liyanlei
-	 * 2016年4月11日下午4:15:05
+	 * 2016年4月15日上午11:06:19
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
-	public List<UserVO> getAllUserList(String siteId, Model model) {
-		UserVO uservo = new UserVO();
-		//uservo.setId(new ObjectId("5546548"));
-		uservo.setLoginName("loginName");
-		uservo.setPhone("12345678945");
-		List<UserVO> userVoList = userService.findUserListBySite(siteId);
-		if(userVoList == null || userVoList.size() == 0){
-			userVoList.add(uservo);
-		}
+	public List<UserVO> getAllUserList(final HttpServletRequest request) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		//查询
+		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
 		return userVoList;
 	}
 	/**
