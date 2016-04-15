@@ -1,12 +1,14 @@
 package com.bbd.saas.api;
 
+import java.util.List;
+
+import org.mongodb.morphia.Key;
+
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
-import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.UpdateResults;
 
 /**
  * Created by luobotao on 2016/4/8.
@@ -31,6 +33,25 @@ public interface OrderService {
      * @return
      */
     PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO);
+    
+    /**
+     * Description: 按照查询条件分页检索订单
+     * @param pageIndex 当前页
+     * @param orderQueryVO 查询条件
+     * @return
+     * @author: liyanlei
+     * 2016年4月15日下午1:30:21
+     */
+    PageModel<Order> findPageOrders(Integer pageIndex, OrderQueryVO orderQueryVO);
+    
+    /**
+     * Description: 按照查询条件检索订单-不分页
+     * @param orderQueryVO 检索条件
+     * @return
+     * @author: liyanlei
+     * 2016年4月15日下午4:28:49
+     */
+    List<Order> findOrders(OrderQueryVO orderQueryVO);
     
     /**
      * Description: 更新

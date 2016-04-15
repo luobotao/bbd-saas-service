@@ -1,10 +1,8 @@
 package com.bbd.saas.controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -17,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
+import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.api.UserService;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.FormatDate;
+import com.bbd.saas.utils.NumberUtil;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.StrTool;
 import com.bbd.saas.vo.OrderQueryVO;
 
 @Controller
@@ -38,6 +36,8 @@ public class DataQueryController {
 	OrderService orderService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	AdminService adminService;
 	/**
 	 * description: 跳转到数据查询页面
 	 * 2016年4月1日下午6:13:46
@@ -46,77 +46,64 @@ public class DataQueryController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, Integer status, String between, String mailNum, Model model) {
-		between = StrTool.initStr(between, FormatDate.getBetweenTime(new Date(), -2));
-		PageModel<Order> orderPage = getList(pageIndex, status, between, mailNum);
-		logger.info(orderPage+"=========");
+	public String index(Integer pageIndex, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
+		//设置默认查询条件
+		status = NumberUtil.defaultIfNull(status, -1);//全部
+		//到站时间
+		//arriveBetween = StringUtils.defaultIfBlank(arriveBetween, FormatDate.getBetweenTime(new Date(), -2));
+		//查询数据
+		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
+		logger.info("=====数据查询页面列表===" + orderPage);
 		model.addAttribute("orderPage", orderPage);
-		model.addAttribute("between", between);
+		model.addAttribute("arriveBetween", arriveBetween);
 		return "page/dataQuery";
 	}
 	//分页Ajax更新
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<Order> getList(Integer pageIndex, Integer status, String between, String mailNum) {
-		if(pageIndex == null){
-			pageIndex = 0;
-		}
-		if(status == null){
-			status = -1;
-		}
-		//功能做完需要删除between
-		if(between != null){
-			between = null;
-		}
-		
-		PageModel<Order> pageModel = new PageModel<>();
-		pageModel.setPageSize(10);
-		pageModel.setPageNo(pageIndex);
-		
+	public PageModel<Order> getList(Integer pageIndex, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
+		//参数为空时，默认值设置
+		pageIndex = NumberUtil.defaultIfNull(pageIndex, 0);
+		status = NumberUtil.defaultIfNull(status, -1);
+		//当前登录的用户信息
+		User user = adminService.get(UserSession.get(request));
+		//设置查询条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.arriveStatus = status;
-		orderQueryVO.between = between;
-		
-		PageModel<Order> orderPage = orderService.findOrders(pageModel, orderQueryVO);
-		List<Order> datas = orderPage.getDatas();
-		User user = new User();
-		user.setRealName("张XX");
-		user.setPhone("13256478978");
-		for(Order order : datas){
-			order.setUser(user);
-		}
-		return orderPage;
+		orderQueryVO.orderStatus = status;
+		orderQueryVO.arriveBetween = arriveBetween;
+		orderQueryVO.mailNum = mailNum;
+		orderQueryVO.areaCode = user.getSite().getAreaCode();
+		//查询数据
+		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		return orderPage;		
 	}
-	//分页Ajax更新
+	
+	/**
+	 * Description: 导出数据
+	 * @param status 状态
+	 * @param arriveBetween 到站时间
+	 * @param mailNum 运单号
+	 * @param request
+	 * @param response
+	 * @return
+	 * @author: liyanlei
+	 * 2016年4月15日下午4:30:41
+	 */
 	@RequestMapping(value="/exportData", method=RequestMethod.GET)
-	public PageModel<Order> exportData(Integer status, String between, String mailNum, final HttpServletResponse response) {
-		if(status == null){
-			status = -1;
-		}
-		//功能做完需要删除between
-		if(between != null){
-			between = null;
-		}
-		
-		PageModel<Order> pageModel = new PageModel<>();
-		pageModel.setPageSize(10);
-		pageModel.setPageNo(1);
-		
+	public void exportData(Integer status, String arriveBetween_expt, String mailNum, 
+			final HttpServletRequest request, final HttpServletResponse response) {
+		//当前登录的用户信息
+		User user = adminService.get(UserSession.get(request));
+		//设置查询条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.arriveStatus = status;
-		orderQueryVO.between = between;
-		
-		PageModel<Order> orderPage = orderService.findOrders(pageModel, orderQueryVO);
-		List<Order> datas = orderPage.getDatas();
-		User user = new User();
-		user.setRealName("张XX");
-		user.setPhone("13256478978");
-		for(Order order : datas){
-			order.setUser(user);
-		}
-		
+		orderQueryVO.orderStatus = status;
+		orderQueryVO.arriveBetween = arriveBetween_expt;
+		orderQueryVO.mailNum = mailNum;
+		orderQueryVO.areaCode = user.getSite().getAreaCode();
+		//查询数据
+		List<Order> orderList = orderService.findOrders(orderQueryVO);	
+		//导出==数据写到Excel中并写入response下载
 
-		return orderPage;
 	}	
 
 }

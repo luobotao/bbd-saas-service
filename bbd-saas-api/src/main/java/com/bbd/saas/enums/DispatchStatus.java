@@ -8,8 +8,8 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum DispatchStatus {
 
-	NOTDISPATCH(0, "未分派"),
-    DISPATCHED(1, "已分派");
+	NOTDISPATCH(1, "未分派"),
+    DISPATCHED(2, "已分派");
     private int status;
     private String message;
     private DispatchStatus(int status, String message) {
