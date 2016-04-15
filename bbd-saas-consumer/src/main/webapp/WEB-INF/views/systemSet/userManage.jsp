@@ -58,7 +58,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						<button id="queryData" name="queryData" onclick="search()">查询</button>
 					</div>
 					<div class="col-xs-3">
-						<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
+						<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal" href="javascript:void(0)" onclick="restUserModel()">新建</button>
 					</div>
 				</div>
 		</div>
@@ -205,6 +205,8 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
 					</div>
 				</div>
+				<input type="hidden" class="form-control" id="sign" name="sign">
+				<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
 				<div class="row">
 					<div class="col-xs-3">
 						<label for="title">确认密码:</label>
@@ -364,6 +366,12 @@ $("#saveUserBtn").click(function(){
 	}else{
 		$("#confirmPassP").attr("style","display:none");
 	}
+	if(loginPass==confirmPass){
+		$("#confirmPassP").attr("style","display:none");
+	}else{
+		$("#confirmPassP").attr("style","color:red");
+		flag = false;
+	}
 	if(flag){
 		console.log("succeful , submit");
 		$("#userForm").ajaxSubmit({  
@@ -384,7 +392,7 @@ $("#saveUserBtn").click(function(){
 	        }  
 	    });  
 	}else{
-		alert("有非法内容，请检查内容合法性！");
+		//alert("有非法内容，请检查内容合法性！");
 		return false;
 	}
 	
@@ -528,6 +536,12 @@ function searchUser(id,realName){
 	
 	
 }
+
+function restUserModel(){
+	
+	document.getElementById("userForm").reset();
+}
+
 </script>
 
 </body>
