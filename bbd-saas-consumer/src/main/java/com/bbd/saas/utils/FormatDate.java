@@ -2979,18 +2979,24 @@ public class FormatDate {
 	 * Description: 开始时间和结束时间
 	 * @param date 开始时间
 	 * @param diff 开始时间和结束时间的间隔 ，以开始时间为基础整数往后推,负数往前移动
-	 * @return 开始时间--结束时间，2016-4-15
+	 * @return 开始时间 - 结束时间，2016/4/15 - 2016/4/17
 	 * @author: liyanlei
 	 * 2016年4月14日上午10:14:01
 	 */
 	public static String getBetweenTime(Date date, int diff){
 		StringBuffer between = new StringBuffer();
-		between.append(dateToString(date, Constants.DATE_PATTERN_YMD));
-		between.append(" - ");
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		calendar.add(Calendar.DATE, diff);// 把日期往后增加diff天.整数往后推,负数往前移动
-		between.append(dateToString(calendar.getTime(), Constants.DATE_PATTERN_YMD));
+		if(diff > 0){
+			between.append(dateToString(date, Constants.DATE_PATTERN_YMD));
+			between.append(" - ");
+			between.append(dateToString(calendar.getTime(), Constants.DATE_PATTERN_YMD));
+		}else{
+			between.append(dateToString(calendar.getTime(), Constants.DATE_PATTERN_YMD));
+			between.append(" - ");
+			between.append(dateToString(date, Constants.DATE_PATTERN_YMD));
+		}
 		return between.toString();
 	}
 	

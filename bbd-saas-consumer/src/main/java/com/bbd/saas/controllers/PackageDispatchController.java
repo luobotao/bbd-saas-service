@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.OrderService;
 import com.bbd.saas.api.UserService;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
@@ -37,6 +41,8 @@ public class PackageDispatchController {
 	OrderService orderService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	AdminService adminService;
 	
 	/**
 	 * Description: 跳转到包裹分派页面
@@ -166,13 +172,16 @@ public class PackageDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
-	public List<UserVO> getAllUserList(String siteId, Model model) {
-		UserVO uservo = new UserVO();
-		//uservo.setId(new ObjectId("5546548"));
-		uservo.setLoginName("loginName");
-		uservo.setPhone("12345678945");
-		List<UserVO> userVoList = userService.findUserListBySite(siteId);
+	public List<UserVO> getAllUserList(String siteId, final HttpServletRequest request) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		
+		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
 		if(userVoList == null || userVoList.size() == 0){
+			UserVO uservo = new UserVO();
+			//uservo.setId(new ObjectId("5546548"));
+			uservo.setRealName("张三");
+			uservo.setLoginName("loginName");
+			uservo.setPhone("12345678945");
 			userVoList.add(uservo);
 		}
 		return userVoList;
