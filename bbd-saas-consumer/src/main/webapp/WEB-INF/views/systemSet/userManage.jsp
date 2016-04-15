@@ -112,14 +112,14 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
 						
 						%>
-						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">停用</a>
+						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">&nbsp;&nbsp停用&nbsp;&nbsp;</a>
 					
 						<% 
 					}else{
 						
 						%>
 						
-						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">启用</a>
+						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">&nbsp;&nbsp启用&nbsp;&nbsp;</a>
 						<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')">删除</a>
 						<% 
 					}
@@ -275,9 +275,9 @@ function getRowHtml(data){
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >停用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >&nbsp;&nbsp停用&nbsp;&nbsp</a>";
 	}else{
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >启用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >&nbsp;&nbsp启用&nbsp;&nbsp</a>";
 		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" >删除</a></td>";
 	}
 
@@ -290,7 +290,7 @@ function getRowHtml(data){
 $("#saveUserBtn").click(function(){
 	
 	var url = "";
-	var getSign = document.getElementById("sign").value;alert(getSign);
+	var getSign = document.getElementById("sign").value;
 	
 	if(getSign=='edit'){
 		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
@@ -360,8 +360,7 @@ $("#saveUserBtn").click(function(){
 	        	}else{
 	        		alert( "保存用户失败");  
 	        	}
-	            
-	            //$( "#wfAuditForm").resetForm();  
+
 	        },  
 	        error: function(JsonHttpRequest, textStatus, errorThrown){  
 	            alert( "error");  
@@ -425,9 +424,6 @@ function checkUser(realname) {
 
 
 function changeStatus(status,id,realName){
-			alert(id);
-			alert(status);
-			alert(realName);
 			$.ajax({
 				type : "GET",  
 	            url : "<c:url value="/userManage/changestatus" />", 
@@ -449,12 +445,7 @@ function changeStatus(status,id,realName){
 
 function delUser(id){
 	
-	alert(id);
-	alert(status);
-	
 	var ret = false;
-	
-	
 	if(confirm('确定要执行此操作吗?')){ 
 		ret = true; 
 	} 
@@ -491,9 +482,6 @@ function search(){
 }
 
 function searchUser(id,realName){
-	
-	alert("sss11");
-	alert(id);
 	$.ajax({
 		type : "GET",  
         url : "<c:url value="/userManage/getOneUser" />", 
