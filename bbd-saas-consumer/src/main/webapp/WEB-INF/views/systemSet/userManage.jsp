@@ -53,14 +53,14 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					</div>
 
 				</div>
-			<div class="row">
-				<div class="col-xs-3">
-					<button id="queryData" name="queryData" onclick="search()">查询</button>
+				<div class="row">
+					<div class="col-xs-3">
+						<button id="queryData" name="queryData" onclick="search()">查询</button>
+					</div>
+					<div class="col-xs-3">
+						<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
+					</div>
 				</div>
-				<div class="col-xs-3">
-					<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
-				</div>
-			</div>
 		</div>
 	</div>	
 				
@@ -163,49 +163,66 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
          <div class="modal-body">
          
 		 <form role="form" action="" method="post" id="userForm" >
-						<div class="box-body">
-						<div class="row" id="usernameDiv" style="margin-top:10px;">
-								<div class="col-xs-4">
-									<label for="title">角色:</label>
-									<select id="roleId" name="roleId" class="roleId">
-										<%=UserRole.Srcs2HTML(-1)%>
-									</select> 
-									<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">真实姓名:</label>
-									<input type="text" class="form-control" id="realName" name="realName" onblur="checkUser(this.value)">
-									<p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">手机号:</label>
-									<input type="text" class="form-control" id="phone" name="phone">
-									<p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">登录名:</label>
-									<input type="text" class="form-control" id="loginName" name="loginName" onblur="checkLoginName(this.value)">
-									<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">登录密码:</label>
-									<input type="text" class="form-control" id="loginPass" name="loginPass">
-									<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
-								</div>
-								<div class="col-xs-4">
-									<label for="title">确认密码:</label>
-									<input type="text" class="form-control" id="confirmPass" name="confirmPass">
-									<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
-								</div>
-								<input type="hidden" class="form-control" id="sign" name="sign">
-								<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
-							</div>
-							<div class="box-footer">
-							&nbsp;&nbsp;<button type="button" class="btn btn-primary" id="saveUserBtn" style="margin-left: 10px;">保存</button>
-						</div>
-					</form>
-         </div>
-      </div><!-- /.modal-content -->
+		 
+		 
+		 <div class="modal-body">
+			<div class="box-body">
+				<div class="row">
+					<div class="col-xs-4">
+						<label>角色：</label>
+						<select id="roleId" name="roleId" class="roleId">
+								<%=UserRole.Srcs2HTML(-1)%>
+						</select> 
+						<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-xs-4">
+						<label for="title">真实姓名:</label>
+						<input type="text" class="form-control" id="realName" name="realName" onblur="checkUser(this.value)">
+						<p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">手机号:</label>
+						<input type="text" class="form-control" id="phone" name="phone">
+						<p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">登录名:</label>
+						<input type="text" class="form-control" id="loginName" name="loginName" onblur="checkLoginName(this.value)">
+						<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">登录密码:</label>
+						<input type="text" class="form-control" id="loginPass" name="loginPass">
+						<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">确认密码:</label>
+						<input type="text" class="form-control" id="confirmPass" name="confirmPass">
+						<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col-xs-3">
+						<button type="button" class="btn btn-primary" id="saveUserBtn" style="margin-left: 10px;">保存</button>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</form>
+    </div>
+    </div><!-- /.modal-content -->
 </div><!-- /.modal -->
 </section>
 <!-- 分页js -->
