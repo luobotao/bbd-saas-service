@@ -1,24 +1,20 @@
 package com.bbd.saas.dao;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
@@ -31,7 +27,16 @@ import com.bbd.saas.vo.UserQueryVO;
 @Repository
 public class UserDao extends BaseDAO<User, ObjectId> {
     public static final Logger logger = LoggerFactory.getLogger(UserDao.class);
+    
+    SiteDao siteDao;
+    public SiteDao getSiteDao() {
+        return siteDao;
+    }
 
+    public void setSiteDao(SiteDao siteDao) {
+        this.siteDao = siteDao;
+    }
+    
     UserDao(LinkedHashMap<String, Datastore> datastores) {
         super(datastores);
     }
@@ -75,20 +80,19 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     }
     
     /**
-     * 获取用户列表信息
-     * @param siteId
-     * @return PageModel<User>
+     * Description: 获取指定站点下的所有派件员
+     * @param areaCode 站点编号
+     * @return
+     * @author: liyanlei
+     * 2016年4月14日下午8:04:44
      */
-    public List<User> findUserListBySite(String siteId) {
+    public List<User> findUserListBySite(String areaCode) {
     	Query<User> query = createQuery();
-    	/*query.filter("sender.name", "陈建伟");
-    	query.filter("sender.phone", "13488884622");
-    	query.filter("sender.province", "北京");*/
-    	//query.filter("realName", "棒棒糖超级管理员");
-    	//分页
-    	/*query.order("dateLogin");
-    	query.offset(0);
-    	query.limit(20);*/
+    	Site site = siteDao.findOne("areaCode", areaCode);
+    	if(StringUtils.isNotBlank(areaCode)){
+    		query.filter("site", site);
+    		query.filter("role", UserRole.SENDMEM);
+    	}
         return  find(query).asList();
     }
 }

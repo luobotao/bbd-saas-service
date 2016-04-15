@@ -49,6 +49,14 @@ public class UserServiceImpl implements UserService {
         return userDao.findOne("realName",realName);
     }
     /**
+     * 根据用户id查找是否存在此用户
+     * @param id
+     * @return
+     */
+    public User findUserById(String id) {
+        return userDao.findOne("_id", new ObjectId(id));
+    }
+    /**
      * 保存用户对象信息
      * @param user
      * @return Key<User>
