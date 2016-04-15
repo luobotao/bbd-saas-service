@@ -15,6 +15,7 @@ import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
+import com.mongodb.WriteResult;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -48,14 +49,6 @@ public class UserServiceImpl implements UserService {
         return userDao.findOne("realName",realName);
     }
     /**
-     * 根据用户id查找是否存在此用户
-     * @param id
-     * @return
-     */
-    public User findUserById(String id) {
-        return userDao.findOne("id",id);
-    }
-    /**
      * 保存用户对象信息
      * @param user
      * @return Key<User>
@@ -63,6 +56,16 @@ public class UserServiceImpl implements UserService {
     public Key<User> save(User user){
     	return userDao.save(user);
     }
+    
+    /**
+     * 保存用户对象信息
+     * @param user
+     * @return WriteResult
+     */
+    public WriteResult delUser(User user){
+    	return userDao.delete(user);
+    }
+
 
     /**
      * 获取用户列表信息

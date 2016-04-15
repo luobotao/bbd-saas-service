@@ -161,6 +161,41 @@ public class UserManageController {
 		}
 	}
 	
+	/**
+     * 保存修改用户
+     * @param model
+     * @return
+     */
+	@ResponseBody
+	@RequestMapping(value="editUser", method=RequestMethod.POST)
+	public String editUser(@Valid UserForm userForm, BindingResult result,Model model,RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
+		System.out.println("ssss");
+		
+		User olduser = userService.findUserByRealName(userForm.getRealNameTemp());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+	    java.util.Date dateUpdate = new java.util.Date();
+		User user = new User();
+		logger.info(userForm.getRealNameTemp());
+		
+		user.setId(olduser.getId());
+		user.setRealName(userForm.getRealName());
+		user.setLoginName(userForm.getLoginName());
+		user.setPhone(userForm.getPhone());
+		user.setPassWord(userForm.getLoginPass());
+		user.setOperate(null);
+		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
+		user.setDateUpdate(dateUpdate);
+		Key<User> kuser = userService.save(user);
+		
+		if(kuser!=null && !kuser.getId().equals("")){
+
+			return "true";
+		}else{
+			return "false";
+		}
+	}
+	
 	@ResponseBody
 	@RequestMapping(value="/checkUser", method=RequestMethod.GET)
 	public String checkUser(Model model,@RequestParam(value = "realname", required = true) String realname,HttpServletResponse response) {
@@ -188,13 +223,27 @@ public class UserManageController {
 	@RequestMapping(value="/changestatus", method=RequestMethod.GET)
 	public String changestatus(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "status", required = true) String status,HttpServletResponse response) {
-		//User user = userService.findUserByRealName(id);
+		User user = userService.findOne(id);
+		user.setUserStatus(UserStatus.status2Obj(Integer.parseInt(status)));
 		logger.info("id"+id);
-		if(status.equals("0")){ 
+		Key<User> kuser = userService.save(user);
+		
+		if(kuser!=null && !kuser.getId().equals("")){ 
 			return "true";
 		}else{
 			return "false";
 		}
+		
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/delUser", method=RequestMethod.GET)
+	public String delUser(Model model,@RequestParam(value = "id", required = true) String id,HttpServletResponse response) {
+		User user = userService.findOne(id);
+		logger.info("id"+id);
+		userService.delUser(user);
+		
+		return "true";
 		
 	}
 	
@@ -214,9 +263,9 @@ public class UserManageController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/test", method=RequestMethod.GET)
-	public User test(Model model,@RequestParam(value = "id", required = true) String id) {
-		User user = userService.findUserByLoginName("qweqewqwed");
+	@RequestMapping(value="/getOneUser", method=RequestMethod.GET)
+	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id) {
+		User user = userService.findOne(id);
 		user.setRoleStatus(user.getRole().getStatus());
 		return user;
 	}

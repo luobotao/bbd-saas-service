@@ -38,6 +38,7 @@ public class User implements Serializable {
     private int state;//状态标识 1审核中 2审核通过 3驳回
     private UserStatus userStatus;//状态标识 1启用,0停用 
     private Date dateAdd;//创建时间
+    private Date dateUpdate;//修改时间
     private Date dateLogin;//最后一次登录时间
     @Transient 
     private int roleStatus;
@@ -160,6 +161,14 @@ public class User implements Serializable {
 
 	public void setRoleStatus(int roleStatus) {
 		this.roleStatus = roleStatus;
+	}
+
+	public Date getDateUpdate() {
+		return dateUpdate;
+	}
+
+	public void setDateUpdate(Date dateUpdate) {
+		this.dateUpdate = dateUpdate;
 	}
 
 	
