@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.UserService;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
@@ -53,6 +55,8 @@ public class UserManageController {
 	public static final Logger logger = LoggerFactory.getLogger(UserManageController.class);
 	@Autowired
 	private UserService userService;
+	@Autowired
+	AdminService adminService;
 	
 
 	/**
@@ -137,7 +141,9 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value="saveUser", method=RequestMethod.POST)
-	public String saveUser(@Valid UserForm userForm, BindingResult result,Model model,RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
+	public String saveUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model,
+			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
+		User getuser = adminService.get(UserSession.get(request));
 		System.out.println("ssss");
 		Map<String, Object> map = new HashMap<String, Object>();
 	    java.util.Date dateAdd = new java.util.Date();
@@ -146,7 +152,8 @@ public class UserManageController {
 		user.setLoginName(userForm.getLoginName());
 		user.setPhone(userForm.getPhone());
 		user.setPassWord(userForm.getLoginPass());
-		user.setOperate(null);
+		user.setSite(getuser.getSite());
+		user.setOperate(getuser.getOperate());
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(0));
@@ -222,10 +229,17 @@ public class UserManageController {
 	@ResponseBody
 	@RequestMapping(value="/changestatus", method=RequestMethod.GET)
 	public String changestatus(Model model,@RequestParam(value = "id", required = true) String id,
-			@RequestParam(value = "status", required = true) String status,HttpServletResponse response) {
-		User user = userService.findOne(id);
+			@RequestParam(value = "status", required = true) String status,
+			@RequestParam(value = "realName", required = true) String realName,HttpServletResponse response) {
+		User user = null;
+		if(id!=null && !id.equals("")){
+			user = userService.findOne(id);
+		}else if(realName!=null && !realName.equals("")){
+			user = userService.findUserByRealName(realName);
+		}
 		user.setUserStatus(UserStatus.status2Obj(Integer.parseInt(status)));
 		logger.info("id"+id);
+		logger.info("realName"+realName);
 		Key<User> kuser = userService.save(user);
 		
 		if(kuser!=null && !kuser.getId().equals("")){ 
@@ -238,9 +252,9 @@ public class UserManageController {
 	
 	@ResponseBody
 	@RequestMapping(value="/delUser", method=RequestMethod.GET)
-	public String delUser(Model model,@RequestParam(value = "id", required = true) String id,HttpServletResponse response) {
-		User user = userService.findOne(id);
-		logger.info("id"+id);
+	public String delUser(Model model,@RequestParam(value = "id", required = true) String realName,HttpServletResponse response) {
+		User user = userService.findUserByRealName(realName);
+		logger.info("realName"+realName);
 		userService.delUser(user);
 		
 		return "true";
@@ -264,8 +278,14 @@ public class UserManageController {
 	
 	@ResponseBody
 	@RequestMapping(value="/getOneUser", method=RequestMethod.GET)
-	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id) {
-		User user = userService.findOne(id);
+	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id,
+			@RequestParam(value = "realName", required = true) String realName) {
+		User user = null;
+		if(id!=null && !id.equals("")){
+			user = userService.findOne(id);
+		}else if(realName!=null && !realName.equals("")){
+			user = userService.findUserByRealName(realName);
+		}
 		user.setRoleStatus(user.getRole().getStatus());
 		return user;
 	}
