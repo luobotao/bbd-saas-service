@@ -91,7 +91,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					}else{
 						
 						%>
-						<td></td>
+						<td>无</td>
 					<% 
 					}
 					%>
@@ -103,18 +103,21 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
 						
 						%>
-						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">停用|</a>
+						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">停用</a>
 					
 						<% 
 					}else{
 						
 						%>
 						
-						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">启用|</a>
+						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">启用</a>
+						<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')">删除</a>
 						<% 
 					}
+					
+					
 					%>
-					<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')">删除</a>
+					
 					</td>
 					
 				</tr>
@@ -248,21 +251,28 @@ function gotoPage(pageIndex,roleId,status,keyword) {
 function getRowHtml(data){
 	var row = "<tr>";
 	var temp = "";
-	row +=  "<td>" + data.role + "</td>";
+	row +=  "<td>" + data.roleMessage + "</td>";
 	row += "<td>" + data.realName + "</td>";
 	row += "<td>" + data.phone + "</td>";
 	row += "<td>" + data.loginName + "</td>";
-	row += "<td>" + data.userStatus + "</td>";
+	
+	if(data.userStatus!==null){
+		row += "<td>" + data.statusMessage + "</td>";
+	}else{
+		row += "<td>无</td>";
+	}
+	
+	
 	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.realName+"')\">修改</button>";
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >停用|</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >停用</a>";
 	}else{
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >启用|</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >启用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" >删除</a></td>";
 	}
-	row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" >删除</a></td>";
-	
+
 	row += "</tr>";
 	return row;
 }
@@ -372,11 +382,7 @@ function checkLoginName(loginName) {
 			console.log(response);
 			if(response=="true"){
 				alert("您输入的登录名目前已存在，请重新输入");
-				document.getElementById("userForm").reset();
 			}
-			
-			//$("#usernameFlag").val(0);
-			
 		},
 		error: function(){
 			alert('服务器繁忙，请稍后再试！');
@@ -397,7 +403,6 @@ function checkUser(realname) {
 			console.log(response);
 			if(response=="true"){
 				alert("您输入的用户名目前已存在，请重新输入");
-				document.getElementById("userForm").reset();
 			}
 			
 			//$("#usernameFlag").val(0);
@@ -435,24 +440,38 @@ function changeStatus(status,id,realName){
 
 
 function delUser(id){
+	
 	alert(id);
 	alert(status);
-	$.ajax({
-		type : "GET",  
-        url : "<c:url value="/userManage/delUser" />", 
-        data : {  
-            "id" : id 
-        },
-        success : function(data) {
-			if(data == 'true'){
-				alert("删除成功");
-				gotoPage(0);
-			} 
-        },
-        error : function() {  
-       		alert("异常！");  
-  		}    
-    });
+	
+	var ret = false;
+	
+	
+	if(confirm('确定要执行此操作吗?')){ 
+		ret = true; 
+	} 
+	    
+	if(ret){
+		
+		$.ajax({
+			type : "GET",  
+	        url : "<c:url value="/userManage/delUser" />", 
+	        data : {  
+	            "id" : id 
+	        },
+	        success : function(data) {
+				if(data == 'true'){
+					alert("删除成功");
+					gotoPage(0);
+				} 
+	        },
+	        error : function() {  
+	       		alert("异常！");  
+	  		}    
+	    });
+	}
+	
+	
 }
 
 function search(){

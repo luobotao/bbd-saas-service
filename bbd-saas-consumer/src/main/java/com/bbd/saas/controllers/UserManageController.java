@@ -46,7 +46,7 @@ import com.bbd.saas.vo.UserQueryVO;
  * 版权：zuowenhai新石器时代<br/>
  * 作者：zuowenhai@neolix.cn <br/>
  * 生成日期：2016-04-11 <br/>
- * 描述：用户接口
+ * 描述：用户管理
  */
 @Controller
 @RequestMapping("/userManage")
@@ -124,6 +124,18 @@ public class UserManageController {
 	public PageModel<User> getUserPage(Integer pageIndex, Integer roleId, Integer status,String keyword) {
 		if (pageIndex==null) pageIndex =0 ;
 		//logger.info(arriveStatus+"========="+between);
+		try {
+			
+			if(keyword!=null && !keyword.equals("")){
+				keyword=new String(keyword.getBytes("iso-8859-1"),"utf-8");
+			}else{
+				keyword = "";
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		UserQueryVO userQueryVO = new UserQueryVO();
 		userQueryVO.roleId=roleId;
 		userQueryVO.status=status;
@@ -131,6 +143,14 @@ public class UserManageController {
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
 		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO);
+		
+		for(User user : userPage.getDatas()){
+			user.setRoleMessage(user.getRole().getMessage());
+			if(user.getUserStatus()!=null && !user.getUserStatus().getMessage().equals("")){
+				user.setStatusMessage(user.getUserStatus().getMessage());
+			}
+		}
+		
 		return userPage;
 	}
 	

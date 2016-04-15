@@ -34,6 +34,17 @@ public enum UserRole {
         }
         return sb.toString();
     }
+    
+    public static UserRole obj2UserRole(String objStr) {
+       
+    	for(UserRole userRole: UserRole.values()){
+    		if(userRole.toString().equals(objStr)){
+    			return userRole;
+    		}
+    	}
+		return null;
+    }
+    
     public static UserRole status2Obj(int value) {
     	UserRole[] returnReason = UserRole.values();
         for (UserRole rr : returnReason) {
