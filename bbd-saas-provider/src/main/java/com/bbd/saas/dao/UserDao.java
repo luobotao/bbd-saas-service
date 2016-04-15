@@ -28,15 +28,6 @@ import com.bbd.saas.vo.UserQueryVO;
 public class UserDao extends BaseDAO<User, ObjectId> {
     public static final Logger logger = LoggerFactory.getLogger(UserDao.class);
     
-    SiteDao siteDao;
-    public SiteDao getSiteDao() {
-        return siteDao;
-    }
-
-    public void setSiteDao(SiteDao siteDao) {
-        this.siteDao = siteDao;
-    }
-    
     UserDao(LinkedHashMap<String, Datastore> datastores) {
         super(datastores);
     }
@@ -80,19 +71,22 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     }
     
     /**
-     * Description: 获取指定站点下的所有派件员
+     * Description: 获取指定站点下的所有状态为有效的用户
      * @param areaCode 站点编号
      * @return
      * @author: liyanlei
      * 2016年4月14日下午8:04:44
      */
-    public List<User> findUserListBySite(String areaCode) {
+    public List<User> findUserListBySite(Site site, UserRole userRole) {
     	Query<User> query = createQuery();
-    	Site site = siteDao.findOne("areaCode", areaCode);
-    	if(StringUtils.isNotBlank(areaCode)){
+    	if(site != null){
     		query.filter("site", site);
-    		query.filter("role", UserRole.SENDMEM);
     	}
+    	if(userRole != null){
+    		query.filter("role", userRole);
+    	}
+    	//有效用户
+    	query.filter("userStatus", UserStatus.status2Obj(1));
         return  find(query).asList();
     }
 }

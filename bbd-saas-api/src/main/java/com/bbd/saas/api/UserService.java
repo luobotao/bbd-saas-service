@@ -70,5 +70,5 @@ public interface UserService {
      * @author: liyanlei
      * 2016年4月12日上午11:27:25
      */
-    public List<UserVO> findUserListBySite(String siteId);
+    public List<UserVO> findUserListBySite(String areaCode);
 }

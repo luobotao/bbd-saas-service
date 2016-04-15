@@ -57,7 +57,8 @@ public class PackageDispatchController {
 	 * 2016年4月12日下午3:25:07
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, Integer status, String between, String courierId, Model model) {
+	public String index(Integer pageIndex, Integer status, String between, String courierId, final HttpServletRequest request, Model model) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		between = StrTool.initStr(between, FormatDate.getBetweenTime(new Date(), -2));
 		PageModel<Order> orderPage = getList(pageIndex, status, between, courierId);
 		logger.info(orderPage+"=========");
@@ -162,28 +163,26 @@ public class PackageDispatchController {
 	}
 	
 	/**
-	 * Description: 获取本站点下的所有派件员
-	 * @param mailNum 运单号
-	 * @param senderId 派件员id
-	 * @param model
+	 * Description: 获取本站点下的所有状态为有效的派件员
+	 * @param request
 	 * @return
 	 * @author: liyanlei
-	 * 2016年4月11日下午4:15:05
+	 * 2016年4月15日上午11:06:19
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
-	public List<UserVO> getAllUserList(String siteId, final HttpServletRequest request) {
+	public List<UserVO> getAllUserList(final HttpServletRequest request) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-		
+		//查询
 		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
-		if(userVoList == null || userVoList.size() == 0){
+		/*if(userVoList == null || userVoList.size() == 0){
 			UserVO uservo = new UserVO();
 			//uservo.setId(new ObjectId("5546548"));
 			uservo.setRealName("张三");
 			uservo.setLoginName("loginName");
 			uservo.setPhone("12345678945");
 			userVoList.add(uservo);
-		}
+		}*/
 		return userVoList;
 	}
 

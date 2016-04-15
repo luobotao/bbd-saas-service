@@ -19,9 +19,6 @@
     <!-- user DAO-->
     <bean id="userDao" class="com.bbd.saas.dao.UserDao">
         <constructor-arg ref="datastore"/>
-        <property name="siteDao">
-            <ref bean="siteDao"/>
-        </property>
     </bean>
     <!-- site DAO-->
     <bean id="siteDao" class="com.bbd.saas.dao.SiteDao">
