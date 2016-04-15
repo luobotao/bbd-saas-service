@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 public class RoleManageController {
 
 	/**
-	 * description: 跳转到系统设置-角色管理页面
-	 * 2016年4月5日下午4:01:56
-	 * @author: liyanlei
-	 * @param model
-	 * @return 
+	 * 版权：zuowenhai新石器时代<br/>
+	 * 作者：zuowenhai@neolix.cn <br/>
+	 * 生成日期：2016-04-11 <br/>
+	 * 描述：角色管理
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Model model) {
