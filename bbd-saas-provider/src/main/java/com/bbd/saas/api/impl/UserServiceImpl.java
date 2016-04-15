@@ -82,8 +82,8 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return WriteResult
      */
-    public WriteResult delUser(User user){
-    	return userDao.delete(user);
+    public void delUser(User user){
+    	userDao.delete(user);
     }
 
 

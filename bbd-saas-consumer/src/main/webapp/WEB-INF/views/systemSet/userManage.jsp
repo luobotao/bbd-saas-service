@@ -28,36 +28,47 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 
 
 
-<div class="content">
-	<div class="content-left" id="content-left"></div>
-	<div class="content-main" id="content-main">
-		<c:url var="userListAction" value="/userManage"/>
-		<form id="userListForm" action="" method="get">    
-		<input type="hidden" name="page" id="page" value="<%=userPage.getPageNo() %>" />  
-		<div class="m20">
-			<span>
-				<label>角色:</label>
+<section class="content">
+		<c:url var="userListAction" value="/userManage"/> 
+		
+		<div class="col-xs-12">
+			<div class="box-body">
+				<div class="row">
+					<div class="col-xs-3">
+						<label>角色：</label>
 						<select id="saasrole" name="saasrole" class="form-control">
 							<%=UserRole.Srcs2HTML(-1)%>
-						</select>  
-			</span> 
-			<span>
-			<label>状态：</label>
+						</select>
+					</div>
+					<div class="col-xs-3">
+						<label>状态：</label>
 						<select id="status" name="status" class="form-control">
 							<%=UserStatus.Srcs2HTML(-1)%>
 						</select>
-			</span>
-			<span class="pl20">
-				关键词：<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" />
-			</span>
-			<br><br>
-			<button id="queryData" name="queryData" onclick="search()">查询</button>
-			
+					</div>
+
+					<div class="col-xs-3">
+						<label>关键词：</label>
+						<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" class="form-control"/>
+					</div>
+
+				</div>
+			<div class="row">
+				<div class="col-xs-3">
+					<button id="queryData" name="queryData" onclick="search()">查询</button>
+				</div>
+				<div class="col-xs-3">
+					<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
+				</div>
+			</div>
 		</div>
-		</form>
-		<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal">新建</button>
-		<div class="m20">
-			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
+	</div>	
+				
+
+	<div class="col-xs-12">
+
+		<div class="box-body table-responsive">
+			<table id="orderTable" class="table table-bordered table-hover">
 				<thead>
 				<tr>
 					<td>角色</td>
@@ -65,14 +76,11 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					<td>手机号</td>
 					<td>登录名</td>
 					<td>状态</td>
-					<td size="30px">操作</td>
+					<td>操作</td>
 				</tr>
 				</thead>
-				
 				<tbody id="dataList">
-			
 				<%
-					
 					for(User user : userPage.getDatas()){
 				%>
 				<tr>
@@ -92,30 +100,33 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					}else{
 						
 						%>
-						<td></td>
+						<td>无</td>
 					<% 
 					}
 					%>
 					
 					
-					<td><button id="editUser" name="editUser" data-toggle="modal" data-target="#myModal" href="javascript:void(0)" onclick="searchUser('<%=user.getId() %>')">修改</button>
+					<td><button id="editUser" name="editUser" data-toggle="modal" data-target="#myModal" href="javascript:void(0)" onclick="searchUser('<%=user.getId() %>','')">修改</button>
 					<% 
 					
 					if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
 						
 						%>
-						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>')">停用|</a>
+						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">停用</a>
 					
 						<% 
 					}else{
 						
 						%>
 						
-						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>')">启用|</a>
+						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">启用</a>
+						<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')">删除</a>
 						<% 
 					}
+					
+					
 					%>
-					<a href="javascript:void(0)" onclick="delUser('<%=user.getId() %>')">删除</a>
+					
 					</td>
 					
 				</tr>
@@ -123,17 +134,16 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					}
 				%>
 				</tbody>
-
+				
 			</table>
+
 			<!--页码 start-->
 			<div id="pagin"></div>
 			<!--页码 end-->
 
-			
-			
 		</div>
 	</div>
-</div>
+		
 
 
 
@@ -197,7 +207,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
          </div>
       </div><!-- /.modal-content -->
 </div><!-- /.modal -->
-</div>
+</section>
 <!-- 分页js -->
 <script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 <script type="text/javascript">
@@ -248,101 +258,44 @@ function gotoPage(pageIndex,roleId,status,keyword) {
 //封装一行的数据
 function getRowHtml(data){
 	var row = "<tr>";
-	row +=  "<td>" + data.role + "</td>";
+	var temp = "";
+	row +=  "<td>" + data.roleMessage + "</td>";
 	row += "<td>" + data.realName + "</td>";
 	row += "<td>" + data.phone + "</td>";
 	row += "<td>" + data.loginName + "</td>";
-	row += "<td>" + data.userStatus + "</td>";
-	row += "<td><button id=\"editUser\" name=\"editUser\" data-toggle=\"modal\" data-target=\"#myModal\" href=\"javascript:void(0)\" onclick=\"searchUser(\"'+data.id+'\")\">"+"修改</button>";
+	
+	if(data.userStatus!==null){
+		row += "<td>" + data.statusMessage + "</td>";
+	}else{
+		row += "<td>无</td>";
+	}
+	
+	
+	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.realName+"')\">修改</button>";
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick='changeStatus(0,'"+data.id+"')' >停用|</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >停用</a>";
 	}else{
-		row += '<a href="javascript:void(0)" onclick="changeStatus(1,'+data.realName+')" >启用|</a>';
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >启用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" >删除</a></td>";
 	}
-	row += "<a href='javascript:void(0)' onclick='delUser('"+data.realName+"')' >删除</a></td>";
-	
+
 	row += "</tr>";
 	return row;
 }
 
 
-//保存
-function saveUser1() {
-	alert("ssss");
-	var link = "<c:url value="/userManage/saveUser" />";
-	$.ajax({ url: link,
-		beforeSend: function(req) { 
-			req.setRequestHeader("Accept", "application/rss+xml");
-		},
-		success: function(feed) {
-			MvcUtil.showSuccessResponse(MvcUtil.xmlencode(feed), link);
-		},
-		error: function(xhr) { 
-			MvcUtil.showErrorResponse(xhr.responseText, link);
-		}
-	});
-}
-
-function checkLoginName(loginName) {
-
-	var url = "<c:url value="/userManage/checkLognName" />";
-	$.ajax({
-		url: url+'?loginName='+loginName,
-		type: 'GET',
-		cache: false,
-		dataType: "text",
-		data: {},
-		success: function(response){
-			console.log(response);
-			if(response=="true"){
-				alert("您输入的登录名目前已存在，请重新输入");
-				document.getElementById("userForm").reset();
-			}
-			
-			//$("#usernameFlag").val(0);
-			
-		},
-		error: function(){
-			alert('服务器繁忙，请稍后再试！');
-		}
-	});
-}
-
-function checkUser(realname) {
-
-	var url = "<c:url value="/userManage/checkUser" />";
-	$.ajax({
-		url: url+'?realname='+realname,
-		type: 'GET',
-		cache: false,
-		dataType: "text",
-		data: {},
-		success: function(response){
-			console.log(response);
-			if(response=="true"){
-				alert("您输入的用户名目前已存在，请重新输入");
-				document.getElementById("userForm").reset();
-			}
-			
-			//$("#usernameFlag").val(0);
-			
-		},
-		error: function(){
-			alert('服务器繁忙，请稍后再试！');
-		}
-	});
-}
 
 $("#saveUserBtn").click(function(){
+	
 	var url = "";
 	var getSign = document.getElementById("sign").value;alert(getSign);
 	
 	if(getSign=='edit'){
-		url = "<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />";
+		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
 	}else{
-		url = "<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />";
+		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
 	}
 	var flag = true;
 	var roleId = $("#roleId").val();
@@ -401,11 +354,11 @@ $("#saveUserBtn").click(function(){
 	        url: url ,  
 	        success: function(data){  
 	        	if(data=="true"){
-	        		alert( "添加用户成功");  
+	        		alert( "保存用户成功");  
 	        		document.getElementById("userForm").reset();
 	        		gotoPage(0);
 	        	}else{
-	        		alert( "添加用户失败");  
+	        		alert( "保存用户失败");  
 	        	}
 	            
 	            //$( "#wfAuditForm").resetForm();  
@@ -422,18 +375,69 @@ $("#saveUserBtn").click(function(){
 	
 })
 
-function changeStatus(status,id){
+
+
+function checkLoginName(loginName) {
+
+	var url = "<c:url value="/userManage/checkLognName" />";
+	$.ajax({
+		url: url+'?loginName='+loginName,
+		type: 'GET',
+		cache: false,
+		dataType: "text",
+		data: {},
+		success: function(response){
+			console.log(response);
+			if(response=="true"){
+				alert("您输入的登录名目前已存在，请重新输入");
+			}
+		},
+		error: function(){
+			alert('服务器繁忙，请稍后再试！');
+		}
+	});
+}
+
+function checkUser(realname) {
+
+	var url = "<c:url value="/userManage/checkUser" />";
+	$.ajax({
+		url: url+'?realname='+realname,
+		type: 'GET',
+		cache: false,
+		dataType: "text",
+		data: {},
+		success: function(response){
+			console.log(response);
+			if(response=="true"){
+				alert("您输入的用户名目前已存在，请重新输入");
+			}
+			
+			//$("#usernameFlag").val(0);
+			
+		},
+		error: function(){
+			alert('服务器繁忙，请稍后再试！');
+		}
+	});
+}
+
+
+
+function changeStatus(status,id,realName){
 			alert(id);
 			alert(status);
+			alert(realName);
 			$.ajax({
 				type : "GET",  
 	            url : "<c:url value="/userManage/changestatus" />", 
 	            data : {  
-	                "id" : id,"status" : status 
+	                "id" : id,"status" : status,"realName" : realName  
 	            },
 	            success : function(data) {
 					if(data == 'true'){
 						alert("更新成功");
+						gotoPage(0);
 					} 
 	            },
 	            error : function() {  
@@ -444,23 +448,38 @@ function changeStatus(status,id){
 
 
 function delUser(id){
+	
 	alert(id);
 	alert(status);
-	$.ajax({
-		type : "GET",  
-        url : "<c:url value="/userManage/delUser" />", 
-        data : {  
-            "id" : id 
-        },
-        success : function(data) {
-			if(data == 'true'){
-				alert("删除成功");
-			} 
-        },
-        error : function() {  
-       		alert("异常！");  
-  		}    
-    });
+	
+	var ret = false;
+	
+	
+	if(confirm('确定要执行此操作吗?')){ 
+		ret = true; 
+	} 
+	    
+	if(ret){
+		
+		$.ajax({
+			type : "GET",  
+	        url : "<c:url value="/userManage/delUser" />", 
+	        data : {  
+	            "id" : id 
+	        },
+	        success : function(data) {
+				if(data == 'true'){
+					alert("删除成功");
+					gotoPage(0);
+				} 
+	        },
+	        error : function() {  
+	       		alert("异常！");  
+	  		}    
+	    });
+	}
+	
+	
 }
 
 function search(){
@@ -468,9 +487,10 @@ function search(){
 	var status = $("#status").val();
 	var keyword = $("#keyword").val();
 	gotoPage(0,roleId,status,keyword);
+
 }
 
-function searchUser(id){
+function searchUser(id,realName){
 	
 	alert("sss11");
 	alert(id);
@@ -478,7 +498,8 @@ function searchUser(id){
 		type : "GET",  
         url : "<c:url value="/userManage/getOneUser" />", 
         data : {  
-            "id" : id
+            "id" : id,
+            "realName" : realName
         },
         success : function(data) {
 			if(data != null){

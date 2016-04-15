@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
@@ -49,18 +50,18 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO) {
     	
     	Query<User> query = createQuery();
-        
     	if(userQueryVO!=null){
+    		
     		if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
-    			query.filter("role", UserRole.status2Obj(userQueryVO.roleId)).filter("role <>", null);
+    			query.filter("role", UserRole.status2Obj(userQueryVO.roleId));
     		}
     		if(userQueryVO.status!=null && userQueryVO.status!=-1){
-    			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status)).filter("userStatus <>", null);
+    			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
     		}
     		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			query.or(query.criteria("realName").equal(userQueryVO.keyword),query.criteria("realName").equal(null));
-    			query.or(query.criteria("phone").equal(userQueryVO.keyword),query.criteria("phone").equal(null));
+    			query.or(query.criteria("realName").equal(userQueryVO.keyword),query.criteria("phone").equal(userQueryVO.keyword));
     		}
+    		
         }
     	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
 

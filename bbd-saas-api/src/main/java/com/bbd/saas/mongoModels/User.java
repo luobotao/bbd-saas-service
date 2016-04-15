@@ -41,7 +41,11 @@ public class User implements Serializable {
     private Date dateUpdate;//修改时间
     private Date dateLogin;//最后一次登录时间
     @Transient 
-    private int roleStatus;
+    private String roleMessage;//存放角色信息
+    @Transient 
+    private int roleStatus;//存放0或1
+    @Transient 
+    private String statusMessage;//存放有效或无效
 
     public ObjectId getId() {
         return id;
@@ -155,14 +159,6 @@ public class User implements Serializable {
 		this.userStatus = userStatus;
 	}
 
-	public int getRoleStatus() {
-		return roleStatus;
-	}
-
-	public void setRoleStatus(int roleStatus) {
-		this.roleStatus = roleStatus;
-	}
-
 	public Date getDateUpdate() {
 		return dateUpdate;
 	}
@@ -171,5 +167,28 @@ public class User implements Serializable {
 		this.dateUpdate = dateUpdate;
 	}
 
-	
+	public String getRoleMessage() {
+		return roleMessage;
+	}
+
+	public void setRoleMessage(String roleMessage) {
+		this.roleMessage = roleMessage;
+	}
+
+	public int getRoleStatus() {
+		return roleStatus;
+	}
+
+	public void setRoleStatus(int roleStatus) {
+		this.roleStatus = roleStatus;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+	}
+
 }

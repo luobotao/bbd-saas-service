@@ -39,7 +39,7 @@ public interface UserService {
      * @param user
      * @return WriteResult
      */
-    WriteResult delUser(User user);
+    public void delUser(User user);
     
     
     /**
