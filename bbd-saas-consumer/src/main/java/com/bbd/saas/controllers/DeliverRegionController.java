@@ -8,6 +8,9 @@ import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.Numbers;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,21 +43,34 @@ public class DeliverRegionController {
 	 */
 	@RequestMapping(value="/map/{activeNum}", method=RequestMethod.GET)
 	public String toMapPage(@PathVariable String activeNum, Model model, HttpServletRequest request ) {
-
 		String userId = UserSession.get(request);
 		User user = userService.findOne(userId);
 		//获取用户站点信息
+		//--------panel 1-----------------------
 		Site site = user.getSite();
-		logger.info("site name:",site.getName());
-		activeNum = "3";
-		//Date between = request.getParameter("");
+		String between = request.getParameter("between");
 		String keyword = request.getParameter("keyword");
+		int page = Numbers.parseInt(request.getParameter("page"),0);
+		activeNum = "2";
 		//导入地址关键词
-		PageList<SiteKeyword> siteKeywordPageList = siteKeywordApi.findSiteKeyword(site.getId()+"",null,null,0,20,"");
+		//--------panel 3-----------------------
+		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+		if(StringUtils.isNotBlank(between)) {//预计到站时间
+			DateBetween dateBetween = new DateBetween(between);
+			logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
+			//导入地址关键词
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId()+"",dateBetween.getStart(),dateBetween.getEnd(),page,10,keyword);
+		}else{
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
+		}
 		model.addAttribute("activeNum", activeNum);
 		model.addAttribute("site", site);
-		model.addAttribute("siteKeywordPageList", siteKeywordPageList.list);
-
+		model.addAttribute("between", between);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
+		model.addAttribute("page", siteKeywordPage.getPage());
+		model.addAttribute("pageNum", siteKeywordPage.getPageNum());
+		model.addAttribute("pageCount", siteKeywordPage.getCount());
 		return "systemSet/deliverRegionMap";
 	}
 

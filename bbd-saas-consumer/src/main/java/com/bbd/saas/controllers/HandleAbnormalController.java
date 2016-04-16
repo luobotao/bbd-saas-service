@@ -23,12 +23,14 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.FormatDate;
 import com.bbd.saas.utils.NumberUtil;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
 import com.bbd.saas.vo.UserVO;
 
 @Controller
@@ -101,6 +103,51 @@ public class HandleAbnormalController {
 		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
 		return userVoList;
 	}
+	
+	/**
+	 * Description: 运单重新分派--把异常的包裹重新分派给派件员
+	 * @param mailNum 运单号
+	 * @param courierId 派件员id
+	 * @param request
+	 * @return
+	 * @author: liyanlei
+	 * 2016年4月16日上午11:38:32
+	 */
+	@ResponseBody
+	@RequestMapping(value="/reDispatch", method=RequestMethod.GET)
+	public Map<String, Object> reDispatch(String mailNum, String courierId, Integer status, final HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		//当前登录的用户信息
+		User currUser = adminService.get(UserSession.get(request));
+		//查询派件员信息
+		User courier = userService.findOne(courierId);
+		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
+		//运单分派给派件员
+		orderUpdateVO.user = courier;
+		//更新运单状态--已分派
+		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;
+		
+		//检索条件
+		OrderQueryVO orderQueryVO = new OrderQueryVO();
+		orderQueryVO.mailNum = mailNum;
+		
+		//更新运单
+		int i = orderService.updateOrder(orderUpdateVO, orderQueryVO);
+		if(i > 0){
+			map.put("operFlag", 1);//1:分派成功
+			//刷新列表
+			orderQueryVO = new OrderQueryVO();
+			orderQueryVO.abnormalStatus = status;
+			orderQueryVO.areaCode = currUser.getSite().getAreaCode();
+			//查询数据
+			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+			map.put("orderPage", orderPage); 
+		}else{
+			map.put("operFlag", 3);//3:分派成功
+		}		
+		return map;
+	}
+	
 	/**
 	 * Description: 获取快递公司
 	 * @param mailNum 运单号
@@ -146,78 +193,20 @@ public class HandleAbnormalController {
 		}
 		return userVoList;
 	}
-	/**
-	 * Description: 运单重新分派--把异常的包裹重新分派给派件员
-	 * @param mailNum 运单号
-	 * @param courierId 派件员id
-	 * @param model
-	 * @return
-	 * @author: liyanlei
-	 * 2016年4月11日下午4:15:05
-	 */
-	@ResponseBody
-	@RequestMapping(value="/reDispatch", method=RequestMethod.GET)
-	public Map reDispatch(String mailNum, String courierId, Model model) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		//====================start================================
-		//查询运单信息
-		Order order = orderService.findOneByMailNum("", mailNum);
-		if(order != null){
-			//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
-			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-				||ExpressStatus.Delay.equals(order.getExpressStatus())
-				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-				if(order.getUser() == null){//未分派，可以分派
-					saveOrderMail(order, courierId, map);
-				}else{//重复扫描，此运单已分派过了
-					map.put("operFlag", 2);
-				}
-			}else{//重复扫描，此运单已分派过了
-				map.put("operFlag", 2);
-			}
-		}else{
-			map.put("erroFlag", 0);//0:运单号不存在
-		}
-		
-		//=====================end================================
-				
-		//Order order = new Order();
-		map.put("order", order); //刷新列表，添加此运单
-		map.put("success", true); //0:分派成功;
-		map.put("operFlag", 2); //0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:拒收运单重新分派--。
-		return map;
-	}
-	/**
-	 * Description: 保存派件员信息
-	 * @param order 订单
-	 * @param courierId 派件员
-	 * @param map
-	 * @author: liyanlei
-	 * 2016年4月14日上午11:00:59
-	 */
-	private void saveOrderMail(Order order, String courierId, Map<String, Object> map){
-		//查询派件员信息
-		User user = userService.findOne(courierId);
-		//运单分派给派件员
-		order.setUser(user);
-		//更新运单
-		orderService.save(order);
-		map.put("operFlag", 1);//1:分派成功
-	}
+	
 	
 	/**
 	 * Description: 退货
 	 * @param mailNum 运单号
-	 * @param reasonType 退货原因类型
-	 * @param reasonInfo 其他原因--原因详情
+	 * @param returnReasonType 退货原因类型
+	 * @param returnReasonInfo 其他原因--原因详情
 	 * @param model
 	 * @return
 	 * @author: liyanlei
 	 * 2016年4月14日下午1:57:12
 	 */
 	@RequestMapping(value="/saveReturn", method=RequestMethod.GET)
-	public Map dispatch(String mailNum, String reasonType, String reasonInfo, Model model) {
+	public Map dispatch(String mailNum, String returnReasonType, String returnReasonInfo, Model model) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//====================start================================
 		//查询运单信息

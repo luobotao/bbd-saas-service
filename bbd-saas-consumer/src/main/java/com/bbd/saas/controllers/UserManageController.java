@@ -299,6 +299,11 @@ public class UserManageController {
 	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "realName", required = true) String realName) {
 		User user = null;
+		try {
+			realName=new String(realName.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+
+		}
 		if(id!=null && !id.equals("")){
 			user = userService.findOne(id);
 		}else if(realName!=null && !realName.equals("")){
