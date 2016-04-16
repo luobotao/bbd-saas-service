@@ -64,11 +64,12 @@ public interface UserService {
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO);
     
     /**
-     * Description: 获取指定站点下的所有用户
-     * @param siteId
+     * Description: 获取指定站点下的所有派件员
+     * @param areaCode 站点编号
      * @return
      * @author: liyanlei
-     * 2016年4月12日上午11:27:25
+     * 2016年4月16日下午5:22:17
      */
     public List<UserVO> findUserListBySite(String areaCode);
+    
 }

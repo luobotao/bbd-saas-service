@@ -95,8 +95,8 @@ public class UserServiceImpl implements UserService {
     }
     
     /**
-     * Description: 获取指定站点下的所有用户
-     * @param siteId
+     * Description: 获取指定站点下的所有派件员
+     * @param areaCode
      * @return
      * @author: liyanlei
      * 2016年4月12日上午11:27:25
@@ -137,4 +137,5 @@ public class UserServiceImpl implements UserService {
 		return userDao.findOne("id",new ObjectId(userId));
 		
 	}
+	
 }

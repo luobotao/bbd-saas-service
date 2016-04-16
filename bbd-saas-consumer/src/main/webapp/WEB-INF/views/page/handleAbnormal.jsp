@@ -99,7 +99,7 @@
 							}
 						%>
 						<td>
-							<a href="javascript:void(0);" onclick="showCourierDiv()">重新分派</a>
+							<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a>
 							<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
 							<a href="javascript:void(0);" onclick="showOtherSiteDiv()">转其他站点</a>
 							<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
@@ -251,36 +251,52 @@ function gotoPage(pageIndex) {
             "arriveBetween" : $("#arriveBetween").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
-            var dataList = dataObject.datas;
-            //更新列表
-			var tbody = $("#dataList");
-		    if(dataList != null){
-				var datastr = "";
-				for(var i = 0; i < dataList.length; i++){
-					datastr += getRowHtml(dataList[i]);
-				}
-				tbody.html(datastr);
-			} 
-			//更新分页条
-			var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
-			$("#pagin").html(pageStr);    
+            refreshTable(dataObject);  
 		},
         error : function() {  
            	alert("加载分页数据异常，请重试！");  
       	}    
     });	
 }	
+//刷新列表--列表数据和分页条
+function refreshTable(dataObject){
+	//更新列表数据
+	var tbody = $("#dataList");
+	tbody.html("");
+    //var datastr = "";
+    var dataList = dataObject.datas;
+	if(dataList != null){
+		for(var i = 0; i < dataList.length; i++){
+			tbody.append(getRowHtml(dataList[i])); 
+			//datastr += getRowHtml(dataList[i]);
+		}
+	} else{
+		tbody.append("<tr><td colspan='7'>没有符合查询条件的数据</td></tr>");
+		//datastr += "<tr><td colspan='7'>没有符合查询条件的数据</td></tr>";
+	}
+	//tbody.html(datastr);
+	//更新分页条
+	var pageStr = paginNav(dataObject.pageNo, dataObject.totalPages, dataObject.totalCount);
+	$("#pagin").html(pageStr);
+}
 //封装一行的数据
 function getRowHtml(data){
 	var row = "<tr>";
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
-	
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
-	//派件员姓名和电话
+	/* //派件员姓名和电话
 	row += "<td>" + data.user.realName + "</td>";
 	row += "<td>" + data.user.phone + "</td>";
+	 */
+	//派件员==未分派，不需要显示派件员姓名和电话
+	if(data.user == null){
+		row += "<td></td><td></td>";
+	}else{
+		row += "<td>" + data.user.realName + "</td>";
+		row += "<td>" + data.user.phone + "</td>";
+	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
 		row += "<td>" + "<%=AbnormalStatus.RETENTION.getMessage()%>" + "</td>";
@@ -288,10 +304,10 @@ function getRowHtml(data){
 		row += "<td>" + "<%=AbnormalStatus.REJECTION.getMessage()%>" + "</td>";
 	}
 	
-	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(" + data.mailNum + ")'>重新分派</a>";
-	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(" + data.mailNum + ")'>转其他快递</a>";
-	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(" + data.mailNum + ")'>转其他站点</a>";
-	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(" + data.mailNum + ")'>申请退货</a></td>";
+	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")'>重新分派</a>";
+	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
+	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")'>转其他站点</a>";
+	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>";
 	row += "</tr>";
 	return row;
 }
@@ -392,6 +408,8 @@ function hideCourierDiv() {
 }
 //重新分派
 function chooseCourier(mailNum) {
+	//获取当前页
+    var pageIndex = parseInt($(".pagination .active a").html())-1;
 	//保存分派信息
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -399,16 +417,14 @@ function chooseCourier(mailNum) {
         data : {  
             "mailNum" : mailNum, //
             "courierId" : $("#sender_select").val(),
-            "status" : $("#status").val() //更新列表
+            "pageIndex" : pageIndex,//更新列表
+            "status" : $("#status").val(), 
+            "arriveBetween" : $("#arriveBetween").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.success){
-        		alert("分派成功，刷新列表！");  
+        	if(data.operFlag == 1){
         		//分派成功，刷新列表！
-        		//获取当前页
-    			var pageIndex = parseInt($(".pagination .active a").html())-1;
-    			//console.log("pageIndex==="+pageIndex);
-        		gotoPage(pageIndex);
+        		refreshTable(data.orderPage);
         	}else{
         		alert("重新分派失败，请重新分派！");  
         	}
