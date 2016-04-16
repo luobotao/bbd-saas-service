@@ -211,6 +211,8 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					<input type="hidden" class="form-control" id="sign" name="sign">
 					<input type="hidden" class="form-control" id="flag" name="flag" value="true">
 					<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
+					<input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
+					<input type="hidden" class="form-control" id="operate" name="operate">
 					</form>
 				</div>
 			</div>
@@ -274,8 +276,8 @@ function getRowHtml(data){
 		row += "<td>无</td>";
 	}
 	
-	
-	row += "<td><a href=\"javascript:void(0);\" onclick=\"searchUser('"+temp+"','"+data.realName+"')\" class=\"orange j-user\">修改</a>";
+	//
+	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.realName+"')\">修改</button>";
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
@@ -298,29 +300,60 @@ function toSearch(){
 }
 
 function checkLoginName(loginName) {
-
-	var url = "<c:url value="/userManage/checkLognName" />";
-	$.ajax({
-		url: url+'?loginName='+loginName,
-		type: 'GET',
-		cache: false,
-		dataType: "text",
-		data: {},
-		success: function(response){
-			console.log(response);
-			if(response=="true"){
-				//alert("您输入的登录名目前已存在，请重新输入");
-				$("#loginNameP").text("登录名目前已存在，请重新输入!");
-			    $("#loginNameP").attr("style","color:red");
-			    document.getElementById("flag").value='false';
-			}else{
-				document.getElementById("flag").value='true';
+	var operate = document.getElementById("operate").value;
+	var oldloginName = document.getElementById("loginNameTemp").value;
+	var newloginName = loginName;
+	if(operate=='create'){
+		var url = "<c:url value="/userManage/checkLognName" />";
+		$.ajax({
+			url: url+'?loginName='+loginName,
+			type: 'GET',
+			cache: false,
+			dataType: "text",
+			data: {},
+			success: function(response){
+				console.log(response);
+				if(response=="true"){
+					//alert("您输入的登录名目前已存在，请重新输入");
+					$("#loginNameP").text("登录名目前已存在，请重新输入!");
+				    $("#loginNameP").attr("style","color:red");
+				    document.getElementById("flag").value='false';
+				}else{
+					document.getElementById("flag").value='true';
+					$("#loginNameP").attr("style","display:none");
+				}
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
 			}
-		},
-		error: function(){
-			alert('服务器繁忙，请稍后再试！');
+		});
+	}else{
+		if(newloginName!==oldloginName){
+			$.ajax({
+				url: url+'?loginName='+loginName,
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					console.log(response);
+					if(response=="true"){
+						//alert("您输入的登录名目前已存在，请重新输入");
+						$("#loginNameP").text("登录名目前已存在，请重新输入!");
+					    $("#loginNameP").attr("style","color:red");
+					    document.getElementById("flag").value='false';
+					}else{
+						document.getElementById("flag").value='true';
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
 		}
-	});
+	}
+	
+	
 }
 
 function checkUser(realname) {
@@ -331,7 +364,6 @@ function checkUser(realname) {
 	
 	var oldrealName = document.getElementById("realNameTemp").value;
 
-	//alert(oldrealName);alert(newrealname);alert(newrealname!==oldrealName);alert(newrealname==oldrealName);
 	
 	var url = "<c:url value="/userManage/checkUser" />";
 	if(newrealname!==oldrealName){
@@ -509,7 +541,7 @@ function saveUserBtn(){
 }
 
 
-function searchUser(id,realName){alert(id);alert(realName);
+function searchUser(id,realName){
 	
 	$.ajax({
 		type : "GET",  
@@ -528,10 +560,10 @@ function searchUser(id,realName){alert(id);alert(realName);
 				$("#roleId").val(data.roleStatus);
 				$("#loginPass").val(data.passWord);
 				$("#confirmPass").val(data.passWord);
-				$("#loginName").attr("disabled","disabled");
-				//$(".sign").val("edit");
+				$("#loginName").attr("readonly",true);
 				document.getElementById("sign").value="edit";
 				document.getElementById("realNameTemp").value=data.realName;
+				document.getElementById("loginNameTemp").value=data.loginName;
 			}    
         },
         error : function() {  
@@ -543,9 +575,11 @@ function searchUser(id,realName){alert(id);alert(realName);
 }
 
 
-function restUserModel(){alert("ss");
+function restUserModel(){
 	document.getElementById("userForm").reset();
-	$("#loginName").attr("disabled",false)
+	$("#loginName").attr("readonly",false);
+	$("#loginNameP").attr("style","display:none");
+	document.getElementById("operate").value = "create";
 }
 </script>
 </body>
