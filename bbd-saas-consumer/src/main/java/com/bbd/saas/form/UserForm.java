@@ -1,5 +1,6 @@
 package com.bbd.saas.form;
 
+import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -10,6 +11,7 @@ import org.springframework.samples.mvc.form.InquiryType;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
@@ -26,6 +28,8 @@ public class UserForm {
 	private String loginName;
 	@NotEmpty
 	private String loginPass;
+	@NotEmpty
+	private String realNameTemp;
 	public String getRoleId() {
 		return roleId;
 	}
@@ -56,6 +60,12 @@ public class UserForm {
 	}
 	public void setLoginPass(String loginPass) {
 		this.loginPass = loginPass;
+	}
+	public String getRealNameTemp() {
+		return realNameTemp;
+	}
+	public void setRealNameTemp(String realNameTemp) {
+		this.realNameTemp = realNameTemp;
 	}
 
 }

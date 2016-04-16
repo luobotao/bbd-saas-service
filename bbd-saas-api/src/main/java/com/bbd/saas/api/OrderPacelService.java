@@ -17,6 +17,12 @@ public interface OrderPacelService {
 	 * @return
      */
     String findParcelCodeByOrderId(String orderId);
-    
 
+	/**
+	 * 根据站点编码和包裹号获取包裹
+	 * @param areaCode 站点编码
+	 * @param parcelCode
+	 * @return
+     */
+	OrderParcel findOrderParcelByParcelCode(String areaCode,String parcelCode);
 }

@@ -28,9 +28,15 @@ public class Dates {
     private static final SimpleDateFormat DATE_TIME_FORMAT_NEW = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public static String formatSimpleDate(Date date) {
+        if(date==null){
+            return "";
+        }
         return DATE_FORMAT.format(date);
     }
     public static String formatDateTimeNewWithOut(Date date) {
+        if(date==null){
+            return "";
+        }
         return DATE_TIME_FORMAT_NEW.format(date);
     }
     /**
@@ -39,6 +45,9 @@ public class Dates {
      * @return
      */
     public static String formatDate(Date date) {
+        if(date==null){
+            return "";
+        }
         return CHINESE_DATE_FORMAT.format(date);
     }
 
@@ -48,6 +57,9 @@ public class Dates {
      * @return
      */
     public static String formatDateTime(Date date) {
+        if(date==null){
+            return "";
+        }
         return CHINESE_DATE_TIME_FORMAT.format(date);
     }
     /**
@@ -56,6 +68,9 @@ public class Dates {
      * @return
      */
     public static String formatDateTime_New(Date date) {
+        if(date==null){
+            return "";
+        }
         return CHINESE_DATE_TIME_FORMAT_NEW.format(date);
     } /**
      * yyyy/MM/dd HH:mm:ss
@@ -63,6 +78,9 @@ public class Dates {
      * @return
      */
     public static String formatDateTime_New1(Date date) {
+        if(date==null){
+            return "";
+        }
         return DATE_FORMAT_IMPORT.format(date);
     }
     /**
@@ -71,7 +89,10 @@ public class Dates {
      * @return
      */
     public static String formatDateNew(Date date) {
-    	return DATE_FORMAT_New.format(date);
+        if(date==null){
+            return "";
+        }
+        return DATE_FORMAT_New.format(date);
     }
     /**
      * yyyy-MM-dd
@@ -79,6 +100,9 @@ public class Dates {
      * @return
      */
     public static String formatDate2(Date date) {
+        if(date==null){
+            return "";
+        }
     	return DATE_FORMAT2.format(date);
     }
     /**
@@ -87,7 +111,10 @@ public class Dates {
      * @return
      */
     public static String formatTimeNew(Date date) {
-    	return TIME_FORMAT_New.format(date);
+        if(date==null){
+            return "";
+        }
+        return TIME_FORMAT_New.format(date);
     }
     /**
      * yyyy.MM.dd HH:mm
@@ -95,7 +122,10 @@ public class Dates {
      * @return
      */
     public static String formatDateTimeNew(Date date) {
-    	return DATE_TIME_FORMAT_New.format(date);
+        if(date==null){
+            return "";
+        }
+        return DATE_TIME_FORMAT_New.format(date);
     }
     /**
      * 转成类似11月5日
@@ -103,6 +133,9 @@ public class Dates {
      * @return
      */
     public static String formatMonthAndDay(Date date) {
+        if(date==null){
+            return "";
+        }
     	return MONTHANDDAY_FORMAT.format(date);
     }
     /**
@@ -111,6 +144,9 @@ public class Dates {
      * @return
      */
 	public static String format2Week(Date date) {
+        if(date==null){
+            return "";
+        }
 		final String dayNames[] = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);

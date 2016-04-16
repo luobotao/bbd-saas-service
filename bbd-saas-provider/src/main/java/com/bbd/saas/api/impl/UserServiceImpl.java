@@ -10,10 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bbd.saas.api.UserService;
+import com.bbd.saas.dao.SiteDao;
 import com.bbd.saas.dao.UserDao;
+import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
+import com.mongodb.WriteResult;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -30,6 +35,15 @@ public class UserServiceImpl implements UserService {
 	public void setUserDao(UserDao userDao) {
 		this.userDao = userDao;
 	}
+	
+	SiteDao siteDao;
+    public SiteDao getSiteDao() {
+        return siteDao;
+    }
+
+    public void setSiteDao(SiteDao siteDao) {
+        this.siteDao = siteDao;
+    }
 	/**
      * 根据用户名查找是否存在此管理员
      * @param loginName
@@ -52,7 +66,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     public User findUserById(String id) {
-        return userDao.findOne("id",id);
+        return userDao.findOne("_id", new ObjectId(id));
     }
     /**
      * 保存用户对象信息
@@ -62,14 +76,24 @@ public class UserServiceImpl implements UserService {
     public Key<User> save(User user){
     	return userDao.save(user);
     }
+    
+    /**
+     * 保存用户对象信息
+     * @param user
+     * @return WriteResult
+     */
+    public void delUser(User user){
+    	userDao.delete(user);
+    }
+
 
     /**
      * 获取用户列表信息
      * @param pageModel
      * @return
      */
-    public PageModel<User> findUserList(PageModel<User> pageModel){
-    	return userDao.findUserList(pageModel);
+    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO){
+    	return userDao.findUserList(pageModel,userQueryVO);
     }
     
     /**
@@ -80,8 +104,9 @@ public class UserServiceImpl implements UserService {
      * 2016年4月12日上午11:27:25
      */
 	@Override
-	public List<UserVO> findUserListBySite(String siteId) {
-		List<User> userList = userDao.findUserListBySite(siteId);
+	public List<UserVO> findUserListBySite(String areaCode) {
+		Site site = siteDao.findOne("areaCode", areaCode);
+		List<User> userList = userDao.findUserListBySite(site, UserRole.SENDMEM);
 		List<UserVO> userVoList = new ArrayList<UserVO>();
 		if(userList != null && userList.size() > 0){
 			for(User user : userList){

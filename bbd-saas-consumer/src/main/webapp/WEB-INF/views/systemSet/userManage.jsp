@@ -1,3 +1,8 @@
+<%@ page import="com.bbd.saas.mongoModels.User" %>
+<%@ page import="com.bbd.saas.enums.UserRole" %>
+<%@ page import="com.bbd.saas.enums.UserStatus" %>
+<%@ page import="com.bbd.saas.utils.PageModel" %>
+<%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -9,81 +14,62 @@
 	<meta name="description" content="棒棒哒-系统设置-用户管理页面" />
 	<title>系统设置-用户管理页面</title>
 	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />	
-	<script type="text/javascript" src="/js/plugins/dialog/dialog.js"></script>	
+	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body>
+<% 
+PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
+
+%>
 <div>
 	<%--<jsp:include page="../top.jsp" flush="true" /> --%>	
-	<jsp:include page="../main.jsp" flush="true" />
+	
 </div>
-<!-- 添加员工 -->
-	<div id="add_user">
-	    <div class="pop_style add_staff">
-	        <div class="title">添加用户</div>
-	        <div class="close"></div>
-	        <div class="form">
-	        	<form id="addForm">
-	            <div class="item">
-	                <label>账号：</label>
-	                <input type="hidden" id="merchantId" name="merchantId" value="${merchantId}">
-	                <input class="ipt" type="text" name="account" id="addStaffAccout" />
-	                <span id="account"></span>
-	            </div>
-	            <div class="item">
-	                <label>密码：</label>
-	                <input class="ipt" type="password" name="password" placeholder="默认为123456">
-	            </div>
-	            <div class="item">
-	                <label>姓名：</label>
-	                <input class="ipt" type="text" name="name">
-	            </div>
-	            <div class="item">
-	                <label>角色：</label>
-	                <p style="width: 380px; font: 12px/30px &quot;Microsoft Yahei&quot;" id="aRoleItem"></p>
-	            </div>
-	            <div class="btn">
-	                <button class="submit submit_save" type="button" data-value="save" onclick="add()">保 存</button>
-	            </div>
-	            </form>
-	        </div>
-	        <div class="msg">
-	            <h3>温馨提示</h3>
-	            <p>1、店长：全面负责药房的管理，拥有接收订单、应答咨询、配送、验证优惠券、客户沟通等全部权限。</p>
-	            <p>2、营业员：拥有接单、验证优惠券、客户沟通的权限。</p>
-	            <p>3、药剂师：负责应答咨询，在店员端APP上回复顾客的问题。同时拥有营业员全部权限</p>
-	            <p>4、配送员：负责接收订单、配送药品。</p>
-	        </div>
-	    </div>
-	</div>
-<div class="content">
-	<div class="content-left" id="content-left"><jsp:include page="../leftMenu.jsp" flush="true" /></div>
-	<div class="content-main" id="content-main">
-		<div class="m20">
-			<span>角色:
-				<select>  
-				  <option value ="1">全部</option>  
-				  <option value ="2">初级</option>  
-				  <option value="3">普通</option> 
-				  <option value="4">高级</option>
-				</select>  
-			</span> 
-			<span class="pl20">状态:
-				<select>  
-				  <option value ="1">全部</option>  
-				  <option value ="2">有效</option>  
-				  <option value="3">无效</option> 
-				</select>  
-			</span> 
-			<span class="pl20">
-				关键词：<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" />
-			</span>
-			<br><br>
-			<button id="queryData" name="queryData">查询</button>
-			<button id="newUser" name="newUser"  onClick="addUserDiv()">新建</button>
-		</div>
+
+
+
+<section class="content">
+		<c:url var="userListAction" value="/userManage"/> 
 		
-		<div class="m20">
-			<table id="data_table" border="1" cellpadding="6px" cellspacing="0px"  style="background-color: #b9d8f3;">
+		<div class="col-xs-12">
+			<div class="box-body">
+				<div class="row">
+					<div class="col-xs-3">
+						<label>角色：</label>
+						<select id="saasrole" name="saasrole" class="form-control">
+							<%=UserRole.Srcs2HTML(-1)%>
+						</select>
+					</div>
+					<div class="col-xs-3">
+						<label>状态：</label>
+						<select id="status" name="status" class="form-control">
+							<%=UserStatus.Srcs2HTML(-1)%>
+						</select>
+					</div>
+
+					<div class="col-xs-3">
+						<label>关键词：</label>
+						<input id="keyword" name="keyword" type="text" value="" placeholder="真实姓名/手机号" class="form-control"/>
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<button id="queryData" name="queryData" onclick="search()">查询</button>
+					</div>
+					<div class="col-xs-3">
+						<button id="newUser" name="newUser" data-toggle="modal" data-target="#myModal" href="javascript:void(0)" onclick="restUserModel()">新建</button>
+					</div>
+				</div>
+		</div>
+	</div>	
+				
+
+	<div class="col-xs-12">
+
+		<div class="box-body table-responsive">
+			<table id="orderTable" class="table table-bordered table-hover">
+				<thead>
 				<tr>
 					<td>角色</td>
 					<td>真实姓名</td>
@@ -92,130 +78,471 @@
 					<td>状态</td>
 					<td>操作</td>
 				</tr>
+				</thead>
+				<tbody id="dataList">
+				<%
+					for(User user : userPage.getDatas()){
+				%>
 				<tr>
-					<td>角色xxx</td>
-					<td>张三</td>
-					<td>12345xxx</td>
-					<td>zhangsan</td>
-					<td>有效</td>
-					<td>
-						<button onClick="showUserDiv('userId')">修改</button>
-						<button onClick="disableUser('userId')">停用</button>
+					
+					<td><%=user.getRole().getMessage()%></td>
+					<td><%=user.getRealName()%></td>
+					<td><%=user.getPhone()%></td>
+					<td><%=user.getLoginName()%></td>
+					
+					<% 
+					
+					if(user.getUserStatus()!=null){
+						
+						%>
+						<td><%=user.getUserStatus().getMessage()%></td>
+						<% 
+					}else{
+						
+						%>
+						<td>无</td>
+					<% 
+					}
+					%>
+					
+					
+					<td><button id="editUser" name="editUser" data-toggle="modal" data-target="#myModal" href="javascript:void(0)" onclick="searchUser('<%=user.getId() %>','')">修改</button>
+					<% 
+					
+					if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
+						
+						%>
+						<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')">&nbsp;&nbsp停用&nbsp;&nbsp;</a>
+					
+						<% 
+					}else{
+						
+						%>
+						
+						<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')">&nbsp;&nbsp启用&nbsp;&nbsp;</a>
+						<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')">删除</a>
+						<% 
+					}
+					
+					
+					%>
+					
 					</td>
+					
 				</tr>
-				<tr>
-					<td>角色xxx</td>
-					<td>张三</td>
-					<td>12345xxx</td>
-					<td>zhangsan</td>
-					<td>有效</td>
-					<td>
-						<button onClick="showUserDiv('userId')">修改</button>
-						<button onClick="activeUser('userId')">激活</button>
-					</td>
-				</tr>
+				<%
+					}
+				%>
+				</tbody>
+				
 			</table>
-			<div class="fr50"> 
-				<a href="">上页</a>
-				<a href="">1</a>
-				<a href="">2</a>
-				<a href="">3</a>
-				<a href="">4</a>
-				<a href="">下页</a>
-			</div>
+
+			<!--页码 start-->
+			<div id="pagin"></div>
+			<!--页码 end-->
+
 		</div>
 	</div>
-</div>
+		
 
-<!-- 新建用户面板-开始 -->
-<div  id="user_div" class="popDiv" >
-	<div class="title_div">新建</div>
-	<div class="m20">
-		<span>角色:
-			<select id="role">  
-				<option value ="初级">初级</option>  
-				<option value ="普通">普通</option>  
-				<option value="高级">高级</option>  
-			</select>				  
-		</span> <br><br>
-		<span>
-			真实姓名:<input id="realName" name="realName" type="text" />	
-		</span> <br><br>
-		<span>
-			手机号:<input id="phone" name="phone" type="text" />	
-		</span> <br><br>
-		<span>
-			登录名:<input id="userName" name="userName" type="text" />	
-		</span> <br><br>
-		<span>
-			登录密码:<input id="passWord" name="passWord" type="text" />	
-		</span> <br><br>
-		<span>
-			确认密码:<input id="passWord2" name="passWord2" type="text" />	
-		</span> <br><br>
-	</div>
-	<div>
-		<button onclick="saveUser()">保存</button>
-	</div>
-<div>
-<!-- 新建用户面板-结束 -->
 
-<script type="text/javascript" src="<c:url value="/resources/jquery/jquery-1.12.3.min.js" />"></script>
 
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+             	  添加用户
+            </h4>
+         </div>
+         <div class="modal-body">
+         
+		 <form role="form" action="" method="post" id="userForm" >
+		 
+		 
+		 <div class="modal-body">
+			<div class="box-body">
+				<div class="row">
+					<div class="col-xs-4">
+						<label>角色：</label>
+						<select id="roleId" name="roleId" class="roleId">
+								<%=UserRole.Srcs2HTML(-1)%>
+						</select> 
+						<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
+					</div>
+
+				</div>
+				<div class="row">
+					<div class="col-xs-4">
+						<label for="title">真实姓名:</label>
+						<input type="text" class="form-control" id="realName" name="realName" onblur="checkUser(this.value)">
+						<p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">手机号:</label>
+						<input type="text" class="form-control" id="phone" name="phone">
+						<p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">登录名:</label>
+						<input type="text" class="form-control" id="loginName" name="loginName" onblur="checkLoginName(this.value)">
+						<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">登录密码:</label>
+						<input type="text" class="form-control" id="loginPass" name="loginPass">
+						<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
+					</div>
+				</div>
+				<input type="hidden" class="form-control" id="sign" name="sign">
+				<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
+				<div class="row">
+					<div class="col-xs-3">
+						<label for="title">确认密码:</label>
+						<input type="text" class="form-control" id="confirmPass" name="confirmPass">
+						<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col-xs-3">
+						<button type="button" class="btn btn-primary" id="saveUserBtn" style="margin-left: 10px;">保存</button>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</form>
+    </div>
+    </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</section>
+<!-- 分页js -->
+<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 <script type="text/javascript">
-var XSQdialog;
-$(function() {
 
-	XSQdialog = {
-    mask: $(".mask"),
-    main: $(".ui_dialog"),
-    colse:$(".colse"),
-    cntbox: $("#wrapBox"),
-    show: function(html) {
-        this.cntbox.html(html);
-        this.cntbox.find('.pop_style').show();
-        this.mask.fadeIn(300);
-        this.main.css({'margin-top': - (this.main.outerHeight(true)) / 2 + 'px', 'margin-left': - (this.main.outerWidth(true)) / 2 + 'px'}).fadeIn(300);
-    },
-    hide: function() {
-        this.cntbox.html('');
-        this.mask.fadeOut(200);
-        this.main.fadeOut(200).removeAttr('style');
-    }
-    
-	};
-	$('#wrapBox').on("click", '.close', function(){
-	    MPHdialog.hide();
+
+//显示分页条
+var pageStr = paginNav(<%=userPage.getPageNo()%>, <%=userPage.getTotalPages()%>, <%=userPage.getTotalCount()%>);
+$("#pagin").html(pageStr);
+
+
+
+//加载带有查询条件的指定页的数据
+function gotoPage(pageIndex,roleId,status,keyword) {
+	var url = "<c:url value="/userManage/getUserPage" />";
+	$.ajax({
+		type : "GET",  //提交方式
+		url : url,//路径
+		data : {
+			"pageIndex" : pageIndex,
+			"roleId" : roleId,
+			"status" : status,
+			"keyword" : keyword
+		},//数据，这里使用的是Json格式进行传输
+		success : function(dataObject) {//返回数据根据结果进行相应的处理
+			var tbody = $("#dataList");
+			// 清空表格数据
+			tbody.html("");
+
+			var dataList = dataObject.datas;
+			if(dataList != null){
+				var datastr = "";
+				for(var i = 0; i < dataList.length; i++){
+					datastr += getRowHtml(dataList[i]);
+				}
+				tbody.html(datastr);
+			}
+			//更新分页条
+			var pageStr = paginNav(pageIndex,  dataObject.totalPages, dataObject.totalCount);
+			$("#pagin").html(pageStr);
+		},
+		error : function() {
+			alert("加载分页数据异常！");
+		}
 	});
-	$('#wrapBox').on("click", 'button.cancel', function(){
-	    MPHdialog.hide();
+}
+
+
+//封装一行的数据
+function getRowHtml(data){
+	var row = "<tr>";
+	var temp = "";
+	row +=  "<td>" + data.roleMessage + "</td>";
+	row += "<td>" + data.realName + "</td>";
+	row += "<td>" + data.phone + "</td>";
+	row += "<td>" + data.loginName + "</td>";
+	
+	if(data.userStatus!==null){
+		row += "<td>" + data.statusMessage + "</td>";
+	}else{
+		row += "<td>无</td>";
+	}
+	
+	
+	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.realName+"')\">修改</button>";
+	
+	
+	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" >&nbsp;&nbsp停用&nbsp;&nbsp</a>";
+	}else{
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" >&nbsp;&nbsp启用&nbsp;&nbsp</a>";
+		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" >删除</a></td>";
+	}
+
+	row += "</tr>";
+	return row;
+}
+
+
+
+$("#saveUserBtn").click(function(){
+	
+	var url = "";
+	var getSign = document.getElementById("sign").value;
+	
+	if(getSign=='edit'){
+		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
+	}else{
+		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
+	}
+	var flag = true;
+	var roleId = $("#roleId").val();
+	var phone = $("#phone").val();
+	var realName = $("#realName").val();
+	var loginName = $("#loginName").val();
+	var loginPass = $("#loginPass").val();
+	var confirmPass = $("#confirmPass").val();
+	var tel_reg = /^1[34578]{1}\d{9}/;
+	if (roleId=="-1") {
+	    $("#roleIdP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#roleIdP").attr("style","display:none");
+	}
+	if (!phone) {
+	    $("#phoneP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#phoneP").attr("style","display:none");
+	}
+	if (!tel_reg.test(phone)) {
+		$("#phoneP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#phoneP").attr("style","display:none");
+	}
+	if (!realName) {
+	    $("#realNameP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#realNameP").attr("style","display:none");
+	}
+	if (!loginName) {
+	    $("#loginNameP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#loginNameP").attr("style","display:none");
+	}
+	if (!loginPass) {
+	    $("#loginpassP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#loginpassP").attr("style","display:none");
+	}
+	if (!confirmPass) {
+	    $("#confirmPassP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#confirmPassP").attr("style","display:none");
+	}
+	if(loginPass==confirmPass){
+		$("#confirmPassP").attr("style","display:none");
+	}else{
+		$("#confirmPassP").attr("style","color:red");
+		flag = false;
+	}
+	if(flag){
+		console.log("succeful , submit");
+		$("#userForm").ajaxSubmit({  
+	        type: 'post',  
+	        url: url ,  
+	        success: function(data){  
+	        	if(data=="true"){
+	        		alert( "保存用户成功");  
+	        		document.getElementById("userForm").reset();
+	        		gotoPage(0);
+	        	}else{
+	        		alert( "保存用户失败");  
+	        	}
+
+	        },  
+	        error: function(JsonHttpRequest, textStatus, errorThrown){  
+	            alert( "error");  
+	        }  
+	    });  
+	}else{
+		//alert("有非法内容，请检查内容合法性！");
+		return false;
+	}
+	
+	
+})
+
+
+
+function checkLoginName(loginName) {
+
+	var url = "<c:url value="/userManage/checkLognName" />";
+	$.ajax({
+		url: url+'?loginName='+loginName,
+		type: 'GET',
+		cache: false,
+		dataType: "text",
+		data: {},
+		success: function(response){
+			console.log(response);
+			if(response=="true"){
+				alert("您输入的登录名目前已存在，请重新输入");
+			}
+		},
+		error: function(){
+			alert('服务器繁忙，请稍后再试！');
+		}
 	});
-});
-//显示用户编辑面板
-function showUserDiv(userId) {
-	$("#user_div").show();
 }
-//添加用户编辑面板
-function addUserDiv(userId) {
-	//$("#user_div").show();
-	var html = $('#add_user').html();
-	MPHdialog.show(html);
+
+function checkUser(realname) {
+
+	var url = "<c:url value="/userManage/checkUser" />";
+	$.ajax({
+		url: url+'?realname='+realname,
+		type: 'GET',
+		cache: false,
+		dataType: "text",
+		data: {},
+		success: function(response){
+			console.log(response);
+			if(response=="true"){
+				alert("您输入的用户名目前已存在，请重新输入");
+			}
+			
+			//$("#usernameFlag").val(0);
+			
+		},
+		error: function(){
+			alert('服务器繁忙，请稍后再试！');
+		}
+	});
 }
-//停用
-function disableUser(userId) {
+
+
+
+function changeStatus(status,id,realName){
+			$.ajax({
+				type : "GET",  
+	            url : "<c:url value="/userManage/changestatus" />", 
+	            data : {  
+	                "id" : id,"status" : status,"realName" : realName  
+	            },
+	            success : function(data) {
+					if(data == 'true'){
+						alert("更新成功");
+						gotoPage(0);
+					} 
+	            },
+	            error : function() {  
+	           		alert("异常！");  
+	      		}    
+	        });
+}
+
+
+function delUser(id){
+	
+	var ret = false;
+	if(confirm('确定要执行此操作吗?')){ 
+		ret = true; 
+	} 
+	    
+	if(ret){
+		
+		$.ajax({
+			type : "GET",  
+	        url : "<c:url value="/userManage/delUser" />", 
+	        data : {  
+	            "id" : id 
+	        },
+	        success : function(data) {
+				if(data == 'true'){
+					alert("删除成功");
+					gotoPage(0);
+				} 
+	        },
+	        error : function() {  
+	       		alert("异常！");  
+	  		}    
+	    });
+	}
+	
 	
 }
-//激活
-function activeUser(userId) {
+
+function search(){
+	var roleId = $("#saasrole").val();
+	var status = $("#status").val();
+	var keyword = $("#keyword").val();
+	gotoPage(0,roleId,status,keyword);
+
+}
+
+function searchUser(id,realName){
+	$.ajax({
+		type : "GET",  
+        url : "<c:url value="/userManage/getOneUser" />", 
+        data : {  
+            "id" : id,
+            "realName" : realName
+        },
+        success : function(data) {
+			if(data != null){
+				
+				$("#realName").val(data.realName);
+				$("#phone").val(data.phone);
+				$("#loginName").val(data.loginName);
+				
+				$("#roleId").val(data.roleStatus);
+				$("#loginPass").val(data.passWord);
+				$("#confirmPass").val(data.passWord);
+				//$(".sign").val("edit");
+				document.getElementById("sign").value="edit";
+				document.getElementById("realNameTemp").value=data.realName;
+			}    
+        },
+        error : function() {  
+       		alert("异常！");  
+  		}    
+    });
+	
 	
 }
-//保存
-function saveUser() {
-	$("#user_div").hide();
+
+function restUserModel(){
+	
+	document.getElementById("userForm").reset();
 }
 
 </script>
-
 
 </body>
 </html>

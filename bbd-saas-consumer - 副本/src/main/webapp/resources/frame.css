@@ -1,0 +1,25 @@
+
+.content{height:800px;}
+.content-left{height:800px;width:10%;float:left;border-right:solid 2px gray;}
+.content-main{height:800px;width:*;float:left;margin-top:20px;}
+.page span{padding:50px 50px; width:110px; background-color:#ffcc00;  }
+.txt-center{text-align:center}
+.m20{margin:20px;}
+.panel{padding:30px 30px; margin:20px; float:left;width:230px; background-color:#ffcc00; text-align:center }
+.pl50{padding-left:50px;}
+.pl20{padding-left:20px;}
+.popDiv_small{display: none; align:center; position: absolute; top: 25%; left: 35%; width: 20%; height: 20%; padding: 8px; border: 8px solid #E8E9F7; background-color: white; z-index:20; overflow: auto;}
+.popDiv{display: none; align:center; position: absolute; top: 25%; left: 35%; width: 30%; height: 55%; padding: 8px; border: 8px solid #E8E9F7; background-color: white; z-index:15; overflow: auto;}
+.popDiv_big{display: none; align:center; position: absolute; top: 25%; left: 35%; width: 30%; height: 75%; padding: 8px; border: 8px solid #E8E9F7; background-color: white; z-index:15; overflow: auto;}
+.p20{padding:20px;}
+.pt20{padding-top:20px;}
+.ft12{font-size:12px;color:#EC894D;}
+.panel_content{margin-top:20px;padding-left:50px}
+.fr{float:right;margin:20px;}
+.fr50{float:right;margin:20px;padding-right:50px}
+.fr100{float:right;margin:20px;padding-right:100px}
+.fr300{float:right;margin:20px;padding-right:300px}
+.title_div{height:30px;border-bottom:solid 2px gray;margin:10px}
+
+
+
