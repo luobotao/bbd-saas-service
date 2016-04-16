@@ -1,8 +1,8 @@
-package com.bbd.saas.api.impl;
+package com.bbd.saas.api.impl.mongo;
 
 
-import com.bbd.saas.api.AdminUserService;
-import com.bbd.saas.dao.AdminUserDao;
+import com.bbd.saas.api.mongo.AdminUserService;
+import com.bbd.saas.dao.mongo.AdminUserDao;
 import com.bbd.saas.mongoModels.AdminUser;
 import org.springframework.stereotype.Service;
 

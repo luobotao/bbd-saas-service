@@ -1,13 +1,9 @@
-package com.bbd.saas.api.impl;
+package com.bbd.saas.api.impl.mongo;
 
 
-import com.bbd.saas.api.OrderService;
-import com.bbd.saas.api.SiteService;
-import com.bbd.saas.dao.OrderDao;
-import com.bbd.saas.dao.SiteDao;
-import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.dao.mongo.SiteDao;
 import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.utils.PageModel;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.springframework.stereotype.Service;

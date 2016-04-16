@@ -2,7 +2,7 @@ package com.bbd.saas.controllers;
 
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.Result;
-import com.bbd.saas.api.SiteService;
+import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.mongoModels.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

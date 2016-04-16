@@ -1,4 +1,4 @@
-package com.bbd.saas.api.impl;
+package com.bbd.saas.api.impl.mongo;
 
 
 import java.util.List;
@@ -7,15 +7,16 @@ import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
 import org.springframework.stereotype.Service;
 
-import com.bbd.saas.api.OrderService;
-import com.bbd.saas.dao.OrderDao;
-import com.bbd.saas.dao.OrderParcelDao;
+import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.dao.mongo.OrderDao;
+import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -111,5 +112,12 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> findOrders(OrderQueryVO orderQueryVO) {
 		return orderDao.findOrders(orderQueryVO);
+	}
+
+	@Override
+	public int updateOrder(OrderUpdateVO orderUpdateVO,
+			OrderQueryVO orderQueryVO) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

@@ -1,13 +1,9 @@
-package com.bbd.saas.api.impl;
+package com.bbd.saas.api.impl.mongo;
 
 
-import com.bbd.saas.api.OrderPacelService;
-import com.bbd.saas.api.OrderService;
-import com.bbd.saas.dao.OrderDao;
-import com.bbd.saas.dao.OrderParcelDao;
-import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.api.mongo.OrderPacelService;
+import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.mongoModels.OrderParcel;
-import com.bbd.saas.utils.PageModel;
 import org.springframework.stereotype.Service;
 
 /**

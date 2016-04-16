@@ -3,15 +3,12 @@ package com.bbd.saas.controllers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
-import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,18 +24,13 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.UserService;
+import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.form.LoginForm;
-import com.bbd.saas.form.SiteForm;
 import com.bbd.saas.form.UserForm;
-import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserQueryVO;
 
 /**
@@ -308,6 +299,11 @@ public class UserManageController {
 	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "realName", required = true) String realName) {
 		User user = null;
+		try {
+			realName=new String(realName.getBytes("iso-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+
+		}
 		if(id!=null && !id.equals("")){
 			user = userService.findOne(id);
 		}else if(realName!=null && !realName.equals("")){

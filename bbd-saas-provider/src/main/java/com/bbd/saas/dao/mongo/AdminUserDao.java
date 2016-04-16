@@ -1,11 +1,10 @@
-package com.bbd.saas.dao;
+package com.bbd.saas.dao.mongo;
 
 
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.mongoModels.AdminUser;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.dao.BasicDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;

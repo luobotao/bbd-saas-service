@@ -1,4 +1,4 @@
-package com.bbd.saas.dao;
+package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.OrderStatus;

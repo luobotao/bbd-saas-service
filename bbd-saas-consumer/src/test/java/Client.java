@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-import com.bbd.saas.api.AdminUserService;
+import com.bbd.saas.api.mongo.AdminUserService;
 import com.bbd.saas.mongoModels.AdminUser;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

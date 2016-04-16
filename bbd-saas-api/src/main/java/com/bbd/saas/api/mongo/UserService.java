@@ -1,4 +1,4 @@
-package com.bbd.saas.api;
+package com.bbd.saas.api.mongo;
 
 import java.util.List;
 

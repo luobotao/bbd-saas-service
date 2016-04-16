@@ -1,9 +1,7 @@
-package com.bbd.saas.dao;
+package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
-import com.bbd.saas.utils.PageModel;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;

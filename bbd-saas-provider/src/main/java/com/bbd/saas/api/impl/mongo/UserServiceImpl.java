@@ -1,4 +1,4 @@
-package com.bbd.saas.api.impl;
+package com.bbd.saas.api.impl.mongo;
 
 
 import java.util.ArrayList;
@@ -6,19 +6,17 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bbd.saas.api.UserService;
-import com.bbd.saas.dao.SiteDao;
-import com.bbd.saas.dao.UserDao;
+import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.dao.mongo.SiteDao;
+import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
-import com.mongodb.WriteResult;
 
 /**
  * Created by luobotao on 2016/4/1.
