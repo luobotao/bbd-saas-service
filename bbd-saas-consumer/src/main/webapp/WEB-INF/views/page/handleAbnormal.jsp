@@ -16,16 +16,8 @@
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
-
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
-	
-	PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
-	long count = orderPage.getTotalCount();
-	int totalPage = orderPage.getTotalPages();
-	int pagesize = orderPage.getPageSize();
-	int currentPage = orderPage.getPageNo();
-	List<Order> orderList = orderPage.getDatas();
 %>
 <body >
 <div>
@@ -69,14 +61,15 @@
 				</thead>
 				<tbody id="dataList">
 				<%
-					if(orderList == null){
+					PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+					if(orderPage.getDatas() == null){
 				%>
 					<tr>
 						<td colspan="7">没有符合查询条件的数据</td>
 					</tr>
 				<%
 					}else{
-						for(Order order : orderList){
+						for(Order order : orderPage.getDatas()){
 				%>
 					<tr>
 						<td><%=order.getMailNum()%></td>
@@ -190,7 +183,7 @@
 	<div class="title_div">申请退货</div>
 	<div class="m20">
 		<span>选择退货原因:
-			<select id="reasonType" name="reasonType">  
+			<select id="returnReasonType" name="returnReasonType">  
 				<option value ="货物破损">货物破损</option>  
 				<option value ="超时配送">超时配送</option>  
 				<option value="客户端要求退换">客户端要求退换</option>  
@@ -198,7 +191,7 @@
 			</select>				  
 		</span> <br><br>
 		<span>
-			<textarea style="display: none;" rows="5" cols="50" id="reasonInfo" name="reasonInfo" placeholder="请输入退货原因">
+			<textarea style="display: none;" rows="5" cols="50" id="returnReasonInfo" name="returnReasonInfo" placeholder="请输入退货原因">
 				
 			</textarea>
 		</span>
@@ -219,9 +212,10 @@
 
 $(document).ready(function() {
 	//显示分页条
-	var pageStr = paginNav(<%=currentPage%>, <%=totalPage%>, <%=count%>);
+	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
-	//到站时间，选择时间
+	
+	//初始化到站时间框
 	$("#arriveBetween").daterangepicker({
 		locale: {
 			applyLabel: '确定',
@@ -234,15 +228,15 @@ $(document).ready(function() {
 		},
 		format: 'YYYY/MM/DD'
 	});
+	
 	//退货原因，选择其他的原因弹出详情输入框
-	$("#reasonType").change(function(){
+	$("#returnReasonType").change(function(){
 		if(this.value == "其他"){
-			$("#reasonInfo").show();
+			$("#returnReasonInfo").show();
 		} else {
-			$("#reasonInfo").hide();
+			$("#returnReasonInfo").hide();
 		}
 	});
-
 });
 /************************分页条***************开始***************************************/
 //加载带有查询条件的指定页的数据
@@ -404,7 +398,8 @@ function chooseCourier(mailNum) {
         url : "<%=path%>/handleAbnormal/reDispatch",//路径  
         data : {  
             "mailNum" : mailNum, //
-            "courierId" : $("#sender_select").val() //$("#waybillId").val()
+            "courierId" : $("#sender_select").val(),
+            "status" : $("#status").val() //更新列表
         },//数据，这里使用的是Json格式进行传输  
         success : function(data) {//返回数据根据结果进行相应的处理  
         	if(data.success){
@@ -519,8 +514,8 @@ function applyReturn(mailNum) {
         url : "<%=path%>/handleAbnormal/saveReturn",//路径  
         data : {  
             "mailNum" : mailNum, //
-            "reasonType" : $("#reasonType").val(), 
-            "reasonInfo" : $("#reasonInfo").val() 
+            "returnReasonType" : $("#returnReasonType").val(), 
+            "returnReasonInfo" : $("#returnReasonInfo").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(data) {//返回数据根据结果进行相应的处理  
         	if(data.success){

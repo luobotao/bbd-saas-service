@@ -9,6 +9,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
 
 /**
  * Created by luobotao on 2016/4/8.
@@ -77,4 +78,14 @@ public interface OrderService {
      * @return
      */
 	void updateOrderOrderStatu(String mailNum, OrderStatus orderStatusOld, OrderStatus orderStatusNew);
+	
+	/**
+     * Description: 按给定条件更新指定字段
+     * @param orderUpdateVO	待更新字段和值
+     * @param orderQueryVO 检索条件
+     * @return 更新的记录数
+     * @author: liyanlei
+     * 2016年4月16日下午1:23:37
+     */
+    int updateOrder(OrderUpdateVO orderUpdateVO, OrderQueryVO orderQueryVO);
 }
