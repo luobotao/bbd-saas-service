@@ -49,29 +49,6 @@ public class UserManageController {
 	@Autowired
 	AdminService adminService;
 	
-
-	/**
-     * 获取用户列表信息
-     * @param 
-     * @return
-     */
-	/*@RequestMapping(value="userList", method=RequestMethod.GET)
-	public String listUser(Integer page,Model model,HttpServletRequest request) {
-		String a = request.getParameter("saasrole");
-		PageModel<User> pageModel = new PageModel<>();
-		pageModel.setPageSize(2);
-		pageModel.setPageNo(page-1);
-		PageModel<User> userPage = userService.findUserList(pageModel);
-		List<User> datas = userPage.getDatas();
-		userPage.setPageSize(2);
-		userPage.setTotalCount(5);
-		userPage.setPageNo(page);
-		
-		logger.info(userPage+"=========");
-		model.addAttribute("userPage", userPage);
-		return "systemSet/userManageUserList";
-	}*/
-	
 	
 	/**
      * 获取用户列表信息
@@ -186,25 +163,37 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value="editUser", method=RequestMethod.POST)
-	public String editUser(@Valid UserForm userForm, BindingResult result,Model model,RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
+	public String editUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model,
+			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
 		System.out.println("ssss");
-		
-		User olduser = userService.findUserByRealName(userForm.getRealNameTemp());
+		User getuser = adminService.get(UserSession.get(request));
+		User olduser = userService.findUserByLoginName(userForm.getLoginNameTemp());
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 	    java.util.Date dateUpdate = new java.util.Date();
 		User user = new User();
-		logger.info(userForm.getRealNameTemp());
+		logger.info(userForm.getLoginNameTemp());
 		
-		user.setId(olduser.getId());
+		/*user.setId(olduser.getId());
 		user.setRealName(userForm.getRealName());
 		user.setLoginName(userForm.getLoginName());
 		user.setPhone(userForm.getPhone());
 		user.setPassWord(userForm.getLoginPass());
 		user.setOperate(null);
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
-		user.setDateUpdate(dateUpdate);
-		Key<User> kuser = userService.save(user);
+		user.setDateUpdate(dateUpdate);*/
+		
+		
+		olduser.setRealName(userForm.getRealName());
+		//olduser.setLoginName(userForm.getLoginName());
+		olduser.setPhone(userForm.getPhone());
+		olduser.setPassWord(userForm.getLoginPass());
+		olduser.setOperate(getuser);
+		olduser.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
+		olduser.setDateUpdate(dateUpdate);
+		
+		
+		Key<User> kuser = userService.save(olduser);
 		
 		if(kuser!=null && !kuser.getId().equals("")){
 
@@ -241,23 +230,23 @@ public class UserManageController {
 	@RequestMapping(value="/changestatus", method=RequestMethod.GET)
 	public String changestatus(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "status", required = true) String status,
-			@RequestParam(value = "realName", required = true) String realName,HttpServletResponse response) {
+			@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
 		User user = null;
 		
 		try {
-			realName=new String(realName.getBytes("iso-8859-1"),"utf-8");
+			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e) {
 
 		}
 		
 		if(id!=null && !id.equals("")){
 			user = userService.findOne(id);
-		}else if(realName!=null && !realName.equals("")){
-			user = userService.findUserByRealName(realName);
+		}else if(loginName!=null && !loginName.equals("")){
+			user = userService.findUserByLoginName(loginName);
 		}System.out.println("================="+UserStatus.status2Obj(Integer.parseInt(status)));
 		user.setUserStatus(UserStatus.status2Obj(Integer.parseInt(status)));
 		logger.info("id"+id);
-		logger.info("realName"+realName);
+		logger.info("loginName"+loginName);
 		Key<User> kuser = userService.save(user);
 		
 		if(kuser!=null && !kuser.getId().equals("")){ 
@@ -270,9 +259,9 @@ public class UserManageController {
 	
 	@ResponseBody
 	@RequestMapping(value="/delUser", method=RequestMethod.GET)
-	public String delUser(Model model,@RequestParam(value = "id", required = true) String realName,HttpServletResponse response) {
-		User user = userService.findUserByRealName(realName);
-		logger.info("realName"+realName);
+	public String delUser(Model model,@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
+		User user = userService.findUserByLoginName(loginName);
+		logger.info("loginName"+loginName);
 		userService.delUser(user);
 		
 		return "true";
@@ -297,17 +286,17 @@ public class UserManageController {
 	@ResponseBody
 	@RequestMapping(value="/getOneUser", method=RequestMethod.GET)
 	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id,
-			@RequestParam(value = "realName", required = true) String realName) {
+			@RequestParam(value = "loginName", required = true) String loginName) {
 		User user = null;
 		try {
-			realName=new String(realName.getBytes("iso-8859-1"),"utf-8");
+			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e) {
 
 		}
 		if(id!=null && !id.equals("")){
 			user = userService.findOne(id);
-		}else if(realName!=null && !realName.equals("")){
-			user = userService.findUserByRealName(realName);
+		}else if(loginName!=null && !loginName.equals("")){
+			user = userService.findUserByLoginName(loginName);
 		}
 		user.setRoleStatus(user.getRole().getStatus());
 		return user;

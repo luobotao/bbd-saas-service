@@ -126,7 +126,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 												%>
 												
 												<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')" class="orange ml6">启用</a>
-												<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')" class="orange ml6">删除</a>
+												<a href="javascript:void(0)" onclick="delUser('<%=user.getLoginName() %>')" class="orange ml6">删除</a>
 												<% 
 											}
 											
@@ -210,7 +210,6 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					</div>
 					<input type="hidden" class="form-control" id="sign" name="sign">
 					<input type="hidden" class="form-control" id="flag" name="flag" value="true">
-					<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
 					<input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
 					<input type="hidden" class="form-control" id="operate" name="operate">
 					</form>
@@ -277,14 +276,14 @@ function getRowHtml(data){
 	}
 	
 	//
-	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.realName+"')\">修改</button>";
+	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.loginName+"')\">修改</button>";
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" class=\"orange ml6\">停用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
 	}else{
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" class=\"orange ml6\">启用</a>";
-		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" class=\"orange ml6\">删除</a></td>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.loginName+"')\" class=\"orange ml6\">删除</a></td>";
 	}
 
 	row += "</tr>";
@@ -392,12 +391,12 @@ function checkUser(realname) {
 	}
 }
 
-function changeStatus(status,id,realName){
+function changeStatus(status,id,loginName){
 	$.ajax({
 		type : "GET",  
         url : "<c:url value="/userManage/changestatus" />", 
         data : {  
-            "id" : id,"status" : status,"realName" : realName  
+            "id" : id,"status" : status,"loginName" : loginName  
         },
         success : function(data) {
 			if(data == 'true'){
@@ -411,7 +410,7 @@ function changeStatus(status,id,realName){
     });
 }
 
-function delUser(id){
+function delUser(loginName){
 	
 	var ret = false;
 	if(confirm('确定要执行此操作吗?')){ 
@@ -424,7 +423,7 @@ function delUser(id){
 			type : "GET",  
 	        url : "<c:url value="/userManage/delUser" />", 
 	        data : {  
-	            "id" : id 
+	            "loginName" : loginName 
 	        },
 	        success : function(data) {
 				if(data == 'true'){
@@ -541,18 +540,18 @@ function saveUserBtn(){
 }
 
 
-function searchUser(id,realName){
+function searchUser(id,loginName){
 	
 	$.ajax({
 		type : "GET",  
         url : "<c:url value="/userManage/getOneUser" />", 
         data : {  
             "id" : id,
-            "realName" : realName
+            "loginName" : loginName
         },
         success : function(data) {
 			if(data != null){
-				
+				document.getElementById("userForm").reset();
 				$("#realName").val(data.realName);
 				$("#phone").val(data.phone);
 				$("#loginName").val(data.loginName);
@@ -562,7 +561,6 @@ function searchUser(id,realName){
 				$("#confirmPass").val(data.passWord);
 				$("#loginName").attr("readonly",true);
 				document.getElementById("sign").value="edit";
-				document.getElementById("realNameTemp").value=data.realName;
 				document.getElementById("loginNameTemp").value=data.loginName;
 			}    
         },
@@ -578,7 +576,13 @@ function searchUser(id,realName){
 function restUserModel(){
 	document.getElementById("userForm").reset();
 	$("#loginName").attr("readonly",false);
+	$("#roleIdP").attr("style","display:none");
+	$("#phoneP").attr("style","display:none");
+	$("#realNameP").attr("style","display:none");
+	$("#loginNameP").text("请输入登录名");
 	$("#loginNameP").attr("style","display:none");
+	$("#loginpassP").attr("style","display:none");
+	$("#confirmPassP").attr("style","display:none");
 	document.getElementById("operate").value = "create";
 }
 </script>

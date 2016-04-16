@@ -29,7 +29,7 @@ public class UserForm {
 	@NotEmpty
 	private String loginPass;
 	@NotEmpty
-	private String realNameTemp;
+	private String loginNameTemp;
 	public String getRoleId() {
 		return roleId;
 	}
@@ -61,11 +61,12 @@ public class UserForm {
 	public void setLoginPass(String loginPass) {
 		this.loginPass = loginPass;
 	}
-	public String getRealNameTemp() {
-		return realNameTemp;
+	public String getLoginNameTemp() {
+		return loginNameTemp;
 	}
-	public void setRealNameTemp(String realNameTemp) {
-		this.realNameTemp = realNameTemp;
+	public void setLoginNameTemp(String loginNameTemp) {
+		this.loginNameTemp = loginNameTemp;
 	}
+
 
 }
