@@ -93,7 +93,7 @@
 							</div>
 						</div><!-- /.box-body -->
 						<div class="box-footer">
-							<button type="button" class="btn btn-primary" id="saveSiteBtn" style="margin-left: 170px ;" onclick="window.location.href='/login'">
+							<button type="button" class="btn btn-primary" id="saveSiteBtn" style="margin-left: 170px ;" onclick="window.location.href='<c:url value="/login"/>'">
 								返回</button>
 						</div>
 				</div>

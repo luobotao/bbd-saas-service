@@ -585,6 +585,13 @@ footer {
   padding: 32px 0;
   box-shadow: 0 5px 15px rgba(9, 163, 212, 0.23);
 }
+.b-status a:link,
+.b-status a:visited,
+.b-status a:hover,
+.b-status a:active {
+  text-decoration: none;
+  color: #333;
+}
 /* E 系统配送首页*/
 /* S 包裹到站 */
 .i-hei {
@@ -882,6 +889,30 @@ footer {
 }
 .pre-step {
   display: none;
+}
+.wp66 {
+  width: 66% !important;
+}
+.wp80 {
+  width: 80% !important;
+}
+.wp25 {
+  width: 25% !important;
+  display: inline-block;
+}
+.input-d {
+  margin: 10px 0 0 20%;
+}
+.site-re {
+  padding-left: 65px;
+  line-height: 40px;
+}
+.filter i {
+  float: left;
+  display: block;
+  width: 20%;
+  text-align: right;
+  padding-top: 6px;
 }
 @media (min-width: 768px) {
   .b-modal-dialog {
