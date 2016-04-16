@@ -7,24 +7,22 @@
 </head>
 <body>
 <div class="content">
+
 	<section class="content-header" >
 		<div class="row">
-			<div class="col-xs-12" >
-				<label for="siteNameLabel" class="col-md-2 control-label">站点名称：</label>
-				<div class="col-md-10">
-					<span id="siteNameLabel"  style="float:left">立水桥  </span>
+			<div class="col-xs-2" >
+				<label style="float:left;"><p class="text-left">站点名称：</p></label>
+				<div >
+					<strong style="float:left;">${site.name}</strong>
+				</div>
+			</div>
+			<div class="col-xs-10" >
+				<label style="float:left;"><p class="text-left">站点地址：</p></label>
+				<div>
+					<strong style="float:left;">${site.province}-${site.city}-${site.area} ${site.address}</strong>
 				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-xs-12" >
-				<label for="siteAddressLabel" class="col-md-2 control-label">站点地址：</label>
-				<div class="col-md-10">
-					<span id="siteAddressLabel" style="float:left">北京市-朝阳区-立水桥-xxx</span>
-				</div>
-			</div>
-		</div>
-
 	</section>
 	<section class="content">
 		<ul class="nav nav-tabs">
@@ -41,88 +39,86 @@
 		<div class="tab-content" style="height:800px;">
 			<div class="tab-pane <c:if test="${activeNum eq '1'}">active</c:if>" id="panel-1">
 				<div class="box box-primary">
-					<div class="row">
-						<p2>设置配送范围后，将优先匹配站点附近的订单</p2>
-					</div>
-					<div class="row">
-						<div class="col-xs-12" >
-							<label for="siteRangeLabel" class="control-label">站点周围：</label>
-							<label >
-								<c:set var="count" value="20"/>
-								<select id="siteRangeLabel"  style="float:left">
-									<option value="">请选择</option>
-									<c:forEach var = "temp" begin="1" step="1" end="${count}">
-										<option value ="${temp}" <c:if test="${temp eq 2}">selected</c:if>>${temp}</option>
-									</c:forEach>
-								</select>公里
-							</label>
+					<form action="/site/updateSiteWithRadius" method="POST" id="siteRadiusForm">
+						<br/>
+						<div class="row">
+							<div class="col-xs-12" >
+								<label class="control-label">设置配送范围后，将优先匹配站点附近的订单</label>
+							</div>
 						</div>
-					</div>
-					<div id="allmap" style="width: 400px;height: 400px;margin-left:15px;margin-top:10px; display:none;"></div>
-				</div>
-			</div>
-			<div class="tab-pane <c:if test="${activeNum eq '2'}">active</c:if>" id="panel-2">
-				<div class="box box-primary">
-					<div class="m20" style="height:500px;width:600px; background-color:#dda;">
-						电子围栏
-					</div>
+						<div class="row">
+							<div class="col-xs-12" >
+								<label for="radius" class="control-label">站点周围：</label>
+								<label >
+									<c:set var="count" value="20"/>
+									<select id="radius" name="radius" style="float:left">
+										<option value="">请选择</option>
+										<c:forEach var = "temp" begin="1" step="1" end="${count}">
+											<option value ="${temp}" <c:if test="${temp eq site.getDeliveryArea()}">selected</c:if>>${temp}</option>
+										</c:forEach>
+									</select>公里
+									<input type="hidden" id="siteId" name="siteId" value="${site.getId()}"/>
+								</label>
+							</div>
+						</div>
+						<c:if test="${site.getDeliveryArea()!=null&&site.getDeliveryArea()!='0'}">
+							<div class="row" >
+								<div id="allmap" style="width: 800px;height: 400px;margin-left:15px;margin-top:10px; "></div>
+							</div>
+							<br/>
+						</c:if>
+						<div class="row">
+							<button type="button" class="btn btn-warning" id="saveSiteBtn" style="margin-left: 10px;">保存</button>
+						</div>
+					</form>
 				</div>
 			</div>
 			<div class="tab-pane <c:if test="${activeNum eq '3'}">active</c:if>" id="panel-3">
-				<div class="box box-primary">
-					地址关键词
-				</div>
+				<jsp:include page="deliverRegionKey.jsp"/>
 			</div>
 		</div>
 	</section>
 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 	<script type="text/javascript">
+		//保存站点配送范围信息
+		$("#saveSiteBtn").click(function(){
+			$.ajax({
+				url: '/site/updateSiteWithRadius/'+$("#radius option:selected").val()+'/'+$("#siteId").val(),
+				type: 'get',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					console.log(response);
+					alert("保存成功");
+					window.location.href="/deliverRegion/map/1";
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
+		})
+
 		showMap();
+		//展示配送范围
 		function showMap(){
-			$("#allmap").css("display","block");
 			// 百度地图API功能
 			var map = new BMap.Map("allmap");
-			var point = new BMap.Point(116.331398,39.897445);
-			map.centerAndZoom(point,12);
-			// 创建地址解析器实例
-			var myGeo = new BMap.Geocoder();
-			// 将地址解析结果显示在地图上,并调整地图视野
-			var prov="北京";
-			var addressStr = $("#address").val();
-			if(id==0){
-			var prov = $(".prov").val();
-			var city = $(".city").val();
-			var dist = $(".dist").val();
-			var str = prov+city+addressStr;
-			if(dist!=null){
-			str = prov+city+dist+addressStr;
-			}
-			}else{
-			str = addressStr;
-			}
-			console.log(str);
-			myGeo.getPoint(str, function(point){
-			if (point) {
-			map.centerAndZoom(point, 16);
-			map.addOverlay(new BMap.Marker(point));
-			$("#lng").val(point.lng);
-			$("#lat").val(point.lat);
-			}else{
-			alertify.error("您选择地址没有解析到结果!");
-			}
-			}, prov);
-			function showInfo(e){
-			map.clearOverlays();
-			console.log(e.point.lng + ", " + e.point.lat);
-			$("#lng").val(e.point.lng);
-			$("#lat").val(e.point.lat);
-			var point = new BMap.Point(e.point.lng, e.point.lat);
+			var point = new BMap.Point(${site.lng}, ${site.lat});
+			map.centerAndZoom(point, 15);
 			var marker = new BMap.Marker(point);  // 创建标注
 			map.addOverlay(marker);               // 将标注添加到地图中
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-			}
-			map.addEventListener("click", showInfo);
+			var circle = new BMap.Circle(point,${site.deliveryArea},{strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5}); //创建圆
+			map.addOverlay(circle);            //增加圆
+			map.enableScrollWheelZoom(true);
 		}
+
+		//-----------panel 3-----------------------
+		$("#importSiteButton").click(function(){
+			console.log("sss");
+			$("#importSiteForm").submit();
+		})
 	</script>
 </div>
 </body>

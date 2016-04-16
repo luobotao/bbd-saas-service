@@ -24,6 +24,9 @@ public class SiteForm {
 	private String password;     //密码
 	private String prePic;       //历史图片
 
+	private String lng;			//经度
+	private String lat;			//纬度
+
 	public String getName() {
 		return name;
 	}
@@ -118,5 +121,21 @@ public class SiteForm {
 
 	public void setPrePic(String prePic) {
 		this.prePic = prePic;
+	}
+
+	public String getLat() {
+		return lat;
+	}
+
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+
+	public String getLng() {
+		return lng;
+	}
+
+	public void setLng(String lng) {
+		this.lng = lng;
 	}
 }

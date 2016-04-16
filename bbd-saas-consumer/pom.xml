@@ -17,6 +17,8 @@
         <org.springframework.security-version>3.2.9.RELEASE</org.springframework.security-version>
         <org.aspectj-version>1.8.1</org.aspectj-version>
         <org.slf4j-version>1.7.12</org.slf4j-version>
+        <poi.version>3.9</poi.version>
+        <commons-lang3.version>3.3.2</commons-lang3.version>
     </properties>
     <dependencies>
         <!--dubbo-->
@@ -25,12 +27,22 @@
             <artifactId>bbd-saas-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- bbd poi
+        <!-- bbd poi-->
         <dependency>
             <groupId>com.bbd</groupId>
             <artifactId>bbd-poi-api</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>-->
+            <exclusions>
+                <exclusion>
+                    <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>logback-core</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
@@ -272,7 +284,27 @@
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
-
+        <!-- poi office -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
@@ -286,6 +318,11 @@
             <url>http://123.56.46.162:8081/nexus/content/repositories/releases</url>
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>oschina-repos</id>
+            <name>Oschina Releases</name>
+            <url>http://maven.oschina.net/content/groups/public</url>
         </repository>
         <repository>
             <id>nexus-snapshots</id>

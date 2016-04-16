@@ -15,11 +15,12 @@
 	<context:annotation-config />
 	
 	<context:component-scan base-package="com.bbd.*" />
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
 	<!--配置拦截器, 多个拦截器,顺序执行 -->
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<!-- 匹配的是url路径， 如果不配置或/**,将拦截所有的Controller -->
+			<!-- 匹配的是url路redis径， 如果不配置或/**,将拦截所有的Controller -->
 			<mvc:mapping path="/*" />
 			<bean class="com.bbd.saas.interceptor.LoginInterceptor"></bean>
 		</mvc:interceptor>

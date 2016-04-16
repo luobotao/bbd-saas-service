@@ -1,7 +1,7 @@
 package com.bbd.saas.Services;
 
+import com.bbd.saas.api.UserService;
 import com.bbd.saas.constants.Constants;
-import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
  */
 @Service("adminService")
 public class AdminService {
-
     @Autowired
     RedisTemplate<String, User> redisTemplate;
 
@@ -27,6 +26,8 @@ public class AdminService {
     }
 
     public User get(Object key) {
-        return (User) redisTemplate.opsForHash().get(Constants.REDIS_ADMIN_ID, key);
+        User user =  (User) redisTemplate.opsForHash().get(Constants.REDIS_ADMIN_ID, key);
+        return user;
     }
+
 }

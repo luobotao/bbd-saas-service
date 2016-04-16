@@ -38,7 +38,14 @@ public class User implements Serializable {
     private int state;//状态标识 1审核中 2审核通过 3驳回
     private UserStatus userStatus;//状态标识 1启用,0停用 
     private Date dateAdd;//创建时间
+    private Date dateUpdate;//修改时间
     private Date dateLogin;//最后一次登录时间
+    @Transient
+    private String roleMessage;//存放角色信息
+    @Transient
+    private int roleStatus;//存放0或1
+    @Transient
+    private String statusMessage;//存放有效或无效
 
     public ObjectId getId() {
         return id;
@@ -80,15 +87,15 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-	public UserRole getRole() {
-		return role;
-	}
+    public UserRole getRole() {
+        return role;
+    }
 
-	public void setRole(UserRole role) {
-		this.role = role;
-	}
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
 
-	public Site getSite() {
+    public Site getSite() {
         return site;
     }
 
@@ -136,20 +143,52 @@ public class User implements Serializable {
         this.dateLogin = dateLogin;
     }
 
-	public User getOperate() {
-		return operate;
-	}
+    public User getOperate() {
+        return operate;
+    }
 
-	public void setOperate(User operate) {
-		this.operate = operate;
-	}
+    public void setOperate(User operate) {
+        this.operate = operate;
+    }
 
-	public UserStatus getUserStatus() {
-		return userStatus;
-	}
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
 
-	public void setUserStatus(UserStatus userStatus) {
-		this.userStatus = userStatus;
-	}
-	
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
+
+    public Date getDateUpdate() {
+        return dateUpdate;
+    }
+
+    public void setDateUpdate(Date dateUpdate) {
+        this.dateUpdate = dateUpdate;
+    }
+
+    public String getRoleMessage() {
+        return roleMessage;
+    }
+
+    public void setRoleMessage(String roleMessage) {
+        this.roleMessage = roleMessage;
+    }
+
+    public int getRoleStatus() {
+        return roleStatus;
+    }
+
+    public void setRoleStatus(int roleStatus) {
+        this.roleStatus = roleStatus;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
 }
