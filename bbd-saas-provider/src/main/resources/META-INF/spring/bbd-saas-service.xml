@@ -44,4 +44,15 @@
             <ref bean="siteDao"/>
         </property>
     </bean>
+
+
+
+
+
+    <!--start mysql services -->
+    <bean id="postcompanyService" class="com.bbd.saas.api.impl.mysql.PostcompanyServiceImpl">
+        <property name="postcompanyDao">
+            <ref bean="postcompanyDao"/>
+        </property>
+    </bean>
 </beans>

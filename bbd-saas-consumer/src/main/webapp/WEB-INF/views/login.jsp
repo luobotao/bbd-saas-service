@@ -164,7 +164,7 @@
 						</a>
 					</li>
 					<li class="cho-lg col-md-6">
-						<a href="javascript:void(0);">
+						<a href="javascript:void(0);" data-dismiss="modal" class="j-site-re" >
 							<div class="cho-lg-card">
 								<span><img src="<c:url value="/resources/images/trader.png" />" alt="站点"></span>
 								<h3>电商商家</h3>
@@ -177,6 +177,86 @@
 		</div>
 	</div>
 </div>
+
+
+<!--S 站点注册-->
+<div class="j-site-re-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-guide-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<h4 class="modal-title tc">站点注册</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				<ul class="b-n-crt">
+					<li class="filter">
+						<i>账号：</i>
+						<input type="text" class="form-control form-bod wp80" />
+					</li>
+					<li class="filter">
+						<i>密 码：</i>
+						<input type="password" class="form-control form-bod wp80" />
+					</li>
+					<li class="filter">
+						<i>站点名称：</i>
+						<input type="text" class="form-control form-bod wp80" />
+					</li>
+					<li class="filter">
+						<i>负责人：</i>
+						<input type="text" class="form-control form-bod wp80" />
+					</li>
+					<li class="filter">
+						<i>负责人电话：</i>
+						<input type="text" class="form-control form-bod wp80" />
+					</li>
+					<li class="filter">
+						<i>固定电话：</i>
+						<input type="text" class="form-control form-bod wp80" />
+					</li>
+					<li class="filter">
+						<i>邮箱：</i>
+						<input type="text" class="form-control form-bod wp80" />
+					</li>
+					<li class="filter">
+						<i>地 址：</i>
+						<em class="wp25">
+							<select class="form-control form-bod ">
+								<option>省</option>
+							</select>
+						</em>
+						<em class="wp25">
+							<select class="form-control form-bod ">
+								<option>市</option>
+							</select>
+						</em>
+						<em class="wp25">
+							<select class="form-control form-bod ">
+								<option>区</option>
+							</select>
+						</em>
+
+						<input type="text" class="form-control form-bod wp80 input-d" placeholder="请输入详细地址" />
+					</li>
+					<li class="filter">
+						<i>公司营业执照：</i>
+						<input type="text" class="form-control form-bod fl wp66" />
+						<a href="javascript:void(0);" class="ser-btn g fr">选择</a>
+					</li>
+				</ul>
+			</div>
+			<div class="modal-footer mb15 mt20 bod0">
+				<div class="fl site-re">
+					<label>
+						<input type="checkbox" />
+						同意<em class="orange">《棒棒达快递注册协议》</em>
+					</label>
+				</div>
+				<a href="javascript:void(0);" class="ser-btn g">查看已注册站点</a>
+				<a href="javascript:void(0);" class="ser-btn l">保存</a>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 站点注册-->
 <!-- E pop -->
 <script>
 	//回车事件
