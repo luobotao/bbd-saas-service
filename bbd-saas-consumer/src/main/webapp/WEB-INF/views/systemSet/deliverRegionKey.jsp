@@ -4,15 +4,15 @@
     <div class="box-body">
         <c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
         <c:url var="querySiteUrl" value="/deliverRegion/map/3?${_csrf.parameterName}=${_csrf.token}"/>
-        <form action="querySiteUrl" method="post" id="siteKeywordForm" name="siteKeywordForm">
+        <form action="querySiteUrl" method="get" id="siteKeywordForm" name="siteKeywordForm">
             <div class="row">
                 <div class="col-xs-3">
                     <label>导入时间：</label>
-                    <input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value=""/>
+                    <input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
                 </div>
                 <div class="col-xs-3">
                     <label>关键词：</label>
-                    <input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value=""/>
+                    <input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
                 </div>
                 <div class="col-xs-3">
                     <button class="btn btn-primary" style="margin-top:25px ; margin-left: 15px ;" type="submit">
@@ -51,7 +51,7 @@
                     <th>操作</th>
                     </thead>
                     <tbody>
-                    <c:forEach items="${siteKeywordPageList}" var="siteKeyword">
+                    <c:forEach items="${siteKeywordPageList.list}" var="siteKeyword">
                         <tr>
                             <td><input type="checkbox" value="${siteKeyword.id}" name="id"/></td>
                             <td>${siteKeyword.createAt}</td>
@@ -71,6 +71,15 @@
                     </th>
                     </tfoot>
                 </table>
+                <!-- E table -->
+                <!-- S tableBot -->
+                <div class="clearfix pad20">
+                    <!-- E button -->
+                    <!-- S page -->
+                    <div id="pagin"></div>
+                    <!-- E page -->
+                </div>
+                <!-- E tableBot -->
             </div>
         </div>
     </div>
@@ -103,4 +112,7 @@
     $("#exportData").click(function(){
         window.location.href="/site/exportSiteKeywordFile";
     })
+    //显示分页条
+    var pageStr = paginNav(${siteKeywordPageList.page}, ${siteKeywordPageList.pageNum}, ${siteKeywordPageList.count});
+    $("#pagin").html(pageStr);
 </script>

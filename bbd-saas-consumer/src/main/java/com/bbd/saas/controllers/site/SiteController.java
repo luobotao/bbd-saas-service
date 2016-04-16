@@ -17,6 +17,7 @@ import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.ExportUtil;
 import com.bbd.saas.utils.Numbers;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.*;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -24,6 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,6 +44,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -60,7 +66,8 @@ public class SiteController {
 	SitePoiApi sitePoiApi;
 	@Autowired
 	SiteKeywordApi siteKeywordApi;
-
+	@Autowired
+	HttpServletRequest request;
 	public static final int MAXSIZE = 100000;
 
 
@@ -293,6 +300,47 @@ public class SiteController {
 				e.printStackTrace();
 			}
 		}
+	}
 
+	/**
+	 * 导出excel模板
+	 * @param response
+     * @return
+     */
+	@RequestMapping(value="/downloadSiteKeywordTemplate", method=RequestMethod.GET)
+	public ResponseEntity<byte[]> downloadSiteKeywordTemplate(HttpServletResponse response) throws IOException {
+		String fileName="siteKeywordTemplate.xlsx";//new String("你好.xlsx".getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
+		File file = getDictionaryFile(fileName);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDispositionFormData("attachment", fileName);
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),
+				headers, HttpStatus.CREATED);
+	}
+
+	/**
+	 * 获取需要下载的文件
+	 * @return
+     */
+	public File getDictionaryFile(String filename) {
+		String path = request.getSession().getServletContext().getRealPath("/") + "resources/tmpl/" + filename;
+		logger.info("PATH:"+path);
+		return new File(path);
+	}
+
+	//电子围栏
+	@ResponseBody
+	@RequestMapping(value="/updateSiteEfence/{siteId}", method=RequestMethod.GET)
+	public String updateSiteEfence(@PathVariable String siteId){
+		/*List<double[]> points = new ArrayList<double[]>();
+        points.add(new double[]{116.476256,39.908467});
+        points.add(new double[]{116.486964,39.904648});
+        points.add(new double[]{116.474028,39.899888});
+        points.add(new double[]{116.469716,39.904261});
+        List list = new ArrayList();
+        list.add(points);
+        Result result = sitePoiApi.updateSiteEfence(siteId,list);
+		logger.info(result.code+"");*/
+		return "success";
 	}
 }
