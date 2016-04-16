@@ -119,25 +119,26 @@ public class HandleAbnormalController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
-		//查询派件员信息
-		User courier = userService.findOne(courierId);
+		
+		//更新字段设置
+		User courier = userService.findOne(courierId);//查询派件员
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
-		//运单分派给派件员
-		orderUpdateVO.user = courier;
-		//更新运单状态--已分派
-		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;
+		orderUpdateVO.user = courier;//运单分派给派件员
+		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
 		
 		//检索条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
 		orderQueryVO.mailNum = mailNum;
-		
+		if(status != null && status != -1){
+			orderQueryVO.abnormalStatus = status;
+		}
 		//更新运单
 		int i = orderService.updateOrder(orderUpdateVO, orderQueryVO);
 		if(i > 0){
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			orderQueryVO = new OrderQueryVO();
-			orderQueryVO.abnormalStatus = status;
+			orderQueryVO.abnormalStatus = NumberUtil.defaultIfNull(status, -1);
 			orderQueryVO.areaCode = currUser.getSite().getAreaCode();
 			//查询数据
 			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);

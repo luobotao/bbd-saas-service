@@ -408,6 +408,8 @@ function hideCourierDiv() {
 }
 //重新分派
 function chooseCourier(mailNum) {
+	//获取当前页
+    var pageIndex = parseInt($(".pagination .active a").html())-1;
 	//保存分派信息
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -415,16 +417,14 @@ function chooseCourier(mailNum) {
         data : {  
             "mailNum" : mailNum, //
             "courierId" : $("#sender_select").val(),
-            "status" : $("#status").val() //更新列表
+            "pageIndex" : pageIndex,//更新列表
+            "status" : $("#status").val(), 
+            "arriveBetween" : $("#arriveBetween").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.success){
-        		alert("分派成功，刷新列表！");  
+        	if(data.operFlag == 1){
         		//分派成功，刷新列表！
-        		//获取当前页
-    			var pageIndex = parseInt($(".pagination .active a").html())-1;
-    			//console.log("pageIndex==="+pageIndex);
-        		gotoPage(pageIndex);
+        		refreshTable(data.orderPage);
         	}else{
         		alert("重新分派失败，请重新分派！");  
         	}
