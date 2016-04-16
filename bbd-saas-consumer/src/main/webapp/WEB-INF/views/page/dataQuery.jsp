@@ -11,16 +11,8 @@
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
-
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
-	
-	PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
-	long count = orderPage.getTotalCount();
-	int totalPage = orderPage.getTotalPages();
-	int pagesize = orderPage.getPageSize();
-	int currentPage = orderPage.getPageNo();
-	List<Order> orderList = orderPage.getDatas();
 %>
 <body >
 <div>
@@ -81,14 +73,15 @@
 				<tbody id="dataList">
 				
 				<%
-					if(orderList == null){
+					PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+					if(orderPage.getDatas() == null){
 				%>
 					<tr>
 						<td colspan="7">没有符合查询条件的数据</td>
 					</tr>
 				<%
 					}else{
-						for(Order order : orderList){
+						for(Order order : orderPage.getDatas()){
 				%>
 					<tr>
 						<td><%=order.getParcelCode()%></td>
@@ -144,6 +137,11 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
+	//显示分页条
+	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
+	$("#pagin").html(pageStr);
+	
+	//初始化到站时间框
 	$("#arriveBetween").daterangepicker({
 		locale: {
 			applyLabel: '确定',
@@ -156,11 +154,6 @@ $(document).ready(function() {
 		},
 		format: 'YYYY/MM/DD'
 	});
-	//显示分页条
-	var pageStr = paginNav(<%=currentPage%>, <%=totalPage%>, <%=count%>);
-	$("#pagin").html(pageStr);
-	
-
 });
 
 //加载带有查询条件的指定页的数据

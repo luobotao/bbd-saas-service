@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
@@ -96,62 +96,67 @@ public class PackageDispatchController {
 	 * Description: 运单分派--把到站的包裹分派给派件员
 	 * @param mailNum 运单号
 	 * @param courierId 派件员id
-	 * @param model
+	 * @param request
 	 * @return
 	 * @author: liyanlei
-	 * 2016年4月11日下午4:15:05
+	 * 2016年4月16日上午11:36:55
 	 */
 	@ResponseBody
 	@RequestMapping(value="/dispatch", method=RequestMethod.GET)
-	public Map dispatch(String mailNum, String courierId, final HttpServletRequest request, Model model) {
+	public Map<String, Object> dispatch(String mailNum, String courierId, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
-		//====================start================================
 		//当前登录的用户信息
 		User user = adminService.get(UserSession.get(request));
 		//查询运单信息
-		Order order = orderService.findOneByMailNum("", mailNum);
-		if(order != null){
-			//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
-			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-				||ExpressStatus.Delay.equals(order.getExpressStatus())
-				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-				if(order.getUser() == null){//未分派，可以分派
-					saveOrderMail(order, courierId, map);
-				}else{//重复扫描，此运单已分派过了
-					map.put("operFlag", 2);
-				}
-			}else{//重复扫描，此运单已分派过了
-				map.put("operFlag", 2);
+		Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
+		if(order == null){//运单不存在,与站点无关
+			map.put("operFlag", 0);//0:运单号不存在
+		}else{//运单存在
+			//当运单到达站点(未分派)，首次分派;当运单状态处于滞留、拒收时，可以重新分派	
+			if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
+				|| OrderStatus.RETENTION.equals(order.getOrderStatus()) //滞留
+				|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
+				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
+			}else if(order.getUser() != null){//重复扫描，此运单已分派过了
+				map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
+			}else{
+				map.put("operFlag", 4);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
 			}
-		}else{
-			map.put("erroFlag", 0);//0:运单号不存在
 		}
-		
-		//=====================end================================
-				
-		//Order order = new Order();
-		map.put("order", order); //刷新列表，添加此运单
-		map.put("success", true); //0:分派成功;
-		map.put("operFlag", 2); //0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:拒收运单重新分派--。
 		return map;
 	}
+	
 	/**
-	 * Description: 保存派件员信息
+	 * Description: 运单分派
 	 * @param order 订单
-	 * @param courierId 派件员
+	 * @param courierId 派件员Id
+	 * @param areaCode 站点编码
 	 * @param map
 	 * @author: liyanlei
-	 * 2016年4月14日上午11:00:59
+	 * 2016年4月16日上午11:36:08
 	 */
-	private void saveOrderMail(Order order, String courierId, Map<String, Object> map){
+	private void saveOrderMail(Order order, String courierId, String areaCode, Map<String, Object> map){
 		//查询派件员信息
 		User user = userService.findOne(courierId);
 		//运单分派给派件员
 		order.setUser(user);
+		//更新运单状态--已分派
+		order.setOrderStatus(OrderStatus.DISPATCHED);
 		//更新运单
-		orderService.save(order);
-		map.put("operFlag", 1);//1:分派成功
+		Key<Order> r = orderService.save(order);
+		if(r != null){
+			map.put("operFlag", 1);//1:分派成功
+			//刷新列表
+			OrderQueryVO orderQueryVO = new OrderQueryVO();
+			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
+			orderQueryVO.userId = courierId;
+			orderQueryVO.areaCode = areaCode;
+			//查询数据
+			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+			map.put("orderPage", orderPage); 
+		}else{
+			map.put("operFlag", 3);//3:分派成功
+		}
 	}
 	
 	/**

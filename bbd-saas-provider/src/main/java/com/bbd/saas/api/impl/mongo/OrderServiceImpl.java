@@ -16,6 +16,7 @@ import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -111,5 +112,12 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> findOrders(OrderQueryVO orderQueryVO) {
 		return orderDao.findOrders(orderQueryVO);
+	}
+
+	@Override
+	public int updateOrder(OrderUpdateVO orderUpdateVO,
+			OrderQueryVO orderQueryVO) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
