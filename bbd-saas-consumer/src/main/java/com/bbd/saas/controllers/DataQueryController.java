@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.OrderService;
-import com.bbd.saas.api.UserService;
+import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;

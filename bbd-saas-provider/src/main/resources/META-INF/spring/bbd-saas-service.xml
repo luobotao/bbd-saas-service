@@ -9,13 +9,13 @@
     <import resource="classpath:META-INF/spring/bbd-saas-dao.xml" />
 
     <!-- adminUser Service-->
-    <bean id="adminUserService" class="com.bbd.saas.api.impl.AdminUserServiceImpl">
+    <bean id="adminUserService" class="com.bbd.saas.api.impl.mongo.AdminUserServiceImpl">
         <property name="adminUserDao">
             <ref bean="adminUserDao"/>
         </property>
     </bean>
     <!-- order Service-->
-    <bean id="orderService" class="com.bbd.saas.api.impl.OrderServiceImpl">
+    <bean id="orderService" class="com.bbd.saas.api.impl.mongo.OrderServiceImpl">
         <property name="orderDao">
             <ref bean="orderDao"/>
         </property>
@@ -24,13 +24,13 @@
         </property>
     </bean>
     <!-- order Service-->
-    <bean id="orderPacelService" class="com.bbd.saas.api.impl.OrderParcelServiceImpl">
+    <bean id="orderPacelService" class="com.bbd.saas.api.impl.mongo.OrderParcelServiceImpl">
         <property name="orderParcelDao">
             <ref bean="orderParcelDao"/>
         </property>
     </bean>
     <!-- user Service-->
-    <bean id="userService" class="com.bbd.saas.api.impl.UserServiceImpl">
+    <bean id="userService" class="com.bbd.saas.api.impl.mongo.UserServiceImpl">
         <property name="userDao">
             <ref bean="userDao"/>
         </property>
@@ -39,7 +39,7 @@
         </property>
     </bean>
     <!-- site Service-->
-    <bean id="siteService" class="com.bbd.saas.api.impl.SiteServiceImpl">
+    <bean id="siteService" class="com.bbd.saas.api.impl.mongo.SiteServiceImpl">
         <property name="siteDao">
             <ref bean="siteDao"/>
         </property>
