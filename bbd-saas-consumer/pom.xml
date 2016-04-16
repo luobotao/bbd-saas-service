@@ -330,11 +330,6 @@
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
-            <id>oschina-repos</id>
-            <name>Oschina Releases</name>
-            <url>http://maven.oschina.net/content/groups/public</url>
-        </repository>
-        <repository>
             <id>nexus-snapshots</id>
             <name>nexus-snapshots Repository</name>
             <url>http://123.56.46.162:8081/nexus/content/repositories/snapshots</url>

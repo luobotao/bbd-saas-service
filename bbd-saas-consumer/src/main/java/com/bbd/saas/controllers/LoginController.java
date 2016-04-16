@@ -1,8 +1,7 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.AdminUserService;
-import com.bbd.saas.api.UserService;
+import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.form.LoginForm;
 import com.bbd.saas.mongoModels.User;

@@ -1,6 +1,5 @@
 package com.bbd.saas.Services;
 
-import com.bbd.saas.api.UserService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.mongoModels.User;
 import org.springframework.beans.factory.annotation.Autowired;

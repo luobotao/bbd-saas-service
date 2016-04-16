@@ -20,6 +20,11 @@
 		<org.springframework-version>3.2.9.RELEASE</org.springframework-version>
 		<org.springframework.security-version>3.2.9.RELEASE</org.springframework.security-version>
 		<org.slf4j-version>1.7.12</org.slf4j-version>
+		<sharding-jdbc.version>1.0.0</sharding-jdbc.version>
+		<commons-dbcp.version>1.4</commons-dbcp.version>
+		<mysql-connector-java.version>5.1.30</mysql-connector-java.version>
+		<mybatis.version>3.3.1</mybatis.version>
+		<mybatis-spring.version>1.2.5</mybatis-spring.version>
 	</properties>
 	<modules>
 		<module>bbd-saas-api</module>

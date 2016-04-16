@@ -9,23 +9,23 @@
 
     <import resource="classpath:META-INF/spring/spring-morphia-conf.xml"/>
     <!-- 管理用户DAO-->
-    <bean id="adminUserDao" class="com.bbd.saas.dao.AdminUserDao">
+    <bean id="adminUserDao" class="com.bbd.saas.dao.mongo.AdminUserDao">
         <constructor-arg ref="datastore"/>
     </bean>
     <!-- order DAO-->
-    <bean id="orderDao" class="com.bbd.saas.dao.OrderDao">
+    <bean id="orderDao" class="com.bbd.saas.dao.mongo.OrderDao">
         <constructor-arg ref="datastore"/>
     </bean>
     <!-- user DAO-->
-    <bean id="userDao" class="com.bbd.saas.dao.UserDao">
+    <bean id="userDao" class="com.bbd.saas.dao.mongo.UserDao">
         <constructor-arg ref="datastore"/>
     </bean>
     <!-- site DAO-->
-    <bean id="siteDao" class="com.bbd.saas.dao.SiteDao">
+    <bean id="siteDao" class="com.bbd.saas.dao.mongo.SiteDao">
         <constructor-arg ref="datastore"/>
     </bean>
     <!-- orderParcel DAO-->
-    <bean id="orderParcelDao" class="com.bbd.saas.dao.OrderParcelDao">
+    <bean id="orderParcelDao" class="com.bbd.saas.dao.mongo.OrderParcelDao">
         <constructor-arg ref="datastore"/>
     </bean>
 </beans>
