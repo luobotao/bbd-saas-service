@@ -25,10 +25,13 @@ $(function(){
 	});
 	// E sidebar
 	// S 配送区域
-
-
+	$('.b-tab li:eq(0) a').tab('show');
+	$('.b-tab a').click(function (e) {
+		e.preventDefault()
+		$(this).tab('show')
+		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
+	})
 	// E 配送区域
-
 
 	// 注册
 	shP(".j-login",".j-login-type");
@@ -44,6 +47,8 @@ $(function(){
 	shP(".j-user",".j-user-pop");
 	// 新建角色
 	shP(".j-role",".j-role-pop");
+	// 站点注册
+	shP(".j-site-re",".j-site-re-pop");
 	function shP(clickW,showW){
 		$(clickW).on("click",function(){
 			$(showW).modal('show');
@@ -104,6 +109,8 @@ $(function(){
 
 
 	};
+
+
 	$(".j-guide-pop").modal();
 
 })
