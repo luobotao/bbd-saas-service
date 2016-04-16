@@ -58,7 +58,7 @@ public class HandleAbnormalController {
 		//设置默认查询条件
 		status = NumberUtil.defaultIfNull(status, -1);//全部，滞留和拒收
 		//到站时间前天、昨天和今天
-		arriveBetween = StringUtils.defaultIfBlank(arriveBetween, FormatDate.getBetweenTime(new Date(), -2));
+		arriveBetween = StringUtils.defaultIfBlank(arriveBetween, FormatDate.getBetweenTime(new Date(), -10));
 		//查询数据
 		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, request);
 		logger.info("=====异常件处理页面列表====" + orderPage);
@@ -97,7 +97,7 @@ public class HandleAbnormalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
-	public List<UserVO> getAllUserList(final HttpServletRequest request) {
+	public List<UserVO> getAllUserList(String courierId, final HttpServletRequest request) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		//查询
 		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
