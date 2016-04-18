@@ -213,7 +213,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						</div>
 					</div>
 					<input type="hidden" class="form-control" id="sign" name="sign">
-					<input type="hidden" class="form-control" id="flag" name="flag" value="true">
+					<input type="hidden" class="form-control" id="flag" name="flag">
 					<input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
 					<input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">
 					<input type="hidden" class="form-control" id="operate" name="operate">
@@ -308,32 +308,10 @@ function checkLoginName(loginName) {
 	var oldloginName = document.getElementById("loginNameTemp").value;
 	var newloginName = loginName;
 	var url = "<c:url value="/userManage/checkLognName" />";
-	if(operate=='create'){
+	if(loginName!=''){
 		
-		$.ajax({
-			url: url+'?loginName='+loginName,
-			type: 'GET',
-			cache: false,
-			dataType: "text",
-			data: {},
-			success: function(response){
-				console.log(response);
-				if(response=="true"){
-					//alert("您输入的登录名目前已存在，请重新输入");
-					$("#loginNameP").text("登录名目前已存在，请重新输入!");
-				    $("#loginNameP").attr("style","color:red");
-				    document.getElementById("flag").value='false';
-				}else{
-					document.getElementById("flag").value='true';
-					$("#loginNameP").attr("style","display:none");
-				}
-			},
-			error: function(){
-				alert('服务器繁忙，请稍后再试！');
-			}
-		});
-	}else{
-		if(newloginName!==oldloginName){
+		if(operate=='create'){
+			
 			$.ajax({
 				url: url+'?loginName='+loginName,
 				type: 'GET',
@@ -349,16 +327,41 @@ function checkLoginName(loginName) {
 					    document.getElementById("flag").value='false';
 					}else{
 						document.getElementById("flag").value='true';
+						$("#loginNameP").attr("style","display:none");
 					}
 				},
 				error: function(){
 					alert('服务器繁忙，请稍后再试！');
 				}
 			});
+		}else{
+			if(newloginName!==oldloginName){
+				$.ajax({
+					url: url+'?loginName='+loginName,
+					type: 'GET',
+					cache: false,
+					dataType: "text",
+					data: {},
+					success: function(response){
+						console.log(response);
+						if(response=="true"){
+							//alert("您输入的登录名目前已存在，请重新输入");
+							$("#loginNameP").text("登录名目前已存在，请重新输入!");
+						    $("#loginNameP").attr("style","color:red");
+						    document.getElementById("flag").value='false';
+						}else{
+							document.getElementById("flag").value='true';
+						}
+					},
+					error: function(){
+						alert('服务器繁忙，请稍后再试！');
+					}
+				});
+			}
 		}
+		
 	}
-	
-	
+
 }
 
 
@@ -368,32 +371,10 @@ function checkStaffid(staffid) {
 	var oldstaffid = document.getElementById("staffidTemp").value;
 	var newstaffid = staffid;
 	var url = "<c:url value="/userManage/checkStaffIdBySiteByStaffid" />";
-	if(operate=='create'){
+	if(staffid!==''){
 		
-		$.ajax({
-			url: url+'?staffid='+staffid,
-			type: 'GET',
-			cache: false,
-			dataType: "text",
-			data: {},
-			success: function(response){
-				console.log(response);
-				if(response=="true"){
-					//alert("您输入的登录名目前已存在，请重新输入");
-					$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
-				    $("#staffidP").attr("style","color:red");
-				    document.getElementById("flag").value='false';
-				}else{
-					document.getElementById("flag").value='true';
-					$("#staffidP").attr("style","display:none");
-				}
-			},
-			error: function(){
-				alert('服务器繁忙，请稍后再试！');
-			}
-		});
-	}else{
-		if(newstaffid!==oldstaffid){
+		if(operate=='create'){
+			
 			$.ajax({
 				url: url+'?staffid='+staffid,
 				type: 'GET',
@@ -416,7 +397,35 @@ function checkStaffid(staffid) {
 					alert('服务器繁忙，请稍后再试！');
 				}
 			});
+		}else{
+			if(newstaffid!==oldstaffid){
+				$.ajax({
+					url: url+'?staffid='+staffid,
+					type: 'GET',
+					cache: false,
+					dataType: "text",
+					data: {},
+					success: function(response){
+						console.log(response);
+						if(response=="true"){
+							//alert("您输入的登录名目前已存在，请重新输入");
+							$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
+						    $("#staffidP").attr("style","color:red");
+						    document.getElementById("flag").value='false';
+						}else{
+							document.getElementById("flag").value='true';
+							$("#staffidP").attr("style","display:none");
+						}
+					},
+					error: function(){
+						alert('服务器繁忙，请稍后再试！');
+					}
+				});
+			}else{
+				$("#staffidP").attr("style","display:none");
+			}
 		}
+		
 	}
 	
 }
@@ -514,6 +523,10 @@ function saveUserBtn(){
 	
 	var flag = document.getElementById("flag").value;
 
+	if(!flag){
+		flag = "true";
+	}
+
 	if(flag=='true'){
 		flag = true;
 	}else{
@@ -606,6 +619,7 @@ function saveUserBtn(){
 	            alert( "error");  
 	        }  
 	    });
+		
 	}else{
 		//alert("有非法内容，请检查内容合法性！");
 		return false;
