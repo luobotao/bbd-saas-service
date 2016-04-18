@@ -648,6 +648,8 @@ function restUserModel(){
 	$("#phoneP").attr("style","display:none");
 	$("#realNameP").attr("style","display:none");
 	$("#loginNameP").text("请输入登录名");
+	$("#staffidP").text("请输入员工ID");
+	$("#staffidP").attr("style","display:none");
 	$("#loginNameP").attr("style","display:none");
 	$("#loginpassP").attr("style","display:none");
 	$("#confirmPassP").attr("style","display:none");
