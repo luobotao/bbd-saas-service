@@ -29,7 +29,6 @@ public class User implements Serializable {
     private String realName;
     private String phone;
     private UserRole role;
-    @Reference("site")
     private Site site;
     @Reference("operate")
     private User operate;//用户创建者
@@ -46,6 +45,7 @@ public class User implements Serializable {
     private int roleStatus;//存放0或1
     @Transient
     private String statusMessage;//存放有效或无效
+    private String staffid;//员工id
 
     public ObjectId getId() {
         return id;
@@ -190,5 +190,13 @@ public class User implements Serializable {
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
+
+	public String getStaffid() {
+		return staffid;
+	}
+
+	public void setStaffid(String staffid) {
+		this.staffid = staffid;
+	}
 
 }

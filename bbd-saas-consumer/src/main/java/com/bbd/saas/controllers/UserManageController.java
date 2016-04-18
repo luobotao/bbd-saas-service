@@ -25,10 +25,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.UserForm;
+import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
@@ -48,6 +50,8 @@ public class UserManageController {
 	private UserService userService;
 	@Autowired
 	AdminService adminService;
+	@Autowired
+	PostmanUserService userMysqlService;	
 	
 	
 	/**
@@ -58,7 +62,7 @@ public class UserManageController {
 	@RequestMapping(value="userList", method=RequestMethod.GET)
 	public String listUser(Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
 		PageModel<User> userPage = getUserPage(0,roleId,status,keyword);
-		
+
 		model.addAttribute("userPage", userPage);
 		//return "systemSet/userManageUserList";
 		return "systemSet/userManage";
@@ -142,14 +146,23 @@ public class UserManageController {
 		user.setPassWord(userForm.getLoginPass());
 		user.setSite(getuser.getSite());
 		user.setOperate(getuser);
+		user.setStaffid(userForm.getStaffid());
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(0));
 		System.out.println("============="+user.getUserStatus().getStatus());
 		Key<User> kuser = userService.save(user);
+		/*PostmanUser postmanUser = new PostmanUser();
+		postmanUser.setPhone(userForm.getPhone());
+		postmanUser.setDateNew(dateAdd);
+		postmanUser.setPoststatus(0);
+		postmanUser.setPostrole(Integer.parseInt(userForm.getRoleId()));
 		
+		
+		userMysqlService.insert(postmanUser);
+		System.out.println("idddd=="+postmanUser.getId());
+		return "true";*/
 		if(kuser!=null && !kuser.getId().equals("")){
-
 			return "true";
 		}else{
 			return "false";
@@ -173,17 +186,6 @@ public class UserManageController {
 	    java.util.Date dateUpdate = new java.util.Date();
 		User user = new User();
 		logger.info(userForm.getLoginNameTemp());
-		
-		/*user.setId(olduser.getId());
-		user.setRealName(userForm.getRealName());
-		user.setLoginName(userForm.getLoginName());
-		user.setPhone(userForm.getPhone());
-		user.setPassWord(userForm.getLoginPass());
-		user.setOperate(null);
-		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
-		user.setDateUpdate(dateUpdate);*/
-		
-		
 		olduser.setRealName(userForm.getRealName());
 		//olduser.setLoginName(userForm.getLoginName());
 		olduser.setPhone(userForm.getPhone());
@@ -274,6 +276,21 @@ public class UserManageController {
 	public String checkLognName(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
 		User user = userService.findUserByLoginName(loginName);
 		logger.info("loginName"+loginName);
+		if(user!=null && !user.getId().equals("")){
+			return "true";
+			
+		}else{ 
+			return "false";
+			
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/checkStaffIdBySiteByStaffid", method=RequestMethod.GET)
+	public String checkStaffIdBySiteByStaffid(HttpServletRequest request,Model model,@RequestParam(value = "staffid", required = true) String staffid) {
+		User getuser = adminService.get(UserSession.get(request));
+		User user = userService.findOneBySiteByStaffid(getuser.getSite(), staffid);
+		logger.info("staffid"+staffid);
 		if(user!=null && !user.getId().equals("")){
 			return "true";
 			

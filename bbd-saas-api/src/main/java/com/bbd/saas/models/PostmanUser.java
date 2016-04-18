@@ -26,6 +26,7 @@ public class PostmanUser implements Serializable {
 	private String addrdes;// 地址描述
 	private String shopurl;// 商铺描述
 	private String sta;//1正常
+	private String spreadticket;
 	
 	private Integer poststatus=0;//1开启
 
@@ -217,4 +218,13 @@ public class PostmanUser implements Serializable {
 	public void setDateUpd(Date dateUpd) {
 		this.dateUpd = dateUpd;
 	}
+
+	public String getSpreadticket() {
+		return spreadticket;
+	}
+
+	public void setSpreadticket(String spreadticket) {
+		this.spreadticket = spreadticket;
+	}
+	
 }

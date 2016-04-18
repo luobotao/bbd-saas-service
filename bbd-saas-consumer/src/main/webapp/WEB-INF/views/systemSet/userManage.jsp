@@ -194,6 +194,10 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
 							</li>
 							<li>
+								<input type="text" id="staffid" name="staffid" onblur="checkStaffid(this.value)" class="form-control form-bod" placeholder="员工ID" />
+								<p class="help-block" id="staffidP" style="display:none;">请输入员工ID</p>
+							</li>
+							<li>
 								<input type="password" id="loginPass" name="loginPass" class="form-control form-bod" placeholder="登录密码" />
 								<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
 							</li>
@@ -211,6 +215,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					<input type="hidden" class="form-control" id="sign" name="sign">
 					<input type="hidden" class="form-control" id="flag" name="flag" value="true">
 					<input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
+					<input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">
 					<input type="hidden" class="form-control" id="operate" name="operate">
 					</form>
 				</div>
@@ -268,7 +273,7 @@ function getRowHtml(data){
 	row += "<td>" + data.realName + "</td>";
 	row += "<td>" + data.phone + "</td>";
 	row += "<td>" + data.loginName + "</td>";
-	
+	row += "<td>" + data.staffid + "</td>";
 	if(data.userStatus!==null){
 		row += "<td>" + data.statusMessage + "</td>";
 	}else{
@@ -302,8 +307,9 @@ function checkLoginName(loginName) {
 	var operate = document.getElementById("operate").value;
 	var oldloginName = document.getElementById("loginNameTemp").value;
 	var newloginName = loginName;
+	var url = "<c:url value="/userManage/checkLognName" />";
 	if(operate=='create'){
-		var url = "<c:url value="/userManage/checkLognName" />";
+		
 		$.ajax({
 			url: url+'?loginName='+loginName,
 			type: 'GET',
@@ -354,6 +360,67 @@ function checkLoginName(loginName) {
 	
 	
 }
+
+
+function checkStaffid(staffid) {
+	
+	var operate = document.getElementById("operate").value;
+	var oldstaffid = document.getElementById("staffidTemp").value;
+	var newstaffid = staffid;
+	var url = "<c:url value="/userManage/checkStaffIdBySiteByStaffid" />";
+	if(operate=='create'){
+		
+		$.ajax({
+			url: url+'?staffid='+staffid,
+			type: 'GET',
+			cache: false,
+			dataType: "text",
+			data: {},
+			success: function(response){
+				console.log(response);
+				if(response=="true"){
+					//alert("您输入的登录名目前已存在，请重新输入");
+					$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
+				    $("#staffidP").attr("style","color:red");
+				    document.getElementById("flag").value='false';
+				}else{
+					document.getElementById("flag").value='true';
+					$("#staffidP").attr("style","display:none");
+				}
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
+			}
+		});
+	}else{
+		if(newstaffid!==oldstaffid){
+			$.ajax({
+				url: url+'?staffid='+staffid,
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					console.log(response);
+					if(response=="true"){
+						//alert("您输入的登录名目前已存在，请重新输入");
+						$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
+					    $("#staffidP").attr("style","color:red");
+					    document.getElementById("flag").value='false';
+					}else{
+						document.getElementById("flag").value='true';
+						$("#staffidP").attr("style","display:none");
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
+		}
+	}
+	
+}
+
 
 function checkUser(realname) {
 	
@@ -555,13 +622,14 @@ function searchUser(id,loginName){
 				$("#realName").val(data.realName);
 				$("#phone").val(data.phone);
 				$("#loginName").val(data.loginName);
-				
+				$("#staffid").val(data.staffid);
 				$("#roleId").val(data.roleStatus);
 				$("#loginPass").val(data.passWord);
 				$("#confirmPass").val(data.passWord);
 				$("#loginName").attr("readonly",true);
 				document.getElementById("sign").value="edit";
 				document.getElementById("loginNameTemp").value=data.loginName;
+				document.getElementById("staffidTemp").value=data.staffid;
 			}    
         },
         error : function() {  

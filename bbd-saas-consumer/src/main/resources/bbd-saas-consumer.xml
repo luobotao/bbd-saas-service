@@ -29,5 +29,7 @@
 
 
     <!--start mysql services-->
+    <dubbo:reference id="orderMysqlService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>
+    <dubbo:reference id="userMysqlService" interface="com.bbd.saas.api.mysql.PostmanUserService"/>
     <dubbo:reference id="postcompanyService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>
 </beans>

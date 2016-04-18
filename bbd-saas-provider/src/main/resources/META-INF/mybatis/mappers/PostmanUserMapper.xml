@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.PostmanUserDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.PostmanUser">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="staffid" property="staffid" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="headicon" property="headicon" jdbcType="VARCHAR"/>
+        <result column="companyname" property="companyname" jdbcType="VARCHAR"/>
+        <result column="cardidno" property="cardidno" jdbcType="VARCHAR"/>
+        <result column="substation" property="substation" jdbcType="VARCHAR"/>
+        <result column="companyid" property="companyid" jdbcType="INTEGER"/>
+        <result column="alipay_account" property="alipayAccount" jdbcType="VARCHAR"/>
+        <result column="token" property="token" jdbcType="VARCHAR"/>
+        <result column="bbttoken" property="bbttoken" jdbcType="VARCHAR"/>
+        <result column="lat" property="lat" jdbcType="DOUBLE"/>
+        <result column="lon" property="lon" jdbcType="DOUBLE"/>
+        <result column="height" property="height" jdbcType="DOUBLE"/>
+        <result column="addr" property="addr" jdbcType="VARCHAR"/>
+        <result column="addrdes" property="addrdes" jdbcType="VARCHAR"/>
+        <result column="shopurl" property="shopurl" jdbcType="VARCHAR"/>
+        <result column="sta" property="sta" jdbcType="VARCHAR"/>
+        <result column="spreadticket" property="spreadticket" jdbcType="VARCHAR"/>
+        <result column="poststatus" property="poststatus" jdbcType="INTEGER"/>
+        <result column="postrole" property="postrole" jdbcType="INTEGER"/>
+        <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
+        <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	staffid,
+    	nickname,
+        phone,
+        headicon,
+        companyname,
+        cardidno,
+        substation,
+        companyid,
+        alipay_account,
+        token,
+        bbttoken,
+        lat,
+        lon,
+        height,
+        addr,
+        addrdes,
+        shopurl,
+        sta,
+        spreadticket,
+        poststatus,
+        postrole,
+        date_new,
+        date_upd
+    </sql>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.PostmanUser">
+        INSERT INTO `postmanuser`(
+        <include refid="baseColumnList"/>
+        )
+        VALUES (
+        #{staffid,jdbcType=VARCHAR},
+        #{nickname,jdbcType=VARCHAR},
+        #{phone,jdbcType=VARCHAR},
+        #{headicon,jdbcType=VARCHAR},
+        #{companyname,jdbcType=VARCHAR},
+        #{cardidno,jdbcType=VARCHAR},
+        #{substation,jdbcType=VARCHAR},
+        #{companyid,jdbcType=INTEGER},
+        #{alipayAccount,jdbcType=INTEGER},
+        #{token,jdbcType=INTEGER},
+        #{bbttoken,jdbcType=INTEGER},
+        #{lat,jdbcType=DOUBLE},
+        #{lon,jdbcType=DOUBLE},
+        #{height,jdbcType=DOUBLE},
+        #{addr,jdbcType=VARCHAR},
+        #{addrdes,jdbcType=VARCHAR},
+        #{shopurl,jdbcType=VARCHAR},
+        #{sta,jdbcType=VARCHAR},
+        #{spreadticket,jdbcType=VARCHAR},
+        #{poststatus,jdbcType=INTEGER},
+        #{postrole,jdbcType=INTEGER},  
+        #{dateNew,jdbcType=TIMESTAMP},
+        #{dateUpd,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    
+
+    
+    
+    <select id="selectAll" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `postmanuser`
+    </select>
+</mapper>
