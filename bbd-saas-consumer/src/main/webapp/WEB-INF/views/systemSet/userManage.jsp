@@ -273,7 +273,7 @@ function getRowHtml(data){
 	row += "<td>" + data.realName + "</td>";
 	row += "<td>" + data.phone + "</td>";
 	row += "<td>" + data.loginName + "</td>";
-	row += "<td>" + data.staffid + "</td>";
+	//row += "<td>" + data.staffid + "</td>";
 	if(data.userStatus!==null){
 		row += "<td>" + data.statusMessage + "</td>";
 	}else{
@@ -529,6 +529,7 @@ function saveUserBtn(){
 	var phone = $("#phone").val();
 	var realName = $("#realName").val();
 	var loginName = $("#loginName").val();
+	var staffid = $("#staffid").val();
 	var loginPass = $("#loginPass").val();
 	var confirmPass = $("#confirmPass").val();
 	var tel_reg = /^1[34578]{1}\d{9}/;
@@ -561,6 +562,12 @@ function saveUserBtn(){
 		flag = false;
 	}else{
 		$("#loginNameP").attr("style","display:none");
+	}
+	if (!staffid) {
+	    $("#staffidP").attr("style","color:red");
+		flag = false;
+	}else{
+		$("#staffidP").attr("style","display:none");
 	}
 	if (!loginPass) {
 	    $("#loginpassP").attr("style","color:red");
