@@ -10,7 +10,7 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.Numbers;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

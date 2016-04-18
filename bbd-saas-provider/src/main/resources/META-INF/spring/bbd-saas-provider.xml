@@ -23,7 +23,7 @@
 
 
     <!--start mysql services -->
-    <dubbo:service interface="com.bbd.saas.api.mysql.PostcompanyService" ref="orderMysqlService" />
+    <dubbo:service interface="com.bbd.saas.api.mysql.PostcompanyService" ref="postcompanyService" />
 
     <import resource="classpath:META-INF/spring/bbd-saas-service.xml" />
 

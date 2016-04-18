@@ -159,7 +159,7 @@
 			<div class="modal-body">
 				<ul class="row">
 					<li class="cho-lg col-md-6">
-						<a href="javascript:void(0);" data-dismiss="modal" class="j-site-re" >
+						<a href="javascript:void(0);" class="j-site-re" >
 							<div class="cho-lg-card">
 								<span><img src="<c:url value="/resources/images/site.png" />" alt="站点"></span>
 								<h3>站点</h3>
@@ -184,7 +184,7 @@
 
 <!--S 站点注册-->
 <div class="j-site-re-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog b-guide-dialog" role="document">
+	<div class="modal-dialog b-guide-dialog j-scroll-dislog" role="document">
 		<div class="modal-content">
 			<div class="modal-header b-modal-header">
 				<h4 class="modal-title tc">站点注册</h4>
@@ -193,11 +193,12 @@
 			<form role="form" enctype="multipart/form-data" action="${actionUrl}" method="post" id="siteForm" >
 			<div class="modal-body b-modal-body">
 				<ul class="b-n-crt">
-					<li class="filter">
+					<li class="filter clearfix">
 						<i>账号：</i>
 						<input type="text" class="form-control form-bod wp80" id="username" name="username" onblur="checkSiteWithUsername(this.value)">
 						<input type="text" class="form-control" id="usernameFlag" name="usernameFlag" value="1" style="display:none;">
 						<p class="help-block" id="usernameP" style="display:none;">请输入账号,不允许重复</p>
+						<em class="tip-info">请输入账号</em>
 					</li>
 					<li class="filter">
 						<i>密 码：</i>
@@ -254,14 +255,14 @@
 					</li>
 				</ul>
 			</div>
-			<div class="modal-footer mb15 mt20 bod0">
+			<div class="modal-footer b-modal-body bod0">
 				<div class="fl site-re">
 					<label>
 						<input type="checkbox"  id="agreeCheck"/>
 						同意<em class="orange">《棒棒达快递注册协议》</em>
 					</label>
 				</div>
-				<a href="javascript:void(0);" class="ser-btn g">查看已注册站点</a>
+				<a href="http://e.ibbt.com/site/toViewSite" class="ser-btn g">查看已注册站点</a>
 				<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn" >保存</a>
 			</div>
 			</form>
