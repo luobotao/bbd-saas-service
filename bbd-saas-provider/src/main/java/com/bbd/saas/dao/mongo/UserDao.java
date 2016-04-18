@@ -104,4 +104,19 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         query.filter("site._id",site.getId());
         return findOne(query);
     }
+    /**
+     * 根据站点编号和staffid查找，该staffid是否在该站点已存在
+     * @param site、staffid
+     * @return User
+     */
+    public User findOneBySiteCodeByStaffid(String areaCode, String staffid) {
+        Query<User> query = createQuery();
+        if(StringUtils.isNotBlank(staffid)){
+        	query.filter("staffid", staffid);
+        }
+        if(StringUtils.isNotBlank(areaCode)){
+        	query.filter("site.areaCode", areaCode);
+        }    
+        return findOne(query);
+    }
 }
