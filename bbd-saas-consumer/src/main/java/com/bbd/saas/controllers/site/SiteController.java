@@ -16,6 +16,7 @@ import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.ExportUtil;
 import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.OSSUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.*;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,6 +49,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 站点相关处理
@@ -66,6 +69,18 @@ public class SiteController {
 	SiteKeywordApi siteKeywordApi;
 	@Autowired
 	HttpServletRequest request;
+
+	@Value("${oss.access.id}")
+	private String ACCESS_ID ;
+	@Value("${oss.access.key}")
+	private String ACCESS_KEY ;
+	@Value("${oss.bucket.name}")
+	private String BUCKET_NAME;
+	@Value("${oss.upload.vendorimg.image}")
+	private String path;
+	@Value("${oss.url}")
+	private String ossUrl;
+
 	public static final int MAXSIZE = 100000;
 
 
@@ -79,8 +94,7 @@ public class SiteController {
 	public String siteView(Model model, HttpServletRequest request) {
 		Site site =siteService.findSite(request.getParameter("siteid"));
 		model.addAttribute("site",site);
-//		OSSUtils ossUtils = new OSSUtils();
-//		ossUtils.getACCESS_KEY();
+		model.addAttribute("ossUrl",ossUrl);
 		return "site/siteView";
 	}
 
@@ -98,27 +112,23 @@ public class SiteController {
 	public String processSubmit(@RequestParam MultipartFile licensePic, @Valid SiteForm siteForm, BindingResult result,Model model,RedirectAttributes redirectAttrs) throws IOException {
 		redirectAttrs.addFlashAttribute("message", "注册成功");
 		logger.info(licensePic.getName()+"====================="+licensePic.getOriginalFilename());
-		if (result.hasErrors()) {
-			model.addAttribute("message","请检查必填项");
-			return null;
-		}
-//		if (licensePic != null) {
-//			String path= Configuration.root().getString("oss.upload.vendorimg.image", "upload/vendorimg/images/");//上传路径
-//			String BUCKET_NAME= StringUtil.getBUCKET_NAME();
-//			if (licensePic != null && licensePic.getFile() != null) {
-//				String fileName = licensePic.getFilename();
-//				File file = licensePic.getFile();//获取到该文件
-//				int p = fileName.lastIndexOf('.');
-//				String type = fileName.substring(p, fileName.length()).toLowerCase();
-//				if (".jpg".equals(type)||".gif".equals(type)||".png".equals(type)||".jpeg".equals(type)||".bmp".equals(type)) {
-//					// 检查文件后缀格式
-//					String fileNameLast = UUID.randomUUID().toString().replaceAll("-", "")+type;//最终的文件名称
-//					String endfilestr = OSSUtils.uploadFile(file,path,fileNameLast, type,BUCKET_NAME);
-//					formPage.licensePic=endfilestr;
-//				}
-//			}
+//		if (result.hasErrors()) {
+//			model.addAttribute("message","请检查必填项");
+//			return null;
 //		}
 		Site site = new Site();
+		if (licensePic != null  && licensePic.getInputStream() != null) {
+			String fileName = licensePic.getOriginalFilename();
+			int p = fileName.lastIndexOf('.');
+			String type = fileName.substring(p, fileName.length()).toLowerCase();
+			if (".jpg".equals(type)||".gif".equals(type)||".png".equals(type)||".jpeg".equals(type)||".bmp".equals(type)) {
+					// 检查文件后缀格式
+					String fileNameLast = UUID.randomUUID().toString().replaceAll("-", "")+type;//最终的文件名称
+					String endfilestr = OSSUtils.uploadFile(licensePic.getInputStream(),path,fileNameLast,licensePic.getSize(), type,BUCKET_NAME,ACCESS_ID,ACCESS_KEY);
+					site.setLicensePic(endfilestr);
+			}
+		}
+
 		BeanUtils.copyProperties(siteForm,site);
 		logger.info(siteForm.getEmail()+"000000000000000"+site.getEmail());
 		site.setDateAdd(new Date());

@@ -290,9 +290,7 @@ function initCourier() {
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/packageDispatch/getAllUserList",//路径  
-        data : {  
-            "siteId" : "siteId" //$("#mailNum").val()
-        },//数据，这里使用的是Json格式进行传输  
+        data : {},//数据，这里使用的是Json格式进行传输  
         success : function(dataList) {//返回数据根据结果进行相应的处理  
         	var courier_select = $("#courier_select");
 			// 清空select  

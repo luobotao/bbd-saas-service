@@ -21,7 +21,7 @@
 
         // 默认值
         settings = $.extend({
-            url: '/resources/javascripts/city.js',
+            url: 'http://localhost:8080/bbd-saas-consumer/resources/javascripts/city.js',
             prov: null,
             city: null,
             dist: null,

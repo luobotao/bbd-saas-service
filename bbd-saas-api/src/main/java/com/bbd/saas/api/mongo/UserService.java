@@ -3,7 +3,9 @@ package com.bbd.saas.api.mongo;
 import java.util.List;
 
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.Query;
 
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
@@ -64,11 +66,19 @@ public interface UserService {
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO);
     
     /**
-     * Description: 获取指定站点下的所有用户
-     * @param siteId
+     * Description: 获取指定站点下的所有派件员
+     * @param areaCode 站点编号
      * @return
      * @author: liyanlei
-     * 2016年4月12日上午11:27:25
+     * 2016年4月16日下午5:22:17
      */
     public List<UserVO> findUserListBySite(String areaCode);
+    
+    /**
+     * 根据site和staffid查找是该staffid是否在该站点已存在
+     * @param site、staffid
+     * @return User
+     */
+    public User findOneBySiteByStaffid(Site site, String staffid);
+    
 }

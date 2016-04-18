@@ -20,5 +20,11 @@
     <dubbo:service interface="com.bbd.saas.api.mongo.SiteService" ref="siteService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.OrderPacelService" ref="orderPacelService" />
 
+
+
+    <!--start mysql services -->
+    <dubbo:service interface="com.bbd.saas.api.mysql.PostcompanyService" ref="postcompanyService" />
+
     <import resource="classpath:META-INF/spring/bbd-saas-service.xml" />
+
 </beans>

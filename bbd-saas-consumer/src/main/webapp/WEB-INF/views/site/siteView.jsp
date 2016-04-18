@@ -1,3 +1,4 @@
+<%@ page import="com.bbd.saas.utils.OSSUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <html>
@@ -88,12 +89,12 @@
 									<label style="float: right;">公司营业执照:</label>
 								</div>
 								<div class="col-xs-4">
-									<img style="width: 200px;height: 200px;" alt="" src="@StringUtil.getImg(site.licensePic)@@200w"/>
+									<img style="width: 200px;height: 200px;" alt="" src="${ossUrl}${site.licensePic}@200w"/>
 								</div>
 							</div>
 						</div><!-- /.box-body -->
 						<div class="box-footer">
-							<button type="button" class="btn btn-primary" id="saveSiteBtn" style="margin-left: 170px ;" onclick="window.location.href='/login'">
+							<button type="button" class="btn btn-primary" id="saveSiteBtn" style="margin-left: 170px ;" onclick="window.location.href='<c:url value="/login"/>'">
 								返回</button>
 						</div>
 				</div>

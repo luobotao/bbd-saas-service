@@ -10,9 +10,12 @@
 	<title>棒棒达快递</title>
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
+	<link href="<c:url value="/resources/bootstrap/css/fileinput.css" />" rel="stylesheet"  type="text/css" />
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
+	<script src="<c:url value="/resources/bootstrap/js/fileinput.min.js" />" type="text/javascript"></script>
+	<script src="<c:url value="/resources/bootstrap/js/fileinput_locale_zh.js" />" type="text/javascript"></script>
 </head>
 <body>
 <!-- S nav -->
@@ -149,14 +152,14 @@
 <!-- E footer -->
 
 <!-- S pop -->
-<div class="j-login-type modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="j-login-type modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header b-modal-header"><h4 class="modal-title tc">请选择注册类型</h4></div>
 			<div class="modal-body">
 				<ul class="row">
 					<li class="cho-lg col-md-6">
-						<a href="javascript:void(0);">
+						<a href="javascript:void(0);" class="j-site-re" >
 							<div class="cho-lg-card">
 								<span><img src="<c:url value="/resources/images/site.png" />" alt="站点"></span>
 								<h3>站点</h3>
@@ -164,7 +167,7 @@
 						</a>
 					</li>
 					<li class="cho-lg col-md-6">
-						<a href="javascript:void(0);">
+						<a href="javascript:void(0);" data-dismiss="modal" class="j-site-re" >
 							<div class="cho-lg-card">
 								<span><img src="<c:url value="/resources/images/trader.png" />" alt="站点"></span>
 								<h3>电商商家</h3>
@@ -177,8 +180,219 @@
 		</div>
 	</div>
 </div>
+
+
+<!--S 站点注册-->
+<div class="j-site-re-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-guide-dialog j-scroll-dislog" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<h4 class="modal-title tc">站点注册</h4>
+			</div>
+			<c:url var="actionUrl" value="/site/register?${_csrf.parameterName}=${_csrf.token}"/>
+			<form role="form" enctype="multipart/form-data" action="${actionUrl}" method="post" id="siteForm" >
+			<div class="modal-body b-modal-body">
+				<ul class="b-n-crt">
+					<li class="filter clearfix">
+						<i>账号：</i>
+						<input type="text" class="form-control form-bod wp80" id="username" name="username" onblur="checkSiteWithUsername(this.value)">
+						<input type="text" class="form-control" id="usernameFlag" name="usernameFlag" value="1" style="display:none;">
+						<p class="help-block" id="usernameP" style="display:none;">请输入账号,不允许重复</p>
+						<em class="tip-info">请输入账号</em>
+					</li>
+					<li class="filter">
+						<i>密 码：</i>
+						<input type="text" class="form-control form-bod wp80" id="password" name="password" >
+						<p class="help-block" id="passwordP" style="display:none;">请输入密码</p>
+					</li>
+					<li class="filter">
+						<i>站点名称：</i>
+						<input type="text" class="form-control form-bod wp80" id="name" name="name" >
+						<p class="help-block" id="nameP" style="display:none;">请输入站点名称</p>
+					</li>
+					<li class="filter">
+						<i>负责人：</i>
+						<input type="text" class="form-control form-bod wp80" id="responser" name="responser" >
+						<p class="help-block" id="responserP" style="display:none;">请输入负责人</p>
+					</li>
+					<li class="filter">
+						<i>负责人电话：</i>
+						<input type="text" class="form-control form-bod wp80" id="phone" name="phone" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="this.value=this.value.replace(/[^\d]/g,'')" maxlength="11">
+					</li>
+					<li class="filter">
+						<i>固定电话：</i>
+						<input type="text" class="form-control form-bod wp80" id="telephone" name="telephone" onkeyup="this.value=this.value.replace(/[^\d\-]/g,'')" onblur="this.value=this.value.replace(/[^\d\-]/g,'')">
+						<p class="help-block" id="sitePhoneP" style="display:none;">负责人电话或固定电话必填一个</p>
+					</li>
+					<li class="filter">
+						<i>邮箱：</i>
+						<input type="text" class="form-control form-bod wp80" id="email" name="email" onkeyup="value=value.replace(/[^a-zA-Z\-_@@\.0-9]/g,'')">
+						<p class="help-block" id="emailP" style="display:none;">请输入邮箱且格式正确</p>
+					</li>
+					<li class="filter" id="city_4">
+						<i>地 址：</i>
+						<em class="wp25">
+							<select class="form-control form-bod  prov" name="prov" ></select>
+						</em>
+						<em class="wp25">
+							<select class="form-control form-bod city" name="city" disabled="disabled"></select>
+						</em>
+						<em class="wp25">
+							<select class="form-control form-bod dist" name="dist" disabled="disabled"></select>
+						</em>
+						<input id="province" name="province" placeholder="请输入省市区" type="hidden" class="form-control" />
+						<input id="city" name="city" placeholder="请输入省市区" type="hidden" class="form-control" />
+						<input id="area" name="area" placeholder="请输入省市区" type="hidden" class="form-control" />
+						<input type="text" class="form-control form-bod wp80 input-d"  id="address" name="address" placeholder="请输入详细地址" />
+						<p class="help-block" id="addressP" style="display:none;">请输入详细地址</p>
+					</li>
+					<li class="filter">
+						<i>公司营业执照：</i>
+						<%--<input type="text" class="form-control form-bod fl wp66" />--%>
+						<%--<a href="javascript:void(0);" class="ser-btn g fr">选择</a>--%>
+						<input id="licensePic" name="licensePic" class="file" type="file" >
+						<p class="help-block" id="licensePicP" style="display:none;">请上传公司营业执照</p>
+					</li>
+				</ul>
+			</div>
+			<div class="modal-footer b-modal-body bod0">
+				<div class="fl site-re">
+					<label>
+						<input type="checkbox"  id="agreeCheck"/>
+						同意<em class="orange">《棒棒达快递注册协议》</em>
+					</label>
+				</div>
+				<a href="http://e.ibbt.com/site/toViewSite" class="ser-btn g">查看已注册站点</a>
+				<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn" >保存</a>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!--E 站点注册-->
 <!-- E pop -->
+<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 <script>
+	var id = $("#id").val();
+	var defprov = "北京";
+	var defcity = "北京";
+	var defdist = "朝阳区";
+	if($("#province").val()!=""){
+		defprov = $("#province").val();
+		defcity = $("#city").val();
+		defdist = $("#area").val();
+	}
+	$("#city_4").citySelect({
+		prov:defprov,
+		city:defcity,
+		dist:defdist,
+		nodata: "none"
+	});
+	$("#licensePic").fileinput({'showUpload':false, 'previewFileType':'any'});
+	function checkSiteWithUsername(loginName){
+		if(username!=""){
+			var linkUrl = "<c:url value="/site/checkSiteWithLoginName?loginName=" />"+loginName
+			$.ajax({
+				url: linkUrl,
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					console.log(response);
+					if(response=="false"){
+						alert("您输入的帐号目前已存在，请重新输入");
+						$("#usernameFlag").val(0);
+					}else{
+						$("#usernameFlag").val(1);
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
+		}
+	}
+
+	$("#saveSiteBtn").click(function(){
+		var flag = $("#agreeCheck").is(':checked');
+		if(flag==false){
+			alert("请先同意《棒棒达快递注册协议》");
+			return false;
+		}
+		var username = $.trim($('input[name="username"]').val());
+		var usernameFlag = $("#usernameFlag").val();
+		var password = $.trim($('input[name="password"]').val());
+		var name = $("#name").val();
+		var responser = $("#responser").val();
+		var phone = $("#phone").val();
+		var telephone = $("#telephone").val();
+		var email = $("#email").val();
+		var province = $(".prov").val();
+		var city = $(".city").val();
+		var area = $(".dist").val();
+		$("#province").val(province);
+		$("#city").val(city);
+		$("#area").val(area);
+		console.log(province+":"+city+":"+area);
+		var address = $("#address").val();
+		var licensePic = $("#licensePic").val();
+		if(username==""||usernameFlag==0){
+			$("#usernameP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#usernameP").attr("style","display:none");
+		}
+		if(password==""){
+			$("#passwordP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#passwordP").attr("style","display:none");
+		}
+		if(name==""){
+			$("#nameP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#nameP").attr("style","display:none");
+		}if(responser==""){
+			$("#responserP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#responserP").attr("style","display:none");
+		}
+		if(phone==""&&telephone==""){
+			$("#sitePhoneP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#sitePhoneP").attr("style","display:none");
+		}
+		if(email==""){
+			$("#emailP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#emailP").attr("style","display:none");
+		}
+		if(address==""){
+			$("#addressP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#addressP").attr("style","display:none");
+		}
+//		if(licensePic==""){
+//			$("#licensePicP").attr("style","color:red");
+//			flag = false;
+//		} else{
+//			$("#licensePicP").attr("style","display:none");
+//		}
+		$("#siteForm").submit();
+//		if(flag){
+//			console.log("succeful , submit");
+//			$("#siteForm").submit();
+//		}else{
+//			alert("有非法内容，请检查内容合法性！");
+//			return false;
+//		}
+	})
 	//回车事件
 	function enterPress(e){
 		if(!e) e = window.event;//火狐中是 window.event

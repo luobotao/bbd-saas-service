@@ -126,7 +126,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 												%>
 												
 												<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')" class="orange ml6">启用</a>
-												<a href="javascript:void(0)" onclick="delUser('<%=user.getRealName() %>')" class="orange ml6">删除</a>
+												<a href="javascript:void(0)" onclick="delUser('<%=user.getLoginName() %>')" class="orange ml6">删除</a>
 												<% 
 											}
 											
@@ -194,6 +194,10 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
 							</li>
 							<li>
+								<input type="text" id="staffid" name="staffid" onblur="checkStaffid(this.value)" class="form-control form-bod" placeholder="员工ID" />
+								<p class="help-block" id="staffidP" style="display:none;">请输入员工ID</p>
+							</li>
+							<li>
 								<input type="password" id="loginPass" name="loginPass" class="form-control form-bod" placeholder="登录密码" />
 								<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
 							</li>
@@ -210,7 +214,9 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					</div>
 					<input type="hidden" class="form-control" id="sign" name="sign">
 					<input type="hidden" class="form-control" id="flag" name="flag" value="true">
-					<input type="hidden" class="form-control" id="realNameTemp" name="realNameTemp">
+					<input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
+					<input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">
+					<input type="hidden" class="form-control" id="operate" name="operate">
 					</form>
 				</div>
 			</div>
@@ -267,22 +273,22 @@ function getRowHtml(data){
 	row += "<td>" + data.realName + "</td>";
 	row += "<td>" + data.phone + "</td>";
 	row += "<td>" + data.loginName + "</td>";
-	
+	row += "<td>" + data.staffid + "</td>";
 	if(data.userStatus!==null){
 		row += "<td>" + data.statusMessage + "</td>";
 	}else{
 		row += "<td>无</td>";
 	}
 	
-	
-	row += "<td><a href=\"javascript:void(0);\" onclick=\"searchUser('"+temp+"','"+data.realName+"')\" class=\"orange j-user\">修改</a>";
+	//
+	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.loginName+"')\">修改</button>";
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.realName+"')\" class=\"orange ml6\">停用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
 	}else{
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.realName+"')\" class=\"orange ml6\">启用</a>";
-		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.realName+"')\" class=\"orange ml6\">删除</a></td>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.loginName+"')\" class=\"orange ml6\">删除</a></td>";
 	}
 
 	row += "</tr>";
@@ -298,30 +304,123 @@ function toSearch(){
 }
 
 function checkLoginName(loginName) {
-
+	var operate = document.getElementById("operate").value;
+	var oldloginName = document.getElementById("loginNameTemp").value;
+	var newloginName = loginName;
 	var url = "<c:url value="/userManage/checkLognName" />";
-	$.ajax({
-		url: url+'?loginName='+loginName,
-		type: 'GET',
-		cache: false,
-		dataType: "text",
-		data: {},
-		success: function(response){
-			console.log(response);
-			if(response=="true"){
-				//alert("您输入的登录名目前已存在，请重新输入");
-				$("#loginNameP").text("登录名目前已存在，请重新输入!");
-			    $("#loginNameP").attr("style","color:red");
-			    document.getElementById("flag").value='false';
-			}else{
-				document.getElementById("flag").value='true';
+	if(operate=='create'){
+		
+		$.ajax({
+			url: url+'?loginName='+loginName,
+			type: 'GET',
+			cache: false,
+			dataType: "text",
+			data: {},
+			success: function(response){
+				console.log(response);
+				if(response=="true"){
+					//alert("您输入的登录名目前已存在，请重新输入");
+					$("#loginNameP").text("登录名目前已存在，请重新输入!");
+				    $("#loginNameP").attr("style","color:red");
+				    document.getElementById("flag").value='false';
+				}else{
+					document.getElementById("flag").value='true';
+					$("#loginNameP").attr("style","display:none");
+				}
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
 			}
-		},
-		error: function(){
-			alert('服务器繁忙，请稍后再试！');
+		});
+	}else{
+		if(newloginName!==oldloginName){
+			$.ajax({
+				url: url+'?loginName='+loginName,
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					console.log(response);
+					if(response=="true"){
+						//alert("您输入的登录名目前已存在，请重新输入");
+						$("#loginNameP").text("登录名目前已存在，请重新输入!");
+					    $("#loginNameP").attr("style","color:red");
+					    document.getElementById("flag").value='false';
+					}else{
+						document.getElementById("flag").value='true';
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
 		}
-	});
+	}
+	
+	
 }
+
+
+function checkStaffid(staffid) {
+	
+	var operate = document.getElementById("operate").value;
+	var oldstaffid = document.getElementById("staffidTemp").value;
+	var newstaffid = staffid;
+	var url = "<c:url value="/userManage/checkStaffIdBySiteByStaffid" />";
+	if(operate=='create'){
+		
+		$.ajax({
+			url: url+'?staffid='+staffid,
+			type: 'GET',
+			cache: false,
+			dataType: "text",
+			data: {},
+			success: function(response){
+				console.log(response);
+				if(response=="true"){
+					//alert("您输入的登录名目前已存在，请重新输入");
+					$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
+				    $("#staffidP").attr("style","color:red");
+				    document.getElementById("flag").value='false';
+				}else{
+					document.getElementById("flag").value='true';
+					$("#staffidP").attr("style","display:none");
+				}
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
+			}
+		});
+	}else{
+		if(newstaffid!==oldstaffid){
+			$.ajax({
+				url: url+'?staffid='+staffid,
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					console.log(response);
+					if(response=="true"){
+						//alert("您输入的登录名目前已存在，请重新输入");
+						$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
+					    $("#staffidP").attr("style","color:red");
+					    document.getElementById("flag").value='false';
+					}else{
+						document.getElementById("flag").value='true';
+						$("#staffidP").attr("style","display:none");
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
+		}
+	}
+	
+}
+
 
 function checkUser(realname) {
 	
@@ -331,7 +430,6 @@ function checkUser(realname) {
 	
 	var oldrealName = document.getElementById("realNameTemp").value;
 
-	//alert(oldrealName);alert(newrealname);alert(newrealname!==oldrealName);alert(newrealname==oldrealName);
 	
 	var url = "<c:url value="/userManage/checkUser" />";
 	if(newrealname!==oldrealName){
@@ -360,12 +458,12 @@ function checkUser(realname) {
 	}
 }
 
-function changeStatus(status,id,realName){
+function changeStatus(status,id,loginName){
 	$.ajax({
 		type : "GET",  
         url : "<c:url value="/userManage/changestatus" />", 
         data : {  
-            "id" : id,"status" : status,"realName" : realName  
+            "id" : id,"status" : status,"loginName" : loginName  
         },
         success : function(data) {
 			if(data == 'true'){
@@ -379,7 +477,7 @@ function changeStatus(status,id,realName){
     });
 }
 
-function delUser(id){
+function delUser(loginName){
 	
 	var ret = false;
 	if(confirm('确定要执行此操作吗?')){ 
@@ -392,7 +490,7 @@ function delUser(id){
 			type : "GET",  
 	        url : "<c:url value="/userManage/delUser" />", 
 	        data : {  
-	            "id" : id 
+	            "loginName" : loginName 
 	        },
 	        success : function(data) {
 				if(data == 'true'){
@@ -509,29 +607,29 @@ function saveUserBtn(){
 }
 
 
-function searchUser(id,realName){alert(id);alert(realName);
+function searchUser(id,loginName){
 	
 	$.ajax({
 		type : "GET",  
         url : "<c:url value="/userManage/getOneUser" />", 
         data : {  
             "id" : id,
-            "realName" : realName
+            "loginName" : loginName
         },
         success : function(data) {
 			if(data != null){
-				
+				document.getElementById("userForm").reset();
 				$("#realName").val(data.realName);
 				$("#phone").val(data.phone);
 				$("#loginName").val(data.loginName);
-				
+				$("#staffid").val(data.staffid);
 				$("#roleId").val(data.roleStatus);
 				$("#loginPass").val(data.passWord);
 				$("#confirmPass").val(data.passWord);
-				$("#loginName").attr("disabled","disabled");
-				//$(".sign").val("edit");
+				$("#loginName").attr("readonly",true);
 				document.getElementById("sign").value="edit";
-				document.getElementById("realNameTemp").value=data.realName;
+				document.getElementById("loginNameTemp").value=data.loginName;
+				document.getElementById("staffidTemp").value=data.staffid;
 			}    
         },
         error : function() {  
@@ -543,9 +641,17 @@ function searchUser(id,realName){alert(id);alert(realName);
 }
 
 
-function restUserModel(){alert("ss");
+function restUserModel(){
 	document.getElementById("userForm").reset();
-	$("#loginName").attr("disabled",false)
+	$("#loginName").attr("readonly",false);
+	$("#roleIdP").attr("style","display:none");
+	$("#phoneP").attr("style","display:none");
+	$("#realNameP").attr("style","display:none");
+	$("#loginNameP").text("请输入登录名");
+	$("#loginNameP").attr("style","display:none");
+	$("#loginpassP").attr("style","display:none");
+	$("#confirmPassP").attr("style","display:none");
+	document.getElementById("operate").value = "create";
 }
 </script>
 </body>

@@ -16,20 +16,22 @@ import org.springframework.stereotype.Service;
 public class SiteServiceImpl implements SiteService {
     private SiteDao siteDao;
 
-    public Key<Site> save(Site site){
-       return siteDao.save(site);
-    }
-
-    @Override
-    public Site findSite(String id) {
-        return siteDao.findOne("id",new ObjectId(id));
-    }
-
     public SiteDao getSiteDao() {
         return siteDao;
     }
 
     public void setSiteDao(SiteDao siteDao) {
         this.siteDao = siteDao;
+    }
+
+
+    @Override
+    public Key<Site> save(Site site){
+        return siteDao.save(site);
+    }
+
+    @Override
+    public Site findSite(String id) {
+        return siteDao.findOne("_id",new ObjectId(id));
     }
 }

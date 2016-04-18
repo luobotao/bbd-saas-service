@@ -160,7 +160,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             	if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
                 	query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(3)), query.criteria("orderStatus").equal(OrderStatus.status2Obj(4)));
                 }else{
-                	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.dispatchStatus));
+                	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
                 }
             }
             //订单状态--用于数据查询页面(-1未全部状态，就相当于不需要按状态字段查询)

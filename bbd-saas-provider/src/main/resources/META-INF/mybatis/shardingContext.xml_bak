@@ -13,14 +13,14 @@
 
     <bean id="ds_0" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt"/>
+        <property name="url" value="jdbc:mysql://182.92.227.140:3306/ds_0"/>
         <property name="username" value="yangtao"/>
         <property name="password" value="neolix123"/>
     </bean>
 
     <bean id="ds_1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt"/>
+        <property name="url" value="jdbc:mysql://182.92.227.140:3306/ds_1"/>
         <property name="username" value="yangtao"/>
         <property name="password" value="neolix123"/>
     </bean>
@@ -63,7 +63,7 @@
         <constructor-arg index="0" ref="dataSourceRule"/>
         <constructor-arg index="1">
             <list>
-                <!--<ref bean="orderTableRule"/>-->
+                <ref bean="orderTableRule"/>
             </list>
         </constructor-arg>
         <constructor-arg index="2" ref="databaseShardingStrategy"/>

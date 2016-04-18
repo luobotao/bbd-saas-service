@@ -585,6 +585,13 @@ footer {
   padding: 32px 0;
   box-shadow: 0 5px 15px rgba(9, 163, 212, 0.23);
 }
+.b-status a:link,
+.b-status a:visited,
+.b-status a:hover,
+.b-status a:active {
+  text-decoration: none;
+  color: #333;
+}
 /* E 系统配送首页*/
 /* S 包裹到站 */
 .i-hei {
@@ -800,6 +807,17 @@ footer {
 }
 /* E 系统设置 配送区域 */
 /* S pop */
+#mask {
+  background: #555555;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0.3;
+  z-index: 1000;
+  display: none;
+}
 .b-modal-header {
   border-bottom: 1px solid #ebedf3;
 }
@@ -882,6 +900,38 @@ footer {
 }
 .pre-step {
   display: none;
+}
+.wp66 {
+  width: 66% !important;
+}
+.wp80 {
+  width: 86% !important;
+}
+.wp25 {
+  width: 25% !important;
+  display: inline-block;
+}
+.input-d {
+  margin: 10px 0 0 14%;
+}
+.site-re {
+  line-height: 40px;
+}
+.tip-info {
+  display: inline-block;
+  color: red;
+  padding: 4px 0 0 14%;
+}
+.filter i {
+  float: left;
+  display: block;
+  width: 14%;
+  text-align: right;
+  padding-top: 6px;
+}
+.j-scroll-dislog {
+  max-height: 600px;
+  overflow-y: auto;
 }
 @media (min-width: 768px) {
   .b-modal-dialog {

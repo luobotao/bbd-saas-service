@@ -5,14 +5,18 @@
                         http://www.springframework.org/schema/beans/spring-beans.xsd
                         ">
     <import resource="shardingContext.xml"/>
-
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <!--分表分库规则的-->
+    <bean id="sqlSessionFactoryWithSharding" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="shardingDataSource"/>
-        <property name="mapperLocations" value="classpath*:META-INF/mybatis/mappers/OrderMapper.xml"/>
+        <property name="mapperLocations" value="classpath*:META-INF/mybatis/mappers/*.xml"/>
+    </bean>
+    <!--不分表分库-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="ds_0"/>
+        <property name="mapperLocations" value="classpath*:META-INF/mybatis/mappers/*.xml"/>
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.dangdang.ddframe.rdb.sharding.example.jdbc"/>
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="com.bbd.saas"/>
     </bean>
 </beans>

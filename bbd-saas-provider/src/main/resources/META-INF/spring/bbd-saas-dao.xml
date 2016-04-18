@@ -28,4 +28,20 @@
     <bean id="orderParcelDao" class="com.bbd.saas.dao.mongo.OrderParcelDao">
         <constructor-arg ref="datastore"/>
     </bean>
+
+
+
+
+
+
+
+
+
+
+    <!--start mysql daos -->
+    <import resource="classpath:META-INF/mybatis/mybatisContext.xml" />
+    <bean id="postcompanyDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostcompanyDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
 </beans>

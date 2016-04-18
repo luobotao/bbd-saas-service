@@ -1,23 +1,5 @@
 package com.bbd.saas.controllers;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
-
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
@@ -32,6 +14,22 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
 import com.bbd.saas.vo.UserVO;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/handleAbnormal")
@@ -58,7 +56,7 @@ public class HandleAbnormalController {
 		//设置默认查询条件
 		status = NumberUtil.defaultIfNull(status, -1);//全部，滞留和拒收
 		//到站时间前天、昨天和今天
-		arriveBetween = StringUtils.defaultIfBlank(arriveBetween, FormatDate.getBetweenTime(new Date(), -2));
+		arriveBetween = StringUtils.defaultIfBlank(arriveBetween, FormatDate.getBetweenTime(new Date(), -10));
 		//查询数据
 		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, request);
 		logger.info("=====异常件处理页面列表====" + orderPage);
@@ -115,35 +113,37 @@ public class HandleAbnormalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/reDispatch", method=RequestMethod.GET)
-	public Map<String, Object> reDispatch(String mailNum, String courierId, Integer status, final HttpServletRequest request) {
+	public Map<String, Object> reDispatch(String mailNum, String courierId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
-		//查询派件员信息
-		User courier = userService.findOne(courierId);
+		
+		//更新字段设置
+		User courier = userService.findOne(courierId);//查询派件员
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
-		//运单分派给派件员
-		orderUpdateVO.user = courier;
-		//更新运单状态--已分派
-		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;
+		orderUpdateVO.user = courier;//运单分派给派件员
+		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
 		
 		//检索条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
 		orderQueryVO.mailNum = mailNum;
-		
+		if(status != null && status != -1){
+			orderQueryVO.abnormalStatus = status;
+		}
 		//更新运单
 		int i = orderService.updateOrder(orderUpdateVO, orderQueryVO);
 		if(i > 0){
 			map.put("operFlag", 1);//1:分派成功
-			//刷新列表
+			//刷新列表==设置查询条件
 			orderQueryVO = new OrderQueryVO();
-			orderQueryVO.abnormalStatus = status;
+			orderQueryVO.abnormalStatus = NumberUtil.defaultIfNull(status, -1);
+			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.areaCode = currUser.getSite().getAreaCode();
 			//查询数据
-			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+			PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			map.put("orderPage", orderPage); 
 		}else{
-			map.put("operFlag", 3);//3:分派成功
+			map.put("operFlag", 0);//3:分派失败
 		}		
 		return map;
 	}
