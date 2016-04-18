@@ -4,7 +4,9 @@
 <html>
 <head>
 	<title>配送区域 - 系统设置 - 棒棒达快递</title>
-	<jsp:include page="../main.jsp" flush="true" />
+	<!-- jQuery 2.1.3 -->
+	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
+
 </head>
 <body>
 <body class="fbg">
@@ -84,36 +86,9 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-12">
-								<span class="b-map"><img src="static/images/map.png" /></span>
-							</div>
-							<div class="col-md-12 mt20">
-								<label>
-									边框宽度：
-									<select class="form-control">
-										<option>4</option>
-									</select>
-								</label>
-								<label>
-									边框颜色：
-									<select class="form-control">
-										<option>4</option>
-									</select>
-								</label>
-								<label>
-									填充颜色：
-									<select class="form-control">
-										<option>4</option>
-									</select>
-								</label>
-							</div>
+							<!--主体部分-->
 
-							<div class="col-md-12">
-								<a href="javascript:void(0);" class="ser-btn c">绘制/重绘</a>
-								<a href="javascript:void(0);" class="ser-btn c ml6">编 辑</a>
-								<a href="javascript:void(0);" class="ser-btn l ml6">保 存</a>
-								<a href="javascript:void(0);" class="ser-btn d ml6">提 交</a>
-							</div>
+							<!--主体部分 end-->
 						</div>
 						<!-- E 绘制电子围栏 -->
 						<!-- S 导入地址关键词 -->
