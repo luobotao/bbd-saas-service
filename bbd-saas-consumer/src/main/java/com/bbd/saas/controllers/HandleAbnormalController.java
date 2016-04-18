@@ -95,7 +95,7 @@ public class HandleAbnormalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
-	public List<UserVO> getAllUserList(String courierId, final HttpServletRequest request) {
+	public List<UserVO> getAllUserList(final HttpServletRequest request) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		//查询
 		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
@@ -113,7 +113,7 @@ public class HandleAbnormalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/reDispatch", method=RequestMethod.GET)
-	public Map<String, Object> reDispatch(String mailNum, String courierId, Integer status, final HttpServletRequest request) {
+	public Map<String, Object> reDispatch(String mailNum, String courierId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
@@ -134,15 +134,16 @@ public class HandleAbnormalController {
 		int i = orderService.updateOrder(orderUpdateVO, orderQueryVO);
 		if(i > 0){
 			map.put("operFlag", 1);//1:分派成功
-			//刷新列表
+			//刷新列表==设置查询条件
 			orderQueryVO = new OrderQueryVO();
 			orderQueryVO.abnormalStatus = NumberUtil.defaultIfNull(status, -1);
+			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.areaCode = currUser.getSite().getAreaCode();
 			//查询数据
-			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+			PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			map.put("orderPage", orderPage); 
 		}else{
-			map.put("operFlag", 3);//3:分派成功
+			map.put("operFlag", 0);//3:分派失败
 		}		
 		return map;
 	}
