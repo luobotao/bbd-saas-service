@@ -97,9 +97,9 @@
 							}
 						%>
 						<td>
-							<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a>
+							<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>','<%=order.getUser().getId().toString()%>')">重新分派</a>
 							<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
-							<a href="javascript:void(0);" onclick="showOtherSiteDiv()">转其他站点</a>
+							<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
 							<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
 						</td>
 					</tr>
@@ -208,6 +208,7 @@
 <script type="text/javascript">
 //缓存快递员列表和站点列表数据
 var courierList = null, siteList = null;
+var courierId = null, siteId = null, mailNum = null;
 
 $(document).ready(function() {
 	//显示分页条
@@ -298,7 +299,7 @@ function getRowHtml(data){
 	if(data.user == null){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + "</td>";
+		row += "<td>" + data.user.realName + data.user.id + "</td>";
 		row += "<td>" + data.user.phone + "</td>";
 	}
 	//状态
@@ -308,7 +309,7 @@ function getRowHtml(data){
 		row += "<td>" + "<%=AbnormalStatus.REJECTION.getMessage()%>" + "</td>";
 	}
 	
-	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")'>重新分派</a>";
+	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\", " + "\"" + data.user.id + "\")'>重新分派</a>";
 	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
 	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")'>转其他站点</a>";
 	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>";
@@ -329,8 +330,7 @@ function initCourierList() {
         data : {},//数据，这里使用的是Json格式进行传输  
         success : function(dataList) {//返回数据根据结果进行相应的处理  
         	courierList = dataList;
-        	console.log("courierList.length==333333=="+dataList.length );
-		},
+        },
         error : function() {  
        		//alert("派件员列表加载异常，请重试！");
        		courierList = null;  
@@ -338,7 +338,10 @@ function initCourierList() {
     });
 }
 //显示选择派件员div
-function showCourierDiv(mailNum, courierId) {
+function showCourierDiv(mailNumStr, courierIdStr) {
+	mailNum = mailNumStr;
+	courierId = courierIdStr;
+	console.log("v==mailNum=="+mailNum+"   courierId ==="+courierId);
 	//console.log("courierList===="+courierList);
 	if(courierList != null){
 		loadCouriers(courierList, courierId);
@@ -367,12 +370,9 @@ function loadCouriers(courierList, courierId) {
 	// 清空select  
 	courier_select.empty(); 
 	if(courierList != null){
-	    console.log("courierList===="+courierList +"  courierId==="+courierId);
-	    console.log("courierList.length===="+courierList.length );
-		for(var i = 0; i < courierList.length; i++){
+	    for(var i = 0; i < courierList.length; i++){
 			data = courierList[i];
 			if(data.id != courierId){
-				console.log("data.id===="+data.id );
 				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
 			}
 		}
@@ -381,11 +381,14 @@ function loadCouriers(courierList, courierId) {
 
 //隐藏选择派件员div
 function hideCourierDiv() {
+	mailNum = null;
+	courierId = null;
 	$("#chooseCourier_div").hide();
 }
 
 //重新分派
-function chooseCourier(mailNum) {
+function chooseCourier() {
+	console.log("v==mailNum=="+mailNum+"   courierId ==="+courierId);
 	//获取当前页
     var pageIndex = parseInt($(".pagination .active a").html())-1;
 	//保存分派信息
@@ -393,8 +396,8 @@ function chooseCourier(mailNum) {
 		type : "GET",  //提交方式  
         url : "<%=path%>/handleAbnormal/reDispatch",//路径  
         data : {  
-            "mailNum" : mailNum, //
-            "courierId" : $("#sender_select").val(),
+            "mailNum" : mailNum, //全局变量
+            "courierId" : courierId, //全局变量
             "pageIndex" : pageIndex,//更新列表的参数
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 
