@@ -3,9 +3,7 @@
 <%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.vo.UserVO" %>
-<%-- <%@ page import="com.bbd.saas.vo.Reciever" %>
-<%@ page import="com.bbd.saas.mongoModels.User" %> --%>
-<%@ page import="com.bbd.saas.mongoModels.Site" %>
+<%-- <%@ page import="com.bbd.saas.mongoModels.Site" %> --%>
 <%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -149,7 +147,7 @@
 				<option value="顺风">顺风</option>  
 			</select>				  
 		</span> <br><br>
-		<span>运单号：<input id="waybillId" name="waybillId" type="text" value="" placeholder="请输入运单号"/></span>
+		<span>运单号：<input id="mailNum" name="mailNum" type="text" value="" placeholder="请输入运单号"/></span>
 	</div>
 	<div class="m20">
 		<button onclick="hideOtherExpressDiv()">取消</button>
@@ -173,7 +171,7 @@
 	</div>
 	<div class="m20">
 		<button onclick="hideOtherSiteDiv()">取消</button>
-		<button onclick="chooseOtherSite('waybillId')">确定</button>
+		<button onclick="chooseOtherSite('mailNum')">确定</button>
 	</div>
 </div>
 <!-- 转其他站点面板-结束 -->
@@ -198,7 +196,7 @@
 	</div>
 	<div class="m20">
 		<button onclick="hideApplyReturnDiv()">取消</button>
-		<button onclick="applyReturn('waybillId')">确定</button>
+		<button onclick="applyReturn('mailNum')">确定</button>
 	</div>
 </div>
 <!-- 转其他站点面板-结束 -->
@@ -208,7 +206,8 @@
 <script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 
 <script type="text/javascript">
-
+//缓存快递员列表和站点列表数据
+var courierList = null, siteList = null;
 
 $(document).ready(function() {
 	//显示分页条
@@ -237,6 +236,11 @@ $(document).ready(function() {
 			$("#returnReasonInfo").hide();
 		}
 	});
+	
+	//初始化快递员列表
+	initCourierList();
+	//初始化站点列表
+	initSiteList();
 });
 /************************分页条***************开始***************************************/
 //加载带有查询条件的指定页的数据
@@ -319,93 +323,90 @@ function getRowHtml(data){
 
 
 //初始化派件员下拉框（快递员）
-function initCourier() {
+function initCourierList() {
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/handleAbnormal/getAllUserList",//路径  
-        data : {  
-            "siteId" : "siteId" //$("#waybillId").val()
-        },//数据，这里使用的是Json格式进行传输  
+        data : {},//数据，这里使用的是Json格式进行传输  
         success : function(dataList) {//返回数据根据结果进行相应的处理  
-        	
-		var courier_select = $("#courier_select");
-		// 清空select  
-		courier_select.empty(); 
-		if(dataList != null){
-			for(var i = 0; i < dataList.length; i++){
-				data = dataList[i];
-				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
-			}
-		} 
-        },
+        	courierList = dataList;
+		},
         error : function() {  
-       		alert("派件员列表加载异常，请重试！");  
-  		}    
+       		//alert("派件员列表加载异常，请重试！");
+       		courierList = null;  
+       	}    
     });
-}	
-//初始化快递公司
-function initExpressCompany() {
-	//查询所有派件员
-	$.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/getAllExpressCompanyList",//路径  
-        data : {  
-            "siteId" : "siteId" //$("#waybillId").val()
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(dataList) {//返回数据根据结果进行相应的处理  
-        	
-		var express_select = $("#express_select");
-		// 清空select  
-		courier_select.empty(); 
-		if(dataList != null){
-			for(var i = 0; i < dataList.length; i++){
-				data = dataList[i];
-				express_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
-			}
-		} 
-        },
-        error : function() {  
-       		alert("快递公司列表加载异常，请重试！");  
-  		}    
-    });
-}	
-//初始化站点
-function initSite() {
+}
+
+//初始化站点列表
+function initSiteList() {
 	//查询所有站点
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/handleAbnormal/getAllSiteList",//路径  
         data : {  
-            "siteId" : "siteId" //$("#waybillId").val()
+            "areaCode" : "areaCode" //$("#mailNum").val()
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataList) {//返回数据根据结果进行相应的处理  
         	
-		var site_select = $("#site_select");
-		// 清空select  
-		courier_select.empty(); 
-		if(dataList != null){
-			for(var i = 0; i < dataList.length; i++){
-				data = dataList[i];
-				site_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
-			}
-		} 
+			/* var site_select = $("#site_select");
+			// 清空select  
+			courier_select.empty(); 
+			if(dataList != null){
+				for(var i = 0; i < dataList.length; i++){
+					data = dataList[i];
+					site_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+				}
+			}  */
         },
         error : function() {  
-       		alert("站点列表加载异常，请重试！");  
+       		//alert("站点列表加载异常，请重试！");  
   		}    
     });
-}	
+}
 
 /************************初始化各个操作面板***************结束***************************************/
 //显示选择派件员div
-function showCourierDiv(waybillId) {
+function showCourierDiv(mailNum, courierId) {
+	if(courierList != null){
+		loadCouriers(courierList, courierId);
+	}else{//重新查询所有派件员
+		$.ajax({
+			type : "GET",  //提交方式  
+	        url : "<%=path%>/handleAbnormal/getAllUserList",//路径  
+	        data : {},//数据，这里使用的是Json格式进行传输  
+	        success : function(dataList) {//返回数据根据结果进行相应的处理  
+	        	loadCouriers(dataList, courierId);
+	        },
+	        error : function() {  
+	       		alert("服务器繁忙，请稍后再试！");
+	  		}    
+	    });
+	}
 	$("#chooseCourier_div").show();
 }
+//把派件员添加到下拉框中
+function loadCouriers(courierList, courierId) {
+	var courier_select = $("#courier_select");
+	// 清空select  
+	courier_select.empty(); 
+	if(courierList != null){
+		for(var i = 0; i < dataList.length; i++){
+			data = dataList[i];
+			if(data.id != courierId){
+				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			}
+		}
+	}
+}
+
 //隐藏选择派件员div
 function hideCourierDiv() {
 	$("#chooseCourier_div").hide();
 }
+
+
 //重新分派
 function chooseCourier(mailNum) {
 	//获取当前页
@@ -430,15 +431,117 @@ function chooseCourier(mailNum) {
         	}
         },
         error : function() {  
-       		alert("重新分派发生异常，请重试！");  
+       		alert("服务器繁忙，请稍后再试！");  
   		}    
     });
     //隐藏面板
 	$("#chooseCourier_div").hide();
 }
 
+
+//显示转其他站点div
+function showOtherSiteDiv(mailNum, areaCode) {
+	if(siteList != null){
+		loadCouriers(siteList, areaCode);
+	}else{//重新查询所有派件员
+		$.ajax({
+			type : "GET",  //提交方式  
+	        url : "<%=path%>/handleAbnormal/getAllSiteList",//路径  
+	        data : {},//数据，这里使用的是Json格式进行传输  
+	        success : function(dataList) {//返回数据根据结果进行相应的处理  
+	        	loadSites(dataList, areaCode);
+	        },
+	        error : function() {  
+	       		alert("服务器繁忙，请稍后再试！");
+	  		}    
+	    });
+	}
+	$("#chooseOtherSite_div").show();
+}
+//把站点添加到下拉框中
+function loadSites(courierList, areaCode) {
+	var site_select = $("#site_select");
+	// 清空select  
+	site_select.empty(); 
+	if(dataList != null){
+		for(var i = 0; i < dataList.length; i++){
+			data = dataList[i];
+			if(data.areaCode != areaCode){
+				site_select.append("<option value='"+data.areaCode+"'>"+data.name+"</option>");
+			}
+		}
+	}
+}
+//隐藏转其他站点div
+function hideOtherSiteDiv() {
+	$("#chooseOtherSite_div").hide();
+}
+//转其他站点
+function chooseOtherSite(mailNum, areaCode) {
+	//获取当前页
+    var pageIndex = parseInt($(".pagination .active a").html())-1;
+    $.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/toOtherExpress",//路径  
+        data : {  
+            "mailNum" : mailNum, //
+            "areaCode" : areaCode,
+            "pageIndex" : pageIndex,//更新列表
+            "status" : $("#status").val(), 
+            "arriveBetween" : $("#arriveBetween").val() 
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(data) {//返回数据根据结果进行相应的处理  
+        	if(data.operFlag == 1){
+        		//分派成功，刷新列表！
+        		refreshTable(data.orderPage);
+        	}else{
+        		alert("重新分派失败，请重新分派！");  
+        	}
+        },
+        error : function() {  
+       		alert("服务器繁忙，请稍后再试！");  
+  		}    
+    });
+    //隐藏面板
+	$("#chooseOtherSite_div").hide();
+}
+
+/******************************************************************* 暂时不做***********************************************************/
+
+/************************初始化各个操作面板***************开始***************************************/
+	
+//初始化快递公司
+function initExpressCompany() {
+	//查询所有派件员
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/getAllExpressCompanyList",//路径  
+        data : {  
+            "areaCode" : "areaCode" //$("#mailNum").val()
+        },//数据，这里使用的是Json格式进行传输  
+        success : function(dataList) {//返回数据根据结果进行相应的处理  
+        	
+		var express_select = $("#express_select");
+		// 清空select  
+		courier_select.empty(); 
+		if(dataList != null){
+			for(var i = 0; i < dataList.length; i++){
+				data = dataList[i];
+				express_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			}
+		} 
+        },
+        error : function() {  
+       		alert("快递公司列表加载异常，请重试！");  
+  		}    
+    });
+}	
+	
+
+/************************初始化各个操作面板***************结束***************************************/
+
 //显示转其他快递公司div
-function showOtherExpressDiv(waybillId) {
+function showOtherExpressDiv(mailNum) {
 	$("#chooseOtherExpress_div").show();
 	
 }
@@ -454,7 +557,7 @@ function chooseOtherExpress(mailNum) {
         url : "<%=path%>/handleAbnormal/toOtherExpress",//路径  
         data : {  
             "mailNum" : mailNum, //
-            "expressId" : $("#express_select").val() //$("#waybillId").val()
+            "expressId" : $("#express_select").val() //$("#mailNum").val()
         },//数据，这里使用的是Json格式进行传输  
         success : function(data) {//返回数据根据结果进行相应的处理  
         	if(data.success){
@@ -476,46 +579,8 @@ function chooseOtherExpress(mailNum) {
 	$("#chooseOtherExpress_div").hide();
 }
 
-//显示转其他站点div
-function showOtherSiteDiv(waybillId) {
-	$("#chooseOtherSite_div").show();
-}
-//隐藏转其他站点div
-function hideOtherSiteDiv() {
-	$("#chooseOtherSite_div").hide();
-}
-//转其他站点
-function chooseOtherSite(mailNum) {
-	//转其他站点
-	$.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
-        data : {  
-            "mailNum" : mailNum, //
-            "siteId" : $("#site_select").val() //$("#waybillId").val()
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.success){
-        		alert("已转到其他站点！");  
-        		//已转到其他快递，刷新列表！
-        		//获取当前页
-    			var pageIndex = parseInt($(".pagination .active a").html())-1;
-    			//console.log("pageIndex==="+pageIndex);
-        		gotoPage(pageIndex);
-        	}else{
-        		alert("转到其他站点失败，请重新选择站点公司！");  
-        	}
-        },
-        error : function() {  
-       		alert("转到其他站点发生异常，请重试！");  
-  		}    
-    });
-    //隐藏面板
-	$("#chooseOtherSite_div").hide();
-}
-
 //显示申请退货div
-function showApplyReturnDiv(waybillId) {
+function showApplyReturnDiv(mailNum) {
 	$("#apply_return_div").show();
 }
 //隐藏申请退货div
@@ -552,7 +617,7 @@ function applyReturn(mailNum) {
     //隐藏面板
 	$("#apply_return_div").hide();
 }
-
+/********************************** 暂时不做********************************************************************************/
 </script>
 </body>
 </html>
