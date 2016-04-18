@@ -4,8 +4,10 @@ package com.bbd.saas.api.impl.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.bbd.saas.api.mongo.UserService;
@@ -137,5 +139,14 @@ public class UserServiceImpl implements UserService {
 		return userDao.findOne("id",new ObjectId(userId));
 		
 	}
+	
+	/**
+     * 根据site和staffid查找是该staffid是否在该站点已存在
+     * @param site、staffid
+     * @return User
+     */
+    public User findOneBySiteByStaffid(Site site, String staffid) {
+        return userDao.findOneBySiteByStaffid(site, staffid);
+    }
 	
 }

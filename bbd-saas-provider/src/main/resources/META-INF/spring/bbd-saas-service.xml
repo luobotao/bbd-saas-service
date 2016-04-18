@@ -55,4 +55,9 @@
             <ref bean="postcompanyDao"/>
         </property>
     </bean>
+    <bean id="postmanUserService" class="com.bbd.saas.api.impl.mysql.PostmanUserServiceImpl">
+        <property name="postmanUserDao">
+            <ref bean="postmanUserDao"/>
+        </property>
+    </bean>
 </beans>

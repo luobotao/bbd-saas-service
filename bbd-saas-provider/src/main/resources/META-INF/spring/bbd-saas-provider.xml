@@ -24,6 +24,7 @@
 
     <!--start mysql services -->
     <dubbo:service interface="com.bbd.saas.api.mysql.PostcompanyService" ref="postcompanyService" />
+    <dubbo:service interface="com.bbd.saas.api.mysql.PostmanUserService" ref="userMysqlService" />
 
     <import resource="classpath:META-INF/spring/bbd-saas-service.xml" />
 
