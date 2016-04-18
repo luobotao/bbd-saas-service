@@ -1,11 +1,24 @@
 package com.bbd.saas.utils;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.bbd.saas.controllers.DataQueryController;
 
 public class ExportUtil
 {
+	public static final Logger logger = LoggerFactory.getLogger(ExportUtil.class);
+	
 	private XSSFWorkbook wb = null;
 
 	private XSSFSheet sheet = null;
@@ -103,5 +116,64 @@ public class ExportUtil
 		cellStyle.setBorderRight(XSSFCellStyle.BORDER_THIN);
 		cellStyle.setBorderTop(XSSFCellStyle.BORDER_THIN);
 		return cellStyle;
+	}
+	/**
+	 * Description: 把数据写入Excel，并下载
+	 * @param fileName 文件名称
+	 * @param dataList 表格数据
+	 * @param titles 表格表头（标题）
+	 * @param response 
+	 * @author: liyanlei
+	 * 2016年4月18日下午2:19:25
+	 */
+	public static void exportExcel(String fileName,List<List<String>> dataList, String[] titles, final HttpServletResponse response){
+		ServletOutputStream outputStream = null;
+		try{
+			// 创建一个workbook 对应一个excel应用文件
+			XSSFWorkbook workBook = new XSSFWorkbook();
+			// 在workbook中添加一个sheet,对应Excel文件中的sheet
+			XSSFSheet sheet = workBook.createSheet(fileName);
+			ExportUtil exportUtil = new ExportUtil(workBook, sheet);
+			XSSFCellStyle headStyle = exportUtil.getHeadStyle();
+			XSSFCellStyle bodyStyle = exportUtil.getBodyStyle();
+			// 构建表头
+			XSSFRow headRow = sheet.createRow(0);
+			XSSFCell cell = null;
+			for (int i = 0; i < titles.length; i++){
+				cell = headRow.createCell(i);
+				cell.setCellStyle(headStyle);
+				cell.setCellValue(titles[i]);
+			}
+			// 构建表体数据
+			if (dataList != null && dataList.size() > 0){
+				List<String> dataRow = null;
+				for (int row = 0; row < dataList.size(); row++){
+					XSSFRow bodyRow = sheet.createRow(row + 1);
+					dataRow = dataList.get(row);
+					for(int col = 0; col < dataRow.size(); col++){
+						cell = bodyRow.createCell(col);
+						cell.setCellStyle(bodyStyle);
+						cell.setCellValue(dataRow.get(col));
+					}
+				}
+			}
+			//输出
+			response.setContentType("application/binary;charset=ISO8859_1");
+			outputStream = response.getOutputStream();
+			fileName = new String((fileName).getBytes(), "ISO8859_1")+Dates.formatDateTime_New(new Date());
+			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
+			workBook.write(outputStream);
+			outputStream.flush();
+			outputStream.close();
+		}catch (IOException e){
+			logger.info(fileName + "--导出数据失败。");
+			e.printStackTrace();
+		}finally{
+			try{
+				outputStream.close();
+			}catch (IOException e){
+				logger.info(fileName + "--导出数据--数据输出流无法关闭。");
+			}
+		}
 	}
 }

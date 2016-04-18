@@ -96,7 +96,7 @@
 						<table id="orderTable" class="table">
 							<thead>
 							<tr>
-								<th><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all"  /></th>
+								<th><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
 								<th>包裹号</th>
 								<th>运单号</th>
 								<th>订单号</th>

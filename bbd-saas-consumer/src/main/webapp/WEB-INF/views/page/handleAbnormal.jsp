@@ -319,9 +319,7 @@ function getRowHtml(data){
 
 /************************分页条***************结束***************************************/	
 
-/************************初始化各个操作面板***************开始***************************************/
-
-
+/**************************重新分派***************开始***********************************/
 //初始化派件员下拉框（快递员）
 function initCourierList() {
 	//查询所有派件员
@@ -331,6 +329,7 @@ function initCourierList() {
         data : {},//数据，这里使用的是Json格式进行传输  
         success : function(dataList) {//返回数据根据结果进行相应的处理  
         	courierList = dataList;
+        	console.log("courierList.length==333333=="+dataList.length );
 		},
         error : function() {  
        		//alert("派件员列表加载异常，请重试！");
@@ -338,37 +337,9 @@ function initCourierList() {
        	}    
     });
 }
-
-//初始化站点列表
-function initSiteList() {
-	//查询所有站点
-	$.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/getAllSiteList",//路径  
-        data : {  
-            "areaCode" : "areaCode" //$("#mailNum").val()
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(dataList) {//返回数据根据结果进行相应的处理  
-        	
-			/* var site_select = $("#site_select");
-			// 清空select  
-			courier_select.empty(); 
-			if(dataList != null){
-				for(var i = 0; i < dataList.length; i++){
-					data = dataList[i];
-					site_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
-				}
-			}  */
-        },
-        error : function() {  
-       		//alert("站点列表加载异常，请重试！");  
-  		}    
-    });
-}
-
-/************************初始化各个操作面板***************结束***************************************/
 //显示选择派件员div
 function showCourierDiv(mailNum, courierId) {
+	//console.log("courierList===="+courierList);
 	if(courierList != null){
 		loadCouriers(courierList, courierId);
 	}else{//重新查询所有派件员
@@ -386,15 +357,22 @@ function showCourierDiv(mailNum, courierId) {
 	}
 	$("#chooseCourier_div").show();
 }
+
 //把派件员添加到下拉框中
 function loadCouriers(courierList, courierId) {
+	if(courierId == null || courierId == "undefined"){
+		courierId = "";
+	}
 	var courier_select = $("#courier_select");
 	// 清空select  
 	courier_select.empty(); 
 	if(courierList != null){
-		for(var i = 0; i < dataList.length; i++){
-			data = dataList[i];
+	    console.log("courierList===="+courierList +"  courierId==="+courierId);
+	    console.log("courierList.length===="+courierList.length );
+		for(var i = 0; i < courierList.length; i++){
+			data = courierList[i];
 			if(data.id != courierId){
+				console.log("data.id===="+data.id );
 				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
 			}
 		}
@@ -405,7 +383,6 @@ function loadCouriers(courierList, courierId) {
 function hideCourierDiv() {
 	$("#chooseCourier_div").hide();
 }
-
 
 //重新分派
 function chooseCourier(mailNum) {
@@ -418,7 +395,7 @@ function chooseCourier(mailNum) {
         data : {  
             "mailNum" : mailNum, //
             "courierId" : $("#sender_select").val(),
-            "pageIndex" : pageIndex,//更新列表
+            "pageIndex" : pageIndex,//更新列表的参数
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 
         },//数据，这里使用的是Json格式进行传输  
@@ -427,7 +404,7 @@ function chooseCourier(mailNum) {
         		//分派成功，刷新列表！
         		refreshTable(data.orderPage);
         	}else{
-        		alert("重新分派失败，请重新分派！");  
+        		alert("重新分派失败，请稍后再试！");  
         	}
         },
         error : function() {  
@@ -437,8 +414,25 @@ function chooseCourier(mailNum) {
     //隐藏面板
 	$("#chooseCourier_div").hide();
 }
+/**************************重新分派***************结束***********************************/
 
-
+/**************************转其他站点***************开始***********************************/
+//初始化站点列表
+function initSiteList() {
+	//查询所有站点
+	$.ajax({
+		type : "GET",  //提交方式  
+        url : "<%=path%>/handleAbnormal/getAllOtherSiteList",//路径  
+        data : {},//数据，这里使用的是Json格式进行传输  
+        success : function(dataList) {//返回数据根据结果进行相应的处理  
+        	siteList = dataList;
+        },
+        error : function() { 
+        	siteList = null; 
+       		//alert("站点列表加载异常，请重试！");  
+  		}    
+    });
+}
 //显示转其他站点div
 function showOtherSiteDiv(mailNum, areaCode) {
 	if(siteList != null){
@@ -459,13 +453,13 @@ function showOtherSiteDiv(mailNum, areaCode) {
 	$("#chooseOtherSite_div").show();
 }
 //把站点添加到下拉框中
-function loadSites(courierList, areaCode) {
+function loadSites(siteList, areaCode) {
 	var site_select = $("#site_select");
 	// 清空select  
 	site_select.empty(); 
-	if(dataList != null){
-		for(var i = 0; i < dataList.length; i++){
-			data = dataList[i];
+	if(siteList != null){
+		for(var i = 0; i < siteList.length; i++){
+			data = siteList[i];
 			if(data.areaCode != areaCode){
 				site_select.append("<option value='"+data.areaCode+"'>"+data.name+"</option>");
 			}
@@ -482,7 +476,7 @@ function chooseOtherSite(mailNum, areaCode) {
     var pageIndex = parseInt($(".pagination .active a").html())-1;
     $.ajax({
 		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/toOtherExpress",//路径  
+        url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
         data : {  
             "mailNum" : mailNum, //
             "areaCode" : areaCode,
@@ -495,7 +489,7 @@ function chooseOtherSite(mailNum, areaCode) {
         		//分派成功，刷新列表！
         		refreshTable(data.orderPage);
         	}else{
-        		alert("重新分派失败，请重新分派！");  
+        		alert("转其他站点失败，请稍后再试！");  
         	}
         },
         error : function() {  
@@ -505,11 +499,11 @@ function chooseOtherSite(mailNum, areaCode) {
     //隐藏面板
 	$("#chooseOtherSite_div").hide();
 }
+/**************************转其他站点***************结束***********************************/
 
-/******************************************************************* 暂时不做***********************************************************/
+/*************************************下面的暂时不做*****************************************************/
 
-/************************初始化各个操作面板***************开始***************************************/
-	
+/************************转其他快递公司***************开始***************************************/	
 //初始化快递公司
 function initExpressCompany() {
 	//查询所有派件员
@@ -536,9 +530,6 @@ function initExpressCompany() {
   		}    
     });
 }	
-	
-
-/************************初始化各个操作面板***************结束***************************************/
 
 //显示转其他快递公司div
 function showOtherExpressDiv(mailNum) {
@@ -579,6 +570,9 @@ function chooseOtherExpress(mailNum) {
 	$("#chooseOtherExpress_div").hide();
 }
 
+/************************转其他快递公司***************结束***************************************/
+
+/************************申请退货***************开始***************************************/
 //显示申请退货div
 function showApplyReturnDiv(mailNum) {
 	$("#apply_return_div").show();
@@ -617,7 +611,7 @@ function applyReturn(mailNum) {
     //隐藏面板
 	$("#apply_return_div").hide();
 }
-/********************************** 暂时不做********************************************************************************/
+/**********************申请退货**************************结束************************************/
 </script>
 </body>
 </html>
