@@ -65,7 +65,7 @@
 						</div>
 						<div class="clearfix mlrf15">
 							<div class="col-md-6">
-								<a href="javascript:void(0);" class="sbtn l mb12" onclick="$('#form').submit()">登　录</a>
+								<a href="javascript:void(0);" class="sbtn l mb12" onclick="submitForm()">登　录</a>
 							</div>
 							<div class="col-md-6">
 								<a href="javascript:void(0);" class="sbtn d j-login">注　册</a>
@@ -197,23 +197,22 @@
 						<i>账号：</i>
 						<input type="text" class="form-control form-bod wp80" id="username" name="username" onblur="checkSiteWithUsername(this.value)">
 						<input type="text" class="form-control" id="usernameFlag" name="usernameFlag" value="1" style="display:none;">
-						<p class="help-block" id="usernameP" style="display:none;">请输入账号,不允许重复</p>
-						<em class="tip-info">请输入账号</em>
+						<em class="tip-info" id="usernameP" style="display:none;">请输入账号,不允许重复</em>
 					</li>
 					<li class="filter">
 						<i>密 码：</i>
 						<input type="text" class="form-control form-bod wp80" id="password" name="password" >
-						<p class="help-block" id="passwordP" style="display:none;">请输入密码</p>
+						<em class="tip-info" id="passwordP" style="display:none;">请输入密码</em>
 					</li>
 					<li class="filter">
 						<i>站点名称：</i>
 						<input type="text" class="form-control form-bod wp80" id="name" name="name" >
-						<p class="help-block" id="nameP" style="display:none;">请输入站点名称</p>
+						<em class="tip-info" id="nameP" style="display:none;">请输入站点名称</em>
 					</li>
 					<li class="filter">
 						<i>负责人：</i>
 						<input type="text" class="form-control form-bod wp80" id="responser" name="responser" >
-						<p class="help-block" id="responserP" style="display:none;">请输入负责人</p>
+						<em class="tip-info" id="responserP" style="display:none;">请输入负责人</em>
 					</li>
 					<li class="filter">
 						<i>负责人电话：</i>
@@ -222,12 +221,12 @@
 					<li class="filter">
 						<i>固定电话：</i>
 						<input type="text" class="form-control form-bod wp80" id="telephone" name="telephone" onkeyup="this.value=this.value.replace(/[^\d\-]/g,'')" onblur="this.value=this.value.replace(/[^\d\-]/g,'')">
-						<p class="help-block" id="sitePhoneP" style="display:none;">负责人电话或固定电话必填一个</p>
+						<em class="tip-info" id="sitePhoneP" style="display:none;">负责人电话或固定电话必填一个</em>
 					</li>
 					<li class="filter">
 						<i>邮箱：</i>
 						<input type="text" class="form-control form-bod wp80" id="email" name="email" onkeyup="value=value.replace(/[^a-zA-Z\-_@@\.0-9]/g,'')">
-						<p class="help-block" id="emailP" style="display:none;">请输入邮箱且格式正确</p>
+						<em class="tip-info" id="emailP" style="display:none;">请输入邮箱且格式正确</em>
 					</li>
 					<li class="filter" id="city_4">
 						<i>地 址：</i>
@@ -244,14 +243,14 @@
 						<input id="city" name="city" placeholder="请输入省市区" type="hidden" class="form-control" />
 						<input id="area" name="area" placeholder="请输入省市区" type="hidden" class="form-control" />
 						<input type="text" class="form-control form-bod wp80 input-d"  id="address" name="address" placeholder="请输入详细地址" />
-						<p class="help-block" id="addressP" style="display:none;">请输入详细地址</p>
+						<em class="tip-info" id="addressP" style="display:none;">请输入详细地址</em>
 					</li>
 					<li class="filter">
 						<i>公司营业执照：</i>
 						<%--<input type="text" class="form-control form-bod fl wp66" />--%>
 						<%--<a href="javascript:void(0);" class="ser-btn g fr">选择</a>--%>
 						<input id="licensePic" name="licensePic" class="file" type="file" >
-						<p class="help-block" id="licensePicP" style="display:none;">请上传公司营业执照</p>
+						<em class="tip-info" id="licensePicP" style="display:none;">请上传公司营业执照</em>
 					</li>
 				</ul>
 			</div>
@@ -378,13 +377,13 @@
 		} else{
 			$("#addressP").attr("style","display:none");
 		}
-//		if(licensePic==""){
-//			$("#licensePicP").attr("style","color:red");
-//			flag = false;
-//		} else{
-//			$("#licensePicP").attr("style","display:none");
-//		}
-		$("#siteForm").submit();
+		if(licensePic==""){
+			$("#licensePicP").attr("style","color:red");
+			flag = false;
+		} else{
+			$("#licensePicP").attr("style","display:none");
+		}
+//		$("#siteForm").submit();
 //		if(flag){
 //			console.log("succeful , submit");
 //			$("#siteForm").submit();
@@ -397,16 +396,20 @@
 	function enterPress(e){
 		if(!e) e = window.event;//火狐中是 window.event
 		if((e.keyCode || e.which) == 13){
-			if($("#userName").val()==null || $("#userName").val()==""){
-				$("#userName").focus();
-				return;
-			}
-			if($("#passWord").val()==null || $("#passWord").val()==""){
-				$("#passWord").focus();
-				return;
-			}
-			$('#form').submit()
+			submitForm();
 		}
+	}
+	//回车事件
+	function submitForm(){
+		if($("#userName").val()==null || $("#userName").val()==""){
+			$("#userName").focus();
+			return;
+		}
+		if($("#passWord").val()==null || $("#passWord").val()==""){
+			$("#passWord").focus();
+			return;
+		}
+		$('#form').submit()
 	}
 </script>
 </body>
