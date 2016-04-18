@@ -1,53 +1,293 @@
+<%@ page contentType="text/html; charset=UTF-8"%>
 <!DOCTYPE html>
-<!-- saved from url=(0052)http://api.map.baidu.com/lbsapi/createmap/index.html -->
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
-	<meta name="generator" content="MediaWiki 1.16.1" />
-	<meta http-equiv="x-ua-compatible" content="ie=7" />
-	<title>创建地图-百度地图生成器</title>
-	<meta name="keywords" content="地图生成器" />
-	<link rel="search" type="application/opensearchdescription+xml" href="http://api.map.baidu.com/wiki/map/opensearch_desc.php" title="地图开放平台 (zh-hans)" />
-	<link rel="alternate" type="application/atom+xml" title="地图开放平台的Atom订阅" href="http://api.map.baidu.com/wiki/map/index.php?title=%E7%89%B9%E6%AE%8A:%E6%9C%80%E8%BF%91%E6%9B%B4%E6%94%B9&amp;feed=atom" />
-	<link rel="stylesheet" href="/resources/gen_files/style.css" type="text/css" />
-	<style type="text/css">.bds-top-banner{display:none!important;display:none}DIV[id^="m"][id$="_canvas"]{display:none;position:absolute;top:-1000000px;visibility:hidden}DIV.fsblock:last-child{display:none;position:absolute;top:-1000000px;visibility:hidden}DIV#container.container_l > DIV#content_left > TABLE{display:none;position:absolute;top:-1000000px;visibility:hidden}DIV#container.container_s > DIV#content_left > TABLE{display:none;position:absolute;top:-1000000px;visibility:hidden}DIV[id^="html-reader-banner-"]{display:none;position:absolute;top:-1000000px;visibility:hidden}DIV#content_left > TABLE[data-click]{display:none;position:absolute;top:-1000000px;visibility:hidden}div[id^="game_couplet_pb_"]{display:none;position:absolute;top:-1000000px;visibility:hidden}div#aside_ad[class^="aside_ad_"]{display:none;position:absolute;top:-1000000px;visibility:hidden}div.res_top_banner,a.adTopImg,div.sam_iebrowser_banner,DIV#imgCmsAdPart,DIV#ecomContainer,DIV#relecom54,TABLE#relEcom,DIV.r.ec_bdtg,DIV.ad-block.ad-block-0,DIV.banner_post.banner_post_bright.j_banner_post.clearfix,div#ec_im_container,div.union_mod,div.pause-ad,div.ws-tips,div.banner_wrap,div.search_union_mod.search_ecom_mod,div.wgt-union,.EC_tglj,div.EC_im_tg,DIV.ad.ecomad-banner-loading,DIV.ecomad-banner-loading,DIV#ecad,div.wrap2 div.novel_wrap.j_novel_wrap,div.widget-ads,div.wgt-ads,div.l_banner.banner_theme_2,table.EC_mr15.EC_ppim_top.ec_pp_f,div#union-qbbanner,div#pb_adbanner{display:none;position:absolute;top:-1000000px;visibility:hidden}</style>
 
-	<script language="javascript" type="text/javascript" src="/resources/gen_files/hidecss.js" charset="gb2312"></script>
-	<script type="text/javascript">hidecss('div#pb_adbanner,div#union-qbbanner,table.EC_mr15.EC_ppim_top.ec_pp_f,div.l_banner.banner_theme_2,div.wgt-ads,div.widget-ads,div#aside_ad[class^="aside_ad_"],div.wrap2 div.novel_wrap.j_novel_wrap,DIV#ecad,DIV.ecomad-banner-loading,DIV.ad.ecomad-banner-loading,div.EC_im_tg,.EC_tglj,div.wgt-union,div[id^="game_couplet_pb_"],div.search_union_mod.search_ecom_mod,div.banner_wrap,div.ws-tips,div.pause-ad,div.union_mod,DIV#content_left > TABLE[data-click],div#ec_im_container,DIV.banner_post.banner_post_bright.j_banner_post.clearfix,DIV.ad-block.ad-block-0,DIV[id^="html-reader-banner-"],DIV#container.container_s > DIV#content_left > TABLE,DIV#container.container_l > DIV#content_left > TABLE,DIV.r.ec_bdtg,DIV.fsblock:last-child,TABLE#relEcom,DIV#relecom54,DIV#ecomContainer,DIV#imgCmsAdPart,div.sam_iebrowser_banner,DIV[id^="m"][id$="_canvas"],a.adTopImg,div.res_top_banner');</script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body, html{width: 100%;height: 100%;overflow: hidden;margin:0;}
+		#allmap {margin-right: 300px;height: 100%;overflow: hidden;}
+		#result {border-left:1px dotted #999;height:100%;width:295px;position:absolute;top:0px;right:0px;font-size:12px;}
+		dl,dt,dd,ul,li{
+			margin:0;
+			padding:0;
+			list-style:none;
+		}
+		p{font-size:12px;}
+		dt{
+			font-size:14px;
+			font-family:"微软雅黑";
+			font-weight:bold;
+			border-bottom:1px dotted #000;
+			padding:5px 0 5px 5px;
+			margin:5px 0;
+		}
+		dd{
+			padding:5px 0 0 5px;
+		}
+		li{
+			line-height:28px;
+		}
+		.red{color: red;}
+	</style>
+	<%--<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.min.css" type="text/css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>--%>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5E5EE28a7615536d1ffe2ce2a3667859"></script>
+	<!--加载鼠标绘制工具-->
+	<script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+	<link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+	<!--加载检索信息窗口-->
+	<script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
+	<link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
+	<title>百度地图绘制多边型带编辑功能</title>
+	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body>
-<!--主体部分-->
-<div class="mcontainer">
-	<div class="draw_map l">
-		<div id="map_container" class="map l" style="width:100%;" > </div>
-		<div class="nav l">
-			<ul>
-				<li>
-					<div class="l" style="width:800px;">
-						<div id="add_overlay" class="l mt-10" style="width:800px;">
-							<div id="marker_nav" class="l">
-								<ul>
-									<li idx="1" id="ol_polygen" class="l" title="线标记" onclick="addPolyline()">绘制/重绘</li>
-								</ul>
-							</div>
-							<div class="l" id="list_polyline">
-							</div>
-						</div>
-					</div>
-				</li>
-			</ul>
-		</div>
-
-
+<div id="allmap" style="overflow:hidden;zoom:1;position:relative;">
+	<div id="map" style="height:100%;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;"></div>
+	<div id="showPanelBtn" style="position:absolute;font-size:14px;top:50%;margin-top:-95px;right:0px;width:20px;padding:10px 10px;color:#999;cursor:pointer;text-align:center;height:170px;rgba(255,255,255,0.9);-webkit-transition:  all 0.5s ease-in-out;transition: all 0.5s ease-in-out;font-family:'微软雅黑';font-weight:bold;">编辑多边形<br/>&lt;</div>
+	<div id="panelWrap" style="width:0px;position:absolute;top:0px;right:0px;height:100%;overflow:auto;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;">
+		<div style="width:20px;height:200px;margin:-100px 0 0 -10px;color:#999;position:absolute;opacity:0.5;top:50%;left:50%;" id="showOverlayInfo">此处用于展示覆盖物信息</div>
+		<div id="panel" style="position:absolute;"></div>
 	</div>
 </div>
-<!--主体部分 end-->
+<div id="result">
+	<dl>
+		<dt>绘制工具功能</dt>
+		<ul>
+			<li><label><input type="radio" name="openClose1"  onclick="openDraw()" />打开</label>  <label><input type="radio" name="openClose1" onclick="bmap.drawingManager.close()" checked="checked"/>关闭</label></li>
+		</ul>
+		</dd>
+		<dt>绘制功能</dt>
+		<dd>
+			<ul>
+				<li>
+					<label><input type="radio" name="drawmode" onclick="bmap.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON)" checked="checked"/>画多边形</label>
+				</li>
+			</ul>
+		</dd>
+		<dt>覆盖物操作</dt>
+		<dd>
+			<ul>
+				<li>
+					<input type="button" value="获取绘制的覆盖物个数" onclick="bmap.getCount()"/>
+					<input type="button" value="清除所有覆盖物" onclick="bmap.clearAll()"/>
+					<input type="button" value="获取最后一个覆盖物信息" onclick="bmap.getOverLay()"/>
+					<input type="button" value="保存" onclick="bmap.getAllOverLay()"/>
+				</li>
+			</ul>
+		</dd>
+	</dl>
+</div>
+<script type="text/javascript">
+	/**
+	 * Author: mobai
+	 * http://mobai.blog.51cto.com/
+	 * 转载请注明出处
+	 */
+	function $(id){
+		return document.getElementById(id);
+	}
+	var bmap = {
+		status: false,
+		map: '',
+		point: '',
+		overlays: [],
+		overlaysCache: [],
+		myPolygon: '',
+		myOverlay: [],
+		drawingManager: '',
+		styleOptions: {
+			strokeColor:"red",      //边线颜色。
+			fillColor:"red",        //填充颜色。当参数为空时，圆形将没有填充效果。
+			strokeWeight: 3,        //边线的宽度，以像素为单位。
+			strokeOpacity: 0.8,     //边线透明度，取值范围0 - 1。
+			fillOpacity: 0.3,       //填充的透明度，取值范围0 - 1。
+			strokeStyle: 'solid'    //边线的样式，solid或dashed。
+		},
+		/**
+		 * 实例化
+		 */
+		init: function(){
+			if(this.status){
+				return;
+			}
+			this.status = true;
+			this.map = new BMap.Map('map');
+			this.point = new BMap.Point(116.307852,40.057031);
+			var map = this.map;
+			var styleOptions = this.styleOptions;
+			map.centerAndZoom(this.point, 16);
+			map.enableScrollWheelZoom();
+			//实例化鼠标绘制工具
+			this.drawingManager = new BMapLib.DrawingManager(map, {
+				isOpen: false, //是否开启绘制模式
+				enableDrawingTool: false, //是否显示工具栏
+				drawingToolOptions: {
+					anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+					offset: new BMap.Size(5, 5), //偏离值
+					scale: 0.8 //工具栏缩放比例
+				},
+				polygonOptions: styleOptions, //多边形的样式
+			});
+			//添加鼠标绘制工具监听事件，用于获取绘制结果
+			this.drawingManager.addEventListener('overlaycomplete', bmap.overlaycomplete);
+			/*加载一个已有的多边形*/
+			if (this.myOverlay) {
+				this.loadMyOverlay();
+			};
+			map.addEventListener("rightclick",function(e){
+				alert(e.point.lng + "," + e.point.lat);
+			});
+		},
+		loadMyOverlay: function(){
+			var map = this.map;
+			this.clearAll();
+			map.centerAndZoom(this.point, 11);
+			myPolygon = new BMap.Polygon(this.myOverlay, this.styleOptions);
+			this.myPolygon = myPolygon;
+			try{myPolygon.enableEditing();}catch(e){};
+			myPolygon.addEventListener("lineupdate",function(e){
+				bmap.showLatLon(e.currentTarget.W);
+			});
+			map.addOverlay(myPolygon);
 
-<script type="text/javascript" src="/resources/gen_files/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="/resources/gen_files/getscript"></script>
-<script type="text/javascript" src="/resources/gen_files/mapConfig.js"></script>
-<script type="text/javascript" src="/resources/gen_files/main.js"></script>
-<script type="text/javascript" src="/resources/gen_files/mapSettings.js"></script>
+		},
+		showLatLon: function(a){
+			var len = a.length;
+			var s = '';
+			var arr = [];
+			for(var i =0 ; i < len-1; i++){
+				arr.push([a[i].lng, a[i].lat]);
+				s += '<li>'+ a[i].lng +','+ a[i].lat +'<span class="red" title="删除" onclick="bmap.delPoint('+i+')">X</span></li>';
+			}
+			this.overlaysCache = arr;
+			$("panelWrap").innerHTML = '<ul>'+ s +'</ul>';
+			console.log("[arr]:"+arr);
+		},
+		delPoint: function(i){
+			if(this.overlaysCache.length <=3 ){
+				alert('不能再删除, 请保留3个以上的点.');
+				return;
+			}
+			this.overlaysCache.splice(i,1);
+			var a = this.overlaysCache;
+			var newOverlay = [];
+			for(var i in a ){
+				newOverlay.push( new BMap.Point(a[i][0],a[i][1]) );
+			}
+			this.myOverlay = newOverlay;
+			this.loadMyOverlay();
+		},
+		/**
+		 *回调获得覆盖物信息
+		 */
+		overlaycomplete: function(e){
+			bmap.overlays.push(e.overlay);
+			e.overlay.enableEditing();
+			e.overlay.addEventListener("lineupdate",function(e){
+				bmap.showLatLon(e.currentTarget.W);
+			});
+		},
+		/**
+		 * 清除覆盖物
+		 */
+		clearAll: function() {
+			var map = this.map;
+			var overlays = this.overlays;
+			for(var i = 0; i < overlays.length; i++){
+				map.removeOverlay(overlays[i]);
+			}
+			this.overlays.length = 0
+			map.removeOverlay(this.myPolygon);
+			this.myPolygon = '';
+		},
+		/**
+		 *取覆盖物的经纬度
+		 */
+		getOverLay: function(){
+			var box = this.myPolygon ? this.myPolygon : this.overlays[this.overlays.length - 1];
+			console.log(box.W);
+		},
+		getAllOverLay: function(){
+			var count  = bmap.getCount();
+			console.log(count);
+			console.log(bmap.overlays);
+			console.log(bmap.overlays.join(","));
+			console.log(bmap.overlays.concat("-"));
+			console.log(this.overlays[0].ro);
+			$.ajax({
+				url: '/site/putAllOverLay/'+bmap.overlays.join(","),
+				type: 'GET',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					console.log(response);
+					alert(response);
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			})
+		},
+		getCount: function(){
+			var n = 0;
+			if (this.myPolygon) {
+				n++;
+			};
+			if (this.overlays) {
+				n = n + this.overlays.length;
+			};
+			console.log(n);
+		}
+	};
+	function MapPoint(lng,lat){
+		this.lng=lng;
+		this.lat=lat;
+	}
+	MapPoint.prototype={
+		setLng : function(n){this.lng=n;},
+		getLng : function(){return this.lng;}
+	}
+	//显示结果面板动作
+	var isPanelShow = true;
+	$("showPanelBtn").onclick = showPanel;
+	function showPanel(){
+		if (isPanelShow == false) {
+			isPanelShow = true;
+			$("showPanelBtn").style.right = "230px";
+			$("panelWrap").style.width = "230px";
+			$("map").style.marginRight = "230px";
+			$("showPanelBtn").innerHTML = "编辑多边形<br/>>";
+		} else {
+			isPanelShow = false;
+			$("showPanelBtn").style.right = "0px";
+			$("panelWrap").style.width = "0px";
+			$("map").style.marginRight = "0px";
+			$("showPanelBtn").innerHTML = "编辑多边形<br/><";
+		}
+	}
+	//加载一个已有的多边形
+	bmap.myOverlay = [
+		new BMap.Point(116.256515,39.995242),
+		new BMap.Point(116.502579,39.951893),
+		new BMap.Point(116.256515,39.866882)
+	];
+	bmap.init();
+
+	function openDraw(){
+		bmap.drawingManager.open();
+		bmap.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
+	}
+
+	function getAllOverLay(){
+		console.log("i am coming");
+		console.log(bmap.overlays.join(","));
+
+	}
+
+</script>
 </body>
 </html>

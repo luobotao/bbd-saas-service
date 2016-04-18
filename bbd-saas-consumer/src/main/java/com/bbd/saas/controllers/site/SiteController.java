@@ -351,4 +351,12 @@ public class SiteController {
 		logger.info(result.code+"");*/
 		return "success";
 	}
+
+	//电子围栏
+	@ResponseBody
+	@RequestMapping(value="/putAllOverLay/{overlays}", method=RequestMethod.GET)
+	public String putAllOverLay(@PathVariable Object overlays){
+		logger.info(overlays.toString());
+		return "success";
+	}
 }
