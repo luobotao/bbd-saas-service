@@ -145,5 +145,10 @@ public class UserServiceImpl implements UserService {
     public User findOneBySiteByStaffid(Site site, String staffid) {
         return userDao.findOneBySiteByStaffid(site, staffid);
     }
+	@Override
+	public User findOneBySiteCodeByStaffid(String areaCode, String staffid) {
+		// TODO Auto-generated method stub
+		return userDao.findOneBySiteCodeByStaffid(areaCode, staffid);
+	}
 	
 }
