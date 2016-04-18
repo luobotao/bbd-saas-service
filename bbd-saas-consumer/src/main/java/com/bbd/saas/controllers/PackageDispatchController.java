@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +25,10 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.FormatDate;
-import com.bbd.saas.utils.NumberUtil;
+import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserVO;
 
@@ -60,9 +61,9 @@ public class PackageDispatchController {
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String arriveBetween, String courierId, final HttpServletRequest request, Model model) {
 		//设置默认查询条件
-		status = NumberUtil.defaultIfNull(status, OrderStatus.NOTDISPATCH.getStatus());//未分派
+		status = Numbers.defaultIfNull(status, OrderStatus.NOTDISPATCH.getStatus());//未分派
 		//到站时间前天、昨天和今天
-		arriveBetween = StringUtils.defaultIfBlank(arriveBetween, FormatDate.getBetweenTime(new Date(), -2));
+		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 		//查询数据
 		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, courierId, request);
 		logger.info("=====运单分派====" + orderPage);
@@ -76,8 +77,8 @@ public class PackageDispatchController {
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<Order> getList(Integer pageIndex, Integer status, String arriveBetween, String courierId, final HttpServletRequest request) {
 		//参数为空时，默认值设置
-		pageIndex = NumberUtil.defaultIfNull(pageIndex, 0);
-		status = NumberUtil.defaultIfNull(status, -1);
+		pageIndex = Numbers.defaultIfNull(pageIndex, 0);
+		status = Numbers.defaultIfNull(status, -1);
 		//当前登录的用户信息
 		User user = adminService.get(UserSession.get(request));
 		//设置查询条件
@@ -142,18 +143,18 @@ public class PackageDispatchController {
 		//运单分派给派件员
 		order.setUser(user);
 		//更新运单状态--已分派
-		order.setOrderStatus(OrderStatus.DISPATCHED);
+		//order.setOrderStatus(OrderStatus.DISPATCHED);
 		//order.setOrderStatus(OrderStatus.REJECTION);
-		//order.setOrderStatus(OrderStatus.RETENTION);
+		order.setOrderStatus(OrderStatus.RETENTION);
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
+			//orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
 			//orderQueryVO.dispatchStatus = OrderStatus.REJECTION.getStatus();
-			//orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
+			orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
 			orderQueryVO.userId = courierId;
 			orderQueryVO.areaCode = areaCode;
 			//查询数据

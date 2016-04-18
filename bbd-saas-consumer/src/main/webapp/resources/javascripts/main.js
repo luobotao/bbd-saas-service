@@ -67,7 +67,7 @@ $(function () {
         $("#mask").show();
         $(".j-site-re-pop").addClass("in").show();
     });
-    $(".modal-dialog").on("click", function (e) {
+    $(".j-scroll-dislog").on("click", function (e) {
         e.stopPropagation();
     })
     $(document).on("click", function () {
