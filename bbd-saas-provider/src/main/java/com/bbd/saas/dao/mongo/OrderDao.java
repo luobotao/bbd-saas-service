@@ -76,16 +76,16 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> queryArrive = createQuery().filter("areaCode",areaCode);
         query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
         orderNumVO.setNoArriveHis(count(query));//历史未到站
-        query.filter("dateUpd <=",new Date());
+        query.filter("dateMayArrive <=",new Date());
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-        query.filter("dateUpd >=",cal.getTime());
+        query.filter("dateMayArrive >=",cal.getTime());
         orderNumVO.setNoArrive(count(query));//今天未到站
-        queryArrive.filter("dateUpd <=",new Date()).filter("dateUpd >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
+        queryArrive.filter("dateMayArrive <=",new Date()).filter("dateMayArrive >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
         orderNumVO.setArrived(count(queryArrive));//已到站
         return orderNumVO;
     }
