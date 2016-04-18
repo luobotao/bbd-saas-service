@@ -133,7 +133,7 @@ public class HandleAbnormalController {
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
 		orderUpdateVO.userId = courierId;//派件员id--ObjectId  
 		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
-		
+		/*
 		//检索条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
 		orderQueryVO.mailNum = mailNum;
@@ -148,7 +148,7 @@ public class HandleAbnormalController {
 			map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
 		}else{
 			map.put("operFlag", 0);//0:分派失败
-		}		
+		}	*/	
 		return map;
 	}
 	/**

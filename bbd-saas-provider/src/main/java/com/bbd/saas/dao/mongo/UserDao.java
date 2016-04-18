@@ -78,10 +78,10 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @author: liyanlei
      * 2016年4月14日下午8:04:44
      */
-    public List<User> findUserListBySite(Site site, UserRole userRole) {
+    public List<User> findUserListBySite(String areaCode, UserRole userRole) {
     	Query<User> query = createQuery();
-    	if(site != null){
-    		query.filter("site", site);
+    	if(areaCode != null){
+    		query.filter("site.areaCode", areaCode);
     	}
     	if(userRole != null){
     		query.filter("role", userRole);
