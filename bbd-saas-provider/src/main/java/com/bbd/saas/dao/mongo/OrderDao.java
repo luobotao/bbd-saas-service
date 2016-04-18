@@ -3,10 +3,12 @@ package com.bbd.saas.dao.mongo;
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
@@ -109,7 +111,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return findOne(query);
     }
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
-    	Query<Order> query = createQuery().order("-dateUpd");
+    	Query<Order> query = createQuery();
     	if(orderQueryVO != null){
     		//站点查询
             if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
@@ -165,7 +167,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             }
             //订单状态--用于数据查询页面(-1未全部状态，就相当于不需要按状态字段查询)
             if(orderQueryVO.orderStatus != null && orderQueryVO.orderStatus != -1){
-            	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+            	if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0或者OrderStatus=null
+            		query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+            	}else{
+            		query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+            	}
             }
         }
     	return query;
@@ -173,10 +179,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
         //设置查询条件
     	Query<Order> query = getQuery(orderQueryVO);
+    	//设置排序
+    	query.order("-dateUpd");
         //分页信息
         query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
-        //设置排序
-    	//query.order("-dateUpd");
         //查询数据
         List<Order> orderList = find(query).asList();
         pageModel.setDatas(orderList);
@@ -184,13 +190,42 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return pageModel;
     }
     public List<Order> findOrders(OrderQueryVO orderQueryVO) {
-    	//创建Query对象和设置排序
-    	Query<Order> query = createQuery().order("-dateUpd");
-        //设置查询条件
-        getQuery(orderQueryVO);
+    	//设置查询条件,并按照更新时间倒叙
+    	Query<Order> query = getQuery(orderQueryVO);
+    	//设置排序
+    	query.order("-dateUpd");
         //查询数据
         List<Order> orderList = find(query).asList();
         return orderList;
     }
-    
+    public UpdateResults updateOrder(OrderUpdateVO orderUpdateVO, OrderQueryVO orderQueryVO) {
+    	Query<Order> query = getQuery(orderQueryVO);
+    	UpdateOperations<Order> op = getUpdateOpers(orderUpdateVO);
+    	return update(query, op);
+    }
+    private UpdateOperations<Order> getUpdateOpers(OrderUpdateVO orderUpdateVO){
+    	UpdateOperations<Order> ops = createUpdateOperations().set("dateUpd",new Date());
+    	//站点编码
+    	if(orderUpdateVO.areaCode != null){
+            ops.set("areaCode",orderUpdateVO.areaCode);
+        }
+    	//派件员
+    	if(orderUpdateVO.user != null){
+            ops.set("user",orderUpdateVO.user);
+        }
+    	/*//退货原因类型
+    	if(orderUpdateVO.returnReasonType != null){
+            ops.set("returnReasonType",orderUpdateVO.returnReasonType);
+        }
+    	//退货原因详情--其他
+    	if(orderUpdateVO.returnReasonInfo != null){
+            ops.set("returnReasonInfo",orderUpdateVO.returnReasonInfo);
+        }*/
+    	//订单状态，-1全部, 0-未到站,1-未分派,2-已分派,3-滞留,4-拒收,5-已签收,6-已转其他快递,7-申请退货,8-退货完成;
+    	if(orderUpdateVO.orderStatus != null){
+            ops.set("orderStatus",orderUpdateVO.orderStatus);
+        }
+    	return ops;
+    }
+
 }

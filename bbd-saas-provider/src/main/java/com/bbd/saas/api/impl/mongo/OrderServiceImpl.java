@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
+import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
@@ -27,7 +28,14 @@ public class OrderServiceImpl implements OrderService {
 	
     private OrderDao orderDao;
     private OrderParcelDao orderParcelDao;
+    private UserDao userDao;
 
+    public UserDao getUserDao() {
+		return userDao;
+	}
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
 	public OrderParcelDao getOrderParcelDao() {
 		return orderParcelDao;
 	}
@@ -117,7 +125,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public int updateOrder(OrderUpdateVO orderUpdateVO,
 			OrderQueryVO orderQueryVO) {
-		// TODO Auto-generated method stub
+		//派件员Id
+    	if(orderUpdateVO.userId != null){
+    		orderUpdateVO.user = userDao.findOne("_id", orderUpdateVO.userId);
+        }
+    	orderDao.updateOrder(orderUpdateVO, orderQueryVO);
 		return 0;
 	}
 }

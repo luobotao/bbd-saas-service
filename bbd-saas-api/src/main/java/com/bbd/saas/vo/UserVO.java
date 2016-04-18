@@ -2,8 +2,6 @@ package com.bbd.saas.vo;
 
 import java.io.Serializable;
 
-import org.bson.types.ObjectId;
-
 /**
  * Description: 派件员信息
  * @author: liyanlei
@@ -11,11 +9,15 @@ import org.bson.types.ObjectId;
  */
 public class UserVO implements Serializable{
 	
+	private static final long serialVersionUID = -6129807696406731504L;
 	private String id;
     private String loginName;
     private String realName;
     private String phone;
     
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 	public String getId() {
 		return id;
 	}

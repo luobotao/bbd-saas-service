@@ -42,7 +42,7 @@
 				<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="gotoPage(0);">查询</button>
 				<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="exportData();">导出</button>
 				<!-- 用于导出 -->
-				<form action="<%=request.getContextPath()%>/dataQuery/exportData" method="post" id="exptForm">
+				<form action="<%=path%>/dataQuery/exportToExcel" method="post" id="exptForm">
 					<input id="status_expt" name="status" type="hidden" />
 					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
@@ -87,7 +87,17 @@
 						<td><%=order.getParcelCode()%></td>
 						<td><%=order.getMailNum()%></td>
 						<td><%=order.getOrderNo()%></td>
-						<td><%=order.getSrc()%></td>
+						<%
+							if(order.getSrc() == null){//来源
+						%>
+								<td></td>
+						<%
+							}else{
+						%>
+								<td><%=order.getSrc().getMessage()%></td>
+						<%
+							}
+						%>
 						<td><%=order.getReciever().getName()%></td>
 						<td><%=order.getReciever().getPhone()%></td>
 						<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
@@ -197,7 +207,7 @@ function getRowHtml(data){
 	row +=  "<td>" + data.parcelCode + "</td>";
 	row += "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.orderNo + "</td>";
-	row += "<td>" + data.src + "</td>";
+	row += "<td>" + getSrcName(data.src) + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.phone + "</td>";
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
@@ -215,6 +225,42 @@ function getRowHtml(data){
 	row += "<td>" + getStatus(data.orderStatus) + "</td>";
 	row += "</tr>";	
 	return row;
+}
+
+//转义状态
+function getSrcName(src) {
+	if(src == null){
+		return "";
+	}
+    x = "";
+	switch (src)
+	{
+	case "BBT":
+	  	x = "棒棒糖";
+	 	break;
+	case "棒棒糖":
+	  	x =  "京东";
+	  	break;
+	case "TAOBAO":
+	  	x =  "淘宝";
+	  	break;
+	case "TIANMAO":
+	  x =  "天猫";
+	  break; 
+	case "BAIDUWAIMAI":
+	  	x =  "百度外卖";
+	  	break;
+	case "PINHAOHUO":
+	  	x =  "拼好货";
+	  	break;
+	case "OTHERS":
+	  	x =  "其他";
+	  	break;
+	default : 
+		//x = "棒棒糖";
+		x = src;
+	}
+	return x;
 }
 
 //转义状态
@@ -253,7 +299,8 @@ function getStatus(status) {
 	  	x =  "退货完成";
 	  	break; 	
 	default : 
-		x = "未到站";
+		//x = "未到站";
+		x = status;
 	}
 	return x;
 }	

@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 
 
-public class StrTool {
+public class StringUtil {
 
 	/**
 	 * 字符串为空时替换称指定文字
@@ -29,121 +29,7 @@ public class StrTool {
 			return oldString;
 	}
 	
-	/**
-	 * 取得指定字符串中{}内容,
-	 * @param str
-	 * @return 多个{}中内容的集合
-	 */
-	public static final List<String> split(String str) {
-		List<String> result = new ArrayList<String>();
-		String[] st = str.split("\\{");
-		for (int i = 1; i < st.length; i++) {
-			int index = st[i].indexOf("}");
-			if(index > -1){
-				result.add(st[i].substring(0, st[i].indexOf("}")));
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * 取得公式中的参数
-	 * @param formula
-	 * @return
-	 */
-	public static final List<String> getFormulaPara(String formula) {
-		List<String> ids = new ArrayList<String>();
-		String[] st = formula.split("【");
-		for (int i = 1; i < st.length; i++) {
-			ids.add(st[i].substring(0, st[i].indexOf("】")));
-		}
-		return ids;
-	}
 	
-	/**
-	 * 判断是否周末
-	 * @param date
-	 * @return
-	 * @throws ParseException 
-	 */
-	public static boolean isWeekend(String date) throws ParseException {
-		DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-		Date bdate = format1.parse(date);
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(bdate);
-		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
-				|| cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * 字符串截取
-	 * @param title
-	 * @param length
-	 * @return
-	 */
-	public static String subStringByBytes(String title, int length) {
-		String fullTitle = title;
-
-		if(fullTitle == null){
-			return "";
-		}
-
-		if (fullTitle.getBytes().length <= length) {
-			return title;
-		}
-		StringBuilder sb = new StringBuilder();
-		int countLength = 0;
-		for (int i = 0; i < fullTitle.length(); i++) {
-			countLength = countLength
-					+ fullTitle.substring(i, i + 1).getBytes().length;
-			if (countLength > length) {
-				break;
-			}
-			sb.append(fullTitle.substring(i, i + 1));
-		}
-		return sb.toString();
-	}
-	/**
-	 * 指定起始的字符串截取
-	 * @param title
-	 * @param length
-	 * @return
-	 */
-	public static String subStringByBytesWithStart(String title, int start,int end) {
-		String fullTitle = title;
-		if(fullTitle == null || fullTitle.getBytes().length < start){
-			return "";
-		}
-		StringBuilder sb = new StringBuilder();
-		if(fullTitle.length()<end){
-			end = fullTitle.length();
-		}
-		for (int i = start; i < end; i++) {
-			sb.append(fullTitle.substring(i, i + 1));
-		}
-		return sb.toString();
-	}
-	/**
-	 * 将[aa,bb,cc]样式的字符创装换成list
-	 * @param itemids
-	 * @return
-	 */
-	public static List<String> generateList(String itemids){
-		List<String> ret = new ArrayList<String>();
-		if(!StringUtils.hasText(itemids)){
-			return ret;
-		}else{
-			String subStr = itemids.substring(1, itemids.length()-1);
-			String[] ids = subStr.split(",");
-			for (String str : ids) {
-				ret.add(str.trim());
-			}
-		}
-		return ret;
-	}
 	
 	/**
 	 * 去掉字符串中的空格
@@ -182,32 +68,6 @@ public class StrTool {
 	    }  
 	    return result;  
 	} 
-	
-	
-	/**
-	 * 数组称Like模糊查询的检索条件字符串
-	 * @param arrays
-	 * @return
-	 */
-	public static String arrayToSql(String[] arrays,String column){
-		
-		//判断空
-		if(arrays == null){
-			return "";
-		}
-
-		//产品模糊查询
-		StringBuilder sql = new StringBuilder();
-		sql.append("AND (");
-		for(int i =0;i<arrays.length;i++){
-			if(i != 0){
-				sql.append(" OR ");
-			}
-			sql.append(column+" LIKE '"+arrays[i]+"%'");
-		}
-		sql.append(")");
-		return sql.toString();
-	}
 	
 	
 	/**
@@ -282,33 +142,7 @@ public class StrTool {
 	       return textStr;// 返回文本字符串      
 	  }     
 	 
-	 /**获取二维数组的名称集合
-	 * @param date
-	 * @return
-	 * @throws ParseException 
-	 */
-	public static List<String> getListFromTwoArray(String[][] statusArray){
-		List<String> list = new ArrayList<String>();
-		for(String[] status :statusArray){
-			list.add(status[1]);
-		}
-		return list;
-	}
-	
-
-	/**
-	 * 当前月份加1
-	 * @param date
-	 * @return
-	 */
-	public static Date monthPlus(Date date){
-		//结束日期为下个月1日0点
-		Calendar calendar=Calendar.getInstance();   
-		calendar.setTime(date);
-		calendar.set(Calendar.MONTH,calendar.get(Calendar.MONTH)+1);//月份+1
-		return calendar.getTime();
-	}
-	
+	 
 	/**
 	 * 百分率转换
 	 * @param 数字
@@ -417,179 +251,6 @@ public class StrTool {
 	}
 	
 	/**
-	 * 校验当前年份是否符合系统规范
-	 * 
-	 * @param strYear
-	 * @return
-	 */
-	public static boolean isValidateYear(String strYear){
-		if (strYear == null || "".equals(strYear)) {
-			return false;
-		}
-		String tempYear = strYear.trim();
-		if (tempYear.length() == 4) {
-			if (isNumeric(tempYear)) {
-				return true;
-			}
-		}
-		if (tempYear.indexOf("年") != -1) {
-			if (tempYear.length() == 5) {
-				if (isNumeric(tempYear.substring(0, 4))) {
-					return true;
-				}
-			}
-		}		
-		return false;
-	}
-	
-	/**
-	 * 校验当前季节是否符合系统规范
-	 * 
-	 * @param strYear
-	 * @return
-	 */
-	public static boolean isValidateSeason(String strSeanson){
-		if (strSeanson == null || "".equals(strSeanson)) {
-			return false;
-		}
-		String tempYear = strSeanson.trim();
-		if (tempYear.length()-1 > tempYear.lastIndexOf("度")) {
-			return false;
-		}
-		if (tempYear.substring(0, tempYear.indexOf("年")).trim().length() > 4) {
-			return false;
-		}
-		
-		// 四个季节
-		String compareSeanson = "|1|2|3|4|";
-		
-		if (tempYear.indexOf("年") != -1 && tempYear.indexOf("第") != -1 && tempYear.indexOf("季") != -1) {
-			if (isNumeric(tempYear.substring(0, 4))) {
-				int start = tempYear.lastIndexOf("第")+1;
-				int end = tempYear.lastIndexOf("季");
-				if (isNumeric(tempYear.substring(start, end))) {
-					Integer tempInt = new Integer(tempYear.substring(start, end));
-					if (compareSeanson.contains("|"+tempInt+"|")) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * 校验当前月份是否符合系统规范
-	 * 
-	 * @param strMonth
-	 * @return
-	 */
-	public static boolean isValidateMonth(String strMonth){
-		if (strMonth == null || "".equals(strMonth)) {
-			return false;
-		}
-		String tempMonth = strMonth.trim();
-		if (tempMonth.length()-1 > tempMonth.lastIndexOf("月")) {
-			return false;
-		}
-		if (tempMonth.substring(0, tempMonth.indexOf("年")).trim().length() > 4) {
-			return false;
-		}
-		// 月份
-		String compareMonth = "|1|2|3|4|5|6|7|8|9|10|11|12|";
-		
-		if (tempMonth.indexOf("年") != -1 && tempMonth.indexOf("月") != -1) {
-			if (isNumeric(tempMonth.substring(0, 4))) {
-				int start = tempMonth.lastIndexOf("年")+1;
-				int end = tempMonth.lastIndexOf("月");
-				if (isNumeric(tempMonth.substring(start, end))) {
-					Integer tempInt = new Integer(tempMonth.substring(start, end));
-					if (compareMonth.contains("|"+tempInt+"|")) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * 
-	 * 日期格式：
-	 * yyyy年mm月dd日
-	 * yyyy/mm/dd
-	 * yyyy-mm-dd
-	 * 
-	 * 转换成：
-	 * yyyy-mm-dd
-	 * 
-	 * @param dateStr
-	 * @return
-	 * @throws Exception
-	 */
-	public static String stringDateToYMD(String dateStr) throws Exception {
-		try {
-			if (initStr(dateStr, null) == null) {
-				return null;
-			}
-			String yearT = dateStr.substring(0, 4);
-			String monthT = "";
-			String dateT = "";
-			if (dateStr.indexOf("年") != -1 && dateStr.indexOf("月") != -1 && dateStr.indexOf("日") != -1) {
-				monthT = dateStr.substring(dateStr.indexOf("年")+1, dateStr.indexOf("月")).trim();
-				dateT = dateStr.substring(dateStr.indexOf("月")+1, dateStr.indexOf("日")).trim();
-			}
-			if (dateStr.indexOf("/") != -1 && dateStr.lastIndexOf("/") != -1) {
-				monthT = dateStr.substring(dateStr.indexOf("/")+1, dateStr.lastIndexOf("/")).trim();
-				dateT = dateStr.substring(dateStr.lastIndexOf("/")+1, dateStr.length()).trim();
-			}
-			if (dateStr.indexOf("-") != -1 && dateStr.lastIndexOf("-") != -1) {
-				monthT = dateStr.substring(dateStr.indexOf("-")+1, dateStr.lastIndexOf("-")).trim();
-				dateT = dateStr.substring(dateStr.lastIndexOf("-")+1, dateStr.length()).trim();
-			}
-			String resultDate = yearT.concat("-").concat(monthT).concat("-").concat(dateT);
-			
-			return resultDate;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
-	
-	/**
-	 * 
-	 * @param dateStr
-	 * @return
-	 * @throws Exception
-	 */
-	public static String stringDateToYM(String dateStr) throws Exception {
-		try {
-			if (initStr(dateStr, null) == null) {
-				return null;
-			}
-			String yearT = dateStr.substring(0, 4);
-			String monthT = "";
-			if (dateStr.indexOf("年") != -1 && dateStr.indexOf("月") != -1) {
-				monthT = dateStr.substring(dateStr.indexOf("年")+1, dateStr.indexOf("月")).trim();
-			}
-			if (dateStr.indexOf("/") != -1) {
-				monthT = dateStr.substring(dateStr.indexOf("/")+1, dateStr.length()).trim();
-			}
-			if (dateStr.indexOf("-") != -1) {
-				monthT = dateStr.substring(dateStr.indexOf("-")+1, dateStr.length()).trim();
-			}
-			String resultDate = yearT.concat("-").concat(monthT);
-			
-			return resultDate;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
-	
-	/**
 	 * 对时间的解析
 	 * @param time
 	 * @return
@@ -630,56 +291,7 @@ public class StrTool {
 		return true;
 	}
 	
-	/**
-	 *  2011年12月上旬;
-		2009年上半年;
-		2007年1月初;
-		对用户传过来的这三种值做处理。返回xxxx/xx/xx
-	 * @param date
-	 * @return
-	 */
-	public static String splitDate(String date){
-//		String a = "2011年12月上旬";
-//		String b = "2009年上半年";
-//		String c = "2007年1月初";
-		// 把年先取出来
-		String year = "";
-		String Month = "";
-		String day = "";
-		year = date.substring(0, 4);
-		// 取月
-		String mayDay = "";
-		mayDay = date.substring(5, date.length());
-		if (mayDay.indexOf("月") > 0) {
-			Month = mayDay.substring(0, mayDay.indexOf("月"));
-			day = mayDay.substring(mayDay.indexOf("月")+1, mayDay.length());
-			if(day.length()==1){
-				day = "月"+day;
-			}
-		}else{
-			Month="无";
-			day=mayDay;
-		}
-		return year+"/"+Month+"/"+day;
-	}
-	//截取2位小数
-	/***
-	 * 计算的结果 都保留两位小数 By tanfy 2015-11-24
-	 * @param double1
-	 * @param replace
-	 * @return
-	 */
-	public static String get2NumByDoubleValue(Double double1,String replace){
-		if(double1==null){
-			return  replace;
-		}
-		String str=double1.toString();
-		if(str.indexOf("E")!=-1){//科学计数法
-			BigDecimal db = new BigDecimal(double1);
-			str = db.toPlainString();
-		}
-		return formatValue(double1.doubleValue());
-	}
+	
 	/**
 	 * 截取2位小数
 	 * @author wenhl
@@ -781,7 +393,7 @@ public class StrTool {
 	public static String calculateDifference(String newData, String oldData) {		
 		if (newData != null && !"".equals(newData) && oldData != null && !"".equals(oldData)) {
 			double diff = Double.parseDouble(newData) - Double.parseDouble(oldData);
-			return StrTool.string2Scale(2, diff+"");
+			return StringUtil.string2Scale(2, diff+"");
 		} 
 		return "0.00";
 	}
@@ -800,7 +412,7 @@ public class StrTool {
 			double diff = Double.parseDouble(newData) - Double.parseDouble(oldData);
 			//幅度
 			double range = diff/Double.parseDouble(oldData)*100;
-			return StrTool.string2Scale(2, range+"") + "%";
+			return StringUtil.string2Scale(2, range+"") + "%";
 		} 
 		return "0.00";
 	}
@@ -820,10 +432,10 @@ public class StrTool {
 		if (newData != null && !"".equals(newData) && oldData != null && !"".equals(oldData)) {
 			//涨跌
 			double diff = Double.parseDouble(newData) - Double.parseDouble(oldData);
-			data.add(StrTool.string2Scale(2, diff+""));
+			data.add(StringUtil.string2Scale(2, diff+""));
 			//幅度
 			double range = diff/Double.parseDouble(oldData)*100;
-			data.add(StrTool.string2Scale(2, range+"") + "%");
+			data.add(StringUtil.string2Scale(2, range+"") + "%");
 			return data;
 		} 
 		data.add("0.00");	//涨跌
@@ -847,7 +459,7 @@ public class StrTool {
 			count += Double.parseDouble(data); // 价格
 		}
 		double avg = count/dataList.size();
-		return StrTool.string2Scale(2, avg+"");
+		return StringUtil.string2Scale(2, avg+"");
 	}
 		
 }
