@@ -30,6 +30,8 @@ public class UserForm {
 	private String loginPass;
 	@NotEmpty
 	private String loginNameTemp;
+	@NotEmpty
+	private String staffid;
 	public String getRoleId() {
 		return roleId;
 	}
@@ -66,6 +68,12 @@ public class UserForm {
 	}
 	public void setLoginNameTemp(String loginNameTemp) {
 		this.loginNameTemp = loginNameTemp;
+	}
+	public String getStaffid() {
+		return staffid;
+	}
+	public void setStaffid(String staffid) {
+		this.staffid = staffid;
 	}
 
 
