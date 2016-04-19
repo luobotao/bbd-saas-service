@@ -12,10 +12,10 @@
 <body class="fbg">
 <!-- S content -->
 <div class="clearfix b-branch">
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
 				<ul class="b-sidebar">
 					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -31,7 +31,7 @@
 			</div>
 			<!-- E sidebar -->
 			<!-- S detail -->
-			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 搜索区域 -->
 				<div class="search-area">
 					<ul class="row pb20">
@@ -118,11 +118,11 @@
 							<div class="row pb20">
 								<c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
 								<form action="/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm">
-									<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+									<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+									<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 										<label>关键词：</label>
 										<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
 									</div>
@@ -134,15 +134,18 @@
 							</div>
 							<div class="row pb20">
 								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-									<a href="javascript:void(0)" class="ser-btn b">导入地址关键词</a>
+									<form action="${importSiteKeywordFileUrl}" method="post" enctype="multipart/form-data">
+										<label class="ser-btn b fileup_ui fl">
+											<span>导入地址关键词</span>
+											<input type="file" name="file" />
+										</label>
+									</form>
+
 									<a href="/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
-									<a href="/site/exportSiteKeywordFile" class="ser-btn b ml16">导出地址关键词</a>
+									<a href="/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
 								</div>
 							</div>
-							<form action="${importSiteKeywordFileUrl}" method="post" enctype="multipart/form-data">
-								选择文件:<input type="file" name="file">
-								<input type="submit" value="提交">
-							</form>
+
 							<!-- S table -->
 							<div class="tab-bod mt20">
 								<div class="table-responsive">
