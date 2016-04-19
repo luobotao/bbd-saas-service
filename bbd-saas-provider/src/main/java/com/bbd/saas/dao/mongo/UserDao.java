@@ -101,7 +101,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         Query<User> query = createQuery();
         if(StringUtils.isNotBlank(staffid))
             query.filter("staffid",staffid);
-        query.filter("site._id",site.getId());
+        query.filter("site",site);
         return findOne(query);
     }
     /**
