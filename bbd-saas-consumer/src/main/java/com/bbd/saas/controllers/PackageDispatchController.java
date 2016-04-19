@@ -112,7 +112,7 @@ public class PackageDispatchController {
 		if(order == null){//运单不存在,与站点无关
 			map.put("operFlag", 0);//0:运单号不存在
 		}else{//运单存在
-			/*//当运单到达站点(未分派)，首次分派;当运单状态处于滞留、拒收时，可以重新分派
+			//当运单到达站点(未分派)，首次分派;当运单状态处于滞留、拒收时，可以重新分派
 			if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
 				|| OrderStatus.RETENTION.equals(order.getOrderStatus()) //滞留
 				|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
@@ -121,8 +121,8 @@ public class PackageDispatchController {
 				map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
 			}else{
 				map.put("operFlag", 4);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
-			}*/
-			saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
+			}
+			//saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
 		}
 		return map;
 	}
@@ -142,8 +142,8 @@ public class PackageDispatchController {
 		//运单分派给派件员
 		order.setUser(user);
 		//更新运单状态--已分派
-		//order.setOrderStatus(OrderStatus.DISPATCHED);
-		order.setOrderStatus(OrderStatus.REJECTION);
+		order.setOrderStatus(OrderStatus.DISPATCHED);
+		//order.setOrderStatus(OrderStatus.REJECTION);
 		//order.setOrderStatus(OrderStatus.RETENTION);
 		//更新运单
 		Key<Order> r = orderService.save(order);
@@ -151,8 +151,8 @@ public class PackageDispatchController {
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			//orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
-			orderQueryVO.dispatchStatus = OrderStatus.REJECTION.getStatus();
+			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
+			//orderQueryVO.dispatchStatus = OrderStatus.REJECTION.getStatus();
 			//orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
 			orderQueryVO.userId = courierId;
 			orderQueryVO.areaCode = areaCode;
