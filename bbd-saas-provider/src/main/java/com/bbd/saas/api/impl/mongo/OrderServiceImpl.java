@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
 			OrderQueryVO orderQueryVO) {
 		//派件员员工Id
     	if(orderUpdateVO.staffId != null){
-    		orderUpdateVO.user = userDao.findOneBySiteCodeByStaffid(orderUpdateVO.selfAreaCode, orderUpdateVO.staffId);
+    		orderUpdateVO.user = userDao.findOneBySiteByStaffid(orderUpdateVO.site, orderUpdateVO.staffId);
         }
     	UpdateResults r = orderDao.updateOrder(orderUpdateVO, orderQueryVO);
     	if(r != null){
