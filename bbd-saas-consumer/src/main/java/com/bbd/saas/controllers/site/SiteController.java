@@ -2,6 +2,7 @@ package com.bbd.saas.controllers.site;
 
 import com.bbd.poi.api.SiteKeywordApi;
 import com.bbd.poi.api.SitePoiApi;
+import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.Result;
 import com.bbd.poi.api.vo.SiteKeyword;
@@ -22,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.*;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.geo.LineString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -43,13 +45,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 站点相关处理
@@ -340,23 +341,33 @@ public class SiteController {
 	@ResponseBody
 	@RequestMapping(value="/updateSiteEfence/{siteId}", method=RequestMethod.GET)
 	public String updateSiteEfence(@PathVariable String siteId){
-		/*List<double[]> points = new ArrayList<double[]>();
-        points.add(new double[]{116.476256,39.908467});
-        points.add(new double[]{116.486964,39.904648});
-        points.add(new double[]{116.474028,39.899888});
-        points.add(new double[]{116.469716,39.904261});
+		List<List<MapPoint>> points = new ArrayList<List<MapPoint>>();
+
         List list = new ArrayList();
         list.add(points);
         Result result = sitePoiApi.updateSiteEfence(siteId,list);
-		logger.info(result.code+"");*/
+		logger.info(result.code+"");
 		return "success";
 	}
 
 	//电子围栏
-	@ResponseBody
-	@RequestMapping(value="/putAllOverLay/{overlays}", method=RequestMethod.GET)
-	public String putAllOverLay(@PathVariable Object overlays){
-		logger.info(overlays.toString());
-		return "success";
+	@RequestMapping(value="putAllOverLay", method=RequestMethod.POST)
+	public String putAllOverLay(@RequestParam String jsonStr){
+		//处理电子围栏数据
+		String[] pointArr = jsonStr.split(";");
+		List<List<MapPoint>> points = new ArrayList<List<MapPoint>>();
+		for (String pointStr: pointArr) {
+			List<MapPoint> mapPointList = new ArrayList<MapPoint>();
+			String[] mapPointArr = pointStr.split(",");
+			for (String mapPointStr: mapPointArr) {
+				String[] arr = mapPointStr.split("_");
+				MapPoint mapPoint = new MapPoint(Numbers.parseDouble(arr[0],0.0),Numbers.parseDouble(arr[1],0.0));
+				mapPointList.add(mapPoint);
+			}
+			points.add(mapPointList);
+		}
+		Result result = sitePoiApi.updateSiteEfence("570e12e06efa872f6c15a7b5",points);
+		logger.info(result.code+"");
+		return "redirect:/deliverRegion/map/2";
 	}
 }

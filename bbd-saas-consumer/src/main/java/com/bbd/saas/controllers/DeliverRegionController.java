@@ -1,6 +1,8 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.poi.api.SiteKeywordApi;
+import com.bbd.poi.api.SitePoiApi;
+import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.Services.AdminService;
@@ -22,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/deliverRegion")
@@ -34,6 +39,8 @@ public class DeliverRegionController {
 	UserService userService;
 	@Autowired
 	SiteKeywordApi siteKeywordApi;
+	@Autowired
+	SitePoiApi sitePoiApi;
 	/**
 	 * description: 跳转到系统设置-配送区域-绘制电子地图页面
 	 * 2016年4月5日下午4:05:01
@@ -71,7 +78,28 @@ public class DeliverRegionController {
 		model.addAttribute("page", siteKeywordPage.getPage());
 		model.addAttribute("pageNum", siteKeywordPage.getPageNum());
 		model.addAttribute("pageCount", siteKeywordPage.getCount());
+
+		List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence("570e12e06efa872f6c15a7b5");
+		String siteStr = dealSitePoints(sitePoints);
+		model.addAttribute("sitePoints", siteStr);
 		return "systemSet/deliverRegionMap";
+	}
+
+	private String dealSitePoints(List<List<MapPoint>> sitePoints) {
+		StringBuffer sb = new StringBuffer();
+		for (int j = 0; j < sitePoints.size(); j++) {
+			for (int i = 0; i < sitePoints.get(j).size(); i++) {
+				String str = sitePoints.get(j).get(i).getLng()+"_"+sitePoints.get(j).get(i).getLat();
+				sb.append(str);
+				if(i<sitePoints.get(j).size()-1){
+					sb.append(",");
+				}
+			}
+			if(j<sitePoints.size()-1) {
+				sb.append(";");
+			}
+		}
+		return sb.toString();
 	}
 
 }
