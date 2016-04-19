@@ -114,7 +114,8 @@ public class PackageToSiteController {
 		pageModel.setPageNo(pageIndex);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
 		for(Order order : orderPage.getDatas()){
-			order.setParcelCode(orderPacelService.findParcelCodeByOrderId(order.getId().toHexString()));//设置包裹号
+			String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+			order.setParcelCode(parcelCodeTemp);//设置包裹号
 		}
 		return orderPage;
 	}

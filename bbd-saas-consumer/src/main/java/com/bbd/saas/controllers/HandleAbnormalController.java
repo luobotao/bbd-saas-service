@@ -106,7 +106,7 @@ public class HandleAbnormalController {
 	public List<UserVO> getAllUserList(final HttpServletRequest request) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		//查询
-		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
+		List<UserVO> userVoList = userService.findUserListBySite(user.getSite());
 		return userVoList;
 	}
 	
