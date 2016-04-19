@@ -227,6 +227,7 @@ public class HandleAbnormalController {
 			order.setAreaRemark(remark.toString());//站点的具体地址
 			order.setOrderStatus(null);//状态--为空
 			order.setUser(null);//未分派
+			order.setDateUpd(new Date());//更新时间
 			//更新运单
 			Key<Order> r = orderService.save(order);
 			if(r != null){
