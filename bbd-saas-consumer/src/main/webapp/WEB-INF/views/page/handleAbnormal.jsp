@@ -17,187 +17,243 @@
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
 %>
-<body >
-<div>
+<body class="fbg">
+<!-- S content -->
+<div class="clearfix b-branch">
+	<div class="container">
+		<div class="row">
+			<!-- S sidebar -->
+			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="opacity:0;">
+				<ul class="b-sidebar">
+					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
+					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
+					<li class="lv1 side-cur"><a href="exception-processing.html"><i class="b-icon p-error"></i>异常件处理</a></li>
+					<li class="lv1"><a href="data-query.html"><i class="b-icon p-query"></i>数据查询</a></li>
+					<li class="lv1"><a href="system-distribution.html"><i class="b-icon p-set"></i>系统设置</a></li>
+					<ul class="menu dn">
+		                <li><a href="system-distribution.html">配送区域</a></li>
+		                <li><a href="system-usermanage.html">用户管理</a></li>
+		                <li><a href="system-role.html">角色管理</a></li>
+		            </ul>
+				</ul>
+			</div>
+			<!-- E sidebar -->
+			<!-- S detail -->
+			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+				<!-- S 搜索区域 -->
+				<div class="search-area">
+  					<div class="row pb20">
+  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+  							<label>状态：</label>
+  							<select id="status" name="status" class="form-control form-con-new">
+  								<%=AbnormalStatus.Srcs2HTML(-1)%>
+  							</select>
+  						</div>
+  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+  							<label>到站时间：</label>
+  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
+  						</div>
+  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
+  						</div>
+  					</div>
+  				</div>
+				<!-- E 搜索区域 -->
+				<div class="tab-bod mt20">
+					<!-- S table -->
+					<div class="table-responsive">
+  					<table class="table">
+  						<thead>
+  							<tr>
+  								<th>运单号</th>
+								<th>收货人</th>
+								<th>收货人地址</th>
+								<th>到站时间</th>
+								<th>派送员姓名</th>
+								<th>派送员手机</th>
+								<th>状态</th>
+								<th width="20%">操作</th>
+  							</tr>
+  						</thead>
+  						<tbody id="dataList">
+						<%
+							PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+							if(orderPage.getDatas() == null){
+						%>
+							<tr>
+								<td colspan="7">没有符合查询条件的数据</td>
+							</tr>
+						<%
+							}else{
+								for(Order order : orderPage.getDatas()){
+						%>
+							<tr>
+								<td><%=order.getMailNum()%></td>
+								<td><%=order.getReciever().getName()%></td>
+								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
+								<%
+									if(order.getUser() == null){//未分派
+								%>
+										<td></td>
+										<td></td>
+								<%
+									}else{
+								%>
+										<td><%=order.getUser().getRealName()%></td>
+										<td><%=order.getUser().getPhone()%></td>
+								<%
+									}
+									if(order.getOrderStatus() == OrderStatus.RETENTION){
+								%>
+									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
+								<%
+									}else{
+								%>
+									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
+								<%
+									}
+								%>
+								<td>
+									<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>','<%=order.getUser().getStaffid()%>')">重新分派</a>
+									<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
+									<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
+									<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
+								</td>
+							</tr>
+						<%
+							}//for
+						}//else
+						%>
+						</tbody>
+  					</table>
+  					</div>
+  					<!-- E table -->
+  					<!-- S tableBot -->
+  					<div class="clearfix pad20" id="pagin"></div>
+					<!-- E tableBot -->
+				</div>
+			</div>
+			<!-- E detail -->
+		</div>
+	</div>
 </div>
-<section class="content">
-	<div class="col-xs-12">
-		<!-- 订单数显示 结束   -->
-		<div class="box-body">
-			<div class="row">
-				<div class="col-xs-3">
-					<label>状态：</label>
-					<select id="status" name="status" class="form-control">
-						<%=AbnormalStatus.Srcs2HTML(-1)%>
-					</select>
-				</div>
-				<div class="col-xs-3">
-					<label>到站时间：</label>
-					<input id="arriveBetween" name="arriveBetween" type="text" class="form-control" placeholder="请选择到站时间" value="${arriveBetween}"/>
-				</div>
-			</div>
-			<div class="row">
-				<button class="btn btn-primary" style="margin-top:10px ; margin-left: 15px ;" onclick="gotoPage(0);">查询</button>
-			</div>
-		</div>
-	</div>
-	<div class="col-xs-12">
-		
-		<div class="box-body table-responsive">
-			<table id="orderTable" class="table table-bordered table-hover">
-				<thead>
-					<tr>
-						<td>运单号</td>
-						<td>收货人</td>
-						<td>收货人地址</td>
-						<td>到站时间</td>
-						<td>派送员姓名</td>
-						<td>派送员手机</td>
-						<td>状态</td>
-						<td>操作</td>
-					</tr>
-				</thead>
-				<tbody id="dataList">
-				<%
-					PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
-					if(orderPage.getDatas() == null){
-				%>
-					<tr>
-						<td colspan="7">没有符合查询条件的数据</td>
-					</tr>
-				<%
-					}else{
-						for(Order order : orderPage.getDatas()){
-				%>
-					<tr>
-						<td><%=order.getMailNum()%></td>
-						<td><%=order.getReciever().getName()%></td>
-						<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-						<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
-						<%
-							if(order.getUser() == null){//未分派
-						%>
-								<td></td>
-								<td></td>
-						<%
-							}else{
-						%>
-								<td><%=order.getUser().getRealName()%></td>
-								<td><%=order.getUser().getPhone()%></td>
-						<%
-							}
-							if(order.getOrderStatus() == OrderStatus.RETENTION){
-						%>
-							<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
-						<%
-							}else{
-						%>
-							<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
-						<%
-							}
-						%>
-						<td>
-							<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>','<%=order.getUser().getStaffid()%>')">重新分派</a>
-							<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
-							<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
-							<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
-						</td>
-					</tr>
-				<%
-					}//for
-				}//else
-				%>
-				</tbody>
-			</table>
-			
-			<!--页码 start-->
-			<div id="pagin"></div>	
-			<!--页码 end-->
-			
-		</div>
-	</div>
-</section>
-
-
+<!-- E content -->
+<!-- S footer -->
+<footer class="pos-footer tc">
+    <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
+</footer>
+<!-- E footer -->
+<!-- S pop -->
 <!-- 重新分派面板-开始 -->
-<div  id="chooseCourier_div" class="popDiv" >
-	<div class="title_div">重新分派</div>
-	<div class="m20">
-		<span>派件员:
-			<select id="courier_select" >  
-				 
-			</select>				  
-		</span> 
-	</div>
-	<div class="m20">
-		<button onclick="hideCourierDiv()">取消</button>
-		<button onclick="chooseCourier()">确定</button>
+<div id="chooseCourier_div" class="j-sel-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display:none;">
+	<div class="modal-dialog b-modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">重新分派</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				<ul class="row">
+					<li class="col-md-12">
+						<div class="has-sel-icon mb12">
+							<i class="glyphicon glyphicon-user c-gray pl15"></i>
+							派件员:<select id="courier_select"> </select>
+						</div>
+					</li>
+					<li class="col-md-12">
+						<div class="c-red"><i class="glyphicon glyphicon-exclamation-sign pl15"></i> 请选择派件员</div>
+					</li>
+				</ul>
+				<div class="row mt20">
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideCourierDiv()" class="sbtn sbtn2 g">取消</a></span>
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="chooseCourier()" class="sbtn sbtn2 l">确定</a></span>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 <!-- 重新分派面板-结束 -->
 
-<!-- 转其他快递面板-开始 -->
-<div  id="chooseOtherExpress_div" class="popDiv" >
-	<div class="title_div">转其他快递</div>
-	<div class="m20">
-		<span>快递公司:
-			<select id="express_select">  
-				<option value ="中通">中通</option>  
-				<option value ="申通">申通</option>  
-				<option value="顺风">顺风</option>  
-			</select>				  
-		</span> <br><br>
-		<span>运单号：<input id="mailNum" name="mailNum" type="text" value="" placeholder="请输入运单号"/></span>
-	</div>
-	<div class="m20">
-		<button onclick="hideOtherExpressDiv()">取消</button>
-		<button onclick="chooseOtherExpress()">确定</button>
-	</div>
-</div>
-<!-- 转其他快递面板-结束 -->
 
 
-<!-- 转其他站点面板-开始 -->
-<div  id="chooseOtherSite_div" class="popDiv" >
-	<div class="title_div">转其他站点</div>
-	<div class="m20">
-		<span>站点:
-			<select id="site_select">  
-				 
-			</select>				  
-		</span> <br>
-	</div>
-	<div class="m20">
-		<button onclick="hideOtherSiteDiv()">取消</button>
-		<button onclick="chooseOtherSite('mailNum')">确定</button>
+<!--S 申请退货-->
+<div id="apply_return_div" class="j-th-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">申请退货</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				选择退货原因:
+				<select id="returnReasonType" name="returnReasonType" class="form-control form-bod">
+					<option value ="货物破损">货物破损</option>  
+					<option value ="超时配送">超时配送</option>  
+					<option value="客户端要求退换">客户端要求退换</option>  
+					<option value="其他">其他</option> 
+				</select>
+				<textarea id="returnReasonInfo" name="returnReasonInfo" class="form-control form-bod mt20" col="3" placeholder="请输入退货原因"></textarea>
+				<div class="row mt20">
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideApplyReturnDiv()" class="sbtn sbtn2 g">取消</a></span>
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="applyReturn()" class="sbtn sbtn2 l">确定</a></span>
+					
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-<!-- 转其他站点面板-结束 -->
+<!--E 申请退货-->
 
-<!-- 申请退货-开始 -->
-<div  id="apply_return_div" class="popDiv" >
-	<div class="title_div">申请退货</div>
-	<div class="m20">
-		<span>选择退货原因:
-			<select id="returnReasonType" name="returnReasonType">  
-				<option value ="货物破损">货物破损</option>  
-				<option value ="超时配送">超时配送</option>  
-				<option value="客户端要求退换">客户端要求退换</option>  
-				<option value="其他">其他</option>  
-			</select>				  
-		</span> <br><br>
-		<span>
-			<textarea style="display: none;" rows="5" cols="50" id="returnReasonInfo" name="returnReasonInfo" placeholder="请输入退货原因">
-				
-			</textarea>
-		</span>
-	</div>
-	<div class="m20">
-		<button onclick="hideApplyReturnDiv()">取消</button>
-		<button onclick="applyReturn('mailNum')">确定</button>
+
+<!--S 转其他快递-->
+<div id="chooseOtherExpress_div" class="j-turn-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">转其他快递</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				快递公司:
+				<select id="express_select" class="form-control form-bod">
+					<option>请选择快递公司</option>
+				</select>
+				运单号：<textarea id="mailNum" name="mailNum"  class="form-control form-bod mt20" col="3" placeholder="请输入运单号"></textarea>
+				<div class="row mt20">
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideOtherExpressDiv()" class="sbtn sbtn2 g">取消</a></span>
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="chooseOtherExpress()" class="sbtn sbtn2 l">确定</a></span>
+					
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-<!-- 转其他站点面板-结束 -->
+<!--E 转其他快递-->
+
+
+<!--S 转其他站点-->
+<div id="chooseOtherSite_div" class="j-site-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">转其他站点</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				站点:<select id="site_select" class="form-control form-bod">
+					</select>
+				<div class="row mt20">
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideOtherSiteDiv()" class="sbtn sbtn2 g">取消</a></span>
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="chooseOtherSite()" class="sbtn sbtn2 l">确定</a></span>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 转其他站点-->
+<!-- E pop -->
 
 <!-- 分页js -->
 <script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
