@@ -25,14 +25,7 @@ $(function () {
         counthei();
     });
     // E sidebar
-    // S 配送区域
-    $('.b-tab li:eq(0) a').tab('show');
-    $('.b-tab a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
-        $(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
-    })
-    // E 配送区域
+
 
     // 重新分派
     shP(".j-sel", ".j-sel-pop");

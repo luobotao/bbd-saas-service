@@ -58,7 +58,6 @@ public class DeliverRegionController {
 		String between = request.getParameter("between");
 		String keyword = request.getParameter("keyword");
 		int page = Numbers.parseInt(request.getParameter("page"),0);
-		activeNum = "2";
 		//导入地址关键词
 		//--------panel 3-----------------------
 		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();

@@ -6,6 +6,7 @@ import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.Result;
 import com.bbd.poi.api.vo.SiteKeyword;
+import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
@@ -70,6 +71,8 @@ public class SiteController {
 	SiteKeywordApi siteKeywordApi;
 	@Autowired
 	HttpServletRequest request;
+	@Autowired
+	AdminService adminService;
 
 	@Value("${oss.access.id}")
 	private String ACCESS_ID ;
@@ -192,6 +195,8 @@ public class SiteController {
 		if (filename == null || "".equals(filename)){
 			return null;
 		}
+		User user = adminService.get(UserSession.get(request));
+		String siteId = user.getSite().getId().toString();
 		try	{
 			InputStream input = fileTmp.getInputStream();
 			XSSFWorkbook workBook = new XSSFWorkbook(input);
@@ -199,8 +204,8 @@ public class SiteController {
 			if (sheet != null){
 				for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++){
 					XSSFRow row = sheet.getRow(i);
-
-					siteKeywordApi.addSitePoiKeyword("570e12e06efa872f6c15a7b5",row.getCell(0).toString(),row.getCell(1).toString(),row.getCell(2).toString(),row.getCell(3).toString());
+					Result result = siteKeywordApi.addSitePoiKeyword(siteId,row.getCell(0).toString(),row.getCell(1).toString(),row.getCell(2).toString(),row.getCell(3).toString());
+					logger.info("[import result]"+result.toString());
 					logger.info("成功导入"+i+"条，地址："+row.getCell(3).toString());
 				}
 			}
@@ -345,7 +350,7 @@ public class SiteController {
         List list = new ArrayList();
         list.add(points);
         Result result = sitePoiApi.updateSiteEfence(siteId,list);
-		logger.info(result.code+"");
+		logger.info(result.toString()+"");
 		return "success";
 	}
 

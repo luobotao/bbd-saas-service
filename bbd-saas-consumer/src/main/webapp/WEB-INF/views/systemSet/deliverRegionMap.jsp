@@ -1,3 +1,4 @@
+<%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -75,7 +76,7 @@
 
 								</div>
 								<div class="col-md-12 pb20">
-									<div class="b-map"><div id="allmap" style="height: 473px;"></div></div>
+									<div class="b-map"><div id="allmapPs" style="height: 473px;"></div></div>
 								</div>
 								<div class="col-md-12 form-inline form-inline-n">
 									<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn">　保存　</a>
@@ -105,6 +106,7 @@
 
 								<form action="/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}" method="post" id="allLaysForm">
 									<input type="hidden" name="jsonStr" id="jsonStr"/>
+									<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
 									<a href="javascript:void(0);" class="ser-btn c" onclick="openDraw()">绘制</a>
 									<a href="javascript:void(0);" class="ser-btn c" onclick="bmap.clearAll()">清除</a>
 									<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
@@ -139,10 +141,11 @@
 											<span>导入地址关键词</span>
 											<input type="file" name="file" />
 										</label>
-									</form>
 
-									<a href="/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
-									<a href="/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
+										<a href="/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
+										<a href="/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
+										<input type="submit" value="提交"/>
+									</form>
 								</div>
 							</div>
 
@@ -165,7 +168,7 @@
 											<c:forEach items="${siteKeywordPageList}" var="siteKeyword">
 												<tr>
 													<td><input type="checkbox" value="${siteKeyword.id}" name="inputC"/></td>
-													<td>${siteKeyword.createAt}</td>
+													<td>${Dates.formatDateTime_New(siteKeyword.createAt)}</td>
 													<td>${siteKeyword.province}</td>
 													<td>${siteKeyword.city}</td>
 													<td>${siteKeyword.distict}</td>
@@ -216,6 +219,7 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
+	console.log(${activeNum});
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
 	$('.b-tab a').click(function (e) {
 		e.preventDefault()
@@ -245,7 +249,7 @@
 	//展示配送范围
 	function showMap(){
 		// 百度地图API功能
-		var map = new BMap.Map("allmap");
+		var map = new BMap.Map("allmapPs");
 		if(${site.lng != ""&&site.lat != ""}){
 		var point = new BMap.Point(${site.lng}, ${site.lat});
 		map.centerAndZoom(point, 12);
@@ -302,19 +306,22 @@
 		$("#siteKeywordForm").submit();
 	}
 
-	/*var bmapArr = [];
-	var arrayPoint = $("sitePoints").value;
+
+	//--------------------panel 2------------------------------------
+
+	var bmapArr = [];
+	var arrayPoint = $("#sitePoints").val();
 	var siteArr = arrayPoint.split(";");
-	for(var i = 0; i < siteArr.length; i++){
+	for (var i = 0; i < siteArr.length; i++) {
 		var arr = siteArr[i].split(",");
 		var barr = [];
-		for(var j = 0; j < arr.length; j++){
+		for (var j = 0; j < arr.length; j++) {
 			var tmp = arr[j].split("_");
-			barr.push(new BMap.Point(tmp[0],tmp[1]));
+			barr.push(new BMap.Point(tmp[0], tmp[1]));
 		}
 		bmapArr.push(barr);
 	}
-	console.log(bmapArr);*/
+	console.log(bmapArr);
 	var bmap = {
 		status: false,
 		map: '',
@@ -469,15 +476,15 @@
 	}
 	//加载一个已有的多边形
 
-	bmap.myOverlay = [[
+	/*bmap.myOverlay = [[
 	 new BMap.Point(116.256515,39.995242),
 	 new BMap.Point(116.502579,39.951893),
 	 new BMap.Point(116.256515,39.866882)
 	 ],[new BMap.Point(116.403863,40.910426),
 	 new BMap.Point(116.636129,40.902574),
 	 new BMap.Point(116.582087,40.731351)
-	 ]];
-	//bmap.myOverlay=bmapArr;
+	 ]];*/
+	bmap.myOverlay=bmapArr;
 	console.log(bmap.myOverlay);
 	bmap.init();
 
