@@ -545,6 +545,8 @@ function saveUserBtn(){
 	var loginPass = $("#loginPass").val();
 	var confirmPass = $("#confirmPass").val();
 	var tel_reg = /^1[34578]{1}\d{9}/;
+	var loginpasstemp = true;
+	var confirmpasstemp = true;
 	if (roleId=="-1") {
 	    $("#roleIdP").attr("style","color:red");
 		flag = false;
@@ -578,16 +580,18 @@ function saveUserBtn(){
 	if (!loginPass) {
 	    $("#loginpassP").attr("style","color:red");
 		flag = false;
+		loginpasstemp = false;
 	}else{
 		$("#loginpassP").attr("style","display:none");
 	}
 	if (!confirmPass) {
 	    $("#confirmPassP").attr("style","color:red");
 		flag = false;
+		confirmpasstemp = false;
 	}else{
 		$("#confirmPassP").attr("style","display:none");
 	}
-	if(loginPass==confirmPass){
+	if(loginpasstemp && confirmpasstemp && loginPass==confirmPass){
 		$("#confirmPassP").attr("style","display:none");
 	}else{
 		$("#confirmPassP").attr("style","color:red");
