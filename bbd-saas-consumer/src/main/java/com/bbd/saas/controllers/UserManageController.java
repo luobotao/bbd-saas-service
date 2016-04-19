@@ -195,6 +195,7 @@ public class UserManageController {
 		olduser.setRealName(userForm.getRealName());
 		//olduser.setLoginName(userForm.getLoginName());
 		//olduser.setPhone(userForm.getPhone());
+		olduser.setStaffid(userForm.getStaffid());
 		olduser.setPassWord(userForm.getLoginPass());
 		olduser.setOperate(getuser);
 		olduser.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
