@@ -131,9 +131,10 @@ public class HandleAbnormalController {
 		
 		//更新字段设置
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
-		orderUpdateVO.staffId = staffId;//派件员id--ObjectId  
-		orderUpdateVO.selfAreaCode = currUser.getStaffid();
-		orderUpdateVO.orderStatus = OrderStatus.RETENTION;//更新运单状态--已分派
+		orderUpdateVO.staffId = staffId;//派件员id--ObjectId 
+		orderUpdateVO.site = currUser.getSite();
+		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
+		//orderUpdateVO.orderStatus = OrderStatus.RETENTION;//更新运单状态--已分派
 		
 		//检索条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
