@@ -24,10 +24,10 @@ public class User implements Serializable {
     private static final long serialVersionUID = 7757716632879758078L;
     @Id
     private ObjectId id;
-    private String loginName;
+    private String loginName;//登录名即手机号
     private String passWord;
     private String realName;
-    private String phone;
+    //private String phone;
     private UserRole role;
     @Reference("site")
     private Site site;
@@ -78,14 +78,6 @@ public class User implements Serializable {
 
     public void setRealName(String realName) {
         this.realName = realName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public UserRole getRole() {
