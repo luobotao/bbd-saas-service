@@ -163,9 +163,7 @@
 	<div class="m20">
 		<span>站点:
 			<select id="site_select">  
-				<option value ="站点A">站点A</option>  
-				<option value ="站点B">站点B</option>  
-				<option value="站点C">站点C</option>  
+				 
 			</select>				  
 		</span> <br>
 	</div>
@@ -460,13 +458,10 @@ function showOtherSiteDiv(mailNumStr) {
 }
 //把站点添加到下拉框中
 function loadSites(siteList) {
-	console.log("siteList=33333=="+siteList);
 	var site_select = $("#site_select");
 	// 清空select  
 	site_select.empty(); 
-	console.log("siteList==="+siteList);
 	if(siteList != null){
-		console.log("siteList.length==="+siteList.length);
 		for(var i = 0; i < siteList.length; i++){
 			data = siteList[i];
 			site_select.append("<option value='"+data.id+"'>"+data.name+"</option>");
@@ -487,7 +482,7 @@ function chooseOtherSite() {
         url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
         data : {  
             "mailNum" : mailNum, //
-            "areaCode" : $("#site_select").val(),//站点编号
+            "siteId" : $("#site_select").val(),//站点编号
             "pageIndex" : pageIndex,//更新列表
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 
