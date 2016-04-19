@@ -141,14 +141,13 @@ public class SiteController {
 		redirectAttrs.addAttribute("siteid",siteKey.getId().toString());
 		//向用户表插入登录用户
 		User user = new User();
-		user.setLoginName(site.getUsername());
+		user.setLoginName(site.getPhone());//手机号即为登录名
 		user.setPassWord(site.getPassword());
 		user.setDateAdd(new Date());
 		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		user.setSite(site);
 		user.setRole(UserRole.SITEMASTER);
-		user.setPhone(site.getPhone());
 		userService.save(user);
 		return "redirect:siteView";
 	}

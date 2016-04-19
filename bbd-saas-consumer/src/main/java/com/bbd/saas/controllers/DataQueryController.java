@@ -86,7 +86,6 @@ public class DataQueryController {
 	/**
 	 * Description: 导出数据
 	 * @param status 状态
-	 * @param arriveBetween 到站时间
 	 * @param mailNum 运单号
 	 * @param request
 	 * @param response
@@ -134,7 +133,7 @@ public class DataQueryController {
 					row.add("");
 				}else{
 					row.add(order.getUser().getRealName());
-					row.add(order.getUser().getPhone());
+					row.add(order.getUser().getLoginName());
 				}
 				if(order.getOrderStatus() == null){
 					row.add("未到站");
