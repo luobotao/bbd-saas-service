@@ -226,8 +226,6 @@ public class SiteController {
 		User user = userService.findOne(userId);
 		String siteId = user.getSite().getId().toString(); //request.getParameter("siteId");
 		String siteName = user.getSite().getName().toString();//request.getParameter("siteName");
-		String between = request.getParameter("between");
-		String keyword = request.getParameter("keyword");
 		response.setContentType("application/binary;charset=ISO8859_1");
 		try
 		{
@@ -370,7 +368,9 @@ public class SiteController {
 			}
 			points.add(mapPointList);
 		}
-		Result result = sitePoiApi.updateSiteEfence("570e12e06efa872f6c15a7b5",points);
+		User user = adminService.get(UserSession.get(request));
+		String siteId = user.getSite().getId().toString();
+		Result result = sitePoiApi.updateSiteEfence(siteId,points);
 		logger.info(result.code+"");
 		return "redirect:/deliverRegion/map/2";
 	}

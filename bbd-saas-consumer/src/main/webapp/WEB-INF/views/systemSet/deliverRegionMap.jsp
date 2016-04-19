@@ -136,15 +136,14 @@
 							</div>
 							<div class="row pb20">
 								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-									<form action="${importSiteKeywordFileUrl}" method="post" enctype="multipart/form-data">
+									<form action="${importSiteKeywordFileUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
 										<label class="ser-btn b fileup_ui fl">
 											<span>导入地址关键词</span>
-											<input type="file" name="file" />
+											<input type="file" name="file" class="import-file" />
 										</label>
 
 										<a href="/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
 										<a href="/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
-										<input type="submit" value="提交"/>
 									</form>
 								</div>
 							</div>
@@ -211,6 +210,29 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<!-- S pop -->
+<!--S 提示-->
+<div class="j-import-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">导入</h4>
+			</div>
+			<div class="modal-body">
+				<div class="col-md-12">
+					<span>确定要导入吗？</span>
+				</div>
+			</div>
+			<div class="modal-footer mt20 bod0">
+				<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal">取消</a>
+				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 提示-->
+<!-- E pop -->
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
@@ -243,6 +265,9 @@
 				alert('服务器繁忙，请稍后再试！');
 			}
 		});
+	})
+	$("#importBtn").click(function(){
+		$("#importFileForm").submit();
 	})
 
 	showMap();
@@ -431,11 +456,17 @@
 		clearAll: function() {
 			var map = this.map;
 			var overlays = this.overlays;
+			console.log(overlays);
 			for(var i = 0; i < overlays.length; i++){
 				map.removeOverlay(overlays[i]);
 			}
 			this.overlays.length = 0
-			map.removeOverlay(this.myPolygon);
+			this.myOverlay.forEach(function(e){
+				myPolygon = new BMap.Polygon(e, this.styleOptions);
+				this.myPolygon = myPolygon;
+				map.removeOverlay(this.myPolygon);
+			})
+
 			this.myPolygon = '';
 		},
 		/**
@@ -460,6 +491,7 @@
 	var isPanelShow = false;
 	$("showPanelBtn").onclick = showPanel;
 	function showPanel(){
+		console.log(isPanelShow);
 		if (isPanelShow == false) {
 			isPanelShow = true;
 			$("showPanelBtn").style.right = "230px";

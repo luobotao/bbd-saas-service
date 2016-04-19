@@ -842,6 +842,9 @@ footer {
 .b-modal-body {
   padding: 40px;
 }
+.b-modal-footer{
+  padding:0 40px 20px;
+}
 .cho-lg {
   text-align: center;
 }
