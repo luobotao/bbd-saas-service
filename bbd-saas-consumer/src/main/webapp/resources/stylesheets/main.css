@@ -797,7 +797,7 @@ footer {
   border: 1px solid #dbdaec;
 }
 .tab-area .b-map {
-  display: block;
+  height:473px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;

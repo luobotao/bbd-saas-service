@@ -122,6 +122,7 @@ public class PackageDispatchController {
 			}else{
 				map.put("operFlag", 4);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
 			}
+			//saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
 		}
 		return map;
 	}
@@ -141,9 +142,9 @@ public class PackageDispatchController {
 		//运单分派给派件员
 		order.setUser(user);
 		//更新运单状态--已分派
-		//order.setOrderStatus(OrderStatus.DISPATCHED);
+		order.setOrderStatus(OrderStatus.DISPATCHED);
 		//order.setOrderStatus(OrderStatus.REJECTION);
-		order.setOrderStatus(OrderStatus.RETENTION);
+		//order.setOrderStatus(OrderStatus.RETENTION);
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){
@@ -152,7 +153,7 @@ public class PackageDispatchController {
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
 			//orderQueryVO.dispatchStatus = OrderStatus.REJECTION.getStatus();
-//			orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
+			//orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
 			orderQueryVO.userId = courierId;
 			orderQueryVO.areaCode = areaCode;
 			//查询数据
@@ -175,7 +176,7 @@ public class PackageDispatchController {
 	public List<UserVO> getAllUserList(final HttpServletRequest request) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		//查询
-		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
+		List<UserVO> userVoList = userService.findUserListBySite(user.getSite());
 		return userVoList;
 	}
 }
