@@ -142,24 +142,30 @@ public class UserManageController {
 		User user = new User();
 		user.setRealName(userForm.getRealName());
 		user.setLoginName(userForm.getLoginName());
-		user.setPhone(userForm.getPhone());
+		//user.setPhone(userForm.getPhone());
 		user.setPassWord(userForm.getLoginPass());
 		user.setSite(getuser.getSite());
 		user.setOperate(getuser);
 		user.setStaffid(userForm.getStaffid());
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
-		user.setUserStatus(UserStatus.status2Obj(0));
+		user.setUserStatus(UserStatus.status2Obj(1));
 		System.out.println("============="+user.getUserStatus().getStatus());
 		Key<User> kuser = userService.save(user);
 		/*PostmanUser postmanUser = new PostmanUser();
-		postmanUser.setPhone(userForm.getPhone());
+		postmanUser.setPhone(userForm.getLoginName());
+		postmanUser.setStaffid(userForm.getStaffid());
 		postmanUser.setDateNew(dateAdd);
-		postmanUser.setPoststatus(0);
-		postmanUser.setPostrole(Integer.parseInt(userForm.getRoleId()));
-		
-		
-		userMysqlService.insertUser(postmanUser);
+		postmanUser.setPoststatus(1);
+		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
+			//站长
+			postmanUser.setPostrole(4);
+		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
+			//快递员
+			postmanUser.setPostrole(0);
+		}
+
+		int ret = userMysqlService.insertUser(postmanUser);
 		System.out.println("idddd=="+postmanUser.getId());
 		return "true";*/
 		if(kuser!=null && !kuser.getId().equals("")){
@@ -188,7 +194,7 @@ public class UserManageController {
 		logger.info(userForm.getLoginNameTemp());
 		olduser.setRealName(userForm.getRealName());
 		//olduser.setLoginName(userForm.getLoginName());
-		olduser.setPhone(userForm.getPhone());
+		//olduser.setPhone(userForm.getPhone());
 		olduser.setPassWord(userForm.getLoginPass());
 		olduser.setOperate(getuser);
 		olduser.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
