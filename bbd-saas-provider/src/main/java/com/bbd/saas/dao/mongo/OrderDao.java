@@ -40,6 +40,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("-dateUpd");
         if(orderQueryVO!=null){
+            query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
             if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
@@ -71,8 +72,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
 
     public OrderNumVO getOrderNumVO(String areaCode) {
         OrderNumVO orderNumVO = new OrderNumVO();
-        Query<Order> query = createQuery().filter("areaCode",areaCode);
-        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode);
+        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         query.filter("dateMayArrive <=",new Date());
