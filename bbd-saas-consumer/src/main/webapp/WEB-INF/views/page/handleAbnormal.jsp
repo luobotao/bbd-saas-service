@@ -392,8 +392,11 @@ function initCourierList() {
        	}    
     });
 }
+// 重新分派
+    shP(".j-sel", ".j-sel-pop");
 //显示选择派件员div
 function showCourierDiv(mailNumStr, staffId) {
+
 	mailNum = mailNumStr;
 	//staffId = staffIdStr;
 	console.log("v==mailNum=="+mailNum);
@@ -413,7 +416,8 @@ function showCourierDiv(mailNumStr, staffId) {
 	  		}    
 	    });
 	}
-	$("#chooseCourier_div").show();
+	$(".j-sel-pop").modal("show");
+	//$("#chooseCourier_div").show();
 }
 
 //把派件员添加到下拉框中
@@ -438,7 +442,8 @@ function loadCouriers(courierList, staffId) {
 function hideCourierDiv() {
 	mailNum = null;
 	//staffId = null;
-	$("#chooseCourier_div").hide();
+	$(".j-sel-pop").modal("hide");
+	//$("#chooseCourier_div").hide();
 }
 
 //重新分派
@@ -470,7 +475,8 @@ function chooseCourier() {
   		}    
     });
     //隐藏面板
-	$("#chooseCourier_div").hide();
+    $(".j-sel-pop").modal("hide");
+    //$("#chooseCourier_div").hide();
 }
 /**************************重新分派***************结束***********************************/
 
@@ -510,7 +516,8 @@ function showOtherSiteDiv(mailNumStr) {
 	  		}    
 	    });
 	}
-	$("#chooseOtherSite_div").show();
+	$(".j-site-pop").modal("show");
+	//$("#chooseOtherSite_div").show();
 }
 //把站点添加到下拉框中
 function loadSites(siteList) {
@@ -527,7 +534,8 @@ function loadSites(siteList) {
 //隐藏转其他站点div
 function hideOtherSiteDiv() {
 	mailNum = null;
-	$("#chooseOtherSite_div").hide();
+	$(".j-site-pop").modal("hide");
+	//$("#chooseOtherSite_div").hide();
 }
 //转其他站点
 function chooseOtherSite() {
@@ -556,7 +564,8 @@ function chooseOtherSite() {
   		}    
     });
     //隐藏面板
-	$("#chooseOtherSite_div").hide();
+    $(".j-site-pop").modal("hide");
+	//$("#chooseOtherSite_div").hide();
 }
 /**************************转其他站点***************结束***********************************/
 
