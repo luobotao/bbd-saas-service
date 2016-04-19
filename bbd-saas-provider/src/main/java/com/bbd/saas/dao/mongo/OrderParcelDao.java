@@ -58,9 +58,9 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
         if(orderStatusOld!=null){//旧状态不为空，则需要加入旧状态的判断
             query.or(query.criteria("orderList.orderStatus").equal(orderStatusOld),query.criteria("orderList.orderStatus").equal(null));
         }
-        UpdateOperations<OrderParcel> ops = createUpdateOperations().set("orderList.orderStatus",orderStatusNew).set("orderList.dateUpd",new Date());
+        UpdateOperations<OrderParcel> ops = createUpdateOperations().set("orderList.$.orderStatus",orderStatusNew).enableValidation().set("orderList.$.dateUpd",new Date());
         if(orderStatusOld==OrderStatus.NOTARR){//若是做到站操作，需要更新下到站时间
-            ops.set("orderList.dateArrived",new Date());
+            ops.set("orderList.$.dateArrived",new Date());
         }
         return update(query,ops);
     }

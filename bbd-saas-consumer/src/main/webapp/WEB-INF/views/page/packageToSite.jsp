@@ -96,7 +96,7 @@
 						<table id="orderTable" class="table">
 							<thead>
 							<tr>
-								<th><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
+								<th width="4%"><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
 								<th>包裹号</th>
 								<th>运单号</th>
 								<th>订单号</th>
@@ -104,8 +104,8 @@
 								<th>收货人</th>
 								<th>收货人电话</th>
 								<th width="10%">地址</th>
-								<th>库房打单时间</th>
-								<th>库房打单时间</th>
+								<th>打单时间</th>
+								<th>预计到站时间</th>
 								<th>状态</th>
 							</tr>
 							</thead>

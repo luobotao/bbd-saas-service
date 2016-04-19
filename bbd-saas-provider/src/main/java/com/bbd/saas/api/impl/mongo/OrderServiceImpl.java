@@ -65,12 +65,13 @@ public class OrderServiceImpl implements OrderService {
 						List<Order> orderList = Lists.newArrayList();
 						for(Order order:orderParcel.getOrderList()){
 							Order orderTemp = orderDao.findOneByMailNum(order.getAreaCode(),order.getMailNum());
-							orderList.add(orderTemp);
+							if(orderTemp!=null)
+								orderList.add(orderTemp);
 						}
 						pageModel.setDatas(orderList);
 						pageModel.setPageNo(0);
 						pageModel.setPageSize(orderList.size());
-						pageModel.setTotalCount(Long.valueOf(orderParcel.getOrderList().size()));
+						pageModel.setTotalCount(Long.valueOf(orderList.size()));
 					}
 					return pageModel;
 				}
