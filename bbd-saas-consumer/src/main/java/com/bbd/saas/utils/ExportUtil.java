@@ -173,7 +173,7 @@ public class ExportUtil
 			*/
 			fileName = new String((fileName).getBytes("UTF-8"), "ISO8859_1")+Dates.formatDateTime_New(new Date());
 			response.setContentType("application/vnd.ms-excel");
-			response.setHeader("Content-disposition", "attachment;filename=" + fileName.replace(" ", "_") + ".xls");
+			response.setHeader("Content-disposition", "attachment;filename=" + fileName.replace(" ", "_") + ".xlsx");
 			outputStream = response.getOutputStream();
 			workBook.write(outputStream);
 			outputStream.flush();

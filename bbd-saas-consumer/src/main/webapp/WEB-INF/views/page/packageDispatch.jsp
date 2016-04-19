@@ -22,10 +22,10 @@
 <body class="fbg">
 <!-- S content -->
 <div class="clearfix b-branch">
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
 				<ul class="b-sidebar">
 					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1 side-cur"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -41,7 +41,7 @@
 			</div>
 			<!-- E sidebar -->
 			<!-- S detail -->
-			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 搜索区域 -->
 				<div class="search-area">
   					<div class="row">
@@ -116,7 +116,7 @@
 									}else{
 								%>
 										<td><%=order.getUser().getRealName()%></td>
-										<td><%=order.getUser().getPhone()%></td>
+										<td><%=order.getUser().getLoginName()%></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
@@ -300,7 +300,7 @@ function getRowHtml(data){
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.user.realName + "</td>";
-		row += "<td>" + data.user.phone + "</td>";
+		row += "<td>" + data.user.loginName + "</td>";
 	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){

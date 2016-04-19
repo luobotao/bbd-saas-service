@@ -119,7 +119,7 @@
 								<td><%=order.getParcelCode()%></td>
 								<td><%=order.getMailNum()%></td>
 								<td><%=order.getOrderNo()%></td>
-								<td><%=order.getSrc()%></td>
+								<td><%=order.getSrc().getMessage()%></td>
 								<td><%=order.getReciever().getName()%></td>
 								<td><%=order.getReciever().getPhone()%></td>
 								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>

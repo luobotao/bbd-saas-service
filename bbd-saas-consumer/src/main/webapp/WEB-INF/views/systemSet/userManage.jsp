@@ -214,7 +214,8 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						</div>
 					</div>
 					<input type="hidden" class="form-control" id="sign" name="sign">
-					<input type="hidden" class="form-control" id="flag" name="flag">
+					<input type="hidden" class="form-control" id="flaglogin" name="flaglogin">
+					<input type="hidden" class="form-control" id="flagstaffid" name="flagstaffid">
 					<input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
 					<input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">
 					<input type="hidden" class="form-control" id="operate" name="operate">
@@ -324,9 +325,9 @@ function checkLoginName(loginName) {
 						//alert("您输入的登录名目前已存在，请重新输入");
 						$("#loginNameP").text("登录名已存在，请重新输入11位手机号!");
 					    $("#loginNameP").attr("style","color:red");
-					    document.getElementById("flag").value='false';
+					    document.getElementById("flaglogin").value='false';
 					}else{
-						document.getElementById("flag").value='true';
+						document.getElementById("flaglogin").value='true';
 						$("#loginNameP").attr("style","display:none");
 					}
 				},
@@ -334,30 +335,6 @@ function checkLoginName(loginName) {
 					alert('服务器繁忙，请稍后再试！');
 				}
 			});
-		}else{
-			if(newloginName!==oldloginName){
-				$.ajax({
-					url: url+'?loginName='+loginName,
-					type: 'GET',
-					cache: false,
-					dataType: "text",
-					data: {},
-					success: function(response){
-						console.log(response);
-						if(response=="true"){
-							//alert("您输入的登录名目前已存在，请重新输入");
-							$("#loginNameP").text("登录名目前已存在，请重新输入!");
-						    $("#loginNameP").attr("style","color:red");
-						    document.getElementById("flag").value='false';
-						}else{
-							document.getElementById("flag").value='true';
-						}
-					},
-					error: function(){
-						alert('服务器繁忙，请稍后再试！');
-					}
-				});
-			}
 		}
 		
 	}
@@ -387,9 +364,9 @@ function checkStaffid(staffid) {
 						//alert("您输入的登录名目前已存在，请重新输入");
 						$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
 					    $("#staffidP").attr("style","color:red");
-					    document.getElementById("flag").value='false';
+					    document.getElementById("flagstaffid").value='false';
 					}else{
-						document.getElementById("flag").value='true';
+						document.getElementById("flagstaffid").value='true';
 						$("#staffidP").attr("style","display:none");
 					}
 				},
@@ -411,9 +388,9 @@ function checkStaffid(staffid) {
 							//alert("您输入的登录名目前已存在，请重新输入");
 							$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
 						    $("#staffidP").attr("style","color:red");
-						    document.getElementById("flag").value='false';
+						    document.getElementById("flagstaffid").value='false';
 						}else{
-							document.getElementById("flag").value='true';
+							document.getElementById("flagstaffid").value='true';
 							$("#staffidP").attr("style","display:none");
 						}
 					},
@@ -422,6 +399,7 @@ function checkStaffid(staffid) {
 					}
 				});
 			}else{
+				document.getElementById("flagstaffid").value='true';
 				$("#staffidP").attr("style","display:none");
 			}
 		}
@@ -430,42 +408,6 @@ function checkStaffid(staffid) {
 	
 }
 
-
-function checkUser(realname) {
-	
-	var operate = document.getElementById("operate").value;
-	
-	var newrealname = realname;
-	
-	var oldrealName = document.getElementById("realNameTemp").value;
-
-	
-	var url = '<c:url value="/userManage/checkUser" />';
-	if(newrealname!==oldrealName){
-		$.ajax({
-			url: url+'?realname='+realname,
-			type: 'GET',
-			cache: false,
-			dataType: "text",
-			data: {},
-			success: function(response){
-				console.log(response);
-				if(response=="true"){
-					//alert("您输入的用户名目前已存在，请重新输入");
-					$("#realNameP").text("用户名目前已存在，请重新输入!");
-				    $("#realNameP").attr("style","color:red");
-				    document.getElementById("flag").value='false';
-				}else{
-					document.getElementById("flag").value='true';
-				}
-
-			},
-			error: function(){
-				alert('服务器繁忙，请稍后再试！');
-			}
-		});
-	}
-}
 
 function changeStatus(status,id,loginName){
 	$.ajax({
@@ -519,15 +461,20 @@ function delUser(loginName){
 function saveUserBtn(){
 	
 	var url = "";
+	//operate这个隐藏域就是为了区别这个操作时修改还是新建
 	var getSign = document.getElementById("operate").value;
-	
-	var flag = document.getElementById("flag").value;
+	var flag = "";
+	//页面隐藏域存放flagstaffid、flaglogin，当执行checkStaffid()和checkLognName()方法时，如何发现有重复的staffid或者loginName存在
+	//就将flagstaffid或者flaglogin的值置为"false",如果不存在就重新置为"true"
+	var flagstaffid = document.getElementById("flagstaffid").value;
+	var flaglogin = document.getElementById("flaglogin").value;
 
-	if(!flag){
+	//如果flagstaffid、flaglogin为空表示当前操作为新建，就将flag初始化为 "true";
+	if(!flagstaffid && !flaglogin){
 		flag = "true";
 	}
-
-	if(flag=='true'){
+	//已验证过checkStaffid()和checkLognName(),只有flagstaffid和flaglogin都为'true'时才允许提交，false赋值为true;
+	if(flagstaffid=='true' && flaglogin=='true'){
 		flag = true;
 	}else{
 		flag = false;
