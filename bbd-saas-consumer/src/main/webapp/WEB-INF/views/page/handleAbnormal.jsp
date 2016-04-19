@@ -163,9 +163,7 @@
 	<div class="m20">
 		<span>站点:
 			<select id="site_select">  
-				<option value ="站点A">站点A</option>  
-				<option value ="站点B">站点B</option>  
-				<option value="站点C">站点C</option>  
+				 
 			</select>				  
 		</span> <br>
 	</div>
@@ -439,8 +437,10 @@ function initSiteList() {
 //显示转其他站点div
 function showOtherSiteDiv(mailNumStr) {
 	mailNum = mailNumStr;
+	//console.log("siteList==="+siteList+" mailNumStr==="+mailNumStr);
 	if(siteList != null){
-		loadCouriers(siteList);
+		//console.log("siteList != null== load div=");
+		loadSites(siteList);
 	}else{//重新查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式  
@@ -464,7 +464,7 @@ function loadSites(siteList) {
 	if(siteList != null){
 		for(var i = 0; i < siteList.length; i++){
 			data = siteList[i];
-			site_select.append("<option value='"+data.areaCode+"'>"+data.name+"</option>");
+			site_select.append("<option value='"+data.id+"'>"+data.name+"</option>");
 		}
 	}
 }
@@ -482,7 +482,7 @@ function chooseOtherSite() {
         url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
         data : {  
             "mailNum" : mailNum, //
-            "areaCode" : $("#site_select").val(),//站点编号
+            "siteId" : $("#site_select").val(),//站点编号
             "pageIndex" : pageIndex,//更新列表
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 

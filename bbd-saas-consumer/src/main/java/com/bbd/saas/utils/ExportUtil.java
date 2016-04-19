@@ -1,6 +1,7 @@
 package com.bbd.saas.utils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
@@ -9,11 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.bbd.saas.controllers.DataQueryController;
 
 public class ExportUtil
 {
@@ -126,7 +130,7 @@ public class ExportUtil
 	 * @author: liyanlei
 	 * 2016年4月18日下午2:19:25
 	 */
-	public static void exportExcel(String fileName,List<List<String>> dataList, String[] titles, final HttpServletResponse response){
+	public static void exportExcel(String fileName,List<List<String>> dataList, String[] titles, int[] colWidths, final HttpServletResponse response){
 		ServletOutputStream outputStream = null;
 		try{
 			// 创建一个workbook 对应一个excel应用文件
@@ -139,6 +143,11 @@ public class ExportUtil
 			// 构建表头
 			XSSFRow headRow = sheet.createRow(0);
 			XSSFCell cell = null;
+			if(colWidths != null){//设置列宽
+				for (int i = 0; i < colWidths.length; i++){
+					sheet.setColumnWidth(i, colWidths[i]);
+				}
+			}
 			for (int i = 0; i < titles.length; i++){
 				cell = headRow.createCell(i);
 				cell.setCellStyle(headStyle);
@@ -157,11 +166,15 @@ public class ExportUtil
 					}
 				}
 			}
+			/**/
 			//输出
-			response.setContentType("application/binary;charset=ISO8859_1");
-			outputStream = response.getOutputStream();
-			fileName = new String((fileName).getBytes(), "ISO8859_1")+Dates.formatDateTime_New(new Date());
+			/*	response.setContentType("application/binary;charset=ISO8859_1");
 			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
+			*/
+			fileName = new String((fileName).getBytes("UTF-8"), "ISO8859_1")+Dates.formatDateTime_New(new Date());
+			response.setContentType("application/vnd.ms-excel");
+			response.setHeader("Content-disposition", "attachment;filename=" + fileName.replace(" ", "_") + ".xls");
+			outputStream = response.getOutputStream();
 			workBook.write(outputStream);
 			outputStream.flush();
 			outputStream.close();
@@ -176,4 +189,5 @@ public class ExportUtil
 			}
 		}
 	}
+	
 }
