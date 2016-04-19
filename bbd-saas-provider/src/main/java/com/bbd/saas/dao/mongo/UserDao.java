@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
