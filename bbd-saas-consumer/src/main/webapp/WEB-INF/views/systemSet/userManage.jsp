@@ -519,7 +519,7 @@ function delUser(loginName){
 function saveUserBtn(){
 	
 	var url = "";
-	var getSign = document.getElementById("sign").value;
+	var getSign = document.getElementById("operate").value;
 	
 	var flag = document.getElementById("flag").value;
 
@@ -651,7 +651,7 @@ function searchUser(id,loginName){
 				$("#loginPass").val(data.passWord);
 				$("#confirmPass").val(data.passWord);
 				$("#loginName").attr("readonly",true);
-				document.getElementById("sign").value="edit";
+				//document.getElementById("sign").value="edit";
 				document.getElementById("loginNameTemp").value=data.loginName;
 				document.getElementById("staffidTemp").value=data.staffid;
 				document.getElementById("operate").value = "edit";
