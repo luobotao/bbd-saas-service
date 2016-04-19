@@ -16,5 +16,5 @@ public interface PostmanUserDao {
      */
     List<PostmanUser> selectAll();
     
-    Integer insert(PostmanUser postmanUser);
+    Integer insertUser(PostmanUser postmanUser);
 }

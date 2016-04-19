@@ -113,7 +113,7 @@ public class HandleAbnormalController {
 	/**
 	 * Description: 运单重新分派--把异常的包裹重新分派给派件员
 	 * @param mailNum 运单号
-	 * @param courierId 派件员id
+	 * @param staffId 派件员员工Id
 	 * @param status 更新列表参数--状态
 	 * @param pageIndex 更新列表参数--页数
 	 * @param arriveBetween 更新列表参数--到站时间
@@ -124,15 +124,17 @@ public class HandleAbnormalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/reDispatch", method=RequestMethod.GET)
-	public Map<String, Object> reDispatch(String mailNum, String courierId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+	public Map<String, Object> reDispatch(String mailNum, String staffId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
 		
 		//更新字段设置
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
-		orderUpdateVO.userId = courierId;//派件员id--ObjectId  
+		orderUpdateVO.staffId = staffId;//派件员id--ObjectId 
+		orderUpdateVO.site = currUser.getSite();
 		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
+		//orderUpdateVO.orderStatus = OrderStatus.RETENTION;//更新运单状态--已分派
 		
 		//检索条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
@@ -275,7 +277,7 @@ public class HandleAbnormalController {
 				||ExpressStatus.Delay.equals(order.getExpressStatus())
 				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
 				if(order.getUser() == null){//未分派，可以分派
-					//saveOrderMail(order, courierId, map);
+					//saveOrderMail(order, staffId, map);
 				}else{//重复扫描，此运单已分派过了
 					map.put("operFlag", 2);
 				}
@@ -313,7 +315,7 @@ public class HandleAbnormalController {
 				||ExpressStatus.Delay.equals(order.getExpressStatus())
 				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
 				if(order.getUser() == null){//未分派，可以分派
-					//saveOrderMail(order, courierId, map);
+					//saveOrderMail(order, staffId, map);
 				}else{//重复扫描，此运单已分派过了
 					map.put("operFlag", 2);
 				}

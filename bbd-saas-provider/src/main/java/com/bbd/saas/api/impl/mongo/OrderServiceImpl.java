@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.UpdateResults;
 import org.springframework.stereotype.Service;
 
 import com.bbd.saas.api.mongo.OrderService;
@@ -138,11 +139,14 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public int updateOrder(OrderUpdateVO orderUpdateVO,
 			OrderQueryVO orderQueryVO) {
-		//派件员Id
-    	if(orderUpdateVO.userId != null){
-    		orderUpdateVO.user = userDao.findOne("_id", orderUpdateVO.userId);
+		//派件员员工Id
+    	if(orderUpdateVO.staffId != null){
+    		orderUpdateVO.user = userDao.findOneBySiteByStaffid(orderUpdateVO.site, orderUpdateVO.staffId);
         }
-    	orderDao.updateOrder(orderUpdateVO, orderQueryVO);
+    	UpdateResults r = orderDao.updateOrder(orderUpdateVO, orderQueryVO);
+    	if(r != null){
+    		return r.getUpdatedCount();
+    	}
 		return 0;
 	}
 }

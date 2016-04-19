@@ -81,13 +81,5 @@ public interface UserService {
      */
     public User findOneBySiteByStaffid(Site site, String staffid);
     
-    /**
-     * Description: 根据站点编号和staffid查找是该staffid是否在该站点已存在
-     * @param areaCode 站点编号
-     * @param staffid 员工号
-     * @return
-     * @author: liyanlei
-     * 2016年4月18日下午8:38:54
-     */
-    public User findOneBySiteCodeByStaffid(String areaCode, String staffid);
+    
 }

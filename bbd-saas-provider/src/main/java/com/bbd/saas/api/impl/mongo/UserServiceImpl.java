@@ -103,13 +103,15 @@ public class UserServiceImpl implements UserService {
      */
 	@Override
 	public List<UserVO> findUserListBySite(String areaCode) {
-		List<User> userList = userDao.findUserListBySite(areaCode, UserRole.SENDMEM);
+		Site site = siteDao.findOne("areaCode", areaCode);
+		List<User> userList = userDao.findUserListBySite(site, UserRole.SENDMEM);
 		List<UserVO> userVoList = new ArrayList<UserVO>();
 		if(userList != null && userList.size() > 0){
 			for(User user : userList){
 				UserVO userVo = new UserVO();
 				userVo.setId(user.getId().toString());
 				userVo.setRealName(init(user.getRealName(), "张三"));
+				userVo.setStaffId(user.getStaffid());
 				//userVo.setLoginName(user.getLoginName());
 				//userVo.setPhone(user.getPhone());
 				userVoList.add(userVo);
@@ -143,12 +145,8 @@ public class UserServiceImpl implements UserService {
      * @return User
      */
     public User findOneBySiteByStaffid(Site site, String staffid) {
-        return userDao.findOneBySiteByStaffid(site, staffid);
+    	return userDao.findOneBySiteByStaffid(site, staffid);
     }
-	@Override
-	public User findOneBySiteCodeByStaffid(String areaCode, String staffid) {
-		// TODO Auto-generated method stub
-		return userDao.findOneBySiteCodeByStaffid(areaCode, staffid);
-	}
+	
 	
 }

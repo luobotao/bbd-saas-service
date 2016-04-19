@@ -29,8 +29,9 @@ public class User implements Serializable {
     private String realName;
     private String phone;
     private UserRole role;
+    @Reference("site")
     private Site site;
-    @Reference("operate")
+    @Reference("user")
     private User operate;//用户创建者
     private String lastIp;
     private int loginCount;

@@ -73,15 +73,15 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     
     /**
      * Description: 获取指定站点下的所有状态为有效的用户
-     * @param areaCode 站点编号
+     * @param site 站点
      * @return
      * @author: liyanlei
      * 2016年4月14日下午8:04:44
      */
-    public List<User> findUserListBySite(String areaCode, UserRole userRole) {
+    public List<User> findUserListBySite(Site site, UserRole userRole) {
     	Query<User> query = createQuery();
-    	if(areaCode != null){
-    		query.filter("site.areaCode", areaCode);
+    	if(site != null){
+    		query.filter("site", site);
     	}
     	if(userRole != null){
     		query.filter("role", userRole);
@@ -101,22 +101,8 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         Query<User> query = createQuery();
         if(StringUtils.isNotBlank(staffid))
             query.filter("staffid",staffid);
-        query.filter("site._id",site.getId());
+        query.filter("site",site);
         return findOne(query);
     }
-    /**
-     * 根据站点编号和staffid查找，该staffid是否在该站点已存在
-     * @param site、staffid
-     * @return User
-     */
-    public User findOneBySiteCodeByStaffid(String areaCode, String staffid) {
-        Query<User> query = createQuery();
-        if(StringUtils.isNotBlank(staffid)){
-        	query.filter("staffid", staffid);
-        }
-        if(StringUtils.isNotBlank(areaCode)){
-        	query.filter("site.areaCode", areaCode);
-        }    
-        return findOne(query);
-    }
+    
 }

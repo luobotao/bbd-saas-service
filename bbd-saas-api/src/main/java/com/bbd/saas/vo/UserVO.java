@@ -14,6 +14,7 @@ public class UserVO implements Serializable{
     private String loginName;
     private String realName;
     private String phone;
+    private String staffId;
     
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -42,4 +43,11 @@ public class UserVO implements Serializable{
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public String getStaffId() {
+		return staffId;
+	}
+	public void setStaffId(String staffId) {
+		this.staffId = staffId;
+	}
+	
 }
