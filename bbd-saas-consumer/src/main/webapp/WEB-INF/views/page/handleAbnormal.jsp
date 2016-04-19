@@ -439,8 +439,10 @@ function initSiteList() {
 //显示转其他站点div
 function showOtherSiteDiv(mailNumStr) {
 	mailNum = mailNumStr;
+	//console.log("siteList==="+siteList+" mailNumStr==="+mailNumStr);
 	if(siteList != null){
-		loadCouriers(siteList);
+		//console.log("siteList != null== load div=");
+		loadSites(siteList);
 	}else{//重新查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式  
@@ -458,13 +460,16 @@ function showOtherSiteDiv(mailNumStr) {
 }
 //把站点添加到下拉框中
 function loadSites(siteList) {
+	console.log("siteList=33333=="+siteList);
 	var site_select = $("#site_select");
 	// 清空select  
 	site_select.empty(); 
+	console.log("siteList==="+siteList);
 	if(siteList != null){
+		console.log("siteList.length==="+siteList.length);
 		for(var i = 0; i < siteList.length; i++){
 			data = siteList[i];
-			site_select.append("<option value='"+data.areaCode+"'>"+data.name+"</option>");
+			site_select.append("<option value='"+data.id+"'>"+data.name+"</option>");
 		}
 	}
 }

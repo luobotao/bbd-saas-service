@@ -203,13 +203,14 @@ public class HandleAbnormalController {
 	 * @author: liyanlei
 	 * 2016年4月18日上午11:44:27
 	 */
+	@ResponseBody
 	@RequestMapping(value="/toOtherSite", method=RequestMethod.GET)
-	public Map<String, Object> toOtherSite(String mailNum, String areaCode, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+	public Map<String, Object> toOtherSite(String mailNum, String siteId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
 		
-		Site site = siteService.findSiteByAreaCode(areaCode);
+		Site site = siteService.findSite(siteId);
 		//更新字段设置
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
 		orderUpdateVO.areaCode = site.getAreaCode();//站点编号
