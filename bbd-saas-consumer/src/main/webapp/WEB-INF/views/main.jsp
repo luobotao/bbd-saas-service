@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -47,7 +48,7 @@ folder instead of downloading all of them to reduce the load. -->
 	<script type="text/javascript">
 		$.widget.bridge('uibutton', $.ui.button);
 	</script>
-	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
+
 	<!-- Bootstrap 3.3.2 JS -->
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap-datetimepicker.js" />" type="text/javascript"></script>
@@ -86,7 +87,9 @@ folder instead of downloading all of them to reduce the load. -->
 	<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 	<!-- alertify -->
 	<script src="<c:url value="/resources/adminLTE/plugins/alertify/alertify.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 </head>
 <body>
+
 </body>
 </html>

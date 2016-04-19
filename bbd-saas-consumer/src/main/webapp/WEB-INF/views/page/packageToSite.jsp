@@ -432,5 +432,6 @@
 
 	}
 </script>
+<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 </body>
 </html>

@@ -519,7 +519,7 @@ function delUser(loginName){
 function saveUserBtn(){
 	
 	var url = "";
-	var getSign = document.getElementById("sign").value;
+	var getSign = document.getElementById("operate").value;
 	
 	var flag = document.getElementById("flag").value;
 
@@ -545,6 +545,8 @@ function saveUserBtn(){
 	var loginPass = $("#loginPass").val();
 	var confirmPass = $("#confirmPass").val();
 	var tel_reg = /^1[34578]{1}\d{9}/;
+	var loginpasstemp = true;
+	var confirmpasstemp = true;
 	if (roleId=="-1") {
 	    $("#roleIdP").attr("style","color:red");
 		flag = false;
@@ -578,16 +580,18 @@ function saveUserBtn(){
 	if (!loginPass) {
 	    $("#loginpassP").attr("style","color:red");
 		flag = false;
+		loginpasstemp = false;
 	}else{
 		$("#loginpassP").attr("style","display:none");
 	}
 	if (!confirmPass) {
 	    $("#confirmPassP").attr("style","color:red");
 		flag = false;
+		confirmpasstemp = false;
 	}else{
 		$("#confirmPassP").attr("style","display:none");
 	}
-	if(loginPass==confirmPass){
+	if(loginpasstemp && confirmpasstemp && loginPass==confirmPass){
 		$("#confirmPassP").attr("style","display:none");
 	}else{
 		$("#confirmPassP").attr("style","color:red");
@@ -647,7 +651,7 @@ function searchUser(id,loginName){
 				$("#loginPass").val(data.passWord);
 				$("#confirmPass").val(data.passWord);
 				$("#loginName").attr("readonly",true);
-				document.getElementById("sign").value="edit";
+				//document.getElementById("sign").value="edit";
 				document.getElementById("loginNameTemp").value=data.loginName;
 				document.getElementById("staffidTemp").value=data.staffid;
 				document.getElementById("operate").value = "edit";

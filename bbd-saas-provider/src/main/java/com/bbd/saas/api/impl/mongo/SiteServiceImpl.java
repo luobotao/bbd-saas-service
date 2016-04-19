@@ -41,13 +41,17 @@ public class SiteServiceImpl implements SiteService {
 	@Override
 	public List<SiteVO> findAllOtherSiteVOList(Site selfSite) {
 		List<Site> siteList = this.siteDao.find().asList();
+		String areaCode = selfSite.getAreaCode();
+		if(areaCode == null){
+			areaCode = "";
+		}
 		List<SiteVO> siteVoList = null;
 		if(siteList != null && siteList.size() > 0){
 			siteVoList = new ArrayList<SiteVO>();
 			SiteVO siteVo = null;
 			for(Site site : siteList){
 				//排除站点编号为areaCode的站点
-				if(!selfSite.getAreaCode().equals(site.getAreaCode())){ //if(site != selfSite){
+				if(!areaCode.equals(site.getAreaCode())){ //if(site != selfSite){
 					siteVo = new SiteVO();
 					siteVo.setId(site.getId().toString());
 					siteVo.setAreaCode(site.getAreaCode());
