@@ -553,13 +553,7 @@ function saveUserBtn(){
 	        	if(data=="true"){
 	        		alert( "保存用户成功");  
 	        		
-	        		
-	        		if(getSign=='edit'){
-	        		}else{
-	        			document.getElementById("userForm").reset();
-	        		}
-	        		
-	        		
+	        		document.getElementById("userForm").reset();
 	        		gotoPage(0);
 	        	}else{
 	        		alert( "保存用户失败");  
