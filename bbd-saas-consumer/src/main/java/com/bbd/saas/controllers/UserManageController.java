@@ -128,7 +128,7 @@ public class UserManageController {
 	
 	/**
      * 保存新建用户
-     * @param model
+     * @param userForm
      * @return
      */
 	@ResponseBody
@@ -151,8 +151,8 @@ public class UserManageController {
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(0));
 		System.out.println("============="+user.getUserStatus().getStatus());
-		//Key<User> kuser = userService.save(user);
-		PostmanUser postmanUser = new PostmanUser();
+		Key<User> kuser = userService.save(user);
+		/*PostmanUser postmanUser = new PostmanUser();
 		postmanUser.setPhone(userForm.getPhone());
 		postmanUser.setDateNew(dateAdd);
 		postmanUser.setPoststatus(0);
@@ -161,18 +161,18 @@ public class UserManageController {
 		
 		userMysqlService.insertUser(postmanUser);
 		System.out.println("idddd=="+postmanUser.getId());
-		return "true";
-		/*if(kuser!=null && !kuser.getId().equals("")){
+		return "true";*/
+		if(kuser!=null && !kuser.getId().equals("")){
 			return "true";
 		}else{
 			return "false";
-		}*/
+		}
 	}
 	
 	/**
      * 保存修改用户
-     * @param model
-     * @return
+     * @param userForm
+     * @return 
      */
 	@ResponseBody
 	@RequestMapping(value="editUser", method=RequestMethod.POST)
@@ -205,6 +205,12 @@ public class UserManageController {
 		}
 	}
 	
+	/**
+	 * ajax异步调用
+     * 根据realname验证在user表中是否已存在 
+     * @param realname
+     * @return "true"/"false"
+     */
 	@ResponseBody
 	@RequestMapping(value="/checkUser", method=RequestMethod.GET)
 	public String checkUser(Model model,@RequestParam(value = "realname", required = true) String realname,HttpServletResponse response) {
@@ -228,6 +234,12 @@ public class UserManageController {
 		
 	}
 	
+	/**
+	 * ajax异步调用
+     * 根据user的主键id或者loginName修改user的状态     
+     * @param id、loginName、status
+     * @return "true"/"false"
+     */
 	@ResponseBody
 	@RequestMapping(value="/changestatus", method=RequestMethod.GET)
 	public String changestatus(Model model,@RequestParam(value = "id", required = true) String id,
@@ -259,6 +271,12 @@ public class UserManageController {
 		
 	}
 	
+	/**
+	 * ajax异步调用
+     * 根据loginName删除user表中的记录
+     * @param loginName
+     * @return "true"/"false"
+     */
 	@ResponseBody
 	@RequestMapping(value="/delUser", method=RequestMethod.GET)
 	public String delUser(Model model,@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
@@ -270,7 +288,12 @@ public class UserManageController {
 		
 	}
 	
-	
+	/**
+	 * ajax异步调用
+     * 验证user表下是否已存在loginName记录
+     * @param loginName
+     * @return "true"/"false"
+     */
 	@ResponseBody
 	@RequestMapping(value="/checkLognName", method=RequestMethod.GET)
 	public String checkLognName(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
@@ -285,6 +308,12 @@ public class UserManageController {
 		}
 	}
 	
+	/**
+	 * ajax异步调用
+     * 根据user对象的site和staffid参数查找在相同的site下是否有该staffid
+     * @param staffid
+     * @return "true"/"false"
+     */
 	@ResponseBody
 	@RequestMapping(value="/checkStaffIdBySiteByStaffid", method=RequestMethod.GET)
 	public String checkStaffIdBySiteByStaffid(HttpServletRequest request,Model model,@RequestParam(value = "staffid", required = true) String staffid) {
@@ -300,6 +329,12 @@ public class UserManageController {
 		}
 	}
 	
+	/**
+	 * ajax异步调用
+     * 根据user对象的id获取user对象
+     * @param id
+     * @return user
+     */
 	@ResponseBody
 	@RequestMapping(value="/getOneUser", method=RequestMethod.GET)
 	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id,
