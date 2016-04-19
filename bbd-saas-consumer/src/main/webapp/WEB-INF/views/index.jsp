@@ -42,10 +42,10 @@
 <!-- E nav -->
 <!-- S content -->
 <div class="clearfix b-branch">
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+			<div class="col-xs-12 col-sm-12 bbd-md-3">
 				<ul class="b-sidebar">
 					<li class="lv1 side-cur"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>

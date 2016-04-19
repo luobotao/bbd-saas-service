@@ -163,9 +163,7 @@
 	<div class="m20">
 		<span>站点:
 			<select id="site_select">  
-				<option value ="站点A">站点A</option>  
-				<option value ="站点B">站点B</option>  
-				<option value="站点C">站点C</option>  
+				 
 			</select>				  
 		</span> <br>
 	</div>
@@ -433,21 +431,23 @@ function initSiteList() {
         },
         error : function() { 
         	siteList = null; 
-       		//alert("站点列表加载异常，请重试！");  
   		}    
     });
 }
 //显示转其他站点div
-function showOtherSiteDiv(mailNum, areaCode) {
+function showOtherSiteDiv(mailNumStr) {
+	mailNum = mailNumStr;
+	//console.log("siteList==="+siteList+" mailNumStr==="+mailNumStr);
 	if(siteList != null){
-		loadCouriers(siteList, areaCode);
+		//console.log("siteList != null== load div=");
+		loadSites(siteList);
 	}else{//重新查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式  
-	        url : "<%=path%>/handleAbnormal/getAllSiteList",//路径  
+	        url : "<%=path%>/handleAbnormal/getAllOtherSiteList",//路径  
 	        data : {},//数据，这里使用的是Json格式进行传输  
 	        success : function(dataList) {//返回数据根据结果进行相应的处理  
-	        	loadSites(dataList, areaCode);
+	        	loadSites(dataList);
 	        },
 	        error : function() {  
 	       		alert("服务器繁忙，请稍后再试！");
@@ -457,25 +457,24 @@ function showOtherSiteDiv(mailNum, areaCode) {
 	$("#chooseOtherSite_div").show();
 }
 //把站点添加到下拉框中
-function loadSites(siteList, areaCode) {
+function loadSites(siteList) {
 	var site_select = $("#site_select");
 	// 清空select  
 	site_select.empty(); 
 	if(siteList != null){
 		for(var i = 0; i < siteList.length; i++){
 			data = siteList[i];
-			if(data.areaCode != areaCode){
-				site_select.append("<option value='"+data.areaCode+"'>"+data.name+"</option>");
-			}
+			site_select.append("<option value='"+data.id+"'>"+data.name+"</option>");
 		}
 	}
 }
 //隐藏转其他站点div
 function hideOtherSiteDiv() {
+	mailNum = null;
 	$("#chooseOtherSite_div").hide();
 }
 //转其他站点
-function chooseOtherSite(mailNum, areaCode) {
+function chooseOtherSite() {
 	//获取当前页
     var pageIndex = parseInt($(".pagination .active a").html())-1;
     $.ajax({
@@ -483,7 +482,7 @@ function chooseOtherSite(mailNum, areaCode) {
         url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
         data : {  
             "mailNum" : mailNum, //
-            "areaCode" : areaCode,
+            "siteId" : $("#site_select").val(),//站点编号
             "pageIndex" : pageIndex,//更新列表
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 

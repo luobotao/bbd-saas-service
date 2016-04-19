@@ -3,6 +3,7 @@ package com.bbd.saas.api.impl.mongo;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
@@ -61,10 +62,16 @@ public class OrderServiceImpl implements OrderService {
 				if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
 					OrderParcel orderParcel = orderParcelDao.findOrderParcelByParcelCode(orderQueryVO.areaCode,orderQueryVO.parcelCode);
 					if(orderParcel!=null){
-						pageModel.setDatas(orderParcel.getOrderList());
+						List<Order> orderList = Lists.newArrayList();
+						for(Order order:orderParcel.getOrderList()){
+							Order orderTemp = orderDao.findOneByMailNum(order.getAreaCode(),order.getMailNum());
+							if(orderTemp!=null)
+								orderList.add(orderTemp);
+						}
+						pageModel.setDatas(orderList);
 						pageModel.setPageNo(0);
-						pageModel.setPageSize(orderParcel.getOrderList().size());
-						pageModel.setTotalCount(Long.valueOf(orderParcel.getOrderList().size()));
+						pageModel.setPageSize(orderList.size());
+						pageModel.setTotalCount(Long.valueOf(orderList.size()));
 					}
 					return pageModel;
 				}
@@ -103,9 +110,16 @@ public class OrderServiceImpl implements OrderService {
 		return orderDao.getOrderNumVO(areaCode);
 	}
 
+	/**
+	 * 此处需要再加上包裹下的订单的状态更新
+	 * @param mailNum 运单号
+	 * @param orderStatusOld 可为null,若为null则不检验旧状态否则须旧状态满足才可更新
+	 * @param orderStatusNew
+     */
 	@Override
 	public void updateOrderOrderStatu(String mailNum,OrderStatus orderStatusOld, OrderStatus orderStatusNew){
-		orderDao.updateOrderOrderStatu(mailNum,orderStatusOld,orderStatusNew);
+		orderDao.updateOrderOrderStatu(mailNum,orderStatusOld,orderStatusNew);//修改订单表里的状态
+		orderParcelDao.updateOrderOrderStatu(mailNum,orderStatusOld,orderStatusNew);//修改包裹表里的订单的状态
 	}
 
 	@Override

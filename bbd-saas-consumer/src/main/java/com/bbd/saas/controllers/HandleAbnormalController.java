@@ -106,7 +106,7 @@ public class HandleAbnormalController {
 	public List<UserVO> getAllUserList(final HttpServletRequest request) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		//查询
-		List<UserVO> userVoList = userService.findUserListBySite(user.getSite().getAreaCode());
+		List<UserVO> userVoList = userService.findUserListBySite(user.getSite());
 		return userVoList;
 	}
 	
@@ -139,6 +139,7 @@ public class HandleAbnormalController {
 		//检索条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
 		orderQueryVO.mailNum = mailNum;
+		orderQueryVO.areaCode = currUser.getSite().getAreaCode();
 		if(status != null && status != -1){
 			orderQueryVO.abnormalStatus = status;
 		}
@@ -187,7 +188,7 @@ public class HandleAbnormalController {
 	public List<SiteVO> getAllSiteList(final HttpServletRequest request) {
 		//当前登录的用户信息
 		User user = adminService.get(UserSession.get(request));
-		return siteService.findAllOtherSiteVOList(user.getSite().getAreaCode());
+		return siteService.findAllOtherSiteVOList(user.getSite());
 	}
 	
 	/**
@@ -202,11 +203,13 @@ public class HandleAbnormalController {
 	 * @author: liyanlei
 	 * 2016年4月18日上午11:44:27
 	 */
+	@ResponseBody
 	@RequestMapping(value="/toOtherSite", method=RequestMethod.GET)
-	public Map toOtherSite(String mailNum, String siteId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+	public Map<String, Object> toOtherSite(String mailNum, String siteId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
+		
 		//查询运单信息
 		Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
 		if(order == null){//运单不存在,与站点无关--正常情况不会执行
@@ -216,9 +219,15 @@ public class HandleAbnormalController {
 			//更新运单字段
 			order.setAreaCode(site.getAreaCode());
 			order.setAreaName(site.getName());
-			//order.setAreaRemark(site.getare);
+			StringBuffer remark = new StringBuffer();
+			remark.append(site.getProvince());
+			remark.append(site.getCity());
+			remark.append(site.getArea());
+			remark.append(site.getAddress());
+			order.setAreaRemark(remark.toString());//站点的具体地址
 			order.setOrderStatus(null);//状态--为空
-			order.setUser(null);
+			order.setUser(null);//未分派
+			order.setDateUpd(new Date());//更新时间
 			//更新运单
 			Key<Order> r = orderService.save(order);
 			if(r != null){
@@ -229,7 +238,8 @@ public class HandleAbnormalController {
 				map.put("operFlag", 0);//0:失败
 			}
 		}
-		return map;
+		return map;		
+		
 	}
 	
 	/**************************转其他站点***************结束***********************************/
@@ -266,7 +276,7 @@ public class HandleAbnormalController {
 	 * 2016年4月14日下午2:04:59
 	 */
 	@RequestMapping(value="/toOtherExpress", method=RequestMethod.GET)
-	public Map toOtherExpress(String mailNum, String expressId, Model model) {
+	public Map<String, Object> toOtherExpress(String mailNum, String expressId, Model model) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//====================start================================
 		//查询运单信息
@@ -304,7 +314,7 @@ public class HandleAbnormalController {
 	 * 2016年4月14日下午1:57:12
 	 */
 	@RequestMapping(value="/saveReturn", method=RequestMethod.GET)
-	public Map dispatch(String mailNum, String returnReasonType, String returnReasonInfo, Model model) {
+	public Map<String, Object> dispatch(String mailNum, String returnReasonType, String returnReasonInfo, Model model) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//====================start================================
 		//查询运单信息

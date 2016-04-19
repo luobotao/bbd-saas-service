@@ -23,11 +23,21 @@ public interface SiteService {
     Site findSite(String id);
     
     /**
-     * Description: 查询除站点号为areaCode的其他所有站点的VO对象
-     * @param otherAreaCode 站点编号
+     * Description: 根据站点编号查询站点
+     * @param areaCode 站点编号
+     * @return
+     * @author: liyanlei
+     * 2016年4月19日上午10:29:29
+     */
+    Site findSiteByAreaCode(String areaCode);
+    
+    /**
+     * Description: 查询除站点site的其他所有站点的VO对象
+     * @param site 站点
      * @return
      * @author: liyanlei
      * 2016年4月18日上午10:20:30
      */
-    List<SiteVO> findAllOtherSiteVOList(String areaCode);
+    List<SiteVO> findAllOtherSiteVOList(Site selfSite);
+    
 }

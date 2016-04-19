@@ -12,10 +12,10 @@
 <body class="fbg">
 <!-- S content -->
 <div class="clearfix b-branch">
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
 				<ul class="b-sidebar">
 					<li class="lv1 side-cur"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -31,7 +31,7 @@
 			</div>
 			<!-- E sidebar -->
 			<!-- S detail -->
-			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 状态 -->
 				<ul class="row">
 					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -96,7 +96,7 @@
 						<table id="orderTable" class="table">
 							<thead>
 							<tr>
-								<th><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
+								<th width="4%"><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
 								<th>包裹号</th>
 								<th>运单号</th>
 								<th>订单号</th>
@@ -104,8 +104,8 @@
 								<th>收货人</th>
 								<th>收货人电话</th>
 								<th width="10%">地址</th>
-								<th>库房打单时间</th>
-								<th>库房打单时间</th>
+								<th>打单时间</th>
+								<th>预计到站时间</th>
 								<th>状态</th>
 							</tr>
 							</thead>
@@ -229,6 +229,7 @@
 
 	//加载带有查询条件的指定页的数据
 	function gotoPage(pageIndex,parcelCode,mailNum,arriveStatus,between) {
+		$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
 		$.ajax({
 			type : "GET",  //提交方式
 			url : "<%=request.getContextPath()%>/packageToSite/getOrderPage",//路径
@@ -257,6 +258,11 @@
 				$("#pagin").html(pageStr);
 				$("input[type='checkbox']").iCheck({
 					checkboxClass : 'icheckbox_square-blue'
+				});
+				$("#selectAll").on('ifUnchecked', function() {
+					$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
+				}).on('ifChecked', function() {
+					$("input[type='checkbox']", "#orderTable").iCheck("check");
 				});
 				updateOrderNumVO();
 			},

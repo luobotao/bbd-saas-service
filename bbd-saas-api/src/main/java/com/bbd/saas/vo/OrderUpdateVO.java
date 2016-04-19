@@ -17,6 +17,8 @@ public class OrderUpdateVO implements Serializable{
 	 */
 	private static final long serialVersionUID = 2496543557609935953L;
 	public String areaCode;//站点编码
+	public String areaName;//站点名称
+	public String areaRemark;//站点地址
 	public User user;//派件员
 	public String staffId;//派件员员工Id
 	public Site site;//本站点编号

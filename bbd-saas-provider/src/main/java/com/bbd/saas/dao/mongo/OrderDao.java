@@ -1,14 +1,9 @@
 package com.bbd.saas.dao.mongo;
 
-import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
@@ -20,10 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderNumVO;
+import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
 
 
 /**
@@ -41,6 +40,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("-dateUpd");
         if(orderQueryVO!=null){
+            query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
             if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
@@ -72,8 +72,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
 
     public OrderNumVO getOrderNumVO(String areaCode) {
         OrderNumVO orderNumVO = new OrderNumVO();
-        Query<Order> query = createQuery().filter("areaCode",areaCode);
-        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode);
+        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         query.filter("dateMayArrive <=",new Date());

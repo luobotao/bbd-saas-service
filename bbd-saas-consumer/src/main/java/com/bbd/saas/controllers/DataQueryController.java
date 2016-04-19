@@ -86,7 +86,6 @@ public class DataQueryController {
 	/**
 	 * Description: 导出数据
 	 * @param status 状态
-	 * @param arriveBetween 到站时间
 	 * @param mailNum 运单号
 	 * @param request
 	 * @param response
@@ -134,18 +133,21 @@ public class DataQueryController {
 					row.add("");
 				}else{
 					row.add(order.getUser().getRealName());
-					row.add(order.getUser().getPhone());
+					row.add(order.getUser().getLoginName());
 				}
 				if(order.getOrderStatus() == null){
 					row.add("未到站");
 				}else{
 					row.add(order.getOrderStatus().getMessage());
 				}
+				dataList.add(row);
 			}
 		}
+		
 		//表头
-		String[] titles = { "省/直辖市", "市", "区", "地址关键词", "站点" };
-		ExportUtil.exportExcel("数据查询", dataList, titles, response);
+		String[] titles = { "包裹号", "运单号", "订单号", "来源", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
+		int[] colWidths = { 4000, 5000, 5000, 2000, 2000, 3500, 12000, 5500, 3500, 5500, 2000, 3500, 2000};
+		ExportUtil.exportExcel("数据查询", dataList, titles, colWidths, response);
 	}	
 	
 

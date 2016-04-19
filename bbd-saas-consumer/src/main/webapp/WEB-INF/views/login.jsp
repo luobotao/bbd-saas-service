@@ -152,8 +152,9 @@
 <!-- E footer -->
 
 <!-- S pop -->
+<div id="mask"></div>
 <div class="j-login-type modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog j-scroll-dislog" role="document">
 		<div class="modal-content">
 			<div class="modal-header b-modal-header"><h4 class="modal-title tc">请选择注册类型</h4></div>
 			<div class="modal-body">
@@ -184,7 +185,7 @@
 
 <!--S 站点注册-->
 <div class="j-site-re-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog b-guide-dialog j-scroll-dislog" role="document">
+	<div class="modal-dialog j-scroll-dislog" role="document">
 		<div class="modal-content">
 			<div class="modal-header b-modal-header">
 				<h4 class="modal-title tc">站点注册</h4>
@@ -384,13 +385,13 @@
 			$("#licensePicP").attr("style","display:none");
 		}
 //		$("#siteForm").submit();
-//		if(flag){
-//			console.log("succeful , submit");
-//			$("#siteForm").submit();
-//		}else{
-//			alert("有非法内容，请检查内容合法性！");
-//			return false;
-//		}
+		if(flag){
+			console.log("succeful , submit");
+			$("#siteForm").submit();
+		}else{
+			alert("有非法内容，请检查内容合法性！");
+			return false;
+		}
 	})
 	//回车事件
 	function enterPress(e){

@@ -73,6 +73,14 @@ public interface UserService {
      * 2016年4月16日下午5:22:17
      */
     public List<UserVO> findUserListBySite(String areaCode);
+    /**
+     * Description: 获取指定站点下的所有派件员
+     * @param site 站点
+     * @return
+     * @author: liyanlei
+     * 2016年4月16日下午5:22:17
+     */
+    public List<UserVO> findUserListBySite(Site site);
     
     /**
      * 根据site和staffid查找是该staffid是否在该站点已存在

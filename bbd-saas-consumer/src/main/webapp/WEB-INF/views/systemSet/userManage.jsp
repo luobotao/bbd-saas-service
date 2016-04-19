@@ -18,10 +18,10 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 %>
         <!-- S content -->
         <div class="clearfix b-branch">
-        	<div class="container">
+			<div class="container-fluid">
         		<div class="row">
         			<!-- S sidebar -->
-        			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="opacity:0;">
+					<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
         				<ul class="b-sidebar">
 							<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 							<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -37,7 +37,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
         			</div>
         			<!-- E sidebar -->
         			<!-- S detail -->
-        			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+					<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
         				<!-- S 搜索区域 -->
         				<form class="form-inline form-inline-n">
         					<div class="search-area">
@@ -64,6 +64,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	        							<a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
 	        							<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="glyphicon glyphicon-plus mr10"></i>新建</a>
+	        							
 	        						</div>
 	        					</div>
 	        				</div>
@@ -77,7 +78,6 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        							<tr>
 		        							<th>角色</th>
 		        							<th>真实姓名</th>
-		        							<th>手机号</th>
 		        							<th>登录名</th>
 		        							<th>状态</th>
 		        							<th>操作</th>
@@ -92,7 +92,6 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 											
 											<td><%=user.getRole().getMessage()%></td>
 											<td><%=user.getRealName()%></td>
-											<td><%=user.getPhone()%></td>
 											<td><%=user.getLoginName()%></td>
 											
 											<% 
@@ -185,13 +184,15 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<input type="text" id="realName" name="realName" class="form-control form-bod" placeholder="真实姓名" />
 								<p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
 							</li>
+							<!--  
 							<li>
 								<input type="text" id="phone" name="phone" class="form-control form-bod" placeholder="手机号" />
 								<p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
 							</li>
+							-->
 							<li>
-								<input type="text" id="loginName" name="loginName" onblur="checkLoginName(this.value)" class="form-control form-bod" placeholder="登录名" />
-								<p class="help-block" id="loginNameP" style="display:none;">请输入登录名</p>
+								<input type="text" id="loginName" name="loginName" onblur="checkLoginName(this.value)" class="form-control form-bod" placeholder="手机号" />
+								<p class="help-block" id="loginNameP" style="display:none;">请正确输入11位手机号</p>
 							</li>
 							<li>
 								<input type="text" id="staffid" name="staffid" onblur="checkStaffid(this.value)" class="form-control form-bod" placeholder="员工ID" />
@@ -271,7 +272,6 @@ function getRowHtml(data){
 	var temp = "";
 	row +=  "<td>" + data.roleMessage + "</td>";
 	row += "<td>" + data.realName + "</td>";
-	row += "<td>" + data.phone + "</td>";
 	row += "<td>" + data.loginName + "</td>";
 	//row += "<td>" + data.staffid + "</td>";
 	if(data.userStatus!==null){
@@ -307,7 +307,7 @@ function checkLoginName(loginName) {
 	var operate = document.getElementById("operate").value;
 	var oldloginName = document.getElementById("loginNameTemp").value;
 	var newloginName = loginName;
-	var url = "<c:url value="/userManage/checkLognName" />";
+	var url = '<c:url value="/userManage/checkLognName" />';
 	if(loginName!=''){
 		
 		if(operate=='create'){
@@ -322,7 +322,7 @@ function checkLoginName(loginName) {
 					console.log(response);
 					if(response=="true"){
 						//alert("您输入的登录名目前已存在，请重新输入");
-						$("#loginNameP").text("登录名目前已存在，请重新输入!");
+						$("#loginNameP").text("登录名已存在，请重新输入11位手机号!");
 					    $("#loginNameP").attr("style","color:red");
 					    document.getElementById("flag").value='false';
 					}else{
@@ -370,7 +370,7 @@ function checkStaffid(staffid) {
 	var operate = document.getElementById("operate").value;
 	var oldstaffid = document.getElementById("staffidTemp").value;
 	var newstaffid = staffid;
-	var url = "<c:url value="/userManage/checkStaffIdBySiteByStaffid" />";
+	var url = '<c:url value="/userManage/checkStaffIdBySiteByStaffid" />';
 	if(staffid!==''){
 		
 		if(operate=='create'){
@@ -440,7 +440,7 @@ function checkUser(realname) {
 	var oldrealName = document.getElementById("realNameTemp").value;
 
 	
-	var url = "<c:url value="/userManage/checkUser" />";
+	var url = '<c:url value="/userManage/checkUser" />';
 	if(newrealname!==oldrealName){
 		$.ajax({
 			url: url+'?realname='+realname,
@@ -470,7 +470,7 @@ function checkUser(realname) {
 function changeStatus(status,id,loginName){
 	$.ajax({
 		type : "GET",  
-        url : "<c:url value="/userManage/changestatus" />", 
+        url : '<c:url value="/userManage/changestatus" />', 
         data : {  
             "id" : id,"status" : status,"loginName" : loginName  
         },
@@ -497,7 +497,7 @@ function delUser(loginName){
 		
 		$.ajax({
 			type : "GET",  
-	        url : "<c:url value="/userManage/delUser" />", 
+	        url : '<c:url value="/userManage/delUser" />', 
 	        data : {  
 	            "loginName" : loginName 
 	        },
@@ -539,42 +539,37 @@ function saveUserBtn(){
 		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
 	}
 	var roleId = $("#roleId").val();
-	var phone = $("#phone").val();
 	var realName = $("#realName").val();
 	var loginName = $("#loginName").val();
 	var staffid = $("#staffid").val();
 	var loginPass = $("#loginPass").val();
 	var confirmPass = $("#confirmPass").val();
 	var tel_reg = /^1[34578]{1}\d{9}/;
+	var loginpasstemp = true;
+	var confirmpasstemp = true;
 	if (roleId=="-1") {
 	    $("#roleIdP").attr("style","color:red");
 		flag = false;
 	}else{
 		$("#roleIdP").attr("style","display:none");
 	}
-	if (!phone) {
-	    $("#phoneP").attr("style","color:red");
+	if (!loginName) {
+	    $("#loginNameP").attr("style","color:red");
 		flag = false;
 	}else{
-		$("#phoneP").attr("style","display:none");
+		$("#loginNameP").attr("style","display:none");
 	}
-	if (!tel_reg.test(phone)) {
-		$("#phoneP").attr("style","color:red");
+	if (!tel_reg.test(loginName)) {
+		$("#loginNameP").attr("style","color:red");
 		flag = false;
 	}else{
-		$("#phoneP").attr("style","display:none");
+		$("#loginNameP").attr("style","display:none");
 	}
 	if (!realName) {
 	    $("#realNameP").attr("style","color:red");
 		flag = false;
 	}else{
 		$("#realNameP").attr("style","display:none");
-	}
-	if (!loginName) {
-	    $("#loginNameP").attr("style","color:red");
-		flag = false;
-	}else{
-		$("#loginNameP").attr("style","display:none");
 	}
 	if (!staffid) {
 	    $("#staffidP").attr("style","color:red");
@@ -585,16 +580,18 @@ function saveUserBtn(){
 	if (!loginPass) {
 	    $("#loginpassP").attr("style","color:red");
 		flag = false;
+		loginpasstemp = false;
 	}else{
 		$("#loginpassP").attr("style","display:none");
 	}
 	if (!confirmPass) {
 	    $("#confirmPassP").attr("style","color:red");
 		flag = false;
+		confirmpasstemp = false;
 	}else{
 		$("#confirmPassP").attr("style","display:none");
 	}
-	if(loginPass==confirmPass){
+	if(loginpasstemp && confirmpasstemp && loginPass==confirmPass){
 		$("#confirmPassP").attr("style","display:none");
 	}else{
 		$("#confirmPassP").attr("style","color:red");
@@ -608,7 +605,14 @@ function saveUserBtn(){
 	        success: function(data){  
 	        	if(data=="true"){
 	        		alert( "保存用户成功");  
-	        		document.getElementById("userForm").reset();
+	        		
+	        		
+	        		if(getSign=='edit'){
+	        		}else{
+	        			document.getElementById("userForm").reset();
+	        		}
+	        		
+	        		
 	        		gotoPage(0);
 	        	}else{
 	        		alert( "保存用户失败");  
@@ -632,7 +636,7 @@ function searchUser(id,loginName){
 	
 	$.ajax({
 		type : "GET",  
-        url : "<c:url value="/userManage/getOneUser" />", 
+        url : '<c:url value="/userManage/getOneUser" />', 
         data : {  
             "id" : id,
             "loginName" : loginName
@@ -641,7 +645,6 @@ function searchUser(id,loginName){
 			if(data != null){
 				document.getElementById("userForm").reset();
 				$("#realName").val(data.realName);
-				$("#phone").val(data.phone);
 				$("#loginName").val(data.loginName);
 				$("#staffid").val(data.staffid);
 				$("#roleId").val(data.roleStatus);
@@ -651,6 +654,7 @@ function searchUser(id,loginName){
 				document.getElementById("sign").value="edit";
 				document.getElementById("loginNameTemp").value=data.loginName;
 				document.getElementById("staffidTemp").value=data.staffid;
+				document.getElementById("operate").value = "edit";
 			}    
         },
         error : function() {  
@@ -666,9 +670,8 @@ function restUserModel(){
 	document.getElementById("userForm").reset();
 	$("#loginName").attr("readonly",false);
 	$("#roleIdP").attr("style","display:none");
-	$("#phoneP").attr("style","display:none");
 	$("#realNameP").attr("style","display:none");
-	$("#loginNameP").text("请输入登录名");
+	$("#loginNameP").text("请正确输入11位手机号");
 	$("#staffidP").text("请输入员工ID");
 	$("#staffidP").attr("style","display:none");
 	$("#loginNameP").attr("style","display:none");

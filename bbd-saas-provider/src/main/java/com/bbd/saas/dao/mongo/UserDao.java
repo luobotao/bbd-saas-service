@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
@@ -59,7 +58,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
     		}
     		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			query.or(query.criteria("realName").equal(userQueryVO.keyword),query.criteria("phone").equal(userQueryVO.keyword));
+    			query.or(query.criteria("realName").equal(userQueryVO.keyword),query.criteria("loginName").equal(userQueryVO.keyword));
     		}
     		
         }
