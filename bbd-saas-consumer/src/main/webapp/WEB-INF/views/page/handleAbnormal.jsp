@@ -20,10 +20,10 @@
 <body class="fbg">
 <!-- S content -->
 <div class="clearfix b-branch">
-	<div class="container">
+	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
 				<ul class="b-sidebar">
 					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -39,7 +39,7 @@
 			</div>
 			<!-- E sidebar -->
 			<!-- S detail -->
-			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 搜索区域 -->
 				<div class="search-area">
   					<div class="row pb20">
@@ -101,7 +101,7 @@
 									}else{
 								%>
 										<td><%=order.getUser().getRealName()%></td>
-										<td><%=order.getUser().getPhone()%></td>
+										<td><%=order.getUser().getLoginName()%></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.RETENTION){
@@ -156,9 +156,10 @@
 			<div class="modal-body b-modal-body">
 				<ul class="row">
 					<li class="col-md-12">
+					<!-- 派件员: -->
 						<div class="has-sel-icon mb12">
 							<i class="glyphicon glyphicon-user c-gray pl15"></i>
-							派件员:<select id="courier_select"> </select>
+							<select id="courier_select"> </select>
 						</div>
 					</li>
 					<li class="col-md-12">
@@ -348,14 +349,14 @@ function getRowHtml(data){
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	/* //派件员姓名和电话
 	row += "<td>" + data.user.realName + "</td>";
-	row += "<td>" + data.user.phone + "</td>";
+	row += "<td>" + data.user.loginName + "</td>";
 	 */
 	//派件员==未分派，不需要显示派件员姓名和电话
 	if(data.user == null){
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.user.realName + data.user.staffid + "</td>";
-		row += "<td>" + data.user.phone + "</td>";
+		row += "<td>" + data.user.loginName + "</td>";
 	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
@@ -393,7 +394,7 @@ function initCourierList() {
     });
 }
 // 重新分派
-    shP(".j-sel", ".j-sel-pop");
+  //  shP(".j-sel", ".j-sel-pop");
 //显示选择派件员div
 function showCourierDiv(mailNumStr, staffId) {
 
@@ -450,7 +451,10 @@ function hideCourierDiv() {
 function chooseCourier() {
 	console.log("v==mailNum=="+mailNum);
 	//获取当前页
-    var pageIndex = parseInt($(".pagination .active a").html())-1;
+    var pageIndex = 0;
+    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
+    	pageIndex = parseInt($(".pages .active span").html())-1;
+    }  		
 	//保存分派信息
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -540,7 +544,10 @@ function hideOtherSiteDiv() {
 //转其他站点
 function chooseOtherSite() {
 	//获取当前页
-    var pageIndex = parseInt($(".pagination .active a").html())-1;
+    var pageIndex = 0;
+    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
+    	pageIndex = parseInt($(".pages .active span").html())-1;
+    }  
     $.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
@@ -623,9 +630,12 @@ function chooseOtherExpress(mailNum) {
         		alert("已转到其他快递！");  
         		//已转到其他快递，刷新列表！
         		//获取当前页
-    			var pageIndex = parseInt($(".pagination .active a").html())-1;
-    			//console.log("pageIndex==="+pageIndex);
-        		gotoPage(pageIndex);
+			    var pageIndex = 0;
+			    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
+			    	pageIndex = parseInt($(".pages .active span").html())-1;
+			    }  
+			    gotoPage(pageIndex);
+        		
         	}else{
         		alert("转到其他快递失败，请重新选择快递公司！");  
         	}
@@ -665,10 +675,12 @@ function applyReturn(mailNum) {
         		alert("退货成功！");  
         		//退货成功，刷新列表！
         		//获取当前页
-    			var pageIndex = parseInt($(".pagination .active a").html())-1;
-    			//console.log("pageIndex==="+pageIndex);
-        		gotoPage(pageIndex);
-        	}else{
+        		var pageIndex = 0;
+			    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
+			    	pageIndex = parseInt($(".pages .active span").html())-1;
+			    }  
+			    gotoPage(pageIndex);
+    		}else{
         		alert("退货失败，请重试！");  
         	}
         },
