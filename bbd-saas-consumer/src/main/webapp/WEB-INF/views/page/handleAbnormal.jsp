@@ -97,7 +97,7 @@
 							}
 						%>
 						<td>
-							<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>','<%=order.getUser().getId().toString()%>')">重新分派</a>
+							<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>','<%=order.getUser().getStaffid()%>')">重新分派</a>
 							<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
 							<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
 							<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
@@ -208,7 +208,8 @@
 <script type="text/javascript">
 //缓存快递员列表和站点列表数据
 var courierList = null, siteList = null;
-var courierId = null, siteId = null, mailNum = null;
+//var staffId = null;
+var siteId = null, mailNum = null;
 
 $(document).ready(function() {
 	//显示分页条
@@ -299,7 +300,7 @@ function getRowHtml(data){
 	if(data.user == null){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + data.user.id + "</td>";
+		row += "<td>" + data.user.realName + data.user.staffid + "</td>";
 		row += "<td>" + data.user.phone + "</td>";
 	}
 	//状态
@@ -309,7 +310,7 @@ function getRowHtml(data){
 		row += "<td>" + "<%=AbnormalStatus.REJECTION.getMessage()%>" + "</td>";
 	}
 	
-	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\", " + "\"" + data.user.id + "\")'>重新分派</a>";
+	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\", " + "\"" + data.user.staffid + "\")'>重新分派</a>";
 	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
 	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")'>转其他站点</a>";
 	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>";
@@ -338,20 +339,20 @@ function initCourierList() {
     });
 }
 //显示选择派件员div
-function showCourierDiv(mailNumStr, courierIdStr) {
+function showCourierDiv(mailNumStr, staffId) {
 	mailNum = mailNumStr;
-	courierId = courierIdStr;
-	console.log("v==mailNum=="+mailNum+"   courierId ==="+courierId);
+	//staffId = staffIdStr;
+	console.log("v==mailNum=="+mailNum);
 	//console.log("courierList===="+courierList);
 	if(courierList != null){
-		loadCouriers(courierList, courierId);
+		loadCouriers(courierList, staffId);
 	}else{//重新查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式  
 	        url : "<%=path%>/handleAbnormal/getAllUserList",//路径  
 	        data : {},//数据，这里使用的是Json格式进行传输  
 	        success : function(dataList) {//返回数据根据结果进行相应的处理  
-	        	loadCouriers(dataList, courierId);
+	        	loadCouriers(dataList, staffId);
 	        },
 	        error : function() {  
 	       		alert("服务器繁忙，请稍后再试！");
@@ -362,9 +363,9 @@ function showCourierDiv(mailNumStr, courierIdStr) {
 }
 
 //把派件员添加到下拉框中
-function loadCouriers(courierList, courierId) {
-	if(courierId == null || courierId == "undefined"){
-		courierId = "";
+function loadCouriers(courierList, staffId) {
+	if(staffId == null || staffId == "undefined"){
+		staffId = "";
 	}
 	var courier_select = $("#courier_select");
 	// 清空select  
@@ -372,8 +373,8 @@ function loadCouriers(courierList, courierId) {
 	if(courierList != null){
 	    for(var i = 0; i < courierList.length; i++){
 			data = courierList[i];
-			if(data.id != courierId){
-				courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
+			if(data.staffId != staffId){
+				courier_select.append("<option value='"+data.staffId+"'>"+data.realName+"</option>");
 			}
 		}
 	}
@@ -382,13 +383,13 @@ function loadCouriers(courierList, courierId) {
 //隐藏选择派件员div
 function hideCourierDiv() {
 	mailNum = null;
-	courierId = null;
+	//staffId = null;
 	$("#chooseCourier_div").hide();
 }
 
 //重新分派
 function chooseCourier() {
-	console.log("v==mailNum=="+mailNum+"   courierId ==="+courierId);
+	console.log("v==mailNum=="+mailNum);
 	//获取当前页
     var pageIndex = parseInt($(".pagination .active a").html())-1;
 	//保存分派信息
@@ -397,7 +398,7 @@ function chooseCourier() {
         url : "<%=path%>/handleAbnormal/reDispatch",//路径  
         data : {  
             "mailNum" : mailNum, //全局变量
-            "courierId" : courierId, //全局变量
+            "staffId" : $("#courier_select").val(), //全局变量
             "pageIndex" : pageIndex,//更新列表的参数
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 

@@ -110,6 +110,7 @@ public class UserServiceImpl implements UserService {
 				UserVO userVo = new UserVO();
 				userVo.setId(user.getId().toString());
 				userVo.setRealName(init(user.getRealName(), "张三"));
+				userVo.setStaffId(user.getStaffid());
 				//userVo.setLoginName(user.getLoginName());
 				//userVo.setPhone(user.getPhone());
 				userVoList.add(userVo);

@@ -17,7 +17,7 @@ public class OrderUpdateVO implements Serializable{
 	private static final long serialVersionUID = 2496543557609935953L;
 	public String areaCode;//站点编码
 	public User user;//派件员
-	public String userId;//派件员Id
+	public String staffId;//派件员员工Id
 	public String selfAreaCode;//本站点编号
 	public String returnReasonType;//退货原因类型
 	public String returnReasonInfo;//退货原因详情--其他
