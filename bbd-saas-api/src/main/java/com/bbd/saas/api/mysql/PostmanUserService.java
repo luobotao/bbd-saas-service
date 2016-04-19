@@ -18,5 +18,5 @@ public interface PostmanUserService {
      */
     List<PostmanUser> selectAll();
     
-    int insert(PostmanUser postmanUser);
+    int insertUser(PostmanUser postmanUser);
 }

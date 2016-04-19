@@ -29,6 +29,7 @@
     </resultMap>
     
     <sql id="baseColumnList">
+    	id,
     	staffid,
     	nickname,
         phone,
@@ -54,11 +55,12 @@
         date_upd
     </sql>
     
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.PostmanUser">
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.PostmanUser">
         INSERT INTO `postmanuser`(
         <include refid="baseColumnList"/>
         )
         VALUES (
+        #{id,jdbcType=INTEGER},
         #{staffid,jdbcType=VARCHAR},
         #{nickname,jdbcType=VARCHAR},
         #{phone,jdbcType=VARCHAR},

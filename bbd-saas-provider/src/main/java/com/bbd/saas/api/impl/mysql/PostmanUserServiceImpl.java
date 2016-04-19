@@ -44,7 +44,7 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		return postmanUserDao.selectAll();
 	}
 	
-	public int insert(PostmanUser postmanUser){
-		return postmanUserDao.insert(postmanUser);
+	public int insertUser(PostmanUser postmanUser){
+		return postmanUserDao.insertUser(postmanUser);
 	}
 }
