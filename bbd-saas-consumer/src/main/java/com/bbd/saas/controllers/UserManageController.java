@@ -237,11 +237,20 @@ public class UserManageController {
 		olduser.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		olduser.setDateUpdate(dateUpdate);
 		
-		
 		Key<User> kuser = userService.save(olduser);
-		
+		PostmanUser postmanUser = new PostmanUser();
+		postmanUser.setStaffid(userForm.getStaffid());
+		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
+			//快递员
+			postmanUser.setPostrole(0);
+		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
+			//站长
+			postmanUser.setPostrole(4);
+		}
+		postmanUser.setPhone(userForm.getLoginName());
 		if(kuser!=null && !kuser.getId().equals("")){
-
+			//同时更新到mysql的bbt库的postmanuser表中
+			int ret = userMysqlService.updateByPhone(postmanUser);
 			return "true";
 		}else{
 			return "false";
@@ -289,9 +298,9 @@ public class UserManageController {
 			@RequestParam(value = "status", required = true) String status,
 			@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
 		User user = null;
-		
 		try {
 			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
+			 
 		} catch (UnsupportedEncodingException e) {
 
 		}
@@ -333,7 +342,7 @@ public class UserManageController {
 	
 	/**
 	 * ajax异步调用
-     * 验证user表下是否已存在loginName记录
+     * 验证user表下是否已存在loginName记录、以及在mysql bbt 中的postmanuser表中是否存在
      * @param loginName
      * @return "true"/"false"
      */
@@ -341,8 +350,9 @@ public class UserManageController {
 	@RequestMapping(value="/checkLognName", method=RequestMethod.GET)
 	public String checkLognName(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
 		User user = userService.findUserByLoginName(loginName);
+		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(loginName);
 		logger.info("loginName"+loginName);
-		if(user!=null && !user.getId().equals("")){
+		if((user!=null && !user.getId().equals("") || (postmanUser!=null && postmanUser.getId()!=null))){
 			return "true";
 			
 		}else{ 

@@ -29,4 +29,11 @@ public interface PostmanUserService {
      * @return PostmanUser
      */
     PostmanUser selectPostmanUserByPhone(String phone);
+    
+    /**
+     * 更新postmanUser
+     * @param postmanUser
+     * @return 
+     */
+    int updateByPhone(PostmanUser postmanUser);
 }

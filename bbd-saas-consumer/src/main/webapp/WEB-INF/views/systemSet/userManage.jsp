@@ -169,7 +169,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 				<div class="modal-content">
 					<div class="modal-header b-modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-						<h4 class="modal-title tc">新建</h4>
+						<h4 class="modal-title userclass tc"></h4>
 					</div>
 					<form role="form" action="" method="post" id="userForm" >
 					<div class="modal-body b-modal-body">
@@ -324,7 +324,7 @@ function checkLoginName(loginName) {
 				success: function(response){
 					console.log(response);
 					if(response=="true"){
-						$("#loginNameP").text("登录名已存在，请重新输入11位手机号!");
+						$("#loginNameP").text("手机号已存在，请重新输入11位手机号!");
 					    $("#loginNameP").attr("style","color:red");
 					    //document.getElementById("flaglogin").value='false';
 					    //return true;
@@ -595,7 +595,7 @@ function saveUserBtn(){
 
 
 function searchUser(id,loginName){
-	
+	$('.userclass').html('修改');
 	$.ajax({
 		type : "GET",  
         url : '<c:url value="/userManage/getOneUser" />', 
@@ -605,6 +605,7 @@ function searchUser(id,loginName){
         },
         success : function(data) {
 			if(data != null){
+				$("#loginNameP").attr("style","display:none");
 				$("#staffidP").attr("style","display:none");
 				document.getElementById("userForm").reset();
 				$("#realName").val(data.realName);
@@ -630,6 +631,7 @@ function searchUser(id,loginName){
 
 
 function restUserModel(){
+	$('.userclass').html('新建');
 	document.getElementById("userForm").reset();
 	$("#loginName").attr("readonly",false);
 	$("#roleIdP").attr("style","display:none");
