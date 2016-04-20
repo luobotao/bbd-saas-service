@@ -117,10 +117,11 @@ public class PackageDispatchController {
 			map.put("operFlag", 0);//0:运单号不存在
 		}else{//运单存在
 			//当运单到达站点(未分派)，首次分派;当运单状态处于滞留、拒收时，可以重新分派
-			if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
-				|| OrderStatus.RETENTION.equals(order.getOrderStatus()) //滞留
-				|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
-				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
+			if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())){//未分派
+				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map, true);//保存mysql
+			}else if(OrderStatus.RETENTION.equals(order.getOrderStatus()) //滞留
+					|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
+				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map, false);//更新mysql
 			}else if(order.getUser() != null){//重复扫描，此运单已分派过了
 				map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
 			}else{
@@ -140,7 +141,7 @@ public class PackageDispatchController {
 	 * @author: liyanlei
 	 * 2016年4月16日上午11:36:08
 	 */
-	private void saveOrderMail(Order order, String courierId, String areaCode, Map<String, Object> map){
+	private void saveOrderMail(Order order, String courierId, String areaCode, Map<String, Object> map, boolean isSaveToMysql){
 		//查询派件员信息
 		User user = userService.findOne(courierId);
 		//运单分派给派件员
@@ -152,6 +153,24 @@ public class PackageDispatchController {
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){
+			saveOrUpdateOrder(order, user, isSaveToMysql);
+			map.put("operFlag", 1);//1:分派成功
+			//刷新列表
+			OrderQueryVO orderQueryVO = new OrderQueryVO();
+			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
+			//orderQueryVO.dispatchStatus = OrderStatus.REJECTION.getStatus();
+			//orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
+			orderQueryVO.userId = courierId;
+			orderQueryVO.areaCode = areaCode;
+			//查询数据
+			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+			map.put("orderPage", orderPage); 
+		}else{
+			map.put("operFlag", 3);//3:分派失败
+		}
+	}
+	private void saveOrUpdateOrder(Order order, User user, boolean isSave){
+		if(isSave){//保存
 			// 插入mysql数据库
 			PostDelivery postDelivery = new PostDelivery();
 			postDelivery.setCompany_code("BANGBANGDA");
@@ -178,20 +197,8 @@ public class PackageDispatchController {
 			postDelivery.setTyp("4");
 			postDeliveryService.insert(postDelivery);
 			logger.info("运单分派成功更新到mysql的bbt数据库的postdelivery表中"+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());
-			
-			map.put("operFlag", 1);//1:分派成功
-			//刷新列表
-			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
-			//orderQueryVO.dispatchStatus = OrderStatus.REJECTION.getStatus();
-			//orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
-			orderQueryVO.userId = courierId;
-			orderQueryVO.areaCode = areaCode;
-			//查询数据
-			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
-			map.put("orderPage", orderPage); 
-		}else{
-			map.put("operFlag", 3);//3:分派失败
+		}else{//更新
+			postDeliveryService.updatePostIdAndStaffId(order.getMailNum(), user.getPostmanuserId()+"", user.getStaffid());
 		}
 	}
 	
