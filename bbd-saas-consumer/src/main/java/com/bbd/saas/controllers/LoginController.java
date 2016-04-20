@@ -1,8 +1,12 @@
 package com.bbd.saas.controllers;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.LoginForm;
 import com.bbd.saas.mongoModels.User;
 import org.slf4j.Logger;
@@ -57,10 +61,27 @@ public class LoginController {
 		User user = userService.findUserByLoginName(loginForm.getUserName());
 		if(user!=null){
 			if(loginForm.getPassWord().equals(user.getPassWord())){//login success
+				//判断登录用户的站点状态是否是通过审核状态
+				if (user.getSite() == null || !user.getSite().getFlag().equals("2") || StringUtils.isBlank(user.getSite().getAreaCode())) {
+					redirectAttrs.addFlashAttribute("message", "站点未审核,请联系工作人员尽快审核");
+					return "redirect:/login";
+				}
+				if(user.getState()!=2){
+					redirectAttrs.addFlashAttribute("message", "用户未通过审核");
+					return "redirect:/login";
+				}
+				if(user.getUserStatus()== UserStatus.INVALID){
+					redirectAttrs.addFlashAttribute("message", "用户状态无效");
+					return "redirect:/login";
+				}
+				if(user.getRole()!= UserRole.SITEMASTER){
+					redirectAttrs.addFlashAttribute("message", "用户角色不可登录此系统");
+					return "redirect:/login";
+				}
 				UserSession.put(response,user.getId().toHexString());//set adminid to cookies
 				adminService.put(user);//set user to redis
 				redirectAttrs.addFlashAttribute("user", user);
-				return "redirect:/";
+				return "redirect:/home";
 			}else{//password is error
 				redirectAttrs.addFlashAttribute("message", "密码错误");
 				return "redirect:/login";

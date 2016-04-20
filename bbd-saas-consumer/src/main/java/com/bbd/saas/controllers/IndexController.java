@@ -30,18 +30,33 @@ public class IndexController {
 	 * @return 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model,HttpServletRequest request) {
+	public String index(Model model,HttpServletRequest request,String typ) {
 		User user = adminService.get(UserSession.get(request));
 		model.addAttribute("user", user);
+		model.addAttribute("typ", typ);
 		return "index";
 	}
 
+	/**
+	 * 退出登录
+	 * @param model
+	 * @param request
+	 * @param response
+     * @return
+     */
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(Model model, HttpServletRequest request, HttpServletResponse response) {
 		User user = adminService.get(UserSession.get(request));
 		UserSession.remove(response);//remove from cookies
 		adminService.delete(user);//remove adminUser from redis
 		return "redirect:/login";
+	}
+
+	@RequestMapping(value="/home", method=RequestMethod.GET)
+	public String home(Model model,HttpServletRequest request) {
+		User user = adminService.get(UserSession.get(request));
+		model.addAttribute("user", user);
+		return "home";
 	}
 
 }
