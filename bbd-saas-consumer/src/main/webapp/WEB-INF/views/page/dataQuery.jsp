@@ -39,36 +39,38 @@
 			<!-- S detail -->
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 搜索区域 -->
-				<div class="search-area">
-  					<div class="row pb20">
-  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-  							<label>状态：</label>
-  							<select id="status" name="status" class="form-control form-con-new">
-  								<%=OrderStatus.Srcs2HTML(-1)%>
-  							</select>
-  						</div>
-  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-  							<label>到站时间：</label>
-  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
-  						</div>
-  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-  							<label>运单号：</label>
-  							<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
-  						</div>
-  					</div>
-  					<div class="row pb20">
-  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
-  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
-  							<!-- 用于导出 -->
-							<form action="<%=request.getContextPath()%>/dataQuery/exportToExcel" method="get" id="exptForm">
-								<input id="status_expt" name="status" type="hidden" />
-								<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
-								<input id="mailNum_expt" name="mailNum" type="hidden" />
-							</form>
-  						</div>
-  					</div>
-  				</div>
+				<form class="form-inline form-inline-n">
+					<div class="search-area">
+	  					<div class="row pb20">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+	  							<label>状态：</label>
+	  							<select id="status" name="status" class="form-control form-con-new">
+	  								<%=OrderStatus.Srcs2HTML(-1)%>
+	  							</select>
+	  						</div>
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+	  							<label>到站时间：</label>
+	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
+	  						</div>
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+	  							<label>运单号：</label>
+	  							<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
+	  						</div>
+	  					</div>
+	  					<div class="row pb20">
+	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
+	  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
+	  							<!-- 用于导出 -->
+								<form action="<%=request.getContextPath()%>/dataQuery/exportToExcel" method="get" id="exptForm">
+									<input id="status_expt" name="status" type="hidden" />
+									<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
+									<input id="mailNum_expt" name="mailNum" type="hidden" />
+								</form>
+	  						</div>
+	  					</div>
+	  				</div>
+				</form>
 				<!-- E 搜索区域 -->
 				<div class="tab-bod mt20">
 					<!-- S table -->

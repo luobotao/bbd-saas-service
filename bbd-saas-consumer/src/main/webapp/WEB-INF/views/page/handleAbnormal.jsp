@@ -3,7 +3,6 @@
 <%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.vo.UserVO" %>
-<%-- <%@ page import="com.bbd.saas.mongoModels.Site" %> --%>
 <%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -41,23 +40,25 @@
 			<!-- S detail -->
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 搜索区域 -->
-				<div class="search-area">
-  					<div class="row pb20">
-  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-  							<label>状态：</label>
-  							<select id="status" name="status" class="form-control form-con-new">
-  								<%=AbnormalStatus.Srcs2HTML(-1)%>
-  							</select>
-  						</div>
-  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
-  							<label>到站时间：</label>
-  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
-  						</div>
-  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
-  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
-  						</div>
-  					</div>
-  				</div>
+				<form class="form-inline form-inline-n">
+					<div class="search-area">
+	  					<div class="row pb20">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+	  							<label>状态：</label>
+	  							<select id="status" name="status" class="form-control form-con-new">
+	  								<%=AbnormalStatus.Srcs2HTML(-1)%>
+	  							</select>
+	  						</div>
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+	  							<label>到站时间：</label>
+	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
+	  						</div>
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+	  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
+	  						</div>
+	  					</div>
+	  				</div>
+	  			</form>
 				<!-- E 搜索区域 -->
 				<div class="tab-bod mt20">
 					<!-- S table -->
@@ -288,9 +289,9 @@ $(document).ready(function() {
 	//退货原因，选择其他的原因弹出详情输入框
 	$("#returnReasonType").change(function(){
 		if(this.value == "其他"){
-			$("#returnReasonInfo").show();
+			$("#returnReasonInfo").modal("show");
 		} else {
-			$("#returnReasonInfo").hide();
+			$("#returnReasonInfo").modal("hide");
 		}
 	});
 	
@@ -418,7 +419,7 @@ function showCourierDiv(mailNumStr, staffId) {
 	    });
 	}
 	$(".j-sel-pop").modal("show");
-	//$("#chooseCourier_div").show();
+	//$("#chooseCourier_div").modal("show");
 }
 
 //把派件员添加到下拉框中
@@ -444,17 +445,13 @@ function hideCourierDiv() {
 	mailNum = null;
 	//staffId = null;
 	$(".j-sel-pop").modal("hide");
-	//$("#chooseCourier_div").hide();
+	//$("#chooseCourier_div").modal("hide");
 }
 
 //重新分派
 function chooseCourier() {
-	console.log("v==mailNum=="+mailNum);
 	//获取当前页
-    var pageIndex = 0;
-    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
-    	pageIndex = parseInt($(".pages .active span").html())-1;
-    }  		
+    var pageIndex = getCurrPage();		
 	//保存分派信息
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -480,7 +477,7 @@ function chooseCourier() {
     });
     //隐藏面板
     $(".j-sel-pop").modal("hide");
-    //$("#chooseCourier_div").hide();
+    //$("#chooseCourier_div").modal("hide");
 }
 /**************************重新分派***************结束***********************************/
 
@@ -521,7 +518,7 @@ function showOtherSiteDiv(mailNumStr) {
 	    });
 	}
 	$(".j-site-pop").modal("show");
-	//$("#chooseOtherSite_div").show();
+	//$("#chooseOtherSite_div").modal("show");
 }
 //把站点添加到下拉框中
 function loadSites(siteList) {
@@ -539,15 +536,12 @@ function loadSites(siteList) {
 function hideOtherSiteDiv() {
 	mailNum = null;
 	$(".j-site-pop").modal("hide");
-	//$("#chooseOtherSite_div").hide();
+	//$("#chooseOtherSite_div").modal("hide");
 }
 //转其他站点
 function chooseOtherSite() {
 	//获取当前页
-    var pageIndex = 0;
-    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
-    	pageIndex = parseInt($(".pages .active span").html())-1;
-    }  
+    var pageIndex = getCurrPage(); 
     $.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
@@ -572,7 +566,7 @@ function chooseOtherSite() {
     });
     //隐藏面板
     $(".j-site-pop").modal("hide");
-	//$("#chooseOtherSite_div").hide();
+	//$("#chooseOtherSite_div").modal("hide");
 }
 /**************************转其他站点***************结束***********************************/
 
@@ -608,12 +602,12 @@ function initExpressCompany() {
 
 //显示转其他快递公司div
 function showOtherExpressDiv(mailNum) {
-	$("#chooseOtherExpress_div").show();
+	$("#chooseOtherExpress_div").modal("show");
 	
 }
 //隐藏转其他快递公司div
 function hideOtherExpressDiv() {
-	$("#chooseOtherExpress_div").hide();
+	$("#chooseOtherExpress_div").modal("hide");
 }
 //选择其他快递
 function chooseOtherExpress(mailNum) {
@@ -630,10 +624,7 @@ function chooseOtherExpress(mailNum) {
         		alert("已转到其他快递！");  
         		//已转到其他快递，刷新列表！
         		//获取当前页
-			    var pageIndex = 0;
-			    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
-			    	pageIndex = parseInt($(".pages .active span").html())-1;
-			    }  
+			    var pageIndex = getCurrPage(); 
 			    gotoPage(pageIndex);
         		
         	}else{
@@ -645,7 +636,7 @@ function chooseOtherExpress(mailNum) {
   		}    
     });
     //隐藏面板
-	$("#chooseOtherExpress_div").hide();
+	$("#chooseOtherExpress_div").modal("hide");
 }
 
 /************************转其他快递公司***************结束***************************************/
@@ -653,11 +644,11 @@ function chooseOtherExpress(mailNum) {
 /************************申请退货***************开始***************************************/
 //显示申请退货div
 function showApplyReturnDiv(mailNum) {
-	$("#apply_return_div").show();
+	$("#apply_return_div").modal("show");
 }
 //隐藏申请退货div
 function hideApplyReturnDiv() {
-	$("#apply_return_div").hide();
+	$("#apply_return_div").modal("hide");
 }
 //确定退货
 function applyReturn(mailNum) {
@@ -675,10 +666,7 @@ function applyReturn(mailNum) {
         		alert("退货成功！");  
         		//退货成功，刷新列表！
         		//获取当前页
-        		var pageIndex = 0;
-			    if($(".pages .active span").html() != null && $(".pages .active span").html() != ""){
-			    	pageIndex = parseInt($(".pages .active span").html())-1;
-			    }  
+        		var pageIndex = getCurrPage();
 			    gotoPage(pageIndex);
     		}else{
         		alert("退货失败，请重试！");  
@@ -689,8 +677,20 @@ function applyReturn(mailNum) {
   		}    
     });
     //隐藏面板
-	$("#apply_return_div").hide();
+	$("#apply_return_div").modal("hide");
 }
+//获取当前页
+function getCurrPage(){
+	//获取当前页
+	//var pageIndex = $(".pages .active span").html();
+	var pageIndex = $(".pagination .active a").html();
+	var currPage = 0;
+	if(pageIndex != null && pageIndex != ""){
+		currPage = parseInt(pageIndex)-1;
+	} 
+	return currPage;
+}
+
 /**********************申请退货**************************结束************************************/
 </script>
 </body>

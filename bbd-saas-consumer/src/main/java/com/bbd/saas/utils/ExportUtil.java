@@ -121,14 +121,16 @@ public class ExportUtil
 		cellStyle.setBorderTop(XSSFCellStyle.BORDER_THIN);
 		return cellStyle;
 	}
+	
 	/**
 	 * Description: 把数据写入Excel，并下载
 	 * @param fileName 文件名称
 	 * @param dataList 表格数据
 	 * @param titles 表格表头（标题）
-	 * @param response 
+	 * @param colWidths 列宽
+	 * @param response
 	 * @author: liyanlei
-	 * 2016年4月18日下午2:19:25
+	 * 2016年4月20日上午11:02:03
 	 */
 	public static void exportExcel(String fileName,List<List<String>> dataList, String[] titles, int[] colWidths, final HttpServletResponse response){
 		ServletOutputStream outputStream = null;
@@ -166,14 +168,11 @@ public class ExportUtil
 					}
 				}
 			}
-			/**/
-			//输出
-			/*	response.setContentType("application/binary;charset=ISO8859_1");
-			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
-			*/
+			
 			fileName = new String((fileName).getBytes("UTF-8"), "ISO8859_1")+Dates.formatDateTime_New(new Date());
-			response.setContentType("application/vnd.ms-excel");
-			response.setHeader("Content-disposition", "attachment;filename=" + fileName.replace(" ", "_") + ".xlsx");
+			//输出
+			response.setContentType("application/binary;charset=ISO8859_1");
+			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
 			outputStream = response.getOutputStream();
 			workBook.write(outputStream);
 			outputStream.flush();

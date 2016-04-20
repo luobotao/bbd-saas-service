@@ -226,7 +226,7 @@ a.orange {
   border-bottom: 1px solid #ebeaf4;
 }
 .tab-bod .table-responsive {
-  margin-right: -1px;
+  margin-right: 0px;
 }
 .table thead tr th:first-child {
   border-radius: 4px 0 0 0;
@@ -975,3 +975,10 @@ footer {
   }
 } /* E reset 布局*/
 /*# sourceMappingURL=main.css.map */
+
+.form-inline .form-control {
+    display: inline-block;
+    vertical-align: middle;
+    min-width: 210px; 
+}
+
