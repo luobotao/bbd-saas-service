@@ -567,11 +567,12 @@ function saveUserBtn(){
 	        url: url ,  
 	        success: function(data){  
 	        	if(data=="true"){
-	        		alert( "保存用户成功");  
+	        		 
 	        		if(getSign=='create'){
+	        			alert("保存用户成功"); 
 	        			document.getElementById("userForm").reset();
 	        		}else{
-	        			//$("#saveuserid").removeAttr("href");
+	        			alert("保存用户成功"); 
 	        		}
 	        		
 	        		gotoPage(0);

@@ -387,7 +387,7 @@ a.orange {
   color: #b3b6c6;
 }
 /*----E-table----*/
-/* S 导航条 */
+/* S 瀵艰埅鏉� */
 .b-navbar {
   min-height: 60px;
   border: none;
@@ -402,7 +402,7 @@ a.orange {
 .b-navbar .navbar-nav > li > a:hover {
   color: #fc9e28;
 }
-/* E 导航条 */
+/* E 瀵艰埅鏉� */
 /* S footer */
 footer {
   padding: 30px 0;
@@ -492,7 +492,7 @@ footer {
   color: #c4deeb;
 }
 /* E banner */
-/* S 关于我们*/
+/* S 鍏充簬鎴戜滑*/
 .b-item {
   text-align: center;
   margin-bottom: 10px;
@@ -505,8 +505,8 @@ footer {
   border-radius: 10px;
   border: 1px solid #e1e2e4;
 }
-/* E 关于我们*/
-/* S 合作伙伴 */
+/* E 鍏充簬鎴戜滑*/
+/* S 鍚堜綔浼欎即 */
 .b-tit {
   text-align: center;
   margin-top: 80px;
@@ -549,8 +549,8 @@ footer {
 .b-brand li {
   margin-top: 68px;
 }
-/* E 合作伙伴 */
-/* S 系统配送首页*/
+/* E 鍚堜綔浼欎即 */
+/* S 绯荤粺閰嶉�侀椤�*/
 .b-con {
   min-height: 836px;
   padding-top: 130px;
@@ -593,8 +593,8 @@ footer {
   text-decoration: none;
   color: #333;
 }
-/* E 系统配送首页*/
-/* S 包裹到站 */
+/* E 绯荤粺閰嶉�侀椤�*/
+/* S 鍖呰９鍒扮珯 */
 .i-hei {
   position: absolute;
   top: 60px;
@@ -746,8 +746,8 @@ footer {
   background: #d9d8eb;
   margin: 19px 0;
 }
-/* E 包裹到站 */
-/* S 系统设置 配送区域 */
+/* E 鍖呰９鍒扮珯 */
+/* S 绯荤粺璁剧疆 閰嶉�佸尯鍩� */
 .txt-info {
   float: left;
   padding: 0 15px;
@@ -823,8 +823,13 @@ footer {
   opacity: 0;
   top: -5px;
 }
-/* E 系统设置 配送区域 */
+/* E 绯荤粺璁剧疆 閰嶉�佸尯鍩� */
 /* S pop */
+fbg .modal,
+.fbg .modal-backdrop {
+  left: 16%;
+  width: 84%;
+}
 #mask {
   background: #555555;
   width: 100%;
@@ -965,7 +970,7 @@ footer {
   }
 }
 /* E pop */
-/* S reset 布局*/
+/* S reset 甯冨眬*/
 @media (min-width: 992px) {
   .bbd-md-3 {
     width: 16%;
@@ -973,7 +978,7 @@ footer {
   .bbd-md-9 {
     width: 84%;
   }
-} /* E reset 布局*/
+} /* E reset 甯冨眬*/
 /*# sourceMappingURL=main.css.map */
 
 .form-inline .form-control {

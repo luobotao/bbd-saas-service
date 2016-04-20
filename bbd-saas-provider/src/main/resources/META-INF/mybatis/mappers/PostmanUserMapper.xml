@@ -102,8 +102,8 @@
 	        	<if test="nickname != null">
 	        	nickname = #{nickname,jdbcType=VARCHAR},
 	        	</if>
-	        	<if test="nickname != null">
-	        	headicon = #{nickname,jdbcType=VARCHAR},
+	        	<if test="headicon != null">
+	        	headicon = #{headicon,jdbcType=VARCHAR},
 	        	</if>
 	        	<if test="companyname != null">
 	        	companyname = #{companyname,jdbcType=VARCHAR},
