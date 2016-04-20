@@ -135,14 +135,14 @@ public class UserManageController {
 	@RequestMapping(value="saveUser", method=RequestMethod.POST)
 	public String saveUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model,
 			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
-		String realName = "";
+		/*String realName = "";
 		
 		try {
 			realName=new String(userForm.getRealName().getBytes("iso-8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		User getuser = adminService.get(UserSession.get(request));
 		//验证该loginName在user表中是否已存在
@@ -175,7 +175,7 @@ public class UserManageController {
 			//loginName在user表中不存在
 			Key<User> kuser = userService.save(user);
 			postmanUser = new PostmanUser();
-			postmanUser.setNickname(realName);
+			postmanUser.setNickname(userForm.getRealName());
 			postmanUser.setHeadicon("");
 			postmanUser.setCardidno("");
 			postmanUser.setCompanyname("");
