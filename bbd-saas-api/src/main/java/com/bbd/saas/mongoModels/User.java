@@ -35,8 +35,7 @@ public class User implements Serializable {
     private User operate;//用户创建者
     private String lastIp;
     private int loginCount;
-    private int state;//状态标识 1审核中 2审核通过 3驳回
-    private UserStatus userStatus;//状态标识 1启用,0停用 
+    private UserStatus userStatus;//状态标识 1启用,0停用
     private Date dateAdd;//创建时间
     private Date dateUpdate;//修改时间
     private Date dateLogin;//最后一次登录时间
@@ -111,14 +110,6 @@ public class User implements Serializable {
 
     public void setLoginCount(int loginCount) {
         this.loginCount = loginCount;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
     }
 
     public Date getDateAdd() {
