@@ -37,6 +37,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         super(datastores);
     }
 
+    /**
+     * 带查询条件去检索订单
+     * @param pageModel
+     * @param orderQueryVO
+     * @return
+     */
     public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("-dateUpd");
         if(orderQueryVO!=null){
@@ -70,6 +76,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return pageModel;
     }
 
+    /**
+     * 根据站点编码获取该站点订单数据
+     * @param areaCode
+     * @return
+     */
     public OrderNumVO getOrderNumVO(String areaCode) {
         OrderNumVO orderNumVO = new OrderNumVO();
         Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
@@ -85,11 +96,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         cal.set(Calendar.MILLISECOND, 0);
         query.filter("dateMayArrive >=",cal.getTime());
         orderNumVO.setNoArrive(count(query));//今天未到站
-        queryArrive.filter("dateMayArrive <=",new Date()).filter("dateMayArrive >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
+        queryArrive.filter("dateArrived <=",new Date()).filter("dateArrived >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
         orderNumVO.setArrived(count(queryArrive));//已到站
         return orderNumVO;
     }
 
+    /**
+     * 更新订单状态
+     * 此处需要再加上包裹下的订单的状态更新
+     * @param mailNum 运单号
+     * @param orderStatusOld 可为null,若为null则不检验旧状态否则须旧状态满足才可更新
+     * @param orderStatusNew
+     */
     public UpdateResults updateOrderOrderStatu(String mailNum, OrderStatus orderStatusOld, OrderStatus orderStatusNew) {
         Query<Order> query = createQuery();
         query.filter("mailNum",mailNum);
@@ -102,7 +120,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         return update(query,ops);
     }
-
+    /**
+     * Description: 根据运单号查询订单信息
+     * @param mailNum 运单号
+     * @return
+     */
     public Order findOneByMailNum(String areaCode, String mailNum) {
         Query<Order> query = createQuery();
         if(StringUtils.isNotBlank(areaCode))
