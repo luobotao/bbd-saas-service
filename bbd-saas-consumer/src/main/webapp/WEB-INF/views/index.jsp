@@ -54,7 +54,6 @@
 					<ul class="menu dn">
 						<li><a href="<c:url value="/deliverRegion/map/1" />" target="iframe1">配送区域</a></li>
 						<li><a href="<c:url value="/userManage/userList" />" target="iframe1">用户管理</a></li>
-						<li><a href="system-role.html">角色管理</a></li>
 					</ul>
 				</ul>
 			</div>

@@ -69,6 +69,7 @@ public class DeliverRegionController {
 		}else{
 			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
 		}
+		activeNum="2";
 		model.addAttribute("activeNum", activeNum);
 		model.addAttribute("site", site);
 		model.addAttribute("between", between);
@@ -78,7 +79,7 @@ public class DeliverRegionController {
 		model.addAttribute("pageNum", siteKeywordPage.getPageNum());
 		model.addAttribute("pageCount", siteKeywordPage.getCount());
 
-		List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence("570e12e06efa872f6c15a7b5");
+		List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());
 		String siteStr = dealSitePoints(sitePoints);
 		model.addAttribute("sitePoints", siteStr);
 		return "systemSet/deliverRegionMap";
