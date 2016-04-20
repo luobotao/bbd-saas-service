@@ -5,6 +5,8 @@ import com.bbd.saas.models.PostmanUser;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 
 public interface PostmanUserDao {
     
@@ -15,6 +17,16 @@ public interface PostmanUserDao {
      * @return
      */
     List<PostmanUser> selectAll();
-    
+    /**
+     * 根据phone获取对应的postmanUser
+     * @param phone
+     * @return PostmanUser
+     */
+    PostmanUser selectPostmanUserByPhone(@Param("phone") String phone);
+    /**
+     * 根据phone获取对应的postmanUser
+     * @param phone
+     * @return List<PostmanUser>
+     */
     Integer insertUser(PostmanUser postmanUser);
 }

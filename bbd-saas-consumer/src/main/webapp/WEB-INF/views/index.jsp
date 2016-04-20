@@ -34,6 +34,7 @@
 				<li><a href="<c:url value="/" />">首页</a></li>
 				<li><a href="javascript:void(0);"><i class="glyphicon glyphicon-user orange">${user.realName}</i></a></li>
 				<li><a href="<c:url value="/logout" />">退出登录</a></li>
+				<li><a href="<c:url value="//updOrderStatus" />" target="iframe1" > 修改订单状态</a></li>
 			</ul>
 		</div><!-- /.navbar-collapse -->
 	</div><!-- /.container-fluid -->

@@ -9,6 +9,7 @@ import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.models.PostmanUser;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,19 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	public List<PostmanUser> selectAll() {
 		return postmanUserDao.selectAll();
 	}
-	
+	/**
+     * 根据phone获取对应的postmanUser
+     * @param phone
+     * @return PostmanUser
+     */
+	public PostmanUser selectPostmanUserByPhone(String phone){
+		return postmanUserDao.selectPostmanUserByPhone(phone);
+	}
+	/**
+     * 保存postmanUser
+     * @param postmanUser
+     * @return ret 成功或失败
+     */
 	public int insertUser(PostmanUser postmanUser){
 		return postmanUserDao.insertUser(postmanUser);
 	}

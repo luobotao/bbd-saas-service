@@ -35,46 +35,46 @@
 					<ul class="menu dn">
 		                <li><a href="system-distribution.html">配送区域</a></li>
 		                <li><a href="system-usermanage.html">用户管理</a></li>
+		                <li><a href="system-role.html">角色管理</a></li>
 		            </ul>
 				</ul>
 			</div>
 			<!-- E sidebar -->
 			<!-- S detail -->
-			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
+			<div class="b-detail col-xs-12 col-sm-12 col-md-9 col-lg-9">
+				修改订单状态：
 				<!-- S 搜索区域 -->
-				<form class="form-inline form-inline-n">
-					<div class="search-area">
-	  					<div class="row">
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<label>状态：</label>
-	  							<select id="status" name="status" class="form-control form-con-new">
-	  								<%=DispatchStatus.Srcs2HTML(-1)%>
-	  							</select>
-	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
-	  							<label>到站时间：</label>
-	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
-	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
-	  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
-	  						</div>
-	  					</div>
-	  					<div class="b-line"></div>
-	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
-	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
-	  							<span class="ft12 pt20">已选择：<span id="courierName"></span></span>
-	  							<input id="courierId" type="hidden" value="" /> 
-	  						</div>
-	  						
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
-	  							<label>扫描运单号：</label>
-	  							<input id="mailNum" name="mailNum" type="text" placeholder="请扫描运单号" class="form-control" onkeypress="enterPress(event)" />
-	  							<span class="pl20 ft12" id="mailNum_check"> </span>	
-	  						</div>
-	  					</div>
-	  				</div>
-				</form>
+				<div class="search-area">
+  					<div class="row">
+  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+  							<label>状态：</label>
+  							<select id="status" name="status" class="form-control form-con-new">
+  								<%=OrderStatus.Srcs2HTML(-1)%>
+  							</select>
+  						</div>
+  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+  							<label>到站时间：</label>
+  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
+  						</div>
+  						<div class="form-group col-xs-12 col-sm-6 bbd-md-3">
+  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
+  						</div>
+  					</div>
+  					<div class="b-line"></div>
+  					<div class="row pb20">
+  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
+  							<span class="ft12 pt20">已选择：<span id="courierName"></span></span>
+  							<input id="courierId" type="hidden" value="" /> 
+  						</div>
+  						
+  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+  							<label>扫描运单号：</label>
+  							<input id="mailNum" name="mailNum" type="text" placeholder="请扫描运单号" class="form-control" onkeypress="enterPress(event)" />
+  							<span class="pl20 ft12" id="mailNum_check"> </span>	
+  						</div>
+  					</div>
+  				</div>
 				<!-- E 搜索区域 -->
   			<div class="tab-bod mt20">
   				<!-- S table -->
@@ -120,13 +120,13 @@
 										<td><%=order.getUser().getLoginName()%></td>
 								<%
 									}
-									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
+									if(order.getOrderStatus() == null){//未到站
 								%>
-									<td><%=DispatchStatus.NOTDISPATCH.getMessage()%></td>
+										<td>未到站</td>
 								<%
 									}else{
 								%>
-									<td><%=DispatchStatus.DISPATCHED.getMessage()%></td>
+										<td><%=order.getOrderStatus().getMessage()%></td>
 								<%
 									}
 								%>
@@ -155,36 +155,22 @@
 </footer>
 <!-- E footer -->
 
-<!-- 运单分派面板-开始 -->
-<div id="chooseCourier_div" class="j-sel-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display:none;">
-	<div class="modal-dialog b-modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header b-modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<h4 class="modal-title tc">选择派件员</h4>
-			</div>
-			<div class="modal-body b-modal-body">
-				<ul class="row">
-					<li class="col-md-12">
-					<!-- 派件员: -->
-						<div class="has-sel-icon mb12">
-							<i class="glyphicon glyphicon-user c-gray pl15"></i>
-							<select id="courier_select"> </select>
-						</div>
-					</li>
-					<li class="col-md-12">
-						<div class="c-red"><i class="glyphicon glyphicon-exclamation-sign pl15"></i> 请选择派件员</div>
-					</li>
-				</ul>
-				<div class="row mt20">
-					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideCourierDiv()" class="sbtn sbtn2 g">取消</a></span>
-					<span class="col-md-6"><a href="javascript:void(0)" onclick="chooseCourier()" class="sbtn sbtn2 l">确定</a></span>
-				</div>
-			</div>
-		</div>
+<!-- 选择派件员弹出窗-开始 -->
+<div  id="chooseCourier_div" class="popDiv" >
+	<div class="title_div">选择派件员</div>
+	<div class="m20">
+		<span>派件员:
+			<select id="courier_select">  
+				  
+			</select>				  
+		</span> 
 	</div>
-</div>
-<!-- 运单分派面板-结束 -->
+	<div>
+		<button onclick="hideCourierDiv()">取消</button>
+		<button onclick="chooseCourier()">确定</button>
+	</div>
+<div>
+<!-- 选择派件员弹出窗-结束 -->
 
 <script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 
@@ -211,25 +197,63 @@ $(document).ready(function() {
 	initCourier();  
 	//扫描运单号  focus事件
 	$("#mailNum").focus(function(){
-		if($("#courierId").val() == null || $("#courierId").val() == ""){
-	  		$("#mailNum_check").text("请选择派件员！");
-	  	}
-	}).blur(function(){//扫描运单号--把快递分派给派件员
-		//未选择派件员 
-		if($("#courierId").val() == null || $("#courierId").val() == ""){
-	  		$("#mailNum_check").text("请选择派件员！");
+		var status = $("#status").val();
+		if(status == null || status == "-1"){
+	  		$("#mailNum_check").text("请选择状态！");
 	  		return ;
-	  	}	
-	  	//已选择派件员，把快递分派给派件员	 
-	  	dispatch();
+	  	}
+	  	if(status == "2"){//已分派--需要选择派件员
+	  		if($("#courierId").val() == null || $("#courierId").val() == ""){
+	  			$("#mailNum_check").text("请选择派件员！");
+	  			return ;
+	  		}
+	  	}
+	 }).blur(function(){//扫描运单号--把快递分派给派件员
+		var status = $("#status").val();
+		if(status == null || status == "-1"){
+	  		$("#mailNum_check").text("请选择状态！");
+	  		return ;
+	  	}
+	  	if(status == "2"){//已分派--需要选择派件员
+	  		if($("#courierId").val() == null || $("#courierId").val() == ""){
+	  			$("#mailNum_check").text("请选择派件员！");
+	  			return ;
+	  		}
+	  	}
+	  	//修改运单状态	 
+	  	updateStatus();
 	});
-	//扫描运单号--把快递分派给派件员--边输入边改变
+	//扫描运单号--把快递分派给派件员
 	$("#mailNum").on('input',function(e){ 
 		
 	});
 	 
 
 });
+// 运单分派  
+function updateStatus() {  
+	$.ajax({
+        type : "GET",  //提交方式  
+		url : "<%=request.getContextPath()%>/updOrderStatus/updateOrderStatus",//路径  
+		data : {  
+		    "mailNum" : $("#mailNum").val(),
+		    "courierId" : $("#courier_select").val(),
+		    "status" : $("#status").val()  
+		},//数据，这里使用的是Json格式进行传输  
+		success : function(data) {//返回数据根据结果进行相应的处理  
+		    if (data.operFlag == 1) { 
+		    	$("#mailNum_check").text($("#mailNum").val() + "更新成功！");
+		    	//刷新列表
+		    	refreshTable(data.orderPage);
+		    }else {
+		    	$("#mailNum_check").text($("#mailNum").val() + "更新失败！");
+		    }
+		},
+		error : function() {  
+			alert("服务器繁忙，请稍后再试！");  
+		}     
+    });
+}  
 
 //回车事件--运单分派
 function enterPress(e){
@@ -244,43 +268,13 @@ function enterPress(e){
 		dispatch();
 	}
 }
-	
-// 运单分派  
-function dispatch() {  
-	$.ajax({
-        type : "GET",  //提交方式  
-		url : "<%=request.getContextPath()%>/packageDispatch/dispatch",//路径  
-		data : {  
-		    "mailNum" : $("#mailNum").val(),
-		    "courierId" : $("#courier_select").val()  
-		},//数据，这里使用的是Json格式进行传输  
-		success : function(data) {//返回数据根据结果进行相应的处理  
-		   	 if (data.operFlag == 1) { 
-		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派成功！");
-		    	//刷新列表
-		    	refreshTable(data.orderPage);
-		    }else if(data.operFlag == 0){
-		    	$("#mailNum_check").text("【异常扫描】不存在此订单！");
-		    }else if(data.operFlag == 2){
-		    	$("#mailNum_check").text("重复扫描，此运单已经分派过啦！");
-		    }else if(data.operFlag == 3){
-		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派失败，请重试！");
-		    }else{
-		    	$("#mailNum_check").text("只有状态为未分派、滞留、拒收的运单才能分派！");
-		    }
-		},
-		error : function() {  
-			alert("服务器繁忙，请稍后再试！");  
-		}     
-    });
-}  
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
-        url : "<%=path%>/packageDispatch/getList",//路径  
+        url : "<%=path%>/updOrderStatus/getList",//路径  
         data : {  
             "pageIndex" : pageIndex,
             "status" : $("#status").val(), 
@@ -331,21 +325,57 @@ function getRowHtml(data){
 		row += "<td>" + data.user.loginName + "</td>";
 	}
 	//状态
-	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
-		row += "<td>" + "<%=DispatchStatus.NOTDISPATCH.getMessage()%>" + "</td>";
-	}else{
-		row += "<td>" + "<%=DispatchStatus.DISPATCHED.getMessage()%>" + "</td>";
-	}
+	row += "<td>" + getStatus(data.orderStatus) + "</td>";
 	row += "</tr>";
 	return row;
 }
-
+//转义状态
+function getStatus(status) {
+	if(status == null){
+		return "未到站";
+	}
+    x = "未到站";
+	switch (status)
+	{
+	case "NOTARR":
+	  	x = "未到站";
+	 	break;
+	case "NOTDISPATCH":
+	  	x =  "未分派";
+	  	break;
+	case "DISPATCHED":
+	  	x =  "已分派";
+	  	break;
+	case "RETENTION":
+	  x =  "滞留";
+	  break; 
+	case "REJECTION":
+	  	x =  "拒收";
+	  	break;
+	case "SIGNED":
+	  	x =  "已签收";
+	  	break;
+	case "TO_OTHER_EXPRESS":
+	  	x =  "已转其他快递";
+	  	break;
+	case "APPLY_RETURN":
+	  	x =  "申请退货";
+	  	break;
+	case "RETURNED":
+	  	x =  "退货完成";
+	  	break; 	
+	default : 
+		//x = "未到站";
+		x = status;
+	}
+	return x;
+}	
 //初始化派件员下拉框（快递员）
 function initCourier() {
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
-        url : "<%=path%>/packageDispatch/getAllUserList",//路径  
+        url : "<%=path%>/updOrderStatus/getAllUserList",//路径  
         data : {},//数据，这里使用的是Json格式进行传输  
         success : function(dataList) {//返回数据根据结果进行相应的处理  
         	var courier_select = $("#courier_select");
@@ -379,18 +409,18 @@ function showCourierDiv(mailNum) {
 	if(courierIsLoadSuccess == 0){//派件员加载失败的话，重新加载
 		initCourier();
 	}
-	$("#chooseCourier_div").modal("show");
+	$("#chooseCourier_div").show();
 }
 //隐藏选择派件员div
 function hideCourierDiv() {
-    $("#chooseCourier_div").modal("hide");
+	$("#chooseCourier_div").hide();
 }
 //选择派件员
 function chooseCourier() {
 $("#ddlregtype").find("option:selected").text(); 
 	$("#courierName").text($("#courier_select").find("option:selected").text());
 	$("#courierId").val($("#courier_select").val());
-	$("#chooseCourier_div").modal("hide");
+	$("#chooseCourier_div").hide();
 }
 	
 </script>

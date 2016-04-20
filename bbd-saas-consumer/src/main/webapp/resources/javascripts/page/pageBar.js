@@ -19,7 +19,7 @@ function paginNav(currPage, totalPage, count){
 		pagestr += "<li class='prev'><a  href='#' onclick=\"gotoPage(" + (currPage - 1) + ");\" title='上一页'>上一页</a></li>";
 	}
 	//当前页之前的页数-当前页-当前页之后的页数
-	if (totalPage > 1){
+	if (totalPage >= 0){
 		//当前页之前的页数
 		if (currPage<=5){
 			pagestr += setPageString(1, currPage, currPage);
