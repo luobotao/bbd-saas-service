@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.models.PostDelivery;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
@@ -45,6 +47,8 @@ public class PackageDispatchController {
 	UserService userService;
 	@Autowired
 	AdminService adminService;
+	@Autowired
+	PostDeliveryService postDeliveryService;
 	
 	/**
 	 * Description: 跳转到包裹分派页面
@@ -148,6 +152,33 @@ public class PackageDispatchController {
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){
+			// 插入mysql数据库
+			PostDelivery postDelivery = new PostDelivery();
+			postDelivery.setCompany_code("BANGBANGDA");
+			postDelivery.setDateNew(new Date());
+			postDelivery.setDateUpd(new Date());
+			postDelivery.setMail_num(order.getMailNum());
+			postDelivery.setOut_trade_no(order.getOrderNo());
+			postDelivery.setPostman_id(user.getPostmanuserId());
+			postDelivery.setReceiver_address(order.getReciever().getAddress());
+			postDelivery.setReceiver_city(order.getReciever().getCity());
+			postDelivery.setReceiver_company_name("");
+			postDelivery.setReceiver_district("");
+			postDelivery.setReceiver_name(order.getReciever().getName());
+			postDelivery.setReceiver_phone(order.getReciever().getPhone());
+			postDelivery.setReceiver_province(order.getReciever().getProvince());
+			postDelivery.setSender_address(order.getSender().getAddress());
+			postDelivery.setSender_city(order.getSender().getCity());
+			postDelivery.setSender_company_name(order.getSrc().getMessage());
+			postDelivery.setSender_name(order.getSender().getName());
+			postDelivery.setSender_phone(order.getSender().getPhone());
+			postDelivery.setSender_province(order.getSender().getProvince());
+			postDelivery.setSta("1");
+			postDelivery.setStaffid(user.getStaffid());
+			postDelivery.setTyp("4");
+			postDeliveryService.insert(postDelivery);
+			logger.info("运单分派成功更新到mysql的bbt数据库的postdelivery表中"+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());
+			
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();

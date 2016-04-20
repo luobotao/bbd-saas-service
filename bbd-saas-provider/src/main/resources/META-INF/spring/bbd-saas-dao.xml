@@ -7,6 +7,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
+    <!--  start mongodb daos  -->
     <import resource="classpath:META-INF/spring/spring-morphia-conf.xml"/>
     <!-- 管理用户DAO-->
     <bean id="adminUserDao" class="com.bbd.saas.dao.mongo.AdminUserDao">
@@ -28,17 +29,9 @@
     <bean id="orderParcelDao" class="com.bbd.saas.dao.mongo.OrderParcelDao">
         <constructor-arg ref="datastore"/>
     </bean>
+	<!--  end mongodb daos  -->
 
-
-
-
-
-
-
-
-
-
-    <!--start mysql daos -->
+    <!--  start mysql daos  -->
     <import resource="classpath:META-INF/mybatis/mybatisContext.xml" />
     <bean id="postcompanyDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostcompanyDao"></property>
@@ -48,4 +41,9 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostmanUserDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+    <bean id="postDeliveryDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostDeliveryDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+    <!--  end mysql daos  -->
 </beans>
