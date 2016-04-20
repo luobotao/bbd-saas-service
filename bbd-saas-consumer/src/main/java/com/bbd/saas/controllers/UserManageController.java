@@ -136,6 +136,10 @@ public class UserManageController {
 	public String saveUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model,
 			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
 		User getuser = adminService.get(UserSession.get(request));
+		//验证该loginName在user表中是否已存在
+		User loginuser = userService.findUserByLoginName(userForm.getLoginName());
+		//验证该在同一个站点下staffid是否已存在
+		User staffiduser = userService.findOneBySiteByStaffid(getuser.getSite(), userForm.getStaffid());
 		System.out.println("ssss");
 		Map<String, Object> map = new HashMap<String, Object>();
 	    java.util.Date dateAdd = new java.util.Date();
@@ -151,27 +155,52 @@ public class UserManageController {
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(1));
 		System.out.println("============="+user.getUserStatus().getStatus());
-		Key<User> kuser = userService.save(user);
-		PostmanUser postmanUser = new PostmanUser();
-		postmanUser.setPhone(userForm.getLoginName());
-		postmanUser.setStaffid(userForm.getStaffid());
-		postmanUser.setDateNew(dateAdd);
-		postmanUser.setPoststatus(1);
-		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
-			//快递员
-			postmanUser.setPostrole(0);
-		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
-			//站长
-			postmanUser.setPostrole(4);
-		}
-
-		int ret = userMysqlService.insertUser(postmanUser);
-		System.out.println("idddd=="+postmanUser.getId());
-		//return "true";
-		if(kuser!=null && !kuser.getId().equals("")){
-			return "true";
-		}else{
+		
+		if(loginuser!=null && !loginuser.getId().equals("") && staffiduser!=null && !staffiduser.getId().equals("")){
+			////loginName在user表中已存在
 			return "false";
+			
+		}else{ 
+			//loginName在user表中不存在
+			Key<User> kuser = userService.save(user);
+			PostmanUser postmanUser = new PostmanUser();
+			postmanUser.setNickname("");
+			postmanUser.setHeadicon("");
+			postmanUser.setCardidno("");
+			postmanUser.setCompanyname("");
+			postmanUser.setCompanyid(0);
+			postmanUser.setSubstation("");
+			postmanUser.setAlipayAccount("");
+			postmanUser.setToken("");
+			postmanUser.setBbttoken("");
+			postmanUser.setLat(0d);
+			postmanUser.setLon(0d);
+			postmanUser.setHeight(0d);
+			postmanUser.setAddr("");
+			postmanUser.setAddrdes("");
+			postmanUser.setShopurl("");
+			postmanUser.setSta("");
+			postmanUser.setSpreadticket("");
+			postmanUser.setPhone(userForm.getLoginName());
+			postmanUser.setStaffid(userForm.getStaffid());
+			postmanUser.setDateNew(dateAdd);
+			postmanUser.setPoststatus(1);
+			if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
+				//快递员
+				postmanUser.setPostrole(0);
+			}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
+				//站长
+				postmanUser.setPostrole(4);
+			}
+
+			int ret = userMysqlService.insertUser(postmanUser);
+			System.out.println("idddd=="+postmanUser.getId());
+			if(kuser!=null && !kuser.getId().equals("")){
+				return "true";
+			}else{
+				return "false";
+			}
+			
 		}
 	}
 	
