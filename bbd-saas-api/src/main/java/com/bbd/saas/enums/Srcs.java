@@ -14,6 +14,7 @@ public enum Srcs {
     TIANMAO(3,"天猫"),
     BAIDUWAIMAI(5,"百度外卖"),
     PINHAOHUO(6,"拼好货"),
+    HANWEI(7,"汉维"),
     OTHERS(99,"其他");
     private int status;
     private String message;
