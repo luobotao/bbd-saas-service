@@ -140,6 +140,8 @@ public class UserManageController {
 		User loginuser = userService.findUserByLoginName(userForm.getLoginName());
 		//验证该在同一个站点下staffid是否已存在
 		User staffiduser = userService.findOneBySiteByStaffid(getuser.getSite(), userForm.getStaffid());
+		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
+		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
 		System.out.println("ssss");
 		Map<String, Object> map = new HashMap<String, Object>();
 	    java.util.Date dateAdd = new java.util.Date();
@@ -156,14 +158,14 @@ public class UserManageController {
 		user.setUserStatus(UserStatus.status2Obj(1));
 		System.out.println("============="+user.getUserStatus().getStatus());
 		
-		if(loginuser!=null && !loginuser.getId().equals("") && staffiduser!=null && !staffiduser.getId().equals("")){
+		if((loginuser!=null && !loginuser.getId().equals("")) || (staffiduser!=null && !staffiduser.getId().equals("")) || postmanUser!=null && postmanUser.getId()!=null){
 			////loginName在user表中已存在
 			return "false";
 			
 		}else{ 
 			//loginName在user表中不存在
 			Key<User> kuser = userService.save(user);
-			PostmanUser postmanUser = new PostmanUser();
+			postmanUser = new PostmanUser();
 			postmanUser.setNickname("");
 			postmanUser.setHeadicon("");
 			postmanUser.setCardidno("");
@@ -196,6 +198,11 @@ public class UserManageController {
 			int ret = userMysqlService.insertUser(postmanUser);
 			System.out.println("idddd=="+postmanUser.getId());
 			if(kuser!=null && !kuser.getId().equals("")){
+				
+				postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
+				user = userService.findOne(kuser.getId().toString());
+				user.setPostmanuserId(postmanUser.getId());
+				kuser = userService.save(user);
 				return "true";
 			}else{
 				return "false";

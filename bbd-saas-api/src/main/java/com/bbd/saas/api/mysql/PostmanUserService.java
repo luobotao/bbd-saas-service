@@ -17,6 +17,16 @@ public interface PostmanUserService {
      * @return
      */
     List<PostmanUser> selectAll();
-    
+    /**
+     * 保存postmanUser
+     * @param postmanUser
+     * @return ret 成功或失败
+     */
     int insertUser(PostmanUser postmanUser);
+    /**
+     * 根据phone获取对应的postmanUser
+     * @param phone
+     * @return PostmanUser
+     */
+    PostmanUser selectPostmanUserByPhone(String phone);
 }

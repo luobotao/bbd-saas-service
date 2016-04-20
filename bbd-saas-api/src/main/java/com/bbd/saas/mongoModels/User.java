@@ -47,6 +47,7 @@ public class User implements Serializable {
     @Transient
     private String statusMessage;//存放有效或无效
     private String staffid;//员工id
+    private int postmanuserId;//postmanuser的主键id
 
     public ObjectId getId() {
         return id;
@@ -190,6 +191,14 @@ public class User implements Serializable {
 
 	public void setStaffid(String staffid) {
 		this.staffid = staffid;
+	}
+
+	public int getPostmanuserId() {
+		return postmanuserId;
+	}
+
+	public void setPostmanuserId(int postmanuserId) {
+		this.postmanuserId = postmanuserId;
 	}
 
 }
