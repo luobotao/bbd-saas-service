@@ -6,10 +6,10 @@
                         ">
     <import resource="shardingContext.xml"/>
     <!--分表分库规则的-->
-    <bean id="sqlSessionFactoryWithSharding" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="shardingDataSource"/>
-        <property name="mapperLocations" value="classpath*:META-INF/mybatis/mappers/*.xml"/>
-    </bean>
+    <!--<bean id="sqlSessionFactoryWithSharding" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+        <!--<property name="dataSource" ref="shardingDataSource"/>-->
+        <!--<property name="mapperLocations" value="classpath*:META-INF/mybatis/mappers/*.xml"/>-->
+    <!--</bean>-->
     <!--不分表分库-->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="ds_0"/>
