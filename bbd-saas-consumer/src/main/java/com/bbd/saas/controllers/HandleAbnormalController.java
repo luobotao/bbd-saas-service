@@ -22,6 +22,7 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -52,6 +53,8 @@ public class HandleAbnormalController {
 	AdminService adminService;
 	@Autowired
 	SiteService siteService;
+	@Autowired
+	PostDeliveryService postDeliveryService;
 	/**
 	 * description: 跳转到异常件处理页面
 	 * 2016年4月1日下午6:13:46
@@ -131,7 +134,7 @@ public class HandleAbnormalController {
 		
 		//更新字段设置
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
-		orderUpdateVO.staffId = staffId;//派件员id--ObjectId 
+		orderUpdateVO.staffId = staffId;//派件员 
 		orderUpdateVO.site = currUser.getSite();
 		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
 		//orderUpdateVO.orderStatus = OrderStatus.RETENTION;//更新运单状态--已分派
@@ -146,6 +149,9 @@ public class HandleAbnormalController {
 		//更新运单
 		int i = orderService.updateOrder(orderUpdateVO, orderQueryVO);
 		if(i > 0){
+			//更新mysql
+			User user = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
+			postDeliveryService.updatePostIdAndStaffId(mailNum, user.getPostmanuserId()+"", user.getStaffid());
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 

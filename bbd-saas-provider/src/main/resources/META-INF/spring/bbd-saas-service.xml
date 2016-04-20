@@ -7,7 +7,8 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
     <import resource="classpath:META-INF/spring/bbd-saas-dao.xml" />
-
+    
+	<!-- start mongodb services   -->
     <!-- adminUser Service-->
     <bean id="adminUserService" class="com.bbd.saas.api.impl.mongo.AdminUserServiceImpl">
         <property name="adminUserDao">
@@ -47,12 +48,9 @@
             <ref bean="siteDao"/>
         </property>
     </bean>
-
-
-
-
-
-    <!--start mysql services -->
+    <!--   end mongodb services    -->
+ 
+    <!--   start mysql services   -->
     <bean id="postcompanyService" class="com.bbd.saas.api.impl.mysql.PostcompanyServiceImpl">
         <property name="postcompanyDao">
             <ref bean="postcompanyDao"/>
@@ -63,4 +61,10 @@
             <ref bean="postmanUserDao"/>
         </property>
     </bean>
+    <bean id="postDeliveryService" class="com.bbd.saas.api.impl.mysql.PostDeliveryServiceImpl">
+        <property name="postDeliveryDao">
+            <ref bean="postDeliveryDao"/>
+        </property>
+    </bean>
+    <!--    end mysql services   -->
 </beans>

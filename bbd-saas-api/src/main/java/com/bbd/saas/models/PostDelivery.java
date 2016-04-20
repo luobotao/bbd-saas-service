@@ -8,7 +8,7 @@ import java.util.Date;
  * @author luobotao
  *
  */
-public class Postdelivery implements Serializable {
+public class PostDelivery implements Serializable {
 	
 	private static final long serialVersionUID = 3742686543177230584L;
 	private Integer id;

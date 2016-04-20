@@ -16,7 +16,7 @@
 <body>
 <!-- S nav -->
 <nav class="navbar navbar-default b-navbar">
-	<div class="container">
+	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -34,7 +34,6 @@
 				<li><a href="<c:url value="/" />">首页</a></li>
 				<li><a href="javascript:void(0);"><i class="glyphicon glyphicon-user orange">${user.realName}</i></a></li>
 				<li><a href="<c:url value="/logout" />">退出登录</a></li>
-				<li><a href="<c:url value="//updOrderStatus" />" target="iframe1" > 修改订单状态</a></li>
 			</ul>
 		</div><!-- /.navbar-collapse -->
 	</div><!-- /.container-fluid -->
@@ -47,14 +46,19 @@
 			<!-- S sidebar -->
 			<div class="col-xs-12 col-sm-12 bbd-md-3">
 				<ul class="b-sidebar">
-					<li class="lv1 side-cur"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
-					<li class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
-					<li class="lv1"><a href="<c:url value="/handleAbnormal" />" target="iframe1" ><i class="b-icon p-error"></i>异常件处理</a></li>
-					<li class="lv1"><a href="<c:url value="/dataQuery" />" target="iframe1" ><i class="b-icon p-query"></i>数据查询</a></li>
+					<li id="arrive" class="lv1 side-cur"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
+					<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
+					<li id="error" class="lv1"><a href="<c:url value="/handleAbnormal" />" target="iframe1" ><i class="b-icon p-error"></i>异常件处理</a></li>
+					<li id="query" class="lv1"><a href="<c:url value="/dataQuery" />" target="iframe1" ><i class="b-icon p-query"></i>数据查询</a></li>
 					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
 					<ul class="menu dn">
+<<<<<<< HEAD
+						<li id="set" ><a href="<c:url value="/deliverRegion/map/1" />" target="iframe1">配送区域</a></li>
+						<li ><a href="<c:url value="/userManage/userList" />" target="iframe1">用户管理</a></li>
+=======
 						<li><a href="<c:url value="/deliverRegion/map/1" />" target="iframe1">配送区域</a></li>
 						<li><a href="<c:url value="/userManage/userList" />" target="iframe1">用户管理</a></li>
+>>>>>>> 4d30ff264c57e930fec4345512c53ad7c248dadd
 					</ul>
 				</ul>
 			</div>
@@ -66,7 +70,7 @@
 <!-- E content -->
 <!-- S detail -->
 <div class="b-branch-hei">
-	<iframe id="iframe1" class="i-hei" name="iframe1" src="<c:url value="/packageToSite" />" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" onLoad="iFrameHeight()"></iframe>
+	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" onLoad="iFrameHeight()"></iframe>
 </div><!-- /.content-wrapper -->
 <!-- E detail -->
 
@@ -75,6 +79,17 @@
 	$("li").click(function(){
 		$(this).addClass("side-cur").siblings().removeClass("side-cur");
 	});
+	var typ="${typ}";
+
+	$("li").each(function(){
+		if($(this).attr("id")==typ){
+			$(this).addClass("side-cur").siblings().removeClass("side-cur");
+			var href = $(this).find("a").attr("href");
+			$("#iframe1").attr("src",href);
+		}
+
+//	$(typ).addClass("side-cur").siblings().removeClass("side-cur");
+	})
 </script>
 <script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 </body>

@@ -279,7 +279,7 @@
 		row +=  "<td>" + data.parcelCode + "</td>";
 		row += "<td>" + data.mailNum + "</td>";
 		row += "<td>" + data.orderNo + "</td>";
-		row += "<td>" + data.src + "</td>";
+		row += "<td>" + data.srcMessage + "</td>";
 		row += "<td>" + data.reciever.name + "</td>";
 		row += "<td>" + data.reciever.phone + "</td>";
 		row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
