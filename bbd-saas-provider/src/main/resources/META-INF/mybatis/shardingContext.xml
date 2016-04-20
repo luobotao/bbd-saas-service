@@ -13,14 +13,14 @@
 
     <bean id="ds_0" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt"/>
+        <property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt?useUnicode=true&characterEncoding=utf8"/>
         <property name="username" value="yangtao"/>
         <property name="password" value="neolix123"/>
     </bean>
 
     <bean id="ds_1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt"/>
+        <property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt?useUnicode=true&characterEncoding=utf8"/>
         <property name="username" value="yangtao"/>
         <property name="password" value="neolix123"/>
     </bean>
