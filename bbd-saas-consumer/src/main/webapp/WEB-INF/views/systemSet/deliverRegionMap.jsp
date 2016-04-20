@@ -26,7 +26,6 @@
 					<ul class="menu">
 						<li class="curr"><a href="system-distribution.html">配送区域</a></li>
 						<li><a href="system-usermanage.html">用户管理</a></li>
-						<li><a href="system-role.html">角色管理</a></li>
 					</ul>
 				</ul>
 			</div>
@@ -92,26 +91,16 @@
 									<!--主体部分-->
 									<div id="allmap" style="overflow:hidden;zoom:1;position:relative;;">
 										<div id="map" style="height:473px;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;"></div>
-										<div id="showPanelBtn" style="position:absolute;font-size:14px;top:50%;margin-top:-95px;right:0px;width:20px;padding:10px 10px;color:#999;cursor:pointer;text-align:center;height:170px;rgba(255,255,255,0.9);-webkit-transition:  all 0.5s ease-in-out;transition: all 0.5s ease-in-out;font-family:'微软雅黑';font-weight:bold;">编辑多边形<br/>&lt;</div>
-										<div id="panelWrap" style="width:0px;position:absolute;top:0px;right:0px;height:100%;overflow:auto;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;">
-											<div style="width:20px;height:200px;margin:-100px 0 0 -10px;color:#999;position:absolute;opacity:0.5;top:50%;left:50%;" id="showOverlayInfo">此处用于展示覆盖物信息</div>
-											<div id="panel" style="position:absolute;"></div>
-										</div>
 									</div>
 
 									<!--主体部分 end-->
 								</div>
 							</div>
 							<div class="col-md-12 mt20">
-
-								<form action="/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}" method="post" id="allLaysForm">
-									<input type="hidden" name="jsonStr" id="jsonStr"/>
 									<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
 									<a href="javascript:void(0);" class="ser-btn c" onclick="openDraw()">绘制</a>
 									<a href="javascript:void(0);" class="ser-btn c" onclick="bmap.clearAll()">清除</a>
 									<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
-								</form>
-
 							</div>
 						</div>
 						<!-- E 绘制电子围栏 -->
@@ -241,7 +230,6 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-	console.log(${activeNum});
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
 	$('.b-tab a').click(function (e) {
 		e.preventDefault()
@@ -257,7 +245,6 @@
 			dataType: "text",
 			data: {},
 			success: function(response){
-				console.log(response);
 				alert("保存成功");
 				window.location.href="/deliverRegion/map/1";
 			},
@@ -311,7 +298,6 @@
 			id_array.push($(this).val());//向数组中添加元素
 		});
 		var delIds = id_array.join(',');
-		console.log(delIds);
 		if(delIds==""){
 			alert("请选择要删除的站点关键词");
 			return false;
@@ -346,7 +332,51 @@
 		}
 		bmapArr.push(barr);
 	}
-	console.log(bmapArr);
+	//console.log(bmapArr);
+
+	//提交保存
+	$("#formBtn").click(function () {
+		var jsonStr = "";
+		bmap.overlays.forEach(function (e) {
+			var arrs = e.ro;
+			for (var i = 0; i < arrs.length; i++) {
+				jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
+				if (i < arrs.length - 1) {
+					jsonStr = jsonStr + ",";
+				}
+			}
+			jsonStr.substring(0, jsonStr.length - 1);
+			jsonStr = jsonStr + ";";
+			console.log(jsonStr);
+		})
+		if ("" != jsonStr) {
+			var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
+			$.ajax({
+				url: url,
+				type: 'POST',
+				cache: false,
+				data: {
+					"jsonStr" : jsonStr
+				},
+				success: function(data){
+					console.log(data);
+					if(data == "success"){
+						alert("提交成功");
+					}else{
+						console.log("error:"+data);
+					}
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
+/*			$("#jsonStr").val(jsonStr);
+			$('#allLaysForm').submit();*/
+		} else {
+			alert("请先绘制电子围栏");
+		}
+	})
+
 	var bmap = {
 		status: false,
 		map: '',
@@ -373,10 +403,10 @@
 			}
 			this.status = true;
 			this.map = new BMap.Map('map');
-			this.point = new BMap.Point(116.307852,40.057031);
+			this.point = new BMap.Point(${site.lng}, ${site.lat});
 			var map = this.map;
 			var styleOptions = this.styleOptions;
-			map.centerAndZoom(this.point, 16);
+			map.centerAndZoom(this.point, 12);
 			map.enableScrollWheelZoom();
 			//实例化鼠标绘制工具
 			this.drawingManager = new BMapLib.DrawingManager(map, {
@@ -406,10 +436,18 @@
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
 				this.myPolygon = myPolygon;
-				try{myPolygon.enableEditing();}catch(e){};
+				try{myPolygon.enableEditing();
+					myPolygon.enableMassClear();}catch(e){}
 				myPolygon.addEventListener("lineupdate",function(e){
 					bmap.showLatLon(e.currentTarget.ro);
 				});
+				myPolygon.addEventListener("click",function(e){
+					if(confirm("删除？")){
+						bmap.delPolygon(e);
+					}
+				});
+				console.log(myPolygon);
+				bmap.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
 			})
 		},
@@ -448,7 +486,19 @@
 			e.overlay.addEventListener("lineupdate",function(e){
 				bmap.showLatLon(e.currentTarget.ro);
 			});
-
+		},
+		//监听左键click事件
+		delPolygon:function(e){
+			var map = this.map;
+			map.removeOverlay(e.target);
+			var overlays = this.overlays;
+			var overlaysTmp = [];
+			for(var i = 0; i < overlays.length; i++){
+				if(overlays[i] != e.target){
+					overlaysTmp.push(overlays[i]);
+				}
+			}
+			this.overlays=overlaysTmp;
 		},
 		/**
 		 * 清除覆盖物
@@ -461,12 +511,7 @@
 				map.removeOverlay(overlays[i]);
 			}
 			this.overlays.length = 0
-			this.myOverlay.forEach(function(e){
-				myPolygon = new BMap.Polygon(e, this.styleOptions);
-				this.myPolygon = myPolygon;
-				map.removeOverlay(this.myPolygon);
-			})
-
+			map.clearOverlays();
 			this.myPolygon = '';
 		},
 		/**
@@ -474,7 +519,7 @@
 		 */
 		getOverLay: function(){
 			var box = this.myPolygon ? this.myPolygon : this.overlays[this.overlays.length - 1];
-			console.log(box.ro);
+			//console.log(box.ro);
 		},
 		getCount: function(){
 			var n = 0;
@@ -484,7 +529,7 @@
 			if (this.overlays) {
 				n = n + this.overlays.length;
 			};
-			console.log(n);
+			//console.log(n);
 		}
 	};
 	//显示结果面板动作
@@ -517,7 +562,7 @@
 	 new BMap.Point(116.582087,40.731351)
 	 ]];*/
 	bmap.myOverlay=bmapArr;
-	console.log(bmap.myOverlay);
+	//console.log(bmap.myOverlay);
 	bmap.init();
 
 	function openDraw(){

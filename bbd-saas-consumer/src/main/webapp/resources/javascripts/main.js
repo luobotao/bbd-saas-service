@@ -126,6 +126,8 @@ $(function () {
     $(".import-file").on("change",function(){
         $(".j-import-pop").modal();
     })
+
+    $(".j-guide-pop").modal();
 })
 //iframe 自适应高度
 function iFrameHeight() {

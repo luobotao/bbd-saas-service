@@ -31,7 +31,6 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 							<ul class="menu">
 				                <li><a href="system-distribution.html">配送区域</a></li>
 				                <li class="curr"><a href="system-usermanage.html">用户管理</a></li>
-				                <li><a href="system-role.html">角色管理</a></li>
 				            </ul>
 						</ul>
         			</div>
