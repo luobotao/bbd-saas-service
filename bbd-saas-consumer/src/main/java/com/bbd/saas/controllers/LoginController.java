@@ -66,10 +66,6 @@ public class LoginController {
 					redirectAttrs.addFlashAttribute("message", "站点未审核,请联系工作人员尽快审核");
 					return "redirect:/login";
 				}
-				if(user.getState()!=2){
-					redirectAttrs.addFlashAttribute("message", "用户未通过审核");
-					return "redirect:/login";
-				}
 				if(user.getUserStatus()== UserStatus.INVALID){
 					redirectAttrs.addFlashAttribute("message", "用户状态无效");
 					return "redirect:/login";

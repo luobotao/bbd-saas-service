@@ -75,16 +75,20 @@
 		$(this).addClass("side-cur").siblings().removeClass("side-cur");
 	});
 	var typ="${typ}";
+	if(typ!=null && typ!=""){
+		$("li").each(function(){
+			if($(this).attr("id")==typ){
+				$(this).addClass("side-cur").siblings().removeClass("side-cur");
+				var href = $(this).find("a").attr("href");
+				$("#iframe1").attr("src",href);
+			}
+		})
+	}else{
+		$("#arrive").addClass("side-cur").siblings().removeClass("side-cur");
+		var href =$("#arrive").find("a").attr("href");
+		$("#iframe1").attr("src",href);
+	}
 
-	$("li").each(function(){
-		if($(this).attr("id")==typ){
-			$(this).addClass("side-cur").siblings().removeClass("side-cur");
-			var href = $(this).find("a").attr("href");
-			$("#iframe1").attr("src",href);
-		}
-
-//	$(typ).addClass("side-cur").siblings().removeClass("side-cur");
-	})
 </script>
 <script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 </body>
