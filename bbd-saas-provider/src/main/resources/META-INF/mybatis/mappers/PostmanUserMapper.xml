@@ -93,6 +93,80 @@
         FROM `postmanuser` where <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
     </select>
     
+    <update id="updateByPhone" parameterType="com.bbd.saas.models.PostmanUser">
+        UPDATE `postmanuser`
+        	<set>
+	        	<if test="staffid != null">
+	        	staffid = #{staffid,jdbcType=INTEGER}
+	        	</if>
+	        	<if test="nickname != null">
+	        	nickname = #{nickname,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="headicon != null">
+	        	headicon = #{headicon,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="companyname != null">
+	        	companyname = #{companyname,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="cardidno != null">
+	        	cardidno = #{cardidno,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="substation != null">
+	        	substation = #{substation,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="companyid != null">
+	        	companyid = #{companyid,jdbcType=INTEGER},
+	        	</if>
+	        	<if test="alipayAccount != null">
+	        	alipay_account = #{alipayAccount,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="token != null">
+	        	token = #{token,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="bbttoken != null">
+	        	bbttoken = #{bbttoken,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="lat != null">
+	        	lat = #{lat,jdbcType=DOUBLE},
+	        	</if>
+	        	<if test="lon != null">
+	        	lon = #{lon,jdbcType=DOUBLE},
+	        	</if>
+	        	<if test="height != null">
+	        	height = #{height,jdbcType=DOUBLE},
+	        	</if>
+	        	<if test="addr != null">
+	        	addr = #{addr,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="addrdes != null">
+	        	addrdes = #{addrdes,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="shopurl != null">
+	        	shopurl = #{shopurl,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="sta != null">
+	        	sta = #{sta,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="spreadticket != null">
+	        	spreadticket= #{spreadticket,jdbcType=VARCHAR},
+	        	</if>
+	        	<!--  
+	        	<if test="poststatus != null">
+	        	poststatus = #{poststatus,jdbcType=INTEGER},
+	        	</if>
+	        	-->
+	        	<if test="postrole != null">
+	        	postrole = #{postrole,jdbcType=INTEGER},  
+	        	</if>
+	        	<if test="dateNew != null">
+	        	date_new = #{dateNew,jdbcType=TIMESTAMP},
+	        	</if>
+	        	<if test="dateUpd != null">
+	        	date_upd = #{dateUpd,jdbcType=TIMESTAMP}
+	        	</if>
+        	</set>
+        	WHERE <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
+    </update>
     
     <select id="selectAll" resultMap="baseResultMap">
         SELECT

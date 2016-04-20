@@ -18,7 +18,6 @@
 		<li><a href="<c:url value="/dataQuery" />" target="content-main">数据查询</a></li>
 		<li><a href="<c:url value="/deliverRegion/range/1" />" target="content-main">系统设置-配送范围</a></li>
 		<li><a href="<c:url value="/userManage/listUser" />" target="content-main">系统设置-用户管理</a></li>
-		<li><a href="<c:url value="/roleManage" />" target="content-main">系统设置-角色管理</a></li>
 	</ul>
 </body>
 </html>

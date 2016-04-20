@@ -29,4 +29,11 @@ public interface PostmanUserDao {
      * @return List<PostmanUser>
      */
     Integer insertUser(PostmanUser postmanUser);
+    
+    /**
+     * 更新postmanUser
+     * @param postmanUser
+     * @return 
+     */
+    int updateByPhone(PostmanUser postmanUser);
 }

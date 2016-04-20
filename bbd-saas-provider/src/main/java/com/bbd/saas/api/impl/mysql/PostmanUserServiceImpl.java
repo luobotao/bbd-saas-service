@@ -60,4 +60,13 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	public int insertUser(PostmanUser postmanUser){
 		return postmanUserDao.insertUser(postmanUser);
 	}
+	
+	/**
+     * 更新postmanUser
+     * @param postmanUser
+     * @return 
+     */
+	public int updateByPhone(PostmanUser postmanUser){
+		return postmanUserDao.updateByPhone(postmanUser);
+	}
 }
