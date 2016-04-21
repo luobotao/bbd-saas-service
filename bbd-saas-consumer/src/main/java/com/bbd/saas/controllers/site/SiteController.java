@@ -145,7 +145,7 @@ public class SiteController {
 		redirectAttrs.addAttribute("siteid",siteKey.getId().toString());
 		//向用户表插入登录用户
 		User user = new User();
-		user.setLoginName(site.getPhone());//手机号即为登录名
+		user.setLoginName(site.getUsername());//手机号即为登录名
 		user.setPassWord(site.getPassword());
 		user.setDateAdd(new Date());
 		user.setRealName(site.getResponser());

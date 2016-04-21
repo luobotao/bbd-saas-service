@@ -201,6 +201,7 @@ public class PackageDispatchController {
 			postDelivery.setStaffid(user.getStaffid());
 			postDelivery.setGoods_fee(0);
 			postDelivery.setGoods_number(order.getGoods().size());
+			postDelivery.setGoods_fee(0);
 			postDelivery.setPay_status("1");
 			postDelivery.setPay_mode("4");
 			postDelivery.setFlg("1");
