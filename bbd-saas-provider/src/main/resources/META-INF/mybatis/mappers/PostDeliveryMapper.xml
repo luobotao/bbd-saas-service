@@ -37,6 +37,8 @@
         <result column="typ" property="typ" jdbcType="VARCHAR"/>
         <result column="flg" property="flg" jdbcType="VARCHAR"/>
         <result column="sta" property="sta" jdbcType="VARCHAR"/>
+        <result column="islooked" property="islooked" jdbcType="INTEGER"/>
+        <result column="iscommened" property="iscommened" jdbcType="INTEGER"/>
         <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
         <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -77,6 +79,8 @@
 		typ,
 		flg,
 		sta,
+		islooked,
+		iscommened,
 		date_new,
 		date_upd
     </sql>
@@ -121,6 +125,8 @@
 			#{typ},
 			#{flg},
 			#{sta},
+			#{islooked},
+			#{iscommened},
 			#{dateNew},
 			#{dateUpd}
         )
