@@ -211,6 +211,17 @@
 						<em class="tip-info" id="nameP" style="display:none;">请输入站点名称</em>
 					</li>
 					<li class="filter">
+						<i>公司名称：</i>
+						<em class="wp25">
+							<select class="form-control form-bod" id="companyId" name="companyId" >
+								<c:forEach var="postcompany" items="${postcompanyList}">
+									<option value="${postcompany.id}">${postcompany.companyname}</option>
+								</c:forEach>
+							</select>
+							<input id="companyName" name="companyName" type="hidden" class="form-control" />
+						</em>
+					</li>
+					<li class="filter">
 						<i>负责人：</i>
 						<input type="text" class="form-control form-bod wp80" id="responser" name="responser" >
 						<em class="tip-info" id="responserP" style="display:none;">请输入负责人</em>
@@ -320,6 +331,7 @@
 			alert("请先同意《棒棒达快递注册协议》");
 			return false;
 		}
+		$("#companyName").val($("#companyId").find("option:selected").text());
 		var username = $.trim($('input[name="username"]').val());
 		var usernameFlag = $("#usernameFlag").val();
 		var password = $.trim($('input[name="password"]').val());
@@ -384,9 +396,7 @@
 		} else{
 			$("#licensePicP").attr("style","display:none");
 		}
-//		$("#siteForm").submit();
 		if(flag){
-			console.log("succeful , submit");
 			$("#siteForm").submit();
 		}else{
 			alert("有非法内容，请检查内容合法性！");

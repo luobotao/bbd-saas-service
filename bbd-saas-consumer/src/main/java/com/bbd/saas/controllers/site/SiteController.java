@@ -116,7 +116,6 @@ public class SiteController {
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	public String processSubmit(@RequestParam MultipartFile licensePic, @Valid SiteForm siteForm, BindingResult result,Model model,RedirectAttributes redirectAttrs) throws IOException {
 		redirectAttrs.addFlashAttribute("message", "注册成功");
-		logger.info(licensePic.getName()+"====================="+licensePic.getOriginalFilename());
 //		if (result.hasErrors()) {
 //			model.addAttribute("message","请检查必填项");
 //			return null;
