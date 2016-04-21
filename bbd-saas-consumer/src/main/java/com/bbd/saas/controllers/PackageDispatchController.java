@@ -52,11 +52,11 @@ public class PackageDispatchController {
 	
 	/**
 	 * Description: 跳转到包裹分派页面
-	 * @param currPage 当前页
+	 * @param pageIndex 当前页
 	 * @param status 状态
 	 * @param arriveBetween 到站时间
-	 * @param courier 派件员
-	 * @param redirectAttrs
+	 * @param courierId 派件员
+	 * @param request
 	 * @param model
 	 * @return
 	 * @author: liyanlei
@@ -206,8 +206,8 @@ public class PackageDispatchController {
 			postDelivery.setSta("1");
 			postDelivery.setTyp("4");
 			postDelivery.setNeed_pay("0");
-			postDelivery.setIslooked(0);
-			postDelivery.setIscommened(0);
+			postDelivery.setIslooked("0");
+			postDelivery.setIscommont("0");
 			postDeliveryService.insert(postDelivery);
 			logger.info("运单分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());			
 		}else{//已保存过了，更新快递员信息

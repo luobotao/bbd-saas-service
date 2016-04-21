@@ -38,7 +38,7 @@
         <result column="flg" property="flg" jdbcType="VARCHAR"/>
         <result column="sta" property="sta" jdbcType="VARCHAR"/>
         <result column="islooked" property="islooked" jdbcType="INTEGER"/>
-        <result column="iscommened" property="iscommened" jdbcType="INTEGER"/>
+        <result column="iscommont" property="iscommont" jdbcType="INTEGER"/>
         <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
         <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -80,7 +80,7 @@
 		flg,
 		sta,
 		islooked,
-		iscommened,
+		iscommont,
 		date_new,
 		date_upd
     </sql>
@@ -126,7 +126,7 @@
 			#{flg},
 			#{sta},
 			#{islooked},
-			#{iscommened},
+			#{iscommont},
 			#{dateNew},
 			#{dateUpd}
         )
@@ -135,12 +135,12 @@
     
     <!-- 通过运单号更新派件员信息  开始  -->  
     <update id="updatePostIdAndStaffId" >  
-        UPDATE `POSTDELIVERY` SET POSTMAN_ID = #{postManId}, STAFFID = #{staffId } WHERE MAIL_NUM = #{mailNum}  
+        UPDATE `postdelivery` SET postman_id = #{postManId}, staffid = #{staffId } WHERE mail_num = #{mailNum}  
     </update> 
      
     <!-- 查询指定运单号的记录的条数  结束   --> 
     <select id="selectCountByMailNum" resultType="java.lang.Integer"> <!-- resultType="_int" -->
-        SELECT COUNT(*) FROM `POSTDELIVERY`  WHERE MAIL_NUM = #{mailNum}
+        SELECT COUNT(*) FROM `postdelivery`  WHERE mail_num = #{mailNum}
     </select> 
 	<!-- 查询指定运单号的记录的条数  结束   --> 
 </mapper>
