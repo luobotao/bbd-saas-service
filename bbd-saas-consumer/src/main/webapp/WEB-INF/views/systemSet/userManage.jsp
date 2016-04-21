@@ -528,6 +528,11 @@ function saveUserBtn(){
 	}else{
 		$("#loginNameP").attr("style","display:none");
 	}
+	if(loginName.length==11){
+		$("#loginNameP").attr("style","display:none");
+	}else{
+		$("#loginNameP").attr("style","color:red");
+	}
 	if (!realName) {
 	    $("#realNameP").attr("style","color:red");
 		flag = false;
@@ -561,6 +566,7 @@ function saveUserBtn(){
 		flag = false;
 	}
 	if(flag){
+		
 		console.log("succeful , submit");
 		$("#userForm").ajaxSubmit({  
 	        type: 'post',  
@@ -585,7 +591,6 @@ function saveUserBtn(){
 	            alert( "有非法内容，请检查内容合法性！");  
 	        }  
 	    });
-		
 	}else{
 		alert("有非法内容，请检查内容合法性！");
 		return false;

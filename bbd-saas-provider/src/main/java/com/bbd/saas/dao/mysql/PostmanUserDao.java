@@ -36,4 +36,11 @@ public interface PostmanUserDao {
      * @return 
      */
     int updateByPhone(PostmanUser postmanUser);
+    
+    /**
+     * 删除postmanUser
+     * @param id
+     * @return 
+     */
+    void deleteById(Integer id);
 }
