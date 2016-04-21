@@ -107,32 +107,6 @@ public class OrderServiceImpl implements OrderService {
      */
 	@Override
 	public Key<Order> save(Order order) {
-//		Goods good1 = new Goods();
-//		good1.setCode("1");
-//		good1.setNum(1);
-//		good1.setTitle("aaa");
-//		Goods good2 = new Goods();
-//		good2.setCode("2");
-//		good2.setNum(2);
-//		good2.setTitle("aaa2");
-//		List<Goods> goodsList = Lists.newArrayList();
-//		goodsList.add(good1);
-//		goodsList.add(good2);
-//		order.setGoods(goodsList);
-		List<Express> expressList = Lists.newArrayList();
-		Express express1 = new Express();
-		express1.setDateAdd(new Date());
-		express1.setLat("111");
-		express1.setLon("1111");
-		express1.setRemark("111");
-		Express express2 = new Express();
-		express2.setDateAdd(new Date());
-		express2.setLat("222");
-		express2.setLon("222");
-		express2.setRemark("2222");
-		expressList.add(express1);
-		expressList.add(express2);
-		order.setExpresses(expressList);
 		return orderDao.save(order);
 	}
 

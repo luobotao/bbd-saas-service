@@ -1,4 +1,4 @@
-package com.bbd.saas.controllers.orerParcel;
+package com.bbd.saas.controllers.orderParcel;
 
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderPacelService;

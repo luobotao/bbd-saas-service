@@ -7,11 +7,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-<<<<<<< HEAD
 	<title>配送系统首页  - 棒棒达快递</title>
-=======
-	<title>棒棒达快递</title>
->>>>>>> a7cc74f1c2cb7477b49c332a0db73f2104ed1316
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>

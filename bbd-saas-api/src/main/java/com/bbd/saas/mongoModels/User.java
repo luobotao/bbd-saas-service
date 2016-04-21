@@ -31,7 +31,7 @@ public class User implements Serializable {
     private UserRole role;
     @Reference("site")
     private Site site;
-    @Reference("user")
+    @Embedded
     private User operate;//用户创建者
     private String lastIp;
     private int loginCount;
@@ -111,6 +111,7 @@ public class User implements Serializable {
     public void setLoginCount(int loginCount) {
         this.loginCount = loginCount;
     }
+
 
     public Date getDateAdd() {
         return dateAdd;
