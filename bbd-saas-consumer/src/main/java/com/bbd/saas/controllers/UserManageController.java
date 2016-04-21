@@ -232,7 +232,7 @@ public class UserManageController {
 			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
 		System.out.println("ssss");
 		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
-		
+		String retSign = "";
 		PostmanUser getpostmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
 		/*String realName = "";
 		
@@ -254,30 +254,48 @@ public class UserManageController {
 		//olduser.setPhone(userForm.getPhone());
 		olduser.setStaffid(userForm.getStaffid());
 		olduser.setPassWord(userForm.getLoginPass());
-		olduser.setOperate(getuser);
+		if(!olduser.getId().equals(getuser.getId())){
+			//如果修改的用户为站长且修改的用户就是当前登录用户的话，不执行olduser.setOperate(getuser);
+			olduser.setOperate(getuser);
+		}
 		olduser.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		olduser.setDateUpdate(dateUpdate);
 		
 		Key<User> kuser = userService.save(olduser);
 		PostmanUser postmanUser = new PostmanUser();
 		postmanUser.setStaffid(userForm.getStaffid());
-		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
-			//快递员
-			postmanUser.setPostrole(0);
-		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
-			//站长
-			postmanUser.setPostrole(4);
-		}
 		postmanUser.setDateUpd(dateUpdate);
 		postmanUser.setNickname(userForm.getRealName());
 		postmanUser.setPhone(userForm.getLoginName());
-		if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
-			//同时更新到mysql的bbt库的postmanuser表中
-			int ret = userMysqlService.updateByPhone(postmanUser);
-			return "true";
-		}else{
-			return "false";
+		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
+			//快递员
+			postmanUser.setPostrole(0);
+
+			if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
+				//同时更新到mysql的bbt库的postmanuser表中
+				int ret = userMysqlService.updateByPhone(postmanUser);
+				//return "true";
+				retSign = "true";
+				
+			}else{
+				//return "false";
+				retSign = "false";
+			}
+			
+			
+		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
+			//站长,就不更新mysql bbt库中的postmanuser表
+			//postmanUser.setPostrole(4);
+			if(kuser!=null && !kuser.getId().equals("")){
+				//return "true";
+				retSign = "true";
+			}else{
+				//return "false";
+				retSign = "false";
+			}
 		}
+		
+		return retSign;
 	}
 	
 	/**

@@ -33,6 +33,7 @@ public class Site implements Serializable {
     private String areaCode;    //区域（站点）编码
     private String companyId;      //所属公司ID
     private String companyName;      //所属公司名称
+    private String companycode;      //所属公司编码
     private SiteStatus status;       //状态
     private String memo;       //备注
     private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
@@ -224,5 +225,13 @@ public class Site implements Serializable {
 
     public void setDeliveryArea(String deliveryArea) {
         this.deliveryArea = deliveryArea;
+    }
+
+    public String getCompanycode() {
+        return companycode;
+    }
+
+    public void setCompanycode(String companycode) {
+        this.companycode = companycode;
     }
 }
