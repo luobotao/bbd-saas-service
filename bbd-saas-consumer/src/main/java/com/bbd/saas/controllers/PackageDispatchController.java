@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.models.PostDelivery;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
@@ -45,6 +47,8 @@ public class PackageDispatchController {
 	UserService userService;
 	@Autowired
 	AdminService adminService;
+	@Autowired
+	PostDeliveryService postDeliveryService;
 	
 	/**
 	 * Description: 跳转到包裹分派页面
@@ -114,9 +118,9 @@ public class PackageDispatchController {
 		}else{//运单存在
 			//当运单到达站点(未分派)，首次分派;当运单状态处于滞留、拒收时，可以重新分派
 			if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
-				|| OrderStatus.RETENTION.equals(order.getOrderStatus()) //滞留
+				||OrderStatus.RETENTION.equals(order.getOrderStatus()) //滞留
 				|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
-				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
+				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);//更新mysql
 			}else if(order.getUser() != null){//重复扫描，此运单已分派过了
 				map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
 			}else{
@@ -128,7 +132,7 @@ public class PackageDispatchController {
 	}
 	
 	/**
-	 * Description: 运单分派
+	 * Description: 运单分派--mongodb库中跟新派件员和运单状态，添加一条数据到mysql库或者更新mysql库中快递员信息
 	 * @param order 订单
 	 * @param courierId 派件员Id
 	 * @param areaCode 站点编码
@@ -148,6 +152,7 @@ public class PackageDispatchController {
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){
+			saveOneOrUpdatePost(order, user);
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
@@ -162,6 +167,54 @@ public class PackageDispatchController {
 		}else{
 			map.put("operFlag", 3);//3:分派失败
 		}
+	}
+	/**
+	 * Description: 运单号不存在，则添加一条记录；存在，则更新派件员postManId和staffId
+	 * @param order
+	 * @param user
+	 * @author: liyanlei
+	 * 2016年4月21日上午10:37:30
+	 */
+	private void saveOneOrUpdatePost(Order order, User user){
+		int row = postDeliveryService.findCountByMailNum(order.getMailNum());
+		if(row == 0){ //保存--插入mysql数据库
+			PostDelivery postDelivery = new PostDelivery();
+			postDelivery.setCompany_code("BANGBANGDA");
+			postDelivery.setDateNew(new Date());
+			postDelivery.setDateUpd(new Date());
+			postDelivery.setMail_num(order.getMailNum());
+			postDelivery.setOut_trade_no(order.getOrderNo());
+			postDelivery.setPostman_id(user.getPostmanuserId());
+			postDelivery.setReceiver_address(order.getReciever().getAddress());
+			postDelivery.setReceiver_city(order.getReciever().getCity());
+			postDelivery.setReceiver_company_name("");
+			postDelivery.setReceiver_district("");
+			postDelivery.setReceiver_name(order.getReciever().getName());
+			postDelivery.setReceiver_phone(order.getReciever().getPhone());
+			postDelivery.setReceiver_province(order.getReciever().getProvince());
+			postDelivery.setSender_address(order.getSender().getAddress());
+			postDelivery.setSender_city(order.getSender().getCity());
+			postDelivery.setSender_company_name(order.getSrc().getMessage());
+			postDelivery.setSender_name(order.getSender().getName());
+			postDelivery.setSender_phone(order.getSender().getPhone());
+			postDelivery.setSender_province(order.getSender().getProvince());
+			postDelivery.setStaffid(user.getStaffid());
+			postDelivery.setGoods_number(order.getGoods().size());
+			postDelivery.setPay_status("1");
+			postDelivery.setPay_mode("4");
+			postDelivery.setFlg("1");
+			postDelivery.setSta("1");
+			postDelivery.setTyp("4");
+			postDelivery.setNeed_pay("0");
+			postDelivery.setIslooked(0);
+			postDelivery.setIscommened(0);
+			postDeliveryService.insert(postDelivery);
+			logger.info("运单分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());			
+		}else{//已保存过了，更新快递员信息
+			postDeliveryService.updatePostIdAndStaffId(order.getMailNum(), user.getPostmanuserId(), user.getStaffid());
+			logger.info("运单重新分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());
+		}
+		
 	}
 	
 	/**

@@ -55,6 +55,11 @@ public class Order implements Serializable {
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
     @Transient
     private String parcelCode;
+    @Transient
+    private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message
+
+
+
     public ObjectId getId() {
         return id;
     }
@@ -270,5 +275,8 @@ public class Order implements Serializable {
 	public void setDateArrived(Date dateArrived) {
 		this.dateArrived = dateArrived;
 	}
-    
+
+    public String getSrcMessage() {
+        return src.getMessage();
+    }
 }

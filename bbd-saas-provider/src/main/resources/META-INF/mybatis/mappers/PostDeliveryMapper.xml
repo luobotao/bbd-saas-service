@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.PostDeliveryDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.PostDelivery">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="postman_id" property="postman_id" jdbcType="VARCHAR"/>
+        <result column="company_code" property="company_code" jdbcType="VARCHAR"/>
+        <result column="out_trade_no" property="out_trade_no" jdbcType="VARCHAR"/>
+        <result column="mail_num" property="mail_num" jdbcType="VARCHAR"/>
+        <result column="staffid" property="staffid" jdbcType="VARCHAR"/>
+        <result column="merchant_code" property="merchant_code" jdbcType="VARCHAR"/>
+        <result column="need_pay" property="need_pay" jdbcType="VARCHAR"/>
+        <result column="sender_name" property="sender_name" jdbcType="VARCHAR"/>
+        <result column="sender_phone" property="sender_phone" jdbcType="VARCHAR"/>
+        <result column="sender_telphone" property="sender_telphone" jdbcType="VARCHAR"/>
+        <result column="sender_province" property="sender_province" jdbcType="VARCHAR"/>
+        <result column="sender_city" property="sender_city" jdbcType="VARCHAR"/>
+        <result column="sender_district" property="sender_district" jdbcType="VARCHAR"/>
+        <result column="sender_address" property="sender_address" jdbcType="VARCHAR"/>
+        <result column="sender_company_name" property="sender_company_name" jdbcType="VARCHAR"/>
+        <result column="sender_region_code" property="sender_region_code" jdbcType="VARCHAR"/>
+        <result column="receiver_name" property="receiver_name" jdbcType="VARCHAR"/>
+        <result column="receiver_phone" property="receiver_phone" jdbcType="VARCHAR"/>
+        <result column="receiver_telphone" property="receiver_telphone" jdbcType="VARCHAR"/>
+        <result column="receiver_province" property="receiver_province" jdbcType="VARCHAR"/>
+        <result column="receiver_city" property="receiver_city" jdbcType="VARCHAR"/>
+        <result column="receiver_district" property="receiver_district" jdbcType="VARCHAR"/>
+        <result column="receiver_address" property="receiver_address" jdbcType="VARCHAR"/>
+        <result column="receiver_company_name" property="receiver_company_name" jdbcType="VARCHAR"/>
+        <result column="receiver_region_code" property="receiver_region_code" jdbcType="VARCHAR"/>
+        <result column="goods_fee" property="goods_fee" jdbcType="VARCHAR"/>
+        <result column="goods_number" property="goods_number" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="pay_status" property="pay_status" jdbcType="VARCHAR"/>
+        <result column="pay_mode" property="pay_mode" jdbcType="VARCHAR"/>
+        <result column="resultmsg" property="resultmsg" jdbcType="VARCHAR"/>
+        <result column="typ" property="typ" jdbcType="VARCHAR"/>
+        <result column="flg" property="flg" jdbcType="VARCHAR"/>
+        <result column="sta" property="sta" jdbcType="VARCHAR"/>
+        <result column="islooked" property="islooked" jdbcType="INTEGER"/>
+        <result column="iscommened" property="iscommened" jdbcType="INTEGER"/>
+        <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
+        <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	id,
+		postman_id,
+		company_code,
+		out_trade_no,
+		mail_num,
+		staffid,
+		merchant_code,
+		need_pay,
+		sender_name,
+		sender_phone,
+		sender_telphone,
+		sender_province,
+		sender_city,
+		sender_district,
+		sender_address,
+		sender_company_name,
+		sender_region_code,
+		receiver_name,
+		receiver_phone,
+		receiver_telphone,
+		receiver_province,
+		receiver_city,
+		receiver_district,
+		receiver_address,
+		receiver_company_name,
+		receiver_region_code,
+		goods_fee,
+		goods_number,
+		remark,
+		pay_status,
+		pay_mode,
+		resultmsg,
+		typ,
+		flg,
+		sta,
+		islooked,
+		iscommened,
+		date_new,
+		date_upd
+    </sql>
+    <!-- 插入一条记录  开始  --> 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.PostDelivery" >
+        INSERT INTO `postdelivery`(
+        <include refid="baseColumnList"/>
+        )
+        VALUES (
+	        #{id},
+			#{postman_id},
+			#{company_code},
+			#{out_trade_no},
+			#{mail_num},
+			#{staffid},
+			#{merchant_code},
+			#{need_pay},
+			#{sender_name},
+			#{sender_phone},
+			#{sender_telphone},
+			#{sender_province},
+			#{sender_city},
+			#{sender_district},
+			#{sender_address},
+			#{sender_company_name},
+			#{sender_region_code},
+			#{receiver_name},
+			#{receiver_phone},
+			#{receiver_telphone},
+			#{receiver_province},
+			#{receiver_city},
+			#{receiver_district},
+			#{receiver_address},
+			#{receiver_company_name},
+			#{receiver_region_code},
+			#{goods_fee},
+			#{goods_number},
+			#{remark},
+			#{pay_status},
+			#{pay_mode},
+			#{resultmsg},
+			#{typ},
+			#{flg},
+			#{sta},
+			#{islooked},
+			#{iscommened},
+			#{dateNew},
+			#{dateUpd}
+        )
+    </insert>
+    <!-- 插入一条记录  结束  --> 
+    
+    <!-- 通过运单号更新派件员信息  开始  -->  
+    <update id="updatePostIdAndStaffId" >  
+        UPDATE `POSTDELIVERY` SET POSTMAN_ID = #{postManId}, STAFFID = #{staffId } WHERE MAIL_NUM = #{mailNum}  
+    </update> 
+     
+    <!-- 查询指定运单号的记录的条数  结束   --> 
+    <select id="selectCountByMailNum" resultType="java.lang.Integer"> <!-- resultType="_int" -->
+        SELECT COUNT(*) FROM `POSTDELIVERY`  WHERE MAIL_NUM = #{mailNum}
+    </select> 
+	<!-- 查询指定运单号的记录的条数  结束   --> 
+</mapper>

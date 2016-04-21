@@ -1,3 +1,4 @@
+@charset "utf-8";
 body {
   font-family: simhei;
 }
@@ -54,6 +55,11 @@ input {
 }
 .orange {
   color: #fc9e28;
+}
+button.orange {
+  background:none;
+  border:none;
+  text-decoration:underline;
 }
 .c-green {
   color: #99cb2f;
@@ -387,7 +393,7 @@ a.orange {
   color: #b3b6c6;
 }
 /*----E-table----*/
-/* S 瀵艰埅鏉� */
+/* S 导航条 */
 .b-navbar {
   min-height: 60px;
   border: none;
@@ -402,7 +408,7 @@ a.orange {
 .b-navbar .navbar-nav > li > a:hover {
   color: #fc9e28;
 }
-/* E 瀵艰埅鏉� */
+/* E 导航条 */
 /* S footer */
 footer {
   padding: 30px 0;
@@ -475,7 +481,7 @@ footer {
   min-width: 370px;
 }
 .b-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset;
+  -webkit-box-shadow: 0 0 0px 1000px #59adce inset;
   border: none !important;
   -webkit-text-fill-color: #c4deeb;
 }
@@ -492,7 +498,7 @@ footer {
   color: #c4deeb;
 }
 /* E banner */
-/* S 鍏充簬鎴戜滑*/
+/* S 关于我们*/
 .b-item {
   text-align: center;
   margin-bottom: 10px;
@@ -505,8 +511,8 @@ footer {
   border-radius: 10px;
   border: 1px solid #e1e2e4;
 }
-/* E 鍏充簬鎴戜滑*/
-/* S 鍚堜綔浼欎即 */
+/* E 关于我们*/
+/* S 合作伙伴 */
 .b-tit {
   text-align: center;
   margin-top: 80px;
@@ -549,8 +555,8 @@ footer {
 .b-brand li {
   margin-top: 68px;
 }
-/* E 鍚堜綔浼欎即 */
-/* S 绯荤粺閰嶉�侀椤�*/
+/* E 合作伙伴 */
+/* S 系统配送首页*/
 .b-con {
   min-height: 836px;
   padding-top: 130px;
@@ -593,8 +599,8 @@ footer {
   text-decoration: none;
   color: #333;
 }
-/* E 绯荤粺閰嶉�侀椤�*/
-/* S 鍖呰９鍒扮珯 */
+/* E 系统配送首页*/
+/* S 包裹到站 */
 .i-hei {
   position: absolute;
   top: 60px;
@@ -746,8 +752,8 @@ footer {
   background: #d9d8eb;
   margin: 19px 0;
 }
-/* E 鍖呰９鍒扮珯 */
-/* S 绯荤粺璁剧疆 閰嶉�佸尯鍩� */
+/* E 包裹到站 */
+/* S 系统设置 配送区域 */
 .txt-info {
   float: left;
   padding: 0 15px;
@@ -823,9 +829,9 @@ footer {
   opacity: 0;
   top: -5px;
 }
-/* E 绯荤粺璁剧疆 閰嶉�佸尯鍩� */
+/* E 系统设置 配送区域 */
 /* S pop */
-fbg .modal,
+.fbg .modal,
 .fbg .modal-backdrop {
   left: 16%;
   width: 84%;
@@ -847,8 +853,8 @@ fbg .modal,
 .b-modal-body {
   padding: 40px;
 }
-.b-modal-footer{
-  padding:0 40px 20px;
+.b-modal-footer {
+  padding: 0 40px 20px;
 }
 .cho-lg {
   text-align: center;
@@ -970,7 +976,7 @@ fbg .modal,
   }
 }
 /* E pop */
-/* S reset 甯冨眬*/
+/* S reset 布局*/
 @media (min-width: 992px) {
   .bbd-md-3 {
     width: 16%;
@@ -978,12 +984,10 @@ fbg .modal,
   .bbd-md-9 {
     width: 84%;
   }
-} /* E reset 甯冨眬*/
+} /* E reset 布局*/
 /*# sourceMappingURL=main.css.map */
-
 .form-inline .form-control {
     display: inline-block;
     vertical-align: middle;
     min-width: 210px; 
 }
-

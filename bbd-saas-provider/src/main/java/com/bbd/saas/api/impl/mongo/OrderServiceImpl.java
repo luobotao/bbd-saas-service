@@ -1,8 +1,10 @@
 package com.bbd.saas.api.impl.mongo;
 
 
+import java.util.Date;
 import java.util.List;
 
+import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
@@ -17,9 +19,6 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -54,6 +53,12 @@ public class OrderServiceImpl implements OrderService {
         this.orderDao = orderDao;
     }
 
+	/**
+	 * 带查询条件去检索订单
+	 * @param pageModel
+	 * @param orderQueryVO
+	 * @return
+	 */
 	public PageModel<Order> findOrders( PageModel<Order> pageModel,OrderQueryVO orderQueryVO){
 		if(orderQueryVO!=null){
 			if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
@@ -102,15 +107,48 @@ public class OrderServiceImpl implements OrderService {
      */
 	@Override
 	public Key<Order> save(Order order) {
+//		Goods good1 = new Goods();
+//		good1.setCode("1");
+//		good1.setNum(1);
+//		good1.setTitle("aaa");
+//		Goods good2 = new Goods();
+//		good2.setCode("2");
+//		good2.setNum(2);
+//		good2.setTitle("aaa2");
+//		List<Goods> goodsList = Lists.newArrayList();
+//		goodsList.add(good1);
+//		goodsList.add(good2);
+//		order.setGoods(goodsList);
+		List<Express> expressList = Lists.newArrayList();
+		Express express1 = new Express();
+		express1.setDateAdd(new Date());
+		express1.setLat("111");
+		express1.setLon("1111");
+		express1.setRemark("111");
+		Express express2 = new Express();
+		express2.setDateAdd(new Date());
+		express2.setLat("222");
+		express2.setLon("222");
+		express2.setRemark("2222");
+		expressList.add(express1);
+		expressList.add(express2);
+		order.setExpresses(expressList);
 		return orderDao.save(order);
 	}
 
+
+	/**
+	 * 根据站点编码获取该站点订单数据
+	 * @param areaCode
+	 * @return
+	 */
 	@Override
 	public OrderNumVO getOrderNumVO(String areaCode) {
 		return orderDao.getOrderNumVO(areaCode);
 	}
 
 	/**
+	 * 更新订单状态
 	 * 此处需要再加上包裹下的订单的状态更新
 	 * @param mailNum 运单号
 	 * @param orderStatusOld 可为null,若为null则不检验旧状态否则须旧状态满足才可更新

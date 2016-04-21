@@ -12,6 +12,7 @@ import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.SiteForm;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
@@ -151,6 +152,7 @@ public class SiteController {
 		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		user.setSite(site);
+		user.setUserStatus(UserStatus.VALID);
 		user.setRole(UserRole.SITEMASTER);
 		userService.save(user);
 		return "redirect:siteView";
