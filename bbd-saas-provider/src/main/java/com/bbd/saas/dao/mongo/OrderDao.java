@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
@@ -173,13 +174,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if(StringUtils.isNotBlank(orderQueryVO.userId)){
                 query.filter("user._id", new ObjectId(orderQueryVO.userId));
             }
-        	//到站时间
-            if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
-                DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
-                query.filter("dateArrived >=",dateBetween.getStart());
-                query.filter("dateArrived <=",dateBetween.getEnd());
-            }
-            //异常状态
+        	//异常状态
             if(orderQueryVO.abnormalStatus != null){
             	if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
                 	query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(3)), query.criteria("orderStatus").equal(OrderStatus.status2Obj(4)));
@@ -191,9 +186,45 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if(orderQueryVO.orderStatus != null && orderQueryVO.orderStatus != -1){
             	if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0或者OrderStatus=null
             		query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
-            	}else{
+            	}else{//已到站
             		query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+            		//到站时间，只有已到站的订单才会有到站时间
+                    if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                        query.filter("dateArrived >=",dateBetween.getStart());
+                        query.filter("dateArrived <=",dateBetween.getEnd());
+                    }
+            		
             	}
+            }else{//状态为空或者=-1，即为查询全部，就相当于不需要按状态字段查询,包含未到站时间为空的记录
+            	//到站时间，包含未到站时间为空的记录
+                if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
+                	//按照时间查询
+                	Query<Order> timeQuery = createQuery(); 
+                    DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                    Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
+                    Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
+                    Criteria timeC = timeQuery.and(startC, endC);
+                    //时间为空query
+                    Query<Order> timeNullQuery = createQuery(); 
+                    Criteria timeNullC = timeNullQuery.or(timeNullQuery.criteria("dateArrived").equal(""), timeNullQuery.criteria("orderStatus").equal(null));
+                    
+                    query.or(timeC, timeNullC);
+                	/*Query<Order> timeQuery = createQuery();
+                	//时间条件
+                    DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                    Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
+                    Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
+                    Criteria timeC = timeQuery.and(startC, endC);
+                    //未到站--不需要按照时间查询
+                    Criteria arrC = query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+                    //到站--需要根据时间查询
+                    Criteria notArrC = query.and(query.criteria("orderStatus").notEqual(OrderStatus.status2Obj(0)),
+                    		query.criteria("orderStatus").notEqual(null), timeC);
+                    query.and(arrC, notArrC);*/
+                	
+                }
+            	
             }
         }
     	return query;

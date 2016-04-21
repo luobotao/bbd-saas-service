@@ -1,3 +1,4 @@
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
@@ -9,7 +10,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page language="java" pageEncoding="UTF-8"%>
 <html>
 <head>
 	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
