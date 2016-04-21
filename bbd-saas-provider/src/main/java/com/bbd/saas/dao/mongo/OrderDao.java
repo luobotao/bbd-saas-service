@@ -154,9 +154,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 query.filter("dateMayArrive >=",dateBetween.getStart());
                 query.filter("dateMayArrive <=",dateBetween.getEnd());
             }
-            //运单号
+            //运单号--模糊查询
             if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
-                query.filter("mailNum", orderQueryVO.mailNum);
+            	query.and(query.criteria("mailNum").containsIgnoreCase(orderQueryVO.mailNum));
             }
             //包裹号
             if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
