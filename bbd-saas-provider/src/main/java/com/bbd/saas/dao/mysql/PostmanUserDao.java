@@ -42,5 +42,5 @@ public interface PostmanUserDao {
      * @param id
      * @return 
      */
-    void deleteById(Integer id);
+    void deleteById(@Param("id") Integer id);
 }
