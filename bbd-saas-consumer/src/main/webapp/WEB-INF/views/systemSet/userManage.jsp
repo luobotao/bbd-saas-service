@@ -581,6 +581,7 @@ function saveUserBtn(){
 	        		}else{
 	        			alert("修改用户成功"); 
 	        			$(".j-user-pop").modal("hide");
+	        			document.getElementById("staffidTemp").value = staffid;
 	        		}
 	        		
 	        		gotoPage(0);
