@@ -416,11 +416,11 @@ public class UserManageController {
 	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "loginName", required = true) String loginName) {
 		User user = null;
-		try {
+		/*try {
 			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e) {
 
-		}
+		}*/
 		if(id!=null && !id.equals("")){
 			user = userService.findOne(id);
 		}else if(loginName!=null && !loginName.equals("")){
