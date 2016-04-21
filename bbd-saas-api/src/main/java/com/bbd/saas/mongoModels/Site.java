@@ -32,8 +32,8 @@ public class Site implements Serializable {
     private String username;     //账号
     private String password;     //密码
     private String areaCode;    //区域（站点）编码
-    @Reference("company")
-    private Company company;      //所属公司
+    private String companyId;      //所属公司ID
+    private String companyName;      //所属公司名称
     private SiteStatus status;       //状态
     private String memo;       //备注
     private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
@@ -156,12 +156,20 @@ public class Site implements Serializable {
         this.areaCode = areaCode;
     }
 
-    public Company getCompany() {
-        return company;
+    public String getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public SiteStatus getStatus() {

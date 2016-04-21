@@ -18,6 +18,7 @@
     </resultMap>
     
     <sql id="baseColumnList">
+        id,
         companyname,
         companycode,
         sta,

@@ -8,6 +8,9 @@ public class SiteForm {
 	@NotEmpty
 	private String name;         //站点名称
 	@NotEmpty
+	private String companyId;    //公司ID
+	private String companyName;    //公司名称
+	@NotEmpty
 	private String responser;    //负责人
 	private String phone;        //负责人手机号
 	private String telephone;    //固定电话
@@ -137,5 +140,21 @@ public class SiteForm {
 
 	public void setLng(String lng) {
 		this.lng = lng;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 }

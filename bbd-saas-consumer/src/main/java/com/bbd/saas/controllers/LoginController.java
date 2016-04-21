@@ -3,11 +3,13 @@ package com.bbd.saas.controllers;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.LoginForm;
+import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/login")
@@ -35,7 +38,8 @@ public class LoginController {
 	AdminService adminService;
 	@Autowired
 	UserService userService;
-
+	@Autowired
+	PostcompanyService postcompanyService;
 
 	@ModelAttribute
 	public void ajaxAttribute(WebRequest request, Model model) {
@@ -49,7 +53,9 @@ public class LoginController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public void form() {
+	public void form(Model model) {
+		List<Postcompany> postcompanyList = postcompanyService.selectAll();
+		model.addAttribute("postcompanyList",postcompanyList);
 	}
 
 	@RequestMapping(method=RequestMethod.POST)
