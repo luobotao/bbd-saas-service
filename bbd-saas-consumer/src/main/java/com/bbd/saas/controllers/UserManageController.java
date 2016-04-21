@@ -358,7 +358,7 @@ public class UserManageController {
 		User user = userService.findUserByLoginName(loginName);
 		logger.info("loginName"+loginName);
 		userService.delUser(user);
-		
+		userMysqlService.deleteById(user.getPostmanuserId());
 		return "true";
 		
 	}
