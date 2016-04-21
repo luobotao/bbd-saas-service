@@ -270,29 +270,23 @@ public class UserManageController {
 		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
 			//快递员
 			postmanUser.setPostrole(0);
-
-			if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
-				//同时更新到mysql的bbt库的postmanuser表中
-				int ret = userMysqlService.updateByPhone(postmanUser);
-				//return "true";
-				retSign = "true";
-				
-			}else{
-				//return "false";
-				retSign = "false";
-			}
-			
 			
 		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
-			//站长,就不更新mysql bbt库中的postmanuser表
-			//postmanUser.setPostrole(4);
-			if(kuser!=null && !kuser.getId().equals("")){
-				//return "true";
-				retSign = "true";
-			}else{
-				//return "false";
-				retSign = "false";
-			}
+			postmanUser.setPostrole(4);
+		}
+		
+		if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
+			//postmanuser表中有对应的数据,同时更新到mysql的bbt库的postmanuser表中
+			int ret = userMysqlService.updateByPhone(postmanUser);
+			//return "true";
+			retSign = "true";
+			
+		}else if(kuser!=null && !kuser.getId().equals("") && getpostmanUser==null){
+			//postmanuser表中没有对应的数据,就不更新mysql bbt库中的postmanuser表
+			//return "true";
+			retSign = "true";
+		}else{
+			retSign = "false";
 		}
 		
 		return retSign;
