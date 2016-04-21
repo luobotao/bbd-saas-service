@@ -168,6 +168,10 @@
         	WHERE <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
     </update>
     
+    <select id="deleteById" resultMap="baseResultMap">
+        delete from postmanuser where id = #{id,jdbcType=INTEGER}
+    </select>
+    
     <select id="selectAll" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>

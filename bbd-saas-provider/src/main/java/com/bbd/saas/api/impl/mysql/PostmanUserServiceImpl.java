@@ -69,4 +69,13 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	public int updateByPhone(PostmanUser postmanUser){
 		return postmanUserDao.updateByPhone(postmanUser);
 	}
+	
+	/**
+     * 删除postmanUser
+     * @param id
+     * @return 
+     */
+    public void deleteById(Integer id){
+    	postmanUserDao.deleteById(id);
+    }
 }
