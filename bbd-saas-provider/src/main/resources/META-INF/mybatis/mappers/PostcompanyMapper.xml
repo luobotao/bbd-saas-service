@@ -29,23 +29,12 @@
         date_new,
         date_upd
     </sql>
-    
-    <insert id="insert">
-        INSERT INTO `postcompany`(
+
+    <select id="selectPostmancompanyById" resultMap="baseResultMap">
+        SELECT
         <include refid="baseColumnList"/>
-        )
-        VALUES (
-        #{companyname,jdbcType=VARCHAR},
-        #{companycode,jdbcType=VARCHAR},
-        #{sta,jdbcType=VARCHAR},
-        #{deliveryflag,jdbcType=VARCHAR},
-        #{appid,jdbcType=VARCHAR},
-        #{privatekey,jdbcType=VARCHAR},
-        #{alipaypublickey,jdbcType=VARCHAR},
-        #{dateNew,jdbcType=TIMESTAMP},
-        #{dateUpd,jdbcType=TIMESTAMP}
-        );
-    </insert>
+        FROM `postcompany` where <![CDATA[ id = #{id,jdbcType=INTEGER}]]>
+    </select>
     
 
     

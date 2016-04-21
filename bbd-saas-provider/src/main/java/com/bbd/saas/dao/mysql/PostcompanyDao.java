@@ -9,4 +9,6 @@ public interface PostcompanyDao {
     
 
     List<Postcompany> selectAll();
+
+    Postcompany selectPostmancompanyById(Integer id);
 }

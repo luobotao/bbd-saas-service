@@ -36,4 +36,10 @@ public class PostcompanyServiceImpl implements PostcompanyService {
 	public List<Postcompany> selectAll() {
 		return postcompanyDao.selectAll();
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Postcompany selectPostmancompanyById(Integer id){
+		return postcompanyDao.selectPostmancompanyById(id);
+	}
 }
