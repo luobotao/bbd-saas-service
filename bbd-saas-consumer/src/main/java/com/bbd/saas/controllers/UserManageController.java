@@ -178,8 +178,9 @@ public class UserManageController {
 			postmanUser.setNickname(userForm.getRealName());
 			postmanUser.setHeadicon("");
 			postmanUser.setCardidno("");
-			postmanUser.setCompanyname("");
-			postmanUser.setCompanyid(0);
+			postmanUser.setCompanyname(getuser.getSite().getCompanyName()!=null?getuser.getSite().getCompanyName():"");
+			postmanUser.setCompanyid(getuser.getSite().getCompanyId()!=null?Integer.parseInt(getuser.getSite().getCompanyId()):0);
+			
 			postmanUser.setSubstation("");
 			postmanUser.setAlipayAccount("");
 			postmanUser.setToken("");
@@ -190,7 +191,7 @@ public class UserManageController {
 			postmanUser.setAddr("");
 			postmanUser.setAddrdes("");
 			postmanUser.setShopurl("");
-			postmanUser.setSta("");
+			postmanUser.setSta("1");
 			postmanUser.setSpreadticket("");
 			postmanUser.setPhone(userForm.getLoginName());
 			postmanUser.setStaffid(userForm.getStaffid());
@@ -230,6 +231,9 @@ public class UserManageController {
 	public String editUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model,
 			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
 		System.out.println("ssss");
+		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
+		
+		PostmanUser getpostmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
 		/*String realName = "";
 		
 		try {
@@ -267,7 +271,7 @@ public class UserManageController {
 		postmanUser.setDateUpd(dateUpdate);
 		postmanUser.setNickname(userForm.getRealName());
 		postmanUser.setPhone(userForm.getLoginName());
-		if(kuser!=null && !kuser.getId().equals("")){
+		if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
 			//同时更新到mysql的bbt库的postmanuser表中
 			int ret = userMysqlService.updateByPhone(postmanUser);
 			return "true";

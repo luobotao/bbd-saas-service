@@ -36,4 +36,11 @@ public interface PostmanUserService {
      * @return 
      */
     int updateByPhone(PostmanUser postmanUser);
+    
+    /**
+     * 删除postmanUser
+     * @param id
+     * @return 
+     */
+    public void deleteById(Integer id);
 }
