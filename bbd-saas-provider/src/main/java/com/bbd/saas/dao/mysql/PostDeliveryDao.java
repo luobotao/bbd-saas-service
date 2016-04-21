@@ -30,5 +30,15 @@ public interface PostDeliveryDao {
 	 * @author: liyanlei
 	 * 2016年4月20日下午2:38:35
 	 */
-	int updatePostIdAndStaffId(@Param("mailNum") String mailNum, @Param("postManId") String postManId, @Param("staffId") String staffId);
+	int updatePostIdAndStaffId(@Param("mailNum") String mailNum, @Param("postManId") Integer postManId, @Param("staffId") String staffId);
+	
+	/**
+	 * Description: 查询指定运单号的记录的条数
+	 * @param mailNum 运单号
+	 * @return
+	 * @author: liyanlei
+	 * 2016年4月21日上午10:13:02
+	 */
+	int selectCountByMailNum(@Param("mailNum") String mailNum);
+
 }

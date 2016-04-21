@@ -47,6 +47,8 @@ public class PostDelivery implements Serializable {
 	private String typ;//订单类型 1-签单返回 2-退货 3-换货 4-普通件 5-加急件
 	private String flg;//是否展示在今天未完成
 	private String sta;//（[0:全部，服务器查询逻辑],1：未完成【需要签收】，2：未完成【需要支付签收】，3：已签收，4：已支付签收，5：已拒绝【未退单到站点】，6：已滞留，7，已拒绝【已退单到站点】
+	private Integer islooked;//是否查看过
+	private Integer iscommened;//是否评论过
 	private Date dateNew;
 	private Date dateUpd;
 
@@ -330,6 +332,22 @@ public class PostDelivery implements Serializable {
 		this.sta = sta;
 	}
 
+	public Integer getIslooked() {
+		return islooked;
+	}
+
+	public void setIslooked(Integer islooked) {
+		this.islooked = islooked;
+	}
+
+	public Integer getIscommened() {
+		return iscommened;
+	}
+
+	public void setIscommened(Integer iscommened) {
+		this.iscommened = iscommened;
+	}
+
 	public Date getDateNew() {
 		return dateNew;
 	}
@@ -345,4 +363,5 @@ public class PostDelivery implements Serializable {
 	public void setDateUpd(Date dateUpd) {
 		this.dateUpd = dateUpd;
 	}
+	
 }

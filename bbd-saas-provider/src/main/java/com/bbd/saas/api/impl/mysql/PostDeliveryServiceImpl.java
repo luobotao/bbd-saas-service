@@ -34,12 +34,17 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	}
 
 	@Override
-	public int updatePostIdAndStaffId(String mailNum, String postManId,
+	public int updatePostIdAndStaffId(String mailNum, Integer postManId,
 			String staffId) {
 		if(mailNum == null){
 			return 0;
 		}
 		return postDeliveryDao.updatePostIdAndStaffId(mailNum, postManId, staffId);
+	}
+
+	@Override
+	public int findCountByMailNum(String mailNum) {
+		return postDeliveryDao.selectCountByMailNum(mailNum);
 	}
 
 }

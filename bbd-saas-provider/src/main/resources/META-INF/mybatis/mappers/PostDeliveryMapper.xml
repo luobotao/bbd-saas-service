@@ -129,13 +129,12 @@
     
     <!-- 通过运单号更新派件员信息  开始  -->  
     <update id="updatePostIdAndStaffId" >  
-        update `postdelivery` set postman_id = #{postManId}, staffid = #{staffId } where mail_num = #{mailNum}  
-    </update>  
-    <!-- 通过运单号更新派件员信息  结束   --> 
-    <!-- 
-    <select id="selectAll" resultMap="baseResultMap">
-        SELECT
-        <include refid="baseColumnList"/>
-        FROM `postdelivery`
-    </select> -->
+        UPDATE `POSTDELIVERY` SET POSTMAN_ID = #{postManId}, STAFFID = #{staffId } WHERE MAIL_NUM = #{mailNum}  
+    </update> 
+     
+    <!-- 查询指定运单号的记录的条数  结束   --> 
+    <select id="selectCountByMailNum" resultType="java.lang.Integer"> <!-- resultType="_int" -->
+        SELECT COUNT(*) FROM `POSTDELIVERY`  WHERE MAIL_NUM = #{mailNum}
+    </select> 
+	<!-- 查询指定运单号的记录的条数  结束   --> 
 </mapper>
