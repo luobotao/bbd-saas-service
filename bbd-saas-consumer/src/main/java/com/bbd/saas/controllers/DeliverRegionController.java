@@ -56,7 +56,7 @@ public class DeliverRegionController {
 		//--------panel 1-----------------------
 		Site site = user.getSite();
 		String between = request.getParameter("between");
-		String keyword = request.getParameter("keyword");
+		String keyword = request.getParameter("keyword")==null?"":request.getParameter("keyword");
 		int page = Numbers.parseInt(request.getParameter("page"),0);
 		//导入地址关键词
 		//--------panel 3-----------------------

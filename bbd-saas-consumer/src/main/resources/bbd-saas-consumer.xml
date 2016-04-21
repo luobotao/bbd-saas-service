@@ -9,7 +9,7 @@
 
 
     <!-- 	启动时不检查提供者 	-->
-	<dubbo:consumer check="false"></dubbo:consumer>
+	<dubbo:consumer check="false" timeout="30000"></dubbo:consumer>
 
     <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
     <!--<dubbo:registry address="zookeeper://10.173.0.222:2181"/>-->
@@ -21,12 +21,12 @@
     <!--用户Service-->
     <dubbo:reference id="userService" interface="com.bbd.saas.api.mongo.UserService"/>
     <!--site Service-->
-    <dubbo:reference id="siteService" interface="com.bbd.saas.api.mongo.SiteService"/>
+    <dubbo:reference id="siteService" interface="com.bbd.saas.api.mongo.SiteService" />
     <!--orderPacel Service-->
     <dubbo:reference id="orderPacelService" interface="com.bbd.saas.api.mongo.OrderPacelService"/>
     <!--orderPacel Service-->
-    <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi"/>
-    <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi"/>
+    <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
+    <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />
 
 
     <!--start mysql services-->

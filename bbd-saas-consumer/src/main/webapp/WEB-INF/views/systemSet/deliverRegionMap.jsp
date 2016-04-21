@@ -404,7 +404,7 @@
 			this.point = new BMap.Point(${site.lng}, ${site.lat});
 			var map = this.map;
 			var styleOptions = this.styleOptions;
-			map.centerAndZoom(this.point, 12);
+			map.centerAndZoom(this.point, 15);
 			map.enableScrollWheelZoom();
 			//实例化鼠标绘制工具
 			this.drawingManager = new BMapLib.DrawingManager(map, {
