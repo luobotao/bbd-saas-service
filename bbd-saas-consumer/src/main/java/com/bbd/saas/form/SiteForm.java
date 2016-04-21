@@ -12,7 +12,6 @@ public class SiteForm {
 	private String companyName;    //公司名称
 	@NotEmpty
 	private String responser;    //负责人
-	private String phone;        //负责人手机号
 	private String telephone;    //固定电话
 	@NotEmpty
 	private String email;        //邮箱
@@ -44,14 +43,6 @@ public class SiteForm {
 
 	public void setResponser(String responser) {
 		this.responser = responser;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
 	}
 
 	public String getTelephone() {

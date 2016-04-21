@@ -21,7 +21,6 @@ public class Site implements Serializable {
     private ObjectId id;
     private String name;         //站点名称
     private String responser;    //负责人
-    private String phone;        //负责人手机号
     private String telephone;    //固定电话
     private String email;        //邮箱
     private String province;     //省
@@ -29,7 +28,7 @@ public class Site implements Serializable {
     private String area;         //区
     private String address;      //详细地址
     private String licensePic;   //营业执照
-    private String username;     //账号
+    private String username;     //账号即手机号
     private String password;     //密码
     private String areaCode;    //区域（站点）编码
     private String companyId;      //所属公司ID
@@ -37,7 +36,6 @@ public class Site implements Serializable {
     private SiteStatus status;       //状态
     private String memo;       //备注
     private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
-
     private String lat;         //纬度
     private String lng;         //经度
     private String deliveryArea;//配送範圍
@@ -66,14 +64,6 @@ public class Site implements Serializable {
 
     public void setResponser(String responser) {
         this.responser = responser;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getTelephone() {
