@@ -10,5 +10,16 @@ import java.util.List;
  */
 public interface PostcompanyService {
 
+    /**
+     * 查询所有公司
+     * @return
+     */
     List<Postcompany> selectAll();
+
+    /**
+     * 根据公司ID获取公司信息
+     * @param id
+     * @return
+     */
+    Postcompany selectPostmancompanyById(Integer id);
 }

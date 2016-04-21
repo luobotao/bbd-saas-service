@@ -9,11 +9,13 @@ import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.SiteForm;
+import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
@@ -74,7 +76,8 @@ public class SiteController {
 	HttpServletRequest request;
 	@Autowired
 	AdminService adminService;
-
+	@Autowired
+	PostcompanyService postcompanyService;
 	@Value("${oss.access.id}")
 	private String ACCESS_ID ;
 	@Value("${oss.access.key}")
@@ -138,6 +141,10 @@ public class SiteController {
 		site.setDateAdd(new Date());
 		site.setDateUpd(new Date());
 		site.setStatus(SiteStatus.WAIT);
+		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(site.getCompanyId(),0)) ;
+		if(postcompany!=null){
+			site.setCompanycode(postcompany.getCompanycode());
+		}
 		site.setMemo("提交成功，我们将在3-5个工作日内完成审核。\n" +
 				"您可使用注册时填写的账号和密码登录，以查看审核状态。");
 		site.setFlag("0");
