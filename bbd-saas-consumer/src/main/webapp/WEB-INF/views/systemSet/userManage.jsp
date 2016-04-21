@@ -576,9 +576,11 @@ function saveUserBtn(){
 	        		 
 	        		if(getSign=='create'){
 	        			alert("保存用户成功"); 
-	        			document.getElementById("userForm").reset();
+	        			$(".j-user-pop").modal("hide");
+	        			//document.getElementById("userForm").reset();
 	        		}else{
-	        			alert("保存用户成功"); 
+	        			alert("修改用户成功"); 
+	        			$(".j-user-pop").modal("hide");
 	        		}
 	        		
 	        		gotoPage(0);
