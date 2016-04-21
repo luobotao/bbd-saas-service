@@ -56,6 +56,11 @@ input {
 .orange {
   color: #fc9e28;
 }
+button.orange {
+  background:none;
+  border:none;
+  text-decoration:underline;
+}
 .c-green {
   color: #99cb2f;
 }

@@ -281,7 +281,7 @@ function getRowHtml(data){
 	}
 	
 	//
-	row += "<td><button id='editUser' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.loginName+"')\">修改</button>";
+	row += "<td><button id='editUser' class='orange' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.loginName+"')\">修改</button>";
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
