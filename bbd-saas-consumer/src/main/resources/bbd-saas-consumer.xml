@@ -11,9 +11,9 @@
     <!-- 	启动时不检查提供者 	-->
 	<dubbo:consumer check="false"></dubbo:consumer>
 
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
     <!--<dubbo:registry address="zookeeper://10.173.0.222:2181"/>-->
-    <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
+    <dubbo:registry address="zookeeper://182.92.227.140:2181"/>
 
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.mongo.AdminUserService"/>
     <!--订单Service-->

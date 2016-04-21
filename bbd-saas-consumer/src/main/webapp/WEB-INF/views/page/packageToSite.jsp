@@ -8,6 +8,7 @@
 <html>
 <head>
 	<jsp:include page="../main.jsp" flush="true" />
+
 </head>
 <body class="fbg">
 <!-- S content -->

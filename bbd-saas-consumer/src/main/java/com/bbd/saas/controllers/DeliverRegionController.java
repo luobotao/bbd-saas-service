@@ -69,7 +69,6 @@ public class DeliverRegionController {
 		}else{
 			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
 		}
-		activeNum="2";
 		model.addAttribute("activeNum", activeNum);
 		model.addAttribute("site", site);
 		model.addAttribute("between", between);

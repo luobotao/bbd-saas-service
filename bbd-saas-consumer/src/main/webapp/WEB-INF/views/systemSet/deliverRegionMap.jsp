@@ -2,13 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/views/main.jsp"%>
 <html>
 <head>
 	<title>配送区域 - 系统设置 - 棒棒达快递</title>
-
-	<jsp:include page="../main.jsp" flush="true" />
-
-	</head>
+</head>
 <body>
 <body class="fbg">
 <!-- S content -->
@@ -60,7 +58,7 @@
 							<div class="col-md-12 pb20">
 								设置配送范围后，将优先匹配站点附近的订单。
 							</div>
-							<form action="/site/updateSiteWithRadius" method="POST" id="siteRadiusForm">
+							<form  method="POST" id="siteRadiusForm">
 								<div class="col-md-12 pb20">
 									<label>
 										站点周围：<c:set var="count" value="20"/>
@@ -108,7 +106,7 @@
 						<div class="clearfix tab-pane fade" id="import-key">
 							<div class="row pb20">
 								<c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
-								<form action="/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm">
+								<form action="${ctx}/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm">
 									<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
@@ -131,8 +129,8 @@
 											<input type="file" name="file" class="import-file" />
 										</label>
 
-										<a href="/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
-										<a href="/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
+										<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
+										<a href="${ctx}/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
 									</form>
 								</div>
 							</div>
@@ -161,7 +159,7 @@
 													<td>${siteKeyword.city}</td>
 													<td>${siteKeyword.distict}</td>
 													<td>${siteKeyword.keyword}</td>
-													<td><a href="/site/deleteSitePoiKeyword/${siteKeyword.id}" class="orange j-del">删除</a></td>
+													<td><a href="${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}" class="orange j-del">删除</a></td>
 												</tr>
 											</c:forEach>
 										</tbody>
@@ -239,14 +237,14 @@
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
 		$.ajax({
-			url: '/site/updateSiteWithRadius/'+$("#radius option:selected").val()+'/'+$("#siteId").val(),
+			url: '${ctx}/site/updateSiteWithRadius/'+$("#radius option:selected").val()+'/'+$("#siteId").val(),
 			type: 'get',
 			cache: false,
 			dataType: "text",
 			data: {},
 			success: function(response){
 				alert("保存成功");
-				window.location.href="/deliverRegion/map/1";
+				window.location.href="${ctx}/deliverRegion/map/1";
 			},
 			error: function(){
 				alert('服务器繁忙，请稍后再试！');
@@ -265,7 +263,7 @@
 		if(${site.lng != ""&&site.lat != ""}){
 		var point = new BMap.Point(${site.lng}, ${site.lat});
 		map.centerAndZoom(point, 12);
-		var myIcon = new BMap.Icon("/resources/images/b_marker.png", new BMap.Size(20,25));
+		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 		var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
 		map.addOverlay(marker);               // 将标注添加到地图中
 		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
@@ -303,7 +301,7 @@
 			return false;
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
-			window.location.href="/site/piliangDeleteSitePoiKeyword/"+delIds
+			window.location.href="${ctx}/site/piliangDeleteSitePoiKeyword/"+delIds
 		}
 	})
 

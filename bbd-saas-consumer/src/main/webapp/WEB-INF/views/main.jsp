@@ -5,6 +5,9 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="Access-Control-Allow-Origin" content="*">
 	<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+
+	<c:set var="ctx" value="<%=request.getContextPath()%>"/>
+
 	<!-- Bootstrap 3.3.2 -->
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
 	<!-- Date Picker -->
@@ -88,6 +91,7 @@ folder instead of downloading all of them to reduce the load. -->
 	<!-- alertify -->
 	<script src="<c:url value="/resources/adminLTE/plugins/alertify/alertify.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
+
 </head>
 <body>
 
