@@ -2,10 +2,12 @@ package com.bbd.saas.dao.mongo;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     	Query<User> query = createQuery();
     	if(userQueryVO!=null){
     		
+    		
     		if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
     			query.filter("role", UserRole.status2Obj(userQueryVO.roleId));
     		}
@@ -58,7 +61,9 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
     		}
     		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			query.or(query.criteria("realName").equal(userQueryVO.keyword),query.criteria("loginName").equal(userQueryVO.keyword));
+    			
+    			query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
+    			
     		}
     		
         }
