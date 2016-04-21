@@ -195,10 +195,10 @@
 			<div class="modal-body b-modal-body">
 				<ul class="b-n-crt">
 					<li class="filter clearfix">
-						<i>账号：</i>
-						<input type="text" class="form-control form-bod wp80" id="username" name="username" onblur="checkSiteWithUsername(this.value)">
+						<i>手机号：</i>
+						<input type="text" class="form-control form-bod wp80" id="username" name="username" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="checkSiteWithUsername(this.value)">
 						<input type="text" class="form-control" id="usernameFlag" name="usernameFlag" value="1" style="display:none;">
-						<em class="tip-info" id="usernameP" style="display:none;">请输入账号,不允许重复</em>
+						<em class="tip-info" id="usernameP" style="display:none;">请输入手机号,不允许重复</em>
 					</li>
 					<li class="filter">
 						<i>密 码：</i>
@@ -226,14 +226,10 @@
 						<input type="text" class="form-control form-bod wp80" id="responser" name="responser" >
 						<em class="tip-info" id="responserP" style="display:none;">请输入负责人</em>
 					</li>
-					<li class="filter">
-						<i>负责人电话：</i>
-						<input type="text" class="form-control form-bod wp80" id="phone" name="phone" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="this.value=this.value.replace(/[^\d]/g,'')" maxlength="11">
-					</li>
+
 					<li class="filter">
 						<i>固定电话：</i>
 						<input type="text" class="form-control form-bod wp80" id="telephone" name="telephone" onkeyup="this.value=this.value.replace(/[^\d\-]/g,'')" onblur="this.value=this.value.replace(/[^\d\-]/g,'')">
-						<em class="tip-info" id="sitePhoneP" style="display:none;">负责人电话或固定电话必填一个</em>
 					</li>
 					<li class="filter">
 						<i>邮箱：</i>
@@ -259,8 +255,6 @@
 					</li>
 					<li class="filter">
 						<i>公司营业执照：</i>
-						<%--<input type="text" class="form-control form-bod fl wp66" />--%>
-						<%--<a href="javascript:void(0);" class="ser-btn g fr">选择</a>--%>
 						<input id="licensePic" name="licensePic" class="file" type="file" >
 						<em class="tip-info" id="licensePicP" style="display:none;">请上传公司营业执照</em>
 					</li>
@@ -269,7 +263,7 @@
 			<div class="modal-footer b-modal-body bod0">
 				<div class="fl site-re">
 					<label>
-						<input type="checkbox"  id="agreeCheck"/>
+						<input type="checkbox"  id="agreeCheck" checked/>
 						同意<em class="orange">《棒棒达快递注册协议》</em>
 					</label>
 				</div>
@@ -312,7 +306,7 @@
 				success: function(response){
 					console.log(response);
 					if(response=="false"){
-						alert("您输入的帐号目前已存在，请重新输入");
+						alert("您输入的手机号目前已存在，请重新输入");
 						$("#usernameFlag").val(0);
 					}else{
 						$("#usernameFlag").val(1);
@@ -337,7 +331,6 @@
 		var password = $.trim($('input[name="password"]').val());
 		var name = $("#name").val();
 		var responser = $("#responser").val();
-		var phone = $("#phone").val();
 		var telephone = $("#telephone").val();
 		var email = $("#email").val();
 		var province = $(".prov").val();
@@ -371,12 +364,6 @@
 			flag = false;
 		} else{
 			$("#responserP").attr("style","display:none");
-		}
-		if(phone==""&&telephone==""){
-			$("#sitePhoneP").attr("style","color:red");
-			flag = false;
-		} else{
-			$("#sitePhoneP").attr("style","display:none");
 		}
 		if(email==""){
 			$("#emailP").attr("style","color:red");
