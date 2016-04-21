@@ -199,6 +199,7 @@ public class PackageDispatchController {
 			postDelivery.setSender_phone(order.getSender().getPhone());
 			postDelivery.setSender_province(order.getSender().getProvince());
 			postDelivery.setStaffid(user.getStaffid());
+			postDelivery.setGoods_fee(0);
 			postDelivery.setGoods_number(order.getGoods().size());
 			postDelivery.setPay_status("1");
 			postDelivery.setPay_mode("4");
