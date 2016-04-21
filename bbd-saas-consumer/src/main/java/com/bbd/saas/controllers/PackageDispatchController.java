@@ -179,7 +179,7 @@ public class PackageDispatchController {
 		int row = postDeliveryService.findCountByMailNum(order.getMailNum());
 		if(row == 0){ //保存--插入mysql数据库
 			PostDelivery postDelivery = new PostDelivery();
-			postDelivery.setCompany_code("BANGBANGDA");
+			postDelivery.setCompany_code(user.getSite().getCompanycode());
 			postDelivery.setDateNew(new Date());
 			postDelivery.setDateUpd(new Date());
 			postDelivery.setMail_num(order.getMailNum());
@@ -199,8 +199,8 @@ public class PackageDispatchController {
 			postDelivery.setSender_phone(order.getSender().getPhone());
 			postDelivery.setSender_province(order.getSender().getProvince());
 			postDelivery.setStaffid(user.getStaffid());
-			postDelivery.setGoods_number(order.getGoods().size());
 			postDelivery.setGoods_fee(0);
+			postDelivery.setGoods_number(order.getGoods().size());
 			postDelivery.setPay_status("1");
 			postDelivery.setPay_mode("4");
 			postDelivery.setFlg("1");
