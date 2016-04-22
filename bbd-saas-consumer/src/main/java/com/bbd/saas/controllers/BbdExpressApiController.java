@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping("/bbd")
@@ -33,6 +34,7 @@ public class BbdExpressApiController {
 		Site site = siteService.findSite(siteId);
 		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
 		logger.info(site.getId().toString());
+		//siteId companyId siteName siteAddress radius
 		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getName(),siteAddress,0);
 		//更新站点的经度和纬度
 		logger.info("result code:"+result.code);
@@ -46,4 +48,18 @@ public class BbdExpressApiController {
 		return result.code+"";
 	}
 
+	@RequestMapping(value="/getAreaCode/{address}", method=RequestMethod.GET)
+	@ResponseBody
+	public String getAreaCode(@PathVariable String address, HttpServletRequest request ) {
+		//args :company address
+		List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
+		logger.info(address);
+		logger.info(areaCodeList.size()+"");
+		if(areaCodeList!=null && areaCodeList.size()>0){
+			//通过积分获取优选区域码，暂时用第一个
+			String areaCode = areaCodeList.get(0);
+			return areaCode;
+		}
+		return "";
+	}
 }

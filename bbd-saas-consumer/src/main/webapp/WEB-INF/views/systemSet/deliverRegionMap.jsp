@@ -261,15 +261,15 @@
 		// 百度地图API功能
 		var map = new BMap.Map("allmapPs");
 		if(${site.lng != ""&&site.lat != ""}){
-		var point = new BMap.Point(${site.lng}, ${site.lat});
-		map.centerAndZoom(point, 12);
-		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
-		var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
-		map.addOverlay(marker);               // 将标注添加到地图中
-		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-		var circle = new BMap.Circle(point,${site.deliveryArea*1000},{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
-		map.addOverlay(circle);            //增加圆
-		map.enableScrollWheelZoom(true);
+			var point = new BMap.Point(${site.lng}, ${site.lat});
+			map.centerAndZoom(point, 12);
+			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
+			var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
+			map.addOverlay(marker);               // 将标注添加到地图中
+			marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+			var circle = new BMap.Circle(point,${site.deliveryArea*1000},{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
+			map.addOverlay(circle);            //增加圆
+			map.enableScrollWheelZoom(true);
 		}
 	}
 
@@ -337,15 +337,19 @@
 		var jsonStr = "";
 		bmap.overlays.forEach(function (e) {
 			var arrs = e.ro;
-			for (var i = 0; i < arrs.length; i++) {
-				jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
-				if (i < arrs.length - 1) {
-					jsonStr = jsonStr + ",";
+			if(arrs.length>2){
+				console.log(arrs);
+				for (var i = 0; i < arrs.length; i++) {
+					jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
+					if (i < arrs.length - 1) {
+						jsonStr = jsonStr + ",";
+					}
+					console.log(jsonStr);
 				}
+				jsonStr.substring(0, jsonStr.length - 1);
+				jsonStr = jsonStr + ";";
+				console.log(jsonStr);
 			}
-			jsonStr.substring(0, jsonStr.length - 1);
-			jsonStr = jsonStr + ";";
-			console.log(jsonStr);
 		})
 		if ("" != jsonStr) {
 			var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
@@ -368,8 +372,8 @@
 					alert('服务器繁忙，请稍后再试！');
 				}
 			});
-/*			$("#jsonStr").val(jsonStr);
-			$('#allLaysForm').submit();*/
+			/*          $("#jsonStr").val(jsonStr);
+			 $('#allLaysForm').submit();*/
 		} else {
 			alert("请先绘制电子围栏");
 		}
@@ -401,10 +405,10 @@
 			}
 			this.status = true;
 			this.map = new BMap.Map('map');
-			this.point = new BMap.Point(${site.lng}, ${site.lat});
+			this.point = new BMap.Point(${site.lng},${site.lat});
 			var map = this.map;
 			var styleOptions = this.styleOptions;
-			map.centerAndZoom(this.point, 15);
+			map.centerAndZoom(this.point,15);
 			map.enableScrollWheelZoom();
 			//实例化鼠标绘制工具
 			this.drawingManager = new BMapLib.DrawingManager(map, {
@@ -440,7 +444,7 @@
 					bmap.showLatLon(e.currentTarget.ro);
 				});
 				myPolygon.addEventListener("click",function(e){
-					if(confirm("删除？")){
+					if(confirm("确认删除该电子围栏？")){
 						bmap.delPolygon(e);
 					}
 				});
