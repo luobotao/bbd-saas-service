@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.OrderPacelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
@@ -43,6 +44,8 @@ public class DataQueryController {
 	UserService userService;
 	@Autowired
 	AdminService adminService;
+	@Autowired
+	OrderPacelService orderPacelService;
 	/**
 	 * description: 跳转到数据查询页面
 	 * 2016年4月1日下午6:13:46
@@ -58,6 +61,11 @@ public class DataQueryController {
 		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 		//查询数据
 		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
+		String parcelCodeTemp = null;
+		for(Order order : orderPage.getDatas()){
+			parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+			order.setParcelCode(parcelCodeTemp);//设置包裹号
+		}
 		logger.info("=====数据查询页面列表===" + orderPage);
 		model.addAttribute("orderPage", orderPage);
 		model.addAttribute("arriveBetween", arriveBetween);
@@ -80,6 +88,11 @@ public class DataQueryController {
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		String parcelCodeTemp = null;
+		for(Order order : orderPage.getDatas()){
+			parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+			order.setParcelCode(parcelCodeTemp);//设置包裹号
+		}
 		return orderPage;		
 	}
 	
@@ -110,10 +123,12 @@ public class DataQueryController {
 		//表格数据
 		List<List<String>> dataList = new ArrayList<List<String>>();
 		List<String> row = null;
+		String parcelCodeTemp = null;
 		if(orderList != null){
 			for(Order order : orderList){
 				row = new ArrayList<String>();
-				row.add(order.getParcelCode());
+				parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+				row.add(parcelCodeTemp);//设置包裹号
 				row.add(order.getMailNum());
 				row.add(order.getOrderNo());
 				row.add(order.getSrc().getMessage());

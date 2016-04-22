@@ -15,7 +15,7 @@
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
 %>
 <style type="text/css">
-.font-bg-color { background-color: #3597FA; }
+.font-bg-color { background-color: #FFED97; }
 </style>
 <body >
 
@@ -64,16 +64,17 @@
 	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
 	  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
-	  							<!-- 用于导出 -->
-								<form action="<%=request.getContextPath()%>/dataQuery/exportToExcel" method="get" id="exptForm">
-									<input id="status_expt" name="status" type="hidden" />
-									<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
-									<input id="mailNum_expt" name="mailNum" type="hidden" />
-								</form>
+	  							
 	  						</div>
 	  					</div>
 	  				</div>
 				</form>
+				<!-- 用于导出 -->
+				<form action="<%=request.getContextPath()%>/dataQuery/exportToExcel" method="get" id="exptForm">
+					<input id="status_expt" name="status" type="hidden" />
+					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
+					<input id="mailNum_expt" name="mailNum" type="hidden" />
+				</form>				
 				<!-- E 搜索区域 -->
 				<div class="tab-bod mt20">
 					<!-- S table -->
@@ -126,7 +127,7 @@
 									<td><%=order.getReciever().getName()%></td>
 									<td><%=order.getReciever().getPhone()%></td>
 									<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-									<td>待增加字段<%=Dates.formatDateTime_New(order.getDatePrint())%></td>
+									<td><%=Dates.formatDateTime_New(order.getDateDriverGeted())%></td>
 									<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 									<%
@@ -250,7 +251,7 @@ function getRowHtml(data){
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.phone + "</td>";
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
-	row += "<td>待增加" + getDate1(data.dateArrived) + "</td>";
+	row += "<td>" + getDate1(data.dateDriverGeted) + "</td>";
 	row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
@@ -350,6 +351,7 @@ function exportData() {
 	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
+	//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#arriveBetween").val());
 }	
 	
 	
