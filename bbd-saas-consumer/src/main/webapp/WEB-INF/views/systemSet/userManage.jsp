@@ -300,10 +300,12 @@ function toSearch(){
 	var roleId = $("#saasrole").val();
 	var status = $("#status").val();
 	var keyword = $("#keyword").val();
+	keyword=keyword.replace(/\ +/g,"");
 	gotoPage(0,roleId,status,keyword);
 }
 
 function checkLoginName(loginName) {
+	loginName=loginName.replace(/\ +/g,"");
 	var operate = document.getElementById("operate").value;
 	var oldloginName = document.getElementById("loginNameTemp").value;
 	var newloginName = loginName;
@@ -351,7 +353,7 @@ function checkLoginName(loginName) {
 
 
 function checkStaffid(staffid) {
-	
+	staffid=staffid.replace(/\ +/g,"");
 	var operate = document.getElementById("operate").value;
 	var oldstaffid = document.getElementById("staffidTemp").value;
 	var newstaffid = staffid;
@@ -497,10 +499,15 @@ function saveUserBtn(){
 	}
 	var roleId = $("#roleId").val();
 	var realName = $("#realName").val();
+	realName=realName.replace(/\ +/g,"");
 	var loginName = $("#loginName").val();
+	loginName=loginName.replace(/\ +/g,"");
 	var staffid = $("#staffid").val();
+	staffid=staffid.replace(/\ +/g,"");
 	var loginPass = $("#loginPass").val();
+	loginPass=loginPass.replace(/\ +/g,"");
 	var confirmPass = $("#confirmPass").val();
+	confirmPass=confirmPass.replace(/\ +/g,"");
 	var tel_reg = /^1[34578]{1}\d{9}/;
 	var loginpasstemp = true;
 	var confirmpasstemp = true;

@@ -155,13 +155,13 @@ public class UserManageController {
 		Map<String, Object> map = new HashMap<String, Object>();
 	    java.util.Date dateAdd = new java.util.Date();
 		User user = new User();
-		user.setRealName(userForm.getRealName());
-		user.setLoginName(userForm.getLoginName());
+		user.setRealName(userForm.getRealName().replaceAll(" ", ""));
+		user.setLoginName(userForm.getLoginName().replaceAll(" ", ""));
 		//user.setPhone(userForm.getPhone());
 		user.setPassWord(userForm.getLoginPass());
 		user.setSite(getuser.getSite());
 		user.setOperate(getuser);
-		user.setStaffid(userForm.getStaffid());
+		user.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(1));
@@ -175,7 +175,7 @@ public class UserManageController {
 			//loginName在user表中不存在
 			Key<User> kuser = userService.save(user);
 			postmanUser = new PostmanUser();
-			postmanUser.setNickname(userForm.getRealName());
+			postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
 			postmanUser.setHeadicon("");
 			postmanUser.setCardidno("");
 			postmanUser.setCompanyname(getuser.getSite().getCompanyName()!=null?getuser.getSite().getCompanyName():"");
@@ -193,8 +193,8 @@ public class UserManageController {
 			postmanUser.setShopurl("");
 			postmanUser.setSta("1");
 			postmanUser.setSpreadticket("");
-			postmanUser.setPhone(userForm.getLoginName());
-			postmanUser.setStaffid(userForm.getStaffid());
+			postmanUser.setPhone(userForm.getLoginName().replaceAll(" ", ""));
+			postmanUser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 			postmanUser.setDateNew(dateAdd);
 			postmanUser.setPoststatus(1);
 			if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
@@ -249,10 +249,10 @@ public class UserManageController {
 	    java.util.Date dateUpdate = new java.util.Date();
 		User user = new User();
 		logger.info(userForm.getLoginNameTemp());
-		olduser.setRealName(userForm.getRealName());
+		olduser.setRealName(userForm.getRealName().replaceAll(" ", ""));
 		//olduser.setLoginName(userForm.getLoginName());
 		//olduser.setPhone(userForm.getPhone());
-		olduser.setStaffid(userForm.getStaffid());
+		olduser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 		olduser.setPassWord(userForm.getLoginPass());
 		if(!olduser.getId().equals(getuser.getId())){
 			//如果修改的用户为站长且修改的用户就是当前登录用户的话，不执行olduser.setOperate(getuser);
@@ -263,9 +263,9 @@ public class UserManageController {
 		
 		Key<User> kuser = userService.save(olduser);
 		PostmanUser postmanUser = new PostmanUser();
-		postmanUser.setStaffid(userForm.getStaffid());
+		postmanUser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 		postmanUser.setDateUpd(dateUpdate);
-		postmanUser.setNickname(userForm.getRealName());
+		postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
 		postmanUser.setPhone(userForm.getLoginName());
 		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
 			//快递员
