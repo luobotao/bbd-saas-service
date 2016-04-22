@@ -6,6 +6,7 @@ import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.Site;
@@ -38,6 +39,8 @@ public class DeliverRegionController {
 	@Autowired
 	UserService userService;
 	@Autowired
+	SiteService siteService;
+	@Autowired
 	SiteKeywordApi siteKeywordApi;
 	@Autowired
 	SitePoiApi sitePoiApi;
@@ -50,11 +53,10 @@ public class DeliverRegionController {
 	 */
 	@RequestMapping(value="/map/{activeNum}", method=RequestMethod.GET)
 	public String toMapPage(@PathVariable String activeNum, Model model, HttpServletRequest request ) {
-		String userId = UserSession.get(request);
-		User user = userService.findOne(userId);
+		User user = adminService.get(UserSession.get(request));
 		//获取用户站点信息
 		//--------panel 1-----------------------
-		Site site = user.getSite();
+		Site site = siteService.findSite(user.getSite().getId().toString());
 		String between = request.getParameter("between");
 		String keyword = request.getParameter("keyword")==null?"":request.getParameter("keyword");
 		int page = Numbers.parseInt(request.getParameter("page"),0);

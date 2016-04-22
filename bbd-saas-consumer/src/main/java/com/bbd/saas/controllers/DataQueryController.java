@@ -46,32 +46,54 @@ public class DataQueryController {
 	AdminService adminService;
 	@Autowired
 	OrderPacelService orderPacelService;
+	
 	/**
-	 * description: 跳转到数据查询页面
-	 * 2016年4月1日下午6:13:46
-	 * @author: liyanlei          
+	 * Description: 跳转到数据查询页面
+	 * @param pageIndex 页数
+	 * @param status 运单状态
+	 * @param arriveBetween 到站时间
+	 * @param mailNum 运单号
+	 * @param request
 	 * @param model
-	 * @return 
+	 * @return
+	 * @author liyanlei
+	 * 2016年4月22日下午6:27:46
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
-		//设置默认查询条件
-		status = Numbers.defaultIfNull(status, -1);//全部
-		//到站时间
-		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
-		//查询数据
-		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
-		String parcelCodeTemp = null;
-		for(Order order : orderPage.getDatas()){
-			parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-			order.setParcelCode(parcelCodeTemp);//设置包裹号
+		try {
+			//设置默认查询条件
+			status = Numbers.defaultIfNull(status, -1);//全部
+			//到站时间
+			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
+			//查询数据
+			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
+			String parcelCodeTemp = null;
+			for(Order order : orderPage.getDatas()){
+				parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+				order.setParcelCode(parcelCodeTemp);//设置包裹号
+			}
+			logger.info("=====数据查询页面列表===" + orderPage);
+			model.addAttribute("orderPage", orderPage);
+			model.addAttribute("arriveBetween", arriveBetween);
+			return "page/dataQuery";
+		} catch (Exception e) {
+			logger.error("===跳转到数据查询页面==出错 :" + e.getMessage());
 		}
-		logger.info("=====数据查询页面列表===" + orderPage);
-		model.addAttribute("orderPage", orderPage);
-		model.addAttribute("arriveBetween", arriveBetween);
 		return "page/dataQuery";
 	}
-	//分页Ajax更新
+	
+	/**
+	 * Description: 分页查询，Ajax更新列表
+	 * @param pageIndex 页数
+	 * @param status 运单状态
+	 * @param arriveBetween 到站时间
+	 * @param mailNum 运单号
+	 * @param request
+	 * @return
+	 * @author liyanlei
+	 * 2016年4月22日下午6:27:16
+	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<Order> getList(Integer pageIndex, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
@@ -94,6 +116,22 @@ public class DataQueryController {
 			order.setParcelCode(parcelCodeTemp);//设置包裹号
 		}
 		return orderPage;		
+	}
+	
+	/**
+	 * Description: 
+	 * @param mailNum
+	 * @return
+	 * @author liyanlei
+	 * 2016年4月22日下午6:31:35
+	 */
+	@RequestMapping(value="/getOrderMail", method=RequestMethod.GET)
+	public String getOrderMail(String mailNum, final HttpServletRequest request, Model model) {
+		//当前登录的用户信息
+		User currUser = adminService.get(UserSession.get(request));
+		Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+		model.addAttribute("order", order);
+		return "page/showOrderMail";
 	}
 	
 	/**

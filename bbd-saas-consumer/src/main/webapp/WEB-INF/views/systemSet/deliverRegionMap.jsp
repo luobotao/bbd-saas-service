@@ -38,6 +38,10 @@
 							<i>${site.name}</i>
 						</li>
 						<li class="txt-info">
+							<em>区域码：</em>
+							<i>${site.areaCode}</i>
+						</li>
+						<li class="txt-info">
 							<em>站点地址：</em>
 							<i>${site.province}-${site.city}-${site.area} ${site.address}</i>
 						</li>
@@ -254,10 +258,15 @@
 	$("#importBtn").click(function(){
 		$("#importFileForm").submit();
 	})
+	//更改配送范围
+	$("#radius").change(function(){
+		var radius = $("#radius option:selected").val();
+		showMap(radius*1000);
+	})
 
-	showMap();
+	showMap(${site.deliveryArea*1000});
 	//展示配送范围
-	function showMap(){
+	function showMap(radius){
 		// 百度地图API功能
 		var map = new BMap.Map("allmapPs", {enableMapClick:false});
 		if(${site.lng != ""&&site.lat != ""}){
@@ -267,7 +276,7 @@
 			var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
 			map.addOverlay(marker);               // 将标注添加到地图中
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-			var circle = new BMap.Circle(point,${site.deliveryArea*1000},{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
+			var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
 			map.addOverlay(circle);            //增加圆
 			map.enableScrollWheelZoom(true);
 		}
@@ -430,6 +439,14 @@
 			map.addEventListener("rightclick",function(e){
 				alert(e.point.lng + "," + e.point.lat);
 			});
+			// S 增加的控件
+			var bottom_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});// 左上角，添加比例尺
+			var bottom_right_navigation = new BMap.NavigationControl({
+				anchor: BMAP_ANCHOR_BOTTOM_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL
+			}); //右上角，仅包含平移和缩放按钮
+			map.addControl(bottom_left_control);
+			map.addControl(bottom_right_navigation);
+			// E 增加的控件
 		},
 		loadMyOverlay: function(){
 			var map = this.map;
@@ -534,6 +551,7 @@
 			//console.log(n);
 		}
 	};
+
 	//显示结果面板动作
 	var isPanelShow = false;
 	$("showPanelBtn").onclick = showPanel;

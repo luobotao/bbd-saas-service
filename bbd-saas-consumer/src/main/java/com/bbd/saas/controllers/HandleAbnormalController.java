@@ -225,7 +225,6 @@ public class HandleAbnormalController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
-		
 		//查询运单信息
 		Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
 		if(order == null){//运单不存在,与站点无关--正常情况不会执行
@@ -249,7 +248,7 @@ public class HandleAbnormalController {
 			//更新运单
 			Key<Order> r = orderService.save(order);
 			if(r != null){
-				//更新到mysql post-status-company至空
+				//更新到mysql post-status-company置为空
 				postDeliveryService.updatePostAndStatusAndCompany(mailNum, 0, "", "1", "");
 				map.put("operFlag", 1);//1:成功
 				//刷新列表
@@ -270,7 +269,7 @@ public class HandleAbnormalController {
 	 */
 	private void addOrderExpress(Order order, User user, String siteName){
 		//更新物流状态
-		order.setExpressStatus(ExpressStatus.DriverGeted);
+		order.setExpressStatus(ExpressStatus.Packed);
 		//更新物流信息
 		List<Express> expressList = order.getExpresses();
 		if(expressList == null){
