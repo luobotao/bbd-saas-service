@@ -72,6 +72,7 @@ public interface OrderService {
 
 	/**
 	 * 根据运单号更新订单的订单状态
+	 * 同时会修改该订单所处包裹里的状态
 	 * @param mailNum 运单号
 	 * @param orderStatusOld 可为null,若为null则不检验旧状态否则须旧状态满足才可更新
 	 * @param orderStatusNew

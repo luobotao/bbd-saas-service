@@ -419,14 +419,14 @@
 					"ids" : JSON.stringify(ids)
 				},
 				success: function(json){
-					alert('aaa！');
 					location.reload();
-
 				},
 				error: function(){
 					alert('服务器繁忙，请稍后再试！');
 				}
 			});
+		}else{
+			alert('请选择运单！');
 		}
 
 
