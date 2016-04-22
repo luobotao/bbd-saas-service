@@ -175,7 +175,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						<ul class="b-n-crt">
 							<li>
 								<select id="roleId" name="roleId" class="form-control form-bod">
-									<%=UserRole.Srcs2HTML(-1)%>
+									<%=UserRole.Srcs2HTMLForUser(-1)%>
 								</select>
 								<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
 							</li>
@@ -374,7 +374,7 @@ function checkStaffid(staffid) {
 					console.log(response);
 					if(response=="true"){
 						//alert("您输入的登录名目前已存在，请重新输入");
-						$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
+						$("#staffidP").text("该站点下的工号已存在，请重新输入!");
 					    $("#staffidP").attr("style","color:red");
 					    //document.getElementById("flagstaffid").value='false';
 					    //return true;
@@ -405,7 +405,7 @@ function checkStaffid(staffid) {
 						console.log(response);
 						if(response=="true"){
 							//alert("您输入的登录名目前已存在，请重新输入");
-							$("#staffidP").text("该站点下的staffid已存在，请重新输入!");
+							$("#staffidP").text("该站点下的工号已存在，请重新输入!");
 						    $("#staffidP").attr("style","color:red");
 						    //document.getElementById("flagstaffid").value='false';
 						    //return true;
@@ -491,7 +491,10 @@ function saveUserBtn(){
 	//operate这个隐藏域就是为了区别这个操作时修改还是新建
 	var getSign = document.getElementById("operate").value;
 	var flag = true;
-
+	var checkSign = false;
+	var loginNameSign = false;
+	var ataffidSign = false;
+	var returnmess = "";
 	if(getSign=='edit'){
 		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
 	}else{
@@ -524,10 +527,19 @@ function saveUserBtn(){
 		$("#loginNameP").attr("style","display:none");
 	}
 	if(checkLoginName(loginName)){
+		returnmess = '该手机号已存在，请重新输入！';
 		flag = false;
+		checkSign = true;
+		loginNameSign = true;
 	}
 	if(checkStaffid(staffid)){
+		returnmess = '该站点下的工号已存在，请重新输入！';
 		flag = false;
+		checkSign = true;
+		staffidSign = true;
+	}
+	if(loginNameSign && staffidSign){
+		returnmess = '该手机号已存在，请重新输入！';
 	}
 	if (!tel_reg.test(loginName)) {
 		$("#loginNameP").attr("style","color:red");
@@ -601,7 +613,10 @@ function saveUserBtn(){
 	            alert( "有非法内容，请检查内容合法性！");  
 	        }  
 	    });
-	}else{
+	}else if(checkSign){
+		alert(returnmess);
+		return false;
+	}else {
 		alert("有非法内容，请检查内容合法性！");
 		return false;
 	}

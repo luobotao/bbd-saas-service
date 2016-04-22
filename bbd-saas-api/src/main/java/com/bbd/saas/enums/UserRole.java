@@ -35,6 +35,20 @@ public enum UserRole {
         return sb.toString();
     }
     
+    public static String Srcs2HTMLForUser(Integer id) {
+        StringBuilder sb = new StringBuilder();
+        UserRole[] returnReason = UserRole.values();
+        sb.append(Htmls.generateOption(-1, "请选则角色"));
+        for (UserRole rr : returnReason) {
+            if (id == rr.status) {
+                sb.append(Htmls.generateSelectedOption(rr.status,rr.message));
+            } else {
+                sb.append(Htmls.generateOption(rr.status, rr.message));
+            }
+        }
+        return sb.toString();
+    }
+    
     public static UserRole obj2UserRole(String objStr) {
        
     	for(UserRole userRole: UserRole.values()){
