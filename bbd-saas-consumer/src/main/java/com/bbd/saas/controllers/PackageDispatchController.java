@@ -212,7 +212,7 @@ public class PackageDispatchController {
 			postDeliveryService.insert(postDelivery);
 			logger.info("运单分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());			
 		}else{//已保存过了，更新快递员信息
-			postDeliveryService.updatePostIdAndStaffId(order.getMailNum(), user.getPostmanuserId(), user.getStaffid());
+			postDeliveryService.updatePostIdAndStatus(order.getMailNum(), user.getPostmanuserId(), user.getStaffid(), "1");
 			logger.info("运单重新分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());
 		}
 		

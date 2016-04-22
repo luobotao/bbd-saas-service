@@ -14,6 +14,9 @@
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
 %>
+<style type="text/css">
+.font-bg-color { background-color: #3597FA; }
+</style>
 <body >
 
 <!-- S content -->
@@ -234,9 +237,14 @@ function gotoPage(pageIndex) {
 
 //封装一行的数据
 function getRowHtml(data){
+	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
 	row +=  "<td>" + data.parcelCode + "</td>";
-	row += "<td>" + data.mailNum + "</td>";
+	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
+		row += "<td>" + data.mailNum + "</td>";
+	}else{
+		row += "<td>" + data.mailNum.replace(mailNum, "<span class='font-bg-color'>" + mailNum + "</span>") + "</td>";
+	}
 	row += "<td>" + data.orderNo + "</td>";
 	row += "<td>" + getSrcName(data.src) + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";

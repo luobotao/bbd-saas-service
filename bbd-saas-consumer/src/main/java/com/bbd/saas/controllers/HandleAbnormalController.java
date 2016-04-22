@@ -151,7 +151,7 @@ public class HandleAbnormalController {
 		if(i > 0){
 			//更新mysql
 			User user = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
-			postDeliveryService.updatePostIdAndStaffId(mailNum, user.getPostmanuserId(), user.getStaffid());
+			postDeliveryService.updatePostIdAndStatus(mailNum, user.getPostmanuserId(), user.getStaffid(), "1");
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 

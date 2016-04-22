@@ -26,7 +26,7 @@ public interface PostDeliveryService {
 	 * @author: liyanlei
 	 * 2016年4月20日下午2:38:35
 	 */
-	int updatePostIdAndStaffId(String mailNum, Integer postManId, String staffId);
+	int updatePostIdAndStatus(String mailNum, Integer postManId, String staffId, String status);
 	
 	/**
 	 * Description: 查询指定运单号的记录的条数
