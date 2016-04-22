@@ -67,10 +67,6 @@ $(function () {
         $(".j-login-type,.j-site-re-pop,#mask").hide()
     })
     // E 注册站点
-    // 删除
-    $(".j-del").on("click", function () {
-        $(this).parent().parent().remove();
-    })
 
     //全选
     $(".j-sel-all").on("click", function () {

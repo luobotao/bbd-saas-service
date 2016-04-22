@@ -51,7 +51,10 @@ function transdate(endTime){
  * @returns {string}
  */
 function getDate1(tm){
-    var date = new Date(tm);
+	if(tm == null){
+		return "";
+	}
+	var date = new Date(tm);
     return date.Format("yyyy-MM-dd HH:mm:ss");
 }
 /**

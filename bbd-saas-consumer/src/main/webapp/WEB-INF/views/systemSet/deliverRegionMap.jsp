@@ -159,7 +159,7 @@
 													<td>${siteKeyword.city}</td>
 													<td>${siteKeyword.distict}</td>
 													<td>${siteKeyword.keyword}</td>
-													<td><a href="${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}" class="orange j-del">删除</a></td>
+													<td><a href="javascript:if(confirm('确认删除？'))location='${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}'" class="orange">删除</a></td>
 												</tr>
 											</c:forEach>
 										</tbody>
@@ -259,7 +259,7 @@
 	//展示配送范围
 	function showMap(){
 		// 百度地图API功能
-		var map = new BMap.Map("allmapPs");
+		var map = new BMap.Map("allmapPs", {enableMapClick:false});
 		if(${site.lng != ""&&site.lat != ""}){
 			var point = new BMap.Point(${site.lng}, ${site.lat});
 			map.centerAndZoom(point, 12);
@@ -404,7 +404,7 @@
 				return;
 			}
 			this.status = true;
-			this.map = new BMap.Map('map');
+			this.map = new BMap.Map('map',{enableMapClick:false});
 			this.point = new BMap.Point(${site.lng},${site.lat});
 			var map = this.map;
 			var styleOptions = this.styleOptions;

@@ -51,6 +51,7 @@ public class Order implements Serializable {
     private Date datePrint;//物流单打印时间
     private Date dateMayArrive;//预计到站时间
     private Date dateArrived;//到站时间
+    private Date dateDriverGeted;//司机取货时间
     private Date dateUpd;//
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
     @Transient
@@ -276,7 +277,15 @@ public class Order implements Serializable {
 		this.dateArrived = dateArrived;
 	}
 
-    public String getSrcMessage() {
+    public Date getDateDriverGeted() {
+		return dateDriverGeted;
+	}
+
+	public void setDateDriverGeted(Date dateDriverGeted) {
+		this.dateDriverGeted = dateDriverGeted;
+	}
+
+	public String getSrcMessage() {
         return src.getMessage();
     }
 }
