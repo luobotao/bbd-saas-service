@@ -24,6 +24,12 @@ public interface PostmanUserDao {
      */
     PostmanUser selectPostmanUserByPhone(@Param("phone") String phone);
     /**
+     * 根据phone获取对应的postmanUser的id
+     * @param phone
+     * @return id
+     */
+    int selectIdByPhone(@Param("phone") String phone);
+    /**
      * 根据phone获取对应的postmanUser
      * @param phone
      * @return List<PostmanUser>
@@ -43,4 +49,18 @@ public interface PostmanUserDao {
      * @return 
      */
     void deleteById(@Param("id") Integer id);
+    
+    /**
+     * 更新postmanUser
+     * @param status、id
+     * @return 
+     */
+    int updateById(@Param("status") Integer status,@Param("id") Integer id);
+    
+    /**
+     * 更新postmanUser
+     * @param staffid、nickname、id
+     * @return 
+     */
+    int updatePostmanUserById(@Param("staffid") String staffid,@Param("nickname") String nickname,@Param("id") Integer id);
 }

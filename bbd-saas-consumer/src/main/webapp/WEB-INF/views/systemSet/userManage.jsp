@@ -44,7 +44,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	        							<label>角色：</label>
 	        							<select id="saasrole" name="saasrole" class="form-control form-con-new">
-	        								<%=UserRole.Srcs2HTML(-1)%>
+	        								<option value ="1" selected ="selected">派件员</option>
 	        							</select>
 	        						</div>
 	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -107,7 +107,6 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 											<% 
 											}
 											%>
-											
 											
 											<td><a href="javascript:void(0);" onclick="searchUser('<%=user.getId() %>','')" class="orange j-user">修改</a>
 											
@@ -175,7 +174,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						<ul class="b-n-crt">
 							<li>
 								<select id="roleId" name="roleId" class="form-control form-bod">
-									<%=UserRole.Srcs2HTMLForUser(-1)%>
+									<option value ="1" selected ="selected">派件员</option>
 								</select>
 								<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
 							</li>

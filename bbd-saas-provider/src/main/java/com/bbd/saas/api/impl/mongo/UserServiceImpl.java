@@ -90,8 +90,8 @@ public class UserServiceImpl implements UserService {
      * @param pageModel
      * @return
      */
-    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO){
-    	return userDao.findUserList(pageModel,userQueryVO);
+    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site){
+    	return userDao.findUserList(pageModel,userQueryVO,site);
     }
     
     /**

@@ -48,15 +48,16 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @param PageModel<User>
      * @return PageModel<User>
      */
-    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO) {
+    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site) {
     	
     	Query<User> query = createQuery();
     	if(userQueryVO!=null){
     		
-    		
-    		if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
+    		query.filter("role", UserRole.status2Obj(1));
+    		/*if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
     			query.filter("role", UserRole.status2Obj(userQueryVO.roleId));
-    		}
+    		}*/
+    		query.filter("site", site);
     		if(userQueryVO.status!=null && userQueryVO.status!=-1){
     			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
     		}

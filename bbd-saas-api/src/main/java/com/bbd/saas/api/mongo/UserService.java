@@ -63,7 +63,7 @@ public interface UserService {
      * @param PageModel<User>
      * @return PageModel<User>
      */
-    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO);
+    public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site);
     
     /**
      * Description: 获取指定站点下的所有派件员

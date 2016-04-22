@@ -53,6 +53,14 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		return postmanUserDao.selectPostmanUserByPhone(phone);
 	}
 	/**
+     * 根据phone获取对应的postmanUser的id
+     * @param phone
+     * @return id
+     */
+    public int selectIdByPhone(String phone){
+    	return postmanUserDao.selectIdByPhone(phone);
+    }
+	/**
      * 保存postmanUser
      * @param postmanUser
      * @return ret 成功或失败
@@ -77,5 +85,23 @@ public class PostmanUserServiceImpl implements PostmanUserService {
      */
     public void deleteById(Integer id){
     	postmanUserDao.deleteById(id);
+    }
+    
+    /**
+     * 更新postmanUser
+     * @param status、id
+     * @return 
+     */
+    public int updateById(@Param("status") Integer status,@Param("id") Integer id){
+    	return postmanUserDao.updateById(status, id);
+    }
+    
+    /**
+     * 更新postmanUser
+     * @param staffid、nickname、id
+     * @return 
+     */
+    public int updatePostmanUserById(String staffid,String nickname,Integer id){
+    	return postmanUserDao.updatePostmanUserById(staffid, nickname, id);
     }
 }
