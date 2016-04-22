@@ -64,4 +64,13 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
         }
         return update(query,ops);
     }
+
+    /**
+     * 根据订单ID获取此订单所处的包裹信息
+     * @param orderId
+     * @return
+     */
+    public OrderParcel findOrderParcelByOrderId(String orderId) {
+        return findOne(createQuery().filter("orderList._id",new ObjectId(orderId)));
+    }
 }

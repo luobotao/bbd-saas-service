@@ -31,6 +31,13 @@ public interface PostmanUserService {
     PostmanUser selectPostmanUserByPhone(String phone);
     
     /**
+     * 根据phone获取对应的postmanUser的id
+     * @param phone
+     * @return id
+     */
+    int selectIdByPhone(String phone);
+    
+    /**
      * 更新postmanUser
      * @param postmanUser
      * @return 
@@ -43,4 +50,18 @@ public interface PostmanUserService {
      * @return 
      */
     public void deleteById(Integer id);
+    
+    /**
+     * 更新postmanUser
+     * @param status、id
+     * @return 
+     */
+    int updateById(Integer status,Integer id);
+    
+    /**
+     * 更新postmanUser
+     * @param staffid、nickname、id
+     * @return 
+     */
+    int updatePostmanUserById(String staffid,String nickname,Integer id);
 }

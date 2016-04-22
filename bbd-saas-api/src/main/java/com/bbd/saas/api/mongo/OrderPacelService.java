@@ -1,5 +1,6 @@
 package com.bbd.saas.api.mongo;
 
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
@@ -25,4 +26,18 @@ public interface OrderPacelService {
 	 * @return
      */
 	OrderParcel findOrderParcelByParcelCode(String areaCode,String parcelCode);
+
+	/**
+	 * 根据订单ID获取此订单所处的包裹信息
+	 * @param orderId
+	 * @return
+     */
+	OrderParcel findOrderParcelByOrderId(String orderId);
+
+
+	/**
+	 * 保存包裹
+	 * @param orderParcel
+     */
+	void saveOrderParcel(OrderParcel orderParcel);
 }

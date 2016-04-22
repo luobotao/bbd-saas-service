@@ -102,6 +102,7 @@
 	        	<if test="nickname != null">
 	        	nickname = #{nickname,jdbcType=VARCHAR},
 	        	</if>
+	        	<!--  
 	        	<if test="headicon != null">
 	        	headicon = #{headicon,jdbcType=VARCHAR},
 	        	</if>
@@ -117,6 +118,8 @@
 	        	<if test="companyid != null">
 	        	companyid = #{companyid,jdbcType=INTEGER},
 	        	</if>
+	        	-->
+	        	<!--  
 	        	<if test="alipayAccount != null">
 	        	alipay_account = #{alipayAccount,jdbcType=VARCHAR},
 	        	</if>
@@ -150,17 +153,16 @@
 	        	<if test="spreadticket != null">
 	        	spreadticket= #{spreadticket,jdbcType=VARCHAR},
 	        	</if>
-	        	<!--  
 	        	<if test="poststatus != null">
 	        	poststatus = #{poststatus,jdbcType=INTEGER},
 	        	</if>
-	        	-->
 	        	<if test="postrole != null">
 	        	postrole = #{postrole,jdbcType=INTEGER},  
 	        	</if>
 	        	<if test="dateNew != null">
 	        	date_new = #{dateNew,jdbcType=TIMESTAMP},
 	        	</if>
+	        	-->
 	        	<if test="dateUpd != null">
 	        	date_upd = #{dateUpd,jdbcType=TIMESTAMP},
 	        	</if>
@@ -168,13 +170,27 @@
         	WHERE <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
     </update>
     
-    <select id="deleteById" resultMap="baseResultMap">
+    <delete id="deleteById">
         delete from postmanuser where id = #{id,jdbcType=INTEGER}
-    </select>
+    </delete>
+    
+    <update id="updateById" >
+        update postmanuser set poststatus = #{status,jdbcType=INTEGER}  where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <update id="updatePostmanUserById" >
+        update postmanuser set staffid = #{staffid,jdbcType=INTEGER},nickname = #{nickname,jdbcType=VARCHAR}  
+        where id = #{id,jdbcType=INTEGER}
+    </update>
     
     <select id="selectAll" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postmanuser`
+    </select>
+    
+    <select id="selectIdByPhone" resultType="int">
+        SELECT id
+        FROM `postmanuser` where <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
     </select>
 </mapper>

@@ -64,7 +64,11 @@ $(function () {
         e.stopPropagation();
     })
     $(document).on("click", function () {
-        $(".j-login-type,.j-site-re-pop,#mask").hide()
+        $(".j-login-type,#mask").hide()
+    })
+    $(".j-close").on("click",function(){
+        $(this).parent().parent().parent().parent().hide();
+        $("#mask").hide();
     })
     // E 注册站点
 

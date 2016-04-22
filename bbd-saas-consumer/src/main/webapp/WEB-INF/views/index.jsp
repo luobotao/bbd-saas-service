@@ -31,7 +31,7 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav navbar-right f16">
-				<li><a href="<c:url value="/" />">首页</a></li>
+				<li><a href="<c:url value="/home" />">首页</a></li>
 				<li><a href="javascript:void(0);"><i class="glyphicon glyphicon-user orange">${user.realName}</i></a></li>
 				<li><a href="<c:url value="/logout" />">退出登录</a></li>
 			</ul>
@@ -46,7 +46,7 @@
 			<!-- S sidebar -->
 			<div class="col-xs-12 col-sm-12 bbd-md-3">
 				<ul class="b-sidebar">
-					<li id="arrive" class="lv1 side-cur"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
+					<li id="arrive" class="lv1"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
 					<li id="error" class="lv1"><a href="<c:url value="/handleAbnormal" />" target="iframe1" ><i class="b-icon p-error"></i>异常件处理</a></li>
 					<li id="query" class="lv1"><a href="<c:url value="/dataQuery" />" target="iframe1" ><i class="b-icon p-query"></i>数据查询</a></li>
@@ -79,6 +79,13 @@
 		$("li").each(function(){
 			if($(this).attr("id")==typ){
 				$(this).addClass("side-cur").siblings().removeClass("side-cur");
+				if ($(this).parents('ul.menu').css("display") == "block") {//menu有dn
+					$(this).parents('ul.menu').slideUp();
+				} else {//menu没有dn
+					$(this).parents('ul.menu').prev().addClass("side-cur");
+					$(this).parents('ul.menu').slideDown();
+				}
+
 				var href = $(this).find("a").attr("href");
 				$("#iframe1").attr("src",href);
 			}

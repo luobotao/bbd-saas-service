@@ -31,6 +31,7 @@ import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.UserForm;
 import com.bbd.saas.models.PostmanUser;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
@@ -60,8 +61,9 @@ public class UserManageController {
      * @return
      */
 	@RequestMapping(value="userList", method=RequestMethod.GET)
-	public String listUser(Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		PageModel<User> userPage = getUserPage(0,roleId,status,keyword);
+	public String listUser(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+		User getuser = adminService.get(UserSession.get(request));
+		PageModel<User> userPage = getUserPage(0,roleId,status,keyword,getuser.getSite());
 
 		model.addAttribute("userPage", userPage);
 		//return "systemSet/userManageUserList";
@@ -93,7 +95,7 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
-	public PageModel<User> getUserPage(Integer pageIndex, Integer roleId, Integer status,String keyword) {
+	public PageModel<User> getUserPage(Integer pageIndex, Integer roleId, Integer status,String keyword,Site site) {
 		if (pageIndex==null) pageIndex =0 ;
 		//logger.info(arriveStatus+"========="+between);
 		try {
@@ -114,7 +116,7 @@ public class UserManageController {
 		userQueryVO.keyword=keyword;
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
-		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO);
+		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO,site);
 		
 		for(User user : userPage.getDatas()){
 			user.setRoleMessage(user.getRole().getMessage());
@@ -197,21 +199,24 @@ public class UserManageController {
 			postmanUser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 			postmanUser.setDateNew(dateAdd);
 			postmanUser.setPoststatus(1);
-			if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
+			/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
 				//快递员
 				postmanUser.setPostrole(0);
 			}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
 				//站长
 				postmanUser.setPostrole(4);
-			}
+			}*/
+			//快递员
+			postmanUser.setPostrole(0);
 
 			int ret = userMysqlService.insertUser(postmanUser);
 			System.out.println("idddd=="+postmanUser.getId());
 			if(kuser!=null && !kuser.getId().equals("")){
 				
-				postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
+				//postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
+				int postmanuserId = userMysqlService.selectIdByPhone(userForm.getLoginName());
 				user = userService.findOne(kuser.getId().toString());
-				user.setPostmanuserId(postmanUser.getId());
+				user.setPostmanuserId(postmanuserId);
 				kuser = userService.save(user);
 				return "true";
 			}else{
@@ -267,17 +272,19 @@ public class UserManageController {
 		postmanUser.setDateUpd(dateUpdate);
 		postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
 		postmanUser.setPhone(userForm.getLoginName());
-		if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
+		/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
 			//快递员
 			postmanUser.setPostrole(0);
 			
 		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
 			postmanUser.setPostrole(4);
-		}
-		
+		}*/
+		//快递员
+		postmanUser.setPostrole(0);
 		if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
 			//postmanuser表中有对应的数据,同时更新到mysql的bbt库的postmanuser表中
-			int ret = userMysqlService.updateByPhone(postmanUser);
+			//int ret = userMysqlService.updateByPhone(postmanUser);
+			int updateret = userMysqlService.updatePostmanUserById(userForm.getStaffid().replaceAll(" ", ""),userForm.getRealName().replaceAll(" ", ""),getpostmanUser.getId());
 			//return "true";
 			retSign = "true";
 			
@@ -351,6 +358,7 @@ public class UserManageController {
 		Key<User> kuser = userService.save(user);
 		
 		if(kuser!=null && !kuser.getId().equals("")){ 
+			int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
 			return "true";
 		}else{
 			return "false";

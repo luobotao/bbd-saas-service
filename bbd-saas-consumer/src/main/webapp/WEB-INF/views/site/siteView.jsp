@@ -44,14 +44,6 @@
 									<label>${site.responser}</label>
 								</div>
 							</div>
-							<div class="row" id="phoneDiv" style="margin-top:10px;">
-								<div class="col-xs-1">
-									<label style="float: right;">负责人电话:</label>
-								</div>
-								<div class="col-xs-4">
-									<label>${site.phone}</label>
-								</div>
-							</div>
 							<div class="row" id="telephoneDiv" style="margin-top:10px;">
 								<div class="col-xs-1">
 									<label style="float: right;">固定电话:</label>
@@ -86,7 +78,7 @@
 							</div>
 							<div class="row" id="licensePicDiv" style="margin-top: 10px;">
 								<div class="col-xs-1">
-									<label style="float: right;">公司营业执照:</label>
+									<label style="float: right;">营业执照:</label>
 								</div>
 								<div class="col-xs-4">
 									<img style="width: 200px;height: 200px;" alt="" src="${ossUrl}${site.licensePic}@200w"/>
