@@ -278,6 +278,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     	if(orderUpdateVO.orderStatus != null){
             ops.set("orderStatus",orderUpdateVO.orderStatus);
         }
+    	//物流状态
+    	if(orderUpdateVO.expressStatus != null){
+            ops.set("expressStatus",orderUpdateVO.expressStatus);
+        }
+    	//增加一条物流信息====ExpressStatus
+    	if(orderUpdateVO.express != null){
+            ops.add("expresses", orderUpdateVO.express);
+        }
     	return ops;
     }
 

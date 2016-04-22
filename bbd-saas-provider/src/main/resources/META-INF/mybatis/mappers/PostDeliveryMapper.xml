@@ -134,8 +134,14 @@
     <!-- 插入一条记录  结束  --> 
     
     <!-- 通过运单号更新派件员信息  开始  -->  
-    <update id="updatePostIdAndStatus" >  
-        UPDATE `postdelivery` SET postman_id = #{postManId}, staffid = #{staffId }, sta = #{status } WHERE mail_num = #{mailNum}  
+    <update id="updatePostAndStatusAndCompany" >  
+        UPDATE `postdelivery` SET postman_id = #{postManId}, 
+        staffid = #{staffId }, sta = #{status },
+        <if test="company_code != null ">  
+        	company_code = #{company_code }, 	  
+    	</if>  
+        date_upd = #{dateUpd } 
+        WHERE mail_num = #{mailNum}  
     </update> 
      
     <!-- 查询指定运单号的记录的条数  结束   --> 

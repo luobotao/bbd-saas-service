@@ -16,7 +16,7 @@
 <%
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
-System.out.println("========状态==========="+OrderStatus.Srcs2HTML(-1));
+	//System.out.println("========状态==========="+OrderStatus.Srcs2HTML(-1));
 %>
 <body class="fbg">
 <!-- S content -->
@@ -80,6 +80,8 @@ System.out.println("========状态==========="+OrderStatus.Srcs2HTML(-1));
   						<tbody id="dataList">
 						<%
 							PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
+							if(orderPage != null){
+							
 							if(orderPage.getDatas() == null){
 						%>
 							<tr>
@@ -126,7 +128,7 @@ System.out.println("========状态==========="+OrderStatus.Srcs2HTML(-1));
 						<%
 							}//for
 						}//else
-						%>
+						}%>
 						</tbody>
   					</table>
   					</div>
@@ -267,10 +269,11 @@ System.out.println("========状态==========="+OrderStatus.Srcs2HTML(-1));
 var courierList = null, siteList = null;
 //var staffId = null;
 var siteId = null, mailNum = null;
-
+console.log("pageStr==000=");
 $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
+	console.log("pageStr==="+pageStr);
 	$("#pagin").html(pageStr);
 	
 	//初始化到站时间框
@@ -331,13 +334,10 @@ function refreshTable(dataObject){
 	if(dataList != null){
 		for(var i = 0; i < dataList.length; i++){
 			tbody.append(getRowHtml(dataList[i])); 
-			//datastr += getRowHtml(dataList[i]);
 		}
 	} else{
 		tbody.append("<tr><td colspan='7'>没有符合查询条件的数据</td></tr>");
-		//datastr += "<tr><td colspan='7'>没有符合查询条件的数据</td></tr>";
 	}
-	//tbody.html(datastr);
 	//更新分页条
 	var pageStr = paginNav(dataObject.pageNo, dataObject.totalPages, dataObject.totalCount);
 	$("#pagin").html(pageStr);
@@ -357,7 +357,7 @@ function getRowHtml(data){
 	if(data.user == null){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + data.user.staffid + "</td>";
+		row += "<td>" + data.user.realName + "</td>";
 		row += "<td>" + data.user.loginName + "</td>";
 	}
 	//状态

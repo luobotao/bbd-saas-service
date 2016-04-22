@@ -5,13 +5,16 @@ import com.bbd.saas.api.mongo.OrderPacelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.ParcelStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/packageToSite")
@@ -97,10 +101,7 @@ public class PackageToSiteController {
 		if(StringUtils.isNotBlank(mailNum)){//进行运单到站操作
 			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum);
 			if(order!=null){
-				order.setOrderStatus(OrderStatus.NOTDISPATCH);
-				order.setDateUpd(new Date());
-				order.setDateArrived(new Date());
-				orderService.save(order);
+				orderToSite(order,user);//到站
 			}
 		}
 		if (pageIndex==null) pageIndex =0 ;
@@ -127,12 +128,52 @@ public class PackageToSiteController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/arriveBatch", method = RequestMethod.POST)
-	public boolean arriveBatch(String ids) {
+	public boolean arriveBatch(HttpServletRequest request,String ids) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		BasicDBList idList = (BasicDBList) JSON.parse(ids);
 		for (Object mailNum :idList){
-			orderService.updateOrderOrderStatu(mailNum.toString(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);
+			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum.toString());
+			if(order!=null){
+				orderToSite(order,user);
+			}
+//			orderService.updateOrderOrderStatu(mailNum.toString(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);
 		}
 		return true;
+	}
+
+	/**
+	 * 单个订单到站方法
+	 * @param order
+	 * @param user
+     */
+	public void orderToSite(Order order,User user){
+		orderService.updateOrderOrderStatu(order.getMailNum(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
+		order = orderService.findOneByMailNum(user.getSite().getAreaCode(),order.getMailNum().toString());
+		Express express = new Express();
+		express.setDateAdd(new Date());
+		express.setLat(user.getSite().getLat());
+		express.setLon(user.getSite().getLng());
+		express.setRemark("订单已到站");
+		List<Express> expressList = order.getExpresses();
+		if(expressList==null)
+			expressList = Lists.newArrayList();
+		expressList.add(express);//增加一条物流信息
+		order.setExpresses(expressList);
+		orderService.save(order);
+		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
+		if(orderParcel!=null){
+			Boolean flag = true;//是否可以更新包裹的状态
+			for(Order orderTemp : orderParcel.getOrderList()){
+				if(orderTemp.getOrderStatus()==OrderStatus.NOTARR){
+					flag = false;
+				}
+			}
+			if(flag){//更新包裹状态，做包裹到站操作
+				orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
+				orderParcel.setDateUpd(new Date());
+				orderPacelService.saveOrderParcel(orderParcel);
+			}
+		}
 	}
 
 	/**

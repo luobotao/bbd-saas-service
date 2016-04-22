@@ -23,14 +23,43 @@ public class OrderParcelServiceImpl implements OrderPacelService {
 		this.orderParcelDao = orderParcelDao;
 	}
 
+	/**
+	 * 根据订单ID获取此订单所处的包裹号
+	 * @param orderId
+	 * @return
+     */
+	@Override
 	public String findParcelCodeByOrderId(String orderId){
       return orderParcelDao.findParcelCodeByOrderId(orderId);
     }
 
+	/**
+	 * 根据站点编码和包裹号获取包裹
+	 * @param areaCode 站点编码
+	 * @param parcelCode
+     * @return
+     */
 	@Override
 	public OrderParcel findOrderParcelByParcelCode(String areaCode,String parcelCode) {
 		return orderParcelDao.findOrderParcelByParcelCode(areaCode,parcelCode);
 	}
 
+	/**
+	 * 根据订单ID获取此订单所处的包裹信息
+	 * @param orderId
+	 * @return
+     */
+	@Override
+	public OrderParcel findOrderParcelByOrderId(String orderId) {
+		return orderParcelDao.findOrderParcelByOrderId(orderId);
+	}
 
+	/**
+	 * 保存包裹
+	 * @param orderParcel
+     */
+	@Override
+	public void saveOrderParcel(OrderParcel orderParcel) {
+		orderParcelDao.save(orderParcel);
+	}
 }

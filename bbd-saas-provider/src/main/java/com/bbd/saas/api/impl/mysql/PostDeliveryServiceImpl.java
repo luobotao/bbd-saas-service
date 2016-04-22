@@ -1,5 +1,7 @@
 package com.bbd.saas.api.impl.mysql;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -34,11 +36,13 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	}
 
 	@Override
-	public int updatePostIdAndStatus(String mailNum, Integer postManId, String staffId, String status) {
-		if(mailNum == null){
+	public int updatePostAndStatusAndCompany(String mailNum,Integer postManId, 
+			String staffId, String status, String company_code) {
+		if (mailNum == null) {
 			return 0;
 		}
-		return postDeliveryDao.updatePostIdAndStatus(mailNum, postManId, staffId, status);
+		return postDeliveryDao.updatePostAndStatusAndCompany(mailNum,
+				postManId, staffId, status, company_code, new Date());
 	}
 
 	@Override

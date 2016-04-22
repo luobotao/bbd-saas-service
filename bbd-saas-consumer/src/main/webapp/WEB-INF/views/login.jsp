@@ -188,6 +188,7 @@
 	<div class="modal-dialog j-scroll-dislog" role="document">
 		<div class="modal-content">
 			<div class="modal-header b-modal-header">
+				<button type="button" class="close j-close"><span>×</span></button>
 				<h4 class="modal-title tc">站点注册</h4>
 			</div>
 			<c:url var="actionUrl" value="/site/register?${_csrf.parameterName}=${_csrf.token}"/>
@@ -242,7 +243,7 @@
 							<select class="form-control form-bod  prov" name="prov" ></select>
 						</em>
 						<em class="wp25">
-							<select class="form-control form-bod city" name="city" disabled="disabled"></select>
+							<select class="form-control form-bod city" disabled="disabled"></select>
 						</em>
 						<em class="wp25">
 							<select class="form-control form-bod dist" name="dist" disabled="disabled"></select>
