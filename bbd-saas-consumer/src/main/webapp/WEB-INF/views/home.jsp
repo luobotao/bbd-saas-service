@@ -81,6 +81,14 @@
 				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
 					<a href="<c:url value="/?typ=set" />">
 						<div class="b-status-card">
+							<span><img src="<c:url value="/resources/images/d_area.png" />" alt="配送区域" /></span>
+							<h3>配送区域</h3>
+						</div>
+					</a>
+				</li>
+				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+					<a href="<c:url value="/?typ=user" />">
+						<div class="b-status-card">
 							<span><img src="<c:url value="/resources/images/set.png" />" alt="系统设置" /></span>
 							<h3>系统设置</h3>
 						</div>
