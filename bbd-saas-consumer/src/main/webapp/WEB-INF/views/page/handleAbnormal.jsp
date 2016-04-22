@@ -7,7 +7,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+ 
 <html>
 <head>
 	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
@@ -434,9 +434,7 @@ function loadCouriers(courierList, staffId) {
 	if(courierList != null){
 	    for(var i = 0; i < courierList.length; i++){
 			data = courierList[i];
-			if(data.staffId != staffId){
-				courier_select.append("<option value='"+data.staffId+"'>"+data.realName+"</option>");
-			}
+			courier_select.append("<option value='"+data.staffId+"'>"+data.realName+"</option>");
 		}
 	}
 }

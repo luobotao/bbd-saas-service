@@ -94,6 +94,7 @@
 								<th>派送员</th>
 								<th>派送员手机</th>
 								<th>状态</th>
+								<th>操作</th>
   							</tr>
   						</thead>
   						<tbody id="dataList">
@@ -151,6 +152,7 @@
 									<%
 										}
 									%>
+									<td><a href="<%=path%>/dataQuery/getOrderMail?mailNum=<%=order.getMailNum()%>" target="_blank">查看物流信息 </a></td>
 								</tr>
 							<%
 								}//for
@@ -262,6 +264,7 @@ function getRowHtml(data){
 	}
 	//状态
 	row += "<td>" + getStatus(data.orderStatus) + "</td>";
+	row += "<td><a href='<%=path%>/dataQuery/getOrderMail?mailNum=" + data.mailNum + "' target='_blank'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
 }
