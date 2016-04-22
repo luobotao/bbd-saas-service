@@ -1,5 +1,6 @@
 package com.bbd.saas.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.PostDelivery;
 import com.bbd.saas.mongoModels.Order;
@@ -31,6 +33,7 @@ import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserVO;
 
@@ -147,8 +150,8 @@ public class PackageDispatchController {
 		order.setUser(user);
 		//更新运单状态--已分派
 		order.setOrderStatus(OrderStatus.DISPATCHED);
-		//order.setOrderStatus(OrderStatus.REJECTION);
-		//order.setOrderStatus(OrderStatus.RETENTION);
+		//更新物流信息
+		setOrderExpress(order, user);
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){
@@ -157,8 +160,6 @@ public class PackageDispatchController {
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
-			//orderQueryVO.dispatchStatus = OrderStatus.REJECTION.getStatus();
-			//orderQueryVO.dispatchStatus = OrderStatus.RETENTION.getStatus();
 			orderQueryVO.userId = courierId;
 			orderQueryVO.areaCode = areaCode;
 			//查询数据
@@ -166,6 +167,38 @@ public class PackageDispatchController {
 			map.put("orderPage", orderPage); 
 		}else{
 			map.put("operFlag", 3);//3:分派失败
+		}
+	}
+	
+	/**
+	 * Description: 设置订单的物流信息
+	 * @param order 订单
+	 * @param user 派件员
+	 * @author liyanlei
+	 * 2016年4月22日下午3:32:35
+	 */
+	private void setOrderExpress(Order order, User user){
+		//更新物流状态
+		order.setExpressStatus(ExpressStatus.Delivering);
+		//更新物流信息
+		List<Express> expressList = order.getExpresses();
+		if(expressList == null){
+			expressList = new ArrayList<Express>();
+		}
+		Express express = new Express();
+		express.setDateAdd(new Date());
+		express.setRemark("正在派送，快递员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
+		boolean expressIsNotAdd = true;//防止多次添加
+		//检查是否添加过了
+		for (Express express1 : expressList) {
+		    if (express.getRemark().equals(express1.getRemark())) {
+		    	expressIsNotAdd = false;
+		        break;
+		    }
+		}
+		if (expressIsNotAdd) {//防止多次添加
+			expressList.add(express);
+		    order.setExpresses(expressList);
 		}
 	}
 	/**
@@ -212,7 +245,7 @@ public class PackageDispatchController {
 			postDeliveryService.insert(postDelivery);
 			logger.info("运单分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());			
 		}else{//已保存过了，更新快递员信息
-			postDeliveryService.updatePostIdAndStatus(order.getMailNum(), user.getPostmanuserId(), user.getStaffid(), "1");
+			postDeliveryService.updatePostAndStatusAndCompany(order.getMailNum(), user.getPostmanuserId(), user.getStaffid(), "1", null);
 			logger.info("运单重新分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());
 		}
 		

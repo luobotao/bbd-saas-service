@@ -48,7 +48,6 @@
 	  							<label>状态：</label>
 	  							<select id="status" name="status" class="form-control form-con-new">
 	  								<%=OrderStatus.Srcs2HTML(-1)%>
-	  								<option value="5555">张三</option>
 	  							</select>
 	  						</div>
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
@@ -88,7 +87,7 @@
 								<th>来源</th>
 								<th>收货人</th>
 								<th>收货人电话</th>
-								<th width="15%">地址</th>
+								<th width="15%">收货人地址</th>
 								<th>司机取货时间</th>
 								<th>预计到站时间</th>
 								<th>到站时间</th>

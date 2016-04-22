@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
+
 import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
@@ -153,9 +154,7 @@ public class OrderServiceImpl implements OrderService {
 	public int updateOrder(OrderUpdateVO orderUpdateVO,
 			OrderQueryVO orderQueryVO) {
 		//派件员员工Id
-    	if(orderUpdateVO.staffId != null){
-    		orderUpdateVO.user = userDao.findOneBySiteByStaffid(orderUpdateVO.site, orderUpdateVO.staffId);
-        }
+    	
     	UpdateResults r = orderDao.updateOrder(orderUpdateVO, orderQueryVO);
     	if(r != null){
     		return r.getUpdatedCount();

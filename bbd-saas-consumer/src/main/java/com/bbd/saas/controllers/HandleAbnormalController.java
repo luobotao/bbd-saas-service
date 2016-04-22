@@ -1,5 +1,6 @@
 package com.bbd.saas.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
 import com.bbd.saas.vo.SiteVO;
@@ -131,14 +133,20 @@ public class HandleAbnormalController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
-		
 		//更新字段设置
 		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
-		orderUpdateVO.staffId = staffId;//派件员 
-		orderUpdateVO.site = currUser.getSite();
+		//查询派件员
+		User courier = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
+    	orderUpdateVO.user = courier; 
+        orderUpdateVO.site = currUser.getSite();
 		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
-		//orderUpdateVO.orderStatus = OrderStatus.RETENTION;//更新运单状态--已分派
-		
+		//更新物流信息
+		orderUpdateVO.expressStatus = ExpressStatus.Delivering;
+		Express express = new Express();
+		express.setDateAdd(new Date());
+		express.setRemark("重新派送，快递员电话：" + courier.getRealName() + " " + courier.getLoginName() + "。");
+		express.setLat(currUser.getSite().getLat());//站点经纬度
+		express.setLon(currUser.getSite().getLng());
 		//检索条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
 		orderQueryVO.mailNum = mailNum;
@@ -151,7 +159,7 @@ public class HandleAbnormalController {
 		if(i > 0){
 			//更新mysql
 			User user = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
-			postDeliveryService.updatePostIdAndStatus(mailNum, user.getPostmanuserId(), user.getStaffid(), "1");
+			postDeliveryService.updatePostAndStatusAndCompany(mailNum, user.getPostmanuserId(), staffId, "1", null);
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
@@ -160,6 +168,7 @@ public class HandleAbnormalController {
 		}		
 		return map;
 	}
+	
 	/**
 	 * Description: 查询列表数据--刷新列表
 	 * @param areaCode 站点编号
@@ -181,6 +190,7 @@ public class HandleAbnormalController {
 		return orderPage;		
 	}
 	/**************************重新分派***************结束***********************************/
+	
 	/**************************转其他站点***************开始***********************************/
 	/**
 	 * Description: 查询除本站点外的其他所有站点的VO对象
@@ -234,9 +244,13 @@ public class HandleAbnormalController {
 			order.setOrderStatus(null);//状态--为空
 			order.setUser(null);//未分派
 			order.setDateUpd(new Date());//更新时间
+			//更新物流信息
+			addOrderExpress(order, currUser, site.getName());
 			//更新运单
 			Key<Order> r = orderService.save(order);
 			if(r != null){
+				//更新到mysql post-status-company至空
+				postDeliveryService.updatePostAndStatusAndCompany(mailNum, 0, "", "1", "");
 				map.put("operFlag", 1);//1:成功
 				//刷新列表
 				map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
@@ -247,7 +261,39 @@ public class HandleAbnormalController {
 		return map;		
 		
 	}
-	
+	/**
+	 * Description: 设置订单的物流信息--转其他站点
+	 * @param order 订单
+	 * @param user 派件员
+	 * @author liyanlei
+	 * 2016年4月22日下午3:32:35
+	 */
+	private void addOrderExpress(Order order, User user, String siteName){
+		//更新物流状态
+		order.setExpressStatus(ExpressStatus.DriverGeted);
+		//更新物流信息
+		List<Express> expressList = order.getExpresses();
+		if(expressList == null){
+			expressList = new ArrayList<Express>();
+		}
+		Express express = new Express();
+		express.setDateAdd(new Date());
+		express.setRemark("转其" + siteName + "站点，操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
+		express.setLat(user.getSite().getLat());
+		express.setLon(user.getSite().getLng());
+		boolean expressIsNotAdd = true;//防止多次添加
+		//检查是否添加过了
+		for (Express express1 : expressList) {
+		    if (express.getRemark().equals(express1.getRemark())) {
+		    	expressIsNotAdd = false;
+		        break;
+		    }
+		}
+		if (expressIsNotAdd) {//防止多次添加
+			expressList.add(express);
+		    order.setExpresses(expressList);
+		}
+	}
 	/**************************转其他站点***************结束***********************************/
 	/**************************转其他快递公司***************开始***********************************/
 	/**
