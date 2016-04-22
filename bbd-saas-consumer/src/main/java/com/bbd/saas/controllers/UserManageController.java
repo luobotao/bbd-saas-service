@@ -181,7 +181,7 @@ public class UserManageController {
 			postmanUser.setCompanyname(getuser.getSite().getCompanyName()!=null?getuser.getSite().getCompanyName():"");
 			postmanUser.setCompanyid(getuser.getSite().getCompanyId()!=null?Integer.parseInt(getuser.getSite().getCompanyId()):0);
 			
-			postmanUser.setSubstation("");
+			postmanUser.setSubstation(getuser.getSite().getName());
 			postmanUser.setAlipayAccount("");
 			postmanUser.setToken("");
 			postmanUser.setBbttoken("");
