@@ -37,7 +37,7 @@ public class BbdExpressApiController {
 		//siteId companyId siteName siteAddress radius
 		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getName(),siteAddress,0);
 		//更新站点的经度和纬度
-		logger.info("result code:"+result.code);
+		logger.info("[addSitePOI]result :"+result.toString());
 		if(result.code==0&&result.data!=null) {
 			double[] data = result.data;
 			site.setLng(data[0] + "");    //经度
