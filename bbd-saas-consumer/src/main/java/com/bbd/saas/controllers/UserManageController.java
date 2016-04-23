@@ -165,7 +165,7 @@ public class UserManageController {
 		//验证该loginName在user表中是否已存在
 		User loginuser = userService.findUserByLoginName(userForm.getLoginName());
 		//验证该在同一个站点下staffid是否已存在
-		User staffiduser = userService.findOneBySiteByStaffid(getuser.getSite(), userForm.getStaffid());
+		//User staffiduser = userService.findOneBySiteByStaffid(getuser.getSite(), userForm.getStaffid());
 		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
 		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
 		System.out.println("ssss");
@@ -184,7 +184,7 @@ public class UserManageController {
 		user.setUserStatus(UserStatus.status2Obj(1));
 		System.out.println("============="+user.getUserStatus().getStatus());
 		
-		if((loginuser!=null && !loginuser.getId().equals("")) || (staffiduser!=null && !staffiduser.getId().equals("")) || postmanUser!=null && postmanUser.getId()!=null){
+		if((loginuser!=null && !loginuser.getId().equals("")) || postmanUser!=null && postmanUser.getId()!=null){
 			////loginName在user表中已存在
 			return "false";
 			
@@ -211,7 +211,8 @@ public class UserManageController {
 			postmanUser.setSta("1");
 			postmanUser.setSpreadticket("");
 			postmanUser.setPhone(userForm.getLoginName().replaceAll(" ", ""));
-			postmanUser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
+			//staffid就是该用户的手机号
+			postmanUser.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
 			postmanUser.setDateNew(dateAdd);
 			postmanUser.setPoststatus(1);
 			/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
@@ -283,7 +284,6 @@ public class UserManageController {
 		
 		Key<User> kuser = userService.save(olduser);
 		PostmanUser postmanUser = new PostmanUser();
-		postmanUser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 		postmanUser.setDateUpd(dateUpdate);
 		postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
 		postmanUser.setPhone(userForm.getLoginName());

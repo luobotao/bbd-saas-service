@@ -192,6 +192,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<input type="text" id="loginName" name="loginName" onblur="checkLoginName(this.value)" class="form-control form-bod" placeholder="手机号" />
 								<p class="help-block" id="loginNameP" style="display:none;">请正确输入11位手机号</p>
 							</li>
+							<!--  
 							<li>
 								<input type="text" id="staffid" name="staffid" onblur="checkStaffid(this.value)" class="form-control form-bod" placeholder="员工ID" />
 								<p class="help-block" id="staffidP" style="display:none;">请输入员工ID</p>
@@ -204,6 +205,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<input type="password" id="confirmPass" name="confirmPass" class="form-control form-bod" placeholder="确认密码" />
 								<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
 							</li>
+							-->
 						</ul>
 							
 						
@@ -504,15 +506,15 @@ function saveUserBtn(){
 	realName=realName.replace(/\ +/g,"");
 	var loginName = $("#loginName").val();
 	loginName=loginName.replace(/\ +/g,"");
-	var staffid = $("#staffid").val();
+	/* var staffid = $("#staffid").val();
 	staffid=staffid.replace(/\ +/g,"");
 	var loginPass = $("#loginPass").val();
 	loginPass=loginPass.replace(/\ +/g,"");
 	var confirmPass = $("#confirmPass").val();
-	confirmPass=confirmPass.replace(/\ +/g,"");
+	confirmPass=confirmPass.replace(/\ +/g,""); */
 	var tel_reg = /^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
-	var loginpasstemp = true;
-	var confirmpasstemp = true;
+	//var loginpasstemp = true;
+	//var confirmpasstemp = true;
 	if (roleId=="-1") {
 	    $("#roleIdP").attr("style","color:red");
 		flag = false;
@@ -529,17 +531,13 @@ function saveUserBtn(){
 		returnmess = '该手机号已存在，请重新输入！';
 		flag = false;
 		checkSign = true;
-		loginNameSign = true;
 	}
-	if(checkStaffid(staffid)){
+	/* if(checkStaffid(staffid)){
 		returnmess = '该站点下的工号已存在，请重新输入！';
 		flag = false;
 		checkSign = true;
 		staffidSign = true;
-	}
-	if(loginNameSign && staffidSign){
-		returnmess = '该手机号已存在，请重新输入！';
-	}
+	} */
 	if (!checkMobile(loginName)) {//!tel_reg.test(loginName)
 		$("#loginNameP").text("请重新输入11位手机号!");
 		$("#loginNameP").attr("style","color:red");
@@ -547,18 +545,13 @@ function saveUserBtn(){
 	}else{
 		$("#loginNameP").attr("style","display:none");
 	}
-	if(loginName.length==11){
-		$("#loginNameP").attr("style","display:none");
-	}else{
-		$("#loginNameP").attr("style","color:red");
-	}
 	if (!realName) {
 	    $("#realNameP").attr("style","color:red");
 		flag = false;
 	}else{
 		$("#realNameP").attr("style","display:none");
 	}
-	if (!staffid) {
+	/*if (!staffid) {
 	    $("#staffidP").attr("style","color:red");
 		flag = false;
 	}else{
@@ -583,7 +576,7 @@ function saveUserBtn(){
 	}else{
 		$("#confirmPassP").attr("style","color:red");
 		flag = false;
-	}
+	} */
 	if(flag){
 		
 		console.log("succeful , submit");
@@ -610,7 +603,7 @@ function saveUserBtn(){
 
 	        },  
 	        error: function(JsonHttpRequest, textStatus, errorThrown){  
-	            alert( "服务器异常！");  
+	            alert( "有非法内容，请检查内容合法性！");  
 	        }  
 	    });
 	}else if(checkSign){
