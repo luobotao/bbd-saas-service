@@ -445,11 +445,6 @@
 			});
 			//添加鼠标绘制工具监听事件，用于获取绘制结果
 			this.drawingManager.addEventListener('overlaycomplete', bmap.overlaycomplete);
-			/*this.drawingManager.addEventListener("rightclick",function(e){
-				if(confirm("确认删除该电子围栏？")){
-					bmap.delPolygon(e);
-				}
-			});*/
 			/*加载一个已有的多边形*/
 			if (this.myOverlay) {
 				this.loadMyOverlay();
@@ -521,6 +516,11 @@
 			e.overlay.enableEditing();
 			e.overlay.addEventListener("lineupdate",function(e){
 				bmap.showLatLon(e.currentTarget.ro);
+			});
+			e.overlay.addEventListener("rightclick",function(e){
+				if(confirm("确认删除该电子围栏？")){
+					bmap.delPolygon(e);
+				}
 			});
 		},
 		//监听左键click事件
