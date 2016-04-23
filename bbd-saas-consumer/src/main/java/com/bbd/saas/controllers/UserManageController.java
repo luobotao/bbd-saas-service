@@ -63,7 +63,7 @@ public class UserManageController {
 	@RequestMapping(value="userList", method=RequestMethod.GET)
 	public String listUser(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
 		User getuser = adminService.get(UserSession.get(request));
-		PageModel<User> userPage = getUserPage(0,roleId,status,keyword,getuser.getSite());
+		PageModel<User> userPage = getUserPage(request,0,roleId,status,keyword);
 
 		model.addAttribute("userPage", userPage);
 		//return "systemSet/userManageUserList";
@@ -95,7 +95,8 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
-	public PageModel<User> getUserPage(Integer pageIndex, Integer roleId, Integer status,String keyword,Site site) {
+	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+		User getuser = adminService.get(UserSession.get(request));
 		if (pageIndex==null) pageIndex =0 ;
 		//logger.info(arriveStatus+"========="+between);
 		try {
@@ -116,7 +117,7 @@ public class UserManageController {
 		userQueryVO.keyword=keyword;
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
-		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO,site);
+		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO,getuser.getSite());
 		
 		for(User user : userPage.getDatas()){
 			user.setRoleMessage(user.getRole().getMessage());
@@ -124,6 +125,20 @@ public class UserManageController {
 				user.setStatusMessage(user.getUserStatus().getMessage());
 			}
 		}
+		
+		return userPage;
+	}
+	
+	/**
+     * 获取用户列表信息
+     * @param 
+     * @return
+     */
+	@ResponseBody
+	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
+	public PageModel<User> getUserPageFenYe(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+		
+		PageModel<User> userPage = getUserPage(request,pageIndex,roleId,status,keyword);
 		
 		return userPage;
 	}
@@ -150,7 +165,7 @@ public class UserManageController {
 		//验证该loginName在user表中是否已存在
 		User loginuser = userService.findUserByLoginName(userForm.getLoginName());
 		//验证该在同一个站点下staffid是否已存在
-		User staffiduser = userService.findOneBySiteByStaffid(getuser.getSite(), userForm.getStaffid());
+		//User staffiduser = userService.findOneBySiteByStaffid(getuser.getSite(), userForm.getStaffid());
 		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
 		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
 		System.out.println("ssss");
@@ -169,7 +184,7 @@ public class UserManageController {
 		user.setUserStatus(UserStatus.status2Obj(1));
 		System.out.println("============="+user.getUserStatus().getStatus());
 		
-		if((loginuser!=null && !loginuser.getId().equals("")) || (staffiduser!=null && !staffiduser.getId().equals("")) || postmanUser!=null && postmanUser.getId()!=null){
+		if((loginuser!=null && !loginuser.getId().equals("")) || postmanUser!=null && postmanUser.getId()!=null){
 			////loginName在user表中已存在
 			return "false";
 			
@@ -196,7 +211,8 @@ public class UserManageController {
 			postmanUser.setSta("1");
 			postmanUser.setSpreadticket("");
 			postmanUser.setPhone(userForm.getLoginName().replaceAll(" ", ""));
-			postmanUser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
+			//staffid就是该用户的手机号
+			postmanUser.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
 			postmanUser.setDateNew(dateAdd);
 			postmanUser.setPoststatus(1);
 			/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
@@ -268,7 +284,6 @@ public class UserManageController {
 		
 		Key<User> kuser = userService.save(olduser);
 		PostmanUser postmanUser = new PostmanUser();
-		postmanUser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 		postmanUser.setDateUpd(dateUpdate);
 		postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
 		postmanUser.setPhone(userForm.getLoginName());
