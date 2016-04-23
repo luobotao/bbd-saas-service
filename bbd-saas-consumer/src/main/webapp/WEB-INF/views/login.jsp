@@ -203,7 +203,7 @@
 						<i>手机号：</i>
 						<input type="text" class="form-control form-bod wp80" id="username" name="username" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="checkSiteWithUsername(this.value)">
 						<input type="text" class="form-control" id="usernameFlag" name="usernameFlag" value="1" style="display:none;">
-						<em class="tip-info" id="usernameP" style="display:none;">请输入手机号,不允许重复</em>
+						<em class="tip-info" id="usernameP" style="display:none;">请输入正确的手机号,不允许重复</em>
 					</li>
 					<li class="filter">
 						<i>密 码：</i>
@@ -273,7 +273,6 @@
 						同意<em class="orange">《棒棒达快递注册协议》</em>
 					</label>
 				</div>
-				<a href="http://e.ibbt.com/site/toViewSite" class="ser-btn g">查看已注册站点</a>
 				<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn" >保存</a>
 			</div>
 			</form>
@@ -289,7 +288,6 @@
 	}else{
 		window.top.location.href="<c:url value="/login" />"
 	}
-	var id = $("#id").val();
 	var defprov = "北京";
 	var defcity = "北京";
 	var defdist = "朝阳区";
@@ -306,11 +304,6 @@
 	});
 	$("#licensePic").fileinput({'showUpload':false, 'previewFileType':'any'});
 	function checkSiteWithUsername(loginName){
-		var flag = checkMobile(loginName);
-		if(flag==false){
-			alert("手机号不合法，请重新输入");
-			$("#username").focus();
-		}
 		if(loginName!=""){
 			var linkUrl = "<c:url value="/site/checkSiteWithLoginName?loginName=" />"+loginName
 			$.ajax({
@@ -322,10 +315,12 @@
 				success: function(response){
 					console.log(response);
 					if(response=="false"){
-						alert("您输入的手机号目前已存在，请重新输入");
 						$("#usernameFlag").val(0);
+						$("#usernameP").html("手机号已存在");
+						$("#usernameP").attr("style","color:red");
 					}else{
 						$("#usernameFlag").val(1);
+						$("#usernameP").attr("style","display:none");
 					}
 				},
 				error: function(){
@@ -344,6 +339,18 @@
 		$("#companyName").val($("#companyId").find("option:selected").text());
 		var username = $.trim($('input[name="username"]').val());
 		var usernameFlag = $("#usernameFlag").val();
+		if(username==""||usernameFlag==0){
+			$("#usernameP").attr("style","color:red");
+			flag = false;
+		} else{
+			if(checkMobile(username)==false){
+				$("#usernameP").html("请输入正确的手机号");
+				$("#usernameP").attr("style","color:red");
+				flag = false;
+			}else{
+				$("#usernameP").attr("style","display:none");
+			}
+		}
 		var password = $.trim($('input[name="password"]').val());
 		var name = $("#name").val();
 		var responser = $("#responser").val();
@@ -355,15 +362,8 @@
 		$("#province").val(province);
 		$("#city").val(city);
 		$("#area").val(area);
-		console.log(province+":"+city+":"+area);
 		var address = $("#address").val();
 		var licensePic = $("#licensePic").val();
-		if(username==""||usernameFlag==0){
-			$("#usernameP").attr("style","color:red");
-			flag = false;
-		} else{
-			$("#usernameP").attr("style","display:none");
-		}
 		if(password==""){
 			$("#passwordP").attr("style","color:red");
 			flag = false;

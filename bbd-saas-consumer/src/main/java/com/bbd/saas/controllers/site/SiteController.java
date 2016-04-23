@@ -24,6 +24,7 @@ import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.OSSUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.*;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -92,15 +93,28 @@ public class SiteController {
 	public static final int MAXSIZE = 100000;
 
 
-	@RequestMapping(value="/register", method=RequestMethod.GET)
-	public String register(Model model) {
-		return "site/siteRegister";
+	@RequestMapping(value="/updateSite", method=RequestMethod.GET)
+	public String updateSite(Model model, HttpServletRequest request) {
+		List<Postcompany> postcompanyList = postcompanyService.selectAll();
+		model.addAttribute("postcompanyList",postcompanyList);
+		Site site =siteService.findSite(request.getParameter("siteid"));
+		if("0".equals(site.getFlag())){
+			site.setFlag("1");
+			siteService.save(site);//更新审核状态并保存站点
+		}
+		model.addAttribute("site",site);
+		model.addAttribute("ossUrl",ossUrl);
+		return "site/updateSite";
 	}
 
 
 	@RequestMapping(value="/siteView", method=RequestMethod.GET)
 	public String siteView(Model model, HttpServletRequest request) {
 		Site site =siteService.findSite(request.getParameter("siteid"));
+		if("0".equals(site.getFlag())){
+			site.setFlag("1");
+			siteService.save(site);//更新审核状态并保存站点
+		}
 		model.addAttribute("site",site);
 		model.addAttribute("ossUrl",ossUrl);
 		return "site/siteView";
@@ -124,7 +138,11 @@ public class SiteController {
 //			return null;
 //		}
 		Site site = new Site();
-		if (licensePic != null  && licensePic.getInputStream() != null) {
+		if(StringUtils.isNotBlank(siteForm.getId())){
+			site = siteService.findSite(siteForm.getId());
+		}
+
+		if (licensePic != null  && licensePic.getInputStream() != null && licensePic.getSize()>0) {
 			String fileName = licensePic.getOriginalFilename();
 			int p = fileName.lastIndexOf('.');
 			String type = fileName.substring(p, fileName.length()).toLowerCase();
@@ -135,9 +153,7 @@ public class SiteController {
 					site.setLicensePic(endfilestr);
 			}
 		}
-
 		BeanUtils.copyProperties(siteForm,site);
-		logger.info(siteForm.getEmail()+"000000000000000"+site.getEmail());
 		site.setDateAdd(new Date());
 		site.setDateUpd(new Date());
 		site.setStatus(SiteStatus.WAIT);

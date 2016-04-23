@@ -25,7 +25,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
 				<ul class="b-sidebar">
 					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1 side-cur"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -63,7 +63,7 @@
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
-	  							<span class="ft12 pt20">已选择：<span id="courierName"></span></span>
+	  							<span class="ft12 pt20" id="courierName"></span>
 	  							<input id="courierId" type="hidden" value="" /> 
 	  						</div>
 	  						
@@ -172,9 +172,9 @@
 							<select id="courier_select"> </select>
 						</div>
 					</li>
-					<li class="col-md-12">
+					<!-- <li class="col-md-12">
 						<div class="c-red"><i class="glyphicon glyphicon-exclamation-sign pl15"></i> 请选择派件员</div>
-					</li>
+					</li> -->
 				</ul>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideCourierDiv()" class="sbtn sbtn2 g">取消</a></span>
@@ -388,7 +388,7 @@ function hideCourierDiv() {
 //选择派件员
 function chooseCourier() {
 $("#ddlregtype").find("option:selected").text(); 
-	$("#courierName").text($("#courier_select").find("option:selected").text());
+	$("#courierName").text("已选择:" + $("#courier_select").find("option:selected").text());
 	$("#courierId").val($("#courier_select").val());
 	$("#chooseCourier_div").modal("hide");
 }

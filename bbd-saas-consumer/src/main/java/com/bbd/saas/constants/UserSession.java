@@ -29,6 +29,7 @@ public class UserSession {
         if(cookies!=null){
             for (Cookie cookie : cookies) {
                 if (Constants.ADMIN_SESSION_NAME.equals(cookie.getName())) {
+                    cookie.setMaxAge(60 * 60);//更新Session一小时
                     return cookie.getValue();
                 }
             }

@@ -24,7 +24,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
 				<ul class="b-sidebar">
 					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -111,19 +111,27 @@
 									if(order.getOrderStatus() == OrderStatus.RETENTION){
 								%>
 									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
+									<td>
+										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a>
+										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
+									</td>
 								<%
 									}else{
 								%>
 									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
+									<td>
+										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a> --%>
+										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
+									</td>
 								<%
 									}
 								%>
-								<td>
+								<%-- <td>
 									<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a>
-									<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
 									<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
-									<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
-								</td>
+									<!-- <a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a> -->
+									<!-- <a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a> -->
+								</td> --%>
 							</tr>
 						<%
 							}//for
@@ -166,9 +174,9 @@
 							<select id="courier_select"> </select>
 						</div>
 					</li>
-					<li class="col-md-12">
+					<!-- <li class="col-md-12">
 						<div class="c-red"><i class="glyphicon glyphicon-exclamation-sign pl15"></i> 请选择派件员</div>
-					</li>
+					</li> -->
 				</ul>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideCourierDiv()" class="sbtn sbtn2 g">取消</a></span>
@@ -367,9 +375,9 @@ function getRowHtml(data){
 	}
 	
 	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")'>重新分派</a>";
-	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
 	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")'>转其他站点</a>";
-	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>";
+	/* row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
+	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>"; */
 	row += "</tr>";
 	return row;
 }

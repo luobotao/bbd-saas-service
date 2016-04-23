@@ -117,7 +117,7 @@
 	                    %>
 	                    	<p class="order-time">
 	                            <i></i>
-	                            <%=Dates.formatDateTime_New(order.getDateAdd())%>
+	                            <%=Dates.formatDateTime_New(express.getDateAdd())%>
 	                        </p>
 	                        <p class="order-cont <% if(express.getRemark().indexOf("已签收") > -1){%>order-success<%} %>" >
 	                        	<%=express.getRemark()%>  <br />      

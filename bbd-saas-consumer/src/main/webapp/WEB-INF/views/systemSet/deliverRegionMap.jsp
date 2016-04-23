@@ -14,7 +14,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
 				<ul class="b-sidebar">
 					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -53,7 +53,7 @@
 				<div class="tab-area mt20">
 					<ul class="clearfix b-tab">
 						<li <c:if test="${activeNum eq '1'}"> class="tab-cur"</c:if>><a href="#send-range">配送区域</a></li>
-						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map">绘制电子围栏</a></li>
+						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map" >绘制电子围栏</a></li>
 						<li <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
 					</ul>
 					<div class="b-tab-con form-inline form-inline-n tab-content">
@@ -67,7 +67,7 @@
 									<label>
 										站点周围：<c:set var="count" value="20"/>
 										<select id="radius" name="radius"  class="form-control form-con-new">
-											<option value="">请选择</option>
+											<option value="0">请选择</option>
 											<c:forEach var = "temp" begin="1" step="1" end="${count}">
 												<option value ="${temp}" <c:if test="${temp eq site.getDeliveryArea()}">selected</c:if>>${temp}</option>
 											</c:forEach>
@@ -88,21 +88,18 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-12">
+							<div class="col-md-12 pb20">
 								<div class="b-map">
-									<!--主体部分-->
-									<div id="allmap" style="overflow:hidden;zoom:1;position:relative;;">
-										<div id="map" style="height:473px;-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;"></div>
-									</div>
-
-									<!--主体部分 end-->
+									<div id="allmap" style="height: 473px;"></div>
+									<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
+									<div class="b-f-screen b-forward-full j-full-btn"></div>
 								</div>
 							</div>
+
 							<div class="col-md-12 mt20">
-									<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
-									<a href="javascript:void(0);" class="ser-btn c" onclick="openDraw()">绘制</a>
-									<a href="javascript:void(0);" class="ser-btn c" onclick="bmap.clearAll()">清除</a>
-									<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
+								<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
+								<a href="javascript:void(0);" class="ser-btn c" onclick="openDraw()">绘制</a>
+								<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
 							</div>
 						</div>
 						<!-- E 绘制电子围栏 -->
@@ -155,17 +152,17 @@
 										</tr>
 										</thead>
 										<tbody id="dataList">
-											<c:forEach items="${siteKeywordPageList}" var="siteKeyword">
-												<tr>
-													<td><input type="checkbox" value="${siteKeyword.id}" name="inputC"/></td>
-													<td>${Dates.formatDateTime_New(siteKeyword.createAt)}</td>
-													<td>${siteKeyword.province}</td>
-													<td>${siteKeyword.city}</td>
-													<td>${siteKeyword.distict}</td>
-													<td>${siteKeyword.keyword}</td>
-													<td><a href="javascript:if(confirm('确认删除？'))location='${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}'" class="orange">删除</a></td>
-												</tr>
-											</c:forEach>
+										<c:forEach items="${siteKeywordPageList}" var="siteKeyword">
+											<tr>
+												<td><input type="checkbox" value="${siteKeyword.id}" name="inputC"/></td>
+												<td>${Dates.formatDateTime_New(siteKeyword.createAt)}</td>
+												<td>${siteKeyword.province}</td>
+												<td>${siteKeyword.city}</td>
+												<td>${siteKeyword.distict}</td>
+												<td>${siteKeyword.keyword}</td>
+												<td><a href="javascript:if(confirm('确认删除？'))location='${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}'" class="orange">删除</a></td>
+											</tr>
+										</c:forEach>
 										</tbody>
 									</table>
 								</div>
@@ -232,28 +229,29 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
-	$('.b-tab a').click(function (e) {
-		e.preventDefault()
-		$(this).tab('show')
-		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
-	})
+
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
-		$.ajax({
-			url: '${ctx}/site/updateSiteWithRadius/'+$("#radius option:selected").val()+'/'+$("#siteId").val(),
-			type: 'get',
-			cache: false,
-			dataType: "text",
-			data: {},
-			success: function(response){
-				alert("保存成功");
-				window.location.href="${ctx}/deliverRegion/map/1";
-			},
-			error: function(){
-				alert('服务器繁忙，请稍后再试！');
-			}
-		});
+		var radiusVal = $("#radius option:selected").val();
+		if(radiusVal==0){
+			alert("请选择站点配送范围");
+			return false;
+		}else{
+			$.ajax({
+				url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
+				type: 'get',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					alert("保存成功");
+					window.location.href="${ctx}/deliverRegion/map/1";
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
+		}
 	})
 	$("#importBtn").click(function(){
 		$("#importFileForm").submit();
@@ -264,22 +262,33 @@
 		showMap(radius*1000);
 	})
 
-	showMap(${site.deliveryArea*1000});
+
 	//展示配送范围
 	function showMap(radius){
 		// 百度地图API功能
-		var map = new BMap.Map("allmapPs", {enableMapClick:false});
-		if(${site.lng != ""&&site.lat != ""}){
-			var point = new BMap.Point(${site.lng}, ${site.lat});
-			map.centerAndZoom(point, 12);
-			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
-			var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
-			map.addOverlay(marker);               // 将标注添加到地图中
-			marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-			var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
-			map.addOverlay(circle);            //增加圆
-			map.enableScrollWheelZoom(true);
+		var allmapPs = new BMap.Map("allmapPs", {enableMapClick:false,minZoom:11});
+		var pointPs = new BMap.Point(${site.lng}, ${site.lat});
+		var radiusVal = 15;
+		if(radius<2000){
+			radiusVal = 15;
+		}else if(radius<3000){
+			radiusVal = 14;
+		}else if(radius<5000){
+			radiusVal = 13;
+		}else if(radius<10000){
+			radiusVal = 12;
+		}else{
+			radiusVal = 11;
 		}
+		allmapPs.centerAndZoom(pointPs, radiusVal);
+		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
+		var marker = new BMap.Marker(pointPs,{icon:myIcon});  // 创建标注
+		allmapPs.addOverlay(marker);               // 将标注添加到地图中
+		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+		//var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
+		var circle = new BMap.Circle(pointPs,radius,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+		allmapPs.addOverlay(circle);            //增加圆
+		allmapPs.enableScrollWheelZoom(true);
 	}
 
 	//--------------------panel 3------------------------------------
@@ -413,12 +422,16 @@
 				return;
 			}
 			this.status = true;
-			this.map = new BMap.Map('map',{enableMapClick:false});
+			this.map = new BMap.Map('allmap',{enableMapClick:false,minZoom:11,noAnimation:true});
 			this.point = new BMap.Point(${site.lng},${site.lat});
+			this.map.centerAndZoom(this.point,15);
+			this.map.enableScrollWheelZoom();
 			var map = this.map;
 			var styleOptions = this.styleOptions;
-			map.centerAndZoom(this.point,15);
-			map.enableScrollWheelZoom();
+			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
+			var marker = new BMap.Marker(this.point,{icon:myIcon});  // 创建标注
+			marker.disableMassClear();
+			this.map.addOverlay(marker);               // 将标注添加到地图中
 			//实例化鼠标绘制工具
 			this.drawingManager = new BMapLib.DrawingManager(map, {
 				isOpen: false, //是否开启绘制模式
@@ -436,22 +449,21 @@
 			if (this.myOverlay) {
 				this.loadMyOverlay();
 			};
-			map.addEventListener("rightclick",function(e){
-				alert(e.point.lng + "," + e.point.lat);
-			});
 			// S 增加的控件
 			var bottom_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});// 左上角，添加比例尺
 			var bottom_right_navigation = new BMap.NavigationControl({
-				anchor: BMAP_ANCHOR_BOTTOM_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL
+				anchor: BMAP_ANCHOR_BOTTOM_RIGHT, type: BMAP_NAVIGATION_CONTROL_ZOOM
 			}); //右上角，仅包含平移和缩放按钮
 			map.addControl(bottom_left_control);
 			map.addControl(bottom_right_navigation);
 			// E 增加的控件
+
 		},
 		loadMyOverlay: function(){
 			var map = this.map;
 			this.clearAll();
-			map.centerAndZoom(this.point, 11);
+			console.log("ctt")
+			console.log(this.myOverlay);
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
 				this.myPolygon = myPolygon;
@@ -460,7 +472,7 @@
 				myPolygon.addEventListener("lineupdate",function(e){
 					bmap.showLatLon(e.currentTarget.ro);
 				});
-				myPolygon.addEventListener("click",function(e){
+				myPolygon.addEventListener("rightclick",function(e){
 					if(confirm("确认删除该电子围栏？")){
 						bmap.delPolygon(e);
 					}
@@ -504,6 +516,11 @@
 			e.overlay.enableEditing();
 			e.overlay.addEventListener("lineupdate",function(e){
 				bmap.showLatLon(e.currentTarget.ro);
+			});
+			e.overlay.addEventListener("rightclick",function(e){
+				if(confirm("确认删除该电子围栏？")){
+					bmap.delPolygon(e);
+				}
 			});
 		},
 		//监听左键click事件
@@ -549,6 +566,12 @@
 				n = n + this.overlays.length;
 			};
 			//console.log(n);
+		},
+		// 用经纬度设置地图中心点
+		theLocation:function(){
+			console.log("xxxx");
+			console.log(this.map);
+			this.map.panTo(this.point);
 		}
 	};
 
@@ -581,14 +604,47 @@
 	 new BMap.Point(116.636129,40.902574),
 	 new BMap.Point(116.582087,40.731351)
 	 ]];*/
-	bmap.myOverlay=bmapArr;
-	//console.log(bmap.myOverlay);
-	bmap.init();
-
 	function openDraw(){
 		bmap.drawingManager.open();
 		bmap.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
 	}
+
+	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
+	showMap(${site.deliveryArea*1000});
+	bmap.myOverlay=bmapArr;
+	console.log(bmap.myOverlay);
+	bmap.init();
+	$('.b-tab a').click(function (e) {
+		console.log($(this));
+		e.preventDefault();
+		$(this).tab('show');
+		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
+		var index=$(this).parent().index();
+		if(index == 1){
+
+		}
+	})
+
+	var winhei2=$(window).height();
+	var inithei=$("#allmap").height();
+
+	$(".j-full-btn").on("click",function(){
+		if($(this).hasClass("b-forward-full")){
+			$(".pos-footer").hide();
+			$("#allmap,.b-map").css({height:winhei2-56-60,marginLeft:"-10px"});
+//			$(".b-f-screen,.pos-adr").css({right:"25px"});
+			$("#draw-map").addClass("full-map");
+			$(this).addClass("b-back-full").removeClass("b-forward-full");
+		}else{
+			$(".pos-footer").show();
+			$("#allmap,.b-map").css({height:inithei,margin:0});
+//			$(".b-f-screen,.pos-adr").css({right:"15px"});
+			$("#draw-map").removeClass("full-map");
+			$(this).removeClass("b-back-full").addClass("b-forward-full");
+		}
+	})
+
+
 </script>
 </body>
 </html>
