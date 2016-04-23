@@ -119,7 +119,7 @@
 									}
 								%>
 								<td>
-									<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>','<%=order.getUser().getStaffid()%>')">重新分派</a>
+									<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a>
 									<a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a>
 									<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
 									<a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a>
@@ -269,11 +269,10 @@
 var courierList = null, siteList = null;
 //var staffId = null;
 var siteId = null, mailNum = null;
-console.log("pageStr==000=");
+
 $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
-	console.log("pageStr==="+pageStr);
 	$("#pagin").html(pageStr);
 	
 	//初始化到站时间框
@@ -367,7 +366,7 @@ function getRowHtml(data){
 		row += "<td>" + "<%=AbnormalStatus.REJECTION.getMessage()%>" + "</td>";
 	}
 	
-	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\", " + "\"" + data.user.staffid + "\")'>重新分派</a>";
+	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")'>重新分派</a>";
 	row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
 	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")'>转其他站点</a>";
 	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>";
@@ -398,21 +397,21 @@ function initCourierList() {
 // 重新分派
   //  shP(".j-sel", ".j-sel-pop");
 //显示选择派件员div
-function showCourierDiv(mailNumStr, staffId) {
+function showCourierDiv(mailNumStr) {
 
 	mailNum = mailNumStr;
 	//staffId = staffIdStr;
 	console.log("v==mailNum=="+mailNum);
 	//console.log("courierList===="+courierList);
 	if(courierList != null){
-		loadCouriers(courierList, staffId);
+		loadCouriers(courierList);
 	}else{//重新查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式  
 	        url : "<%=path%>/handleAbnormal/getAllUserList",//路径  
 	        data : {},//数据，这里使用的是Json格式进行传输  
 	        success : function(dataList) {//返回数据根据结果进行相应的处理  
-	        	loadCouriers(dataList, staffId);
+	        	loadCouriers(dataList);
 	        },
 	        error : function() {  
 	       		alert("服务器繁忙，请稍后再试！");
@@ -425,9 +424,9 @@ function showCourierDiv(mailNumStr, staffId) {
 
 //把派件员添加到下拉框中
 function loadCouriers(courierList, staffId) {
-	if(staffId == null || staffId == "undefined"){
+	/* if(staffId == null || staffId == "undefined"){
 		staffId = "";
-	}
+	} */
 	var courier_select = $("#courier_select");
 	// 清空select  
 	courier_select.empty(); 
