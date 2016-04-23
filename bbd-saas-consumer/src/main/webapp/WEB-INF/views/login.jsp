@@ -280,6 +280,11 @@
 <!-- E pop -->
 <script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 <script>
+	if(window.top==window.self){//不存在父页面
+
+	}else{
+		window.top.location.href="<c:url value="/login" />"
+	}
 	var id = $("#id").val();
 	var defprov = "北京";
 	var defcity = "北京";
