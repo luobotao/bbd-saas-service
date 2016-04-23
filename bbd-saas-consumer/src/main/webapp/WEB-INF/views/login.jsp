@@ -57,11 +57,11 @@
 							</c:if>
 						</div>
 						<div class="has-icon mb12">
-							<i class="glyphicon glyphicon-user c-white pl15"></i>
+							<i class="p-icon p-person"></i>
 							<form:input path="userName" class="b-input pl15" placeholder="输入账号" onkeypress="enterPress(event)"/>
 						</div>
 						<div class="has-icon mb12">
-							<i class="glyphicon glyphicon-lock c-white pl15"></i>
+							<i class="p-icon p-lock"></i>
 							<form:input path="passWord" type="password" class="b-input pl15" placeholder="输入密码" onkeypress="enterPress(event)"/>
 						</div>
 						<div class="clearfix mlrf15">

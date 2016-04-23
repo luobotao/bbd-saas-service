@@ -1104,3 +1104,21 @@ footer {
 }
 
 /* E 控件css reset */
+.p-icon{
+    display:inline-block;
+    width:16px;
+    height:16px;
+    background:url(../images/p_icon.png) no-repeat;
+    margin:0 0 -2px 0;
+}
+.p-person{
+    background-position:0 0;
+    margin-left: 15px;
+}
+.p-lock{
+    background-position:0 -25px;
+    margin-left: 15px;
+}
+.p-user{
+    background-position:0 -51px;
+}
