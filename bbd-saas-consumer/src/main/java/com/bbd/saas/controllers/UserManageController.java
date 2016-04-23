@@ -97,6 +97,7 @@ public class UserManageController {
 	@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
 	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+		System.out.println("=================beigin======================");
 		User getuser = adminService.get(UserSession.get(request));
 		if (pageIndex==null) pageIndex =0 ;
 		if(keyword!=null && !keyword.equals("")){
@@ -110,7 +111,7 @@ public class UserManageController {
 				e.printStackTrace();
 			}
 		}
-
+		System.out.println("=================end======================");
 		UserQueryVO userQueryVO = new UserQueryVO();
 		userQueryVO.roleId=roleId;
 		userQueryVO.status=status;
