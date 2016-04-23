@@ -174,9 +174,9 @@
 							<select id="courier_select"> </select>
 						</div>
 					</li>
-					<li class="col-md-12">
+					<!-- <li class="col-md-12">
 						<div class="c-red"><i class="glyphicon glyphicon-exclamation-sign pl15"></i> 请选择派件员</div>
-					</li>
+					</li> -->
 				</ul>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideCourierDiv()" class="sbtn sbtn2 g">取消</a></span>
