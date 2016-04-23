@@ -154,6 +154,8 @@ public class HandleAbnormalController {
 			express.setRemark("重新派送，快递员电话：" + courier.getRealName() + " " + courier.getLoginName() + "。");
 			express.setLat(currUser.getSite().getLat());//站点经纬度
 			express.setLon(currUser.getSite().getLng());
+			expressList.add(express);
+			order.setExpresses(expressList);
 			//更新运单
 			Key<Order> r = orderService.save(order);
 			if(r != null){
