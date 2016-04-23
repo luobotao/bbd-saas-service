@@ -806,6 +806,7 @@ footer {
   border: 1px solid #dbdaec;
 }
 .tab-area .b-map {
+  position:relative;
   height:473px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -997,11 +998,12 @@ footer {
 
 /* S 控件css reset */
 .BMap_scaleCtrl{
-  width:100px !important;
+  width:120px !important;
+  height:43px !important;
   background:#fff;
   padding:10px;
   box-shadow: 4px 4px 10px #888888;
-  left:12px !important;
+  left:15px !important;
   bottom:40px !important;
 }
 .BMap_scaleTxt{
@@ -1019,11 +1021,11 @@ footer {
   right:10px !important;
   bottom:10px !important;
 }
-.BMap_stdMpPan{
-  background:url(../images/b_shift.png) no-repeat  !important;
+.BMap_stdMpType3{
   width:31px !important;
-  height:31px !important;
-  box-shadow: 4px 4px 10px #888888;
+  height:82px !important;
+  bottom:32px !important;
+  right:15px !important;
 }
 .BMap_stdMpZoom{
   width:45px !important;
@@ -1074,7 +1076,6 @@ footer {
   right:15px;
   width:31px;
   height:31px;
-
   box-shadow: 4px 4px 10px #888888;
   cursor:pointer;
 }
@@ -1084,5 +1085,21 @@ footer {
 .b-back-full{
   background:url(../images/back_full.png) no-repeat;
 }
+.pos-adr{
+  display:block;
+  position:absolute;
+  bottom:130px;
+  right:15px;
+  width:31px;
+  height:31px;
+  background:url(../images/b_shift.png) no-repeat;
+  box-shadow: 4px 4px 10px #888888;
+  cursor:pointer;
+}
+.full-map{
+  position:absolute;
+  top:0;
+  width:99.96%;
 
+}
 /* E 控件css reset */
