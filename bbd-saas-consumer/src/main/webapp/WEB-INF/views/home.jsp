@@ -482,14 +482,11 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
-<<<<<<< HEAD
 <script type="application/javascript">
 	if(${user.loginCount==0}){
 		console.log("aabb");
 		$(".j-guide-pop").modal();
 	}
 </script>
-=======
->>>>>>> a7cc74f1c2cb7477b49c332a0db73f2104ed1316
 </body>
 </html>

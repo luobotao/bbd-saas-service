@@ -20,6 +20,11 @@ public interface SiteService {
      */
     Key<Site> save(Site site);
 
+    /**
+     * 根据ID获取Site
+     * @param id
+     * @return
+     */
     Site findSite(String id);
     
     /**
