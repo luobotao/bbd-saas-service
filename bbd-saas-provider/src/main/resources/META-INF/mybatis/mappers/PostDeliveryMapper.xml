@@ -149,4 +149,10 @@
         SELECT COUNT(*) FROM `postdelivery`  WHERE mail_num = #{mailNum}
     </select> 
 	<!-- 查询指定运单号的记录的条数  结束   --> 
+	
+	<!-- 通过运单号删除一条记录  开始  -->  
+    <delete id="deleteByMailNum">
+    	DELETE FROM  `postdelivery` WHERE mail_num = #{mailNum} 
+    </delete>
+    <!-- 通过运单号删除一条记录  结束  --> 
 </mapper>
