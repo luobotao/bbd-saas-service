@@ -138,7 +138,7 @@ public class UserManageController {
 	@ResponseBody
 	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
 	public PageModel<User> getUserPageFenYe(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		
+		System.out.println("=================getUserPageFenYe======================");
 		PageModel<User> userPage = getUserPage(request,pageIndex,roleId,status,keyword);
 		
 		return userPage;
