@@ -51,6 +51,8 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site) {
     	
     	Query<User> query = createQuery();
+    	//设置排序
+    	query.order("-dateUpdate");
     	if(userQueryVO!=null){
     		
     		query.filter("role", UserRole.status2Obj(1));
