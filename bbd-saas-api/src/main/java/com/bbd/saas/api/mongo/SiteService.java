@@ -32,7 +32,7 @@ public interface SiteService {
     Site findSiteByAreaCode(String areaCode);
     
     /**
-     * Description: 查询除站点site的其他所有站点的VO对象
+     * Description: 查询同一公司下除站点site的其他所有站点的VO对象
      * @param site 站点
      * @return
      * @author: liyanlei
