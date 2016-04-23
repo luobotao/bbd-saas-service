@@ -59,8 +59,8 @@ public interface PostmanUserDao {
     
     /**
      * 更新postmanUser
-     * @param staffid、nickname、id
+     * @param nickname、id
      * @return 
      */
-    int updatePostmanUserById(@Param("staffid") String staffid,@Param("nickname") String nickname,@Param("id") Integer id);
+    int updatePostmanUserById(@Param("nickname") String nickname,@Param("id") Integer id);
 }

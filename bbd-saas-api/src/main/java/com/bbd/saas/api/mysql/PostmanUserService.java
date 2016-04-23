@@ -60,8 +60,8 @@ public interface PostmanUserService {
     
     /**
      * 更新postmanUser
-     * @param staffid、nickname、id
+     * @param nickname、id
      * @return 
      */
-    int updatePostmanUserById(String staffid,String nickname,Integer id);
+    int updatePostmanUserById(String nickname,Integer id);
 }

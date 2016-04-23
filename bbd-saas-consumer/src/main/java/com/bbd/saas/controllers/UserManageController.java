@@ -178,7 +178,8 @@ public class UserManageController {
 		user.setPassWord(userForm.getLoginPass());
 		user.setSite(getuser.getSite());
 		user.setOperate(getuser);
-		user.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
+		//staffid就是该用户的手机号
+		user.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(1));
@@ -273,7 +274,7 @@ public class UserManageController {
 		olduser.setRealName(userForm.getRealName().replaceAll(" ", ""));
 		//olduser.setLoginName(userForm.getLoginName());
 		//olduser.setPhone(userForm.getPhone());
-		olduser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
+		//olduser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 		olduser.setPassWord(userForm.getLoginPass());
 		if(!olduser.getId().equals(getuser.getId())){
 			//如果修改的用户为站长且修改的用户就是当前登录用户的话，不执行olduser.setOperate(getuser);
@@ -299,7 +300,7 @@ public class UserManageController {
 		if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
 			//postmanuser表中有对应的数据,同时更新到mysql的bbt库的postmanuser表中
 			//int ret = userMysqlService.updateByPhone(postmanUser);
-			int updateret = userMysqlService.updatePostmanUserById(userForm.getStaffid().replaceAll(" ", ""),userForm.getRealName().replaceAll(" ", ""),getpostmanUser.getId());
+			int updateret = userMysqlService.updatePostmanUserById(userForm.getRealName().replaceAll(" ", ""),getpostmanUser.getId());
 			//return "true";
 			retSign = "true";
 			

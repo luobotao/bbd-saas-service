@@ -593,7 +593,7 @@ function saveUserBtn(){
 	        		}else{
 	        			alert("修改用户成功"); 
 	        			$(".j-user-pop").modal("hide");
-	        			document.getElementById("staffidTemp").value = staffid;
+	        			//document.getElementById("staffidTemp").value = staffid;
 	        		}
 	        		
 	        		gotoPage(0);
@@ -603,7 +603,7 @@ function saveUserBtn(){
 
 	        },  
 	        error: function(JsonHttpRequest, textStatus, errorThrown){  
-	            alert( "有非法内容，请检查内容合法性！");  
+	            alert( "服务器异常!");  
 	        }  
 	    });
 	}else if(checkSign){
