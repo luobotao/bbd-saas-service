@@ -56,6 +56,6 @@ public interface PostDeliveryService {
 	 * @author liyanlei
 	 * 2016年4月23日上午11:18:12
 	 */
-	int deleteByMailNum(String mailNum);
+	int deleteByMailNum(String mailNum); 
 	
 }

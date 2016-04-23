@@ -50,7 +50,7 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 		return postDeliveryDao.selectCountByMailNum(mailNum);
 	}
 
-	@Override
+	@Override 
 	public int deleteByMailNum(String mailNum) {
 		return postDeliveryDao.deleteByMailNum(mailNum);
 	}

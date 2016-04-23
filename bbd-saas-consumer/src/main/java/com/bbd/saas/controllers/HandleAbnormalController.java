@@ -253,7 +253,7 @@ public class HandleAbnormalController {
 				map.put("operFlag", 1);//1:成功
 				//刷新列表
 				map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-			}else{
+			}else{ 
 				map.put("operFlag", 0);//0:失败
 			}
 		}

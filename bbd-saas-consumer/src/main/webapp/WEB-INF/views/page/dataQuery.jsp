@@ -175,7 +175,7 @@
 <!-- E content -->
 
 
-<!--S 转其他站点-->
+<!--S 显示物流地图-->
 <div id="mailMap" class="j-site-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog b-modal-dialog" role="document">
 		<div class="modal-content">

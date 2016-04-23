@@ -52,7 +52,7 @@ public interface PostDeliveryDao {
 	
 	/**
 	 * Description: 根据运单号删除记录
-	 * @param mailNum 运单号
+	 * @param mailNum 运单号 
 	 * @return
 	 * @author liyanlei
 	 * 2016年4月23日上午11:18:12
