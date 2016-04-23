@@ -133,39 +133,40 @@ public class HandleAbnormalController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
-		//更新字段设置
-		OrderUpdateVO orderUpdateVO = new OrderUpdateVO();
-		//查询派件员
-		User courier = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
-    	orderUpdateVO.user = courier; 
-        orderUpdateVO.site = currUser.getSite();
-		orderUpdateVO.orderStatus = OrderStatus.DISPATCHED;//更新运单状态--已分派
-		//更新物流信息
-		orderUpdateVO.expressStatus = ExpressStatus.Delivering;
-		Express express = new Express();
-		express.setDateAdd(new Date());
-		express.setRemark("重新派送，快递员电话：" + courier.getRealName() + " " + courier.getLoginName() + "。");
-		express.setLat(currUser.getSite().getLat());//站点经纬度
-		express.setLon(currUser.getSite().getLng());
-		//检索条件
-		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.mailNum = mailNum;
-		orderQueryVO.areaCode = currUser.getSite().getAreaCode();
-		if(status != null && status != -1){
-			orderQueryVO.abnormalStatus = status;
+		//查询运单信息
+		Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+		if(order == null){//运单不存在,与站点无关--正常情况不会执行
+			map.put("operFlag", 0);//0:运单号不存在
+		}else{//运单存在
+			//查询派件员
+			User courier = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
+			order.setUser(courier);
+			order.setOrderStatus(OrderStatus.DISPATCHED);//更新运单状态--已分派
+			//更新物流信息
+			order.setExpressStatus(ExpressStatus.Delivering);
+			//添加一条物流信息
+			List<Express> expressList = order.getExpresses();
+			if(expressList == null){
+				expressList = new ArrayList<Express>();
+			}
+			Express express = new Express();
+			express.setDateAdd(new Date());
+			express.setRemark("重新派送，快递员电话：" + courier.getRealName() + " " + courier.getLoginName() + "。");
+			express.setLat(currUser.getSite().getLat());//站点经纬度
+			express.setLon(currUser.getSite().getLng());
+			//更新运单
+			Key<Order> r = orderService.save(order);
+			if(r != null){
+				//更新mysql
+				User user = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
+				postDeliveryService.updatePostAndStatusAndCompany(mailNum, user.getPostmanuserId(), staffId, "1", null);
+				map.put("operFlag", 1);//1:分派成功
+				//刷新列表
+				map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
+			}else{
+				map.put("operFlag", 0);//0:分派失败
+			}		
 		}
-		//更新运单
-		int i = orderService.updateOrder(orderUpdateVO, orderQueryVO);
-		if(i > 0){
-			//更新mysql
-			User user = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
-			postDeliveryService.updatePostAndStatusAndCompany(mailNum, user.getPostmanuserId(), staffId, "1", null);
-			map.put("operFlag", 1);//1:分派成功
-			//刷新列表
-			map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
-		}else{
-			map.put("operFlag", 0);//0:分派失败
-		}		
 		return map;
 	}
 	
@@ -277,7 +278,8 @@ public class HandleAbnormalController {
 		}
 		Express express = new Express();
 		express.setDateAdd(new Date());
-		express.setRemark("转其" + siteName + "站点，操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
+		//express.setRemark("已由【" + siteName + "】出库，转送到【" + order.getAreaName() + "】进行配送,操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
+		express.setRemark("已由【" + user.getSite().getName() + "】出库，转送到【" + order.getAreaName() + "】进行配送。操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		boolean expressIsNotAdd = true;//防止多次添加
