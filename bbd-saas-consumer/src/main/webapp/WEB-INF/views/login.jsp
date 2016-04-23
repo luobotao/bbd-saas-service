@@ -14,6 +14,7 @@
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
 	<script src="<c:url value="/resources/bootstrap/js/fileinput.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/bootstrap/js/fileinput_locale_zh.js" />" type="text/javascript"></script>
 </head>
@@ -296,7 +297,12 @@
 	});
 	$("#licensePic").fileinput({'showUpload':false, 'previewFileType':'any'});
 	function checkSiteWithUsername(loginName){
-		if(username!=""){
+		var flag = checkMobile(loginName);
+		if(flag==false){
+			alert("手机号不合法，请重新输入");
+			$("#username").focus();
+		}
+		if(loginName!=""){
 			var linkUrl = "<c:url value="/site/checkSiteWithLoginName?loginName=" />"+loginName
 			$.ajax({
 				url: linkUrl,
@@ -370,7 +376,13 @@
 			$("#emailP").attr("style","color:red");
 			flag = false;
 		} else{
-			$("#emailP").attr("style","display:none");
+			var emailFlag = checkemail(email);
+			if(emailFlag==false){
+				$("#emailP").attr("style","color:red");
+				flag = false;
+			}else{
+				$("#emailP").attr("style","display:none");
+			}
 		}
 		if(address==""){
 			$("#addressP").attr("style","color:red");
