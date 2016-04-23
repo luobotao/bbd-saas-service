@@ -518,7 +518,7 @@ function saveUserBtn(){
 	}else{
 		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
 	}
-	var roleId = $("#roleId").val();
+	//var roleId = $("#roleId").val();
 	var realName = $("#realName").val();
 	realName=realName.replace(/\ +/g,"");
 	var loginName = $("#loginName").val();
@@ -532,12 +532,12 @@ function saveUserBtn(){
 	var tel_reg = /^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
 	//var loginpasstemp = true;
 	//var confirmpasstemp = true;
-	if (roleId=="-1") {
+	/* if (roleId=="-1") {
 	    $("#roleIdP").attr("style","color:red");
 		flag = false;
 	}else{
 		$("#roleIdP").attr("style","display:none");
-	}
+	} */
 	if (!loginName) {
 	    $("#loginNameP").attr("style","color:red");
 		flag = false;

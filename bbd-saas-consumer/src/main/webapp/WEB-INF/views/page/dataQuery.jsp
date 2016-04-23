@@ -152,7 +152,7 @@
 									<%
 										}
 									%>
-									<td><a href="<%=path%>/dataQuery/getOrderMail?mailNum=<%=order.getMailNum()%>" target="_blank">查看物流信息 </a></td>
+									<td><a href="<%=path%>/dataQuery/getOrderMail?mailNum=<%=order.getMailNum()%>" target="_blank" class="orange">查看物流信息 </a></td>
 								</tr>
 							<%
 								}//for

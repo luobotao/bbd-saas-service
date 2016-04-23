@@ -51,17 +51,17 @@
 	  								<%=DispatchStatus.Srcs2HTML(-1)%>
 	  							</select>
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
-	  							<label>到站时间：</label>
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+	  							<label>到站时间：　</label>
 	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
 	  						</div>
 	  					</div>
 	  					<div class="b-line"></div>
 	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
 	  							<span class="ft12 pt20">已选择：<span id="courierName"></span></span>
 	  							<input id="courierId" type="hidden" value="" /> 
