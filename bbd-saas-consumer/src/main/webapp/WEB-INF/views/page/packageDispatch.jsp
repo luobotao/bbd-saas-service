@@ -63,7 +63,7 @@
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
-	  							<span class="ft12 pt20">已选择：<span id="courierName"></span></span>
+	  							<span class="ft12 pt20" id="courierName"></span>
 	  							<input id="courierId" type="hidden" value="" /> 
 	  						</div>
 	  						
@@ -388,7 +388,7 @@ function hideCourierDiv() {
 //选择派件员
 function chooseCourier() {
 $("#ddlregtype").find("option:selected").text(); 
-	$("#courierName").text($("#courier_select").find("option:selected").text());
+	$("#courierName").text("已选择:" + $("#courier_select").find("option:selected").text());
 	$("#courierId").val($("#courier_select").val());
 	$("#chooseCourier_div").modal("hide");
 }
