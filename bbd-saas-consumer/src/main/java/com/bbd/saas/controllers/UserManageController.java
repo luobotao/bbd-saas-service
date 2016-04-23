@@ -2,6 +2,7 @@ package com.bbd.saas.controllers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,19 +99,18 @@ public class UserManageController {
 	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
 		User getuser = adminService.get(UserSession.get(request));
 		if (pageIndex==null) pageIndex =0 ;
-		//logger.info(arriveStatus+"========="+between);
-		try {
-			
-			if(keyword!=null && !keyword.equals("")){
-				keyword=new String(keyword.getBytes("iso-8859-1"),"utf-8");
-			}else{
-				keyword = "";
+		if(keyword!=null && !keyword.equals("")){
+			try {
+				
+				System.out.println("========================keyword=="+keyword);
+				keyword = URLDecoder.decode(keyword,"UTF-8");
+				System.out.println("========================URLDecoder.decode(keyword,UTF-8)=="+keyword);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
+
 		UserQueryVO userQueryVO = new UserQueryVO();
 		userQueryVO.roleId=roleId;
 		userQueryVO.status=status;

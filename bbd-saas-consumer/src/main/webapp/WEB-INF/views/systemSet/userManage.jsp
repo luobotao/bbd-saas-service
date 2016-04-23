@@ -301,7 +301,8 @@ function toSearch(){
 	var roleId = $("#saasrole").val();
 	var status = $("#status").val();
 	var keyword = $("#keyword").val();
-	keyword=keyword.replace(/\ +/g,"");
+	keyword = keyword.replace(/\ +/g,"");
+	keyword = encodeURIComponent(keyword);
 	gotoPage(0,roleId,status,keyword);
 }
 
