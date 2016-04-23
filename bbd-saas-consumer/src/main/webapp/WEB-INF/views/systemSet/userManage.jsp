@@ -21,7 +21,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 			<div class="container-fluid">
         		<div class="row">
         			<!-- S sidebar -->
-					<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
+					<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
         				<ul class="b-sidebar">
 							<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 							<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -77,7 +77,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        							<tr>
 		        							<th>角色</th>
 		        							<th>真实姓名</th>
-		        							<th>登录名</th>
+		        							<th>手机号</th>
 		        							<th>状态</th>
 		        							<th>操作</th>
 	        							</tr>
@@ -192,6 +192,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<input type="text" id="loginName" name="loginName" onblur="checkLoginName(this.value)" class="form-control form-bod" placeholder="手机号" />
 								<p class="help-block" id="loginNameP" style="display:none;">请正确输入11位手机号</p>
 							</li>
+							<!--  
 							<li>
 								<input type="text" id="staffid" name="staffid" onblur="checkStaffid(this.value)" class="form-control form-bod" placeholder="员工ID" />
 								<p class="help-block" id="staffidP" style="display:none;">请输入员工ID</p>
@@ -204,6 +205,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<input type="password" id="confirmPass" name="confirmPass" class="form-control form-bod" placeholder="确认密码" />
 								<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
 							</li>
+							-->
 						</ul>
 							
 						
@@ -231,7 +233,7 @@ $("#pagin").html(pageStr);
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex,roleId,status,keyword) {
-	var url = "<c:url value="/userManage/getUserPage" />";
+	var url = "<c:url value="/userManage/getUserPageFenYe" />";
 	$.ajax({
 		type : "GET",  //提交方式
 		url : url,//路径
@@ -299,7 +301,8 @@ function toSearch(){
 	var roleId = $("#saasrole").val();
 	var status = $("#status").val();
 	var keyword = $("#keyword").val();
-	keyword=keyword.replace(/\ +/g,"");
+	keyword = keyword.replace(/\ +/g,"");
+	keyword = encodeURIComponent(keyword);
 	gotoPage(0,roleId,status,keyword);
 }
 
@@ -436,22 +439,38 @@ function checkStaffid(staffid) {
 
 
 function changeStatus(status,id,loginName){
-	$.ajax({
-		type : "GET",  
-        url : '<c:url value="/userManage/changestatus" />', 
-        data : {  
-            "id" : id,"status" : status,"loginName" : loginName  
-        },
-        success : function(data) {
-			if(data == 'true'){
-				alert("更新成功");
-				gotoPage(0);
-			} 
-        },
-        error : function() {  
-       		alert("异常！");  
-  		}    
-    });
+	
+	
+	if(status==0){ 
+		//表示要停用
+		if(confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')){  
+			ret = true; 
+		} 
+	}else{
+		//表示要启用
+		if(confirm('启用后小件员可以使用棒棒达客户端，确认启用吗？')){ 
+			ret = true; 
+		}
+	}
+	
+	if(ret){
+		$.ajax({
+			type : "GET",  
+	        url : '<c:url value="/userManage/changestatus" />', 
+	        data : {  
+	            "id" : id,"status" : status,"loginName" : loginName  
+	        },
+	        success : function(data) {
+				if(data == 'true'){
+					//alert("更新成功");
+					gotoPage(0);
+				} 
+	        },
+	        error : function() {  
+	       		alert("异常！");  
+	  		}    
+	    });
+	}
 }
 
 function delUser(loginName){
@@ -499,26 +518,26 @@ function saveUserBtn(){
 	}else{
 		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
 	}
-	var roleId = $("#roleId").val();
+	//var roleId = $("#roleId").val();
 	var realName = $("#realName").val();
 	realName=realName.replace(/\ +/g,"");
 	var loginName = $("#loginName").val();
 	loginName=loginName.replace(/\ +/g,"");
-	var staffid = $("#staffid").val();
+	/* var staffid = $("#staffid").val();
 	staffid=staffid.replace(/\ +/g,"");
 	var loginPass = $("#loginPass").val();
 	loginPass=loginPass.replace(/\ +/g,"");
 	var confirmPass = $("#confirmPass").val();
-	confirmPass=confirmPass.replace(/\ +/g,"");
-	var tel_reg = /^1[34578]{1}\d{9}/;
-	var loginpasstemp = true;
-	var confirmpasstemp = true;
-	if (roleId=="-1") {
+	confirmPass=confirmPass.replace(/\ +/g,""); */
+	var tel_reg = /^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+	//var loginpasstemp = true;
+	//var confirmpasstemp = true;
+	/* if (roleId=="-1") {
 	    $("#roleIdP").attr("style","color:red");
 		flag = false;
 	}else{
 		$("#roleIdP").attr("style","display:none");
-	}
+	} */
 	if (!loginName) {
 	    $("#loginNameP").attr("style","color:red");
 		flag = false;
@@ -529,27 +548,19 @@ function saveUserBtn(){
 		returnmess = '该手机号已存在，请重新输入！';
 		flag = false;
 		checkSign = true;
-		loginNameSign = true;
 	}
-	if(checkStaffid(staffid)){
+	/* if(checkStaffid(staffid)){
 		returnmess = '该站点下的工号已存在，请重新输入！';
 		flag = false;
 		checkSign = true;
 		staffidSign = true;
-	}
-	if(loginNameSign && staffidSign){
-		returnmess = '该手机号已存在，请重新输入！';
-	}
-	if (!tel_reg.test(loginName)) {
+	} */
+	if (!checkMobile(loginName)) {//!tel_reg.test(loginName)
+		$("#loginNameP").text("请重新输入11位手机号!");
 		$("#loginNameP").attr("style","color:red");
 		flag = false;
 	}else{
 		$("#loginNameP").attr("style","display:none");
-	}
-	if(loginName.length==11){
-		$("#loginNameP").attr("style","display:none");
-	}else{
-		$("#loginNameP").attr("style","color:red");
 	}
 	if (!realName) {
 	    $("#realNameP").attr("style","color:red");
@@ -557,7 +568,7 @@ function saveUserBtn(){
 	}else{
 		$("#realNameP").attr("style","display:none");
 	}
-	if (!staffid) {
+	/*if (!staffid) {
 	    $("#staffidP").attr("style","color:red");
 		flag = false;
 	}else{
@@ -582,7 +593,7 @@ function saveUserBtn(){
 	}else{
 		$("#confirmPassP").attr("style","color:red");
 		flag = false;
-	}
+	} */
 	if(flag){
 		
 		console.log("succeful , submit");
@@ -593,13 +604,13 @@ function saveUserBtn(){
 	        	if(data=="true"){
 	        		 
 	        		if(getSign=='create'){
-	        			alert("保存用户成功"); 
+	        			//alert("保存用户成功"); 
 	        			$(".j-user-pop").modal("hide");
 	        			//document.getElementById("userForm").reset();
 	        		}else{
 	        			alert("修改用户成功"); 
 	        			$(".j-user-pop").modal("hide");
-	        			document.getElementById("staffidTemp").value = staffid;
+	        			//document.getElementById("staffidTemp").value = staffid;
 	        		}
 	        		
 	        		gotoPage(0);
@@ -609,14 +620,14 @@ function saveUserBtn(){
 
 	        },  
 	        error: function(JsonHttpRequest, textStatus, errorThrown){  
-	            alert( "有非法内容，请检查内容合法性！");  
+	            alert( "服务器异常!");  
 	        }  
 	    });
 	}else if(checkSign){
 		alert(returnmess);
 		return false;
 	}else {
-		alert("有非法内容，请检查内容合法性！");
+		//alert("有非法内容，请检查内容合法性！");
 		return false;
 	}
 	

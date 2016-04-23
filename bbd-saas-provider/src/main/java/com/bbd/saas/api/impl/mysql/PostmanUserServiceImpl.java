@@ -98,10 +98,10 @@ public class PostmanUserServiceImpl implements PostmanUserService {
     
     /**
      * 更新postmanUser
-     * @param staffid、nickname、id
+     * @param nickname、id
      * @return 
      */
-    public int updatePostmanUserById(String staffid,String nickname,Integer id){
-    	return postmanUserDao.updatePostmanUserById(staffid, nickname, id);
+    public int updatePostmanUserById(String nickname,Integer id){
+    	return postmanUserDao.updatePostmanUserById(nickname, id);
     }
 }

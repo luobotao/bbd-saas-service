@@ -66,10 +66,10 @@
 						</div>
 						<div class="clearfix mlrf15">
 							<div class="col-md-6">
-								<a href="javascript:void(0);" class="sbtn l mb12" onclick="submitForm()">登　录</a>
+								<a href="javascript:void(0);" class="sbtn l mb12 f24" onclick="submitForm()">登　录</a>
 							</div>
 							<div class="col-md-6">
-								<a href="javascript:void(0);" class="sbtn d j-login">注　册</a>
+								<a href="javascript:void(0);" class="sbtn d j-login f24">注　册</a>
 							</div>
 
 						</div>
@@ -111,40 +111,43 @@
 <!-- S 合作伙伴 -->
 <h3 class="b-tit"><em>TA们都在使用棒棒达快递</em></h3>
 <div class="clearfix">　</div>
-<div class="container mb80">
-	<ul class="row b-brand">
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/ln.png" />" alt="李宁" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/hs.png" />" alt="韩束" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/lyl.png" />" alt="蓝月亮" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/md.png" />" alt="美的" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/lt.png" />" alt="骆驼" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/super.png" />" alt="super" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/dl.png" />" alt="得力办公" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/at.png" />" alt="安踏" />
-		</li>
-		<li class="b-grid">
-			<img src="<c:url value="/resources/images/qf.png" />" alt="清风" />
-		</li>
-		<li class="b-grid col-sm-6">
-			<img src="<c:url value="/resources/images/hyx.png" />" alt="恒源祥" />
-		</li>
-	</ul>
+<div class="part-bg clearfix">
+		<div class="container mb80">
+		<ul class="row b-brand">
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/ln.png" />" alt="李宁" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/hs.png" />" alt="韩束" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/lyl.png" />" alt="蓝月亮" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/md.png" />" alt="美的" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/lt.png" />" alt="骆驼" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/super.png" />" alt="super" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/dl.png" />" alt="得力办公" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/at.png" />" alt="安踏" />
+			</li>
+			<li class="b-grid">
+				<img src="<c:url value="/resources/images/qf.png" />" alt="清风" />
+			</li>
+			<li class="b-grid col-sm-6">
+				<img src="<c:url value="/resources/images/hyx.png" />" alt="恒源祥" />
+			</li>
+		</ul>
+	</div>
 </div>
+
 <!-- E 合作伙伴 -->
 <!-- S footer -->
 <footer class="container tc">
@@ -158,7 +161,7 @@
 	<div class="modal-dialog j-scroll-dislog" role="document">
 		<div class="modal-content">
 			<div class="modal-header b-modal-header"><h4 class="modal-title tc">请选择注册类型</h4></div>
-			<div class="modal-body">
+			<div class="modal-body b-modal-body">
 				<ul class="row">
 					<li class="cho-lg col-md-6">
 						<a href="javascript:void(0);" class="j-site-re" >
@@ -194,13 +197,13 @@
 			</div>
 			<c:url var="actionUrl" value="/site/register?${_csrf.parameterName}=${_csrf.token}"/>
 			<form role="form" enctype="multipart/form-data" action="${actionUrl}" method="post" id="siteForm" >
-			<div class="modal-body b-modal-body">
+			<div class="modal-body b-modal-body y-scroll">
 				<ul class="b-n-crt">
 					<li class="filter clearfix">
 						<i>手机号：</i>
 						<input type="text" class="form-control form-bod wp80" id="username" name="username" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="checkSiteWithUsername(this.value)">
 						<input type="text" class="form-control" id="usernameFlag" name="usernameFlag" value="1" style="display:none;">
-						<em class="tip-info" id="usernameP" style="display:none;">请输入手机号,不允许重复</em>
+						<em class="tip-info" id="usernameP" style="display:none;">请输入正确的手机号,不允许重复</em>
 					</li>
 					<li class="filter">
 						<i>密 码：</i>
@@ -256,8 +259,9 @@
 						<em class="tip-info" id="addressP" style="display:none;">请输入详细地址</em>
 					</li>
 					<li class="filter">
-						<i>公司营业执照：</i>
-						<input id="licensePic" name="licensePic" class="file" type="file" >
+						<i class="mb12">公司营业执照：</i>
+						<div class="clearfix"></div>
+						<input id="licensePic" name="licensePic" class="file input-d" type="file" >
 						<em class="tip-info" id="licensePicP" style="display:none;">请上传公司营业执照</em>
 					</li>
 				</ul>
@@ -269,7 +273,6 @@
 						同意<em class="orange">《棒棒达快递注册协议》</em>
 					</label>
 				</div>
-				<a href="http://e.ibbt.com/site/toViewSite" class="ser-btn g">查看已注册站点</a>
 				<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn" >保存</a>
 			</div>
 			</form>
@@ -280,7 +283,11 @@
 <!-- E pop -->
 <script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 <script>
-	var id = $("#id").val();
+	if(window.top==window.self){//不存在父页面
+
+	}else{
+		window.top.location.href="<c:url value="/login" />"
+	}
 	var defprov = "北京";
 	var defcity = "北京";
 	var defdist = "朝阳区";
@@ -297,11 +304,6 @@
 	});
 	$("#licensePic").fileinput({'showUpload':false, 'previewFileType':'any'});
 	function checkSiteWithUsername(loginName){
-		var flag = checkMobile(loginName);
-		if(flag==false){
-			alert("手机号不合法，请重新输入");
-			$("#username").focus();
-		}
 		if(loginName!=""){
 			var linkUrl = "<c:url value="/site/checkSiteWithLoginName?loginName=" />"+loginName
 			$.ajax({
@@ -313,10 +315,12 @@
 				success: function(response){
 					console.log(response);
 					if(response=="false"){
-						alert("您输入的手机号目前已存在，请重新输入");
 						$("#usernameFlag").val(0);
+						$("#usernameP").html("手机号已存在");
+						$("#usernameP").attr("style","color:red");
 					}else{
 						$("#usernameFlag").val(1);
+						$("#usernameP").attr("style","display:none");
 					}
 				},
 				error: function(){
@@ -335,6 +339,18 @@
 		$("#companyName").val($("#companyId").find("option:selected").text());
 		var username = $.trim($('input[name="username"]').val());
 		var usernameFlag = $("#usernameFlag").val();
+		if(username==""||usernameFlag==0){
+			$("#usernameP").attr("style","color:red");
+			flag = false;
+		} else{
+			if(checkMobile(username)==false){
+				$("#usernameP").html("请输入正确的手机号");
+				$("#usernameP").attr("style","color:red");
+				flag = false;
+			}else{
+				$("#usernameP").attr("style","display:none");
+			}
+		}
 		var password = $.trim($('input[name="password"]').val());
 		var name = $("#name").val();
 		var responser = $("#responser").val();
@@ -346,15 +362,8 @@
 		$("#province").val(province);
 		$("#city").val(city);
 		$("#area").val(area);
-		console.log(province+":"+city+":"+area);
 		var address = $("#address").val();
 		var licensePic = $("#licensePic").val();
-		if(username==""||usernameFlag==0){
-			$("#usernameP").attr("style","color:red");
-			flag = false;
-		} else{
-			$("#usernameP").attr("style","display:none");
-		}
 		if(password==""){
 			$("#passwordP").attr("style","color:red");
 			flag = false;

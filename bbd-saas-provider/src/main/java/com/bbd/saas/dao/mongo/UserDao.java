@@ -51,6 +51,8 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site) {
     	
     	Query<User> query = createQuery();
+    	//设置排序
+    	query.order("-dateUpdate");
     	if(userQueryVO!=null){
     		
     		query.filter("role", UserRole.status2Obj(1));
@@ -61,15 +63,18 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     		if(userQueryVO.status!=null && userQueryVO.status!=-1){
     			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
     		}
+    		System.out.println("=======================================");
     		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			
+    			System.out.println("userQueryVO.keyword=="+userQueryVO.keyword);
     			query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
     			
     		}
-    		
+    		System.out.println("=======================================");
         }
     	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-
+    	System.out.println("=======================================");
+    	System.out.println("userList.size()=="+userList.size());
+    	System.out.println("=======================================");
         pageModel.setDatas(userList);
         pageModel.setTotalCount(count(query));
     	

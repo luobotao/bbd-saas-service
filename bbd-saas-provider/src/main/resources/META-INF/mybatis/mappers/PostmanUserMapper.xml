@@ -179,7 +179,7 @@
     </update>
     
     <update id="updatePostmanUserById" >
-        update postmanuser set staffid = #{staffid,jdbcType=INTEGER},nickname = #{nickname,jdbcType=VARCHAR}  
+        update postmanuser set nickname = #{nickname,jdbcType=VARCHAR}  
         where id = #{id,jdbcType=INTEGER}
     </update>
     

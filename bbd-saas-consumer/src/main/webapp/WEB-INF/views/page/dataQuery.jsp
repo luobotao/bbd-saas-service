@@ -24,7 +24,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
 				<ul class="b-sidebar">
 					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -152,7 +152,7 @@
 									<%
 										}
 									%>
-									<td><a href="<%=path%>/dataQuery/getOrderMail?mailNum=<%=order.getMailNum()%>" target="_blank">查看物流信息 </a></td>
+									<td><a href="<%=path%>/dataQuery/getOrderMail?mailNum=<%=order.getMailNum()%>" target="_blank" class="orange">查看物流信息 </a></td>
 								</tr>
 							<%
 								}//for
@@ -173,6 +173,29 @@
 	</div>
 </div>
 <!-- E content -->
+
+
+<!--S 显示物流地图-->
+<div id="mailMap" class="j-site-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">转其他站点</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				站点:<select id="site_select" class="form-control form-bod">
+					</select>
+				<div class="row mt20">
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideOtherSiteDiv()" class="sbtn sbtn2 g">取消</a></span>
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="chooseOtherSite()" class="sbtn sbtn2 l">确定</a></span>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 转其他站点-->
 
 <!-- S footer -->
 <footer class="pos-footer tc">

@@ -16,7 +16,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
 				<ul class="b-sidebar">
 					<li class="lv1 side-cur"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
@@ -62,27 +62,27 @@
 					<div class="search-area">
 						<div class="row pb20">
 							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>状态：</label>
+								<label>状态：　　　</label>
 								<select id="arriveStatus" name="arriveStatus" class="form-control form-con-new">
 									<%=ArriveStatus.Srcs2HTML(-1)%>
 								</select>
 							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 								<label>预计到站时间：</label>
 								<input id="between" name="between" type="text" class="form-control" placeholder="请选择预计到站时间" value="${between}"/>
 							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>搜索</a>
 							</div>
 						</div>
 						<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 								<label>扫描包裹号：</label>
 								<input id="parcelCode" name="parcelCode" class="form-control" type="text" onkeypress="enterPress(event)" />
 								<p class="help-block" id="parcelCodeP" style="display:none;"></p>
 							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
-								<label>扫描运单号：</label>
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+								<label>扫描运单号：　</label>
 								<input id="mailNum" name="mailNum" class="form-control" type="text" onkeypress="enterPress(event)"/>
 								<p class="help-block" id="mailNumP" style="display:none;"></p>
 							</div>
@@ -128,11 +128,11 @@
 								<%
 									if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
 								%>
-								<td><%=ArriveStatus.NOTARR.getMessage()%></td>
+								<td class="orange"><%=ArriveStatus.NOTARR.getMessage()%></td>
 								<%
 								}else{
 								%>
-								<td><%=ArriveStatus.ARRIVED.getMessage()%></td>
+								<td class="c-green"><%=ArriveStatus.ARRIVED.getMessage()%></td>
 								<%
 									}
 								%>
@@ -287,9 +287,9 @@
 		row += "<td>" + getDate1(data.datePrint) + "</td>";
 		row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){
-			row += "<td>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
+			row += "<td class='orange'>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
 		}else{
-			row += "<td>" + "<%=ArriveStatus.ARRIVED.getMessage()%>" + "</td>";
+			row += "<td class='c-green'>" + "<%=ArriveStatus.ARRIVED.getMessage()%>" + "</td>";
 		}
 		row += "</tr>";
 		return row;

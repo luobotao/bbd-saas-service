@@ -46,6 +46,14 @@
 							</div>
 							<div class="row" id="telephoneDiv" style="margin-top:10px;">
 								<div class="col-xs-1">
+									<label style="float: right;">用户名:</label>
+								</div>
+								<div class="col-xs-4">
+									<label>${site.username}</label>
+								</div>
+							</div>
+							<div class="row" id="usernameDiv" style="margin-top:10px;">
+								<div class="col-xs-1">
 									<label style="float: right;">固定电话:</label>
 								</div>
 								<div class="col-xs-4">

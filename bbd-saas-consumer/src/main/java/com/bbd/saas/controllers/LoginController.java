@@ -70,8 +70,7 @@ public class LoginController {
 			if(loginForm.getPassWord().equals(user.getPassWord())){//login success
 				//判断登录用户的站点状态是否是通过审核状态
 				if (user.getSite() == null || !user.getSite().getFlag().equals("2") || StringUtils.isBlank(user.getSite().getAreaCode())) {
-					redirectAttrs.addFlashAttribute("message", "站点未审核,请联系工作人员尽快审核");
-					return "redirect:/login";
+					return "redirect:/site/updateSite?siteid="+user.getSite().getId().toHexString();
 				}
 				if(user.getUserStatus()== UserStatus.INVALID){
 					redirectAttrs.addFlashAttribute("message", "用户状态无效");
