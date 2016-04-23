@@ -248,12 +248,12 @@ public class HandleAbnormalController {
 			//更新运单
 			Key<Order> r = orderService.save(order);
 			if(r != null){
-				//更新到mysql post-status-company置为空
-				postDeliveryService.updatePostAndStatusAndCompany(mailNum, 0, "", "1", "");
+				//更新到mysql 删除一条记录
+				postDeliveryService.deleteByMailNum(mailNum);
 				map.put("operFlag", 1);//1:成功
 				//刷新列表
 				map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-			}else{
+			}else{ 
 				map.put("operFlag", 0);//0:失败
 			}
 		}
