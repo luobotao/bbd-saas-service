@@ -183,6 +183,7 @@ public class UserManageController {
 		user.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
 		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
 		user.setDateAdd(dateAdd);
+		user.setDateUpdate(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(1));
 		System.out.println("============="+user.getUserStatus().getStatus());
 		
@@ -216,6 +217,7 @@ public class UserManageController {
 			//staffid就是该用户的手机号
 			postmanUser.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
 			postmanUser.setDateNew(dateAdd);
+			postmanUser.setDateUpd(dateAdd);
 			postmanUser.setPoststatus(1);
 			/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
 				//快递员

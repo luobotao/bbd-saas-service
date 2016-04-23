@@ -77,7 +77,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        							<tr>
 		        							<th>角色</th>
 		        							<th>真实姓名</th>
-		        							<th>登录名</th>
+		        							<th>手机号</th>
 		        							<th>状态</th>
 		        							<th>操作</th>
 	        							</tr>
@@ -439,22 +439,38 @@ function checkStaffid(staffid) {
 
 
 function changeStatus(status,id,loginName){
-	$.ajax({
-		type : "GET",  
-        url : '<c:url value="/userManage/changestatus" />', 
-        data : {  
-            "id" : id,"status" : status,"loginName" : loginName  
-        },
-        success : function(data) {
-			if(data == 'true'){
-				alert("更新成功");
-				gotoPage(0);
-			} 
-        },
-        error : function() {  
-       		alert("异常！");  
-  		}    
-    });
+	
+	
+	if(status==0){ 
+		//表示要停用
+		if(confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')){  
+			ret = true; 
+		} 
+	}else{
+		//表示要启用
+		if(confirm('启用后小件员可以使用棒棒达客户端，确认启用吗？')){ 
+			ret = true; 
+		}
+	}
+	
+	if(ret){
+		$.ajax({
+			type : "GET",  
+	        url : '<c:url value="/userManage/changestatus" />', 
+	        data : {  
+	            "id" : id,"status" : status,"loginName" : loginName  
+	        },
+	        success : function(data) {
+				if(data == 'true'){
+					//alert("更新成功");
+					gotoPage(0);
+				} 
+	        },
+	        error : function() {  
+	       		alert("异常！");  
+	  		}    
+	    });
+	}
 }
 
 function delUser(loginName){
@@ -588,7 +604,7 @@ function saveUserBtn(){
 	        	if(data=="true"){
 	        		 
 	        		if(getSign=='create'){
-	        			alert("保存用户成功"); 
+	        			//alert("保存用户成功"); 
 	        			$(".j-user-pop").modal("hide");
 	        			//document.getElementById("userForm").reset();
 	        		}else{
