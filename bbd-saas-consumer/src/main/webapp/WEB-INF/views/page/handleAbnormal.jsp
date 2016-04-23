@@ -421,7 +421,7 @@ function showCourierDiv(mailNumStr) {
 	$(".j-sel-pop").modal("show");
 	//$("#chooseCourier_div").modal("show");
 }
-
+ 
 //把派件员添加到下拉框中
 function loadCouriers(courierList, staffId) {
 	/* if(staffId == null || staffId == "undefined"){
