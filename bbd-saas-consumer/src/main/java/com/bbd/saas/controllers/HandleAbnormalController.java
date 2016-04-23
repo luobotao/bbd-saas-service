@@ -281,7 +281,7 @@ public class HandleAbnormalController {
 		Express express = new Express();
 		express.setDateAdd(new Date());
 		//express.setRemark("已由【" + siteName + "】出库，转送到【" + order.getAreaName() + "】进行配送,操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
-		express.setRemark("已由【" + user.getSite().getName() + "】出库，转送到【" + order.getAreaName() + "】进行配送。操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
+		express.setRemark("已由【" + user.getSite().getName() + "】出库，转送到【" + order.getAreaName() + "】进行配送。");
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		boolean expressIsNotAdd = true;//防止多次添加
