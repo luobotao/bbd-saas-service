@@ -231,7 +231,7 @@ $("#pagin").html(pageStr);
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex,roleId,status,keyword) {
-	var url = "<c:url value="/userManage/getUserPage" />";
+	var url = "<c:url value="/userManage/getUserPageFenYe" />";
 	$.ajax({
 		type : "GET",  //提交方式
 		url : url,//路径
@@ -510,7 +510,7 @@ function saveUserBtn(){
 	loginPass=loginPass.replace(/\ +/g,"");
 	var confirmPass = $("#confirmPass").val();
 	confirmPass=confirmPass.replace(/\ +/g,"");
-	var tel_reg = /^1[34578]{1}\d{9}/;
+	var tel_reg = /^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
 	var loginpasstemp = true;
 	var confirmpasstemp = true;
 	if (roleId=="-1") {
@@ -540,7 +540,8 @@ function saveUserBtn(){
 	if(loginNameSign && staffidSign){
 		returnmess = '该手机号已存在，请重新输入！';
 	}
-	if (!tel_reg.test(loginName)) {
+	if (!checkMobile(loginName)) {//!tel_reg.test(loginName)
+		$("#loginNameP").text("请重新输入11位手机号!");
 		$("#loginNameP").attr("style","color:red");
 		flag = false;
 	}else{
@@ -609,14 +610,14 @@ function saveUserBtn(){
 
 	        },  
 	        error: function(JsonHttpRequest, textStatus, errorThrown){  
-	            alert( "有非法内容，请检查内容合法性！");  
+	            alert( "服务器异常！");  
 	        }  
 	    });
 	}else if(checkSign){
 		alert(returnmess);
 		return false;
 	}else {
-		alert("有非法内容，请检查内容合法性！");
+		//alert("有非法内容，请检查内容合法性！");
 		return false;
 	}
 	

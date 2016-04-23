@@ -63,7 +63,7 @@ public class UserManageController {
 	@RequestMapping(value="userList", method=RequestMethod.GET)
 	public String listUser(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
 		User getuser = adminService.get(UserSession.get(request));
-		PageModel<User> userPage = getUserPage(0,roleId,status,keyword,getuser.getSite());
+		PageModel<User> userPage = getUserPage(request,0,roleId,status,keyword);
 
 		model.addAttribute("userPage", userPage);
 		//return "systemSet/userManageUserList";
@@ -95,7 +95,8 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
-	public PageModel<User> getUserPage(Integer pageIndex, Integer roleId, Integer status,String keyword,Site site) {
+	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+		User getuser = adminService.get(UserSession.get(request));
 		if (pageIndex==null) pageIndex =0 ;
 		//logger.info(arriveStatus+"========="+between);
 		try {
@@ -116,7 +117,7 @@ public class UserManageController {
 		userQueryVO.keyword=keyword;
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
-		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO,site);
+		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO,getuser.getSite());
 		
 		for(User user : userPage.getDatas()){
 			user.setRoleMessage(user.getRole().getMessage());
@@ -124,6 +125,20 @@ public class UserManageController {
 				user.setStatusMessage(user.getUserStatus().getMessage());
 			}
 		}
+		
+		return userPage;
+	}
+	
+	/**
+     * 获取用户列表信息
+     * @param 
+     * @return
+     */
+	@ResponseBody
+	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
+	public PageModel<User> getUserPageFenYe(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+		
+		PageModel<User> userPage = getUserPage(request,pageIndex,roleId,status,keyword);
 		
 		return userPage;
 	}
