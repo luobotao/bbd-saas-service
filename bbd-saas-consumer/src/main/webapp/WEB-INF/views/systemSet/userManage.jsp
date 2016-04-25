@@ -115,14 +115,14 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 											if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
 												
 												%>
-												<a href="javascript:void(0)" onclick="changeStatus(0,'<%=user.getId() %>','')" class="orange ml6">停用</a>
+												<a href="javascript:void(0)" onclick="changeStatus(0,'','<%=user.getLoginName() %>')" class="orange ml6">停用</a>
 											
 												<% 
 											}else{
 												
 												%>
 												
-												<a href="javascript:void(0)" onclick="changeStatus(1,'<%=user.getId() %>','')" class="orange ml6">启用</a>
+												<a href="javascript:void(0)" onclick="changeStatus(1,'','<%=user.getLoginName() %>')" class="orange ml6">启用</a>
 												<a href="javascript:void(0)" onclick="delUser('<%=user.getLoginName() %>')" class="orange ml6">删除</a>
 												<% 
 											}

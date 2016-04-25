@@ -145,7 +145,7 @@ public class StringUtil {
 	 
 	/**
 	 * 百分率转换
-	 * @param 数字
+	 * @param str
 	 * @return 转换后数字
 	 */
 	public static BigDecimal conversionPercent(String str){
@@ -387,7 +387,6 @@ public class StringUtil {
 	 * Description: 计算差值，保留两位小数（newData和oldData都不为空的情况下，才相减计算，否则返回0.00） newData - oldData
 	 * @param newData
 	 * @param oldData
-	 * @param defaultStr
 	 * @return
 	 */
 	public static String calculateDifference(String newData, String oldData) {		
@@ -404,7 +403,6 @@ public class StringUtil {
 	 * Description: 计算差值，保留两位小数（newData和oldData都不为空的情况下，才相减计算，否则返回0.00） newData - oldData
 	 * @param newData
 	 * @param oldData
-	 * @param defaultStr
 	 * @return
 	 */
 	public static String calculateRange(String newData, String oldData) {		
@@ -424,7 +422,6 @@ public class StringUtil {
 	 * data0=newData - oldData; data1=(newData - oldData)/oldData
 	 * @param newData
 	 * @param oldData
-	 * @param defaultStr
 	 * @return
 	 */
 	public static List<String> calculateZDAndRange(String newData, String oldData) {	
@@ -447,7 +444,6 @@ public class StringUtil {
 	 * @author liyanlei
 	 * @date 2016年3月16日下午4:33:31
 	 * Description: 计算均值,保留2位小数
-	 * @param priceList
 	 * @return
 	 */
 	public static String calculateAvgValue(List<String> dataList) {

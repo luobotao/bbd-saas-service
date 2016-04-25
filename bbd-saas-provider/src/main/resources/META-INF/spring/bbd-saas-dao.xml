@@ -45,5 +45,9 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostDeliveryDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+    <bean id="openUserDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.OpenUserDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
     <!--  end mysql daos  -->
 </beans>

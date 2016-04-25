@@ -5,6 +5,7 @@ import java.util.List;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.Query;
 
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
@@ -89,5 +90,11 @@ public interface UserService {
      */
     public User findOneBySiteByStaffid(Site site, String staffid);
     
+    /**
+     * 更新用户状态
+     * @param loginName 、UserStatus
+     * return UpdateResults
+     */
+    public void updateUserStatu(String loginName, UserStatus userStatus);
     
 }

@@ -88,6 +88,18 @@ public class UpdateOrderStatusController {
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		//查询派件员姓名电话
+		if(orderPage != null && orderPage.getDatas() != null){
+			List<Order> dataList = orderPage.getDatas();
+			User courier = null;
+			for(Order order : dataList){
+				courier = userService.findOne(order.getUserId());
+				UserVO userVO = new UserVO();
+				userVO.setLoginName(courier.getLoginName());
+				userVO.setRealName(courier.getRealName());
+				order.setUserVO(userVO);
+			}
+		}		
 		return orderPage;
 	}
 	
@@ -131,7 +143,7 @@ public class UpdateOrderStatusController {
 				//查询派件员信息
 				User user = userService.findOne(courierId);
 				//运单分派给派件员
-				order.setUser(user);
+				order.setUserId(user.getId().toString());
 			}
 			//更新运单状态
 			order.setOrderStatus(OrderStatus.status2Obj(status));
@@ -145,6 +157,17 @@ public class UpdateOrderStatusController {
 				orderQueryVO.areaCode = currUser.getSite().getAreaCode();
 				//查询数据
 				PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+				if(orderPage != null && orderPage.getDatas() != null){
+					List<Order> dataList = orderPage.getDatas();
+					User courier = null;
+					for(Order order1 : dataList){
+						courier = userService.findOne(order1.getUserId());
+						UserVO userVO = new UserVO();
+						userVO.setLoginName(courier.getLoginName());
+						userVO.setRealName(courier.getRealName());
+						order1.setUserVO(userVO);
+					}
+				}
 				map.put("orderPage", orderPage); 
 			}else{
 				map.put("operFlag", 3);//3:分派失败

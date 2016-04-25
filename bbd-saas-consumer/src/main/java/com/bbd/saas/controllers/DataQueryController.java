@@ -30,6 +30,7 @@ import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.UserVO;
 
 @Controller
 @RequestMapping("/dataQuery")
@@ -68,9 +69,8 @@ public class DataQueryController {
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
-			String parcelCodeTemp = null;
 			for(Order order : orderPage.getDatas()){
-				parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
 			}
 			logger.info("=====数据查询页面列表===" + orderPage);
@@ -110,10 +110,21 @@ public class DataQueryController {
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-		String parcelCodeTemp = null;
-		for(Order order : orderPage.getDatas()){
-			parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-			order.setParcelCode(parcelCodeTemp);//设置包裹号
+		//设置包裹号,派件员快递和电话
+		if(orderPage != null && orderPage.getDatas() != null){
+			List<Order> dataList = orderPage.getDatas();
+			String parcelCodeTemp = null;
+			for(Order order : dataList){
+				parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+				order.setParcelCode(parcelCodeTemp);//设置包裹号
+				User courier = userService.findOne(order.getUserId());
+				if(courier!=null){
+					UserVO userVO = new UserVO();
+					userVO.setLoginName(courier.getLoginName());
+					userVO.setRealName(courier.getRealName());
+					order.setUserVO(userVO);
+				}
+			}
 		}
 		return orderPage;		
 	}
@@ -162,6 +173,7 @@ public class DataQueryController {
 		List<List<String>> dataList = new ArrayList<List<String>>();
 		List<String> row = null;
 		String parcelCodeTemp = null;
+		
 		if(orderList != null){
 			for(Order order : orderList){
 				row = new ArrayList<String>();
@@ -181,13 +193,7 @@ public class DataQueryController {
 				row.add(Dates.formatDateTime_New(order.getDatePrint()));
 				row.add(Dates.formatDate2(order.getDateMayArrive()));
 				row.add(Dates.formatDateTime_New(order.getDateArrived()));
-				if(order.getUser() == null){
-					row.add("");
-					row.add("");
-				}else{
-					row.add(order.getUser().getRealName());
-					row.add(order.getUser().getLoginName());
-				}
+				setCourier(order.getUserId(), row);
 				if(order.getOrderStatus() == null){
 					row.add("未到站");
 				}else{
@@ -203,5 +209,20 @@ public class DataQueryController {
 		ExportUtil.exportExcel("数据查询", dataList, titles, colWidths, response);
 	}	
 	
+	void setCourier(String userId, List<String> row){
+		if(userId == null || "".equals(userId)){
+			row.add("");
+			row.add("");
+		}else{
+			User courier = userService.findOne(userId);
+			if(courier != null){
+				row.add(courier.getRealName());
+				row.add(courier.getLoginName());
+			}else{
+				row.add("");
+				row.add("");
+			}
+		}
+	}
 
 }

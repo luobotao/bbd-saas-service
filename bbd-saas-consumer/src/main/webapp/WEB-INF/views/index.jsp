@@ -12,6 +12,7 @@
 	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
+	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 </head>
 <body>
 <!-- S nav -->
@@ -65,14 +66,15 @@
 <!-- E content -->
 <!-- S detail -->
 <div class="b-branch-hei">
-	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" onLoad="iFrameHeight()"></iframe>
+	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" onLoad="iFrameHeight();"></iframe>
+
 </div><!-- /.content-wrapper -->
 <!-- E detail -->
 
 <script>
 
-	$("li").click(function(){
-		$(this).addClass("side-cur").siblings().removeClass("side-cur");
+	$(".menu li").click(function(){
+		$(this).addClass("curr").siblings().removeClass("curr");
 	});
 	var typ="${typ}";
 	if(typ!=null && typ!=""){
@@ -97,6 +99,6 @@
 	}
 
 </script>
-<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
+
 </body>
 </html>

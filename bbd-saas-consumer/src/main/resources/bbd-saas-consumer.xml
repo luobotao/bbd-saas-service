@@ -11,9 +11,9 @@
     <!-- 	启动时不检查提供者 	-->
 	<dubbo:consumer check="false" timeout="30000"></dubbo:consumer>
 
-    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
     <!--<dubbo:registry address="zookeeper://10.173.0.222:2181"/>-->
-    <dubbo:registry address="zookeeper://182.92.227.140:2181"/>
+    <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
 
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.mongo.AdminUserService"/>
     <!--订单Service-->
@@ -34,4 +34,5 @@
     <dubbo:reference id="userMysqlService" interface="com.bbd.saas.api.mysql.PostmanUserService"/>
     <dubbo:reference id="postcompanyService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>
     <dubbo:reference id="postDeliveryService" interface="com.bbd.saas.api.mysql.PostDeliveryService"/>
+    <dubbo:reference id="openUserMysqlService" interface="com.bbd.saas.api.mysql.OpenUserService"/>
 </beans>
