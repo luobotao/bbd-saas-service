@@ -2,14 +2,10 @@ package com.bbd.saas.api.impl.mongo;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateOperations;
-import org.mongodb.morphia.query.UpdateResults;
 import org.springframework.stereotype.Service;
 
 import com.bbd.saas.api.mongo.UserService;
@@ -144,6 +140,9 @@ public class UserServiceImpl implements UserService {
      */
 	@Override
 	public User findOne(String userId) {
+		if(userId == null || "".equals(userId)){
+			return null;
+		}
 		return userDao.findOne("_id",new ObjectId(userId));
 		
 	}
