@@ -359,7 +359,7 @@ public class UserManageController {
 			@RequestParam(value = "status", required = true) String status,
 			@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
 		User user = null;
-		try {
+		/*try {
 			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
 			 
 		} catch (UnsupportedEncodingException e) {
@@ -381,7 +381,17 @@ public class UserManageController {
 			return "true";
 		}else{
 			return "false";
+		}*/
+		
+		if(loginName!=null && !loginName.equals("")){
+			user = userService.findUserByLoginName(loginName);
+			userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(status)));
+			int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
+			return "true";
+		}else{
+			return "false";
 		}
+
 		
 	}
 	

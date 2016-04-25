@@ -1,5 +1,6 @@
 package com.bbd.saas.dao.mongo;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -9,13 +10,17 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
+import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
+import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
@@ -113,6 +118,18 @@ public class UserDao extends BaseDAO<User, ObjectId> {
             query.filter("staffid",staffid);
         query.filter("site",site);
         return findOne(query);
+    }
+    
+    /**
+     * 更新用户状态
+     * @param loginName 、UserStatus
+     * return UpdateResults
+     */
+    public UpdateResults updateUserStatu(String loginName, UserStatus userStatus) {
+        Query<User> query = createQuery();
+        query.filter("loginName",loginName);
+        UpdateOperations<User> ops = createUpdateOperations().set("userStatus",userStatus).set("dateUpdate",new Date());
+        return update(query,ops);
     }
     
 }
