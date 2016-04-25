@@ -10,9 +10,9 @@
 	<jsp:include page="../main.jsp" flush="true" />
 	<style>
     	.order-info {
-	     	width:1140px ;
+	     	width:1170px ;
 			margin:40px auto 95px ;
-			height:720px ;
+			height:760px ;
 			background:#FFF ;
 			overflow:hidden ;
 			border-radius:6px ;
@@ -81,7 +81,7 @@
 		}
 		.order-map {
 			width:740px ;
-			height:720px ;
+			height:730px ;
 			overflow:hidden ;
 		}
 		</style>               
@@ -128,7 +128,7 @@
 	                    </div>
 	                </div>
 	            </div>
-	            <div class="fr order-map" id="allmap">
+	            <div class="fr order-map" id="allmap" style="margin:20;">
 	            }
 				</div>
 		<%
@@ -236,17 +236,19 @@
 	         }
 	     }
 	     // 绘制驾车步行线路
-	     for (var i = 0; i < planObj.getNumRoutes(); i ++){
-	         var route = planObj.getRoute(i);
-	         if (route.getDistance(false) <= 0){continue;}
-	         addPoints(route.getPath());
-	         // 驾车线路
-	         if(route.getRouteType() == BMAP_ROUTE_TYPE_DRIVING){
-	             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#0030ff",strokeOpacity:opacity,strokeWeight:6,enableMassClear:true}));
-	         }else{
-	             // 步行线路有可能为0
-	             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#30a208",strokeOpacity:0.75,strokeWeight:4,enableMassClear:true}));
-	         }
+	      if(planObj != null && planObj.getNumRoutes() != null){
+		     for (var i = 0; i < planObj.getNumRoutes(); i ++){
+		         var route = planObj.getRoute(i);
+		         if (route.getDistance(false) <= 0){continue;}
+		         addPoints(route.getPath());
+		         // 驾车线路
+		         if(route.getRouteType() == BMAP_ROUTE_TYPE_DRIVING){
+		             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#0030ff",strokeOpacity:opacity,strokeWeight:6,enableMassClear:true}));
+		         }else{
+		             // 步行线路有可能为0
+		             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#30a208",strokeOpacity:0.75,strokeWeight:4,enableMassClear:true}));
+		         }
+		     }
 	     }
 	     map.setViewport(bounds);
 	     // 终点
@@ -282,7 +284,7 @@
          %>
          			var lon = "<%=express.getLon()%>";
          			var lat = "<%=express.getLat()%>";
-		            if(lat != "" && lon != ""){
+		            if(lat != null && lat != "0.0" && lat != "" && lon != null && lon != "0.0" && lon != ""){
 		                dataDetail.push(new Array(lon,lat));
 		            }
          <%

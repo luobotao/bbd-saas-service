@@ -270,7 +270,7 @@ function dispatch() {
 		    }
 		},
 		error : function() {  
-			alert("服务器繁忙，请稍后再试！");  
+			//alert("服务器繁忙，请稍后再试！");  
 		}     
     });
 }  
@@ -291,7 +291,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);
 		},
         error : function() {  
-           	alert("加载分页数据异常！");  
+           //	alert("加载分页数据异常！");  
       	}    
     });	
 }	
