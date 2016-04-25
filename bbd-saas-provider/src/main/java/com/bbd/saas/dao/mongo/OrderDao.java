@@ -172,7 +172,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             }
         	//派件员
             if(StringUtils.isNotBlank(orderQueryVO.userId)){
-                query.filter("user._id", new ObjectId(orderQueryVO.userId));
+                query.filter("userId", new ObjectId(orderQueryVO.userId));
             }
         	//异常状态
             if(orderQueryVO.abnormalStatus != null){

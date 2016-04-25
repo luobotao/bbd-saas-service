@@ -9,9 +9,9 @@
 	<jsp:include page="../main.jsp" flush="true" />
 	<style>
     	.order-info {
-	     	width:1140px ;
+	     	width:1170px ;
 			margin:40px auto 95px ;
-			height:720px ;
+			height:760px ;
 			background:#FFF ;
 			overflow:hidden ;
 			border-radius:6px ;
@@ -80,7 +80,7 @@
 		}
 		.order-map {
 			width:740px ;
-			height:720px ;
+			height:730px ;
 			overflow:hidden ;
 		}
 		</style>               
@@ -89,17 +89,34 @@
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
 %>
-<body class="fbg">
-<body>
+<!-- <body class="fbg"> -->
+<body style="background-color:#f0f0f7 ">
     <div class="container">
-        <!-- Collect the nav links, forms, and other content for toggling -->
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<ul class="nav navbar-nav navbar-right f16">
-				<li><a href="<c:url value="/" />">首页</a></li>
-				<li><a href="javascript:void(0);"><i class="glyphicon glyphicon-user orange">${user.realName}</i></a></li>
-				<li><a href="<c:url value="/logout" />">退出登录</a></li>
-			</ul>
-		</div><!-- /.navbar-collapse -->
+       <nav class="navbar navbar-default b-navbar">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="<c:url value="/" />"><img src="<c:url value="/resources/images/logo.png" />" alt="logo" /></a>
+				</div>
+		
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav navbar-right f16">
+						<li><a href="<c:url value="/home" />">首页</a></li>
+						<li><a href="javascript:void(0);"><i class="p-icon p-user"></i>　<em class="orange">${user.realName}</em></a></li>
+						<li><a href="<c:url value="/logout" />">退出登录</a></li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+	
+		<!-- /.navbar-collapse -->
 		
         <div class="order-info">
         <%
@@ -127,8 +144,8 @@
 	                    </div>
 	                </div>
 	            </div>
-	            <div class="fr order-map" id="allmap">
-	            }
+	            <div class="fr order-map" id="allmap" style="margin:20;">
+	            
 				</div>
 		<%
 			}
@@ -235,17 +252,19 @@
 	         }
 	     }
 	     // 绘制驾车步行线路
-	     for (var i = 0; i < planObj.getNumRoutes(); i ++){
-	         var route = planObj.getRoute(i);
-	         if (route.getDistance(false) <= 0){continue;}
-	         addPoints(route.getPath());
-	         // 驾车线路
-	         if(route.getRouteType() == BMAP_ROUTE_TYPE_DRIVING){
-	             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#0030ff",strokeOpacity:opacity,strokeWeight:6,enableMassClear:true}));
-	         }else{
-	             // 步行线路有可能为0
-	             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#30a208",strokeOpacity:0.75,strokeWeight:4,enableMassClear:true}));
-	         }
+	      if(planObj != null && planObj.getNumRoutes() != null){
+		     for (var i = 0; i < planObj.getNumRoutes(); i ++){
+		         var route = planObj.getRoute(i);
+		         if (route.getDistance(false) <= 0){continue;}
+		         addPoints(route.getPath());
+		         // 驾车线路
+		         if(route.getRouteType() == BMAP_ROUTE_TYPE_DRIVING){
+		             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#0030ff",strokeOpacity:opacity,strokeWeight:6,enableMassClear:true}));
+		         }else{
+		             // 步行线路有可能为0
+		             map.addOverlay(new BMap.Polyline(route.getPath(), {strokeColor: "#30a208",strokeOpacity:0.75,strokeWeight:4,enableMassClear:true}));
+		         }
+		     }
 	     }
 	     map.setViewport(bounds);
 	     // 终点
@@ -281,7 +300,7 @@
          %>
          			var lon = "<%=express.getLon()%>";
          			var lat = "<%=express.getLat()%>";
-		            if(lat != "" && lon != ""){
+		            if(lat != null && lat != "0.0" && lat != "" && lon != null && lon != "0.0" && lon != ""){
 		                dataDetail.push(new Array(lon,lat));
 		            }
          <%

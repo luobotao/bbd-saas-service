@@ -9,7 +9,7 @@ import com.bbd.saas.utils.Htmls;
 public enum UserStatus {
 
 	VALID(1,"有效"),
-    INVALID(0,"无效");
+    INVALID(3,"无效");
     private int status;
     private String message;
     private UserStatus(int status, String message) {
