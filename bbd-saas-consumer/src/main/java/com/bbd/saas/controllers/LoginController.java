@@ -93,6 +93,10 @@ public class LoginController {
 					redirectAttrs.addFlashAttribute("message", "用户角色不可登录此系统");
 					return "redirect:/login";
 				}
+				int loginCount = user.getLoginCount();
+				loginCount = loginCount++;
+				user.setLoginCount(loginCount);
+				userService.save(user);
 				UserSession.put(response,user.getId().toHexString());//set adminid to cookies
 				adminService.put(user);//set user to redis
 				redirectAttrs.addFlashAttribute("user", user);
