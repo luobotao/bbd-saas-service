@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.OpenUserService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.UserRole;
@@ -35,6 +36,7 @@ import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.SignUtil;
 import com.bbd.saas.vo.UserQueryVO;
 
 /**
@@ -54,6 +56,8 @@ public class UserManageController {
 	AdminService adminService;
 	@Autowired
 	PostmanUserService userMysqlService;	
+	@Autowired
+	OpenUserService openUserMysqlService;	
 	
 	
 	/**
@@ -405,22 +409,50 @@ public class UserManageController {
      * @return "true"/"false"
      */
 	@ResponseBody
-	@RequestMapping(value="/changestatusOuter", method=RequestMethod.POST)
-	public String changestatusOuter(Model model,
-			@RequestParam(value = "loginName", required = true) String loginName,
-			@RequestParam(value = "status", required = true) String status,HttpServletResponse response) {
+	@RequestMapping(value="/changestatusOuter", method=RequestMethod.GET)
+	public String changestatusOuter(HttpServletRequest request,HttpServletResponse response) {
 		User user = null;
+		System.out.println();
+		String sign = request.getParameter("sign");
+		String code = request.getParameter("code");
+		String ts = request.getParameter("ts");
+		String loginName = request.getParameter("loginName");
+		String newStatus = request.getParameter("newStatus");
+		String oldStatus = request.getParameter("oldStatus");
+		//根据code查询对应的token
+		String token = openUserMysqlService.selectTokenByCode(code);
 		
-		if(loginName!=null && !loginName.equals("")){
-			user = userService.findUserByLoginName(loginName);
-			userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(status)));
-			int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
-			return "true";
+		//String checkSign = "code="+code+"&ts="+ts+"&loginName="+loginName+"&oldStatus="+oldStatus+"&newStatus="+newStatus;
+		
+		Map<Object, Object> m = new HashMap<Object, Object>();
+		m.put("code", code);
+		m.put("ts", ts);
+		m.put("loginName", loginName);
+		m.put("newStatus", newStatus);
+		m.put("oldStatus", oldStatus);
+		String getSign = SignUtil.makeOpenSign(m,token);
+		
+		if(getSign.equals(sign)){
+			//判断签名是否正确
+			if(loginName!=null && !loginName.equals("")){
+				user = userService.findUserByLoginName(loginName);
+				
+				if(user!=null && !user.getId().equals("")){ 
+					userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(newStatus)));
+					int ret = userMysqlService.updateById(Integer.parseInt(newStatus),user.getPostmanuserId());
+					return "true";
+				}else{
+					return "false";
+				}
+
+				
+			}else{
+				return "false";
+			}
 		}else{
 			return "false";
 		}
 
-		
 	}
 	
 	

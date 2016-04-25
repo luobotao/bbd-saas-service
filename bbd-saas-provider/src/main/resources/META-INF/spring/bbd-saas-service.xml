@@ -66,5 +66,10 @@
             <ref bean="postDeliveryDao"/>
         </property>
     </bean>
+    <bean id="openUserService" class="com.bbd.saas.api.impl.mysql.OpenUserServiceImpl">
+        <property name="openUserDao">
+            <ref bean="openUserDao"/>
+        </property>
+    </bean>
     <!--    end mysql services   -->
 </beans>
