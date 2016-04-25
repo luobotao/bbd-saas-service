@@ -166,7 +166,7 @@ public class PackageToSiteController {
 		if(orderParcel!=null){
 			Boolean flag = true;//是否可以更新包裹的状态
 			for(Order orderTemp : orderParcel.getOrderList()){
-				if(orderTemp.getOrderStatus()==OrderStatus.NOTARR){
+				if(orderTemp.getOrderStatus()==null || orderTemp.getOrderStatus()==OrderStatus.NOTARR){
 					flag = false;
 				}
 			}

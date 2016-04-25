@@ -25,8 +25,13 @@ public class AdminService {
     }
 
     public User get(Object key) {
-        User user =  (User) redisTemplate.opsForHash().get(Constants.REDIS_ADMIN_ID, key);
-        return user;
+        try {
+            User user =  (User) redisTemplate.opsForHash().get(Constants.REDIS_ADMIN_ID, key);
+            return user;
+        }catch (Exception exception){
+            return null;
+        }
+
     }
 
 }
