@@ -52,10 +52,10 @@ public interface PostmanUserDao {
     
     /**
      * 更新postmanUser
-     * @param status、id
+     * @param sta、id
      * @return 
      */
-    int updateById(@Param("status") Integer status,@Param("id") Integer id);
+    int updateById(@Param("sta") Integer sta,@Param("id") Integer id);
     
     /**
      * 更新postmanUser

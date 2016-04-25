@@ -78,8 +78,6 @@ public class HandleAbnormalController {
 		return "page/handleAbnormal";
 	}
 	
-	
-
 	//分页Ajax更新
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
@@ -96,6 +94,18 @@ public class HandleAbnormalController {
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		//查询派件员姓名电话
+		if(orderPage != null && orderPage.getDatas() != null){
+			List<Order> dataList = orderPage.getDatas();
+			User courier = null;
+			for(Order order : dataList){
+				courier = userService.findOne(order.getUserId());
+				UserVO userVO = new UserVO();
+				userVO.setLoginName(courier.getLoginName());
+				userVO.setRealName(courier.getRealName());
+				order.setUserVO(userVO);
+			}
+		}
 		return orderPage;		
 	}
 	/**************************重新分派***************开始***********************************/
@@ -129,7 +139,7 @@ public class HandleAbnormalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/reDispatch", method=RequestMethod.GET)
-	public Map<String, Object> reDispatch(String mailNum, String staffId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+	public Map<String, Object> reDispatch(String mailNum, String userId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
@@ -139,8 +149,8 @@ public class HandleAbnormalController {
 			map.put("operFlag", 0);//0:运单号不存在
 		}else{//运单存在
 			//查询派件员
-			User courier = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
-			order.setUser(courier);
+			User courier = userService.findOne(userId);
+			order.setUserId(userId);
 			order.setOrderStatus(OrderStatus.DISPATCHED);//更新运单状态--已分派
 			//更新物流信息
 			order.setExpressStatus(ExpressStatus.Delivering);
@@ -160,8 +170,7 @@ public class HandleAbnormalController {
 			Key<Order> r = orderService.save(order);
 			if(r != null){
 				//更新mysql
-				User user = userService.findOneBySiteByStaffid(currUser.getSite(), staffId);
-				postDeliveryService.updatePostAndStatusAndCompany(mailNum, user.getPostmanuserId(), staffId, "1", null);
+				postDeliveryService.updatePostAndStatusAndCompany(mailNum, courier.getPostmanuserId(), courier.getStaffid(), "1", null);
 				map.put("operFlag", 1);//1:分派成功
 				//刷新列表
 				map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
@@ -190,6 +199,18 @@ public class HandleAbnormalController {
 		orderQueryVO.areaCode = areaCode;
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		//查询派件员姓名电话
+		if(orderPage != null && orderPage.getDatas() != null){
+			List<Order> dataList = orderPage.getDatas();
+			User courier = null;
+			for(Order order : dataList){
+				courier = userService.findOne(order.getUserId());
+				UserVO userVO = new UserVO();
+				userVO.setLoginName(courier.getLoginName());
+				userVO.setRealName(courier.getRealName());
+				order.setUserVO(userVO);
+			}
+		}		
 		return orderPage;		
 	}
 	/**************************重新分派***************结束***********************************/
@@ -244,7 +265,7 @@ public class HandleAbnormalController {
 			remark.append(site.getAddress());
 			order.setAreaRemark(remark.toString());//站点的具体地址
 			order.setOrderStatus(null);//状态--为空
-			order.setUser(null);//未分派
+			order.setUserId("");//未分派
 			order.setDateUpd(new Date());//更新时间
 			//更新物流信息
 			addOrderExpress(order, currUser, site.getName());
@@ -281,7 +302,7 @@ public class HandleAbnormalController {
 		Express express = new Express();
 		express.setDateAdd(new Date());
 		//express.setRemark("已由【" + siteName + "】出库，转送到【" + order.getAreaName() + "】进行配送,操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
-		express.setRemark("已由【" + user.getSite().getName() + "】出库，转送到【" + order.getAreaName() + "】进行配送。操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
+		express.setRemark("已由【" + user.getSite().getName() + "】出库，转送到【" + order.getAreaName() + "】进行配送。");
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		boolean expressIsNotAdd = true;//防止多次添加
@@ -341,7 +362,7 @@ public class HandleAbnormalController {
 			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
 				||ExpressStatus.Delay.equals(order.getExpressStatus())
 				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-				if(order.getUser() == null){//未分派，可以分派
+				if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
 					//saveOrderMail(order, staffId, map);
 				}else{//重复扫描，此运单已分派过了
 					map.put("operFlag", 2);
@@ -379,7 +400,7 @@ public class HandleAbnormalController {
 			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
 				||ExpressStatus.Delay.equals(order.getExpressStatus())
 				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-				if(order.getUser() == null){//未分派，可以分派
+				if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
 					//saveOrderMail(order, staffId, map);
 				}else{//重复扫描，此运单已分派过了
 					map.put("operFlag", 2);

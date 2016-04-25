@@ -12,6 +12,7 @@ import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.dao.mongo.SiteDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
@@ -139,6 +140,9 @@ public class UserServiceImpl implements UserService {
      */
 	@Override
 	public User findOne(String userId) {
+		if(userId == null || "".equals(userId)){
+			return null;
+		}
 		return userDao.findOne("_id",new ObjectId(userId));
 		
 	}
@@ -153,5 +157,12 @@ public class UserServiceImpl implements UserService {
     }
 	
 	
-	
+    /**
+     * 更新用户状态
+     * @param loginName 、UserStatus
+     * return UpdateResults
+     */
+    public void updateUserStatu(String loginName, UserStatus userStatus) {
+    	userDao.updateUserStatu(loginName, userStatus);
+    }
 }

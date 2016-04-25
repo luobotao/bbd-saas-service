@@ -53,7 +53,7 @@ public interface PostmanUserService {
     
     /**
      * 更新postmanUser
-     * @param status、id
+     * @param sta、id
      * @return 
      */
     int updateById(Integer status,Integer id);

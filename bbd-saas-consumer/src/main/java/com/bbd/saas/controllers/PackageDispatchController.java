@@ -96,6 +96,18 @@ public class PackageDispatchController {
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		//查询派件员姓名电话
+		if(orderPage != null && orderPage.getDatas() != null){
+			List<Order> dataList = orderPage.getDatas();
+			User courier = null;
+			for(Order order : dataList){
+				courier = userService.findOne(order.getUserId());
+				UserVO userVO = new UserVO();
+				userVO.setLoginName(courier.getLoginName());
+				userVO.setRealName(courier.getRealName());
+				order.setUserVO(userVO);
+			}
+		}				
 		return orderPage;
 	}
 	
@@ -119,15 +131,15 @@ public class PackageDispatchController {
 		if(order == null){//运单不存在,与站点无关
 			map.put("operFlag", 0);//0:运单号不存在
 		}else{//运单存在
-			//当运单到达站点(未分派)，首次分派;当运单状态处于滞留、拒收时，可以重新分派
+			//当运单到达站点(未分派)，首次分派;当运单状态处于滞留时，可以重新分派
 			if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
-				||OrderStatus.RETENTION.equals(order.getOrderStatus()) //滞留
-				|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
+				||OrderStatus.RETENTION.equals(order.getOrderStatus())) {//滞留
+				//|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
 				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);//更新mysql
-			}else if(order.getUser() != null){//重复扫描，此运单已分派过了
-				map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
+			}else if(order.getUserId() != null && !"".equals(order.getUserId())){//重复扫描，此运单已分派过了
+				map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（只有状态为未分派、滞留的运单才能分派！）。
 			}else{
-				map.put("operFlag", 4);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（不可预料的错误）。
+				map.put("operFlag", 4);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（只有状态为未分派、滞留的运单才能分派！）。
 			}
 			//saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
 		}
@@ -147,7 +159,7 @@ public class PackageDispatchController {
 		//查询派件员信息
 		User user = userService.findOne(courierId);
 		//运单分派给派件员
-		order.setUser(user);
+		order.setUserId(courierId);
 		//更新运单状态--已分派
 		order.setOrderStatus(OrderStatus.DISPATCHED);
 		//更新物流信息
@@ -164,6 +176,17 @@ public class PackageDispatchController {
 			orderQueryVO.areaCode = areaCode;
 			//查询数据
 			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+			if(orderPage != null && orderPage.getDatas() != null){
+				List<Order> dataList = orderPage.getDatas();
+				User courier = null;
+				for(Order order1 : dataList){
+					courier = userService.findOne(order1.getUserId());
+					UserVO userVO = new UserVO();
+					userVO.setLoginName(courier.getLoginName());
+					userVO.setRealName(courier.getRealName());
+					order1.setUserVO(userVO);
+				}
+			}		
 			map.put("orderPage", orderPage); 
 		}else{
 			map.put("operFlag", 3);//3:分派失败
