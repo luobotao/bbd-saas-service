@@ -5,10 +5,15 @@ import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.Goods;
 import com.bbd.saas.vo.Reciever;
 import com.bbd.saas.vo.Sender;
+import com.bbd.saas.vo.UserVO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -35,8 +40,7 @@ public class Order implements Serializable {
     private Sender sender;
     @Embedded
     private Reciever reciever;
-    @Embedded
-    private User user;
+    private String userId;
     private Srcs src;
     private OrderStatus orderStatus;
     private ExpressStatus expressStatus;
@@ -58,6 +62,8 @@ public class Order implements Serializable {
     private String parcelCode;
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message
+    @Transient
+    private UserVO userVO;//传递jsp页面快递员姓名和电话
 
 
 
@@ -133,12 +139,13 @@ public class Order implements Serializable {
         this.reciever = reciever;
     }
     
-    public User getUser() {
-		return user;
+   
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public Srcs getSrc() {
@@ -288,4 +295,38 @@ public class Order implements Serializable {
 	public String getSrcMessage() {
         return src.getMessage();
     }
+	public UserVO getUserVO() {
+		return userVO;
+	}
+
+	public void setUserVO(UserVO userVO) {
+		this.userVO = userVO;
+	}
+	public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
+		if(expressList == null){
+			return "";
+		}
+		ObjectMapper mapper = new ObjectMapper(); 
+		String json = mapper.writeValueAsString(expressList).replaceAll("\"", "\\\"");
+		json = json.replaceAll("\"", "`");
+		System.out.println(json);
+		//json = "{`name`:`lisi`}";
+        return json;  
+	}
+	public static void main(String[] args) {
+		Express express = new Express();
+		express.setDateAdd(new Date());
+		express.setLat("lat123.23");
+		express.setLon("lon124.36");
+		express.setRemark("remark备注");
+		List<Express> expressList = new ArrayList<Express>(); 
+		expressList.add(express);
+		try {
+			getExpressList(expressList);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }

@@ -97,40 +97,40 @@
 								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUser() == null){//未分派
+									if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派
 								%>
 										<td></td>
 										<td></td>
 								<%
 									}else{
 								%>
-										<td><%=order.getUser().getRealName()%></td>
-										<td><%=order.getUser().getLoginName()%></td>
+										<td><%=order.getUserVO().getRealName()%></td>
+										<td><%=order.getUserVO().getLoginName()%></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.RETENTION){
 								%>
 									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
 									<td>
-										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a>
-										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
+										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
+										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 									</td>
 								<%
 									}else{
 								%>
 									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
 									<td>
-										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a> --%>
-										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
+										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a> --%>
+										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 									</td>
 								<%
 									}
 								%>
 								<%-- <td>
-									<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')">重新分派</a>
-									<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')">转其他站点</a>
-									<!-- <a href="javascript:void(0);" onclick="showOtherExpressDiv()">转其他快递</a> -->
-									<!-- <a href="javascript:void(0);" onclick="showApplyReturnDiv()">申请退货</a> -->
+									<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
+									<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
+									<!-- <a href="javascript:void(0);" onclick="showOtherExpressDiv()" class="orange">转其他快递</a> -->
+									<!-- <a href="javascript:void(0);" onclick="showApplyReturnDiv()" class="orange">申请退货</a> -->
 								</td> --%>
 							</tr>
 						<%
@@ -361,21 +361,21 @@ function getRowHtml(data){
 	row += "<td>" + data.user.loginName + "</td>";
 	 */
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.user == null){
+	if(data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + "</td>";
-		row += "<td>" + data.user.loginName + "</td>";
+		row += "<td>" + data.userVO.realName + "</td>";
+		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
-		row += "<td>" + "<%=AbnormalStatus.RETENTION.getMessage()%>" + "</td>";
+		row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
+		row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a></td>";
 	}else{
-		row += "<td>" + "<%=AbnormalStatus.REJECTION.getMessage()%>" + "</td>";
+		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
 	}
-	
-	row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")'>重新分派</a>";
-	row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")'>转其他站点</a>";
 	/* row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
 	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>"; */
 	row += "</tr>";
@@ -409,7 +409,7 @@ function showCourierDiv(mailNumStr) {
 
 	mailNum = mailNumStr;
 	//staffId = staffIdStr;
-	console.log("v==mailNum=="+mailNum);
+	//console.log("v==mailNum=="+mailNum);
 	//console.log("courierList===="+courierList);
 	if(courierList != null){
 		loadCouriers(courierList);
@@ -441,7 +441,7 @@ function loadCouriers(courierList, staffId) {
 	if(courierList != null){
 	    for(var i = 0; i < courierList.length; i++){
 			data = courierList[i];
-			courier_select.append("<option value='"+data.staffId+"'>"+data.realName+"</option>");
+			courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
 		}
 	}
 }
@@ -464,7 +464,7 @@ function chooseCourier() {
         url : "<%=path%>/handleAbnormal/reDispatch",//路径  
         data : {  
             "mailNum" : mailNum, //全局变量
-            "staffId" : $("#courier_select").val(), //全局变量
+            "userId" : $("#courier_select").val(), //全局变量
             "pageIndex" : pageIndex,//更新列表的参数
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 
@@ -523,8 +523,9 @@ function showOtherSiteDiv(mailNumStr) {
 	  		}    
 	    });
 	}
-	$(".j-site-pop").modal("show");
-	//$("#chooseOtherSite_div").modal("show");
+	//$(".j-site-pop").modal("show");
+	//alert(123);
+	$("#chooseOtherSite_div").modal("show");
 }
 //把站点添加到下拉框中
 function loadSites(siteList) {
@@ -541,8 +542,8 @@ function loadSites(siteList) {
 //隐藏转其他站点div
 function hideOtherSiteDiv() {
 	mailNum = null;
-	$(".j-site-pop").modal("hide");
-	//$("#chooseOtherSite_div").modal("hide");
+	//$(".j-site-pop").modal("hide");
+	$("#chooseOtherSite_div").modal("hide");
 }
 //转其他站点
 function chooseOtherSite() {
@@ -592,7 +593,7 @@ function initExpressCompany() {
         	
 		var express_select = $("#express_select");
 		// 清空select  
-		courier_select.empty(); 
+		express_select.empty(); 
 		if(dataList != null){
 			for(var i = 0; i < dataList.length; i++){
 				data = dataList[i];

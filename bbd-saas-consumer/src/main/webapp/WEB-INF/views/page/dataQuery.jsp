@@ -131,15 +131,15 @@
 									<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 									<%
-										if(order.getUser() == null){//未分派
+										if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
 									%>
 											<td></td>
 											<td></td>
 									<%
 										}else{
 									%>
-											<td><%=order.getUser().getRealName()%></td>
-											<td><%=order.getUser().getLoginName()%></td>
+											<td><%=order.getUserVO().getRealName()%></td>
+											<td><%=order.getUserVO().getLoginName()%></td>
 									<%
 										}
 										if(order.getOrderStatus() == null){//未到站
@@ -279,11 +279,11 @@ function getRowHtml(data){
 	row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.user == null){
+	if(data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + "</td>";
-		row += "<td>" + data.user.loginName + "</td>";
+		row += "<td>" + data.userVO.realName + "</td>";
+		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
 	row += "<td>" + getStatus(data.orderStatus) + "</td>";

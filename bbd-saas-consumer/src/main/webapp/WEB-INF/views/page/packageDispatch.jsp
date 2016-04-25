@@ -63,14 +63,14 @@
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
-	  							<span class="ft12 pt20" id="courierName"></span>
+	  							<span class="ft16 pt20" id="courierName"></span>
 	  							<input id="courierId" type="hidden" value="" /> 
 	  						</div>
 	  						
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
 	  							<label>扫描运单号：</label>
 	  							<input id="mailNum" name="mailNum" type="text" placeholder="请扫描运单号" class="form-control" onkeypress="enterPress(event)" />
-	  							<span class="pl20 ft12" id="mailNum_check"> </span>	
+	  							<span class="pl20 ft16" id="mailNum_check"> </span>	
 	  						</div>
 	  					</div>
 	  				</div>
@@ -109,24 +109,24 @@
 								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUser() == null){//未分派
+									if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
 								%>
 										<td></td>
 										<td></td>
 								<%
 									}else{
 								%>
-										<td><%=order.getUser().getRealName()%></td>
-										<td><%=order.getUser().getLoginName()%></td>
+										<td><%=order.getUserVO().getRealName()%></td>
+										<td><%=order.getUserVO().getLoginName()%></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
 								%>
-									<td><%=DispatchStatus.NOTDISPATCH.getMessage()%></td>
+									<td><em class="orange"><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>
 								<%
 									}else{
 								%>
-									<td><%=DispatchStatus.DISPATCHED.getMessage()%></td>
+									<td><em class="c-green"><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>
 								<%
 									}
 								%>
@@ -266,7 +266,7 @@ function dispatch() {
 		    }else if(data.operFlag == 3){
 		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派失败，请重试！");
 		    }else{
-		    	$("#mailNum_check").text("只有状态为未分派、滞留、拒收的运单才能分派！");
+		    	$("#mailNum_check").text("只有状态为未分派、滞留的运单才能分派！");
 		    }
 		},
 		error : function() {  
@@ -324,17 +324,17 @@ function getRowHtml(data){
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.user == null){
+	if(data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + "</td>";
-		row += "<td>" + data.user.loginName + "</td>";
+		row += "<td>" + data.userVO.realName + "</td>";
+		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
-		row += "<td>" + "<%=DispatchStatus.NOTDISPATCH.getMessage()%>" + "</td>";
+		row += "<td><em class='orange'><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>";
 	}else{
-		row += "<td>" + "<%=DispatchStatus.DISPATCHED.getMessage()%>" + "</td>";
+		row += "<td><em class='c-green'><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>";
 	}
 	row += "</tr>";
 	return row;
