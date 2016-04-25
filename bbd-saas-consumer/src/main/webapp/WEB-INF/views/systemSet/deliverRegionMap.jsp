@@ -77,10 +77,13 @@
 
 								</div>
 								<div class="col-md-12 pb20">
-									<div class="b-map"><div id="allmapPs" style="height: 473px;"></div></div>
-								</div>
-								<div class="col-md-12 form-inline form-inline-n">
-									<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn">　保存　</a>
+									<div class="b-map">
+										<div id="allmapPs" style="height: 473px;"></div>
+										<div class="draw-btn">
+											<div class="bg-alpha"></div>
+											<a href="javascript:void(0);" class="ser-btn l ml12" id="saveSiteBtn">　保存　</a>
+										</div>
+									</div>
 								</div>
 							</form>
 						</div>
@@ -90,16 +93,16 @@
 						<div class="row tab-pane fade" id="draw-map">
 							<div class="col-md-12 pb20">
 								<div class="b-map">
-									<div id="allmap" style="height: 473px;"></div>
+									<div id="allmap" class="bod-rad" style="height: 473px;"></div>
 									<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
 									<div class="b-f-screen b-forward-full j-full-btn"></div>
+									<div class="draw-btn">
+										<div class="bg-alpha"></div>
+										<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
+										<a href="javascript:void(0);" class="ser-btn c ml12" onclick="openDraw()">绘制</a>
+										<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
+									</div>
 								</div>
-							</div>
-
-							<div class="col-md-12 mt20">
-								<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
-								<a href="javascript:void(0);" class="ser-btn c" onclick="openDraw()">绘制</a>
-								<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
 							</div>
 						</div>
 						<!-- E 绘制电子围栏 -->
@@ -424,8 +427,10 @@
 			this.status = true;
 			this.map = new BMap.Map('allmap',{enableMapClick:false,minZoom:11,noAnimation:true});
 			this.point = new BMap.Point(${site.lng},${site.lat});
-			this.map.centerAndZoom(this.point,15);
+			this.map.centerAndZoom(this.point,12);
 			this.map.enableScrollWheelZoom();
+			this.map.disableInertialDragging();
+
 			var map = this.map;
 			var styleOptions = this.styleOptions;
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
@@ -621,24 +626,28 @@
 		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
 		var index=$(this).parent().index();
 		if(index == 1){
-
+			window.setTimeout(function(){
+				bmap.map.panTo(new BMap.Point(${site.lng},${site.lat}));
+			}, 500);
 		}
 	})
 
-	var winhei2=$(window).height();
+	var winhei2=window.screen.availHeight;
 	var inithei=$("#allmap").height();
 
 	$(".j-full-btn").on("click",function(){
 		if($(this).hasClass("b-forward-full")){
 			$(".pos-footer").hide();
-			$("#allmap,.b-map").css({height:winhei2-56-60,marginLeft:"-10px"});
+			$("#allmap,.b-map").css({height:winhei2-60-84,marginLeft:"-10px"});
 //			$(".b-f-screen,.pos-adr").css({right:"25px"});
+			$(".draw-btn").css({marginLeft:"-10px"})
 			$("#draw-map").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
 			$(".pos-footer").show();
 			$("#allmap,.b-map").css({height:inithei,margin:0});
 //			$(".b-f-screen,.pos-adr").css({right:"15px"});
+			$(".draw-btn").css({marginLeft:"0"})
 			$("#draw-map").removeClass("full-map");
 			$(this).removeClass("b-back-full").addClass("b-forward-full");
 		}

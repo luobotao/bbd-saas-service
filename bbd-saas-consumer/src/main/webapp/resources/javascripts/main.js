@@ -82,52 +82,18 @@ $(function () {
     })
 
 
-    //引导页
-    $(".b-guide-con .step:eq(0)").show();
-    //点击保存
-    mcount = 0;
-    $('.next-step').click(function () {
-        //alert(lilen)
-        $('.pre-step').show();
-        mcount += 1
-        // 3的倍数
-        if (mcount == 3) {
-            mcount = 2;
-            return;
-        } else if (mcount < 3) {
-            $(".b-guide-tab li").eq(mcount).addClass("guide-cur");
-        }
-
-        showOther(mcount)
-    });
-    //点击上一步
-    $('.pre-step').click(function () {
-        mcount -= 1
-        if (mcount <= 0) {
-            mcount = 0;
-            $(".b-guide-tab li").eq(mcount + 1).removeClass("guide-cur");
-            $('.pre-step').hide();
-
-        } else if (mcount >= 0) {
-            //alert(mcount)
-            $(".b-guide-tab li").eq(mcount + 1).removeClass("guide-cur");
-        }
-        showOther(mcount);
-    });
-    //点击左右按钮执行的函数
-    function showOther(mcount) {
-        var viewwid = $('.b-tab-all').width();
-        $(".b-guide-con").css({"margin-left": -viewwid * mcount + 'px'});
 
 
-    };
+    // 导入文件
+    $(".import-guid-file").on("change",function(){
+        $(".j-import-guid-pop").addClass("in").show();
+    })
 
     // 导入文件
     $(".import-file").on("change",function(){
         $(".j-import-pop").modal();
     })
 
-    $(".j-guide-pop").modal();
 })
 //iframe 自适应高度
 function iFrameHeight() {

@@ -62,7 +62,7 @@
 	  					<div class="b-line"></div>
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
+	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn d">选择派件员</a>
 	  							<span class="ft16 pt20" id="courierName"></span>
 	  							<input id="courierId" type="hidden" value="" /> 
 	  						</div>
@@ -254,8 +254,9 @@ function dispatch() {
 		    "mailNum" : $("#mailNum").val(),
 		    "courierId" : $("#courier_select").val()  
 		},//数据，这里使用的是Json格式进行传输  
+		dataType: "json",
 		success : function(data) {//返回数据根据结果进行相应的处理  
-		   	 if (data.operFlag == 1) { 
+		   	if (data.operFlag == 1) { 
 		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派成功！");
 		    	//刷新列表
 		    	refreshTable(data.orderPage);
@@ -270,7 +271,7 @@ function dispatch() {
 		    }
 		},
 		error : function() {  
-			alert("服务器繁忙，请稍后再试！");  
+			//alert("服务器繁忙，请稍后再试！");  
 		}     
     });
 }  
@@ -291,7 +292,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);
 		},
         error : function() {  
-           	alert("加载分页数据异常！");  
+           //	alert("加载分页数据异常！");  
       	}    
     });	
 }	

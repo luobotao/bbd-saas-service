@@ -1,18 +1,18 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.vo.Express" %>
-<%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="com.bbd.saas.utils.Dates" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
-	<jsp:include page="../main.jsp" flush="true" />
+	<%-- <link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
+	<jsp:include page="../views/main.jsp" flush="true" /> --%>
 	<style>
     	.order-info {
-	     	width:1170px ;
-			margin:40px auto 95px ;
-			height:760px ;
+    		/* min-width: 800px; */
+	     	width:990px ;
+			margin:20px auto 35px ;
+			height:600px ;
 			background:#FFF ;
 			overflow:hidden ;
 			border-radius:6px ;
@@ -23,9 +23,10 @@
 			position:absolute ;
 			top:0 ;
 			left:0 ;
-			width:400px ;
+			/* min-width: 260px; */
+			width:350px ;
 			border-right:1px solid #d7d6eb ;
-			height:720px ;
+			height:600px ;
 		}
 		.order-number h2 {
 			display:block ;
@@ -42,11 +43,11 @@
 			text-overflow: ellipsis ;
 		}
 		.order-show {
-			height:620px ;
+			height:465px ;
 			overflow:auto ;
 		}
 		.order-show-padding {
-			padding:25px 36px ;
+			padding:2px 10px ;
 		}
 		.order-time {
 			font-size:14px ;
@@ -80,97 +81,97 @@
 			color:#38a7f8 ;
 		}
 		.order-map {
-			width:740px ;
-			height:730px ;
+			width:620px ;
+			height:580px ;
 			overflow:hidden ;
 		}
 		</style>               
 </head>
-<%
-	String proPath = request.getContextPath();
-	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
-%>
-<!-- <body class="fbg"> -->
-<body style="background-color:#f0f0f7 ">
-    <div class="container">
-       <nav class="navbar navbar-default b-navbar">
-			<div class="container-fluid">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="<c:url value="/" />"><img src="<c:url value="/resources/images/logo.png" />" alt="logo" /></a>
+
+<body class="fbg">
+<!--S 显示物流地图-->
+<div id="mailMap" class="j-site-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-modal-dialog" role="document" style="width:1030px;">
+		<div class="modal-content clearfix">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">转其他站点</h4>
+			</div>
+			<div class="modal-body b-modal-body order-info">
+				<!-- map start -->
+				<div class="order-number fl" style=" display:inline">
+				     <h2>运单号：<span id="map_mailNum"></span></h2>
+				     <div class="order-show">
+				         <div class="order-show-padding" id="mailsDiv">
+				         </div>
+				     </div>
 				</div>
-		
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav navbar-right f16">
-						<li><a href="<c:url value="/home" />">首页</a></li>
-						<li><a href="javascript:void(0);"><i class="p-icon p-user"></i>　<em class="orange">${user.realName}</em></a></li>
-						<li><a href="<c:url value="/logout" />">退出登录</a></li>
-					</ul>
-				</div><!-- /.navbar-collapse -->
-			</div><!-- /.container-fluid -->
-		</nav>
-	
-		<!-- /.navbar-collapse -->
-		
-        <div class="order-info">
-        <%
-			Order order = (Order)request.getAttribute("order");
-			if(order != null){
-		%>
-				<div class="order-number">
-	                <h2>运单号：<%=order.getMailNum()%></h2>
-	                <div class="order-show">
-	                    <div class="order-show-padding" id="mailsDiv">
-	                    <%
-	                    if(order.getExpresses() != null){ 
-	                    	for(Express express : order.getExpresses()){
-	                    %>
-	                    	<p class="order-time">
-	                            <i></i>
-	                            <%=Dates.formatDateTime_New(express.getDateAdd())%>
-	                        </p>
-	                        <p class="order-cont <% if(express.getRemark().indexOf("已签收") > -1){%>order-success<%} %>" >
-	                        	<%=express.getRemark()%>  <br />      
-	                        </p>
-	                    <%
-	                    	}
-	                    } %>
-	                    </div>
-	                </div>
-	            </div>
-	            <div class="fr order-map" id="allmap" style="margin:20;">
-	            
-				</div>
-		<%
-			}
-		%>
+				<!-- <div  class="fl" style=" display:inline">
+				         
+				       
+				</div> -->
+				<div id="allmap" class="fr order-map" style="margin:-30px"></div> 
+				
+				<!-- map end -->
+			</div> <!-- modal body end -->
 		</div>
 	</div>
+</div>
+<!--E 显示物流地图-->
+
+    
 	
 </body>       
-<!-- S footer -->
-<footer class="pos-footer tc">
-    <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
-</footer>
-<!-- E footer -->
+<!-- 
 
 <script src="<c:url value="/resources/javascripts/timeUtil.js"/>" >   </script>
 
+ -->
+
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <script type="text/javascript">
-     // 百度地图API功能
-     var map = new BMap.Map("allmap");
-     var bounds = null;
-     var linesPoints = null;
-
-     showmap();
+	var dataDetail = new Array();
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");
+    var bounds = null;
+    var linesPoints = null;  
+        
+	//load map data
+	function LoadMailAndMapData(mailNum, expressListJson) {
+		expressListJson = expressListJson.replace(/`/g, "\'");
+		//console.log(expressListJson);
+		//var expressList = eval('(' + expressListJson + ')'); 
+		var expressList = eval(expressListJson);
+        $("#map_mailNum").html(mailNum);//运单号
+        //	物流信息
+        mailDatas = "";
+        var lon = "";
+        var lat = "";
+        if(expressList != null){
+        	for(var index in expressList){
+        		var express = expressList[index];
+        		mailDatas += "<p class='order-time'><i></i>";
+        		mailDatas += getDate1(express.dateAdd);
+        		mailDatas += "<p class='order-cont";
+        		if(express.remark != null && express.remark.indexOf("已签收") > -1){
+        			mailDatas += " order-success";
+        		}
+        		mailDatas += "'>" + express.remark + "  <br/> </p>";
+        		lon = express.lon;
+         		lat = express.lat;
+		        if(lat != null && lat != "0.0" && lat != "" && lon != null && lon != "0.0" && lon != ""){
+		            dataDetail.push(new Array(lon,lat));
+		        }
+        	}
+        } 
+        showmap();
+        $("#mailsDiv").html(mailDatas);//运单物流信息
+        $("#mailMap").modal("show");
+        
+        
+    }
+	showmap();
+     
 
      function initMap() {
         map.enableScrollWheelZoom();//启用滚轮放大缩小
@@ -252,8 +253,9 @@
 	             b.push(points[i]);
 	         }
 	     }
+	     //console.log("results===="+results + "planObj==="+planObj );
 	     // 绘制驾车步行线路
-	      if(planObj != null && planObj.getNumRoutes() != null){
+	     if(planObj != null && planObj.getNumRoutes() != null){
 		     for (var i = 0; i < planObj.getNumRoutes(); i ++){
 		         var route = planObj.getRoute(i);
 		         if (route.getDistance(false) <= 0){continue;}
@@ -267,6 +269,8 @@
 		         }
 		     }
 	     }
+	     
+	     
 	     map.setViewport(bounds);
 	     // 终点
 	     addMarkerFun(results.getEnd().point,1,1);
@@ -284,30 +288,7 @@
 	     driving4.search(spoi2, epoi);                                       // 搜索一条线路
 	 }
      function showmap(){
-         var dataDetail = new Array();
-         <%-- var order = <%=order %>;
-         if(order != null && order.expresses != null){
-         	for (express in order.expresses){
-         		 var lon = express.lon;
-	             var lat = express.lat;
-	             if(lat!="" && lon!=""){
-	                 dataDetail.push(new Array(lon,lat));
-	             }
-         	}
-         } --%>
-          <%
-         	if(order != null && order.getExpresses() != null){
-         		for(Express express : order.getExpresses()){
-         %>
-         			var lon = "<%=express.getLon()%>";
-         			var lat = "<%=express.getLat()%>";
-		            if(lat != null && lat != "0.0" && lat != "" && lon != null && lon != "0.0" && lon != ""){
-		                dataDetail.push(new Array(lon,lat));
-		            }
-         <%
-         		}
-         	}
-         %> 
+         
          initMap();
          if(dataDetail.length>0){
              map.centerAndZoom(new BMap.Point(dataDetail[0][0],dataDetail[0][1]), 18);// 初始化地图,设置中心点坐标和地图级别。

@@ -18,10 +18,7 @@ import com.bbd.saas.form.SiteForm;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.ExportUtil;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.OSSUtils;
+import com.bbd.saas.utils.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -254,11 +251,11 @@ public class SiteController {
 		try
 		{
 			ServletOutputStream outputStream = response.getOutputStream();
-			String fileName = new String((siteName).getBytes(), "ISO8859_1")+Dates.formatDateTime_New(new Date());
+			String fileName = new String((siteName).getBytes(), "ISO8859_1")+Dates.formatDate2(new Date());
 			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
 			PageList<SiteKeyword> siteKeywordPageList = siteKeywordApi.findSiteKeyword(siteId+"",null,null,0,MAXSIZE,"");
 			List<SiteKeyword> siteKeywordList = siteKeywordPageList.list;
-			String[] titles = { "省/直辖市", "市", "区", "地址关键词", "站点" };
+			String[] titles = { "省/直辖市", "市", "区", "地址关键词" };
 			exportExcel(siteName,siteKeywordList, titles, outputStream);
 		}
 		catch (IOException e) {
@@ -309,9 +306,6 @@ public class SiteController {
 				cell.setCellStyle(bodyStyle);
 				cell.setCellValue(siteKeyword.getKeyword());
 
-				cell = bodyRow.createCell(4);
-				cell.setCellStyle(bodyStyle);
-				cell.setCellValue(siteName);
 			}
 		}
 		try
@@ -344,10 +338,10 @@ public class SiteController {
      */
 	@RequestMapping(value="/downloadSiteKeywordTemplate", method=RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadSiteKeywordTemplate(HttpServletResponse response) throws IOException {
-		String fileName="siteKeywordTemplate.xlsx";//new String("你好.xlsx".getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
+		String fileName="地址关键词模板.xlsx";//new String("地址关键词模板.xlsx".getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
 		File file = getDictionaryFile(fileName);
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentDispositionFormData("attachment", fileName);
+		headers.setContentDispositionFormData("attachment", new String("地址关键词模板.xlsx".getBytes("UTF-8"),"iso-8859-1"));
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),
 				headers, HttpStatus.CREATED);
@@ -384,5 +378,91 @@ public class SiteController {
 		Result result = sitePoiApi.updateSiteEfence(siteId,points);
 		logger.info(result.code+":"+result.toString());
 		return "success";
+	}
+
+	//--------------------------站点配送区域引导--------------------------------------------------
+	@ResponseBody
+	@RequestMapping(value="/deliverRegionWithAjax", method=RequestMethod.POST)
+	public Map<String, Object> deliverRegionWithAjax(Model model, HttpServletRequest request){
+		return dealSiteKeywordWithAjax(request);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "importSiteKeywordFileWithAjax", method=RequestMethod.POST)
+	public   Map<String, Object> importSiteKeywordFileWithAjax(@RequestParam("file") MultipartFile file,  RedirectAttributes redirectAttributes,HttpServletRequest request) {
+		MultipartHttpServletRequest mulRequest = (MultipartHttpServletRequest) request;
+		MultipartFile fileTmp = mulRequest.getFile("file");
+		String filename = fileTmp.getOriginalFilename();
+		if (filename == null || "".equals(filename)){
+			return null;
+		}
+		User user = adminService.get(UserSession.get(request));
+		String siteId = user.getSite().getId().toString();
+		try	{
+			InputStream input = fileTmp.getInputStream();
+			XSSFWorkbook workBook = new XSSFWorkbook(input);
+			XSSFSheet sheet = workBook.getSheetAt(0);
+			if (sheet != null){
+				for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++){
+					XSSFRow row = sheet.getRow(i);
+					Result result = siteKeywordApi.addSitePoiKeyword(siteId,row.getCell(0).toString(),row.getCell(1).toString(),row.getCell(2).toString(),row.getCell(3).toString());
+					logger.info("[import result]"+result.toString());
+					logger.info("成功导入"+i+"条，地址："+row.getCell(3).toString());
+				}
+			}
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		Map<String, Object> model = dealSiteKeywordWithAjax(request);
+		return model;
+	}
+
+	/**
+	 * 处理ajax返回的关键词的信息
+	 * @param request
+	 * @return
+     */
+	public  Map<String, Object> dealSiteKeywordWithAjax(HttpServletRequest request) {
+		//获取用户站点信息
+		//--------panel 1-----------------------
+		User user = adminService.get(UserSession.get(request));
+		Site site = siteService.findSite(user.getSite().getId().toString());
+		String between = request.getParameter("between");
+		String keyword = request.getParameter("keyword")==null?"":request.getParameter("keyword");
+		int page = Numbers.parseInt(request.getParameter("page"),0);
+		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+		if(StringUtils.isNotBlank(between)) {//预计到站时间
+			DateBetween dateBetween = new DateBetween(between);
+			logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
+			//导入地址关键词
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId()+"",dateBetween.getStart(),dateBetween.getEnd(),page,10,keyword);
+		}else{
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
+		}
+		Map<String, Object> modelMap = new HashMap<String, Object>(4);
+		modelMap.put("siteKeywordPageList", siteKeywordPage.list);
+		modelMap.put("page", siteKeywordPage.getPage());
+		modelMap.put("pageNum", siteKeywordPage.getPageNum());
+		modelMap.put("pageCount", siteKeywordPage.getCount());
+		return modelMap;
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/deleteSitePoiKeywordWithAjax/{id}", method=RequestMethod.GET)
+	public Map<String, Object> deleteSitePoiKeywordWithAjax(@PathVariable String id, Model model, HttpServletRequest request){
+		Result result = siteKeywordApi.deleteSitePoiKeyword(id);
+		return dealSiteKeywordWithAjax(request);
+	}
+
+
+
+	@ResponseBody
+	@RequestMapping(value="/piliangDeleteSitePoiKeywordWithAjax/{ids}", method=RequestMethod.GET)
+	public Map<String, Object> piliangDeleteSitePoiKeywordWithAjax(@PathVariable String ids, Model model, HttpServletRequest request){
+		List<String> idList = Arrays.asList(ids.split(","));
+		Result result = siteKeywordApi.deleteSitePoiKeyword(idList);
+		logger.info("批量删除完成");
+		return dealSiteKeywordWithAjax(request);
 	}
 }

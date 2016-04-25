@@ -67,11 +67,11 @@
 									<%=ArriveStatus.Srcs2HTML(-1)%>
 								</select>
 							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
 								<label>预计到站时间：</label>
 								<input id="between" name="between" type="text" class="form-control" placeholder="请选择预计到站时间" value="${between}"/>
 							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+							<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>搜索</a>
 							</div>
 						</div>
@@ -81,7 +81,7 @@
 								<input id="parcelCode" name="parcelCode" class="form-control" type="text" onkeypress="enterPress(event)" />
 								<p class="help-block" id="parcelCodeP" style="display:none;"></p>
 							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
 								<label>扫描运单号：　</label>
 								<input id="mailNum" name="mailNum" class="form-control" type="text" onkeypress="enterPress(event)"/>
 								<p class="help-block" id="mailNumP" style="display:none;"></p>

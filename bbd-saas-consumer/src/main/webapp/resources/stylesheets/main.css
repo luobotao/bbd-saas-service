@@ -136,7 +136,7 @@ a.orange {
   padding: 0 !important;
 }
 .form-inline-n .form-control {
-  height: 36px;
+  height: 40px;
   border: 1px solid #d9d8eb;
 }
 .sbtn {
@@ -175,13 +175,14 @@ a.orange {
   display: inline-block;
   width: auto;
   padding: 0 30px;
-  height: 36px;
-  line-height: 34px;
+  height: 40px;
+  line-height: 38px;
   color: #000;
   border-radius: 4px;
   border: 1px solid #efb600;
   text-align: center;
   cursor: pointer;
+  font-size:18px;
 }
 .filter .btn-primary,.filter .btn-primary:active{
    background: #c3c3cc;
@@ -257,6 +258,7 @@ a.orange {
   font-weight: normal;
   padding: 3px 0;
   text-align: center;
+  font-size:14px;
 }
 .table tbody tr td {
   border-top: 1px solid #efefef;
@@ -264,6 +266,7 @@ a.orange {
   line-height: 18px;
   padding: 16px 0;
   vertical-align: middle;
+  font-size:16px;
 }
 .table tr:nth-child(2n) td {
   background: #f8f8f8;
@@ -403,6 +406,9 @@ a.orange {
 .c-disable {
   color: #b3b6c6;
 }
+.c-disable a{
+  color: #b3b6c6 !important;
+}
 /*----E-table----*/
 /* S 导航条 */
 .b-navbar {
@@ -462,6 +468,7 @@ footer {
   width: 80%;
   height:58px;
   color: #fff;
+  font-size: 16px;
 }
 .has-sel-icon {
   height: 60px;
@@ -531,7 +538,7 @@ footer {
 /* S 合作伙伴 */
 .b-tit {
   text-align: center;
-  margin-top: 80px;
+  margin: 80px 0 0 0;
   position: relative;
 }
 .b-tit:before {
@@ -757,6 +764,7 @@ footer {
   -moz-border-radius: 4px;
   border-radius: 4px;
   border: 1px solid #d9d8eb;
+  font-size:16px;
 }
 .form-inline .form-con-new {
   min-width: 196px;
@@ -811,6 +819,7 @@ footer {
   border: 1px solid #dbdaec;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
+  background:#f0f0f7;
 }
 .tab-area .b-tab .tab-cur a {
   background: #ffc800;
@@ -957,6 +966,10 @@ footer {
 .wp66 {
   width: 66% !important;
 }
+.w150{
+  width:150px !important;
+  min-width:auto !important;
+}
 .wp80 {
   width: 80% !important;
 }
@@ -1011,7 +1024,8 @@ footer {
 .form-inline .form-control {
     display: inline-block;
     vertical-align: middle;
-    min-width: 210px; 
+    min-width: 190px;
+    font-sieze: 16px;
 }
 /* S 控件css reset */
 .BMap_scaleCtrl{
@@ -1021,7 +1035,7 @@ footer {
     padding:10px;
     box-shadow: 4px 4px 10px #888888;
     left:15px !important;
-    bottom:40px !important;
+    bottom:72px !important;
 }
 .BMap_scaleTxt{
     margin-left:-10px;
@@ -1041,7 +1055,7 @@ footer {
 .BMap_stdMpType3{
     width:31px !important;
     height:82px !important;
-    bottom:32px !important;
+    bottom:64px !important;
     right:15px !important;
 }
 .BMap_stdMpZoom{
@@ -1104,7 +1118,7 @@ footer {
 }
 .pos-adr{
     position:absolute;
-    bottom:130px;
+    bottom:162px;
     right:15px;
     width:31px;
     height:31px;
@@ -1140,3 +1154,60 @@ footer {
     background-position:0 -51px;
 }
  /* E 图标 */
+/* S 修改 */
+.ml12 {
+  margin-left: 12px !important;
+}
+.j-scroll-dislog{
+  margin:100px auto 0;
+}
+.bod-rad {
+  border-radius: 4px;
+}
+.draw-btn {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.draw-btn .bg-alpha {
+  background: #000;
+  opacity: 0.3;
+  width: 100%;
+  height: 60px;
+  position: absolute;
+  bottom: 0;
+  z-index: 2;
+}
+.draw-btn a {
+  position: relative;
+  z-index: 3;
+  bottom: 12px;
+}
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{
+  background:#ffc800;
+  border: 1px solid #efb600;
+  color:#000;
+}
+.pagination li{
+
+}
+.pagination a{
+  border-radius:4px;
+  margin-left:10px !important;
+}
+.pagination>li>a, .pagination>li>span{
+  color:#333;
+}
+.ft16 {
+    font-size: 16px;
+    color: #EC894D;
+}
+.pt20 {
+    padding-top: 20px;
+}
+.pl20 {
+    padding-left: 20px;
+}
+
+/* E 修改 */
