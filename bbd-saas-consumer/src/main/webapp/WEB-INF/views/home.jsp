@@ -122,8 +122,7 @@
 </footer>
 <!-- E footer -->
 <script type="application/javascript">
-	if(${user.loginCount==0}){
-		console.log("aabb");
+	if(${user.loginCount==1}){
 		$(".j-guide-pop").modal();
 	}
 </script>
