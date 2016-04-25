@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class SignUtil {
     // 组装签名字符串,供外部使用
-    public static String makeOpenSig(Map<Object, Object> sortMap, String token) {
+    public static String makeOpenSign(Map<Object, Object> sortMap, String token) {
         StringBuilder sb = new StringBuilder();
         Object[] keys = sortMap.keySet().toArray();
         Arrays.sort(keys);
