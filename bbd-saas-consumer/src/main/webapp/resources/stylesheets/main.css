@@ -44,6 +44,9 @@ input {
 .tr {
   text-align: right;
 }
+.tl {
+  text-align: left !important;
+}
 .f12 {
   font-size: 12px;
 }
@@ -247,10 +250,10 @@ a.orange {
   margin-right: 0px;
 }
 .table thead tr th:first-child {
-  border-radius: 4px 0 0 0;
+  border-radius:1px 0 0 0;
 }
 .table thead tr th:last-child {
-  border-radius: 0 4px 0 0;
+  border-radius: 0 1px 0 0;
 }
 .table thead tr th {
   background: #d9d9e4;
@@ -259,6 +262,7 @@ a.orange {
   padding: 3px 0;
   text-align: center;
   font-size:14px;
+  border:none;
 }
 .table tbody tr td {
   border-top: 1px solid #efefef;
@@ -879,6 +883,8 @@ footer {
 }
 .b-modal-header {
   border-bottom: 1px solid #ebedf3;
+  background:#f5f6f7;
+  border-radius:10px 10px 0 0;
 }
 .b-modal-body {
   padding: 40px;
@@ -1024,8 +1030,8 @@ footer {
 .form-inline .form-control {
     display: inline-block;
     vertical-align: middle;
-    min-width: 190px;
-    font-sieze: 16px;
+    min-width: 212px;
+    font-size:16px;
 }
 /* S 控件css reset */
 .BMap_scaleCtrl{
@@ -1153,6 +1159,10 @@ footer {
 .p-user{
     background-position:0 -51px;
 }
+.num-add{
+  font-weight:bold;
+  font-size:16px;
+}
  /* E 图标 */
 /* S 修改 */
 .ml12 {
@@ -1198,5 +1208,15 @@ footer {
 }
 .pagination>li>a, .pagination>li>span{
   color:#333;
+}
+.form-inline-n .form-control:focus {
+  box-shadow: none;
+  border: 1px solid #ffa000;
+}
+.f-dialog{
+  position:fixed;
+  top:100px;
+  left:50%;
+  margin-left:-210px;
 }
 /* E 修改 */

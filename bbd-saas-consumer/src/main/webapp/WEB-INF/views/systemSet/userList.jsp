@@ -8,8 +8,7 @@
 	<meta name="keywords" content="棒棒哒-系统设置-用户管理页面" />
 	<meta name="description" content="棒棒哒-系统设置-用户管理页面" />
 	<title>系统设置-用户管理页面</title>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />	
-	<script type="text/javascript" src="/js/plugins/dialog/dialog.js"></script>	
+	<script type="text/javascript" src="/js/plugins/dialog/dialog.js"></script>
 </head>
 <body>
 <div>

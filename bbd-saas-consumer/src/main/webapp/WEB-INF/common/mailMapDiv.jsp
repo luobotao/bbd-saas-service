@@ -5,8 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-	<%-- <link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
-	<jsp:include page="../views/main.jsp" flush="true" /> --%>
 	<style>
     	.order-info {
     		/* min-width: 800px; */

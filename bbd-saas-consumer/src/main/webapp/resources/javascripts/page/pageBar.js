@@ -38,7 +38,7 @@ function paginNav(currPage, totalPage, count){
 	}
 	//下一页和尾页
 	if (currPage >=(totalPage - 1)){
-		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>下一页</a></li>";
+		pagestr += "<li class='next disabled c-disable'><a href='#' title='已经是最后一页了'>下一页 <em class='glyphicon glyphicon-triangle-right'></em></a></li>";
 		pagestr += "<li class='next disabled'><a href='#' title='已经是最后一页了'>尾页</a></li>";
 	}else{
 		pagestr += "<li><a href='#' title='下一页'  onclick=\"gotoPage(" + (currPage + 1) + ");\">下一页 <em class='glyphicon glyphicon-triangle-right'></em></a></li>";

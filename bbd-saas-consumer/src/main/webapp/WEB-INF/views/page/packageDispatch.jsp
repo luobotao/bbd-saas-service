@@ -12,7 +12,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
@@ -63,14 +62,14 @@
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn d">选择派件员</a>
-	  							<span class="ft16 pt20" id="courierName"></span>
+	  							<span class="ft16 pt20 tip-info" id="courierName"></span>
 	  							<input id="courierId" type="hidden" value="" /> 
 	  						</div>
 	  						
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	  							<label>扫描运单号：</label>
 	  							<input id="mailNum" name="mailNum" type="text" placeholder="请扫描运单号" class="form-control" onkeypress="enterPress(event)" />
-	  							<span class="pl20 ft16" id="mailNum_check"> </span>	
+	  							<span class="pl20 ft16 tip-info" id="mailNum_check"> </span>
 	  						</div>
 	  					</div>
 	  				</div>

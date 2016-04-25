@@ -8,12 +8,9 @@
 	<meta name="keywords" content="棒棒哒-系统设置-角色管理页面" />
 	<meta name="description" content="棒棒哒-系统设置-角色管理页面" />
 	<title>系统设置-角色管理页面</title>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />	
-	 
 </head>
 <body>
 <div>
-	<jsp:include page="../top.jsp" flush="true" />	
 </div>
 <div class="content">
 	<div class="content-left" id="content-left"><jsp:include page="../leftMenu.jsp" flush="true" /></div>

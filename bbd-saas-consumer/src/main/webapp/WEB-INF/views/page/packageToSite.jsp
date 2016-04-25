@@ -72,7 +72,7 @@
 								<input id="between" name="between" type="text" class="form-control" placeholder="请选择预计到站时间" value="${between}"/>
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
-								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>搜索</a>
+								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>查询</a>
 							</div>
 						</div>
 						<div class="row pb20">
@@ -122,7 +122,7 @@
 								<td><%=order.getSrc().getMessage()%></td>
 								<td><%=order.getReciever().getName()%></td>
 								<td><%=order.getReciever().getPhone()%></td>
-								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>
 								<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 								<%
@@ -144,19 +144,19 @@
 							<tfoot>
 								<div class="modal fade" id="batchToSite" tabindex="-1" role="dialog" aria-hidden="true">
 									<div class="modal_wrapper">
-										<div class="modal-dialog">
+										<div class="modal-dialog b-modal-dialog">
 											<div class="modal-content">
-												<div class="modal-header">
+												<div class="modal-header b-modal-header">
 													<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-													<h4 class="modal-title" id="activeUserLabel">确认信息</h4>
+													<h4 class="modal-title  tc" id="activeUserLabel">确认信息</h4>
 												</div>
-												<div class="modal-body">
+												<div class="modal-body b-modal-body">
 													确认批量到站？<br>
 													该操作会把选中的订单设置为已到站。
 												</div>
 												<div class="modal-footer">
-													<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-													<button id="enableSelect" type="button" class="btn btn-primary">确认</button>
+													<button type="button" class="ser-btn g" data-dismiss="modal">取消</button>
+													<button id="enableSelect" type="button" class="ser-btn l">确认</button>
 												</div>
 											</div>
 										</div>

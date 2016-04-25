@@ -209,7 +209,7 @@
 					</li>
 					<li class="filter">
 						<i>密 码：</i>
-						<input type="text" class="form-control form-bod wp80" id="password" name="password" >
+						<input class="form-control form-bod wp80" id="password" name="password" type="password" >
 						<em class="tip-info" id="passwordP" style="display:none;">请输入密码</em>
 					</li>
 					<li class="filter">

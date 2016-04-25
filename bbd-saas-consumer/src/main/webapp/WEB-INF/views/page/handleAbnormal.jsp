@@ -10,7 +10,6 @@
  
 <html>
 <head>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%

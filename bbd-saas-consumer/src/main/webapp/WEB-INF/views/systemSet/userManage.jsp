@@ -62,7 +62,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        					<div class="row pb20">
 	        						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	        							<a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
-	        							<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="glyphicon glyphicon-plus mr10"></i>新建</a>
+	        							<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
 	        							
 	        						</div>
 	        					</div>
