@@ -196,6 +196,10 @@
 	<script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 	<link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 	<script type="application/javascript">
+		// 导入文件
+		$(".import-guid-file").on("change",function(){
+			$(".j-import-guid-pop").addClass("in").show();
+		})
 		//引导页
 		$(".b-guide-con .step:eq(2)").show();
 		//点击保存

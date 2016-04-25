@@ -1194,12 +1194,10 @@ footer {
   z-index: 3;
   bottom: 12px;
 }
-<<<<<<< HEAD
 .c-cbox{
   width:20px;
   height:20px;
 }
-=======
 .pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{
   background:#ffc800;
   border: 1px solid #efb600;
@@ -1236,7 +1234,6 @@ footer {
     padding-left: 20px;
 }
 
->>>>>>> 63a1e210bc75489f979390b3d759b0622a66f290
 /* E 修改 */
 /* 循环加载 开始*/
 .spinner {
