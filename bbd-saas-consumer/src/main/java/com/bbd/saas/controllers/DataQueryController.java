@@ -69,9 +69,8 @@ public class DataQueryController {
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
-			String parcelCodeTemp = null;
 			for(Order order : orderPage.getDatas()){
-				parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
 			}
 			logger.info("=====数据查询页面列表===" + orderPage);
@@ -114,16 +113,17 @@ public class DataQueryController {
 		//设置包裹号,派件员快递和电话
 		if(orderPage != null && orderPage.getDatas() != null){
 			List<Order> dataList = orderPage.getDatas();
-			User courier = null;
 			String parcelCodeTemp = null;
 			for(Order order : dataList){
 				parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
-				courier = userService.findOne(order.getUserId());
-				UserVO userVO = new UserVO();
-				userVO.setLoginName(courier.getLoginName());
-				userVO.setRealName(courier.getRealName());
-				order.setUserVO(userVO);
+				User courier = userService.findOne(order.getUserId());
+				if(courier!=null){
+					UserVO userVO = new UserVO();
+					userVO.setLoginName(courier.getLoginName());
+					userVO.setRealName(courier.getRealName());
+					order.setUserVO(userVO);
+				}
 			}
 		}
 		return orderPage;		

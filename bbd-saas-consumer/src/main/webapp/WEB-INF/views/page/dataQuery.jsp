@@ -2,12 +2,10 @@
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
@@ -100,7 +98,7 @@
   						<tbody id="dataList">
   							<%
 								PageModel<Order> orderPage = (PageModel<Order>)request.getAttribute("orderPage");
-								if(orderPage.getDatas() == null){
+								if(orderPage==null || orderPage.getDatas() == null){
 							%>
 								<tr>
 									<td colspan="7">没有符合查询条件的数据</td>
@@ -202,7 +200,6 @@
     <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
-<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 <script type="text/javascript">
 
 $(document).ready(function() {

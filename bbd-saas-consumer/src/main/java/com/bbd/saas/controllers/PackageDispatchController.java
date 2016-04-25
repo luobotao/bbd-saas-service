@@ -98,15 +98,7 @@ public class PackageDispatchController {
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 		//查询派件员姓名电话
 		if(orderPage != null && orderPage.getDatas() != null){
-			List<Order> dataList = orderPage.getDatas();
-			User courier = null;
-			for(Order order : dataList){
-				courier = userService.findOne(order.getUserId());
-				UserVO userVO = new UserVO();
-				userVO.setLoginName(courier.getLoginName());
-				userVO.setRealName(courier.getRealName());
-				order.setUserVO(userVO);
-			}
+			formatOrder(orderPage.getDatas()) ;
 		}				
 		return orderPage;
 	}
@@ -177,16 +169,8 @@ public class PackageDispatchController {
 			//查询数据
 			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
 			if(orderPage != null && orderPage.getDatas() != null){
-				List<Order> dataList = orderPage.getDatas();
-				User courier = null;
-				for(Order order1 : dataList){
-					courier = userService.findOne(order1.getUserId());
-					UserVO userVO = new UserVO();
-					userVO.setLoginName(courier.getLoginName());
-					userVO.setRealName(courier.getRealName());
-					order1.setUserVO(userVO);
-				}
-			}		
+				formatOrder(orderPage.getDatas()) ;
+			}
 			map.put("orderPage", orderPage); 
 		}else{
 			map.put("operFlag", 3);//3:分派失败
@@ -288,5 +272,24 @@ public class PackageDispatchController {
 		//查询
 		List<UserVO> userVoList = userService.findUserListBySite(user.getSite());
 		return userVoList;
+	}
+
+
+	/**
+	 * 格式化orderList给item加入用户信息
+	 * @param orderList
+	 * @return
+     */
+	public List<Order> formatOrder(List<Order> orderList){
+		for(Order order1 : orderList){
+			User courier = userService.findOne(order1.getUserId());
+			if(courier!=null){
+				UserVO userVO = new UserVO();
+				userVO.setLoginName(courier.getLoginName());
+				userVO.setRealName(courier.getRealName());
+				order1.setUserVO(userVO);
+			}
+		}
+		return orderList;
 	}
 }

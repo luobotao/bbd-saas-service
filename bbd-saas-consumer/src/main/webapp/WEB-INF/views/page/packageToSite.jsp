@@ -193,10 +193,6 @@
 <!-- E footer -->
 
 
-<!-- 分页js -->
-<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
-<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
-
 <script type="text/javascript">
 	var flag = true;
 	$("#between").daterangepicker({
@@ -228,7 +224,9 @@
 
 
 	//加载带有查询条件的指定页的数据
-	function gotoPage(pageIndex,parcelCode,mailNum,arriveStatus,between) {
+	function gotoPage(pageIndex,parcelCode,mailNum) {
+		var between = $("#between").val();
+		var arriveStatus = $('#arriveStatus option:selected').val();
 		$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
 		$.ajax({
 			type : "GET",  //提交方式
@@ -300,7 +298,7 @@
 	function searchOrder(){
 		$("#parcelCode").val("");
 		$("#mailNum").val("");
-		gotoPage(0,'','',$('#arriveStatus option:selected').val(),$("#between").val());
+		gotoPage(0);
 	}
 	//回车事件
 	function enterPress(e){
@@ -432,6 +430,5 @@
 
 	}
 </script>
-<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 </body>
 </html>
