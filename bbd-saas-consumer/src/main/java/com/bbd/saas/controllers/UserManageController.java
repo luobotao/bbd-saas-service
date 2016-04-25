@@ -405,7 +405,9 @@ public class UserManageController {
 		User user = null;
 		
 		if(loginName!=null && !loginName.equals("")){
+			user = userService.findUserByLoginName(loginName);
 			userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(status)));
+			int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
 			return "true";
 		}else{
 			return "false";
