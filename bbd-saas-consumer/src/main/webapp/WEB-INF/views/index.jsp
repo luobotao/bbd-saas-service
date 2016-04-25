@@ -71,8 +71,8 @@
 
 <script>
 
-	$("li").click(function(){
-		$(this).addClass("side-cur").siblings().removeClass("side-cur");
+	$(".menu li").click(function(){
+		$(this).addClass("curr").siblings().removeClass("curr");
 	});
 	var typ="${typ}";
 	if(typ!=null && typ!=""){
