@@ -186,7 +186,10 @@
 			} else if (mcount < 3) {
 				if(mcount==1) {
 					//保存最新站点值
-					saveSiteFunc()
+					saveSiteFunc();
+					window.setTimeout(function(){
+						bmap.map.panTo(new BMap.Point(${site.lng},${site.lat}));
+					}, 500);
 				}
 				$(".b-guide-tab li").eq(mcount).addClass("guide-cur");
 			}
@@ -267,6 +270,9 @@
 			var circle = new BMap.Circle(pointPs,radius,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
 			allmapPs.addOverlay(circle);            //增加圆
 			allmapPs.enableScrollWheelZoom(true);
+			window.setTimeout(function(){
+				allmapPs.panTo(new BMap.Point(${site.lng},${site.lat}));
+			}, 500);
 		}
 
 

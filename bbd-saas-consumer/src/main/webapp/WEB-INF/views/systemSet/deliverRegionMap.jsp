@@ -430,6 +430,7 @@
 			this.map.centerAndZoom(this.point,12);
 			this.map.enableScrollWheelZoom();
 			this.map.disableInertialDragging();
+
 			var map = this.map;
 			var styleOptions = this.styleOptions;
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
@@ -625,7 +626,9 @@
 		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
 		var index=$(this).parent().index();
 		if(index == 1){
-
+			window.setTimeout(function(){
+				bmap.map.panTo(new BMap.Point(${site.lng},${site.lat}));
+			}, 500);
 		}
 	})
 
