@@ -44,6 +44,9 @@ input {
 .tr {
   text-align: right;
 }
+.tl {
+  text-align: left !important;
+}
 .f12 {
   font-size: 12px;
 }
@@ -136,7 +139,7 @@ a.orange {
   padding: 0 !important;
 }
 .form-inline-n .form-control {
-  height: 36px;
+  height: 40px;
   border: 1px solid #d9d8eb;
 }
 .sbtn {
@@ -175,13 +178,14 @@ a.orange {
   display: inline-block;
   width: auto;
   padding: 0 30px;
-  height: 36px;
-  line-height: 34px;
+  height: 40px;
+  line-height: 38px;
   color: #000;
   border-radius: 4px;
   border: 1px solid #efb600;
   text-align: center;
   cursor: pointer;
+  font-size:18px;
 }
 .filter .btn-primary,.filter .btn-primary:active{
    background: #c3c3cc;
@@ -246,10 +250,10 @@ a.orange {
   margin-right: 0px;
 }
 .table thead tr th:first-child {
-  border-radius: 4px 0 0 0;
+  border-radius:1px 0 0 0;
 }
 .table thead tr th:last-child {
-  border-radius: 0 4px 0 0;
+  border-radius: 0 1px 0 0;
 }
 .table thead tr th {
   background: #d9d9e4;
@@ -257,6 +261,8 @@ a.orange {
   font-weight: normal;
   padding: 3px 0;
   text-align: center;
+  font-size:14px;
+  border:none;
 }
 .table tbody tr td {
   border-top: 1px solid #efefef;
@@ -264,6 +270,7 @@ a.orange {
   line-height: 18px;
   padding: 16px 0;
   vertical-align: middle;
+  font-size:16px;
 }
 .table tr:nth-child(2n) td {
   background: #f8f8f8;
@@ -403,6 +410,9 @@ a.orange {
 .c-disable {
   color: #b3b6c6;
 }
+.c-disable a{
+  color: #b3b6c6 !important;
+}
 /*----E-table----*/
 /* S 导航条 */
 .b-navbar {
@@ -462,6 +472,7 @@ footer {
   width: 80%;
   height:58px;
   color: #fff;
+  font-size: 16px;
 }
 .has-sel-icon {
   height: 60px;
@@ -531,7 +542,7 @@ footer {
 /* S 合作伙伴 */
 .b-tit {
   text-align: center;
-  margin-top: 80px;
+  margin: 80px 0 0 0;
   position: relative;
 }
 .b-tit:before {
@@ -757,6 +768,7 @@ footer {
   -moz-border-radius: 4px;
   border-radius: 4px;
   border: 1px solid #d9d8eb;
+  font-size:16px;
 }
 .form-inline .form-con-new {
   min-width: 196px;
@@ -811,6 +823,7 @@ footer {
   border: 1px solid #dbdaec;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
+  background:#f0f0f7;
 }
 .tab-area .b-tab .tab-cur a {
   background: #ffc800;
@@ -870,6 +883,8 @@ footer {
 }
 .b-modal-header {
   border-bottom: 1px solid #ebedf3;
+  background:#f5f6f7;
+  border-radius:10px 10px 0 0;
 }
 .b-modal-body {
   padding: 40px;
@@ -1015,7 +1030,8 @@ footer {
 .form-inline .form-control {
     display: inline-block;
     vertical-align: middle;
-    min-width: 210px; 
+    min-width: 212px;
+    font-size:16px;
 }
 /* S 控件css reset */
 .BMap_scaleCtrl{
@@ -1143,10 +1159,17 @@ footer {
 .p-user{
     background-position:0 -51px;
 }
+.num-add{
+  font-weight:bold;
+  font-size:16px;
+}
  /* E 图标 */
 /* S 修改 */
 .ml12 {
-  margin-left: 12px;
+  margin-left: 12px !important;
+}
+.j-scroll-dislog{
+  margin:100px auto 0;
 }
 .bod-rad {
   border-radius: 4px;
@@ -1171,10 +1194,49 @@ footer {
   z-index: 3;
   bottom: 12px;
 }
+<<<<<<< HEAD
 .c-cbox{
   width:20px;
   height:20px;
 }
+=======
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{
+  background:#ffc800;
+  border: 1px solid #efb600;
+  color:#000;
+}
+.pagination li{
+
+}
+.pagination a{
+  border-radius:4px;
+  margin-left:10px !important;
+}
+.pagination>li>a, .pagination>li>span{
+  color:#333;
+}
+.form-inline-n .form-control:focus {
+  box-shadow: none;
+  border: 1px solid #ffa000;
+}
+.f-dialog{
+  position:fixed;
+  top:100px;
+  left:50%;
+  margin-left:-210px;
+}
+.ft16 {
+    font-size: 16px;
+    color: #EC894D;
+}
+.pt20 {
+    padding-top: 20px;
+}
+.pl20 {
+    padding-left: 20px;
+}
+
+>>>>>>> 63a1e210bc75489f979390b3d759b0622a66f290
 /* E 修改 */
 /* 循环加载 开始*/
 .spinner {

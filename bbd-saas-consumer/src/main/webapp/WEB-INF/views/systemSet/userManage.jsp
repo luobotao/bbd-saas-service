@@ -62,7 +62,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        					<div class="row pb20">
 	        						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	        							<a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
-	        							<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="glyphicon glyphicon-plus mr10"></i>新建</a>
+	        							<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
 	        							
 	        						</div>
 	        					</div>
@@ -115,7 +115,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 											if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
 												
 												%>
-												<a href="javascript:void(0)" onclick="changeStatus(0,'','<%=user.getLoginName() %>')" class="orange ml6">停用</a>
+												<a href="javascript:void(0)" onclick="changeStatus(3,'','<%=user.getLoginName() %>')" class="orange ml6">停用</a>
 											
 												<% 
 											}else{
@@ -286,7 +286,7 @@ function getRowHtml(data){
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(0,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
+		row += "<a href='javascript:void(0)' onclick=\"changeStatus(3,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
 	}else{
 		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
 		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.loginName+"')\" class=\"orange ml6\">删除</a></td>";

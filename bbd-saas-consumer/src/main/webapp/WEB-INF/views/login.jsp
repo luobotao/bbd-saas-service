@@ -110,7 +110,6 @@
 <!-- E 关于我们  -->
 <!-- S 合作伙伴 -->
 <h3 class="b-tit"><em>TA们都在使用棒棒达快递</em></h3>
-<div class="clearfix">　</div>
 <div class="part-bg clearfix">
 		<div class="container mb80">
 		<ul class="row b-brand">
@@ -160,7 +159,10 @@
 <div class="j-login-type modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog j-scroll-dislog" role="document">
 		<div class="modal-content">
-			<div class="modal-header b-modal-header"><h4 class="modal-title tc">请选择注册类型</h4></div>
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close j-close"><span>×</span></button>
+				<h4 class="modal-title tc">请选择注册类型</h4>
+			</div>
 			<div class="modal-body b-modal-body">
 				<ul class="row">
 					<li class="cho-lg col-md-6">
@@ -189,7 +191,7 @@
 
 <!--S 站点注册-->
 <div class="j-site-re-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog j-scroll-dislog" role="document">
+	<div class="modal-dialog b-guide-dialog j-scroll-dislog" role="document">
 		<div class="modal-content">
 			<div class="modal-header b-modal-header">
 				<button type="button" class="close j-close"><span>×</span></button>
@@ -207,7 +209,7 @@
 					</li>
 					<li class="filter">
 						<i>密 码：</i>
-						<input type="text" class="form-control form-bod wp80" id="password" name="password" >
+						<input class="form-control form-bod wp80" id="password" name="password" type="password" >
 						<em class="tip-info" id="passwordP" style="display:none;">请输入密码</em>
 					</li>
 					<li class="filter">

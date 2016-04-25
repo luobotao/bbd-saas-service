@@ -10,7 +10,6 @@
  
 <html>
 <head>
-	<link href="<c:url value="/resources/frame.css" />" rel="stylesheet"  type="text/css" />		
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
@@ -327,7 +326,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);  
 		},
         error : function() {  
-           	alert("加载分页数据异常，请重试！");  
+           //	alert("加载分页数据异常，请重试！");  
       	}    
     });	
 }	
@@ -422,7 +421,7 @@ function showCourierDiv(mailNumStr) {
 	        	loadCouriers(dataList);
 	        },
 	        error : function() {  
-	       		alert("服务器繁忙，请稍后再试！");
+	       		//alert("服务器繁忙，请稍后再试！");
 	  		}    
 	    });
 	}
@@ -478,7 +477,7 @@ function chooseCourier() {
         	}
         },
         error : function() {  
-       		alert("服务器繁忙，请稍后再试！");  
+       		//alert("服务器繁忙，请稍后再试！");  
   		}    
     });
     //隐藏面板
@@ -519,7 +518,7 @@ function showOtherSiteDiv(mailNumStr) {
 	        	loadSites(dataList);
 	        },
 	        error : function() {  
-	       		alert("服务器繁忙，请稍后再试！");
+	       		//alert("服务器繁忙，请稍后再试！");
 	  		}    
 	    });
 	}
@@ -568,7 +567,7 @@ function chooseOtherSite() {
         	}
         },
         error : function() {  
-       		alert("服务器繁忙，请稍后再试！");  
+       		//alert("服务器繁忙，请稍后再试！");  
   		}    
     });
     //隐藏面板
@@ -602,7 +601,7 @@ function initExpressCompany() {
 		} 
         },
         error : function() {  
-       		alert("快递公司列表加载异常，请重试！");  
+       		//alert("快递公司列表加载异常，请重试！");  
   		}    
     });
 }	
@@ -639,7 +638,7 @@ function chooseOtherExpress(mailNum) {
         	}
         },
         error : function() {  
-       		alert("转到其他快递发生异常，请重试！");  
+       		//alert("转到其他快递发生异常，请重试！");  
   		}    
     });
     //隐藏面板
@@ -680,7 +679,7 @@ function applyReturn(mailNum) {
         	}
         },
         error : function() {  
-       		alert("退货发生异常，请重试！");  
+       		//alert("退货发生异常，请重试！");  
   		}    
     });
     //隐藏面板
