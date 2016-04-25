@@ -175,7 +175,7 @@
     </delete>
     
     <update id="updateById" >
-        update postmanuser set poststatus = #{status,jdbcType=INTEGER}  where id = #{id,jdbcType=INTEGER}
+        update postmanuser set sta = #{sta,jdbcType=INTEGER}  where id = #{id,jdbcType=INTEGER}
     </update>
     
     <update id="updatePostmanUserById" >

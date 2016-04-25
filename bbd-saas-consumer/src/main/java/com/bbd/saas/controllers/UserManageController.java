@@ -206,14 +206,14 @@ public class UserManageController {
 			postmanUser.setAddr("");
 			postmanUser.setAddrdes("");
 			postmanUser.setShopurl("");
-			postmanUser.setSta("1");
+			postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
 			postmanUser.setSpreadticket("");
 			postmanUser.setPhone(userForm.getLoginName().replaceAll(" ", ""));
 			//staffid就是该用户的手机号
 			postmanUser.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
 			postmanUser.setDateNew(dateAdd);
 			postmanUser.setDateUpd(dateAdd);
-			postmanUser.setPoststatus(1);
+			postmanUser.setPoststatus(1);//默认为1
 			/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
 				//快递员
 				postmanUser.setPostrole(0);
@@ -405,7 +405,7 @@ public class UserManageController {
      * @return "true"/"false"
      */
 	@ResponseBody
-	@RequestMapping(value="/changestatusOuter", method=RequestMethod.GET)
+	@RequestMapping(value="/changestatusOuter", method=RequestMethod.POST)
 	public String changestatusOuter(Model model,
 			@RequestParam(value = "loginName", required = true) String loginName,
 			@RequestParam(value = "status", required = true) String status,HttpServletResponse response) {

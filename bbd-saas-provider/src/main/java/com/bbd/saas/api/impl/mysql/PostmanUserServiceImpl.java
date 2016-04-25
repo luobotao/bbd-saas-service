@@ -89,11 +89,11 @@ public class PostmanUserServiceImpl implements PostmanUserService {
     
     /**
      * 更新postmanUser
-     * @param status、id
+     * @param sta、id
      * @return 
      */
-    public int updateById(@Param("status") Integer status,@Param("id") Integer id){
-    	return postmanUserDao.updateById(status, id);
+    public int updateById(@Param("sta") Integer sta,@Param("id") Integer id){
+    	return postmanUserDao.updateById(sta, id);
     }
     
     /**
