@@ -19,7 +19,7 @@
 	<!-- Ionicons 2.0.0 -->
 	<link href="<c:url value="/resources/adminLTE/css/ionicons.min.css" />" rel="stylesheet"  type="text/css" />
 	<!-- Theme style -->
-	<link href="<c:url value="/resources/adminLTE/css/AdminLTE.css" />" rel="stylesheet"  type="text/css" />
+	<%--<link href="<c:url value="/resources/adminLTE/css/AdminLTE.css" />" rel="stylesheet"  type="text/css" />--%>
 	<!-- AdminLTE Skins. Choose a skin from the css/skins
 folder instead of downloading all of them to reduce the load. -->
 	<link href="<c:url value="/resources/adminLTE/css/skins/_all-skins.css" />" rel="stylesheet"  type="text/css" />

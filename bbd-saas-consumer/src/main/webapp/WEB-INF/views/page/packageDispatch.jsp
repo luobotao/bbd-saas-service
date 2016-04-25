@@ -62,7 +62,7 @@
 	  					<div class="b-line"></div>
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn l">选择派件员</a>
+	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn d">选择派件员</a>
 	  							<span class="ft16 pt20" id="courierName"></span>
 	  							<input id="courierId" type="hidden" value="" /> 
 	  						</div>
