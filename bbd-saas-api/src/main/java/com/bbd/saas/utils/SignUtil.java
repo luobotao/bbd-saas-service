@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by luobotao on 2016/4/25.
  */
-public class StringUtil {
+public class SignUtil {
     // 组装签名字符串,供外部使用
     public static String makeOpenSig(Map<Object, Object> sortMap, String token) {
         StringBuilder sb = new StringBuilder();
