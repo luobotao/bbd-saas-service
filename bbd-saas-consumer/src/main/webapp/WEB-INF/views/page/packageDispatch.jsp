@@ -271,7 +271,7 @@ function dispatch() {
 		    }
 		},
 		error : function() {  
-			alert("服务器繁忙，请稍后再试！");  
+			//alert("服务器繁忙，请稍后再试！");  
 		}     
     });
 }  
