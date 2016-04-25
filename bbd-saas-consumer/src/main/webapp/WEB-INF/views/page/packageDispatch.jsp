@@ -109,15 +109,15 @@
 								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUser() == null){//未分派
+									if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
 								%>
 										<td></td>
 										<td></td>
 								<%
 									}else{
 								%>
-										<td><%=order.getUser().getRealName()%></td>
-										<td><%=order.getUser().getLoginName()%></td>
+										<td><%=order.getUserVO().getRealName()%></td>
+										<td><%=order.getUserVO().getLoginName()%></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
@@ -266,7 +266,7 @@ function dispatch() {
 		    }else if(data.operFlag == 3){
 		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派失败，请重试！");
 		    }else{
-		    	$("#mailNum_check").text("只有状态为未分派、滞留、拒收的运单才能分派！");
+		    	$("#mailNum_check").text("只有状态为未分派、滞留的运单才能分派！");
 		    }
 		},
 		error : function() {  
@@ -324,11 +324,11 @@ function getRowHtml(data){
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.user == null){
+	if(data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + "</td>";
-		row += "<td>" + data.user.loginName + "</td>";
+		row += "<td>" + data.userVO.realName + "</td>";
+		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){

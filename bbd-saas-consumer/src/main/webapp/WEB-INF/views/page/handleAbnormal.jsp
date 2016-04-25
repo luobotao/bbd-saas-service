@@ -97,15 +97,15 @@
 								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUser() == null){//未分派
+									if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派
 								%>
 										<td></td>
 										<td></td>
 								<%
 									}else{
 								%>
-										<td><%=order.getUser().getRealName()%></td>
-										<td><%=order.getUser().getLoginName()%></td>
+										<td><%=order.getUserVO().getRealName()%></td>
+										<td><%=order.getUserVO().getLoginName()%></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.RETENTION){
@@ -361,11 +361,11 @@ function getRowHtml(data){
 	row += "<td>" + data.user.loginName + "</td>";
 	 */
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.user == null){
+	if(data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.user.realName + "</td>";
-		row += "<td>" + data.user.loginName + "</td>";
+		row += "<td>" + data.userVO.realName + "</td>";
+		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
@@ -441,7 +441,7 @@ function loadCouriers(courierList, staffId) {
 	if(courierList != null){
 	    for(var i = 0; i < courierList.length; i++){
 			data = courierList[i];
-			courier_select.append("<option value='"+data.staffId+"'>"+data.realName+"</option>");
+			courier_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
 		}
 	}
 }
@@ -464,7 +464,7 @@ function chooseCourier() {
         url : "<%=path%>/handleAbnormal/reDispatch",//路径  
         data : {  
             "mailNum" : mailNum, //全局变量
-            "staffId" : $("#courier_select").val(), //全局变量
+            "userId" : $("#courier_select").val(), //全局变量
             "pageIndex" : pageIndex,//更新列表的参数
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 
@@ -593,7 +593,7 @@ function initExpressCompany() {
         	
 		var express_select = $("#express_select");
 		// 清空select  
-		courier_select.empty(); 
+		express_select.empty(); 
 		if(dataList != null){
 			for(var i = 0; i < dataList.length; i++){
 				data = dataList[i];
