@@ -8,6 +8,7 @@
 </html>
 <bobdy>
 	<div class="modal-header b-modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 		<h4 class="modal-title tc">设置站点配送区域</h4>
 	</div>
 	<div class="modal-body tab-area">
@@ -99,7 +100,7 @@
 							<table class="table">
 								<thead>
 								<tr>
-									<th><input type="checkbox" name="inputA" class="j-sel-all"  /></th>
+									<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox"  /></th>
 									<th>导入日期</th>
 									<th>省</th>
 									<th>市</th>
@@ -163,6 +164,29 @@
 		</div>
 	</div>
 	<!--E 提示-->
+	<!-- E footer -->
+	<div class="b-loading">
+		<div class="spinner" style="display:none">
+			<div class="spinner-container container1">
+				<div class="circle1"></div>
+				<div class="circle2"></div>
+				<div class="circle3"></div>
+				<div class="circle4"></div>
+			</div>
+			<div class="spinner-container container2">
+				<div class="circle1"></div>
+				<div class="circle2"></div>
+				<div class="circle3"></div>
+				<div class="circle4"></div>
+			</div>
+			<div class="spinner-container container3">
+				<div class="circle1"></div>
+				<div class="circle2"></div>
+				<div class="circle3"></div>
+				<div class="circle4"></div>
+			</div>
+		</div>
+	</div>
 	<!-- E pop -->
 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 	<!--加载鼠标绘制工具-->
@@ -331,7 +355,7 @@
 						}
 					},
 					error: function(){
-						alert('服务器繁忙，请稍后再试！');
+						console.log('服务器繁忙，请稍后再试！');
 					}
 				});
 				/*          $("#jsonStr").val(jsonStr);
@@ -538,6 +562,8 @@
 		//--------------------panel 3------------------------------------
 		$("#importBtn").click(function(){
 			console.log("import start");
+			$(".j-import-guid-pop").hide();
+			$(".spinner").show();
 			$("#importFileForm").ajaxSubmit({
 				type: 'post',
 				url: "${ctx}/site/importSiteKeywordFileWithAjax?${_csrf.parameterName}=${_csrf.token}",
@@ -547,7 +573,8 @@
 					console.log("import file success");
 					console.log(data);
 					updateDataList(data);
-					$(".j-import-guid-pop").hide();
+					$(".import-guid-file").val("");
+					$(".spinner").hide();
 				},
 				error: function(JsonHttpRequest, textStatus, errorThrown){
 					console.log( "服务器异常!");
@@ -573,7 +600,7 @@
 		function updateDataList(data){
 			$( '#dataList').html("");
 			$.each(data.siteKeywordPageList, function(i, item){
-				$( '#dataList').append("<tr><td><input type='checkbox' value='"+item.id+"' name='inputC'/></td>" +
+				$( '#dataList').append("<tr><td><input type='checkbox' value='"+item.id+"' name='inputC' class='c-cbox'/></td>" +
 						"<td>"+item.createAt+"</td><td>"+item.province+"</td><td>"+item.city+"</td><td>"+item.distict+"</td><td>"+item.keyword+"</td>" +
 						"<td><a href='javascript:void(0);' class='orange' onclick='delSiteKeywordWithTr(\""+item.id+"\")'>删除</a></td></tr>");
 			});
@@ -624,6 +651,7 @@
 					success: function(data){
 						console.log("批量删除站点关键字成功");
 						updateDataList(data);
+						$("input[name=inputA]").prop("checked", false);
 					},
 					error: function(){
 						console.log('批量删除站点关键字失败');

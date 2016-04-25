@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/bbd")
 @SessionAttributes("bbdExpress")
 public class BbdExpressApiController {
-	public static final Logger logger = LoggerFactory.getLogger(BbdExpressApiController.class);
+	public static final Logger logger = LoggerFactory.getLogger("bbdpoi");
 	@Autowired
 	SiteService siteService;
 	@Autowired

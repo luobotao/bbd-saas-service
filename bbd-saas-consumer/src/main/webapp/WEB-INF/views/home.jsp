@@ -122,9 +122,9 @@
 </footer>
 <!-- E footer -->
 <script type="application/javascript">
-	if(${user.loginCount==1}){
+	//if(${user.loginCount==1}){
 		$(".j-guide-pop").modal();
-	}
+	//}
 </script>
 </body>
 </html>

@@ -145,7 +145,7 @@
 									<table class="table">
 										<thead>
 										<tr>
-											<th><input type="checkbox" name="inputA" class="j-sel-all"  /></th>
+											<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox"  /></th>
 											<th>导入日期</th>
 											<th>省</th>
 											<th>市</th>
@@ -157,7 +157,7 @@
 										<tbody id="dataList">
 										<c:forEach items="${siteKeywordPageList}" var="siteKeyword">
 											<tr>
-												<td><input type="checkbox" value="${siteKeyword.id}" name="inputC"/></td>
+												<td><input type="checkbox" value="${siteKeyword.id}" name="inputC" class="c-cbox"/></td>
 												<td>${Dates.formatDateTime_New(siteKeyword.createAt)}</td>
 												<td>${siteKeyword.province}</td>
 												<td>${siteKeyword.city}</td>
@@ -201,6 +201,29 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<div class="b-loading">
+<div class="spinner" style="display:none">
+	<div class="spinner-container container1">
+		<div class="circle1"></div>
+		<div class="circle2"></div>
+		<div class="circle3"></div>
+		<div class="circle4"></div>
+	</div>
+	<div class="spinner-container container2">
+		<div class="circle1"></div>
+		<div class="circle2"></div>
+		<div class="circle3"></div>
+		<div class="circle4"></div>
+	</div>
+	<div class="spinner-container container3">
+		<div class="circle1"></div>
+		<div class="circle2"></div>
+		<div class="circle3"></div>
+		<div class="circle4"></div>
+	</div>
+</div>
+</div>
+
 <!-- S pop -->
 <!--S 提示-->
 <div class="j-import-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -222,7 +245,9 @@
 		</div>
 	</div>
 </div>
+
 <!--E 提示-->
+
 <!-- E pop -->
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
@@ -257,6 +282,8 @@
 		}
 	})
 	$("#importBtn").click(function(){
+		$(this).parents(".j-import-pop").hide();
+		$(".spinner").show();
 		$("#importFileForm").submit();
 	})
 	//更改配送范围
