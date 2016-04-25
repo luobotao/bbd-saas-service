@@ -2,16 +2,21 @@ package com.bbd.saas.api.impl.mongo;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
+import org.mongodb.morphia.query.UpdateResults;
 import org.springframework.stereotype.Service;
 
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.dao.mongo.SiteDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
@@ -153,5 +158,12 @@ public class UserServiceImpl implements UserService {
     }
 	
 	
-	
+    /**
+     * 更新用户状态
+     * @param loginName 、UserStatus
+     * return UpdateResults
+     */
+    public void updateUserStatu(String loginName, UserStatus userStatus) {
+    	userDao.updateUserStatu(loginName, userStatus);
+    }
 }

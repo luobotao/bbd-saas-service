@@ -97,21 +97,17 @@ public class UserManageController {
 	@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
 	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		System.out.println("=================beigin======================");
 		User getuser = adminService.get(UserSession.get(request));
 		if (pageIndex==null) pageIndex =0 ;
 		if(keyword!=null && !keyword.equals("")){
 			try {
 				
-				System.out.println("========================keyword=="+keyword);
 				keyword = URLDecoder.decode(keyword,"UTF-8");
-				System.out.println("========================URLDecoder.decode(keyword,UTF-8)=="+keyword);
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		System.out.println("=================end======================");
 		UserQueryVO userQueryVO = new UserQueryVO();
 		userQueryVO.roleId=roleId;
 		userQueryVO.status=status;
@@ -138,7 +134,6 @@ public class UserManageController {
 	@ResponseBody
 	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
 	public PageModel<User> getUserPageFenYe(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		System.out.println("=================getUserPageFenYe======================");
 		PageModel<User> userPage = getUserPage(request,pageIndex,roleId,status,keyword);
 		
 		return userPage;
@@ -359,7 +354,7 @@ public class UserManageController {
 			@RequestParam(value = "status", required = true) String status,
 			@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
 		User user = null;
-		try {
+		/*try {
 			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
 			 
 		} catch (UnsupportedEncodingException e) {
@@ -381,9 +376,53 @@ public class UserManageController {
 			return "true";
 		}else{
 			return "false";
+		}*/
+		
+		if(loginName!=null && !loginName.equals("")){
+			user = userService.findUserByLoginName(loginName);
+			
+			if(user!=null && !user.getId().equals("")){ 
+				userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(status)));
+				int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
+				return "true";
+			}else{
+				return "false";
+			}
+
+			
+		}else{
+			return "false";
 		}
+
 		
 	}
+	
+	
+	/**
+	 * ajax异步调用
+     * 根据loginName修改user的状态     
+     * @param loginName、status
+     * @return "true"/"false"
+     */
+	@ResponseBody
+	@RequestMapping(value="/changestatusOuter", method=RequestMethod.GET)
+	public String changestatusOuter(Model model,
+			@RequestParam(value = "loginName", required = true) String loginName,
+			@RequestParam(value = "status", required = true) String status,HttpServletResponse response) {
+		User user = null;
+		
+		if(loginName!=null && !loginName.equals("")){
+			user = userService.findUserByLoginName(loginName);
+			userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(status)));
+			int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
+			return "true";
+		}else{
+			return "false";
+		}
+
+		
+	}
+	
 	
 	/**
 	 * ajax异步调用
