@@ -50,7 +50,7 @@
 	  						</div>
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
 	  							<label>到站时间：</label>
-	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
+	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
 	  						</div>
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
 	  							<label>运单号：</label>
@@ -124,7 +124,7 @@
 									%>
 									<td><%=order.getReciever().getName()%></td>
 									<td><%=order.getReciever().getPhone()%></td>
-									<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+									<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateDriverGeted())%></td>
 									<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
@@ -271,7 +271,7 @@ function getRowHtml(data){
 	row += "<td>" + getSrcName(data.src) + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.phone + "</td>";
-	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateDriverGeted) + "</td>";
 	row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
@@ -284,7 +284,7 @@ function getRowHtml(data){
 	}
 	//状态
 	row += "<td>" + getStatus(data.orderStatus) + "</td>";
-	row += "<td><a href='<%=path%>/dataQuery/getOrderMail?mailNum=" + data.mailNum + "' target='_blank'>查看物流信息 </a></td>";
+	row += "<td><a href='<%=path%>/dataQuery/getOrderMail?mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
 }

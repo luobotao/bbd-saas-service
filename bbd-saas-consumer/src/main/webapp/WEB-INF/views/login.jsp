@@ -37,8 +37,8 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav navbar-right f16">
 				<li class="cur"><a href="javascript:void(0);">首页</a></li>
-				<li><a href="javascript:void(0);">关于我们</a></li>
-				<li><a href="javascript:void(0);">合作伙伴</a></li>
+				<li><a href="#aboutUs">关于我们</a></li>
+				<li><a href="#partner">合作伙伴</a></li>
 			</ul>
 		</div><!-- /.navbar-collapse -->
 	</div><!-- /.container-fluid -->
@@ -82,7 +82,7 @@
 </div>
 <!-- E banner -->
 <!-- S 关于我们 -->
-<div class="container">
+<div class="container" id="aboutUs">
 	<ul class="row">
 		<li class="b-item col-xs-12 col-sm-6 col-md-4 col-lg-4">
 			<div class="b-item-card">
@@ -109,7 +109,7 @@
 </div>
 <!-- E 关于我们  -->
 <!-- S 合作伙伴 -->
-<h3 class="b-tit"><em>TA们都在使用棒棒达快递</em></h3>
+<h3 class="b-tit" id="partner"><em>TA们都在使用棒棒达快递</em></h3>
 <div class="part-bg clearfix">
 		<div class="container mb80">
 		<ul class="row b-brand">
