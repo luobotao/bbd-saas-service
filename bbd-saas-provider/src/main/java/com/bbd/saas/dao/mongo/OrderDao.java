@@ -184,9 +184,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             }
             //订单状态和到站时间
             if(orderQueryVO.orderStatus == null){//除了数据查询页面之外的其他的页面的到站时间查询
-            	DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
-                query.filter("dateArrived >=",dateBetween.getStart());
-                query.filter("dateArrived <=",dateBetween.getEnd());
+            	//预计到站时间
+                if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
+                	DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                    query.filter("dateArrived >=",dateBetween.getStart());
+                    query.filter("dateArrived <=",dateBetween.getEnd());
+                }
             }else if(orderQueryVO.orderStatus == -1){//数据查询页面===查询全部，就相当于不需要按状态字段查询,并且包含到站时间为空（未到站）的记录
             	//到站的运单，根据时间查询；未到站，时间为空
                 if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){

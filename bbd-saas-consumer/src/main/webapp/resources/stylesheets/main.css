@@ -1218,11 +1218,11 @@ footer {
 .pagination > li > a, .pagination > li > span{
 	border:1px solid #d7d6ea;
 }
-.form-inline-n .form-control:focus {
+.form-control:focus {
   box-shadow: none;
   border: 1px solid #ffa000;
 }
-.has-sel-icon select,.input.c-disable,.form-inline-n select.form-control{
+.has-sel-icon select,input.c-disable,.form-inline-n select.form-control{
 	appearance:none;
     -moz-appearance:none;
     -webkit-appearance:none;
