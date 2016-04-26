@@ -272,7 +272,7 @@
 				<div class="fl site-re">
 					<label>
 						<input type="checkbox"  id="agreeCheck" checked/>
-						同意<em class="orange">《棒棒达快递注册协议》</em>
+						同意<a href="http://ht.neolix.cn/www/wap/protocal.html" target="_blank"><em class="orange">《棒棒达快递注册协议》</em></a>
 					</label>
 				</div>
 				<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn" >保存</a>
