@@ -283,7 +283,7 @@ function dispatch() {
 function queryData(pageIndex) {
 	//清除派件员的查询条件
 	$("#courierId").val() == "";
-	$("#mailNum_check").text("");
+	$("#courierName").text("");
 	status = $("#status").val();
   	arriveBetween = $("#arriveBetween").val();
 	//查询所有派件员
@@ -414,7 +414,7 @@ function hideCourierDiv() {
 //选择派件员
 function chooseCourier() {
 	$("#ddlregtype").find("option:selected").text(); 
-	$("#courierName").text("已选择:" + $("#courier_select").find("option:selected").text());
+	$("#除").text("已选择:" + $("#courier_select").find("option:selected").text());
 	$("#courierId").val($("#courier_select").val());
 	//设置分页查询条件
 	status = "";
