@@ -479,14 +479,8 @@ footer {
   font-size: 16px;
 }
 .has-sel-icon {
-  height: 60px;
-  line-height: 60px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  border: 1px solid #fff;
-  height: 40px;
-  line-height: 40px;
+  height: 38px;
+  line-height: 38px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -499,7 +493,7 @@ footer {
   color: #fff;
 }
 .has-sel-icon select {
-  width: 82%;
+  width: 89%;
   height: 36px;
   border: none;
   outline: none;
@@ -1228,7 +1222,7 @@ footer {
   box-shadow: none;
   border: 1px solid #ffa000;
 }
-input.c-disable,.form-inline-n select.form-control{
+.has-sel-icon select,.input.c-disable,.form-inline-n select.form-control{
 	appearance:none;
     -moz-appearance:none;
     -webkit-appearance:none;
