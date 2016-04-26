@@ -51,24 +51,26 @@ $(function () {
     $(".j-login").on("click", function (e) {
         e.stopPropagation();
         $(".j-login-type").addClass("in").show();
-        ;
         $("#mask").show();
+        $(document.body).addClass("modal-open").css({paddingRight:"17px"});
     });
     // 注册站点
     $(".j-site-re").on("click", function () {
         $(this).parents(".modal").hide();
         $("#mask").show();
         $(".j-site-re-pop").addClass("in").show();
+        $(document.body).addClass("modal-open").css({paddingRight:"17px"});
     });
     $(".j-scroll-dislog").on("click", function (e) {
         e.stopPropagation();
     })
-    $(document).on("click", function () {
-        $(".j-login-type,#mask").hide()
-    })
+//    $(document).on("click", function () {
+//        $(".j-login-type,#mask").hide()
+//    })
     $(".j-close").on("click",function(){
         $(this).parent().parent().parent().parent().hide();
         $("#mask").hide();
+        $(document.body).removeClass("modal-open").css({paddingRight:"0"});
     })
     // E 注册站点
 
@@ -82,7 +84,7 @@ $(function () {
     })
     // S 浮层固定定位
     $(parent.window).scroll(function(){
-	  $('.j-pl-pop').css({top:$(parent.window).scrollTop()})
+	  $('.j-pl-pop').css({top:$(parent.window).scrollTop()});
 	})
 	// E 浮层固定定位
 })
