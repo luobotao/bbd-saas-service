@@ -48,7 +48,7 @@
 <div class="b-banner mb120">
 	<div class="container">
 		<div class="clearfix">
-			<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-md-offset-8 pr0">
+			<div class="fr">
 				<div class="login-area">
 					<form:form id="form" method="post" modelAttribute="loginForm" >
 						<div class="header">
