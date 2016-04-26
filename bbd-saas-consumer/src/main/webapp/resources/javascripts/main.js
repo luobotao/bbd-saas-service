@@ -81,19 +81,6 @@ $(function () {
         }
     })
 
-
-
-
-    // 导入文件
-    $(".import-guid-file").on("change",function(){
-        $(".j-import-guid-pop").addClass("in").show();
-    })
-
-    // 导入文件
-    $(".import-file").on("change",function(){
-        $(".j-import-pop").modal();
-    })
-
 })
 //iframe 自适应高度
 function iFrameHeight() {

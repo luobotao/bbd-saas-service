@@ -257,7 +257,10 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-
+	// 导入文件
+	$(".import-file").on("change",function(){
+		$(".j-import-pop").modal();
+	})
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
 		var radiusVal = $("#radius option:selected").val();

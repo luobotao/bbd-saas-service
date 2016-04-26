@@ -81,6 +81,13 @@
             <artifactId>jedis</artifactId>
             <version>2.7.2</version>
         </dependency>
+		
+		<!--JSONT TO MAP-->
+		<dependency>
+			<groupId>net.sf.flexjson</groupId>
+			<artifactId>flexjson</artifactId>
+			<version>2.1</version>
+		</dependency>
 
         <!-- Spring -->
         <dependency>
