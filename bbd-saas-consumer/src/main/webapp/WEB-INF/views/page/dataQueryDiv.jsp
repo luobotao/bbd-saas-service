@@ -257,6 +257,7 @@ function gotoPage(pageIndex) {
 		},
         error : function() {  
            //	alert("加载分页数据异常！");  
+           window.location.href = "<%=path%>/login";
       	}    
     });	
 }	

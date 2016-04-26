@@ -251,7 +251,8 @@ function gotoPage(pageIndex) {
 			$("#pagin").html(pageStr);
 		},
         error : function() {  
-           	alert("加载分页数据异常！");  
+           	//alert("加载分页数据异常！");  
+           	window.location.href = "<%=path%>/login";
       	}    
     });	
 }	
