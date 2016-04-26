@@ -326,7 +326,8 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);  
 		},
         error : function() {  
-           //	alert("加载分页数据异常，请重试！");  
+           //	alert("加载分页数据异常，请重试！"); 
+           window.location.href = "<%=path%>/login"; 
       	}    
     });	
 }	
@@ -398,6 +399,7 @@ function initCourierList() {
         error : function() {  
        		//alert("派件员列表加载异常，请重试！");
        		courierList = null;  
+       		window.location.href = "<%=path%>/login";
        	}    
     });
 }
@@ -422,6 +424,7 @@ function showCourierDiv(mailNumStr) {
 	        },
 	        error : function() {  
 	       		//alert("服务器繁忙，请稍后再试！");
+	       		window.location.href = "<%=path%>/login";
 	  		}    
 	    });
 	}
@@ -478,6 +481,7 @@ function chooseCourier() {
         },
         error : function() {  
        		//alert("服务器繁忙，请稍后再试！");  
+       		window.location.href = "<%=path%>/login";
   		}    
     });
     //隐藏面板
@@ -499,6 +503,7 @@ function initSiteList() {
         },
         error : function() { 
         	siteList = null; 
+        	window.location.href = "<%=path%>/login";
   		}    
     });
 }
@@ -519,6 +524,7 @@ function showOtherSiteDiv(mailNumStr) {
 	        },
 	        error : function() {  
 	       		//alert("服务器繁忙，请稍后再试！");
+	       		window.location.href = "<%=path%>/login";
 	  		}    
 	    });
 	}
@@ -567,7 +573,8 @@ function chooseOtherSite() {
         	}
         },
         error : function() {  
-       		//alert("服务器繁忙，请稍后再试！");  
+       		//alert("服务器繁忙，请稍后再试！"); 
+       		window.location.href = "<%=path%>/login"; 
   		}    
     });
     //隐藏面板
@@ -602,6 +609,7 @@ function initExpressCompany() {
         },
         error : function() {  
        		//alert("快递公司列表加载异常，请重试！");  
+       		window.location.href = "<%=path%>/login";
   		}    
     });
 }	
@@ -639,6 +647,7 @@ function chooseOtherExpress(mailNum) {
         },
         error : function() {  
        		//alert("转到其他快递发生异常，请重试！");  
+       		window.location.href = "<%=path%>/login";
   		}    
     });
     //隐藏面板
@@ -680,6 +689,7 @@ function applyReturn(mailNum) {
         },
         error : function() {  
        		//alert("退货发生异常，请重试！");  
+       		window.location.href = "<%=path%>/login";
   		}    
     });
     //隐藏面板
