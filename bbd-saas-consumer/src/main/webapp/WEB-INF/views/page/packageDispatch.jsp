@@ -52,7 +52,7 @@
 	  						</div>
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<label>到站时间：　</label>
-	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control"  />
+	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
 	  						</div>
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
@@ -105,7 +105,7 @@
 							<tr>
 								<td><%=order.getMailNum()%></td>
 								<td><%=order.getReciever().getName()%></td>
-								<td><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
+								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
 									if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
@@ -213,7 +213,7 @@ $(document).ready(function() {
 		if($("#courierId").val() == null || $("#courierId").val() == ""){
 	  		$("#mailNum_check").text("请选择派件员！");
 	  	}
-	}).blur(function(){//扫描运单号--把快递分派给派件员
+	});/* .blur(function(){//扫描运单号--把快递分派给派件员
 		//未选择派件员 
 		if($("#courierId").val() == null || $("#courierId").val() == ""){
 	  		$("#mailNum_check").text("请选择派件员！");
@@ -221,7 +221,7 @@ $(document).ready(function() {
 	  	}	
 	  	//已选择派件员，把快递分派给派件员	 
 	  	dispatch();
-	});
+	}); */
 	//扫描运单号--把快递分派给派件员--边输入边改变
 	$("#mailNum").on('input',function(e){ 
 		
@@ -255,6 +255,7 @@ function dispatch() {
 		},//数据，这里使用的是Json格式进行传输  
 		dataType: "json",
 		success : function(data) {//返回数据根据结果进行相应的处理  
+			console.log("data.operFlag===="+data.operFlag);
 		   	if (data.operFlag == 1) { 
 		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派成功！");
 		    	//刷新列表
@@ -302,6 +303,7 @@ function refreshTable(dataObject){
 	tbody.html("");
     //var datastr = "";
     var dataList = dataObject.datas;
+    console.log(dataList+"   len==="+dataList.length);
 	if(dataList != null){
 		for(var i = 0; i < dataList.length; i++){
 			tbody.append(getRowHtml(dataList[i])); 
@@ -321,7 +323,7 @@ function getRowHtml(data){
 	var row = "<tr>";
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
-	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
 	if(data.userId == null || data.userId == ""){

@@ -31,7 +31,7 @@
 			<!-- S detail -->
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 搜索区域 -->
-				<div class="search-area">
+				<div class="search-area d-search-area">
 					<ul class="row pb20">
 						<li class="txt-info">
 							<em>站点名称：</em>
@@ -59,14 +59,14 @@
 					<div class="b-tab-con form-inline form-inline-n tab-content">
 						<!-- S 配送区域 -->
 						<div class="row tab-pane fade" id="send-range">
-							<div class="col-md-12 pb20">
+							<div class="col-md-12 pb20 f16">
 								设置配送范围后，将优先匹配站点附近的订单。
 							</div>
 							<form  method="POST" id="siteRadiusForm">
 								<div class="col-md-12 pb20">
-									<label>
+									<label class="f16">
 										站点周围：<c:set var="count" value="20"/>
-										<select id="radius" name="radius"  class="form-control form-con-new">
+										<select id="radius" name="radius"  class="form-control form-con-new f16">
 											<option value="0">请选择</option>
 											<c:forEach var = "temp" begin="1" step="1" end="${count}">
 												<option value ="${temp}" <c:if test="${temp eq site.getDeliveryArea()}">selected</c:if>>${temp}</option>
@@ -110,7 +110,7 @@
 						<div class="clearfix tab-pane fade" id="import-key">
 							<div class="row pb20">
 								<c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
-								<form action="${ctx}/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm">
+								<form action="${ctx}/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
 									<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
@@ -319,7 +319,7 @@
 		allmapPs.addOverlay(marker);               // 将标注添加到地图中
 		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
 		//var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
-		var circle = new BMap.Circle(pointPs,radius,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+		var circle = new BMap.Circle(pointPs,radius,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 		allmapPs.addOverlay(circle);            //增加圆
 		allmapPs.enableScrollWheelZoom(true);
 	}

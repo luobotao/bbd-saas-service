@@ -69,7 +69,7 @@
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
 								<label>预计到站时间：</label>
-								<input id="between" name="between" type="text" class="form-control" placeholder="请选择预计到站时间" value="${between}"/>
+								<input id="between" name="between" type="text" class="form-control c-disable" placeholder="请选择预计到站时间" value="${between}"/>
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>查询</a>
@@ -281,7 +281,7 @@
 		row += "<td>" + data.srcMessage + "</td>";
 		row += "<td>" + data.reciever.name + "</td>";
 		row += "<td>" + data.reciever.phone + "</td>";
-		row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+		row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 		row += "<td>" + getDate1(data.datePrint) + "</td>";
 		row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){

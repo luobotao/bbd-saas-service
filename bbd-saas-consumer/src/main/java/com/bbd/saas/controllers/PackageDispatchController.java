@@ -169,7 +169,8 @@ public class PackageDispatchController {
 			//查询数据
 			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
 			if(orderPage != null && orderPage.getDatas() != null){
-				formatOrder(orderPage.getDatas()) ;
+				List<Order> orderList = formatOrder(orderPage.getDatas()) ;
+				orderPage.setDatas(orderList);
 			}
 			map.put("orderPage", orderPage); 
 		}else{

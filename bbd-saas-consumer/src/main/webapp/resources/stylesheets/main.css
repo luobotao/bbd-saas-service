@@ -142,6 +142,9 @@ a.orange {
   height: 40px;
   border: 1px solid #d9d8eb;
 }
+.form-inline-n label{
+	font-size:16px;
+}
 .sbtn {
   display: inline-block;
   width: 100%;
@@ -273,7 +276,7 @@ a.orange {
   font-size:16px;
 }
 .table tr:nth-child(2n) td {
-  background: #f8f8f8;
+  background: #f4f4fb;
 }
 .table .l-count {
   color: #cf242a;
@@ -450,7 +453,7 @@ footer {
 .b-banner {
   background: url(../images/banner.png) no-repeat;
   min-height: 688px;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 .b-banner .login-area {
   padding: 67px 43px;
@@ -770,6 +773,9 @@ footer {
   border: 1px solid #d9d8eb;
   font-size:16px;
 }
+.d-search-area{
+	padding:30px 0 10px 40px;
+}
 .form-inline .form-con-new {
   min-width: 196px;
 }
@@ -796,12 +802,12 @@ footer {
   display: block;
 }
 .txt-info em {
-  font-size: 14px;
+  font-size: 16px;
   color: #85888d;
   padding-bottom: 6px;
 }
 .txt-info i {
-  font-size: 22px;
+  font-size: 24px;
   color: #33333d;
   line-height: 1.1;
 }
@@ -824,6 +830,7 @@ footer {
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   background:#f0f0f7;
+  font-size:18px;
 }
 .tab-area .b-tab .tab-cur a {
   background: #ffc800;
@@ -1169,7 +1176,7 @@ footer {
   margin-left: 12px !important;
 }
 .j-scroll-dislog{
-  margin:100px auto 0;
+  margin:170px auto 0;
 }
 .bod-rad {
   border-radius: 4px;
@@ -1213,9 +1220,15 @@ footer {
 .pagination>li>a, .pagination>li>span{
   color:#333;
 }
+.pagination > li > a, .pagination > li > span{
+	border:1px solid #d7d6ea;
+}
 .form-inline-n .form-control:focus {
   box-shadow: none;
   border: 1px solid #ffa000;
+}
+.navbar-nav > li > a{
+	padding:20px 40px 0 0;
 }
 .f-dialog{
   position:fixed;
@@ -1233,7 +1246,6 @@ footer {
 .pl20 {
     padding-left: 20px;
 }
-
 /* E 修改 */
 /* 循环加载 开始*/
 .spinner {
