@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class SignUtil {
     // 组装签名字符串,供外部使用
-    public static String makeOpenSign(Map<Object, Object> sortMap, String token) {
+    public static String makeOpenSign(Map<Object, Object> sortMap,String token) {
         StringBuilder sb = new StringBuilder();
         Object[] keys = sortMap.keySet().toArray();
         Arrays.sort(keys);
@@ -17,8 +17,11 @@ public class SignUtil {
             String mapkey = (String) keys[i];
             sb.append(mapkey).append("=").append(sortMap.get(mapkey)).append("&");
         }
-        sb.append(token);//拼接token
+        sb.append("token="+token);//拼接token
         String data = sb.toString();// 参数拼好的字符串
+        /*if(data.endsWith("&")){
+        	data = data.substring(0, data.length()-1);
+        }*/
         try {
             MessageDigest messageDigest = java.security.MessageDigest.getInstance("SHA-1");
             messageDigest.reset();

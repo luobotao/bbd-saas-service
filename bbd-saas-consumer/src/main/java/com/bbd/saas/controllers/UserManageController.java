@@ -1,6 +1,9 @@
 package com.bbd.saas.controllers;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -39,6 +42,8 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.SignUtil;
 import com.bbd.saas.vo.UserQueryVO;
 
+import flexjson.JSONDeserializer;
+
 /**
  * 版权：zuowenhai新石器时代<br/>
  * 作者：zuowenhai@neolix.cn <br/>
@@ -53,11 +58,11 @@ public class UserManageController {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	AdminService adminService;
+	private AdminService adminService;
 	@Autowired
-	PostmanUserService userMysqlService;	
+	private PostmanUserService userMysqlService;	
 	@Autowired
-	OpenUserService openUserMysqlService;	
+	private OpenUserService openUserMysqlService;	
 	
 	
 	/**
@@ -408,30 +413,64 @@ public class UserManageController {
      * @param loginName、status
      * @return "true"/"false"
      */
-	@ResponseBody
-	@RequestMapping(value="/changestatusOuter", method=RequestMethod.GET)
-	public String changestatusOuter(HttpServletRequest request,HttpServletResponse response) {
+	//@ResponseBody
+	@RequestMapping(value="/changestatusOuter", method=RequestMethod.POST)
+	public void changestatusOuter(HttpServletRequest request,HttpServletResponse response) {
 		User user = null;
 		System.out.println();
-		String sign = request.getParameter("sign");
-		String code = request.getParameter("code");
-		String ts = request.getParameter("ts");
-		String loginName = request.getParameter("loginName");
-		String newStatus = request.getParameter("newStatus");
-		String oldStatus = request.getParameter("oldStatus");
+		StringBuilder sb = null;
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new InputStreamReader(request.getInputStream()));
+			sb = new StringBuilder();   
+		    String line = null;  
+		    while ((line = in.readLine()) != null) {   
+		         sb.append(line);   
+		    }
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		  
+		Map<String,Object> map = null;
+		//String data = request.getParameter("data");
+		JSONDeserializer deserializer = new JSONDeserializer();
+		try{
+			map = (Map<String,Object>)deserializer.deserialize(sb.toString());
+			//System.out.println(map.get("atcode"));
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+		
+		
+		String sign = map.get("sign")!=null?(String) map.get("sign"):"";
+		String code = map.get("code")!=null?(String) map.get("code"):"";
+		String timestamp = map.get("timestamp")!=null?(String) map.get("timestamp"):"";
+		String loginName = map.get("loginName")!=null?(String) map.get("loginName"):"";
+		String newStatus = map.get("newStatus")!=null?(String) map.get("newStatus"):"";
+		String oldStatus = map.get("oldStatus")!=null?(String) map.get("oldStatus"):"";
 		//根据code查询对应的token
 		String token = openUserMysqlService.selectTokenByCode(code);
-		
-		//String checkSign = "code="+code+"&ts="+ts+"&loginName="+loginName+"&oldStatus="+oldStatus+"&newStatus="+newStatus;
+		String retflag = "";
 		
 		Map<Object, Object> m = new HashMap<Object, Object>();
-		m.put("code", code);
-		m.put("ts", ts);
-		m.put("loginName", loginName);
+		
 		m.put("newStatus", newStatus);
 		m.put("oldStatus", oldStatus);
+		m.put("loginName", loginName);
+		m.put("timestamp", timestamp);
+
 		String getSign = SignUtil.makeOpenSign(m,token);
 		
+		response.setCharacterEncoding("UTF-8");  
+	    response.setContentType("application/json; charset=utf-8");  
+	    PrintWriter out = null;  
+	    try {
+			out = response.getWriter();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
 		if(getSign.equals(sign)){
 			//判断签名是否正确
 			if(loginName!=null && !loginName.equals("")){
@@ -439,20 +478,27 @@ public class UserManageController {
 				
 				if(user!=null && !user.getId().equals("")){ 
 					userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(newStatus)));
-					int ret = userMysqlService.updateById(Integer.parseInt(newStatus),user.getPostmanuserId());
-					return "true";
+					//int ret = userMysqlService.updateById(Integer.parseInt(newStatus),user.getPostmanuserId());
+					retflag = "{\"result\":\"ok\"}";
+					out.append(retflag);
 				}else{
-					return "false";
+					retflag = "{\"result\":\"error\",\"code\":51002,\"msg\":\"参数错误\"}";
+					out.append(retflag);
 				}
 
 				
 			}else{
-				return "false";
+				retflag = "{\"result\":\"error\",\"code\":51002,\"msg\":\"参数错误\"}";
+				out.append(retflag);
 			}
 		}else{
-			return "false";
+			retflag = "{\"result\":\"error\",\"code\":51002,\"msg\":\"签名错误\"}";
+			out.append(retflag);
 		}
 
+		
+		
+		
 	}
 	
 	
