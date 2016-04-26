@@ -327,7 +327,7 @@ function gotoPage(pageIndex) {
 		},
         error : function() {  
            //	alert("加载分页数据异常，请重试！"); 
-           window.location.href = "<%=path%>/login"; 
+           gotoLoginPage(); 
       	}    
     });	
 }	
@@ -399,9 +399,17 @@ function initCourierList() {
         error : function() {  
        		//alert("派件员列表加载异常，请重试！");
        		courierList = null;  
-       		window.location.href = "<%=path%>/login";
+       		gotoLoginPage();
        	}    
     });
+}
+//出错跳转到登录页
+function gotoLoginPage() {
+	if(window.top==window.self){//不存在父页面
+		window.location.href="<c:url value="/login" />"
+	}else{
+		window.top.location.href="<c:url value="/login" />"
+	}
 }
 // 重新分派
   //  shP(".j-sel", ".j-sel-pop");
@@ -424,7 +432,7 @@ function showCourierDiv(mailNumStr) {
 	        },
 	        error : function() {  
 	       		//alert("服务器繁忙，请稍后再试！");
-	       		window.location.href = "<%=path%>/login";
+	       		gotoLoginPage();
 	  		}    
 	    });
 	}
@@ -481,7 +489,7 @@ function chooseCourier() {
         },
         error : function() {  
        		//alert("服务器繁忙，请稍后再试！");  
-       		window.location.href = "<%=path%>/login";
+       		gotoLoginPage();
   		}    
     });
     //隐藏面板
@@ -503,7 +511,7 @@ function initSiteList() {
         },
         error : function() { 
         	siteList = null; 
-        	window.location.href = "<%=path%>/login";
+        	gotoLoginPage();
   		}    
     });
 }
@@ -524,7 +532,7 @@ function showOtherSiteDiv(mailNumStr) {
 	        },
 	        error : function() {  
 	       		//alert("服务器繁忙，请稍后再试！");
-	       		window.location.href = "<%=path%>/login";
+	       		gotoLoginPage();
 	  		}    
 	    });
 	}
@@ -574,7 +582,7 @@ function chooseOtherSite() {
         },
         error : function() {  
        		//alert("服务器繁忙，请稍后再试！"); 
-       		window.location.href = "<%=path%>/login"; 
+       		gotoLoginPage(); 
   		}    
     });
     //隐藏面板
@@ -609,7 +617,7 @@ function initExpressCompany() {
         },
         error : function() {  
        		//alert("快递公司列表加载异常，请重试！");  
-       		window.location.href = "<%=path%>/login";
+       		gotoLoginPage();
   		}    
     });
 }	
@@ -647,7 +655,7 @@ function chooseOtherExpress(mailNum) {
         },
         error : function() {  
        		//alert("转到其他快递发生异常，请重试！");  
-       		window.location.href = "<%=path%>/login";
+       		gotoLoginPage();
   		}    
     });
     //隐藏面板
@@ -689,7 +697,7 @@ function applyReturn(mailNum) {
         },
         error : function() {  
        		//alert("退货发生异常，请重试！");  
-       		window.location.href = "<%=path%>/login";
+       		gotoLoginPage();
   		}    
     });
     //隐藏面板

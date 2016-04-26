@@ -272,7 +272,7 @@ function dispatch() {
 		},
 		error : function() {  
 			//alert("服务器繁忙，请稍后再试！");  
-			window.location.href = "<%=path%>/login";
+			gotoLoginPage();
 		}     
     });
 }  
@@ -294,7 +294,7 @@ function gotoPage(pageIndex) {
 		},
         error : function() {  
            //	alert("加载分页数据异常！"); 
-           window.location.href = "<%=path%>/login"; 
+           gotoLoginPage(); 
       	}    
     });	
 }	
@@ -366,11 +366,19 @@ function initCourier() {
         error : function() {  
         	courierIsLoadSuccess = 0;
        		//alert("派件员列表加载异常！");  
-       		window.location.href = "<%=path%>/login";
+       		gotoLoginPage();
   		}    
     });
 }	
 
+//出错跳转到登录页
+function gotoLoginPage() {
+	if(window.top==window.self){//不存在父页面
+		window.location.href="<c:url value="/login" />"
+	}else{
+		window.top.location.href="<c:url value="/login" />"
+	}
+}
 // 添加  
 function col_add() {  
     var selObj = $("#mySelect");  
