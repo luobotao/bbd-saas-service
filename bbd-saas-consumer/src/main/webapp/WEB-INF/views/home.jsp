@@ -109,7 +109,7 @@
 <!-- S pop -->
 <!--S 引导页-->
 <div class="j-guide-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog b-guide-dialog" role="document">
+	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<jsp:include page="live-guide.jsp"/>
 		</div>

@@ -184,8 +184,26 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
                 }
             }
-            //订单状态--用于数据查询页面(-1未全部状态，就相当于不需要按状态字段查询)
-            if(orderQueryVO.orderStatus != null && orderQueryVO.orderStatus != -1){
+            //订单状态和到站时间
+            if(orderQueryVO.orderStatus == null){//除了数据查询页面之外的其他的页面的到站时间查询
+            	DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                query.filter("dateArrived >=",dateBetween.getStart());
+                query.filter("dateArrived <=",dateBetween.getEnd());
+            }else if(orderQueryVO.orderStatus == -1){//数据查询页面===查询全部，就相当于不需要按状态字段查询,并且包含到站时间为空（未到站）的记录
+            	//到站的运单，根据时间查询；未到站，时间为空
+                if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
+                	//按照时间查询--已到站的记录
+                	Query<Order> timeQuery = createQuery(); 
+                    DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                    Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
+                    Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
+                    Criteria timeC = timeQuery.and(startC, endC);
+                    //时间为空query--未到站的记录
+                    Query<Order> timeNullQuery = createQuery(); 
+                    Criteria timeNullC = timeNullQuery.or(timeNullQuery.criteria("dateArrived").equal(""), timeNullQuery.criteria("orderStatus").equal(null));
+                    query.or(timeC, timeNullC);
+                }
+            }else{//数据查询页面查询订单某一状态的记录
             	if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0或者OrderStatus=null
             		query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
             	}else{//已到站
@@ -196,37 +214,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
                     }
-            		
             	}
-            }else{//状态为空或者=-1，即为查询全部，就相当于不需要按状态字段查询,包含未到站时间为空的记录
-            	//到站时间，包含未到站时间为空的记录
-                if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
-                	//按照时间查询
-                	Query<Order> timeQuery = createQuery(); 
-                    DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
-                    Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
-                    Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
-                    Criteria timeC = timeQuery.and(startC, endC);
-                    //时间为空query
-                    Query<Order> timeNullQuery = createQuery(); 
-                    Criteria timeNullC = timeNullQuery.or(timeNullQuery.criteria("dateArrived").equal(""), timeNullQuery.criteria("orderStatus").equal(null));
-                    
-                    query.or(timeC, timeNullC);
-                	/*Query<Order> timeQuery = createQuery();
-                	//时间条件
-                    DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
-                    Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
-                    Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
-                    Criteria timeC = timeQuery.and(startC, endC);
-                    //未到站--不需要按照时间查询
-                    Criteria arrC = query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
-                    //到站--需要根据时间查询
-                    Criteria notArrC = query.and(query.criteria("orderStatus").notEqual(OrderStatus.status2Obj(0)),
-                    		query.criteria("orderStatus").notEqual(null), timeC);
-                    query.and(arrC, notArrC);*/
-                	
-                }
-            	
             }
         }
     	return query;
