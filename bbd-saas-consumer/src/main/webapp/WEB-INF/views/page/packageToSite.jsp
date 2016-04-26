@@ -142,7 +142,7 @@
 							%>
 							</tbody>
 							<tfoot>
-								<div class="modal fade" id="batchToSite" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="j-pl-pop modal fade" id="batchToSite" tabindex="-1" role="dialog" aria-hidden="true">
 									<div class="modal_wrapper">
 										<div class="modal-dialog b-modal-dialog">
 											<div class="modal-content">

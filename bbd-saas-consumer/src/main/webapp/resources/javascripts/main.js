@@ -80,7 +80,11 @@ $(function () {
             $("input[name=inputC]").prop("checked", true);
         }
     })
-
+    // S 浮层固定定位
+    $(parent.window).scroll(function(){
+	  $('.j-pl-pop').css({top:$(parent.window).scrollTop()})
+	})
+	// E 浮层固定定位
 })
 //iframe 自适应高度
 function iFrameHeight() {
