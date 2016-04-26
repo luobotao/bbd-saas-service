@@ -22,7 +22,7 @@
     <dubbo:reference id="userService" interface="com.bbd.saas.api.mongo.UserService"/>
     <!--site Service-->
     <dubbo:reference id="siteService" interface="com.bbd.saas.api.mongo.SiteService" />
-    <!--orderPacel Service-->Ws
+    <!--orderPacel Service-->
     <dubbo:reference id="orderPacelService" interface="com.bbd.saas.api.mongo.OrderPacelService"/>
     <!--orderPacel Service-->
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
