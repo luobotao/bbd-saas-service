@@ -213,7 +213,7 @@ $(document).ready(function() {
 		if($("#courierId").val() == null || $("#courierId").val() == ""){
 	  		$("#mailNum_check").text("请选择派件员！");
 	  	}
-	}).blur(function(){//扫描运单号--把快递分派给派件员
+	});/* .blur(function(){//扫描运单号--把快递分派给派件员
 		//未选择派件员 
 		if($("#courierId").val() == null || $("#courierId").val() == ""){
 	  		$("#mailNum_check").text("请选择派件员！");
@@ -221,7 +221,7 @@ $(document).ready(function() {
 	  	}	
 	  	//已选择派件员，把快递分派给派件员	 
 	  	dispatch();
-	});
+	}); */
 	//扫描运单号--把快递分派给派件员--边输入边改变
 	$("#mailNum").on('input',function(e){ 
 		
