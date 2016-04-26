@@ -265,11 +265,7 @@
 				updateOrderNumVO();
 			},
 			error : function() {
-				if(window.top==window.self){//不存在父页面
-					window.location.href="<c:url value="/login" />"
-				}else{
-					window.top.location.href="<c:url value="/login" />"
-				}
+				alert("加载分页数据异常！");
 			}
 		});
 	}
@@ -343,11 +339,8 @@
 					}
 				},
 				error: function(){
-					if(window.top==window.self){//不存在父页面
-						window.location.href="<c:url value="/login" />"
-					}else{
-						window.top.location.href="<c:url value="/login" />"
-					}
+					$("#mailNumP").html("【异常扫描】不存在此运单号") ;
+					$("#mailNumP").attr("style","color:red");
 				}
 			});
 		}
@@ -368,11 +361,6 @@
 				}
 			},
 			error: function(){
-				if(window.top==window.self){//不存在父页面
-					window.location.href="<c:url value="/login" />"
-				}else{
-					window.top.location.href="<c:url value="/login" />"
-				}
 			}
 		});
 	}
