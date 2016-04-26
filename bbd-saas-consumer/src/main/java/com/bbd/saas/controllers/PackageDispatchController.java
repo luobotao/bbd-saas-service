@@ -68,7 +68,7 @@ public class PackageDispatchController {
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String arriveBetween, String courierId, final HttpServletRequest request, Model model) {
 		//设置默认查询条件
-		status = Numbers.defaultIfNull(status, OrderStatus.NOTDISPATCH.getStatus());//未分派
+		status = Numbers.defaultIfNull(status, -1);//全部
 		//到站时间前天、昨天和今天
 		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 		//查询数据
