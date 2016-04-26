@@ -410,7 +410,7 @@ function gotoLoginPage() {
 	}else{
 		window.top.location.href="<c:url value="/login" />"
 	}
-}
+} 
 // 重新分派
   //  shP(".j-sel", ".j-sel-pop");
 //显示选择派件员div
