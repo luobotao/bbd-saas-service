@@ -460,13 +460,14 @@ footer {
   border-radius: 10px;
   background: #59adce;
   margin-top: 94px;
+  width:456px;
 }
 .has-icon {
   height: 60px;
   line-height: 60px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid #fff;
 }
 .has-icon .b-input {
@@ -606,11 +607,11 @@ footer {
 .b-con-bot {
   display: block;
   content: '';
-  height: 20px;
+  height: 50px;
   border-radius: 50%;
   background: #fff;
-  margin-top: -10px;
-  margin-bottom: -10px;
+  margin-top: -25px;
+  margin-bottom: -25px;
 }
 .b-status {
   text-align: center;
@@ -1227,6 +1228,18 @@ footer {
   box-shadow: none;
   border: 1px solid #ffa000;
 }
+input.c-disable,.form-inline-n select.form-control{
+	appearance:none;
+    -moz-appearance:none;
+    -webkit-appearance:none;
+	background:#fff url(../images/sel_bg.png) no-repeat center right;
+	box-shadow:none;
+	padding-right:40px;
+}
+input.c-disable{
+	min-width:252px !important;
+}
+select.form-control::-ms-expand { display: none; }
 .navbar-nav > li > a{
 	padding:20px 40px 0 0;
 }
@@ -1238,13 +1251,16 @@ footer {
 }
 .ft16 {
     font-size: 16px;
-    color: #EC894D;
+    color: red;
 }
 .pt20 {
     padding-top: 20px;
 }
 .pl20 {
     padding-left: 20px;
+}
+.daterangepicker{
+	width:670px;
 }
 /* E 修改 */
 /* 循环加载 开始*/

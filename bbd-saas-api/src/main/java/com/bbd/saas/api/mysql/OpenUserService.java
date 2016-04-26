@@ -12,9 +12,9 @@ import java.util.List;
 public interface OpenUserService {
 
 	/**
-     * 获取所有用户列表
-     * @param 
-     * @return
+     * 获取token
+     * @param code
+     * @return token
      */
    public String selectTokenByCode(String code);
 }
