@@ -250,7 +250,7 @@
 		function saveSiteFunc(){
 			var radiusVal = $("#radius option:selected").val();
 			if(radiusVal==0){
-				alert("请选择站点配送范围");
+				console.log("请选择站点配送范围");
 				return false;
 			}else{
 				$.ajax({
