@@ -958,7 +958,7 @@ footer {
   border-bottom: 1px solid #d5d5dd;
 }
 .b-tab-all {
-  width: 770px;
+  width: 870px;
   overflow: hidden;
 }
 .tab-area .b-guide-con {
@@ -968,10 +968,10 @@ footer {
 }
 .tab-area .b-guide-con .step {
   float: left;
-  width: 800px;
+  width: 900px;
 }
 .tab-area .b-guide-con .step3 {
-  width: 770px;
+  width: 870px;
 }
 .pre-step {
   display: none;

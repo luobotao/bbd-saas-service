@@ -1,4 +1,4 @@
-
+<%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -21,7 +21,7 @@
 			<div class="b-tab-con b-guide-con form-inline form-inline-n">
 				<!-- S 配送区域 -->
 				<div class="row step step1">
-					<div class="col-md-12 pb20">
+					<div class="col-md-12 pb20 f16">
 						设置配送范围后，将优先匹配站点附近的订单。
 					</div>
 					<form  method="POST" id="siteRadiusForm">
@@ -52,7 +52,7 @@
 						<div class="b-map">
 							<div id="allmap" class="bod-rad" style="height: 473px;"></div>
 							<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
-							<div class="b-f-screen b-forward-full j-full-btn"></div>
+
 							<div class="draw-btn">
 								<div class="bg-alpha"></div>
 								<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
@@ -138,7 +138,7 @@
 			<div class="fl pre-step">
 				<a href="javascript:void(0);" class="ser-btn l">上一步</a>
 			</div>
-			<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal">跳过</a>
+			<a href="javascript:void(0);" class="ser-btn g next-step">跳过</a>
 			<a href="javascript:void(0);" class="ser-btn l next-step" id="saveBtn">保存</a>
 		</div>
 	</div>
@@ -212,12 +212,15 @@
 			if (mcount >= 3) {
 				$(".j-guide-pop").modal("hide");
 			} else if (mcount < 3) {
+
 				if(mcount==1) {
 					//保存最新站点值
 					saveSiteFunc();
 					window.setTimeout(function(){
 						bmap.map.panTo(new BMap.Point(${site.lng},${site.lat}));
 					}, 500);
+				}else if (mcount == 2)  {
+					$("#saveBtn").html("完成")
 				}
 				$(".b-guide-tab li").eq(mcount).addClass("guide-cur");
 			}
@@ -225,6 +228,7 @@
 		});
 		//点击上一步
 		$('.pre-step').click(function () {
+			$("#saveBtn").html("保存");
 			mcount -= 1
 			if (mcount <= 0) {
 				mcount = 0;
@@ -295,7 +299,7 @@
 			allmapPs.addOverlay(marker);               // 将标注添加到地图中
 			marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
 			//var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
-			var circle = new BMap.Circle(pointPs,radius,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+			var circle = new BMap.Circle(pointPs,radius,{fillColor:"#ff2400",strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 			allmapPs.addOverlay(circle);            //增加圆
 			allmapPs.enableScrollWheelZoom(true);
 			window.setTimeout(function(){
@@ -604,8 +608,9 @@
 		function updateDataList(data){
 			$( '#dataList').html("");
 			$.each(data.siteKeywordPageList, function(i, item){
+				var time = formatDate(new Date(parseInt(item.createAt)));
 				$( '#dataList').append("<tr><td><input type='checkbox' value='"+item.id+"' name='inputC' class='c-cbox'/></td>" +
-						"<td>"+item.createAt+"</td><td>"+item.province+"</td><td>"+item.city+"</td><td>"+item.distict+"</td><td>"+item.keyword+"</td>" +
+						"<td>"+time+"</td><td>"+item.province+"</td><td>"+item.city+"</td><td>"+item.distict+"</td><td>"+item.keyword+"</td>" +
 						"<td><a href='javascript:void(0);' class='orange' onclick='delSiteKeywordWithTr(\""+item.id+"\")'>删除</a></td></tr>");
 			});
 			//显示分页条
@@ -687,6 +692,19 @@
 		$("#cancelImportBtn").click(function(){
 			$(".j-import-guid-pop").hide();
 		})
+
+		function getLocalTime(nS) {
+			return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+		}
+		function   formatDate(now)   {
+			var   year=now.getFullYear();
+			var   month=now.getMonth()+1;
+			var   date=now.getDate();
+			var   hour=now.getHours();
+			var   minute=now.getMinutes();
+			var   second=now.getSeconds();
+			return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
+		}
 	</script>
 </bobdy>
 </html>
