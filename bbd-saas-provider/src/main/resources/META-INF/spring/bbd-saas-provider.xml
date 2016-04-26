@@ -8,9 +8,9 @@
 
     <dubbo:application name="bbd-saas-provider" owner="bbd-saas-provider" organization="com.bbd"/>
 
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
    <!--<dubbo:registry address="zookeeper://10.173.0.222:2181"/>-->
-   <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
+   <dubbo:registry address="zookeeper://182.92.227.140:2181"/>
     <!-- 用dubbo协议在20880端口暴露服务 -->
     <dubbo:protocol name="dubbo" port="30881" />
     <!-- 声明需要暴露的服务接口-->
