@@ -136,7 +136,7 @@
     <!-- 通过运单号更新派件员信息  开始  -->  
     <update id="updatePostAndStatusAndCompany" >  
         UPDATE `postdelivery` SET postman_id = #{postManId}, 
-        staffid = #{staffId }, sta = #{status },
+        staffid = #{staffId }, sta = #{status }, resultmsg = '',
         <if test="company_code != null ">  
         	company_code = #{company_code }, 	  
     	</if>  
