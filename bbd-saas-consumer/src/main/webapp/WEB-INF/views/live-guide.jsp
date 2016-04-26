@@ -264,6 +264,7 @@
 					},
 					error: function(){
 						console.log('服务器繁忙，请稍后再试！');
+						window.location.href="${ctx}/login";
 					}
 				});
 			}
@@ -364,6 +365,7 @@
 					},
 					error: function(){
 						console.log('服务器繁忙，请稍后再试！');
+						window.location.href="${ctx}/login";
 					}
 				});
 				/*          $("#jsonStr").val(jsonStr);
@@ -586,6 +588,7 @@
 				},
 				error: function(JsonHttpRequest, textStatus, errorThrown){
 					console.log( "服务器异常!");
+					window.location.href="${ctx}/login";
 				}
 			});
 		})
@@ -636,6 +639,7 @@
 				},
 				error: function(JsonHttpRequest, textStatus, errorThrown){
 					console.log( "服务器异常!");
+					window.location.href="${ctx}/login";
 				}
 			});
 		}
@@ -664,6 +668,7 @@
 					},
 					error: function(){
 						console.log('批量删除站点关键字失败');
+						window.location.href="${ctx}/login";
 					}
 				});
 			}
@@ -685,6 +690,7 @@
 					},
 					error: function(){
 						console.log('删除站点关键字失败');
+						window.location.href="${ctx}/login";
 					}
 				});
 			}
