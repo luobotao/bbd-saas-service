@@ -1080,11 +1080,11 @@ footer {
 }
 .BMap_scaleLBar{
     left:10px !important;
-    bottom:10px !important; 
+    bottom:11px !important; 
 }
 .BMap_scaleRBar{
     right:10px !important;
-    bottom:10px !important; 
+    bottom:11px !important; 
 }
 .BMap_stdMpType3{
     width:31px !important;

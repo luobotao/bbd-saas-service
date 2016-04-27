@@ -76,7 +76,7 @@
 									</label>
 
 								</div>
-								<div class="col-md-12 pb20">
+								<div class="col-md-12">
 									<div class="b-map">
 										<div id="allmapPs" style="height: 533px;"></div>
 										<div class="draw-btn">
@@ -91,7 +91,7 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-12 pb20">
+							<div class="col-md-12">
 								<div class="b-map">
 									<div id="allmap" class="bod-rad" style="height: 533px;"></div>
 									<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
