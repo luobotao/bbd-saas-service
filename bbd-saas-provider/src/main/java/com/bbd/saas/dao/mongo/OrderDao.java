@@ -99,6 +99,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         cal.add(Calendar.DAY_OF_YEAR,1);
         query.filter("dateMayArrive <=",cal.getTime());
         orderNumVO.setNoArrive(count(query));//今天未到站
+        cal.add(Calendar.DAY_OF_YEAR,-1);
         queryArrive.filter("dateArrived <=",new Date()).filter("dateArrived >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
         orderNumVO.setArrived(count(queryArrive));//已到站
         return orderNumVO;

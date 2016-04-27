@@ -154,7 +154,7 @@ public class PackageToSiteController {
 		express.setDateAdd(new Date());
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
-		express.setRemark("订单已到站");
+		express.setRemark("订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 		List<Express> expressList = order.getExpresses();
 		if(expressList==null)
 			expressList = Lists.newArrayList();

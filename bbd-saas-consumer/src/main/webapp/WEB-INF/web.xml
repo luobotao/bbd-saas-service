@@ -6,7 +6,9 @@
 	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:root-context.xml</param-value>
+		<param-value>
+			classpath:root-context.xml
+		</param-value>
 	</context-param>
 	<context-param>
 		<param-name>logbackConfigLocation</param-name>
@@ -64,7 +66,19 @@
 
 	<!-- Disables Servlet Container welcome file handling. Needed for compatibility with Servlet 3.0 and Tomcat 7.0 -->
 	<welcome-file-list>
-		<welcome-file></welcome-file>
-	</welcome-file-list>	
-
+		<welcome-file>/</welcome-file>
+	</welcome-file-list>
+	<!-- 出错页面定义 -->
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/500</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/500</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404</location>
+	</error-page>
 </web-app>
