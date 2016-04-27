@@ -69,7 +69,7 @@
 						<form action="" method="post" id="siteKeywordForm" >
 							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 								<label>导入时间：</label>
-								<input id="between" name="between" type="text" class="form-control w150" placeholder="请选择导入时间范围"/>
+								<input id="between" name="between" type="text" class="form-control w150" placeholder="请选择导入时间"/>
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 								<label>关键词：</label>
