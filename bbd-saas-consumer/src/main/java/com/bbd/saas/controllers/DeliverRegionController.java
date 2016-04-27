@@ -53,37 +53,48 @@ public class DeliverRegionController {
 	 */
 	@RequestMapping(value="/map/{activeNum}", method=RequestMethod.GET)
 	public String toMapPage(@PathVariable String activeNum, Model model, HttpServletRequest request ) {
-		User user = adminService.get(UserSession.get(request));
-		//获取用户站点信息
-		//--------panel 1-----------------------
-		Site site = siteService.findSite(user.getSite().getId().toString());
-		String between = request.getParameter("between");
-		String keyword = request.getParameter("keyword")==null?"":request.getParameter("keyword");
-		int page = Numbers.parseInt(request.getParameter("page"),0);
-		//导入地址关键词
-		//--------panel 3-----------------------
-		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-		if(StringUtils.isNotBlank(between)) {//预计到站时间
-			DateBetween dateBetween = new DateBetween(between);
-			logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
-			//导入地址关键词
-			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId()+"",dateBetween.getStart(),dateBetween.getEnd(),page,10,keyword);
-		}else{
-			siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
-		}
-		model.addAttribute("activeNum", activeNum);
-		model.addAttribute("site", site);
-		model.addAttribute("between", between);
-		model.addAttribute("keyword", keyword);
-		model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
-		model.addAttribute("page", siteKeywordPage.getPage());
-		model.addAttribute("pageNum", siteKeywordPage.getPageNum());
-		model.addAttribute("pageCount", siteKeywordPage.getCount());
+		try{
+			String userId = UserSession.get(request);
+			if(userId!=null&&!"".equals(userId)) {
+				User user = adminService.get(userId);
+				//获取用户站点信息
+				//--------panel 1-----------------------
+				Site site = siteService.findSite(user.getSite().getId().toString());
+				String between = request.getParameter("between");
+				String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
+				int page = Numbers.parseInt(request.getParameter("page"), 0);
+				//导入地址关键词
+				//--------panel 3-----------------------
+				PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+				if (StringUtils.isNotBlank(between)) {//预计到站时间
+					DateBetween dateBetween = new DateBetween(between);
+					logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
+					//导入地址关键词
+					siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", dateBetween.getStart(), dateBetween.getEnd(), page, 10, keyword);
+				} else {
+					siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
+				}
+				model.addAttribute("activeNum", activeNum);
+				model.addAttribute("site", site);
+				model.addAttribute("between", between);
+				model.addAttribute("keyword", keyword);
+				model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
+				model.addAttribute("page", siteKeywordPage.getPage());
+				model.addAttribute("pageNum", siteKeywordPage.getPageNum());
+				model.addAttribute("pageCount", siteKeywordPage.getCount());
 
-		List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());
-		String siteStr = dealSitePoints(sitePoints);
-		model.addAttribute("sitePoints", siteStr);
-		return "systemSet/deliverRegionMap";
+				List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());
+				String siteStr = dealSitePoints(sitePoints);
+				model.addAttribute("sitePoints", siteStr);
+				return "systemSet/deliverRegionMap";
+			}else{
+				return "redirect:/login";
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return "redirect:/login";
+		}
+
 	}
 
 	private String dealSitePoints(List<List<MapPoint>> sitePoints) {

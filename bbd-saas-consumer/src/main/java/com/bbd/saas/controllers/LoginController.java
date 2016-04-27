@@ -75,40 +75,47 @@ public class LoginController {
 	@RequestMapping(method=RequestMethod.POST)
 	public String processSubmit(@Valid LoginForm loginForm, BindingResult result,
 								@ModelAttribute("ajaxRequest") boolean ajaxRequest,RedirectAttributes redirectAttrs,HttpServletResponse response) {
-		if (result.hasErrors()) {
-			return null;
-		}
-		User user = userService.findUserByLoginName(loginForm.getUserName());
-		if(user!=null){
-			if(loginForm.getPassWord().equals(user.getPassWord())){//login success
-				//判断登录用户的站点状态是否是通过审核状态
-				if (user.getSite() == null || !user.getSite().getFlag().equals("2") || StringUtils.isBlank(user.getSite().getAreaCode())) {
-					return "redirect:/site/updateSite?siteid="+user.getSite().getId().toHexString();
-				}
-				if(user.getUserStatus()== UserStatus.INVALID){
-					redirectAttrs.addFlashAttribute("message", "用户状态无效");
+		try{
+			if (result.hasErrors()) {
+				return null;
+			}
+			User user = userService.findUserByLoginName(loginForm.getUserName());
+			if(user!=null){
+				if(loginForm.getPassWord().equals(user.getPassWord())){//login success
+					//判断登录用户的站点状态是否是通过审核状态
+					if (user.getSite() == null || !user.getSite().getFlag().equals("2") || StringUtils.isBlank(user.getSite().getAreaCode())) {
+						return "redirect:/site/updateSite?siteid="+user.getSite().getId().toHexString();
+					}
+					if(user.getUserStatus()== UserStatus.INVALID){
+						redirectAttrs.addFlashAttribute("message", "用户状态无效");
+						return "redirect:/login";
+					}
+					if(user.getRole()!= UserRole.SITEMASTER){
+						redirectAttrs.addFlashAttribute("message", "用户角色不可登录此系统");
+						return "redirect:/login";
+					}
+					int loginCount = user.getLoginCount();
+					loginCount = ++loginCount;
+					user.setLoginCount(loginCount);
+					userService.save(user);
+					UserSession.put(response,user.getId().toHexString());//set adminid to cookies
+					adminService.put(user);//set user to redis
+					redirectAttrs.addFlashAttribute("user", user);
+					return "redirect:/home";
+				}else{//password is error
+					redirectAttrs.addFlashAttribute("message", "密码错误");
 					return "redirect:/login";
 				}
-				if(user.getRole()!= UserRole.SITEMASTER){
-					redirectAttrs.addFlashAttribute("message", "用户角色不可登录此系统");
-					return "redirect:/login";
-				}
-				int loginCount = user.getLoginCount();
-				loginCount = ++loginCount;
-				user.setLoginCount(loginCount);
-				userService.save(user);
-				UserSession.put(response,user.getId().toHexString());//set adminid to cookies
-				adminService.put(user);//set user to redis
-				redirectAttrs.addFlashAttribute("user", user);
-				return "redirect:/home";
-			}else{//password is error
-				redirectAttrs.addFlashAttribute("message", "密码错误");
+			}else{
+				redirectAttrs.addFlashAttribute("message", "用户名不存在");
 				return "redirect:/login";
 			}
-		}else{
-			redirectAttrs.addFlashAttribute("message", "用户名不存在");
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info("[login error]"+e.getMessage());
 			return "redirect:/login";
 		}
+
 	}
 
 
