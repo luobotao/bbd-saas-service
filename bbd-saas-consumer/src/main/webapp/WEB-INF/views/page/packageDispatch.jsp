@@ -55,7 +55,7 @@
 	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
 	  						</div>
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
+	  							<a href="javascript:void(0)" onclick="queryData(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
 	  						</div>
 	  					</div>
 	  					<div class="b-line"></div>
@@ -189,6 +189,9 @@
 
 <script type="text/javascript">
 var courierIsLoadSuccess = 0;
+var status = ""; 
+var arriveBetween = ""; 
+
 $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
@@ -272,10 +275,21 @@ function dispatch() {
 		},
 		error : function() {  
 			//alert("服务器繁忙，请稍后再试！");  
+			gotoLoginPage();
 		}     
     });
 }  
-
+//加载带有查询条件的指定页的数据
+function queryData(pageIndex) {
+	//清除派件员的查询条件
+	$("#courierId").val("");
+	$("#courierName").text("");
+	status = $("#status").val();
+  	arriveBetween = $("#arriveBetween").val();
+	//查询所有派件员
+	gotoPage(pageIndex);
+}	
+ 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
 	//查询所有派件员
@@ -284,15 +298,16 @@ function gotoPage(pageIndex) {
         url : "<%=path%>/packageDispatch/getList",//路径  
         data : {  
             "pageIndex" : pageIndex,
-            "status" : $("#status").val(), 
-            "arriveBetween" : $("#arriveBetween").val() 
-            //"courierId" : $("#courierId").val()
+            "status" : status, 
+            "arriveBetween" : arriveBetween, 
+            "courierId" : $("#courierId").val()
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             refreshTable(dataObject);
 		},
         error : function() {  
-           //	alert("加载分页数据异常！");  
+           //	alert("加载分页数据异常！"); 
+           gotoLoginPage(); 
       	}    
     });	
 }	
@@ -364,10 +379,19 @@ function initCourier() {
         error : function() {  
         	courierIsLoadSuccess = 0;
        		//alert("派件员列表加载异常！");  
+       		gotoLoginPage();
   		}    
     });
 }	
 
+//出错跳转到登录页
+function gotoLoginPage() {
+	if(window.top==window.self){//不存在父页面
+		window.location.href="<c:url value="/login" />"
+	}else{
+		window.top.location.href="<c:url value="/login" />"
+	}
+}
 // 添加  
 function col_add() {  
     var selObj = $("#mySelect");  
@@ -389,9 +413,12 @@ function hideCourierDiv() {
 }
 //选择派件员
 function chooseCourier() {
-$("#ddlregtype").find("option:selected").text(); 
+	$("#ddlregtype").find("option:selected").text(); 
 	$("#courierName").text("已选择:" + $("#courier_select").find("option:selected").text());
 	$("#courierId").val($("#courier_select").val());
+	//设置分页查询条件
+	status = "";
+  	arriveBetween = ""; 
 	$("#chooseCourier_div").modal("hide");
 }
 	

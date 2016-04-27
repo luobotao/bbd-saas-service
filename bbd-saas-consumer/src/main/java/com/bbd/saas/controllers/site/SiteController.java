@@ -154,6 +154,7 @@ public class SiteController {
 		site.setDateAdd(new Date());
 		site.setDateUpd(new Date());
 		site.setStatus(SiteStatus.WAIT);
+		site.setAreaCode("");
 		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(site.getCompanyId(),0)) ;
 		if(postcompany!=null){
 			site.setCompanycode(postcompany.getCompanycode());

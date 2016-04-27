@@ -34,7 +34,7 @@ public class UserSession {
                 }
             }
         }
-        return null;
+        return "";
     }
 
 }

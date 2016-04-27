@@ -261,7 +261,12 @@ function gotoPage(pageIndex,roleId,status,keyword) {
 			$("#pagin").html(pageStr);
 		},
 		error : function() {
-			alert("加载分页数据异常！");
+			//alert("加载分页数据异常！");
+			if(window.top==window.self){//不存在父页面
+				window.location.href="<c:url value="/login" />"
+			}else{
+				window.top.location.href="<c:url value="/login" />"
+			}
 		}
 	});
 }
@@ -340,9 +345,14 @@ function checkLoginName(loginName) {
 					}
 				},
 				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+					//alert('服务器繁忙，请稍后再试！');
 					//return true;
 					ret = true;
+					if(window.top==window.self){//不存在父页面
+						window.location.href="<c:url value="/login" />"
+					}else{
+						window.top.location.href="<c:url value="/login" />"
+					}
 				}
 			});
 		}
@@ -389,9 +399,14 @@ function checkStaffid(staffid) {
 					}
 				},
 				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+					//alert('服务器繁忙，请稍后再试！');
 					//return true;
 					ret = true;
+					if(window.top==window.self){//不存在父页面
+						window.location.href="<c:url value="/login" />"
+					}else{
+						window.top.location.href="<c:url value="/login" />"
+					}
 				}
 			});
 		}else{
@@ -441,7 +456,7 @@ function checkStaffid(staffid) {
 function changeStatus(status,id,loginName){
 	
 	
-	if(status==0){ 
+	if(status==3){ 
 		//表示要停用
 		if(confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')){  
 			ret = true; 
@@ -467,7 +482,12 @@ function changeStatus(status,id,loginName){
 				} 
 	        },
 	        error : function() {  
-	       		alert("异常！");  
+	       		//alert("异常！");  
+	        	if(window.top==window.self){//不存在父页面
+					window.location.href="<c:url value="/login" />"
+				}else{
+					window.top.location.href="<c:url value="/login" />"
+				}
 	  		}    
 	    });
 	}
@@ -495,7 +515,12 @@ function delUser(loginName){
 				} 
 	        },
 	        error : function() {  
-	       		alert("异常！");  
+	       		//alert("异常！");  
+	        	if(window.top==window.self){//不存在父页面
+					window.location.href="<c:url value="/login" />"
+				}else{
+					window.top.location.href="<c:url value="/login" />"
+				}
 	  		}    
 	    });
 	}
@@ -545,7 +570,7 @@ function saveUserBtn(){
 		$("#loginNameP").attr("style","display:none");
 	}
 	if(checkLoginName(loginName)){
-		returnmess = '该手机号已存在，请重新输入！';
+		//returnmess = '该手机号已存在，请重新输入！';
 		flag = false;
 		checkSign = true;
 	}
@@ -620,11 +645,18 @@ function saveUserBtn(){
 
 	        },  
 	        error: function(JsonHttpRequest, textStatus, errorThrown){  
-	            alert( "服务器异常!");  
+	            //alert( "服务器异常!");  
+	        	if(window.top==window.self){//不存在父页面
+					window.location.href="<c:url value="/login" />"
+				}else{
+					window.top.location.href="<c:url value="/login" />"
+				}
 	        }  
 	    });
 	}else if(checkSign){
-		alert(returnmess);
+		//alert(returnmess);
+		//$("#loginNameP").text("手机号已存在，请重新输入11位手机号!");
+		$("#loginNameP").attr("style","color:red");
 		return false;
 	}else {
 		//alert("有非法内容，请检查内容合法性！");
@@ -662,7 +694,13 @@ function searchUser(id,loginName){
 			}    
         },
         error : function() {  
-       		alert("异常！");  
+       		//alert("异常！");  
+        	//location.href = '<c:url value="/login" />';
+        	if(window.top==window.self){//不存在父页面
+				window.location.href="<c:url value="/login" />"
+			}else{
+				window.top.location.href="<c:url value="/login" />"
+			}
   		}    
     });
 	

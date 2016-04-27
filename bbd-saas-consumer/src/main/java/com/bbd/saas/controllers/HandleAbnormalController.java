@@ -36,7 +36,6 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
 
@@ -66,15 +65,19 @@ public class HandleAbnormalController {
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String arriveBetween, final HttpServletRequest request, Model model) {
-		//设置默认查询条件
-		status = Numbers.defaultIfNull(status, -1);//全部，滞留和拒收
-		//到站时间前天、昨天和今天
-		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -10));
-		//查询数据
-		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, request);
-		logger.info("=====异常件处理页面列表====" + orderPage);
-		model.addAttribute("orderPage", orderPage);
-		model.addAttribute("arriveBetween", arriveBetween);		
+		try {
+			//设置默认查询条件
+			status = Numbers.defaultIfNull(status, -1);//全部，滞留和拒收
+			//到站时间前天、昨天和今天
+			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -10));
+			//查询数据
+			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, request);
+			logger.info("=====异常件处理页面列表====" + orderPage);
+			model.addAttribute("orderPage", orderPage);
+			model.addAttribute("arriveBetween", arriveBetween);
+		} catch (Exception e) {
+			logger.error("===跳转到异常件处理页面===出错:" + e.getMessage());
+		}		
 		return "page/handleAbnormal";
 	}
 	
@@ -82,30 +85,35 @@ public class HandleAbnormalController {
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<Order> getList(Integer pageIndex, Integer status, String arriveBetween, final HttpServletRequest request) {
-		//参数为空时，默认值设置
-		pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-		status = Numbers.defaultIfNull(status, -1);
-		//当前登录的用户信息
-		User user = adminService.get(UserSession.get(request));
-		//设置查询条件
-		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.abnormalStatus = status;
-		orderQueryVO.arriveBetween = arriveBetween;
-		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
-		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-		//查询派件员姓名电话
-		if(orderPage != null && orderPage.getDatas() != null){
-			List<Order> dataList = orderPage.getDatas();
-			for(Order order : dataList){
-				User courier = userService.findOne(order.getUserId());
-				if(courier!=null){
-					UserVO userVO = new UserVO();
-					userVO.setLoginName(courier.getLoginName());
-					userVO.setRealName(courier.getRealName());
-					order.setUserVO(userVO);
+		PageModel<Order> orderPage = null;
+		try {
+			//参数为空时，默认值设置
+			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
+			status = Numbers.defaultIfNull(status, -1);
+			//当前登录的用户信息
+			User user = adminService.get(UserSession.get(request));
+			//设置查询条件
+			OrderQueryVO orderQueryVO = new OrderQueryVO();
+			orderQueryVO.abnormalStatus = status;
+			orderQueryVO.arriveBetween = arriveBetween;
+			orderQueryVO.areaCode = user.getSite().getAreaCode();
+			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+			//查询派件员姓名电话
+			if(orderPage != null && orderPage.getDatas() != null){
+				List<Order> dataList = orderPage.getDatas();
+				for(Order order : dataList){
+					User courier = userService.findOne(order.getUserId());
+					if(courier!=null){
+						UserVO userVO = new UserVO();
+						userVO.setLoginName(courier.getLoginName());
+						userVO.setRealName(courier.getRealName());
+						order.setUserVO(userVO);
+					}
 				}
 			}
+		} catch (Exception e) {
+			logger.error("===分页Ajax更新列表数据===出错:" + e.getMessage());
 		}
 		return orderPage;		
 	}
@@ -120,9 +128,14 @@ public class HandleAbnormalController {
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
 	public List<UserVO> getAllUserList(final HttpServletRequest request) {
-		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		//查询
-		List<UserVO> userVoList = userService.findUserListBySite(user.getSite());
+		List<UserVO> userVoList = null;
+		try {
+			User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+			userVoList = userService.findUserListBySite(user.getSite());
+		} catch (Exception e) {
+			logger.error("===获取本站点下的所有状态为有效的派件员===出错:" + e.getMessage());
+		}
 		return userVoList;
 	}
 	
@@ -141,43 +154,48 @@ public class HandleAbnormalController {
 	@ResponseBody
 	@RequestMapping(value="/reDispatch", method=RequestMethod.GET)
 	public Map<String, Object> reDispatch(String mailNum, String userId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		//当前登录的用户信息
-		User currUser = adminService.get(UserSession.get(request));
-		//查询运单信息
-		Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
-		if(order == null){//运单不存在,与站点无关--正常情况不会执行
-			map.put("operFlag", 0);//0:运单号不存在
-		}else{//运单存在
-			//查询派件员
-			User courier = userService.findOne(userId);
-			order.setUserId(userId);
-			order.setOrderStatus(OrderStatus.DISPATCHED);//更新运单状态--已分派
-			//更新物流信息
-			order.setExpressStatus(ExpressStatus.Delivering);
-			//添加一条物流信息
-			List<Express> expressList = order.getExpresses();
-			if(expressList == null){
-				expressList = new ArrayList<Express>();
+		Map<String, Object> map = null;
+		try {
+			map = new HashMap<String, Object>();
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
+			//查询运单信息
+			Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+			if(order == null){//运单不存在,与站点无关--正常情况不会执行
+				map.put("operFlag", 0);//0:运单号不存在
+			}else{//运单存在
+				//查询派件员
+				User courier = userService.findOne(userId);
+				order.setUserId(userId);
+				order.setOrderStatus(OrderStatus.DISPATCHED);//更新运单状态--已分派
+				//更新物流信息
+				order.setExpressStatus(ExpressStatus.Delivering);
+				//添加一条物流信息
+				List<Express> expressList = order.getExpresses();
+				if(expressList == null){
+					expressList = new ArrayList<Express>();
+				}
+				Express express = new Express();
+				express.setDateAdd(new Date());
+				express.setRemark("重新派送，快递员电话：" + courier.getRealName() + " " + courier.getLoginName() + "。");
+				express.setLat(currUser.getSite().getLat());//站点经纬度
+				express.setLon(currUser.getSite().getLng());
+				expressList.add(express);
+				order.setExpresses(expressList);
+				//更新运单
+				Key<Order> r = orderService.save(order);
+				if(r != null){
+					//更新mysql
+					postDeliveryService.updatePostAndStatusAndCompany(mailNum, courier.getPostmanuserId(), courier.getStaffid(), "1", null);
+					map.put("operFlag", 1);//1:分派成功
+					//刷新列表
+					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
+				}else{
+					map.put("operFlag", 0);//0:分派失败
+				}		
 			}
-			Express express = new Express();
-			express.setDateAdd(new Date());
-			express.setRemark("重新派送，快递员电话：" + courier.getRealName() + " " + courier.getLoginName() + "。");
-			express.setLat(currUser.getSite().getLat());//站点经纬度
-			express.setLon(currUser.getSite().getLng());
-			expressList.add(express);
-			order.setExpresses(expressList);
-			//更新运单
-			Key<Order> r = orderService.save(order);
-			if(r != null){
-				//更新mysql
-				postDeliveryService.updatePostAndStatusAndCompany(mailNum, courier.getPostmanuserId(), courier.getStaffid(), "1", null);
-				map.put("operFlag", 1);//1:分派成功
-				//刷新列表
-				map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
-			}else{
-				map.put("operFlag", 0);//0:分派失败
-			}		
+		} catch (Exception e) {
+			logger.error("===运单重新分派===出错:" + e.getMessage());
 		}
 		return map;
 	}
@@ -227,9 +245,14 @@ public class HandleAbnormalController {
 	@ResponseBody
 	@RequestMapping(value="/getAllOtherSiteList", method=RequestMethod.GET)
 	public List<SiteVO> getAllSiteList(final HttpServletRequest request) {
-		//当前登录的用户信息
-		User user = adminService.get(UserSession.get(request));
-		return siteService.findAllOtherSiteVOList(user.getSite());
+		try {
+			//当前登录的用户信息
+			User user = adminService.get(UserSession.get(request));
+			return siteService.findAllOtherSiteVOList(user.getSite());
+		} catch (Exception e) {
+			logger.error("===查询除本站点外的其他所有站点的VO对象===出错:" + e.getMessage());
+		}
+		return null;
 	}
 	
 	/**
@@ -247,40 +270,45 @@ public class HandleAbnormalController {
 	@ResponseBody
 	@RequestMapping(value="/toOtherSite", method=RequestMethod.GET)
 	public Map<String, Object> toOtherSite(String mailNum, String siteId, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		//当前登录的用户信息
-		User currUser = adminService.get(UserSession.get(request));
-		//查询运单信息
-		Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
-		if(order == null){//运单不存在,与站点无关--正常情况不会执行
-			map.put("operFlag", 0);//0:运单号不存在
-		}else{//运单存在
-			Site site = siteService.findSite(siteId);
-			//更新运单字段
-			order.setAreaCode(site.getAreaCode());
-			order.setAreaName(site.getName());
-			StringBuffer remark = new StringBuffer();
-			remark.append(site.getProvince());
-			remark.append(site.getCity());
-			remark.append(site.getArea());
-			remark.append(site.getAddress());
-			order.setAreaRemark(remark.toString());//站点的具体地址
-			order.setOrderStatus(null);//状态--为空
-			order.setUserId("");//未分派
-			order.setDateUpd(new Date());//更新时间
-			//更新物流信息
-			addOrderExpress(order, currUser, site.getName());
-			//更新运单
-			Key<Order> r = orderService.save(order);
-			if(r != null){
-				//更新到mysql 删除一条记录
-				postDeliveryService.deleteByMailNum(mailNum);
-				map.put("operFlag", 1);//1:成功
-				//刷新列表
-				map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-			}else{ 
-				map.put("operFlag", 0);//0:失败
+		Map<String, Object> map = null;
+		try {
+			map = new HashMap<String, Object>();
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
+			//查询运单信息
+			Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+			if(order == null){//运单不存在,与站点无关--正常情况不会执行
+				map.put("operFlag", 0);//0:运单号不存在
+			}else{//运单存在
+				Site site = siteService.findSite(siteId);
+				//更新运单字段
+				order.setAreaCode(site.getAreaCode());
+				order.setAreaName(site.getName());
+				StringBuffer remark = new StringBuffer();
+				remark.append(site.getProvince());
+				remark.append(site.getCity());
+				remark.append(site.getArea());
+				remark.append(site.getAddress());
+				order.setAreaRemark(remark.toString());//站点的具体地址
+				order.setOrderStatus(null);//状态--为空
+				order.setUserId("");//未分派
+				order.setDateUpd(new Date());//更新时间
+				//更新物流信息
+				addOrderExpress(order, currUser, site.getName());
+				//更新运单
+				Key<Order> r = orderService.save(order);
+				if(r != null){
+					//更新到mysql 删除一条记录
+					postDeliveryService.deleteByMailNum(mailNum);
+					map.put("operFlag", 1);//1:成功
+					//刷新列表
+					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+				}else{ 
+					map.put("operFlag", 0);//0:失败
+				}
 			}
+		} catch (Exception e) {
+			logger.error("===转其他站点===出错:" + e.getMessage());
 		}
 		return map;		
 		
@@ -333,13 +361,18 @@ public class HandleAbnormalController {
 	@ResponseBody
 	@RequestMapping(value="/getAllExpressCompanyList", method=RequestMethod.GET)
 	public List<UserVO> getAllExpressCompanyList(String siteId, Model model) {
-		UserVO uservo = new UserVO();
-		//uservo.setId(new ObjectId("5546548"));
-		uservo.setLoginName("loginName");
-		uservo.setPhone("12345678945");
-		List<UserVO> userVoList = userService.findUserListBySite(siteId);
-		if(userVoList == null || userVoList.size() == 0){
-			userVoList.add(uservo);
+		List<UserVO> userVoList = null;
+		try {
+			UserVO uservo = new UserVO();
+			//uservo.setId(new ObjectId("5546548"));
+			uservo.setLoginName("loginName");
+			uservo.setPhone("12345678945");
+			userVoList = userService.findUserListBySite(siteId);
+			if(userVoList == null || userVoList.size() == 0){
+				userVoList.add(uservo);
+			}
+		} catch (Exception e) {
+			logger.error("===获取快递公司===出错:" + e.getMessage());
 		}
 		return userVoList;
 	}
@@ -355,26 +388,28 @@ public class HandleAbnormalController {
 	@RequestMapping(value="/toOtherExpress", method=RequestMethod.GET)
 	public Map<String, Object> toOtherExpress(String mailNum, String expressId, Model model) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		//====================start================================
-		//查询运单信息
-		Order order = orderService.findOneByMailNum("", mailNum);
-		if(order != null){
-			//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
-			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-				||ExpressStatus.Delay.equals(order.getExpressStatus())
-				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-				if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
-					//saveOrderMail(order, staffId, map);
+		try {
+			//查询运单信息
+			Order order = orderService.findOneByMailNum("", mailNum);
+			if(order != null){
+				//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
+				if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
+					||ExpressStatus.Delay.equals(order.getExpressStatus())
+					|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
+					if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
+						//saveOrderMail(order, staffId, map);
+					}else{//重复扫描，此运单已分派过了
+						map.put("operFlag", 2);
+					}
 				}else{//重复扫描，此运单已分派过了
 					map.put("operFlag", 2);
 				}
-			}else{//重复扫描，此运单已分派过了
-				map.put("operFlag", 2);
+			}else{
+				map.put("erroFlag", 0);//0:运单号不存在
 			}
-		}else{
-			map.put("erroFlag", 0);//0:运单号不存在
+		} catch (Exception e) {
+			logger.error("===转其他快递===出错:" + e.getMessage());
 		}
-		//=====================end================================
 		return map;
 	}
 	/**************************转其他快递公司***************结束***********************************/
@@ -393,26 +428,28 @@ public class HandleAbnormalController {
 	@RequestMapping(value="/saveReturn", method=RequestMethod.GET)
 	public Map<String, Object> dispatch(String mailNum, String returnReasonType, String returnReasonInfo, Model model) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		//====================start================================
-		//查询运单信息
-		Order order = orderService.findOneByMailNum("", mailNum);
-		if(order != null){
-			//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
-			if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-				||ExpressStatus.Delay.equals(order.getExpressStatus())
-				|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-				if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
-					//saveOrderMail(order, staffId, map);
+		try {
+			//查询运单信息
+			Order order = orderService.findOneByMailNum("", mailNum);
+			if(order != null){
+				//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
+				if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
+					||ExpressStatus.Delay.equals(order.getExpressStatus())
+					|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
+					if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
+						//saveOrderMail(order, staffId, map);
+					}else{//重复扫描，此运单已分派过了
+						map.put("operFlag", 2);
+					}
 				}else{//重复扫描，此运单已分派过了
 					map.put("operFlag", 2);
 				}
-			}else{//重复扫描，此运单已分派过了
-				map.put("operFlag", 2);
+			}else{
+				map.put("erroFlag", 0);//0:运单号不存在
 			}
-		}else{
-			map.put("erroFlag", 0);//0:运单号不存在
+		} catch (Exception e) {
+			logger.error("===退货===出错:" + e.getMessage());
 		}
-		//=====================end================================
 		return map;
 	}
 	/**************************申请退货***************结束***********************************/
