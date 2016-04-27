@@ -171,7 +171,9 @@ public class ExportUtil
 			
 			fileName = new String((fileName).getBytes("UTF-8"), "ISO8859_1")+Dates.formatDateTime_New(new Date());
 			//输出
-			response.setContentType("application/binary;charset=ISO8859_1");
+			//response.setContentType("application/vnd.ms-excel;charset=UTF-8"); //后缀.xls
+			//火狐后缀是.xlsx
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
 			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
 			outputStream = response.getOutputStream();
 			workBook.write(outputStream);

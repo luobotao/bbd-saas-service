@@ -248,7 +248,10 @@ public class SiteController {
 		User user = userService.findOne(userId);
 		String siteId = user.getSite().getId().toString(); //request.getParameter("siteId");
 		String siteName = user.getSite().getName().toString();//request.getParameter("siteName");
-		response.setContentType("application/binary;charset=ISO8859_1");
+		//火狐浏览器没有扩展名
+		//response.setContentType("application/binary;charset=ISO8859_1");
+		//扩展名.xlsx
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=ISO8859_1");
 		try
 		{
 			ServletOutputStream outputStream = response.getOutputStream();
