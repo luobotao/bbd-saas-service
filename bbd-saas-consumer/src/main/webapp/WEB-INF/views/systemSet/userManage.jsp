@@ -456,7 +456,7 @@ function checkStaffid(staffid) {
 function changeStatus(status,id,loginName){
 	
 	
-	if(status==0){ 
+	if(status==3){ 
 		//表示要停用
 		if(confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')){  
 			ret = true; 
@@ -570,7 +570,7 @@ function saveUserBtn(){
 		$("#loginNameP").attr("style","display:none");
 	}
 	if(checkLoginName(loginName)){
-		returnmess = '该手机号已存在，请重新输入！';
+		//returnmess = '该手机号已存在，请重新输入！';
 		flag = false;
 		checkSign = true;
 	}
@@ -654,7 +654,9 @@ function saveUserBtn(){
 	        }  
 	    });
 	}else if(checkSign){
-		alert(returnmess);
+		//alert(returnmess);
+		//$("#loginNameP").text("手机号已存在，请重新输入11位手机号!");
+		$("#loginNameP").attr("style","color:red");
 		return false;
 	}else {
 		//alert("有非法内容，请检查内容合法性！");
