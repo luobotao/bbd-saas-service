@@ -177,7 +177,11 @@ public class HandleAbnormalController {
 				}
 				Express express = new Express();
 				express.setDateAdd(new Date());
-				express.setRemark("重新派送，快递员电话：" + courier.getRealName() + " " + courier.getLoginName() + "。");
+				if(new Date().getHours() < 19){
+	            	express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
+	            }else{
+	            	express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
+	            }
 				express.setLat(currUser.getSite().getLat());//站点经纬度
 				express.setLon(currUser.getSite().getLng());
 				expressList.add(express);
@@ -330,8 +334,8 @@ public class HandleAbnormalController {
 		}
 		Express express = new Express();
 		express.setDateAdd(new Date());
-		//express.setRemark("已由【" + siteName + "】出库，转送到【" + order.getAreaName() + "】进行配送,操作员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
-		express.setRemark("已由【" + user.getSite().getName() + "】出库，转送到【" + order.getAreaName() + "】进行配送。");
+		//订单已由【A站点】出库，正在转送到【B站点】进行配送
+		express.setRemark("订单已由【" + user.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。");
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		boolean expressIsNotAdd = true;//防止多次添加

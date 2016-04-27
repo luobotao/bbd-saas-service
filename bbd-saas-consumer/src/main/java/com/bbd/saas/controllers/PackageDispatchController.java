@@ -24,6 +24,7 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.ArriveStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.PostDelivery;
@@ -166,10 +167,10 @@ public class PackageDispatchController {
 		User user = userService.findOne(courierId);
 		//运单分派给派件员
 		order.setUserId(courierId);
-		//更新运单状态--已分派
-		order.setOrderStatus(OrderStatus.DISPATCHED);
 		//更新物流信息
 		setOrderExpress(order, user);
+		//更新运单状态--已分派
+		order.setOrderStatus(OrderStatus.DISPATCHED);
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){
@@ -199,6 +200,7 @@ public class PackageDispatchController {
 	 * @author liyanlei
 	 * 2016年4月22日下午3:32:35
 	 */
+	@SuppressWarnings("deprecation")
 	private void setOrderExpress(Order order, User user){
 		//更新物流状态
 		order.setExpressStatus(ExpressStatus.Delivering);
@@ -209,7 +211,19 @@ public class PackageDispatchController {
 		}
 		Express express = new Express();
 		express.setDateAdd(new Date());
-		express.setRemark("正在派送，快递员电话：" + user.getRealName() + " " + user.getLoginName() + "。");
+		if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
+            if(new Date().getHours() < 19){
+            	express.setRemark("配送员正在为您派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+            }else{
+            	express.setRemark("配送员正在为您派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+            }
+        }else{
+        	if(new Date().getHours() < 19){
+            	express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+            }else{
+            	express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+            }
+        }
 		boolean expressIsNotAdd = true;//防止多次添加
 		//检查是否添加过了
 		for (Express express1 : expressList) {
