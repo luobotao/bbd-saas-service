@@ -455,13 +455,13 @@ function checkStaffid(staffid) {
 
 function changeStatus(status,id,loginName){
 	
-	
+	var ret = false; 
 	if(status==3){ 
 		//表示要停用
 		if(confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')){  
 			ret = true; 
 		} 
-	}else{
+	}else if(status==1){
 		//表示要启用
 		if(confirm('启用后小件员可以使用棒棒达客户端，确认启用吗？')){ 
 			ret = true; 
