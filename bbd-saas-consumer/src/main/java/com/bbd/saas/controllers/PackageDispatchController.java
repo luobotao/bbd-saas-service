@@ -67,15 +67,19 @@ public class PackageDispatchController {
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String arriveBetween, String courierId, final HttpServletRequest request, Model model) {
-		//设置默认查询条件
-		status = Numbers.defaultIfNull(status, -1);//全部
-		//到站时间前天、昨天和今天
-		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
-		//查询数据
-		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, courierId, request);
-		logger.info("=====运单分派====" + orderPage);
-		model.addAttribute("orderPage", orderPage);
-		model.addAttribute("arriveBetween", arriveBetween);
+		try {
+			//设置默认查询条件
+			status = Numbers.defaultIfNull(status, -1);//全部
+			//到站时间前天、昨天和今天
+			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
+			//查询数据
+			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, courierId, request);
+			logger.info("=====运单分派====" + orderPage);
+			model.addAttribute("orderPage", orderPage);
+			model.addAttribute("arriveBetween", arriveBetween);
+		} catch (Exception e) {
+			logger.error("===跳转到包裹分派页面===出错:" + e.getMessage());
+		}
 		return "page/packageDispatch";
 	}
 	
@@ -83,22 +87,27 @@ public class PackageDispatchController {
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<Order> getList(Integer pageIndex, Integer status, String arriveBetween, String courierId, final HttpServletRequest request) {
-		//参数为空时，默认值设置
-		pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-		status = Numbers.defaultIfNull(status, -1);
-		//当前登录的用户信息
-		User user = adminService.get(UserSession.get(request));
-		//设置查询条件
-		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.dispatchStatus = status;
-		orderQueryVO.arriveBetween = arriveBetween;
-		orderQueryVO.userId = courierId;
-		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
-		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-		//查询派件员姓名电话
-		if(orderPage != null && orderPage.getDatas() != null){
-			formatOrder(orderPage.getDatas()) ;
+		PageModel<Order> orderPage = null;
+		try {
+			//参数为空时，默认值设置
+			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
+			status = Numbers.defaultIfNull(status, -1);
+			//当前登录的用户信息
+			User user = adminService.get(UserSession.get(request));
+			//设置查询条件
+			OrderQueryVO orderQueryVO = new OrderQueryVO();
+			orderQueryVO.dispatchStatus = status;
+			orderQueryVO.arriveBetween = arriveBetween;
+			orderQueryVO.userId = courierId;
+			orderQueryVO.areaCode = user.getSite().getAreaCode();
+			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+			//查询派件员姓名电话
+			if(orderPage != null && orderPage.getDatas() != null){
+				formatOrder(orderPage.getDatas()) ;
+			}
+		} catch (Exception e) {
+			logger.error("===分页Ajax更新列表===出错:" + e.getMessage());
 		}				
 		return orderPage;
 	}
@@ -115,25 +124,30 @@ public class PackageDispatchController {
 	@ResponseBody
 	@RequestMapping(value="/dispatch", method=RequestMethod.GET)
 	public Map<String, Object> dispatch(String mailNum, String courierId, final HttpServletRequest request) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		//当前登录的用户信息
-		User user = adminService.get(UserSession.get(request));
-		//查询运单信息
-		Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
-		if(order == null){//运单不存在,与站点无关
-			map.put("operFlag", 0);//0:运单号不存在
-		}else{//运单存在
-			//当运单到达站点(未分派)，首次分派;当运单状态处于滞留时，可以重新分派
-			if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
-				||OrderStatus.RETENTION.equals(order.getOrderStatus())) {//滞留
-				//|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
-				saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);//更新mysql
-			}else if(order.getUserId() != null && !"".equals(order.getUserId())){//重复扫描，此运单已分派过了
-				map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（只有状态为未分派、滞留的运单才能分派！）。
-			}else{
-				map.put("operFlag", 4);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（只有状态为未分派、滞留的运单才能分派！）。
+		Map<String, Object> map = null;
+		try {
+			map = new HashMap<String, Object>();
+			//当前登录的用户信息
+			User user = adminService.get(UserSession.get(request));
+			//查询运单信息
+			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
+			if(order == null){//运单不存在,与站点无关
+				map.put("operFlag", 0);//0:运单号不存在
+			}else{//运单存在
+				//当运单到达站点(未分派)，首次分派;当运单状态处于滞留时，可以重新分派
+				if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
+					||OrderStatus.RETENTION.equals(order.getOrderStatus())) {//滞留
+					//|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
+					saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);//更新mysql
+				}else if(order.getUserId() != null && !"".equals(order.getUserId())){//重复扫描，此运单已分派过了
+					map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（只有状态为未分派、滞留的运单才能分派！）。
+				}else{
+					map.put("operFlag", 4);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（只有状态为未分派、滞留的运单才能分派！）。
+				}
+				//saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
 			}
-			//saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);
+		} catch (Exception e) {
+			logger.error("===运单分派===出错:" + e.getMessage());
 		}
 		return map;
 	}
@@ -269,9 +283,14 @@ public class PackageDispatchController {
 	@ResponseBody
 	@RequestMapping(value="/getAllUserList", method=RequestMethod.GET)
 	public List<UserVO> getAllUserList(final HttpServletRequest request) {
-		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		//查询
-		List<UserVO> userVoList = userService.findUserListBySite(user.getSite());
+		List<UserVO> userVoList = null;
+		try {
+			User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+			userVoList = userService.findUserListBySite(user.getSite());
+		} catch (Exception e) {
+			logger.error("===获取本站点下的所有状态为有效的派件员===出错:" + e.getMessage());
+		}
 		return userVoList;
 	}
 
