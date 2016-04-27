@@ -146,8 +146,14 @@
 													该操作会把选中的订单设置为已到站。
 												</div>
 												<div class="modal-footer">
-													<button type="button" class="ser-btn g" data-dismiss="modal">取消</button>
-													<button id="enableSelect" type="button" class="ser-btn l">确认</button>
+													<div class="row mt20">
+														<span class="col-md-6">
+															<button type="button" class="ser-btn g wp100" data-dismiss="modal">取消</button>
+														</span>
+														<span class="col-md-6">
+															<button id="enableSelect" type="button" class="ser-btn wp100 l">确认</button>
+														</span>
+													</div>
 												</div>
 											</div>
 										</div>

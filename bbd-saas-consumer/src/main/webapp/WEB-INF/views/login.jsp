@@ -11,12 +11,18 @@
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 	<link href="<c:url value="/resources/bootstrap/css/fileinput.css" />" rel="stylesheet"  type="text/css" />
+	<!-- iCheck -->
+	<link href="<c:url value="/resources/adminLTE/plugins/iCheck/flat/blue.css" />" rel="stylesheet"  type="text/css" />
+	<link href="<c:url value="/resources/adminLTE/plugins/iCheck/square/blue.css" />" rel="stylesheet"  type="text/css" />
+	
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
 	<script src="<c:url value="/resources/bootstrap/js/fileinput.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/bootstrap/js/fileinput_locale_zh.js" />" type="text/javascript"></script>
+	<!-- iCheck -->
+	<script src="<c:url value="/resources/adminLTE/plugins/iCheck/icheck.min.js" />" type="text/javascript"></script>
 </head>
 <body>
 <!-- S nav -->
@@ -198,7 +204,7 @@
 				<h4 class="modal-title tc">站点注册</h4>
 			</div>
 			<c:url var="actionUrl" value="/site/register?${_csrf.parameterName}=${_csrf.token}"/>
-			<form role="form" enctype="multipart/form-data" action="${actionUrl}" method="post" id="siteForm" >
+			<form role="form" enctype="multipart/form-data" action="${actionUrl}" method="post" id="siteForm" class="form-inline form-inline-n">
 			<div class="modal-body b-modal-body y-scroll">
 				<ul class="b-n-crt">
 					<li class="filter clearfix">
@@ -246,13 +252,13 @@
 					<li class="filter" id="city_4">
 						<i>地 址：</i>
 						<em class="wp25">
-							<select class="form-control form-bod  prov" name="prov" ></select>
+							<select class="form-control form-bod w150  prov" name="prov" ></select>
 						</em>
 						<em class="wp25">
-							<select class="form-control form-bod city" disabled="disabled"></select>
+							<select class="form-control form-bod w150 city" disabled="disabled"></select>
 						</em>
 						<em class="wp25">
-							<select class="form-control form-bod dist" name="dist" disabled="disabled"></select>
+							<select class="form-control form-bod w150 dist" name="dist" disabled="disabled"></select>
 						</em>
 						<input id="province" name="province" placeholder="请输入省市区" type="hidden" class="form-control" />
 						<input id="city" name="city" placeholder="请输入省市区" type="hidden" class="form-control" />
@@ -285,6 +291,9 @@
 <!-- E pop -->
 <script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 <script>
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
 	if(window.top==window.self){//不存在父页面
 
 	}else{

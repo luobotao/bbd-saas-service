@@ -1,4 +1,5 @@
 $(function () {
+	
     // S sidebar\
     var winhei = $(window).height();
     var dochei = $(document).height();
@@ -92,7 +93,7 @@ $(function () {
 	var parentD=$('#psrE',window.parent.document);  
 	var ulhtml=parentD.find(".b-sidebar").html();
 	$(".sub-sidebar").html(ulhtml);
-	// E iframe嵌进去的页面的左导航 
+	// E iframe嵌进去的页面的左导航
 })
 //iframe 自适应高度
 function iFrameHeight() {

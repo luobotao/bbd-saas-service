@@ -138,6 +138,9 @@ a.orange {
 .pad0 {
   padding: 0 !important;
 }
+.w150{
+	width:150px !important;
+}
 .form-inline-n .form-control {
   height: 40px;
   border: 1px solid #d9d8eb;
@@ -190,13 +193,26 @@ a.orange {
   cursor: pointer;
   font-size:18px;
 }
-.filter .btn-primary,.filter .btn-primary:active{
+.filter .btn-default,.filter .btn-default:active,.filter .btn-primary,.filter .btn-primary:active{
    background: #c3c3cc;
    border: 1px solid #bbbbc4;
    color: #000;
 }
-.filter .btn-primary i{
+.filter .btn-default{
+	margin-right:10px;
+}
+.filter .btn{
+	padding:0 12px;
+	height:40px;
+	line-height:38px;
+}
+.filter .input-group i,.filter .input-group span{
 	display:none;
+}
+.filter .file-caption{
+	width:500px !important;
+	margin-right:10px;
+	border-radius:4px;
 }
 .ser-btn:link,
 .ser-btn:visited,
@@ -795,7 +811,7 @@ footer {
   font-size:16px;
 }
 .d-search-area{
-	padding:30px 0 10px 40px;
+	padding:30px 0 10px 15px;
 }
 .form-inline .form-con-new {
   min-width: 196px;
@@ -815,7 +831,7 @@ footer {
 /* S 系统设置 配送区域 */
 .txt-info {
   float: left;
-  padding: 0 15px;
+  padding: 0 40px;
   border-right: 1px solid #dbdaec;
 }
 .txt-info em,
@@ -828,9 +844,12 @@ footer {
   padding-bottom: 6px;
 }
 .txt-info i {
-  font-size: 24px;
+  font-size: 18px;
+  line-height:24px;
   color: #33333d;
-  line-height: 1.1;
+}
+.txt-info-l i{
+	font-size:24px;
 }
 .txt-info:last-child {
   border-right: none;
@@ -1007,15 +1026,21 @@ footer {
 .wp80 {
   width: 80% !important;
 }
+.wp100 {
+  width: 100% !important;
+}
 .wp25 {
   width: 25% !important;
   display: inline-block;
 }
 .input-d {
-  margin: 10px 0 0 20%;
+  margin: 10px 0 0 16%;
 }
 .site-re {
   line-height: 40px;
+}
+.site-re .icheckbox_square-blue{
+	margin-bottom:5px;
 }
 .tip-info {
   display: inline-block;
@@ -1025,11 +1050,14 @@ footer {
 .filter i {
   float: left;
   display: block;
-  width: 20%;
+  width: 16%;
   text-align: right;
   padding-top: 6px;
+  font-size:16px;
 }
-
+.filter .tip-info{
+	padding-left:16%;
+}
 .y-scroll {
   max-height: 300px;
   overflow-y: auto;

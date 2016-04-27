@@ -33,7 +33,7 @@
 				<!-- S 搜索区域 -->
 				<div class="search-area d-search-area">
 					<ul class="row pb20">
-						<li class="txt-info">
+						<li class="txt-info txt-info-l">
 							<em>站点名称：</em>
 							<i>${site.name}</i>
 						</li>
@@ -261,6 +261,9 @@
 	$(".import-file").on("change",function(){
 		$(".j-import-pop").modal();
 	})
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
 		var radiusVal = $("#radius option:selected").val();
