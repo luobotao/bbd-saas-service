@@ -71,6 +71,7 @@ $(function () {
     $(".j-close").on("click",function(){
         $(this).parent().parent().parent().parent().hide();
         $("#mask").hide();
+        $(".j-guide-pop").hide().removeClass("in");
         $(document.body).removeClass("modal-open").css({paddingRight:"0"});
     })
     // E 注册站点
