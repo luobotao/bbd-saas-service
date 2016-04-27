@@ -281,7 +281,7 @@
 		row += "<td>" + data.srcMessage + "</td>";
 		row += "<td>" + data.reciever.name + "</td>";
 		row += "<td>" + data.reciever.phone + "</td>";
-		row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+		row += "<td class='tl'>" + data.reciever.province +" "+ data.reciever.city +" "+ data.reciever.area +" "+ data.reciever.address + "</td>";
 		row += "<td>" + getDate1(data.datePrint) + "</td>";
 		row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){

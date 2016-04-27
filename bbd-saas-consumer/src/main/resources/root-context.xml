@@ -21,6 +21,7 @@
 		<property name="execludeUrls">
 			<list>
 				<value>/userManage/changestatusOuter</value>
+				<value>/login</value>
 			</list>
 		</property>
 	</bean>
