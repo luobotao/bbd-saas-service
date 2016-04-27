@@ -14,7 +14,7 @@
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
 	<script type="application/javascript">
-		$(".j-guide-pop").modal();
+		$(".j-guide-pop").show().addClass("in");
 	</script>
 </head>
 <body>
@@ -105,8 +105,9 @@
 	<div class="b-con-bot"></div>
 </div>
 <!-- E content -->
-<!-- S footer -->
+
 <!-- S pop -->
+<div id="mask"></div>
 <!--S 引导页-->
 <div class="j-guide-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog modal-lg" role="document">
@@ -123,7 +124,8 @@
 <!-- E footer -->
 <script type="application/javascript">
 	if(${user.loginCount==1}){
-		$(".j-guide-pop").modal();
+		$(".j-guide-pop").show().addClass("in");
+		$("#mask").show();
 	}
 </script>
 </body>

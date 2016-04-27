@@ -78,7 +78,7 @@
 								</div>
 								<div class="col-md-12 pb20">
 									<div class="b-map">
-										<div id="allmapPs" style="height: 473px;"></div>
+										<div id="allmapPs" style="height: 533px;"></div>
 										<div class="draw-btn">
 											<div class="bg-alpha"></div>
 											<a href="javascript:void(0);" class="ser-btn l ml12" id="saveSiteBtn">　保存　</a>
@@ -93,7 +93,7 @@
 						<div class="row tab-pane fade" id="draw-map">
 							<div class="col-md-12 pb20">
 								<div class="b-map">
-									<div id="allmap" class="bod-rad" style="height: 473px;"></div>
+									<div id="allmap" class="bod-rad" style="height: 533px;"></div>
 									<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
 									<div class="b-f-screen b-forward-full j-full-btn"></div>
 									<div class="draw-btn">

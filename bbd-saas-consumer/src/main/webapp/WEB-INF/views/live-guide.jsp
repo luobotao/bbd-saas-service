@@ -8,7 +8,7 @@
 </html>
 <bobdy>
 	<div class="modal-header b-modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+		<button type="button" class="close j-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 		<h4 class="modal-title tc">设置站点配送区域</h4>
 	</div>
 	<div class="modal-body tab-area">
@@ -39,7 +39,7 @@
 
 						</div>
 						<div class="col-md-12 pb20">
-							<div class="b-map"><div id="allmapPs" style="height: 473px;"></div></div>
+							<div class="b-map"><div id="allmapPs" style="height: 533px;"></div></div>
 						</div>
 					</form>
 				</div>
@@ -50,7 +50,7 @@
 				<div class="row step step2">
 					<div class="col-md-12 pb20">
 						<div class="b-map">
-							<div id="allmap" class="bod-rad" style="height: 473px;"></div>
+							<div id="allmap" class="bod-rad" style="height: 533px;"></div>
 							<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
 
 							<div class="draw-btn">
@@ -210,7 +210,8 @@
 			mcount += 1
 			// 3的倍数
 			if (mcount >= 3) {
-				$(".j-guide-pop").modal("hide");
+				$(".j-guide-pop").hide().removeClass("in");
+				$("#mask").hide();
 			} else if (mcount < 3) {
 
 				if(mcount==1) {

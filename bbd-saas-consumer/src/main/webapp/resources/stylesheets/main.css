@@ -644,12 +644,18 @@ footer {
 .dn {
   display: none;
 }
-.b-sidebar {
+.b-sidebar,
+.sub-sidebar {
   padding-top: 40px;
   position: relative;
   z-index: 4;
 }
-.b-sidebar li a {
+.b-sidebar li,
+.sub-sidebar li {
+  line-height: 60px;
+}
+.b-sidebar li a,
+.sub-sidebar li a {
   display: inline-block;
   width: 100%;
   line-height: 60px;
@@ -658,21 +664,28 @@ footer {
   font-size: 18px;
 }
 .b-sidebar li a:hover,
-.b-sidebar .side-cur a {
+.sub-sidebar li a:hover,
+.b-sidebar .side-cur a,
+.sub-sidebar .side-cur a {
   background: #dbdbe3;
   border-radius: 10px 0 0 10px;
 }
-.b-sidebar .menu {
+.b-sidebar .menu,
+.sub-sidebar .menu {
   margin-left: 22px;
 }
-.b-sidebar .menu li {
+.b-sidebar .menu li,
+.sub-sidebar .menu li {
   margin-top: 10px;
 }
-.b-sidebar .menu li a {
+.b-sidebar .menu li a,
+.sub-sidebar .menu li a {
   padding-left: 40px;
 }
 .b-sidebar .menu li a:hover,
-.b-sidebar .menu .curr a {
+.sub-sidebar .menu li a:hover,
+.b-sidebar .menu .curr a,
+.sub-sidebar .menu .curr a {
   background: #d5d5dd;
   border-radius: 10px 0 0 10px;
 }
@@ -716,6 +729,19 @@ footer {
   .b-detail {
     margin: 0 -15px;
   }
+}
+@media screen and (max-width: 990px) {
+  .b-detail {
+    margin: 0;
+  }
+  .b-sidebar {
+    background: #f0f0f7;
+  }
+}
+@media screen and (max-width: 767px) {
+	.row{
+		margin-left:-15px;
+	}
 }
 .arrive-status {
   color: #fff;
@@ -834,12 +860,12 @@ footer {
   border-radius: 4px 4px 0 0;
 }
 .tab-area .b-tab-con {
-  padding: 40px 15px;
+  padding: 40px 15px 15px;
   border: 1px solid #dbdaec;
 }
 .tab-area .b-map {
   position:relative;
-  height:473px;
+  height:533px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -1231,7 +1257,7 @@ footer {
 	padding-right:40px;
 }
 input.c-disable{
-	min-width:252px !important;
+	min-width:244px !important;
 }
 select.form-control::-ms-expand { display: none; }
 .navbar-nav > li > a{
@@ -1375,3 +1401,8 @@ select.form-control::-ms-expand { display: none; }
   margin:-90px 0 0 -30px;
 }
 /* 循环加载 结束*/
+/* S pop 样式修改 */
+.j-guide-pop{
+	position:absolute;
+}
+/* E pop 样式修改 */

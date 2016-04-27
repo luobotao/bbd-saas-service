@@ -50,11 +50,11 @@
 	  								<%=DispatchStatus.Srcs2HTML(-1)%>
 	  							</select>
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
 	  							<label>到站时间：　</label>
 	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 	  							<a href="javascript:void(0)" onclick="queryData(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
 	  						</div>
 	  					</div>

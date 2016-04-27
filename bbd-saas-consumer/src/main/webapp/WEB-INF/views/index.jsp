@@ -14,7 +14,7 @@
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 </head>
-<body>
+<body id="psrE">
 <!-- S nav -->
 <nav class="navbar navbar-default b-navbar">
 	<div class="container-fluid">
