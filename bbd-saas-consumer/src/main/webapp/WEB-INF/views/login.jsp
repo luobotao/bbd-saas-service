@@ -294,7 +294,7 @@
 <!-- E pop -->
 <script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 <script>
-	$("#password").val(" ");
+	$("#password").val("");
 	$("input[type='checkbox']").iCheck({
 		checkboxClass : 'icheckbox_square-blue'
 	});
