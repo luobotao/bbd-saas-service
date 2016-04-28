@@ -56,30 +56,32 @@
 		<div class="clearfix">
 			<div class="fr">
 				<div class="login-area">
+					<div class="l-bg"></div>
 					<form:form id="form" method="post" modelAttribute="loginForm" >
 						<div class="header">
 							<c:if test="${not empty message}">
 								<div id="message" class="error">${message}</div>
 							</c:if>
 						</div>
-						<div class="has-icon mb12">
-							<i class="p-icon p-person"></i>
+						<div class="has-icon bor-tr">
+							<i class="p-icon p-loginperson"></i>
 							<form:input path="userName" class="b-input pl15" placeholder="输入账号" onkeypress="enterPress(event)"/>
 						</div>
-						<div class="has-icon mb12">
-							<i class="p-icon p-lock"></i>
+						<div class="has-icon bor-br">
+							<i class="p-icon p-loginlock"></i>
 							<form:input path="passWord" type="password" class="b-input pl15" placeholder="输入密码" onkeypress="enterPress(event)"/>
 						</div>
 						<div class="clearfix mlrf15">
-							<div class="col-md-6">
-								<a href="javascript:void(0);" class="sbtn l mb12 f24" onclick="submitForm()">登　录</a>
+							<div class="col-md-12">
+								<a href="javascript:void(0);" class="sbtn blue mb10 f24" onclick="submitForm()">登　录</a>
 							</div>
-							<div class="col-md-6">
-								<a href="javascript:void(0);" class="sbtn d j-login f24">注　册</a>
+							<div class="col-md-12">
+								<a href="javascript:void(0);" class="sbtn lblue j-login f24">注　册</a>
 							</div>
 
 						</div>
 					</form:form>
+					<p class="warm-tips">若账号有问题，请联系客服：4009 616 090</p>
 				</div>
 
 			</div>
@@ -278,8 +280,9 @@
 				<div class="fl site-re">
 					<label>
 						<input type="checkbox"  id="agreeCheck" checked/>
-						同意<a href="http://ht.neolix.cn/www/wap/protocal.html" target="_blank"><em class="orange">《棒棒达快递注册协议》</em></a>
+						同意
 					</label>
+					<a href="http://ht.neolix.cn/www/wap/protocal.html" target="_blank"><em class="orange">《棒棒达快递注册协议》</em></a>
 				</div>
 				<a href="javascript:void(0);" class="ser-btn l" id="saveSiteBtn" >保存</a>
 			</div>
@@ -291,6 +294,7 @@
 <!-- E pop -->
 <script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 <script>
+	$("#password").val(" ");
 	$("input[type='checkbox']").iCheck({
 		checkboxClass : 'icheckbox_square-blue'
 	});

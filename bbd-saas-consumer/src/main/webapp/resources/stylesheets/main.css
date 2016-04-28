@@ -111,6 +111,9 @@ a.orange {
 .mt20 {
   margin-top: 20px;
 }
+.mb10 {
+  margin-bottom: 10px;
+}
 .mb12 {
   margin-bottom: 12px;
 }
@@ -156,6 +159,8 @@ a.orange {
   color: #000;
   border-radius: 4px;
   text-align: center;
+  position:relative;
+  z-index:2;
 }
 .sbtn:link,
 .sbtn:visited,
@@ -175,6 +180,16 @@ a.orange {
 .sbtn.g {
   background: #c3c3cc;
   border: 1px solid #bbbbc4;
+}
+.sbtn.blue {
+  background: #81e1ff;
+  border: 1px solid #81e1ff;
+  color:#3d3838;
+}
+.sbtn.lblue {
+  background: #e4eff5;
+  border: 1px solid #e4eff5;
+  color:#3d3838;
 }
 .sbtn2 {
   height: 36px;
@@ -248,6 +263,16 @@ a.orange {
 }
 .cur a {
   color: #fc9e28 !important;
+}
+.warm-tips{
+	color:#fff;
+	font-size:16px;
+	line-height:1.1;
+	margin:18px 0 0 0;
+	position:relative;
+	z-index:3;
+	text-align:center;
+	opacity:0.6;
 }
 /*----S-table----*/
 .table {
@@ -434,16 +459,21 @@ a.orange {
 }
 /*----E-table----*/
 /* S 导航条 */
+.navbar-nav {
+    margin: 7.5px 0;
+}
 .b-navbar {
   min-height: 60px;
-  border: none;
+  border: 1px solid #eaeaeb;
   margin-bottom: 0;
+  position: relative;
+  z-index: 5;
 }
 .b-navbar .navbar-brand {
   padding-top: 9px;
 }
 .b-navbar .navbar-nav > li > a {
-  padding-top: 20px;
+  padding-top: 12px;
 }
 .b-navbar .navbar-nav > li > a:hover {
   color: #fc9e28;
@@ -472,11 +502,21 @@ footer {
   background-size: 100% 100%;
 }
 .b-banner .login-area {
-  padding: 67px 43px;
-  border-radius: 10px;
-  background: #59adce;
-  margin-top: 94px;
-  width:456px;
+  padding: 30px;
+  margin-top: 99px;
+  width:430px;
+  position:relative;
+}
+.l-bg{
+	position:absolute;
+	top:0;
+	left:0;
+	width:430px;
+	height:354px;
+	border-radius: 10px;
+	background:#477a99;
+	opacity:0.4;
+	z-index:1;
 }
 .has-icon {
   height: 60px;
@@ -485,14 +525,24 @@ footer {
   -moz-border-radius: 10px;
   border-radius: 4px;
   border: 1px solid #fff;
+  position:relative;
+  z-index:2;
+  background:#f6f2f2;
+}
+.bor-tr{
+	border-radius:4px 4px 0 0;
+}
+.bor-br{
+	border-radius:0 0 4px 4px;
+	margin:1px 0 10px 0;
 }
 .has-icon .b-input {
-  background: none;
+  background: #f6f2f2;
   border: none;
   width: 80%;
   height:58px;
   color: #fff;
-  font-size: 16px;
+  font-size:18px;
 }
 .has-sel-icon {
   height: 38px;
@@ -518,21 +568,21 @@ footer {
   min-width: 370px;
 }
 .b-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #59adce inset;
+  -webkit-box-shadow: 0 0 0px 1000px #f6f2f2 inset;
   border: none !important;
-  -webkit-text-fill-color: #c4deeb;
+  -webkit-text-fill-color: #3e6b8c;
 }
 .b-input::-webkit-input-placeholder { /* WebKit browsers */
-  color: #c4deeb;
+  color: #3e6b8c;
 }
 .b-input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-  color: #c4deeb;
+  color: #3e6b8c;
 }
 .b-input::-moz-placeholder { /* Mozilla Firefox 19+ */
-  color: #c4deeb;
+  color: #3e6b8c;
 }
 .b-input:-ms-input-placeholder { /* Internet Explorer 10+ */
-  color: #c4deeb;
+  color: #3e6b8c;
 }
 /* E banner */
 /* S 关于我们*/
@@ -1090,7 +1140,7 @@ footer {
     font-size:16px;
 }
 /* S 控件css reset */
-.BMap_scaleCtrl{
+.b-tab-con .BMap_scaleCtrl{
     width:120px !important;
     height:43px !important;
     background:#fff;
@@ -1099,67 +1149,67 @@ footer {
     left:15px !important;
     bottom:72px !important;
 }
-.BMap_scaleTxt{
+.b-tab-con .BMap_scaleTxt{
     margin-left:-10px;
 }
-.BMap_scaleHBar{
+.b-tab-con .BMap_scaleHBar{
     width:100px !important;  
     bottom:10px !important;   
 }
-.BMap_scaleLBar{
+.b-tab-con .BMap_scaleLBar{
     left:10px !important;
     bottom:11px !important; 
 }
-.BMap_scaleRBar{
+.b-tab-con .BMap_scaleRBar{
     right:10px !important;
     bottom:11px !important; 
 }
-.BMap_stdMpType3{
+.b-tab-con .BMap_stdMpType3{
     width:31px !important;
     height:82px !important;
     bottom:64px !important;
     right:15px !important;
 }
-.BMap_stdMpZoom{
+.b-tab-con .BMap_stdMpZoom{
     width:45px !important;
     height:88px !important;
     
 }
-.BMap_stdMpZoom .BMap_button{
+.b-tab-con .BMap_stdMpZoom .BMap_button{
     background:none !important;
     width:31px !important;
     height:31px !important;
     left:0 !important;
     box-shadow: 4px 4px 10px #888888;       
 }
-.BMap_stdMpZoom .BMap_stdMpZoomIn{
+.b-tab-con .BMap_stdMpZoom .BMap_stdMpZoomIn{
     background:url(../images/b_plus.png) no-repeat  !important;
 }
-.BMap_stdMpZoom .BMap_stdMpZoomOut{
+.b-tab-con .BMap_stdMpZoom .BMap_stdMpZoomOut{
     background:url(../images/b_minus.png) no-repeat  !important;
     top:43px!important;
 }
-.BMap_stdMpType1{
+.b-tab-con .BMap_stdMpType1{
     bottom:32px !important;
     height:126px !important;
 }
-.BMap_stdMpPan .BMap_button{
+.b-tab-con .BMap_stdMpPan .BMap_button{
     width:4px !important;
     height:4px !important;
 }
-.BMap_panN{
+.b-tab-con .BMap_panN{
     top:7px !important;
 }
-.BMap_panW{
+.b-tab-con .BMap_panW{
     left:7px !important;
     top:13px !important;
 }
-.BMap_panE{
+.b-tab-con .BMap_panE{
     left:inherit !important;
     right:7px !important;
     top:13px !important;
 }
-.BMap_panS{
+.b-tab-con .BMap_panS{
     top:inherit !important;
     bottom:7px !important;
 }
@@ -1214,6 +1264,14 @@ footer {
 }
 .p-user{
     background-position:0 -51px;
+}
+.p-loginperson{
+    background-position:0 -77px;
+    margin-left: 16px;
+}
+.p-loginlock{
+    background-position:0 -102px;
+    margin-left: 16px;
 }
 .num-add{
   font-weight:bold;
@@ -1434,3 +1492,39 @@ select.form-control::-ms-expand { display: none; }
 	position:absolute;
 }
 /* E pop 样式修改 */
+/* S 404页面*/
+.mb8 {
+  margin-bottom: 8px !important;
+}
+.f18 {
+  font-size: 18px;
+}
+.error-area {
+  margin: 184px 0 110px 0;
+}
+.error-area .error-txt {
+  padding: 128px 0 0 110px;
+  color: #959494;
+}
+.error-area .error-txt h1 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 1.1;
+  color: #000;
+}
+.error-area .error-txt p {
+  line-height: 1.1;
+  margin: 0;
+}
+.error-area .error-txt p i {
+  color: #000;
+}
+.error-area .error-txt .reasult-info {
+  font-size: 18px;
+  margin: 24px 0 16px 0;
+}
+.error-area .error-btn {
+  padding-top: 108px;
+} 
+/* E 404页面 */
