@@ -243,8 +243,8 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 				<h4 class="modal-title tc">转其他站点</h4>
 			</div>
-			<div class="modal-body b-modal-body">
-				站点:<select id="site_select" class="form-control form-bod">
+			<div class="modal-body b-modal-body form-inline-n">
+				站点:<select id="site_select" class="form-control form-bod mt10">
 					</select>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideOtherSiteDiv()" class="sbtn sbtn2 g">取消</a></span>

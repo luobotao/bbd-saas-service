@@ -160,7 +160,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 						<h4 class="modal-title userclass tc"></h4>
 					</div>
-					<form role="form" action="" method="post" id="userForm" >
+					<form role="form" action="" method="post" id="userForm" class="form-inline-n">
 					<div class="modal-body b-modal-body">
 						<ul class="b-n-crt">
 							<li>
