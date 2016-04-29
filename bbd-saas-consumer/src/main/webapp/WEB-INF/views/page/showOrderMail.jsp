@@ -239,7 +239,10 @@
 	var carlength=0;
 	var courierlength=0;
 	function init() {
-		if(points!=null||points.length==0){
+		console.log("aabb");
+		console.log(points);
+		if(points==null||points.length==0){
+			console.log("wuliu status error");
 			return false;
 		}
 		followChk = document.getElementById("follow");

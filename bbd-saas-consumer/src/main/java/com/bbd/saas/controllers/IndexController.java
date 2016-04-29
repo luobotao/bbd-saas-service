@@ -75,7 +75,7 @@ public class IndexController {
 	public String home(Model model,HttpServletRequest request) {
 		User user = adminService.get(UserSession.get(request));
 		model.addAttribute("user", user);
-		//if(user.getLoginCount()==1) {
+		if(user.getLoginCount()==1) {
 			//--------panel 1-----------------------
 			Site site = siteService.findSite(user.getSite().getId().toString());
 			String between = request.getParameter("between");
@@ -103,7 +103,7 @@ public class IndexController {
 			List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());
 			String siteStr = dealSitePoints(sitePoints);
 			model.addAttribute("sitePoints", siteStr);
-		//}
+		}
 		return "home";
 	}
 	private String dealSitePoints(List<List<MapPoint>> sitePoints) {
