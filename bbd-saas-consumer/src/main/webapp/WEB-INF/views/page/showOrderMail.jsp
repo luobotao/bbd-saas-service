@@ -152,9 +152,9 @@
 					<div class="log-draw-btn">
 						<div class="bg-alpha"></div>
 						<input id="follow" type="checkbox"  class="ml12"><span class="follow-pic">画面跟随</span></input>
-						<input id="play" type="button" class="ser-btn l ml6" value="播放" onclick="play();" disabled />
-						<input id="pause" type="button"  class="ser-btn l ml6" value="暂停" onclick="pause();" disabled />
-						<input id="reset" type="button"  class="ser-btn l ml6" value="重置" onclick="reset()" disabled />
+						<input id="play" type="button" class="b-play-icon b-play" onclick="play();" disabled />
+						<input id="pause" type="button"  class="b-play-icon b-pause ml12" onclick="pause();" disabled />
+						<input id="reset" type="button"  class="b-play-icon b-reset ml12" onclick="reset()" disabled />
 					</div>
 				</div>
 		<%
@@ -309,12 +309,11 @@
 		//点亮操作按钮
 		playBtn.disabled = false;
 		resetBtn.disabled = false;
-		pauseBtn.style.background = "#e3e3eb";
 	}
 	function play() {
-		playBtn.style.background = "#e3e3eb";
+		playBtn.style.backgroundPosition = "-92px 0";
 		playBtn.disabled = true;
-		pauseBtn.style.background = "#ffc800";
+		pauseBtn.style.backgroundPosition = "0 -42px";
 		pauseBtn.disabled = false;
 		var point = pointsTotal[index];
 		if(index <  carlength) {
@@ -343,9 +342,9 @@
 
 	}
 	function pause() {
-		playBtn.style.background = "#ffc800";
+		playBtn.style.backgroundPosition = "0 0";
 		playBtn.disabled = false;
-		pauseBtn.style.background = "#e3e3eb";
+		pauseBtn.style.backgroundPosition = "-92px -42px";
 		pauseBtn.disabled = true;
 		if(timer) {
 			window.clearTimeout(timer);
@@ -353,9 +352,9 @@
 	}
 	function reset() {
 		followChk.checked = false;
-		playBtn.style.background = "#ffc800";
+		playBtn.style.backgroundPosition = "0 0";
 		playBtn.disabled = false;
-		pauseBtn.style.background = "#e3e3eb";
+		pauseBtn.style.backgroundPosition = "-92px -42px";
 		pauseBtn.disabled = true;
 		if(timer) {
 			window.clearTimeout(timer);
