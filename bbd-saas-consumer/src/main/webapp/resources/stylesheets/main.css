@@ -576,7 +576,7 @@ footer {
   color: #fff;
 }
 .has-sel-icon select {
-  width: 89%;
+  width: 88%;
   height: 35px;
   border: none;
   outline: none;
@@ -1290,6 +1290,10 @@ footer {
     background-position:0 -102px;
     margin-left: 16px;
 }
+.p-patch{
+	background-position:0 -127px;
+    margin-left: 16px;
+}
 .num-add{
   font-weight:bold;
   font-size:16px;
@@ -1365,6 +1369,9 @@ input.c-disable{
 select.form-control::-ms-expand { display: none; }
 .navbar-nav > li > a{
 	padding:20px 40px 0 0;
+}
+.login-navbar  > li > a{
+	padding-right:60px;
 }
 .navbar-nav > li:last-child a{
 	padding-right:0;

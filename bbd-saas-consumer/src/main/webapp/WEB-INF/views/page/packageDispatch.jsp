@@ -158,7 +158,7 @@
 					<li class="col-md-12">
 					<!-- 派件员: -->
 						<div class="has-sel-icon mb12">
-							<i class="glyphicon glyphicon-user c-gray pl15"></i>
+							<i class="p-icon p-patch"></i>
 							<select id="courier_select"> </select>
 						</div>
 					</li>
