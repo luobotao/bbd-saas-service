@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Controller
@@ -61,5 +62,25 @@ public class BbdExpressApiController {
 			return areaCode;
 		}
 		return "";
+	}
+
+	@RequestMapping(value="/postAllAreaCode",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
+	@ResponseBody
+	public String postAllAreaCode(@RequestParam String address) throws UnsupportedEncodingException {
+		//args :company address
+		String[] addes = address.split(";");
+		StringBuffer sb = new StringBuffer();
+		for (String str: addes) {
+			List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",str);
+			logger.info("[address]:"+str+" [search poi result] :"+areaCodeList.size()+"");
+			if(areaCodeList!=null && areaCodeList.size()>0){
+				//通过积分获取优选区域码，暂时用第一个
+				String siteId = areaCodeList.get(0);
+				Site site = siteService.findSite(siteId);
+				sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\n");
+			}
+		}
+		String str = sb.toString();
+		return str;
 	}
 }
