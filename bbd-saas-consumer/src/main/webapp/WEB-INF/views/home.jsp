@@ -123,10 +123,10 @@
 </footer>
 <!-- E footer -->
 <script type="application/javascript">
-	if(${user.loginCount==1}){
+	//if(${user.loginCount==1}){
 		$(".j-guide-pop").show().addClass("in");
 		$("#mask").show();
-	}
+	//}
 </script>
 </body>
 </html>

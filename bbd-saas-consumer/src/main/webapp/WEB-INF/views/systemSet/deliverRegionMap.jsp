@@ -133,10 +133,10 @@
 							<!-- S table -->
 							<div class="tab-bod mt20">
 								<div class="table-responsive">
-									<table class="table">
+									<table class="table" id="dis-table">
 										<thead>
 										<tr>
-											<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox"  /></th>
+											<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox" id="selectAll" /></th>
 											<th>导入日期</th>
 											<th>省</th>
 											<th>市</th>
@@ -255,6 +255,11 @@
 	$("input[type='checkbox']").iCheck({
 		checkboxClass : 'icheckbox_square-blue'
 	});
+	$("#selectAll").on('ifUnchecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
+	}).on('ifChecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("check");
+	});;
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
 		var radiusVal = $("#radius option:selected").val();
