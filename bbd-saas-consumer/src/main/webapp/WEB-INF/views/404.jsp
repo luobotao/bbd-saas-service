@@ -14,7 +14,7 @@
         <nav class="navbar navbar-default b-navbar">
           <div class="container">
             <div class="navbar-header">
-              <a class="navbar-brand" href="#"><img src="<c:url value="/resources/images/logo.png" />"  alt="logo" /></a>
+                <a class="navbar-brand" href="<c:url value="/" />"><img src="<c:url value="/resources/images/logo.png" />" alt="logo" /></a>
             </div>
           </div>
         </nav>
