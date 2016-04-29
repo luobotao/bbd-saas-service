@@ -571,7 +571,7 @@ footer {
 }
 .has-sel-icon select {
   width: 89%;
-  height: 36px;
+  height: 35px;
   border: none;
   outline: none;
 }
@@ -1552,13 +1552,14 @@ select.form-control::-ms-expand { display: none; }
 }
 .log-draw-btn {
   width: 100%;
+  height:60px;
   position: absolute;
-  top:20px;
+  top:0;
   left: 0;
 }
 .log-draw-btn .bg-alpha {
-  background: #000;
-  opacity: 0.3;
+  background: #fff;
+  opacity: 0.6;
   width: 100%;
   height: 60px;
   position: absolute;
@@ -1568,18 +1569,39 @@ select.form-control::-ms-expand { display: none; }
 .log-draw-btn input ,.log-draw-btn .follow-pic{
   position: relative;
   z-index: 3;
-  bottom: 10px;
+  top: 14px;
 }
 .log-draw-btn .follow-pic{
   font-size:18px;
-  color:#fff;
-  padding-left:12px;
+  color:#33333d;
+  padding:0 17px 0 6px;
+  top:6px;
 }
 .log-status .BMap_stdMpType0{
   top:80px !important;
 }
 .log-status .icheckbox_square-blue{
   z-index:4;
-  margin: -26px 0 0  12px;
+  margin: 4px 0 0 25px;
+}
+.b-play-icon{
+	width:82px;
+	height:32px;
+	border:none;
+	background:none;
+	box-shadow:2px 2px 2px #979899;
+	background:url(../images/play_btn_icon.png) no-repeat;
+}
+.b-play{
+	background-position:0 0;
+}
+.b-pause{
+	background-position:-92px -42px;
+}
+.b-reset{
+	background-position:0 -84px;
+}
+.b-reset:active{
+	background-position:-92px -84px;
 }
 /* E 物流状态*/
