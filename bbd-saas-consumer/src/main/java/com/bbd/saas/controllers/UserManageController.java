@@ -71,7 +71,7 @@ public class UserManageController {
      * @return
      */
 	@RequestMapping(value="userList", method=RequestMethod.GET)
-	public String listUser(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+	public String userList(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
 		User getuser = adminService.get(UserSession.get(request));
 		PageModel<User> userPage = getUserPage(request,0,roleId,status,keyword);
 
@@ -81,21 +81,18 @@ public class UserManageController {
 	}
 	
 	/**
-	 * description: 跳转到用户管理页面
-	 * 2016年4月14日
-	 * @author: zuowenhai
-	 * @param model
-	 * @return 
-	 */
+     * 获取用户列表信息
+     * @param 
+     * @return
+     */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public void index(Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+	public String index(HttpServletRequest request,Model model) {
 
+		PageModel<User> userPage = getUserPage(request,0,null,null,null);
 
-		User user = userService.findUserByLoginName("qweqewqwed");
-
-		model.addAttribute("user", user);
-		
-		//return "systemSet/userManage";
+		model.addAttribute("userPage", userPage);
+		//return "systemSet/userManageUserList";
+		return "systemSet/userManage";
 	}
 	
 	/**
