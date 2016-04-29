@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by luobotao on 2016/4/8.
  */
 public class LoginInterceptor extends HandlerInterceptorAdapter {
-    private static final String[] IGNORE_URI = {"/login","/500","/404"};
+    private static final String[] IGNORE_URI = {"/login","/500","/404","/resources","site","register","bbd"};
 
     @Autowired
     AdminService adminService;
@@ -36,7 +36,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 User user = adminService.get(UserSession.get(request));
                 if (user != null) return true;
             }
-            response.sendRedirect("login");
+
+            response.sendRedirect(request.getContextPath()+"/login");
         }
         return flag;
     }

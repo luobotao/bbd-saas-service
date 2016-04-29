@@ -14,7 +14,7 @@
         <nav class="navbar navbar-default b-navbar">
           <div class="container">
             <div class="navbar-header">
-              <a class="navbar-brand" href="#"><img src="<c:url value="/resources/images/logo.png" />"  alt="logo" /></a>
+                <a class="navbar-brand" href="<c:url value="/" />"><img src="<c:url value="/resources/images/logo.png" />" alt="logo" /></a>
             </div>
           </div>
         </nav>
@@ -42,4 +42,11 @@
         </footer>
         <!-- E footer -->
     </body>
+<script>
+    if(window.top==window.self){//不存在父页面
+
+    }else{
+        window.top.location.href="<c:url value="/404" />"
+    }
+</script>
 </html>
