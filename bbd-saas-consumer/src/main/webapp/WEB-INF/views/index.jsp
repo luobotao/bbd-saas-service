@@ -54,7 +54,7 @@
 					<li id="set" class="lv1"><a href="<c:url value="/deliverRegion/map/1" />" target="iframe1"><i class="b-icon p-dis"></i>配送区域</a></li>
 					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
 					<ul class="menu dn">
-						<li id="user"><a href="<c:url value="/userManage/userList" />" target="iframe1">用户管理</a></li>
+						<li id="user"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
 					</ul>
 				</ul>
 			</div>
@@ -66,7 +66,7 @@
 <!-- E content -->
 <!-- S detail -->
 <div class="b-branch-hei">
-	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" onLoad="iFrameHeight();"></iframe>
+	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" width="100%" height="100%" onLoad="iFrameHeight();"></iframe>
 
 </div><!-- /.content-wrapper -->
 <!-- E detail -->

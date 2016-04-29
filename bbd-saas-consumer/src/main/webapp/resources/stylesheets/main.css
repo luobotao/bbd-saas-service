@@ -105,6 +105,9 @@ a.orange {
 .mr10 {
   margin-right: 10px;
 }
+.mb0{
+  margin-bottom:0 !important;
+}
 .mr15 {
   margin-right: 15px;
 }
@@ -278,6 +281,9 @@ a.orange {
 .table {
   border: 1px solid #d9d8eb;
   background: #ffffff;
+}
+.guide-tab{
+  min-height:300px; 
 }
 .tab-bod {
   -webkit-border-radius: 4px;
@@ -1504,7 +1510,7 @@ select.form-control::-ms-expand { display: none; }
 /* S pop 样式修改 */
 .j-guide-pop{
 	position:absolute;
-	overflow:visible;
+    overflow:visible;
 }
 /* E pop 样式修改 */
 /* S 404页面*/

@@ -81,7 +81,7 @@
 							<input type="hidden" id="page" name="page">
 						</form>
 					</div>
-					<div class="row pb20">
+					<div class="row">
 						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 							<form action="" method="post" enctype="multipart/form-data" id="importFileForm">
 								<label class="ser-btn b fileup_ui fl">
@@ -96,11 +96,11 @@
 
 					<!-- S table -->
 					<div class="tab-bod mt20">
-						<div class="table-responsive">
-							<table class="table">
+						<div class="table-responsive y-scroll">
+							<table class="table mb0" id="guide-table">
 								<thead>
 								<tr>
-									<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox"  /></th>
+									<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox" id="selectAll" /></th>
 									<th>导入日期</th>
 									<th>省</th>
 									<th>市</th>
@@ -116,16 +116,17 @@
 						</div>
 						<!-- E table -->
 						<!-- S tableBot -->
-						<div class="clearfix">
+						<div class="clearfix mt20">
 							<!-- S button -->
-							<div class="clearfix fl pad20">
+							<div class="clearfix fl ml12">
 								<a href="javascript:void(0);" id="piliangDel" class="ser-btn l">批量删除</a>
 							</div>
 							<!-- E button -->
-							<!-- S page -->
-							<div id="pagin"></div>
-							<!-- E page -->
+
 						</div>
+						<!-- S page -->
+						<div id="pagin" class="clearfix pb20"></div>
+						<!-- E page -->
 						<!-- E tableBot -->
 					</div>
 				</div>
@@ -196,6 +197,10 @@
 	<script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 	<link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 	<script type="application/javascript">
+		$("input[type='checkbox']").iCheck({
+			checkboxClass : 'icheckbox_square-blue'
+		});
+
 		// 导入文件
 		$(".import-guid-file").on("change",function(){
 			$(".j-import-guid-pop").addClass("in").show();
@@ -607,18 +612,28 @@
 		});
 		$("#querySiteBtn").click(function(){
 			console.log("query site start");
+			$(".table-responsive").addClass("guide-tab");
 			querySiteKey();
+
 		})
 		function updateDataList(data){
 			$( '#dataList').html("");
 			$.each(data.siteKeywordPageList, function(i, item){
-				var time = formatDate(new Date(parseInt(item.createAt)));
+				var time = getDate1(item.createAt);
 				$( '#dataList').append("<tr><td><input type='checkbox' value='"+item.id+"' name='inputC' class='c-cbox'/></td>" +
 						"<td>"+time+"</td><td>"+item.province+"</td><td>"+item.city+"</td><td>"+item.distict+"</td><td>"+item.keyword+"</td>" +
 						"<td><a href='javascript:void(0);' class='orange' onclick='delSiteKeywordWithTr(\""+item.id+"\")'>删除</a></td></tr>");
 			});
+			$("input[type='checkbox']").iCheck({
+				checkboxClass : 'icheckbox_square-blue'
+			})
+			$("#selectAll").on('ifUnchecked', function() {
+				$("input[type='checkbox']", "#guide-table").iCheck("uncheck");
+			}).on('ifChecked', function() {
+				$("input[type='checkbox']", "#guide-table").iCheck("check");
+			});;
 			//显示分页条
-			var pageStr = paginNav(data.page, data.pageNum, data.pageCount);
+			var pageStr = paginNavMin(data.page, data.pageNum, data.pageCount);
 			$("#pagin").html(pageStr);
 		}
 		//加载带有查询条件的指定页的数据
@@ -703,15 +718,7 @@
 		function getLocalTime(nS) {
 			return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 		}
-		function   formatDate(now)   {
-			var   year=now.getFullYear();
-			var   month=now.getMonth()+1;
-			var   date=now.getDate();
-			var   hour=now.getHours();
-			var   minute=now.getMinutes();
-			var   second=now.getSeconds();
-			return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
-		}
+
 	</script>
 </bobdy>
 </html>

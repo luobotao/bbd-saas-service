@@ -200,7 +200,7 @@
 				var remark = "<%=express.getRemark()%>";
 				console.log(remark);
 				var flag = false;
-				if(remark.startWith("订单已打包")){
+				if(remark.startWith("订单分拣中")){
 					flag = true;
 					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/start.png", new BMap.Size(64,64)));
 				}else if(remark.startWith("订单已送达")){
