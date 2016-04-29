@@ -1490,6 +1490,7 @@ select.form-control::-ms-expand { display: none; }
 /* S pop 样式修改 */
 .j-guide-pop{
 	position:absolute;
+    overflow:visible;;
 }
 /* E pop 样式修改 */
 /* S 404页面*/
