@@ -41,7 +41,7 @@
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<ul class="nav navbar-nav navbar-right f16">
+			<ul class="nav navbar-nav navbar-right login-navbar f16">
 				<li class="cur"><a href="javascript:void(0);">首页</a></li>
 				<li><a href="#aboutUs">关于我们</a></li>
 				<li><a href="#partner">合作伙伴</a></li>

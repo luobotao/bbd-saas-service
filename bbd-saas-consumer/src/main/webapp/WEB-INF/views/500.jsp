@@ -29,7 +29,7 @@
         			<p class="f16 mb8"><i class="f18">网址有错误</i> &gt;请检查地址是否完整或存在多余字符</p>
         			<p class="f16"><i class="f18">网址已失效 </i>&gt;可能页面已删除，活动已下线等</p>
         			<div class="error-btn tc">
-	        			<a href="<c:url value="/login" />"  class="ser-btn l">返回首页</a>
+	        			<a href="<c:url value="/login"  />"  class="ser-btn l">返回首页</a>
 	        		</div>
         		</div>
         		
