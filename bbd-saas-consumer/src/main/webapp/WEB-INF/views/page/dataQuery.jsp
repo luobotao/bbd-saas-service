@@ -23,16 +23,7 @@
 		<div class="row">
 			<!-- S sidebar -->
 			<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
-				<ul class="b-sidebar">
-					<li class="lv1"><a href="package-arrives.html"><i class="b-icon p-package"></i>包裹到站</a></li>
-					<li class="lv1"><a href="tracking-assign.html"><i class="b-icon p-aign"></i>运单分派</a></li>
-					<li class="lv1"><a href="exception-processing.html"><i class="b-icon p-error"></i>异常件处理</a></li>
-					<li class="lv1 side-cur"><a href="data-query.html"><i class="b-icon p-query"></i>数据查询</a></li>
-					<li class="lv1"><a href="system-distribution.html"><i class="b-icon p-set"></i>系统设置</a></li>
-					<ul class="menu dn">
-		                <li><a href="system-distribution.html">配送区域</a></li>
-		                <li><a href="system-usermanage.html">用户管理</a></li>
-		            </ul>
+				<ul class="sub-sidebar">
 				</ul>
 			</div>
 			<!-- E sidebar -->

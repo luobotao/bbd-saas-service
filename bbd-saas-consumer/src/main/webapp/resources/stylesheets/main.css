@@ -1306,7 +1306,7 @@ footer {
 .draw-btn a {
   position: relative;
   z-index: 3;
-  bottom: 12px;
+  bottom: 10px;
 }
 .c-cbox{
   width:20px;
