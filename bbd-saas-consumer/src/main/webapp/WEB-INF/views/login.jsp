@@ -53,7 +53,7 @@
 <!-- S banner -->
 <div class="b-banner mb120">
 	<div class="container">
-		<div class="clearfix">
+		<div class="clearfix banner-txt">
 			<div class="fr">
 				<div class="login-area">
 					<div class="l-bg"></div>
@@ -85,6 +85,7 @@
 				</div>
 
 			</div>
+			<div class="banner-cloud"></div>
 		</div>
 	</div>
 </div>

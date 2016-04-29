@@ -21,6 +21,7 @@
 		<property name="execludeUrls">
 			<list>
 				<value>/userManage/changestatusOuter</value>
+				<value>/bbd/postAllAreaCode</value>
 				<value>/login</value>
 			</list>
 		</property>

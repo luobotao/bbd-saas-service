@@ -497,9 +497,20 @@ footer {
 /* E footer */
 /* S banner */
 .b-banner {
-  background: url(../images/banner.png) no-repeat;
+  background: url(../images/banner.png) repeat-x center top;
   min-height: 688px;
-  background-size: 100% 100%;
+}
+.banner-txt{
+    position:relative;
+    background:url(../images/banner_txt.png) no-repeat left 98px;
+}
+.banner-cloud{
+    position:absolute;
+    right:-90px;
+    top:80px;
+    width:109px;
+    height:72px;
+    background:url(../images/banner_cloud.png) no-repeat;
 }
 .b-banner .login-area {
   padding: 30px;
@@ -1306,7 +1317,7 @@ footer {
 .draw-btn a {
   position: relative;
   z-index: 3;
-  bottom: 12px;
+  bottom: 10px;
 }
 .c-cbox{
   width:20px;
@@ -1348,6 +1359,9 @@ input.c-disable{
 select.form-control::-ms-expand { display: none; }
 .navbar-nav > li > a{
 	padding:20px 40px 0 0;
+}
+.navbar-nav > li:last-child a{
+	padding-right:0;
 }
 .f-dialog{
   position:fixed;
@@ -1490,6 +1504,11 @@ select.form-control::-ms-expand { display: none; }
 /* S pop 样式修改 */
 .j-guide-pop{
 	position:absolute;
+<<<<<<< HEAD
+    overflow:visible;;
+=======
+	overflow:visible;
+>>>>>>> 15fc043d96e3e7f3b60c6aeb854441a4bf7e6bf3
 }
 /* E pop 样式修改 */
 /* S 404页面*/

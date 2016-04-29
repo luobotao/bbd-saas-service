@@ -66,7 +66,7 @@
 <!-- E content -->
 <!-- S detail -->
 <div class="b-branch-hei">
-	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" onLoad="iFrameHeight();"></iframe>
+	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" width="100%" height="100%" onLoad="iFrameHeight();"></iframe>
 
 </div><!-- /.content-wrapper -->
 <!-- E detail -->
