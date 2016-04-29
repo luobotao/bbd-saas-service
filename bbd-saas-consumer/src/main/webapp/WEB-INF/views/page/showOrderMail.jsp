@@ -196,7 +196,7 @@
 		%>
 			var lon = "<%=express.getLon()%>";
 			var lat = "<%=express.getLat()%>";
-			if(lat!="" && lon!=""&&lon!="0.0"&&lat!="0.0"&&lon.indexOf("E")<=-1&&lat.indexOf("E")<=-1){
+			if(lat!="" && lon!=""&&lon!="0.0"&&lat!="0.0"&&lon.indexOf("E")<=-1&&lat.indexOf("E")<=-1&&lon.indexOf("e")<=-1&&lat.indexOf("e")<=-1){
 				var remark = "<%=express.getRemark()%>";
 				console.log(remark);
 				var flag = false;
@@ -244,74 +244,75 @@
 		if(points==null||points.length==0){
 			console.log("wuliu status error");
 			return false;
-		}
-		followChk = document.getElementById("follow");
-		playBtn = document.getElementById("play");
-		pauseBtn = document.getElementById("pause");
-		resetBtn = document.getElementById("reset");
-		//初始化地图,选取第一个点为起始点
-		map = new BMap.Map("container");
-		map.centerAndZoom(points[0],15);
-		map.enableScrollWheelZoom();
-		map.addControl(new BMap.NavigationControl());
-		map.addControl(new BMap.ScaleControl({anchor:BMAP_ANCHOR_BOTTOM_LEFT}));
-		map.addControl(new BMap.OverviewMapControl({isOpen: true}));
-		//map.pointToOverlayPixel(Point);
+		}else{
+			followChk = document.getElementById("follow");
+			playBtn = document.getElementById("play");
+			pauseBtn = document.getElementById("pause");
+			resetBtn = document.getElementById("reset");
+			//初始化地图,选取第一个点为起始点
+			map = new BMap.Map("container");
+			map.centerAndZoom(points[0],15);
+			map.enableScrollWheelZoom();
+			map.addControl(new BMap.NavigationControl());
+			map.addControl(new BMap.ScaleControl({anchor:BMAP_ANCHOR_BOTTOM_LEFT}));
+			map.addControl(new BMap.OverviewMapControl({isOpen: true}));
+			//map.pointToOverlayPixel(Point);
 
-		//通过DrivingRoute获取一条路线的point
-		var driving = new BMap.DrivingRoute(map);
+			//通过DrivingRoute获取一条路线的point
+			var driving = new BMap.DrivingRoute(map);
 
-		for (var i = 0;i < points.length ; i++) {
-			var myIcon = myIconArray[i];
-			var marker2 = new BMap.Marker(points[i],{icon: myIcon});  // 创建标注
-			//var lab = new  BMap.Label("途径点"+i,{position:points[i]});
-			map.addOverlay(marker2);              // 将标注添
-			//map.addOverlay(lab);
-			if(i < points.length-1){
-				driving.search(points[i],points[i+1]);
-			}
-		}
-		driving.setSearchCompleteCallback(function() {
-			var tmp = driving.getResults().getPlan(0).getRoute(0).getPath();
-			console.log("i am comming");
-			var first = tmp[0];
-			cnt++;
-			for (var i = 0;i < points.length-1 ; i++) {
-				if(Math.abs(first.lng - points[i].lng) < 0.01&& Math.abs(first.lat - points[i].lat)<0.01){
-					pointsArray[i]  = tmp;
-					if(i < points.length-2){
-						carlength = carlength + pointsArray[i].length;
-					}
-					if(hasKdy){
-						courierlength = courierlength + pointsArray[i].length+carlength;
-					}else{
-						carlength = carlength + pointsArray[i].length;
-					}
+			for (var i = 0;i < points.length ; i++) {
+				var myIcon = myIconArray[i];
+				var marker2 = new BMap.Marker(points[i],{icon: myIcon});  // 创建标注
+				//var lab = new  BMap.Label("途径点"+i,{position:points[i]});
+				map.addOverlay(marker2);              // 将标注添
+				//map.addOverlay(lab);
+				if(i < points.length-1){
+					driving.search(points[i],points[i+1]);
 				}
 			}
-			if(cnt ==points.length-1){
-				for (var i = 0;i < pointsArray.length ; i++) {
-					pointsTotal = pointsTotal.concat(pointsArray[i]);
+			driving.setSearchCompleteCallback(function() {
+				var tmp = driving.getResults().getPlan(0).getRoute(0).getPath();
+				console.log("i am comming");
+				var first = tmp[0];
+				cnt++;
+				for (var i = 0;i < points.length-1 ; i++) {
+					if(Math.abs(first.lng - points[i].lng) < 0.01&& Math.abs(first.lat - points[i].lat)<0.01){
+						pointsArray[i]  = tmp;
+						if(i < points.length-2){
+							carlength = carlength + pointsArray[i].length;
+						}
+						if(hasKdy){
+							courierlength = courierlength + pointsArray[i].length+carlength;
+						}else{
+							carlength = carlength + pointsArray[i].length;
+						}
+					}
 				}
-				var polyline = new BMap.Polyline(pointsTotal, {strokeColor: "#36cbff", strokeWeight: 6, strokeOpacity: 1});
-				map.addOverlay(polyline);
-				map.setViewport(pointsTotal);
+				if(cnt ==points.length-1){
+					for (var i = 0;i < pointsArray.length ; i++) {
+						pointsTotal = pointsTotal.concat(pointsArray[i]);
+					}
+					var polyline = new BMap.Polyline(pointsTotal, {strokeColor: "#36cbff", strokeWeight: 6, strokeOpacity: 1});
+					map.addOverlay(polyline);
+					map.setViewport(pointsTotal);
+				}
+			});
+			label = new BMap.Label("", {offset: new BMap.Size(-20, -20)});
+			//显示小车子
+			var myIconCar = new BMap.Icon("${ctx}/resources/images/admin/car1.png", new BMap.Size(128,128), { imageOffset: new BMap.Size(30,15),imageSize:new BMap.Size(64,64)});
+			car = new BMap.Marker(points[0],{icon:myIconCar});
+			map.addOverlay(car);
+			if(hasKdy){
+				//显示快递员
+				var myIconCourier = new BMap.Icon("${ctx}/resources/images/admin/courier.png", new BMap.Size(128,128), { imageOffset: new BMap.Size(30,15),imageSize:new BMap.Size(64,64)});
+				courier = new BMap.Marker(points[points.length-2],{icon:myIconCourier});
+				map.addOverlay(courier);
 			}
-		});
-		label = new BMap.Label("", {offset: new BMap.Size(-20, -20)});
-		//显示小车子
-		var myIconCar = new BMap.Icon("${ctx}/resources/images/admin/car1.png", new BMap.Size(128,128), { imageOffset: new BMap.Size(30,15),imageSize:new BMap.Size(64,64)});
-		car = new BMap.Marker(points[0],{icon:myIconCar});
-		map.addOverlay(car);
-		if(hasKdy){
-			//显示快递员
-			var myIconCourier = new BMap.Icon("${ctx}/resources/images/admin/courier.png", new BMap.Size(128,128), { imageOffset: new BMap.Size(30,15),imageSize:new BMap.Size(64,64)});
-			courier = new BMap.Marker(points[points.length-2],{icon:myIconCourier});
-			map.addOverlay(courier);
+			//点亮操作按钮
+			playBtn.disabled = false;
+			resetBtn.disabled = false;
 		}
-		//点亮操作按钮
-		playBtn.disabled = false;
-		resetBtn.disabled = false;
 	}
 	function play() {
 		playBtn.style.backgroundPosition = "-92px 0";

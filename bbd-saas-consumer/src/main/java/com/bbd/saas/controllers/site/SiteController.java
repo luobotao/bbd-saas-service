@@ -61,7 +61,7 @@ import java.util.List;
 @RequestMapping("/site")
 @SessionAttributes("loginForm")
 public class SiteController {
-	public static final Logger logger = LoggerFactory.getLogger("bbdpoi");
+	public static final Logger logger = LoggerFactory.getLogger(SiteController.class);
 	@Autowired
 	SiteService siteService;
 	@Autowired

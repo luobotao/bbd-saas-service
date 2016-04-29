@@ -7,21 +7,22 @@ $(function () {
     function counthei() {
         $(".b-branch").css({minHeight: winhei - 60});
         $(".b-detail").css({minHeight: winhei});
-        $(".b-sidebar .lv1").click(function () {
-            if ($(this).hasClass('side-cur')) {//h3有curr
-                if ($(this).next('ul.menu').css("display") == "block") {//menu有dn
-                    $(this).next('ul.menu').slideUp();
-                } else {//menu没有dn
-                    $(this).next('ul.menu').slideDown();
-                }
-            } else {//h3没有curr
-                $(this).siblings('.lv1').removeClass('side-cur');
-                $(this).siblings('.menu').slideUp();
-                $(this).addClass('side-cur').next('ul.menu').slideDown();
-            }
-        });
+
     };
     counthei();
+    $(".b-sidebar .lv1").click(function () {
+        if ($(this).hasClass('side-cur')) {//h3有curr
+            if ($(this).next('ul.menu').css("display") == "block") {//menu有dn
+                $(this).next('ul.menu').slideUp();
+            } else {//menu没有dn
+                $(this).next('ul.menu').slideDown();
+            }
+        } else {//h3没有curr
+            $(this).siblings('.lv1').removeClass('side-cur');
+            $(this).siblings('.menu').slideUp();
+            $(this).addClass('side-cur').next('ul.menu').slideDown();
+        }
+    });
     $(window).resize(function () {
         counthei();
     });

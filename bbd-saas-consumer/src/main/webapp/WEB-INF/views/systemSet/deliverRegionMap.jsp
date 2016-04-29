@@ -102,11 +102,11 @@
 							<div class="row pb20">
 								<c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
 								<form action="${ctx}/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
-									<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 										<label>关键词：</label>
 										<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
 									</div>

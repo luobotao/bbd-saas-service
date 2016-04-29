@@ -585,6 +585,7 @@
 				url: "${ctx}/site/importSiteKeywordFileWithAjax?${_csrf.parameterName}=${_csrf.token}",
 				data : $( '#importFileForm').serialize(),
 				dataType : 'json',
+				timeout: 0,
 				success: function(data){
 					console.log("import file success");
 					console.log(data);
@@ -593,8 +594,10 @@
 					$(".spinner").hide();
 				},
 				error: function(JsonHttpRequest, textStatus, errorThrown){
-					console.log( "服务器异常!");
-					window.location.href="${ctx}/login";
+					console.log( "超时，服务器异常!");
+					$(".spinner").hide();
+					$(".table-responsive").addClass("guide-tab");
+					querySiteKey();
 				}
 			});
 		})
