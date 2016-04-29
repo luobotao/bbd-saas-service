@@ -612,13 +612,13 @@
 		function updateDataList(data){
 			$( '#dataList').html("");
 			$.each(data.siteKeywordPageList, function(i, item){
-				var time = formatDate(new Date(parseInt(item.createAt)));
+				var time = getDate1(item.createAt);
 				$( '#dataList').append("<tr><td><input type='checkbox' value='"+item.id+"' name='inputC' class='c-cbox'/></td>" +
 						"<td>"+time+"</td><td>"+item.province+"</td><td>"+item.city+"</td><td>"+item.distict+"</td><td>"+item.keyword+"</td>" +
 						"<td><a href='javascript:void(0);' class='orange' onclick='delSiteKeywordWithTr(\""+item.id+"\")'>删除</a></td></tr>");
 			});
 			//显示分页条
-			var pageStr = paginNav(data.page, data.pageNum, data.pageCount);
+			var pageStr = paginNavMin(data.page, data.pageNum, data.pageCount);
 			$("#pagin").html(pageStr);
 		}
 		//加载带有查询条件的指定页的数据
@@ -703,15 +703,7 @@
 		function getLocalTime(nS) {
 			return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 		}
-		function   formatDate(now)   {
-			var   year=now.getFullYear();
-			var   month=now.getMonth()+1;
-			var   date=now.getDate();
-			var   hour=now.getHours();
-			var   minute=now.getMinutes();
-			var   second=now.getSeconds();
-			return   year+"-"+month+"-"+date+"   "+hour+":"+minute+":"+second;
-		}
+
 	</script>
 </bobdy>
 </html>
