@@ -105,6 +105,9 @@ a.orange {
 .mr10 {
   margin-right: 10px;
 }
+.mb0{
+  margin-bottom:0 !important;
+}
 .mr15 {
   margin-right: 15px;
 }
@@ -278,6 +281,9 @@ a.orange {
 .table {
   border: 1px solid #d9d8eb;
   background: #ffffff;
+}
+.guide-tab{
+  min-height:300px; 
 }
 .tab-bod {
   -webkit-border-radius: 4px;
@@ -571,7 +577,7 @@ footer {
 }
 .has-sel-icon select {
   width: 89%;
-  height: 36px;
+  height: 35px;
   border: none;
   outline: none;
 }
