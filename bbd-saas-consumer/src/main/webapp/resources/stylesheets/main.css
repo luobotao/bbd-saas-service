@@ -283,7 +283,7 @@ a.orange {
   background: #ffffff;
 }
 .guide-tab{
-  min-height:300px;
+  min-height:300px; 
 }
 .tab-bod {
   -webkit-border-radius: 4px;
