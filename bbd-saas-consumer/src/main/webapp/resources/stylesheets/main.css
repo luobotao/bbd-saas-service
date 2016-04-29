@@ -1504,11 +1504,7 @@ select.form-control::-ms-expand { display: none; }
 /* S pop 样式修改 */
 .j-guide-pop{
 	position:absolute;
-<<<<<<< HEAD
-    overflow:visible;;
-=======
-	overflow:visible;
->>>>>>> 15fc043d96e3e7f3b60c6aeb854441a4bf7e6bf3
+    overflow:visible;
 }
 /* E pop 样式修改 */
 /* S 404页面*/
