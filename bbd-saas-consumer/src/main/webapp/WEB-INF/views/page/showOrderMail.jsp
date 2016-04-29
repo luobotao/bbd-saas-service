@@ -196,7 +196,7 @@
 		%>
 			var lon = "<%=express.getLon()%>";
 			var lat = "<%=express.getLat()%>";
-			if(lat!="" && lon!=""&&lon!="0.0"&&lat!="0.0"){
+			if(lat!="" && lon!=""&&lon!="0.0"&&lat!="0.0"&&lon.indexOf("E")<=-1&&lat.indexOf("E")<=-1){
 				var remark = "<%=express.getRemark()%>";
 				console.log(remark);
 				var flag = false;
@@ -239,6 +239,9 @@
 	var carlength=0;
 	var courierlength=0;
 	function init() {
+		if(points!=null||points.length==0){
+			return false;
+		}
 		followChk = document.getElementById("follow");
 		playBtn = document.getElementById("play");
 		pauseBtn = document.getElementById("pause");
