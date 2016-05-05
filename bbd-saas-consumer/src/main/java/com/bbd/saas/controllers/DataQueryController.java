@@ -1,12 +1,15 @@
 package com.bbd.saas.controllers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.OrderPacelService;
+import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.*;
+import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +20,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderPacelService;
-import com.bbd.saas.api.mongo.OrderService;
-import com.bbd.saas.api.mongo.UserService;
-import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.ExportUtil;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.StringUtil;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.UserVO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/dataQuery")
@@ -63,6 +57,9 @@ public class DataQueryController {
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
 		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
 			//设置默认查询条件
 			status = Numbers.defaultIfNull(status, -1);//全部
 			//到站时间
@@ -100,6 +97,9 @@ public class DataQueryController {
 		//查询数据
 		PageModel<Order> orderPage = null;
 		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 			status = Numbers.defaultIfNull(status, -1);
@@ -116,12 +116,14 @@ public class DataQueryController {
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();
 				String parcelCodeTemp = null;
+				User courier = null;
+				UserVO userVO = null;
 				for(Order order : dataList){
 					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 					order.setParcelCode(parcelCodeTemp);//设置包裹号
-					User courier = userService.findOne(order.getUserId());
-					if(courier!=null){
-						UserVO userVO = new UserVO();
+					courier = userService.findOne(order.getUserId());
+					if(courier != null){
+						userVO = new UserVO();
 						userVO.setLoginName(courier.getLoginName());
 						userVO.setRealName(courier.getRealName());
 						order.setUserVO(userVO);
@@ -144,6 +146,9 @@ public class DataQueryController {
 	@RequestMapping(value="/getOrderMail", method=RequestMethod.GET)
 	public String getOrderMail(String mailNum, final HttpServletRequest request, Model model) {
 		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
@@ -168,6 +173,9 @@ public class DataQueryController {
 	public void exportData(Integer status, String arriveBetween_expt, String mailNum, 
 			final HttpServletRequest request, final HttpServletResponse response) {
 		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
 			//设置查询条件
