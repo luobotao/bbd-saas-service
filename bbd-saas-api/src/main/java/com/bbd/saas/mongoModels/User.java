@@ -47,6 +47,7 @@ public class User implements Serializable {
     private String statusMessage;//存放有效或无效
     private String staffid;//员工id
     private int postmanuserId;//postmanuser的主键id
+    private String companyId;      //所属公司ID
 
     public ObjectId getId() {
         return id;
@@ -193,4 +194,11 @@ public class User implements Serializable {
 		this.postmanuserId = postmanuserId;
 	}
 
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
 }
