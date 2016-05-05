@@ -1,30 +1,10 @@
 package com.bbd.saas.controllers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.mongodb.morphia.Key;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
-
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.ArriveStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.PostDelivery;
@@ -37,6 +17,19 @@ import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserVO;
+import org.mongodb.morphia.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Controller
 @RequestMapping("/packageDispatch")
@@ -127,6 +120,9 @@ public class PackageDispatchController {
 	public Map<String, Object> dispatch(String mailNum, String courierId, final HttpServletRequest request) {
 		Map<String, Object> map = null;
 		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
 			map = new HashMap<String, Object>();
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
@@ -315,10 +311,12 @@ public class PackageDispatchController {
 	 * @return
      */
 	public List<Order> formatOrder(List<Order> orderList){
+		User courier = null;
+		UserVO userVO = null;
 		for(Order order1 : orderList){
-			User courier = userService.findOne(order1.getUserId());
+			courier = userService.findOne(order1.getUserId());
 			if(courier!=null){
-				UserVO userVO = new UserVO();
+				userVO = new UserVO();
 				userVO.setLoginName(courier.getLoginName());
 				userVO.setRealName(courier.getRealName());
 				order1.setUserVO(userVO);

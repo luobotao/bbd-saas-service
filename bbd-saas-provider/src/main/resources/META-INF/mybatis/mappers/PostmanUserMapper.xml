@@ -101,8 +101,7 @@
 	        	</if>
 	        	<if test="nickname != null">
 	        	nickname = #{nickname,jdbcType=VARCHAR},
-	        	</if>
-	        	<!--  
+	        	</if> 
 	        	<if test="headicon != null">
 	        	headicon = #{headicon,jdbcType=VARCHAR},
 	        	</if>
@@ -118,8 +117,6 @@
 	        	<if test="companyid != null">
 	        	companyid = #{companyid,jdbcType=INTEGER},
 	        	</if>
-	        	-->
-	        	<!--  
 	        	<if test="alipayAccount != null">
 	        	alipay_account = #{alipayAccount,jdbcType=VARCHAR},
 	        	</if>
@@ -162,7 +159,6 @@
 	        	<if test="dateNew != null">
 	        	date_new = #{dateNew,jdbcType=TIMESTAMP},
 	        	</if>
-	        	-->
 	        	<if test="dateUpd != null">
 	        	date_upd = #{dateUpd,jdbcType=TIMESTAMP},
 	        	</if>
