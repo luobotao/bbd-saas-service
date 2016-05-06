@@ -1,10 +1,7 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderPacelService;
-import com.bbd.saas.api.mongo.OrderService;
-import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
@@ -29,14 +26,14 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 运单查询
+ * 运单监控
  */
 @Controller
-@RequestMapping("/mailQuery")
-@SessionAttributes("mailQuery")
-public class MailQueryController {
+@RequestMapping("/mailMonitor")
+@SessionAttributes("mailMonitor")
+public class MailMonitorController {
 	
-	public static final Logger logger = LoggerFactory.getLogger(MailQueryController.class);
+	public static final Logger logger = LoggerFactory.getLogger(MailMonitorController.class);
 	
 	@Autowired
 	OrderService orderService;
@@ -48,9 +45,11 @@ public class MailQueryController {
 	OrderPacelService orderPacelService;
 	@Autowired
 	SiteService siteService;
+	@Autowired
+	ToOtherSiteLogService toOtherSiteLogService;
 
 	/**
-	 * Description: 跳转到运单查询页面
+	 * Description: 跳转到运单监控页面
 	 * @param pageIndex 页数
 	 * @param status 运单状态
 	 * @param arriveBetween 到站时间
@@ -80,13 +79,13 @@ public class MailQueryController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
-			logger.info("=====运单查询页面列表===" + orderPage);
+			logger.info("=====运单监控页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
 			model.addAttribute("siteList", siteVOList);
 			return "page/mailQuery";
 		} catch (Exception e) {
-			logger.error("===跳转到运单查询页面==出错 :" + e.getMessage());
+			logger.error("===跳转到运单监控页面==出错 :" + e.getMessage());
 		}
 		return "page/mailQuery";
 	}
@@ -240,9 +239,9 @@ public class MailQueryController {
 			//表头
 			String[] titles = { "包裹号", "运单号", "订单号", "来源", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
 			int[] colWidths = { 4000, 5000, 5000, 2000, 2000, 3500, 12000, 5500, 3500, 5500, 2000, 3500, 2000};
-			ExportUtil.exportExcel("运单查询", dataList, titles, colWidths, response);
+			ExportUtil.exportExcel("运单监控", dataList, titles, colWidths, response);
 		} catch (Exception e) {
-			logger.error("===运单查询数据导出===出错:" + e.getMessage());
+			logger.error("===运单监控数据导出===出错:" + e.getMessage());
 		}
 	
 	}

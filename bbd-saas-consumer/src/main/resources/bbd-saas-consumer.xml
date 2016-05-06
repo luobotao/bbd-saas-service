@@ -28,6 +28,8 @@
     <!--orderPacel Service-->
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
     <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />
+    <!--ToOtherSiteLog Service-->
+    <dubbo:reference id="toOtherSiteLogService" interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" />
 
 
     <!--start mysql services-->
