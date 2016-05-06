@@ -1,9 +1,7 @@
 package com.bbd.saas.dao.mongo;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
+import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.mongoModels.Site;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -11,9 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.Site;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
@@ -32,5 +29,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     	query.filter("companycode", companycode);
     	return  find(query).asList();
     }
-
+    public List<Site> selectByCompanyId(String companyId) {
+        Query<Site> query = createQuery();
+        query.filter("companyId", companyId);
+        return  find(query).asList();
+    }
 }
