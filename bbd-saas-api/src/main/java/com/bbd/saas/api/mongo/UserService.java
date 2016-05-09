@@ -12,6 +12,7 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
 import com.mongodb.WriteResult;
+import org.mongodb.morphia.query.UpdateResults;
 
 /**
  * Created by luobotao on 2016/4/11.
@@ -47,7 +48,7 @@ public interface UserService {
     
     /**
      * 根据用户名检索站点用户
-     * @param loginName
+     * @param realName
      * @return
      */
     User findUserByRealName(String realName);
@@ -61,7 +62,7 @@ public interface UserService {
     
     /**
      * 获取用户列表信息
-     * @param PageModel<User>
+     * @param pageModel
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site);
@@ -96,5 +97,17 @@ public interface UserService {
      * return UpdateResults
      */
     public void updateUserStatu(String loginName, UserStatus userStatus);
-    
+
+    /**
+     * 根据用户名（手机号）去更新此用户的公司ID
+     * @param companyId
+     * @param phone
+     */
+    void updateCompanyIdByLoginName(int companyId, String phone);
+
+    /**
+     * 删除此站点下的所有用户
+     * @param siteId
+     */
+    void delUsersBySiteId(String siteId);
 }

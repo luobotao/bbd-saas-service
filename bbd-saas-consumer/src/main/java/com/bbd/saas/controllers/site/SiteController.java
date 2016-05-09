@@ -7,9 +7,11 @@ import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.Result;
 import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.Services.RedisService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
@@ -19,13 +21,12 @@ import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.*;
+import org.apache.xmlbeans.impl.common.ConcurrentReaderHashMap;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-import org.mongodb.morphia.geo.LineString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -47,12 +48,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.List;
 
 /**
  * 站点相关处理
@@ -87,6 +86,7 @@ public class SiteController {
 	@Value("${oss.url}")
 	private String ossUrl;
 
+
 	public static final int MAXSIZE = 100000;
 
 
@@ -104,79 +104,6 @@ public class SiteController {
 		return "site/updateSite";
 	}
 
-
-	@RequestMapping(value="/siteView", method=RequestMethod.GET)
-	public String siteView(Model model, HttpServletRequest request) {
-		Site site =siteService.findSite(request.getParameter("siteid"));
-		if("0".equals(site.getFlag())){
-			site.setFlag("1");
-			siteService.save(site);//更新审核状态并保存站点
-		}
-		model.addAttribute("site",site);
-		model.addAttribute("ossUrl",ossUrl);
-		return "site/siteView";
-	}
-
-	@ResponseBody
-	@RequestMapping(value="/checkSiteWithLoginName", method=RequestMethod.GET)
-	public Boolean checkSiteWithUsername(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
-		User user = userService.findUserByLoginName(loginName);
-		if(user==null)
-			return true;
-		else
-			return false;
-	}
-
-	@RequestMapping(value="/register",method=RequestMethod.POST)
-	public String processSubmit(@RequestParam MultipartFile licensePic, @Valid SiteForm siteForm, BindingResult result,Model model,RedirectAttributes redirectAttrs) throws IOException {
-		redirectAttrs.addFlashAttribute("message", "注册成功");
-//		if (result.hasErrors()) {
-//			model.addAttribute("message","请检查必填项");
-//			return null;
-//		}
-		Site site = new Site();
-		if(StringUtils.isNotBlank(siteForm.getId())){
-			site = siteService.findSite(siteForm.getId());
-		}
-
-		if (licensePic != null  && licensePic.getInputStream() != null && licensePic.getSize()>0) {
-			String fileName = licensePic.getOriginalFilename();
-			int p = fileName.lastIndexOf('.');
-			String type = fileName.substring(p, fileName.length()).toLowerCase();
-			if (".jpg".equals(type)||".gif".equals(type)||".png".equals(type)||".jpeg".equals(type)||".bmp".equals(type)) {
-					// 检查文件后缀格式
-					String fileNameLast = UUID.randomUUID().toString().replaceAll("-", "")+type;//最终的文件名称
-					String endfilestr = OSSUtils.uploadFile(licensePic.getInputStream(),path,fileNameLast,licensePic.getSize(), type,BUCKET_NAME,ACCESS_ID,ACCESS_KEY);
-					site.setLicensePic(endfilestr);
-			}
-		}
-		BeanUtils.copyProperties(siteForm,site);
-		site.setDateAdd(new Date());
-		site.setDateUpd(new Date());
-		site.setStatus(SiteStatus.WAIT);
-		site.setAreaCode("");
-		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(site.getCompanyId(),0)) ;
-		if(postcompany!=null){
-			site.setCompanycode(postcompany.getCompanycode());
-		}
-		site.setMemo("提交成功，我们将在3-5个工作日内完成审核。\n" +
-				"您可使用注册时填写的账号和密码登录，以查看审核状态。");
-		site.setFlag("0");
-		Key<Site> siteKey = siteService.save(site);//保存站点
-		redirectAttrs.addAttribute("siteid",siteKey.getId().toString());
-		//向用户表插入登录用户
-		User user = new User();
-		user.setLoginName(site.getUsername());//手机号即为登录名
-		user.setPassWord(site.getPassword());
-		user.setDateAdd(new Date());
-		user.setRealName(site.getResponser());
-		site.setId(new ObjectId(siteKey.getId().toString()));
-		user.setSite(site);
-		user.setUserStatus(UserStatus.VALID);
-		user.setRole(UserRole.SITEMASTER);
-		userService.save(user);
-		return "redirect:siteView";
-	}
 
 	@ResponseBody
 	@RequestMapping(value="/updateSiteWithRadius/{radius}/{siteId}", method = RequestMethod.GET)
@@ -469,4 +396,6 @@ public class SiteController {
 		logger.info("批量删除完成");
 		return dealSiteKeywordWithAjax(request);
 	}
+
+
 }

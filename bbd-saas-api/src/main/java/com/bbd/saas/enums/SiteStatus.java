@@ -8,9 +8,10 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum SiteStatus {
 
-    WAIT(1, "待审核"),
-    APPROVE(2, "审核通过"),
-    REFUND(3, "驳回");
+    WAIT(1, "未审核"),
+    APPROVE(2, "有效"),
+    TURNDOWN(3, "驳回"),
+    INVALID(4, "无效");
     private int status;
     private String message;
 

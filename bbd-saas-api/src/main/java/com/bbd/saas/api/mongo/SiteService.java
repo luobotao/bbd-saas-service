@@ -2,6 +2,7 @@ package com.bbd.saas.api.mongo;
 
 import java.util.List;
 
+import com.bbd.saas.utils.PageModel;
 import org.mongodb.morphia.Key;
 
 import com.bbd.saas.mongoModels.Site;
@@ -38,11 +39,39 @@ public interface SiteService {
     
     /**
      * Description: 查询同一公司下除站点site的其他所有站点的VO对象
-     * @param site 站点
+     * @param selfSite 站点
      * @return
      * @author: liyanlei
      * 2016年4月18日上午10:20:30
      */
     List<SiteVO> findAllOtherSiteVOList(Site selfSite);
-    
+
+    /**
+     * 根据站点状态与关键词进行站点分页查询
+     * @param pageModel
+     * @param companyId 公司ID
+     * @param status
+     * @param keyword 站点名称/站⻓姓名/⼿机号
+     * @return
+     */
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,Integer status, String keyword);
+
+    /**
+     * 删除站点
+     * @param siteId
+     */
+    void delSiteBySiteId(String siteId);
+
+    /**
+     * 将此站点审核通过
+     * @param siteId
+     */
+    void validSite(String siteId);
+
+    /**
+     * 根据公司ID获取该公司下的所有站点
+     * @param companyId
+     * @return
+     */
+    List<Site> findSiteListByCompanyId(String companyId);
 }

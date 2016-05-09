@@ -36,12 +36,16 @@ public class Site implements Serializable {
     private String companycode;      //所属公司编码
     private SiteStatus status;       //状态
     private String memo;       //备注
+    private String turnDownMessage;       //驳回原因
     private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
     private String lat;         //纬度
     private String lng;         //经度
     private String deliveryArea;//配送範圍
     private Date dateAdd;      //充值时间
     private Date dateUpd;      //更新时间
+
+    @Transient
+    private String statusMessage;//JS展示状态
 
     public ObjectId getId() {
         return id;
@@ -233,5 +237,23 @@ public class Site implements Serializable {
 
     public void setCompanycode(String companycode) {
         this.companycode = companycode;
+    }
+
+    public String getTurnDownMessage() {
+        return turnDownMessage;
+    }
+
+    public void setTurnDownMessage(String turnDownMessage) {
+        this.turnDownMessage = turnDownMessage;
+    }
+
+    public String getStatusMessage() {
+        if(status==null)
+            return "";
+        return status.getMessage();
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 }

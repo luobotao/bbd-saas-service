@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Criteria;
@@ -50,7 +50,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     }
     /**
      * 获取用户列表信息
-     * @param PageModel<User>
+     * @param pageModel
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site) {
@@ -59,21 +59,23 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     	//设置排序
     	query.order("-dateUpdate");
     	if(userQueryVO!=null){
-    		
-    		query.filter("role", UserRole.status2Obj(1));
-    		/*if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
+    		if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
+                query.filter("companyId", userQueryVO.companyId);
+            }
+            query.filter("role <>", UserRole.COMPANY);
+    		if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
     			query.filter("role", UserRole.status2Obj(userQueryVO.roleId));
-    		}*/
-    		query.filter("site", site);
+    		}
+            if(site!=null){
+                query.filter("site", site);
+            }
     		if(userQueryVO.status!=null && userQueryVO.status!=-1){
     			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
     		}
     		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			System.out.println("userQueryVO.keyword=="+userQueryVO.keyword);
     			query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
     			
     		}
-
         }
     	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
     	System.out.println("userList.size()=="+userList.size());
@@ -128,5 +130,26 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         UpdateOperations<User> ops = createUpdateOperations().set("userStatus",userStatus).set("dateUpdate",new Date());
         return update(query,ops);
     }
-    
+    /**
+     * 根据用户名（手机号）去更新此用户的公司ID
+     * @param companyId
+     * @param loginName
+     */
+    public UpdateResults updateCompanyIdByLoginName(int companyId, String loginName) {
+        Query<User> query = createQuery();
+        query.filter("loginName",loginName);
+        UpdateOperations<User> ops = createUpdateOperations().set("companyId",companyId).set("dateUpdate",new Date());
+        return update(query,ops);
+    }
+
+    /**
+     * 删除此站点下的所有用户
+     * @param siteId
+     */
+    public void delUsersBySiteId(String siteId) {
+        Site site = getDatastore().get(Site.class,new ObjectId(siteId));
+        Query<User> query = createQuery();
+        query.filter("site",site);
+        deleteByQuery(query);
+    }
 }

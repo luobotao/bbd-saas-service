@@ -28,6 +28,6 @@
     <dubbo:service interface="com.bbd.saas.api.mysql.PostmanUserService" ref="userMysqlService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.PostDeliveryService" ref="postDeliveryService" />
 	<dubbo:service interface="com.bbd.saas.api.mysql.OpenUserService" ref="openUserMysqlService" />
-
+    <dubbo:service interface="com.bbd.saas.api.mysql.SmsInfoService" ref="smsInfoService" />
 
 </beans>

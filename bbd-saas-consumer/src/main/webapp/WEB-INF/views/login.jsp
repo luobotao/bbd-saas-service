@@ -79,7 +79,7 @@
 								<a href="javascript:void(0);" class="sbtn lblue j-login f24">注　册</a>
 							</div>
 							<div class="col-md-12">
-								<a href="<c:url value="/register/registerView" />" target="iframe1" class="sbtn lblue f24">新 版 注　册</a>
+								<a href="<c:url value="/register/registerFirst" />" target="iframe1" class="sbtn lblue f24">新 版 注　册</a>
 							</div>
 
 						</div>
@@ -394,7 +394,8 @@
 			flag = false;
 		} else{
 			$("#nameP").attr("style","display:none");
-		}if(responser==""){
+		}
+		if(responser==""){
 			$("#responserP").attr("style","color:red");
 			flag = false;
 		} else{

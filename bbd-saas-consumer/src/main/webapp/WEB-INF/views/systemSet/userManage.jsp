@@ -32,10 +32,28 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
         				<form class="form-inline form-inline-n">
         					<div class="search-area">
 	        					<div class="row pb20">
+									<c:if test="${userNow.role==UserRole.COMPANY}">
+										<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+											<label>站点：</label>
+											<select id="sites" name="sites" class="form-control form-con-new">
+												<option value ="-1" selected ="selected">全部</option>
+												<c:forEach var="site" items="${siteList}">
+													<option value="${site.id}">${site.name}</option>
+												</c:forEach>
+											</select>
+										</div>
+									</c:if>
 	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	        							<label>角色：</label>
-	        							<select id="saasrole" name="saasrole" class="form-control form-con-new">
-	        								<option value ="1" selected ="selected">派件员</option>
+										<select id="saasrole" name="saasrole" class="form-control form-con-new">
+											<c:if test="${userNow.role==UserRole.COMPANY}">
+												<option value ="-1" selected ="selected">全部</option>
+												<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
+												<option value ="<%=UserRole.SENDMEM%>"><%=UserRole.SENDMEM.getMessage()%></option>
+											</c:if>
+											<c:if test="${userNow.role==UserRole.SITEMASTER}">
+												<option value ="<%=UserRole.SENDMEM%>" selected ="selected"><%=UserRole.SENDMEM.getMessage()%></option>
+											</c:if>
 	        							</select>
 	        						</div>
 	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -66,6 +84,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        					<table class="table">
 	        						<thead>
 	        							<tr>
+											<c:if test="${userNow.role==UserRole.COMPANY}"><th>站点</th></c:if>
 		        							<th>角色</th>
 		        							<th>真实姓名</th>
 		        							<th>手机号</th>
@@ -79,7 +98,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 											for(User user : userPage.getDatas()){
 										%>
 										<tr>
-											
+											<c:if test="${userNow.role==UserRole.COMPANY}"><td><%=user.getSite().getName()%></td></c:if>
 											<td><%=user.getRole().getMessage()%></td>
 											<td><%=user.getRealName()%></td>
 											<td><%=user.getLoginName()%></td>

@@ -15,6 +15,13 @@
         <result column="alipaypublickey" property="alipaypublickey" jdbcType="VARCHAR"/>
         <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
         <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+        <!--20160506新增属性-->
+        <result column="licensePic" property="licensePic" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
     </resultMap>
     
     <sql id="baseColumnList">
@@ -26,22 +33,52 @@
         appid,
         privatekey,
         alipaypublickey,
+        licensePic,
+        email,
+        province,
+        city,
+        area,
+        address,
         date_new,
         date_upd
     </sql>
 
+    <!--根据公司ID查询公司-->
     <select id="selectPostmancompanyById" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postcompany` where <![CDATA[ id = #{id,jdbcType=INTEGER}]]>
     </select>
-    
 
-    
-    
+    <!--查询所有公司-->
     <select id="selectAll" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postcompany`
     </select>
+
+    <!-- 插入公司-->
+    <insert id="insertCompany" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.Postcompany" >
+        INSERT INTO `postcompany`(
+        <include refid="baseColumnList"/>
+        )
+        VALUES (
+        #{id},
+        #{companyname},
+        #{companycode},
+        #{sta},
+        #{deliveryflag},
+        #{appid},
+        #{privatekey},
+        #{alipaypublickey},
+        #{licensePic},
+        #{email},
+        #{province},
+        #{city},
+        #{area},
+        #{address},
+        #{dateNew},
+        #{dateUpd}
+        )
+    </insert>
 </mapper>

@@ -22,4 +22,10 @@ public interface PostcompanyService {
      * @return
      */
     Postcompany selectPostmancompanyById(Integer id);
+    /**
+     * 插入一条新公司
+     * @param postcompany
+     * @return
+     */
+    Postcompany insertCompany(Postcompany postcompany);
 }

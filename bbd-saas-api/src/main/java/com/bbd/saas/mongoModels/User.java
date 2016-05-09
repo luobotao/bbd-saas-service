@@ -27,7 +27,7 @@ public class User implements Serializable {
     private String loginName;//登录名即手机号
     private String passWord;
     private String realName;
-    //private String phone;
+    private String email;
     private UserRole role;
     @Reference("site")
     private Site site;
@@ -200,5 +200,13 @@ public class User implements Serializable {
 
     public void setCompanyId(String companyId) {
         this.companyId = companyId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

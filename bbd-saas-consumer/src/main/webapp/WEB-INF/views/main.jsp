@@ -93,6 +93,7 @@ folder instead of downloading all of them to reduce the load. -->
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 </head>
 <body>
 

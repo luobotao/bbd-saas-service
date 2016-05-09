@@ -2,17 +2,14 @@ package com.bbd.saas.form;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class SiteForm {
+public class CompanyForm {
 	
 	@NotEmpty
-	private String phone;    //用户的登录手机号
-	@NotEmpty
-	private String name;         //站点名称
-	@NotEmpty
-	private String companyId;    //公司ID
-	private String companyName;    //公司名称
+	private String companyname;    //公司名称
 	@NotEmpty
 	private String responser;    //负责人
+	@NotEmpty
+	private String phone;    //用户的登录手机号
 	@NotEmpty
 	private String email;        //邮箱
 	private String province;     //省
@@ -21,36 +18,14 @@ public class SiteForm {
 	@NotEmpty
 	private String address;      //详细地址
 
-	public String getPhone() {
-		return phone;
+	private String prePic;       //历史图片
+
+	public String getCompanyname() {
+		return companyname;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCompanyId() {
-		return companyId;
-	}
-
-	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
-	}
-
-	public String getCompanyName() {
-		return companyName;
-	}
-
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setCompanyname(String companyname) {
+		this.companyname = companyname;
 	}
 
 	public String getResponser() {
@@ -59,6 +34,14 @@ public class SiteForm {
 
 	public void setResponser(String responser) {
 		this.responser = responser;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String getEmail() {
@@ -99,5 +82,13 @@ public class SiteForm {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getPrePic() {
+		return prePic;
+	}
+
+	public void setPrePic(String prePic) {
+		this.prePic = prePic;
 	}
 }
