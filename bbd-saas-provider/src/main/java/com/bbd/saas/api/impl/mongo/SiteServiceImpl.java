@@ -1,24 +1,22 @@
 package com.bbd.saas.api.impl.mongo;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.dao.mongo.SiteDao;
+import com.bbd.saas.dao.mysql.BbtAddressDao;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.models.BbtAddress;
-import com.bbd.saas.dao.mysql.BbtAddressDao;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.SiteVO;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.springframework.stereotype.Service;
 
-import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.dao.mongo.SiteDao;
-import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.vo.SiteVO;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -59,30 +57,6 @@ public class SiteServiceImpl implements SiteService {
         return siteDao.findOne("areaCode", areaCode);
     }
 
-    @Override
-    public List<SiteVO> findAllOtherSiteVOList(Site selfSite) {
-        List<Site> siteList = this.siteDao.selectByCompanyCode(selfSite.getCompanycode());
-        String areaCode = selfSite.getAreaCode();
-        if (areaCode == null) {
-            areaCode = "";
-        }
-        List<SiteVO> siteVoList = null;
-        if (siteList != null && siteList.size() > 0) {
-            siteVoList = new ArrayList<SiteVO>();
-            SiteVO siteVo = null;
-            for (Site site : siteList) {
-                //排除站点编号为areaCode的站点
-                if (!areaCode.equals(site.getAreaCode())) { //if(site != selfSite){
-                    siteVo = new SiteVO();
-                    siteVo.setId(site.getId().toString());
-                    siteVo.setAreaCode(site.getAreaCode());
-                    siteVo.setName(site.getName());
-                    siteVoList.add(siteVo);
-                }
-            }
-        }
-        return siteVoList;
-    }
 
     /**
      * 根据站点状态与关键词进行站点分页查询
@@ -130,7 +104,7 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public List<Site> findSiteListByCompanyId(String companyId) {
-        return siteDao.findSiteListByCompanyId(companyId);
+        return siteDao.selectByCompanyId(companyId);
     }
 
     /**
@@ -212,5 +186,46 @@ public class SiteServiceImpl implements SiteService {
         }
         return strs;
     }
+	@Override
+	public List<SiteVO> findAllOtherSiteVOList(Site selfSite) {
+		List<Site> siteList = this.siteDao.selectByCompanyCode(selfSite.getCompanycode());
+		String areaCode = selfSite.getAreaCode();
+		if(areaCode == null){
+			areaCode = "";
+		}
+		List<SiteVO> siteVoList = null;
+		if(siteList != null && siteList.size() > 0){
+			siteVoList = new ArrayList<SiteVO>();
+			SiteVO siteVo = null;
+			for(Site site : siteList){
+				//排除站点编号为areaCode的站点
+				if(!areaCode.equals(site.getAreaCode())){ //if(site != selfSite){
+					siteVoList.add(siteToSiteVO(site));
+				}
+			}
+		}
+		return siteVoList;
+	}
+
+	@Override
+	public List<SiteVO> findAllSiteVOByCompanyId(String companyId) {
+		List<Site> siteList = this.siteDao.selectByCompanyId(companyId);
+		List<SiteVO> siteVoList = null;
+		if(siteList != null && siteList.size() > 0){
+			siteVoList = new ArrayList<SiteVO>();
+			SiteVO siteVo = null;
+			for(Site site : siteList){
+				siteVoList.add(siteToSiteVO(site));
+			}
+		}
+		return siteVoList;
+	}
+	private SiteVO siteToSiteVO(Site site){
+		SiteVO siteVo = new SiteVO();
+		siteVo.setId(site.getId().toString());
+		siteVo.setAreaCode(site.getAreaCode());
+		siteVo.setName(site.getName());
+		return siteVo;
+	}
 
 }

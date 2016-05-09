@@ -53,10 +53,10 @@
 						User user = (User) request.getAttribute("user");
 						if (user!=null && UserRole.COMPANY.equals(user.getRole())) {
 					%>
-					<li class="lv1"><a href="#"><i class="b-icon p-query"></i>数据查询</a></li>
+					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>数据查询</a></li>
 					<ul class="menu dn">
-						<li id="orderQueryForComp"><a href="<c:url value="/userManage" />" target="iframe1">运单查询</a></li>
-						<li id="orderMonitorForComp"><a href="<c:url value="/userManage" />" target="iframe1">运单监控</a></li>
+						<li><a href="<c:url value="/mailQuery" />" target="iframe1">运单查询</a></li>
+						<li><a href="<c:url value="/mailMonitor" />" target="iframe1">运单监控</a></li>
 					</ul>
 					<li id="query" class="lv1"><a href="<c:url value="/dataQuery" />" target="iframe1" ><i class="b-icon p-query"></i>运力分布</a></li>
 					<li id="set" class="lv1"><a href="<c:url value="/deliverRegion/map/1" />" target="iframe1"><i class="b-icon p-dis"></i>配送区域</a></li>
@@ -80,6 +80,7 @@
 					<%
 						}
 					%>
+
 
 				</ul>
 			</div>

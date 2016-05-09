@@ -26,6 +26,10 @@
     <bean id="orderParcelDao" class="com.bbd.saas.dao.mongo.OrderParcelDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- ToOtherSiteLog DAO-->
+    <bean id="toOtherSiteLogDao" class="com.bbd.saas.dao.mongo.ToOtherSiteLogDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->

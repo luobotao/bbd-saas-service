@@ -51,6 +51,12 @@
             <ref bean="bbtAddressDao"/>
         </property>
     </bean>
+    <!-- ToOtherSiteLog Service-->
+    <bean id="toOtherSiteLogService" class="com.bbd.saas.api.impl.mongo.ToOtherSiteLogServiceImpl">
+        <property name="toOtherSiteLogDao">
+            <ref bean="toOtherSiteLogDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->

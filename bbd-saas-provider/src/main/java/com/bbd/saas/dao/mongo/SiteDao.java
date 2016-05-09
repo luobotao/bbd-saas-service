@@ -64,9 +64,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param companyId
      * @return
      */
-    public List<Site> findSiteListByCompanyId(String companyId) {
-        Query<Site> query = createQuery().order("-dateAdd");
+    public List<Site> selectByCompanyId(String companyId) {
+        Query<Site> query = createQuery();
         query.filter("companyId", companyId);
-        return find(query).asList();
+        return  find(query).asList();
     }
 }

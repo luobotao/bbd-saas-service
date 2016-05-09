@@ -32,7 +32,7 @@
 
         // 默认值
         settings = $.extend({
-            url: getRootPath()+'/resources/javascripts/city.js',
+            url: getRootPath() + '/resources/javascripts/city.js',
             prov: null,
             city: null,
             dist: null,
