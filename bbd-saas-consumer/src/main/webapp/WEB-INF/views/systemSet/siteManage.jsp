@@ -28,34 +28,31 @@
             <!-- S detail -->
             <div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
                 <!-- S 搜索区域 -->
-                <form class="form-inline form-inline-n">
-                    <div class="search-area">
-                        <div class="row pb20">
+                <div class="search-area">
+                    <div class="row pb20">
 
-                            <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                                <label>状态：</label>
-                                <select id="status" name="status" class="form-control form-con-new">
-                                    <%=SiteStatus.Stas2HTML(-1)%>
-                                </select>
-                            </div>
-                            <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                                <label>关键字：</label>
-                                <input type="text" id="keyword" name="keyword" placeholder="真实姓名/手机号"
-                                       class="form-control"/>
-                            </div>
-
+                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                            <label>状态：</label>
+                            <select id="status" name="status" class="form-control form-con-new">
+                                <%=SiteStatus.Stas2HTML(-1)%>
+                            </select>
                         </div>
-                        <div class="row pb20">
-                            <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i
-                                        class="b-icon p-query p-ser"></i>查询</a>
-                                <a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6"><i
-                                        class="num-add mr10">＋</i>新建</a>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                            <label>关键字：</label>
+                            <input type="text" id="keyword" name="keyword" placeholder="站点名称/站长姓名/手机"
+                                   class="form-control"/>
+                        </div>
 
-                            </div>
+                    </div>
+                    <div class="row pb20">
+                        <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i
+                                    class="b-icon p-query p-ser"></i>查询</a>
+                            <a href="javascript:void(0)" class="ser-btn d ml6 j-siteM"><i class="num-add mr10">＋</i><em>新建</em></a>
+
                         </div>
                     </div>
-                </form>
+                </div>
                 <!-- E 搜索区域 -->
                 <div class="tab-bod mt20">
                     <!-- S table -->
@@ -65,7 +62,7 @@
                             <tr>
                                 <th>站点名称</th>
                                 <th>区域码</th>
-                                <th>站点地址</th>
+                                <th width="20%">站点地址</th>
                                 <th>站点姓名</th>
                                 <th>手机号</th>
                                 <th>邮箱</th>
@@ -161,56 +158,77 @@
 <!-- E footer -->
 <!-- S pop -->
 <!--S 新建-->
-<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="myModal"
-     aria-hidden="true">
-    <div class="modal-dialog b-modal-dialog">
+<div class="j-siteM-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog b-modal-dialog b-guide-dialog" role="document">
         <div class="modal-content">
+        <c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
+        <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data"
+              class="form-inline form-inline-n">
             <div class="modal-header b-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h4 class="modal-title userclass tc"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title tc j-cg-txt">新建</h4>
             </div>
-            <form role="form" action="" method="post" id="userForm" class="form-inline-n">
-                <div class="modal-body b-modal-body">
-                    <ul class="b-n-crt">
-                        <li>
-                            <select id="roleId" name="roleId" class="form-control form-bod">
-                                <option value="1" selected="selected">派件员</option>
-                            </select>
-                            <p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
-                        </li>
-                        <li>
-                            <input type="text" id="realName" name="realName" class="form-control form-bod"
-                                   placeholder="真实姓名"/>
-                            <p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
-                        </li>
-                        <!--
-                        <li>
-                            <input type="text" id="phone" name="phone" class="form-control form-bod" placeholder="手机号" />
-                            <p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
-                        </li>
-                        -->
-                        <li>
-                            <input type="text" id="loginName" name="loginName" onblur="checkLoginName(this.value)"
-                                   class="form-control form-bod" placeholder="手机号"/>
-                            <p class="help-block" id="loginNameP" style="display:none;">请正确输入11位手机号</p>
-                        </li>
-                    </ul>
-
-
-                    <div class="row mt20">
-                        <span class="col-md-12"><a href="javascript:void(0)" id="saveuserid" onclick="saveUserBtn()"
-                                                   class="sbtn sbtn2 l">保存</a></span>
-                    </div>
+            <div class="modal-body b-modal-body">
+                <ul class="b-n-crt b-n-crt-new form-inline-n  y-scroll">
+                    <li class="filter clearfix">
+                        <i>站点名称：</i>
+                        <input type="text" class="form-control form-bod wp80" id="name"/>
+                        <em class="tip-info" id="nameP" style="display:none;">请输入站点名称</em>
+                    </li>
+                    <li class="filter" id="city_4">
+                        <i>站点地址：</i>
+                        <em class="wp25">
+                             <select class="form-control form-bod prov" name="prov"></select>
+                        </em>
+                        <em class="wp25">
+                            <select class="form-control form-bod city" disabled="disabled"></select>
+                        </em>
+                        <em class="wp25">
+                            <select class="form-control form-bod w150 dist" name="dist" disabled="disabled"></select>
+                        </em>
+                        <input id="province" name="province" type="hidden" class="form-control"/>
+                        <input id="city" name="city" type="hidden" class="form-control"/>
+                        <input id="area" name="area" type="hidden" class="form-control"/>
+                        <input type="text" class="form-control form-bod wp80 input-d" id="address" name="address" placeholder="请输入详细地址"/>
+                        <em class="tip-info" id="addressP" style="display:none;">请输入详细地址</em>
+                    </li>
+                    <li class="filter">
+                        <i>站长姓名：</i>
+                        <input type="text" class="form-control form-bod wp80" id="responser" name="responser">
+                        <em class="tip-info" id="responserP" style="display:none;">请输站长姓名</em>
+                    </li>
+                    <li class="filter">
+                        <i>站长手机号：</i>
+                        <input type="text" class="form-control form-bod wp80" id="phone" name="phone" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="checkSiteWithUsername(this.value)">
+                        <input type="text" class="form-control" id="phoneFlag" name="phoneFlag" value="1" style="display:none;">
+                        <em class="tip-info" id="phoneP" style="display:none;">请输入正确的手机号,不允许重复</em>
+                        <em class="tip-info-g">保存成功后站长可使用手机号登录系统</em>
+                    </li>
+                    <li class="filter">
+                        <i>邮 箱：</i>
+                        <input type="text" class="form-control form-bod wp80" id="email" name="email"
+                               onkeyup="value=value.replace(/[^a-zA-Z\-_@@\.0-9]/g,'')">
+                        <em class="tip-info" id="emailP" style="display:none;">请输入邮箱且格式正确</em>
+                    </li>
+                    <li class="filter">
+                        <i>登录密码：</i>
+                        <input type="password" class="form-control form-bod wp80" id="password" />
+                        <em class="tip-info" id="passwordP" style="display:none;">请输入登录密码</em>
+                    </li>
+                    <li class="filter">
+                        <i>确认密码：</i>
+                        <input type="password" class="form-control form-bod wp80" id="passwordConfirm"/>
+                        <em class="tip-info" id="passwordConfirmP" style="display:none;">请确认登录密码</em>
+                    </li>
+                </ul>
+                <div class="clearfix mt20">
+                    <a href="javascript:void(0);" class="ser-btn l fl input-d" id="saveSiteBtn">保存</a>
                 </div>
-                <input type="hidden" class="form-control" id="sign" name="sign">
-                <input type="hidden" class="form-control" id="flaglogin" name="flaglogin">
-                <input type="hidden" class="form-control" id="flagstaffid" name="flagstaffid">
-                <input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
-                <input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">
-                <input type="hidden" class="form-control" id="operate" name="operate">
-            </form>
+
+            </div>
+        </form>
         </div>
+
     </div>
 </div>
 <!--E 新建-->
@@ -340,6 +358,20 @@
 <!--E 删除-->
 <!-- E pop -->
 <script type="text/javascript">
+    var defprov = "北京";
+    var defcity = "北京";
+    var defdist = "朝阳区";
+    if ($("#province").val() != "") {
+        defprov = $("#province").val();
+        defcity = $("#city").val();
+        defdist = $("#area").val();
+    }
+    $("#city_4").citySelect({
+        prov: defprov,
+        city: defcity,
+        dist: defdist,
+        nodata: "none"
+    });
     //显示分页条
     var pageStr = paginNav(<%=sitePage.getPageNo()%>, <%=sitePage.getTotalPages()%>, <%=sitePage.getTotalCount()%>);
     $("#pagin").html(pageStr);
@@ -416,185 +448,122 @@
         var keyword = $("#keyword").val();
         gotoPage(0, status, keyword);
     }
-
-    function checkLoginName(loginName) {
-        loginName = loginName.replace(/\ +/g, "");
-        var operate = document.getElementById("operate").value;
-        var oldloginName = document.getElementById("loginNameTemp").value;
-        var newloginName = loginName;
-        var url = '<c:url value="/userManage/checkLognName" />';
-        var ret = false;
-        if (loginName != '') {
-
-            if (operate == 'create') {
-
-                $.ajax({
-                    url: url + '?loginName=' + loginName,
-                    type: 'GET',
-                    cache: false,
-                    dataType: "text",
-                    async: false,
-                    data: {},
-                    success: function (response) {
-                        console.log(response);
-                        if (response == "true") {
-                            $("#loginNameP").text("手机号已存在，请重新输入11位手机号!");
-                            $("#loginNameP").attr("style", "color:red");
-                            //document.getElementById("flaglogin").value='false';
-                            //return true;
-                            ret = true;
-                        } else {
-                            //document.getElementById("flaglogin").value='true';
-                            $("#loginNameP").attr("style", "display:none");
-                            //return false;
-                            ret = false;
-                        }
-                    },
-                    error: function () {
-                        //alert('服务器繁忙，请稍后再试！');
-                        //return true;
-                        ret = true;
-                        if (window.top == window.self) {//不存在父页面
-                            window.location.href = "<c:url value="/login" />"
-                        } else {
-                            window.top.location.href = "<c:url value="/login" />"
-                        }
-                    }
-                });
-            }
-
-        }
-        return ret;
-    }
-
-
-    function checkStaffid(staffid) {
-        staffid = staffid.replace(/\ +/g, "");
-        var operate = document.getElementById("operate").value;
-        var oldstaffid = document.getElementById("staffidTemp").value;
-        var newstaffid = staffid;
-        var url = '<c:url value="/userManage/checkStaffIdBySiteByStaffid" />';
-        var ret = false;
-        if (staffid !== '') {
-
-            if (operate == 'create') {
-
-                $.ajax({
-                    url: url + '?staffid=' + staffid,
-                    type: 'GET',
-                    cache: false,
-                    dataType: "text",
-                    async: false,
-                    data: {},
-                    success: function (response) {
-                        console.log(response);
-                        if (response == "true") {
-                            //alert("您输入的登录名目前已存在，请重新输入");
-                            $("#staffidP").text("该站点下的工号已存在，请重新输入!");
-                            $("#staffidP").attr("style", "color:red");
-                            //document.getElementById("flagstaffid").value='false';
-                            //return true;
-                            ret = true;
-                        } else {
-                            //document.getElementById("flagstaffid").value='true';
-                            $("#staffidP").attr("style", "display:none");
-                            //return false;
-                            ret = false;
-                        }
-                    },
-                    error: function () {
-                        //alert('服务器繁忙，请稍后再试！');
-                        //return true;
-                        ret = true;
-                        if (window.top == window.self) {//不存在父页面
-                            window.location.href = "<c:url value="/login" />"
-                        } else {
-                            window.top.location.href = "<c:url value="/login" />"
-                        }
-                    }
-                });
-            } else {
-                if (newstaffid !== oldstaffid) {
-                    $.ajax({
-                        url: url + '?staffid=' + staffid,
-                        type: 'GET',
-                        cache: false,
-                        dataType: "text",
-                        async: false,
-                        data: {},
-                        success: function (response) {
-                            console.log(response);
-                            if (response == "true") {
-                                //alert("您输入的登录名目前已存在，请重新输入");
-                                $("#staffidP").text("该站点下的工号已存在，请重新输入!");
-                                $("#staffidP").attr("style", "color:red");
-                                //document.getElementById("flagstaffid").value='false';
-                                //return true;
-                                ret = true;
-                            } else {
-                                //document.getElementById("flagstaffid").value='true';
-                                $("#staffidP").attr("style", "display:none");
-                                //return false;
-                                ret = false;
-                            }
-                        },
-                        error: function () {
-                            alert('服务器繁忙，请稍后再试！');
-                            //return true;
-                            ret = true;
-                        }
-                    });
-                } else {
-                    //document.getElementById("flagstaffid").value='true';
-                    $("#staffidP").attr("style", "display:none");
-                    //return false;
-                    ret = false;
-                }
-            }
-
-        }
-        return ret;
-    }
-
-
-    function changeStatus(status, id, loginName) {
-
-        var ret = false;
-        if (status == 3) {
-            //表示要停用
-            if (confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')) {
-                ret = true;
-            }
-        } else if (status == 1) {
-            //表示要启用
-            if (confirm('启用后小件员可以使用棒棒达客户端，确认启用吗？')) {
-                ret = true;
-            }
-        }
-
-        if (ret) {
+    function checkSiteWithUsername(loginName){
+        if(loginName!=""){
+            var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />"+loginName
             $.ajax({
-                type: "GET",
-                url: '<c:url value="/userManage/changestatus" />',
-                data: {
-                    "id": id, "status": status, "loginName": loginName
-                },
-                success: function (data) {
-                    if (data == 'true') {
-                        gotoPage(0);
+                url: linkUrl,
+                type: 'GET',
+                cache: false,
+                dataType: "text",
+                data: {},
+                success: function(response){
+                    console.log(response);
+                    if(response=="false"){
+                        $("#phoneFlag").val(0);
+                        $("#phoneP").html("手机号已存在");
+                        $("#phoneP").attr("style","color:red");
+                    }else{
+                        $("#phoneFlag").val(1);
+                        $("#phoneP").attr("style","display:none");
                     }
                 },
-                error: function () {
-                    //alert("异常！");
-                    if (window.top == window.self) {//不存在父页面
-                        window.location.href = "<c:url value="/login" />"
-                    } else {
-                        window.top.location.href = "<c:url value="/login" />"
-                    }
+                error: function(){
+                    alert('服务器繁忙，请稍后再试！');
                 }
             });
         }
     }
+    $("#saveSiteBtn").click(function () {
+        var flag = true;
+        var name = $.trim($("#name").val());
+        var nameP = $("#nameP").val();
+        if (name == "" || name == 0) {
+            $("#nameP").attr("style", "color:red");
+            flag = false;
+        }
+
+        var province = $(".prov").val();
+        var city = $(".city").val();
+        var area = $(".dist").val();
+        $("#province").val(province);
+        $("#city").val(city);
+        $("#area").val(area);
+
+        var responser = $("#responser").val();
+        if(responser==""){
+            $("#responserP").attr("style","color:red");
+            flag = false;
+        } else{
+            $("#responserP").attr("style","display:none");
+        }
+        var password = $("#password").val();
+        if(password==""){
+            $("#passwordP").attr("style","color:red");
+            flag = false;
+        } else{
+            $("#passwordP").attr("style","display:none");
+        }
+        var phone = $.trim($('input[name="phone"]').val());
+        var phoneFlag = $("#phoneFlag").val();
+        if(phone==""||phoneFlag==0){
+            $("#phoneP").attr("style","color:red");
+            flag = false;
+        } else{
+            if(checkMobile(phone)==false){
+                $("#phoneP").html("请输入正确的手机号");
+                $("#phoneP").attr("style","color:red");
+                flag = false;
+            }else{
+                $("#phoneP").attr("style","display:none");
+            }
+        }
+        var passwordConfirm = $("#passwordConfirm").val();
+        if(passwordConfirm==""){
+            $("#passwordConfirmP").attr("style","color:red");
+            flag = false;
+        } else{
+            $("#passwordConfirmP").attr("style","display:none");
+        }
+
+        var email = $("#email").val();
+        if(email==""){
+            $("#emailP").attr("style","color:red");
+            flag = false;
+        } else{
+            var emailFlag = checkemail(email);
+            if(emailFlag==false){
+                $("#emailP").attr("style","color:red");
+                flag = false;
+            }else{
+                $("#emailP").attr("style","display:none");
+            }
+        }
+        if (flag) {
+            $("#siteForm").ajaxSubmit({
+                success: function(data){
+                    alert(data);
+                    if(data==true){
+                        $(".j-siteM-pop").modal("hide");
+                        gotoPage(0);
+                    }else{
+                        alert( "保存用户失败");
+                    }
+
+                },
+                error: function(JsonHttpRequest, textStatus, errorThrown){
+                    //alert( "服务器异常!");
+                    if(window.top==window.self){//不存在父页面
+                        window.location.href="<c:url value="/login" />"
+                    }else{
+                        window.top.location.href="<c:url value="/login" />"
+                    }
+                }
+            });
+        } else {
+            return false;
+        }
+    })
 
     function delSite(siteId) {
         var ret = false;

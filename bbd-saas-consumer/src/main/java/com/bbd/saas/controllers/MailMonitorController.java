@@ -42,7 +42,7 @@ public class MailMonitorController {
 	@Autowired
 	AdminService adminService;
 	@Autowired
-	OrderPacelService orderPacelService;
+	OrderParcelService orderParcelService;
 	@Autowired
 	SiteService siteService;
 	@Autowired
@@ -73,7 +73,7 @@ public class MailMonitorController {
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
 			for(Order order : orderPage.getDatas()){
-				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+				String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
 			}
 			//当前登录的用户信息
@@ -130,7 +130,7 @@ public class MailMonitorController {
 				User courier = null;
 				UserVO userVO = null;
 				for(Order order : dataList){
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+					parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
 					order.setParcelCode(parcelCodeTemp);//设置包裹号
 					courier = userService.findOne(order.getUserId());
 					if(courier != null){
@@ -210,7 +210,7 @@ public class MailMonitorController {
 			if(orderList != null){
 				for(Order order : orderList){
 					row = new ArrayList<String>();
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+					parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
 					row.add(parcelCodeTemp);//设置包裹号
 					row.add(order.getMailNum());
 					row.add(order.getOrderNo());

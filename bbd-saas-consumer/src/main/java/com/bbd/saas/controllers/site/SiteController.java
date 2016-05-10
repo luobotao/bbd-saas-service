@@ -90,20 +90,6 @@ public class SiteController {
 	public static final int MAXSIZE = 100000;
 
 
-	@RequestMapping(value="/updateSite", method=RequestMethod.GET)
-	public String updateSite(Model model, HttpServletRequest request) {
-		List<Postcompany> postcompanyList = postcompanyService.selectAll();
-		model.addAttribute("postcompanyList",postcompanyList);
-		Site site =siteService.findSite(request.getParameter("siteid"));
-		if("0".equals(site.getFlag())){
-			site.setFlag("1");
-			siteService.save(site);//更新审核状态并保存站点
-		}
-		model.addAttribute("site",site);
-		model.addAttribute("ossUrl",ossUrl);
-		return "site/updateSite";
-	}
-
 
 	@ResponseBody
 	@RequestMapping(value="/updateSiteWithRadius/{radius}/{siteId}", method = RequestMethod.GET)

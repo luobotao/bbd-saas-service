@@ -12,7 +12,12 @@ import java.util.List;
  * 站点接口
  */
 public interface SiteService {
-
+    /**
+     *
+     * @param address
+     * @return
+     */
+    String dealOrderWithGetAreaCode(String address);
     /**
      * 保存站点
      * @param site

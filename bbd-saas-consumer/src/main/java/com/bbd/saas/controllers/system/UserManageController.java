@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.mongoModels.Site;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,6 @@ import flexjson.JSONDeserializer;
  */
 @Controller
 @RequestMapping("/userManage")
-@SessionAttributes("userForm")
 public class UserManageController {
 	public static final Logger logger = LoggerFactory.getLogger(UserManageController.class);
 	@Autowired
@@ -69,21 +69,7 @@ public class UserManageController {
 	@Autowired
 	SiteService siteService;
 	
-	/**
-     * 获取用户列表信息
-     * @param 
-     * @return
-     */
-	@RequestMapping(value="userList", method=RequestMethod.GET)
-	public String userList(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		User getuser = adminService.get(UserSession.get(request));
-		PageModel<User> userPage = getUserPage(request,0,roleId,status,keyword);
 
-		model.addAttribute("userPage", userPage);
-		//return "systemSet/userManageUserList";
-		return "systemSet/userManage";
-	}
-	
 	/**
      * 获取用户列表信息
      * @param 
@@ -96,7 +82,7 @@ public class UserManageController {
 			List<Site> siteList = siteService.findSiteListByCompanyId(userNow.getCompanyId());
 			model.addAttribute("siteList", siteList);
 		}
-		PageModel<User> userPage = getUserPage(request,0,null,null,null);
+		PageModel<User> userPage = getUserPage(request,0,null,null,null,null);
 
 		model.addAttribute("userNow", userNow);
 		model.addAttribute("userPage", userPage);
@@ -110,7 +96,7 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
-	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
+	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex,String siteId,String roleId ,  Integer status,String keyword) {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
 		if (pageIndex==null) pageIndex =0 ;
 
@@ -124,7 +110,11 @@ public class UserManageController {
 		PageModel<User> userPage = new PageModel<>();
 		if(UserRole.COMPANY==userNow.getRole()){//公司用户
 			userQueryVO.companyId=userNow.getCompanyId();
-			userPage = userService.findUserList(pageModel,userQueryVO,null);
+			Site site = null;
+			if(StringUtils.isNotBlank(siteId) && !"-1".equals(siteId)){
+				site = siteService.findSite(siteId);
+			}
+			userPage = userService.findUserList(pageModel,userQueryVO,site);
 		}else{//站长
 			userPage = userService.findUserList(pageModel,userQueryVO,userNow.getSite());
 		}
@@ -146,8 +136,8 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
-	public PageModel<User> getUserPageFenYe(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		PageModel<User> userPage = getUserPage(request,pageIndex,roleId,status,keyword);
+	public PageModel<User> getUserPageFenYe(HttpServletRequest request,Integer pageIndex, String siteId, String roleId, Integer status,String keyword) {
+		PageModel<User> userPage = getUserPage(request,pageIndex,siteId,roleId,status,keyword);
 		
 		return userPage;
 	}
@@ -414,7 +404,6 @@ public class UserManageController {
 	/**
 	 * ajax异步调用
      * 根据loginName修改user的状态     
-     * @param loginName、status
      * @return "true"/"false"
      */
 	//@ResponseBody

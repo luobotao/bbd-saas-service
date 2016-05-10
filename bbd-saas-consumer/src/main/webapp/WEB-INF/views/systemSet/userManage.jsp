@@ -242,7 +242,7 @@ $("#pagin").html(pageStr);
 
 
 //加载带有查询条件的指定页的数据
-function gotoPage(pageIndex,roleId,status,keyword) {
+function gotoPage(pageIndex,sites,roleId,status,keyword) {
 	var url = "<c:url value="/userManage/getUserPageFenYe" />";
 	$.ajax({
 		type : "GET",  //提交方式
@@ -251,6 +251,7 @@ function gotoPage(pageIndex,roleId,status,keyword) {
 			"pageIndex" : pageIndex,
 			"roleId" : roleId,
 			"status" : status,
+			"siteId" : sites,
 			"keyword" : keyword
 		},//数据，这里使用的是Json格式进行传输
 		success : function(dataObject) {//返回数据根据结果进行相应的处理
@@ -271,12 +272,7 @@ function gotoPage(pageIndex,roleId,status,keyword) {
 			$("#pagin").html(pageStr);
 		},
 		error : function() {
-			//alert("加载分页数据异常！");
-			if(window.top==window.self){//不存在父页面
-				window.location.href="<c:url value="/login" />"
-			}else{
-				window.top.location.href="<c:url value="/login" />"
-			}
+			alert("加载分页数据异常！");
 		}
 	});
 }
@@ -286,6 +282,9 @@ function gotoPage(pageIndex,roleId,status,keyword) {
 function getRowHtml(data){
 	var row = "<tr>";
 	var temp = "";
+	<c:if test="${userNow.role==UserRole.COMPANY}">
+		row +=  "<td>" + data.site.name + "</td>";
+	</c:if>
 	row +=  "<td>" + data.roleMessage + "</td>";
 	row += "<td>" + data.realName + "</td>";
 	row += "<td>" + data.loginName + "</td>";
@@ -316,9 +315,8 @@ function toSearch(){
 	var roleId = $("#saasrole").val();
 	var status = $("#status").val();
 	var keyword = $("#keyword").val();
-	keyword = keyword.replace(/\ +/g,"");
-	keyword = encodeURIComponent(keyword);
-	gotoPage(0,roleId,status,keyword);
+	var sites = $("#sites").val();
+	gotoPage(0,sites,roleId,status,keyword);
 }
 
 function checkLoginName(loginName) {
