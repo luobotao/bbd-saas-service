@@ -109,10 +109,6 @@ public class RegisterController {
 	@RequestMapping(value="/regitsterSiteView", method=RequestMethod.GET)
 	public String regitsterSiteView(Model model, HttpServletRequest request) {
 		Site site =siteService.findSite(request.getParameter("siteid"));
-		if("0".equals(site.getFlag())){
-			site.setFlag("1");
-			siteService.save(site);//更新审核状态并保存站点
-		}
 		model.addAttribute("site",site);
 		model.addAttribute("ossUrl",ossUrl);
 		return "register/regitsterSiteView";
@@ -252,7 +248,6 @@ public class RegisterController {
 		}
 		site.setMemo("提交成功，我们将在3-5个工作日内完成审核。\n" +
 				"您可使用注册时填写的账号和密码登录，以查看审核状态。");
-		site.setFlag("0");
 		Key<Site> siteKey = siteService.save(site);//保存站点
 		redirectAttrs.addAttribute("siteid",siteKey.getId().toString());
 		//向用户表插入登录用户

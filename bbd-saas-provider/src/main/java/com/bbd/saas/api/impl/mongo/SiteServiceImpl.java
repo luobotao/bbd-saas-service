@@ -113,7 +113,7 @@ public class SiteServiceImpl implements SiteService {
      * @param address
      * @return
      */
-    private String dealOrderWithGetAreaCode(String address) {
+    public String dealOrderWithGetAreaCode(String address) {
         address = address.replaceAll("省", "");
         address = address.replaceAll("市", "");
         String str[] = new String[3];

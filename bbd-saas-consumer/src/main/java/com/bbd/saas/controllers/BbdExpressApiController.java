@@ -1,9 +1,13 @@
 package com.bbd.saas.controllers;
 
+import com.alibaba.dubbo.common.json.JSON;
+import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
+import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.mongoModels.Site;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,8 @@ public class BbdExpressApiController {
 	SiteService siteService;
 	@Autowired
 	SitePoiApi sitePoiApi;
+	@Autowired
+	Geo geo;
 	/**
 	 * description: 推送站点信息接口
 	 * 2016年4月14日下午4:05:01
@@ -87,6 +93,26 @@ public class BbdExpressApiController {
 			}
 		}
 		String str = sb.toString();
+		return str;
+	}
+
+	@RequestMapping(value="/getGeoInfo/{address}", method=RequestMethod.GET)
+	@ResponseBody
+	public String getGeoInfo(@PathVariable String address, HttpServletRequest request ) {
+		//args :company address
+		String str = "";
+		try {
+			MapPoint mapPoint = geo.getGeoInfo(address);
+			if (mapPoint != null) {
+				logger.info("[address]:" + address + " [search geo result] 经度:" + mapPoint.getLng() + ",纬度："+ mapPoint.getLat());
+				return JSON.json(mapPoint);
+			}else{
+				logger.info("[address]:" + address + " [search geo result] null,无法获取经纬度");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info("[address]:" + address + " [search geo result] exception,异常");
+		}
 		return str;
 	}
 }

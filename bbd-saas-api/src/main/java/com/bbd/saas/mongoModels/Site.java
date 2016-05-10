@@ -37,7 +37,6 @@ public class Site implements Serializable {
     private SiteStatus status;       //状态
     private String memo;       //备注
     private String turnDownMessage;       //驳回原因
-    private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
     private String lat;         //纬度
     private String lng;         //经度
     private String deliveryArea;//配送範圍
@@ -181,14 +180,6 @@ public class Site implements Serializable {
 
     public void setMemo(String memo) {
         this.memo = memo;
-    }
-
-    public String getFlag() {
-        return flag;
-    }
-
-    public void setFlag(String flag) {
-        this.flag = flag;
     }
 
     public String getLat() {

@@ -13,4 +13,12 @@ public interface AdminUserService {
      * @return
      */
     AdminUser findAdminUserByUserName(String userName);
+
+
+    /**
+     * 根据商户
+     * @param id
+     * @return
+     */
+    AdminUser findOne(String id);
 }

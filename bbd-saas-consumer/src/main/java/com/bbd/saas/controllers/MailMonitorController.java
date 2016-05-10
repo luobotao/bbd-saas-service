@@ -6,9 +6,9 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.OrderMonitorVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.SiteVO;
+import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,9 @@ public class MailMonitorController {
 	/**
 	 * Description: 跳转到运单监控页面
 	 * @param pageIndex 页数
-	 * @param areaCode 站点编号
-	 * @param timeBetween 时间范围
+	 * @param status 运单状态
+	 * @param arriveBetween 到站时间
+	 * @param mailNum 运单号
 	 * @param request 请求
 	 * @param model
 	 * @return 返回页面
@@ -82,7 +83,7 @@ public class MailMonitorController {
 	}
 
 	/**
-	 * 分页查询，Ajax更新列表
+	 * Description: 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
 	 * @param areaCode 站点编号
 	 * @param timeBetween 时间范围

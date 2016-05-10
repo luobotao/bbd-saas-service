@@ -63,8 +63,8 @@ public class UserDao extends BaseDAO<User, ObjectId> {
                 query.filter("companyId", userQueryVO.companyId);
             }
             query.filter("role <>", UserRole.COMPANY);
-    		if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
-    			query.filter("role", UserRole.status2Obj(userQueryVO.roleId));
+    		if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){
+    			query.filter("role", userQueryVO.roleId);
     		}
             if(site!=null){
                 query.filter("site", site);
@@ -78,7 +78,6 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     		}
         }
     	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-    	System.out.println("userList.size()=="+userList.size());
         pageModel.setDatas(userList);
         pageModel.setTotalCount(count(query));
     	

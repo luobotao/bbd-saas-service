@@ -5,6 +5,7 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.LoginForm;
@@ -77,7 +78,7 @@ public class LoginController {
 						}
 					}else{//站长
 						//判断登录用户的站点状态是否是通过审核状态
-						if (user.getSite() == null || !user.getSite().getFlag().equals("2") || StringUtils.isBlank(user.getSite().getAreaCode())) {
+						if (user.getSite() == null || user.getSite().getStatus()!= SiteStatus.APPROVE|| StringUtils.isBlank(user.getSite().getAreaCode())) {
 							redirectAttrs.addAttribute("siteid",user.getSite().getId().toString());
 							return "redirect:register/regitsterSiteView";
 						}

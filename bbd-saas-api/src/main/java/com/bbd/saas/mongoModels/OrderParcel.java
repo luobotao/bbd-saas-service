@@ -23,6 +23,8 @@ public class OrderParcel implements Serializable {
     private ObjectId id;
     // 包裹号
     private String parcelCode;
+    // 运单号
+    private String trackNo;
     //分拣员ID
     private String sort_uid;
     //司机ID
@@ -137,5 +139,13 @@ public class OrderParcel implements Serializable {
 
     public void setDateUpd(Date dateUpd) {
         this.dateUpd = dateUpd;
+    }
+
+    public String getTrackNo() {
+        return trackNo;
+    }
+
+    public void setTrackNo(String trackNo) {
+        this.trackNo = trackNo;
     }
 }

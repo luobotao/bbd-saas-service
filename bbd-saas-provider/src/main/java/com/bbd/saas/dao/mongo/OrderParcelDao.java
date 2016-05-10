@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
@@ -72,5 +73,16 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
      */
     public OrderParcel findOrderParcelByOrderId(String orderId) {
         return findOne(createQuery().filter("orderList._id",new ObjectId(orderId)));
+    }
+
+    /**
+     * 根据运单号查询所有的包裹
+     * @param trackNo
+     * @return
+     */
+    public List<OrderParcel> findOrderParcelListByTrackCode(String trackNo) {
+        Query<OrderParcel> query = createQuery();
+        query.filter("trackNo",trackNo);
+        return find(query).asList();
     }
 }
