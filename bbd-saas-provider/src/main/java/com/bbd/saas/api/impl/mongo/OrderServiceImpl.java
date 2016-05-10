@@ -153,7 +153,6 @@ public class OrderServiceImpl implements OrderService {
 	public int updateOrder(OrderUpdateVO orderUpdateVO,
 			OrderQueryVO orderQueryVO) {
 		//派件员员工Id
-    	
     	UpdateResults r = orderDao.updateOrder(orderUpdateVO, orderQueryVO);
     	if(r != null){
     		return r.getUpdatedCount();

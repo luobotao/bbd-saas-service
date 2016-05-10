@@ -6,17 +6,21 @@ import com.bbd.saas.api.mysql.OrderLogService;
 import com.bbd.saas.models.OrderLog;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.vo.Express;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
  * @description: Created by liyanlei on 2016/5/9 15:20.
  */
+@Component("statisticOrderNumByDay")
 public class StatisticOrderNumByDay {
     public static final Logger logger = LoggerFactory.getLogger(StatisticOrderNumByDay.class);
     @Autowired
@@ -27,7 +31,7 @@ public class StatisticOrderNumByDay {
     SiteService siteService;
 
     //每个凌晨1点统计昨天的数据
-    @Scheduled(cron = "0 23 20 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void sysOrderExpressToMysql() {
         logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger start ...");
         try {
@@ -42,13 +46,16 @@ public class StatisticOrderNumByDay {
                                 expressList = order.getExpresses();
                                 if (expressList != null && expressList.size() > 0) {
                                     for (Express express : expressList) {
-                                        OrderLog orderLog = new OrderLog();
-                                        orderLog.setAreaCode(order.getAreaCode());
-                                        orderLog.setDate(express.getDateAdd());
-                                        orderLog.setStatus(getStatusByRemark(express.getRemark()));
-                                        orderLog.setOrderNo(order.getOrderNo());
-                                        orderLog.setMailNum(order.getMailNum());
-                                        orderLogService.insert(orderLog);
+                                        if (Dates.isSameDay(express.getDateAdd(), new Date())){
+                                            OrderLog orderLog = new OrderLog();
+                                            orderLog.setAreaCode(order.getAreaCode());
+                                            orderLog.setOperTime(express.getDateAdd());
+                                            orderLog.setStatus(getStatusByRemark(express.getRemark()));
+                                            orderLog.setOrderNo(order.getOrderNo());
+                                            orderLog.setMailNum(order.getMailNum());
+                                            orderLogService.insert(orderLog);
+                                        }
+
                                     }
                                 }
                             }
@@ -61,14 +68,9 @@ public class StatisticOrderNumByDay {
         }
         logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。");
     }
-
-    public void saveToMysql(Express express, Order order) {
-
-    }
-    //0-未到达站点，1-已到达站点，2-正在派送，3-已签收，4-已滞留，5-已拒收，6-转站, 7-已丢失,8-已取消
-
     /**
      * 根据remark获取状态值
+     * 0-未到达站点，1-已到达站点，2-正在派送，3-已签收，4-已滞留，5-已拒收，6-转站, 7-已丢失,8-已取消
      * @param remark 物流备注
      * @return 状态值
      */

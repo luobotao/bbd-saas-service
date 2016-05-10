@@ -14,7 +14,7 @@ public class OrderLog implements Serializable {
 	private String areaCode;//站点号
 	private String orderNo;//订单号
 	private String mailNum;//运单号
-	private Date date;//日期
+	private Date operTime;//日期
 	//0-未到达站点，1-已到达站点，2-正在派送，3-已签收，4-已滞留，5-已拒收，6-转站, 7-已丢失,8-已取消
 	private Integer status;//状态
 
@@ -47,12 +47,12 @@ public class OrderLog implements Serializable {
 		this.mailNum = mailNum;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getOperTime() {
+		return operTime;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setOperTime(Date operTime) {
+		this.operTime = operTime;
 	}
 
 	public Integer getStatus() {

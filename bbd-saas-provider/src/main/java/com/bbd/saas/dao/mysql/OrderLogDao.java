@@ -1,6 +1,10 @@
 package com.bbd.saas.dao.mysql;
 
 import com.bbd.saas.models.OrderLog;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -15,5 +19,13 @@ public interface OrderLogDao {
 	 * @return
      */
 	int insert(OrderLog orderLog);
+	/**
+	 * 根据站点和时间统计不同状态的订单数目
+	 * @param areaCode 站点编号
+	 * @param startDate 开始时间
+	 * @param endDate 结束时间
+	 * @return
+	 */
+	public List<Map<String, Object>> selectCountByAreaCodeAndTime(@Param("areaCode") String areaCode, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
 }

@@ -5,7 +5,7 @@
         <result column="id" property="id" jdbcType="INTEGER"/>
         <result column="orderNo" property="orderNo" jdbcType="VARCHAR"/>
         <result column="mailNum" property="mailNum" jdbcType="VARCHAR"/>
-        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="operTime" property="operTime" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="areaCode" property="areaCode" jdbcType="VARCHAR"/>
     </resultMap>
@@ -20,20 +20,36 @@
     </sql>
     <!-- 插入一条记录  开始  --> 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.OrderLog" >
-        INSERT INTO `postdelivery`(
+        INSERT INTO `OrderLog`(
         <include refid="baseColumnList"/>
         )
         VALUES (
 	        #{id},
             #{areaCode},
 			#{orderNo},
-			#{mail_num},
-			#{date},
+			#{mailNum},
+			#{operTime},
 			#{status}
         )
     </insert>
-    <!-- 插入一条记录  结束  --> 
-    
+    <!-- 插入一条记录  结束  -->
+    <!-- 根据站点和时间统计不同状态的订单数目  开始   -->
+    <select id="selectCountByAreaCodeAndTime" resultType="java.util.HashMap">
+        SELECT `status`, COUNT(*) num FROM `OrderLog`
+        <where>
+            <if test="areaCode != null and areaCode != ''" >
+                areaCode = #{areaCode }
+            </if>
+            <if test="startDate != null and startDate != ''" >
+                <![CDATA[
+                    AND operTime >= CONCAT(#{startDate},' 00:00:00')
+                    AND operTime <= CONCAT(#{endDate},' 23:59:59')
+                ]]>
+            </if>
+        </where>
+        GROUP BY `status`
+    </select>
+    <!-- 根据站点和时间统计不同状态的订单数目  结束   -->
 
 
 </mapper>

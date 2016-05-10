@@ -2,13 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
 	<!-- 错误路径和错误页面，注意指定viewResolver -->
 	<mvc:view-controller path="/404" view-name="404"/>
@@ -20,13 +17,6 @@
 	
 	<context:component-scan base-package="com.bbd.*" />
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-
-
-	<!--开启这个配置，spring才能识别@Scheduled注解  -->
-	<context:component-scan base-package="com.bbd.saas.timer.*"/>
-	<!--理论上只需要加上<task:annotation-driven />这句配置就可以了，这些参数都不是必须的  -->
-	<task:annotation-driven scheduler="qbScheduler" mode="proxy"/>
-	<task:scheduler id="qbScheduler" pool-size="10"/>
 
 	<!--配置拦截器, 多个拦截器,顺序执行 -->
 	<mvc:interceptors>

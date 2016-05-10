@@ -2,13 +2,14 @@ package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
+import com.bbd.saas.api.mysql.OrderLogService;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderMonitorVO;
 import com.bbd.saas.vo.SiteVO;
-import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,28 +33,25 @@ import java.util.List;
 @RequestMapping("/mailMonitor")
 @SessionAttributes("mailMonitor")
 public class MailMonitorController {
-	
+
 	public static final Logger logger = LoggerFactory.getLogger(MailMonitorController.class);
-	
+
 	@Autowired
 	OrderService orderService;
 	@Autowired
-	UserService userService;
-	@Autowired
 	AdminService adminService;
-	@Autowired
-	OrderPacelService orderPacelService;
 	@Autowired
 	SiteService siteService;
 	@Autowired
 	ToOtherSiteLogService toOtherSiteLogService;
+	@Autowired
+	OrderLogService orderLogService;
 
 	/**
 	 * Description: 跳转到运单监控页面
 	 * @param pageIndex 页数
-	 * @param status 运单状态
-	 * @param arriveBetween 到站时间
-	 * @param mailNum 运单号
+	 * @param areaCode 站点编号
+	 * @param timeBetween 时间范围
 	 * @param request 请求
 	 * @param model
 	 * @return 返回页面
@@ -64,7 +62,7 @@ public class MailMonitorController {
 	public String index(Integer pageIndex, String areaCode, String timeBetween, final HttpServletRequest request, Model model) {
 		try {
 			//设置默认查询条件
-			timeBetween = StringUtil.initStr(timeBetween, Dates.getBetweenTime(new Date(), -20));
+			timeBetween = StringUtil.initStr(timeBetween, Dates.getBetweenTime(new Date(), -1));
 			//查询数据
 			PageModel<OrderMonitorVO> orderMonitorVOPage = getList(pageIndex, areaCode, timeBetween, request);
 			//当前登录的用户信息
@@ -83,135 +81,153 @@ public class MailMonitorController {
 	}
 
 	/**
-	 * Description: 分页查询，Ajax更新列表
+	 * 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
 	 * @param areaCode 站点编号
 	 * @param timeBetween 时间范围
 	 * @param request 请求
-     * @return 分页列表数据
-     */
+	 * @return 分页列表数据
+	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<OrderMonitorVO> getList(Integer pageIndex, String areaCode, String timeBetween, final HttpServletRequest request) {
 		//查询数据
-		PageModel<OrderMonitorVO> orderMonitorVOPage = new PageModel<OrderMonitorVO>();
+		PageModel<OrderMonitorVO> pageModel = new PageModel<OrderMonitorVO>();
 		try {
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
+			pageModel.setPageNo(pageIndex);
 			//设置默认查询条件
-			areaCode = StringUtil.initStr(areaCode, "141725-001");
-			//当前登录的用户信息
-			User user = adminService.get(UserSession.get(request));
-			//设置查询条件
-			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.areaCode = areaCode;
-			//分页数据
-			orderMonitorVOPage.setPageNo(pageIndex);
-			orderMonitorVOPage.setTotalCount(20);
-			//列表数据
-			List<OrderMonitorVO> dataList = new ArrayList<OrderMonitorVO>();
-			OrderMonitorVO orderMonitorVO = new OrderMonitorVO();
-			orderMonitorVO.setDispatched(orderService.getDispatchedNums(areaCode, timeBetween));
-			dataList.add(orderMonitorVO);
-			orderMonitorVOPage.setDatas(dataList);
+			//areaCode = StringUtil.initStr(areaCode, "141725-001");
+			if(areaCode != null && !"".equals(areaCode)){//只查询一个站点
+				OrderMonitorVO orderMonitorVO = getOneSiteAllData(areaCode, timeBetween);
+				//列表数据
+				List<OrderMonitorVO> dataList = new ArrayList<OrderMonitorVO>();
+				dataList.add(orderMonitorVO);
+				pageModel.setTotalCount(dataList.size());
+				pageModel.setDatas(dataList);
+			}else {//查询本公司下的所有站点 （全部）
+				//当前登录的用户信息
+				User currUser = adminService.get(UserSession.get(request));
+				PageModel<Site> sitePageModel = new PageModel<Site>();
+				sitePageModel.setPageNo(pageIndex);
+				PageModel<Site> sitePage = siteService.getSitePage(sitePageModel,currUser.getCompanyId(), SiteStatus.APPROVE.getStatus(), null);
+				pageModel.setTotalCount(sitePage.getTotalCount());//总条数
+				List<Site> siteList = sitePage.getDatas();//数据
+				if(siteList != null && siteList.size() > 0){
+					//列表数据
+					List<OrderMonitorVO> dataList = new ArrayList<OrderMonitorVO>();
+					pageModel.setTotalCount(sitePage.getTotalCount());
+					for(Site site : siteList){
+						OrderMonitorVO  orderMonitorVO = getOneSiteData(site.getAreaCode(), timeBetween);
+						orderMonitorVO.setSiteName(site.getName());
+						dataList.add(orderMonitorVO);
+					}
+					pageModel.setDatas(dataList);
+				}
+			}
 		} catch (Exception e) {
 			logger.error("===分页查询，Ajax查询列表数据===出错:" + e.getMessage());
 		}
-		return orderMonitorVOPage;
+		return pageModel;
 	}
 
 	/**
-	 * Description: 导出数据
-	 * @param status 状态
+	 * 获得一个站点的名称和不同状态的订单数
 	 * @param areaCode 站点编号
-	 * @param mailNum 运单号
+	 * @param timeBetween 查询时间范围
+	 * @return 运单监控实体
+	 */
+	private OrderMonitorVO  getOneSiteAllData(String areaCode, String timeBetween){
+		OrderMonitorVO  orderMonitorVO = getOneSiteData(areaCode, timeBetween);
+		Site site = siteService.findSiteByAreaCode(areaCode);
+		String siteName = null;
+		if(site != null){
+			siteName = site.getName();
+		}
+		orderMonitorVO.setSiteName(StringUtil.initStr(siteName,""));
+		return orderMonitorVO;
+	}
+	/**
+	 * 查询一个站点的订单统计数据
+	 */
+	private OrderMonitorVO  getOneSiteData(String areaCode, String timeBetween){
+		String start = null, end = null;
+		if(timeBetween != null && !"".equals(timeBetween)){
+			String[] times  = timeBetween.split("-");
+			start = times[0];
+			end = times[1];
+		}
+		//转站从mongodb中toOtherSiteLog表中取数据，其他数据从mysql中的orderLog表中取数据
+		OrderMonitorVO orderMonitorVO = orderLogService.statisticOrderNum(areaCode, start, end);
+		//查询转站数目
+		orderMonitorVO.setToOtherSite(toOtherSiteLogService.countByFromAreaCodeAndTime(areaCode, timeBetween));
+		return orderMonitorVO;
+	}
+	/**
+	 * Description: 导出数据
+	 * @param areaCode 站点编号
+	 * @param timeBetween 时间查询范围
 	 * @param request
 	 * @param response
 	 * @return
 	 * @author: liyanlei
-	 * 2016年4月15日下午4:30:41
+	 * 2016年5月10日下午4:30:41
 	 */
 	@RequestMapping(value="/exportToExcel", method=RequestMethod.GET)
-	public void exportData(String areaCode, Integer status, String arriveBetween_expt, String mailNum,
-			final HttpServletRequest request, final HttpServletResponse response) {
+	public void exportData(String areaCode, String timeBetween,
+						   final HttpServletRequest request, final HttpServletResponse response) {
+		List<OrderMonitorVO> monitorVOList = null;
 		try {
-			if(mailNum != null){
-				mailNum = mailNum.trim();
-			}
-			//当前登录的用户信息
-			User user = adminService.get(UserSession.get(request));
-			//设置查询条件
-			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.orderStatus = status;
-			orderQueryVO.arriveBetween = arriveBetween_expt;
-			orderQueryVO.mailNum = mailNum;
-			orderQueryVO.areaCode = areaCode;
-			//查询数据
-			List<Order> orderList = orderService.findOrders(orderQueryVO);	
-			//导出==数据写到Excel中并写入response下载
-			//表格数据
-			List<List<String>> dataList = new ArrayList<List<String>>();
-			List<String> row = null;
-			String parcelCodeTemp = null;
-			
-			if(orderList != null){
-				for(Order order : orderList){
-					row = new ArrayList<String>();
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					row.add(parcelCodeTemp);//设置包裹号
-					row.add(order.getMailNum());
-					row.add(order.getOrderNo());
-					row.add(order.getSrc().getMessage());
-					row.add(order.getReciever().getName());
-					row.add(order.getReciever().getPhone());
-					StringBuffer address = new StringBuffer();
-					address.append(order.getReciever().getProvince());
-					address.append(order.getReciever().getCity());
-					address.append(order.getReciever().getArea());
-					address.append(order.getReciever().getAddress());
-					row.add(address.toString());
-					row.add(Dates.formatDateTime_New(order.getDatePrint()));
-					row.add(Dates.formatDate2(order.getDateMayArrive()));
-					row.add(Dates.formatDateTime_New(order.getDateArrived()));
-					setCourier(order.getUserId(), row);
-					if(order.getOrderStatus() == null){
-						row.add("未到站");
-					}else{
-						row.add(order.getOrderStatus().getMessage());
+			monitorVOList = new ArrayList<OrderMonitorVO>();
+			if (areaCode != null && !"".equals(areaCode)) {//只查询一个站点
+				OrderMonitorVO orderMonitorVO = getOneSiteAllData(areaCode, timeBetween);
+				//列表数据
+				monitorVOList.add(orderMonitorVO);
+			} else {//查询本公司下的所有站点 （全部）
+				//当前登录的用户信息
+				User currUser = adminService.get(UserSession.get(request));
+				//当前公司下的所有站点
+				List<Site> siteList = siteService.findSiteListByCompanyId(currUser.getCompanyId());
+				if (siteList != null && siteList.size() > 0) {
+					//列表数据
+					for (Site site : siteList) {
+						OrderMonitorVO orderMonitorVO = getOneSiteData(site.getAreaCode(), timeBetween);
+						orderMonitorVO.setSiteName(site.getName());
+						monitorVOList.add(orderMonitorVO);
 					}
-					dataList.add(row);
 				}
 			}
-			
+			//导出==数据写到Excel中并写入response下载
+			List<List<String>> dataList = objectToTable(monitorVOList);
 			//表头
-			String[] titles = { "包裹号", "运单号", "订单号", "来源", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
-			int[] colWidths = { 4000, 5000, 5000, 2000, 2000, 3500, 12000, 5500, 3500, 5500, 2000, 3500, 2000};
+			String[] titles = {"站点", "未到站订单数", "已到站订单数", "未分派数", "已分派数", "签收数", "滞留数", "拒收数", "转站数"};
+			int[] colWidths = {10000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
 			ExportUtil.exportExcel("运单监控", dataList, titles, colWidths, response);
 		} catch (Exception e) {
 			logger.error("===运单监控数据导出===出错:" + e.getMessage());
 		}
-	
 	}
-
-	/**
-	 * 设置订单的派件员信息
-	 * @param userId
-	 * @param row
-     */
-	private void setCourier(String userId, List<String> row){
-		if(userId == null || "".equals(userId)){
-			row.add("");
-			row.add("");
-		}else{
-			User courier = userService.findOne(userId);
-			if(courier != null){
-				row.add(courier.getRealName());
-				row.add(courier.getLoginName());
-			}else{
-				row.add("");
-				row.add("");
+	private List<List<String>> objectToTable (List <OrderMonitorVO> monitorVOList) {
+		//表格数据
+		List<List<String>> dataList = new ArrayList<List<String>>();
+		List<String> row = null;
+		if (monitorVOList != null) {
+			for (OrderMonitorVO monitorVO : monitorVOList) {
+				row = new ArrayList<String>();
+				row.add(monitorVO.getSiteName());//
+				row.add(monitorVO.getNoArrive() + "");//
+				row.add(monitorVO.getArrived() + "");//
+				row.add(monitorVO.getNoDispatch() + "");//
+				row.add(monitorVO.getDispatched() + "");//
+				row.add(monitorVO.getSigned() + "");//
+				row.add(monitorVO.getRetention() + "");//
+				row.add(monitorVO.getRejection() + "");//
+				row.add(monitorVO.getToOtherSite() + "");//
+				dataList.add(row);
 			}
 		}
+		return dataList;
 	}
 
 }
