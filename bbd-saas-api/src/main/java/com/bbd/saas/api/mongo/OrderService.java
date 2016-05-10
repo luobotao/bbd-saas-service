@@ -1,15 +1,14 @@
 package com.bbd.saas.api.mongo;
 
-import java.util.List;
-
-import org.mongodb.morphia.Key;
-
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
+import org.mongodb.morphia.Key;
+
+import java.util.List;
 
 /**
  * Created by luobotao on 2016/4/8.
@@ -89,4 +88,21 @@ public interface OrderService {
      * 2016年4月16日下午1:23:37
      */
     int updateOrder(OrderUpdateVO orderUpdateVO, OrderQueryVO orderQueryVO);
+
+
+	/**
+	 * 根据站点编码和时间获取该站点已分派的订单数
+	 * @param areaCode 站点编号
+	 * @param betweenTime 查询时间范围
+	 * @return
+	 */
+	public long getDispatchedNums(String areaCode, String betweenTime);
+
+	/**
+	 * 得到指定站点当天更新的所有订单
+	 * @param areaCode 站点编号
+	 * @return 订单集合
+	 */
+	public List<Order> getTodayUpdateOrdersBySite(String areaCode);
+
 }

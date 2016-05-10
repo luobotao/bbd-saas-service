@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.OrderLogDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.OrderLog">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="orderNo" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="mailNum" property="mailNum" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="areaCode" property="areaCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	id,
+    	areaCode,
+		orderNo,
+		mailNum，
+	    date，
+		status
+    </sql>
+    <!-- 插入一条记录  开始  --> 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.OrderLog" >
+        INSERT INTO `postdelivery`(
+        <include refid="baseColumnList"/>
+        )
+        VALUES (
+	        #{id},
+            #{areaCode},
+			#{orderNo},
+			#{mail_num},
+			#{date},
+			#{status}
+        )
+    </insert>
+    <!-- 插入一条记录  结束  --> 
+    
+
+
+</mapper>

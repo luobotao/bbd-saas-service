@@ -6,9 +6,9 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
+import com.bbd.saas.vo.OrderMonitorVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.SiteVO;
-import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,128 +51,74 @@ public class MailMonitorController {
 	/**
 	 * Description: 跳转到运单监控页面
 	 * @param pageIndex 页数
-	 * @param status 运单状态
-	 * @param arriveBetween 到站时间
-	 * @param mailNum 运单号
+	 * @param areaCode 站点编号
+	 * @param timeBetween 时间范围
 	 * @param request 请求
 	 * @param model
-	 * @return
+	 * @return 返回页面
 	 * @author liyanlei
-	 * 2016年4月22日下午6:27:46
+	 * 2016年5月6日下午4:27:46
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, String areaCode, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String areaCode, String timeBetween, final HttpServletRequest request, Model model) {
 		try {
-			if(mailNum != null){
-				mailNum = mailNum.trim();
-			}
 			//设置默认查询条件
-			status = Numbers.defaultIfNull(status, -1);//全部
-			//到站时间
-			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
+			timeBetween = StringUtil.initStr(timeBetween, Dates.getBetweenTime(new Date(), -20));
 			//查询数据
-			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
-			for(Order order : orderPage.getDatas()){
-				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-				order.setParcelCode(parcelCodeTemp);//设置包裹号
-			}
+			PageModel<OrderMonitorVO> orderMonitorVOPage = getList(pageIndex, areaCode, timeBetween, request);
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
+			//查询登录用户的公司下的所有站点
 			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
-			logger.info("=====运单监控页面列表===" + orderPage);
-			model.addAttribute("orderPage", orderPage);
-			model.addAttribute("arriveBetween", arriveBetween);
+			logger.info("=====运单监控页面列表===" + orderMonitorVOPage);
+			model.addAttribute("orderMonitorVOPage", orderMonitorVOPage);
+			model.addAttribute("timeBetween", timeBetween);
 			model.addAttribute("siteList", siteVOList);
-			return "page/mailQuery";
+			return "page/mailMonitor";
 		} catch (Exception e) {
 			logger.error("===跳转到运单监控页面==出错 :" + e.getMessage());
 		}
 		return "page/mailQuery";
 	}
-	
+
 	/**
-	 * Description: 分页查询，Ajax更新列表
+	 * 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
 	 * @param areaCode 站点编号
-	 * @param status 运单状态
-	 * @param arriveBetween 到站时间
-	 * @param mailNum 运单号
+	 * @param timeBetween 时间范围
 	 * @param request 请求
-	 * @return
-	 * @author liyanlei
-	 * 2016年4月22日下午6:27:16
-	 */
+     * @return 分页列表数据
+     */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<Order> getList(Integer pageIndex, String areaCode, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
+	public PageModel<OrderMonitorVO> getList(Integer pageIndex, String areaCode, String timeBetween, final HttpServletRequest request) {
 		//查询数据
-		PageModel<Order> orderPage = null;
+		PageModel<OrderMonitorVO> orderMonitorVOPage = new PageModel<OrderMonitorVO>();
 		try {
-			if(mailNum != null){
-				mailNum = mailNum.trim();
-			}
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-			status = Numbers.defaultIfNull(status, -1);
+			//设置默认查询条件
+			areaCode = StringUtil.initStr(areaCode, "141725-001");
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.orderStatus = status;
-			orderQueryVO.arriveBetween = arriveBetween;
-			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
-			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-			//设置包裹号,派件员快递和电话
-			if(orderPage != null && orderPage.getDatas() != null){
-				List<Order> dataList = orderPage.getDatas();
-				String parcelCodeTemp = null;
-				User courier = null;
-				UserVO userVO = null;
-				for(Order order : dataList){
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					order.setParcelCode(parcelCodeTemp);//设置包裹号
-					courier = userService.findOne(order.getUserId());
-					if(courier != null){
-						userVO = new UserVO();
-						userVO.setLoginName(courier.getLoginName());
-						userVO.setRealName(courier.getRealName());
-						order.setUserVO(userVO);
-					}
-				}
-			}
+			//分页数据
+			orderMonitorVOPage.setPageNo(pageIndex);
+			orderMonitorVOPage.setTotalCount(20);
+			//列表数据
+			List<OrderMonitorVO> dataList = new ArrayList<OrderMonitorVO>();
+			OrderMonitorVO orderMonitorVO = new OrderMonitorVO();
+			orderMonitorVO.setDispatched(orderService.getDispatchedNums(areaCode, timeBetween));
+			dataList.add(orderMonitorVO);
+			orderMonitorVOPage.setDatas(dataList);
 		} catch (Exception e) {
 			logger.error("===分页查询，Ajax查询列表数据===出错:" + e.getMessage());
 		}
-		return orderPage;		
+		return orderMonitorVOPage;
 	}
 
-
-
-	/**
-	 * Description: 查看物流信息
-	 * @param areaCode 站点编码
-	 * @param mailNum 运单号
-	 * @return 页面
-	 * @author  liyanlei
-	 * 2016年4月22日下午6:31:35
-	 */
-	@RequestMapping(value="/getOrderMail", method=RequestMethod.GET)
-	public String getOrderMail(String areaCode, String mailNum, final HttpServletRequest request, Model model) {
-		try {
-			if(mailNum != null){
-				mailNum = mailNum.trim();
-			}
-			//当前登录的用户信息
-			User currUser = adminService.get(UserSession.get(request));
-			Order order = orderService.findOneByMailNum(areaCode, mailNum);
-			model.addAttribute("order", order);
-		} catch (Exception e) {
-			logger.error("===查看物流信息===出错 :" + e.getMessage());
-		}
-		return "page/showOrderMail";
-	}
-	
 	/**
 	 * Description: 导出数据
 	 * @param status 状态

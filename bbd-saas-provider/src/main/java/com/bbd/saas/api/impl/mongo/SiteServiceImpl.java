@@ -220,6 +220,12 @@ public class SiteServiceImpl implements SiteService {
 		}
 		return siteVoList;
 	}
+
+	@Override
+	public List<Site> findAllSiteList() {
+		return siteDao.find().asList();
+	}
+
 	private SiteVO siteToSiteVO(Site site){
 		SiteVO siteVo = new SiteVO();
 		siteVo.setId(site.getId().toString());

@@ -81,4 +81,10 @@ public interface SiteService {
      * @auth liyanlei
      */
     List<SiteVO> findAllSiteVOByCompanyId(String companyId);
+
+    /**
+     * 查询所有站点
+     * @return
+     */
+    List<Site> findAllSiteList();
 }
