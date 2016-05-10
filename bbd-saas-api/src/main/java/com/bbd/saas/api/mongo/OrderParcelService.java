@@ -5,11 +5,14 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by luobotao on 2016/4/13.
  * 包裹接口
  */
-public interface OrderPacelService {
+public interface OrderParcelService {
 
 
 	/**
@@ -40,4 +43,10 @@ public interface OrderPacelService {
 	 * @param orderParcel
      */
 	void saveOrderParcel(OrderParcel orderParcel);
+
+	/**
+	 * 根据运单号获取所有关联的站点
+	 * @param trackNo
+	 */
+	List<OrderParcel> findOrderParcelListByTrackCode(String trackNo);
 }

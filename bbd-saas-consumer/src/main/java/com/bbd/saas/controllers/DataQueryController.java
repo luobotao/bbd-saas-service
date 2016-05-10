@@ -1,7 +1,7 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderPacelService;
+import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
@@ -40,7 +40,7 @@ public class DataQueryController {
 	@Autowired
 	AdminService adminService;
 	@Autowired
-	OrderPacelService orderPacelService;
+	OrderParcelService orderPacelService;
 	
 	/**
 	 * Description: 跳转到数据查询页面

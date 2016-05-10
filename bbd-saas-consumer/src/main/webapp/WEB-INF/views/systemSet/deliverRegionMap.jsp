@@ -466,6 +466,8 @@
 			var marker = new BMap.Marker(this.point,{icon:myIcon});  // 创建标注
 			marker.disableMassClear();
 			this.map.addOverlay(marker);               // 将标注添加到地图中
+			var label = new BMap.Label("我是文字标注哦",{offset:new BMap.Size(20,-10)});
+			marker.setLabel(label);
 			//实例化鼠标绘制工具
 			this.drawingManager = new BMapLib.DrawingManager(map, {
 				isOpen: false, //是否开启绘制模式

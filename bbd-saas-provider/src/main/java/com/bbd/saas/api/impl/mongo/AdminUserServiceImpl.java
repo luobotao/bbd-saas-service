@@ -4,6 +4,7 @@ package com.bbd.saas.api.impl.mongo;
 import com.bbd.saas.api.mongo.AdminUserService;
 import com.bbd.saas.dao.mongo.AdminUserDao;
 import com.bbd.saas.mongoModels.AdminUser;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +21,11 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     public AdminUser findAdminUserByUserName(String userName){
         return adminUserDao.findOne("userName",userName);
+    }
+
+    @Override
+    public AdminUser findOne(String id) {
+        return adminUserDao.findOne("id",new ObjectId(id));
     }
 
 
