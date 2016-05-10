@@ -8,7 +8,8 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum UserRole {
 	SITEMASTER(0, "站长"),
-    SENDMEM(1, "派件员");
+    SENDMEM(1, "派件员"),
+    COMPANY(2, "公司管理员");
     private int status;
     private String message;
     private UserRole(int status, String message) {

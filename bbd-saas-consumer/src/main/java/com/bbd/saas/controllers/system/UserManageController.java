@@ -1,4 +1,4 @@
-package com.bbd.saas.controllers;
+package com.bbd.saas.controllers.system;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,12 +7,16 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.mongoModels.Site;
+import com.google.common.collect.Lists;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +40,6 @@ import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.UserForm;
 import com.bbd.saas.models.PostmanUser;
-import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.SignUtil;
@@ -62,8 +65,9 @@ public class UserManageController {
 	@Autowired
 	private PostmanUserService userMysqlService;	
 	@Autowired
-	private OpenUserService openUserMysqlService;	
-	
+	private OpenUserService openUserMysqlService;
+	@Autowired
+	SiteService siteService;
 	
 	/**
      * 获取用户列表信息
@@ -87,11 +91,15 @@ public class UserManageController {
      */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(HttpServletRequest request,Model model) {
-
+		User userNow = adminService.get(UserSession.get(request));//当前登录用户
+		if(userNow.getRole()==UserRole.COMPANY){
+			List<Site> siteList = siteService.findSiteListByCompanyId(userNow.getCompanyId());
+			model.addAttribute("siteList", siteList);
+		}
 		PageModel<User> userPage = getUserPage(request,0,null,null,null);
 
+		model.addAttribute("userNow", userNow);
 		model.addAttribute("userPage", userPage);
-		//return "systemSet/userManageUserList";
 		return "systemSet/userManage";
 	}
 	
@@ -103,25 +111,24 @@ public class UserManageController {
 	@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
 	public PageModel<User> getUserPage(HttpServletRequest request,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		User getuser = adminService.get(UserSession.get(request));
+		User userNow = adminService.get(UserSession.get(request));//当前登录用户
 		if (pageIndex==null) pageIndex =0 ;
-		if(keyword!=null && !keyword.equals("")){
-			try {
-				
-				keyword = URLDecoder.decode(keyword,"UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
 		UserQueryVO userQueryVO = new UserQueryVO();
 		userQueryVO.roleId=roleId;
 		userQueryVO.status=status;
 		userQueryVO.keyword=keyword;
+
 		PageModel<User> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
-		PageModel<User> userPage = userService.findUserList(pageModel,userQueryVO,getuser.getSite());
-		
+		PageModel<User> userPage = new PageModel<>();
+		if(UserRole.COMPANY==userNow.getRole()){//公司用户
+			userQueryVO.companyId=userNow.getCompanyId();
+			userPage = userService.findUserList(pageModel,userQueryVO,null);
+		}else{//站长
+			userPage = userService.findUserList(pageModel,userQueryVO,userNow.getSite());
+		}
+
 		for(User user : userPage.getDatas()){
 			user.setRoleMessage(user.getRole().getMessage());
 			if(user.getUserStatus()!=null && !user.getUserStatus().getMessage().equals("")){

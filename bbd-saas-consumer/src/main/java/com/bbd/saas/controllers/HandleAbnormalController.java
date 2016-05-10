@@ -1,13 +1,26 @@
 package com.bbd.saas.controllers;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.api.mongo.ToOtherSiteLogService;
+import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostDeliveryService;
+import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.mongoModels.ToOtherSiteLog;
+import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.vo.Express;
+import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.SiteVO;
+import com.bbd.saas.vo.UserVO;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +32,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderService;
-import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.api.mongo.UserService;
-import com.bbd.saas.api.mysql.PostDeliveryService;
-import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.StringUtil;
-import com.bbd.saas.vo.Express;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.SiteVO;
-import com.bbd.saas.vo.UserVO;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Controller
 @RequestMapping("/handleAbnormal")
@@ -54,6 +50,8 @@ public class HandleAbnormalController {
 	AdminService adminService;
 	@Autowired
 	SiteService siteService;
+	@Autowired
+	ToOtherSiteLogService toOtherSiteLogService;
 	@Autowired
 	PostDeliveryService postDeliveryService;
 	/**
@@ -142,7 +140,7 @@ public class HandleAbnormalController {
 	/**
 	 * Description: 运单重新分派--把异常的包裹重新分派给派件员
 	 * @param mailNum 运单号
-	 * @param staffId 派件员员工Id
+	 * @param userId 派件员员工Id
 	 * @param status 更新列表参数--状态
 	 * @param pageIndex 更新列表参数--页数
 	 * @param arriveBetween 更新列表参数--到站时间
@@ -262,7 +260,7 @@ public class HandleAbnormalController {
 	/**
 	 * Description: 转其他站点
 	 * @param mailNum 运单号
-	 * @param areaCode 站点编号
+	 * @param siteId 站点号
 	 * @param status 更新列表参数--状态
 	 * @param pageIndex 更新列表参数--页码
 	 * @param arriveBetween 更新列表参数--到站时间
@@ -284,6 +282,7 @@ public class HandleAbnormalController {
 			if(order == null){//运单不存在,与站点无关--正常情况不会执行
 				map.put("operFlag", 0);//0:运单号不存在
 			}else{//运单存在
+				String fromAreaCode = order.getAreaCode();
 				Site site = siteService.findSite(siteId);
 				//更新运单字段
 				order.setAreaCode(site.getAreaCode());
@@ -302,6 +301,13 @@ public class HandleAbnormalController {
 				//更新运单
 				Key<Order> r = orderService.save(order);
 				if(r != null){
+					//记录转站日志
+					ToOtherSiteLog toOtherSiteLog = new ToOtherSiteLog();
+					toOtherSiteLog.setMailNum(order.getMailNum());
+					toOtherSiteLog.setFromAreaCode(fromAreaCode);
+					toOtherSiteLog.setToAreaCode(site.getAreaCode());
+					toOtherSiteLog.setOperTime(new Date());
+					toOtherSiteLogService.save(toOtherSiteLog);
 					//更新到mysql 删除一条记录
 					postDeliveryService.deleteByMailNum(mailNum);
 					map.put("operFlag", 1);//1:成功
@@ -355,8 +361,6 @@ public class HandleAbnormalController {
 	/**************************转其他快递公司***************开始***********************************/
 	/**
 	 * Description: 获取快递公司
-	 * @param mailNum 运单号
-	 * @param senderId 派件员id
 	 * @param model
 	 * @return
 	 * @author: liyanlei
@@ -364,17 +368,10 @@ public class HandleAbnormalController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getAllExpressCompanyList", method=RequestMethod.GET)
-	public List<UserVO> getAllExpressCompanyList(String siteId, Model model) {
+	public List<UserVO> getAllExpressCompanyList(Model model) {
 		List<UserVO> userVoList = null;
 		try {
-			UserVO uservo = new UserVO();
-			//uservo.setId(new ObjectId("5546548"));
-			uservo.setLoginName("loginName");
-			uservo.setPhone("12345678945");
-			userVoList = userService.findUserListBySite(siteId);
-			if(userVoList == null || userVoList.size() == 0){
-				userVoList.add(uservo);
-			}
+			return null;
 		} catch (Exception e) {
 			logger.error("===获取快递公司===出错:" + e.getMessage());
 		}

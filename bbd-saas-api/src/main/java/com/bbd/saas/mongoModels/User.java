@@ -27,7 +27,7 @@ public class User implements Serializable {
     private String loginName;//登录名即手机号
     private String passWord;
     private String realName;
-    //private String phone;
+    private String email;
     private UserRole role;
     @Reference("site")
     private Site site;
@@ -47,6 +47,7 @@ public class User implements Serializable {
     private String statusMessage;//存放有效或无效
     private String staffid;//员工id
     private int postmanuserId;//postmanuser的主键id
+    private String companyId;      //所属公司ID
 
     public ObjectId getId() {
         return id;
@@ -193,4 +194,19 @@ public class User implements Serializable {
 		this.postmanuserId = postmanuserId;
 	}
 
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

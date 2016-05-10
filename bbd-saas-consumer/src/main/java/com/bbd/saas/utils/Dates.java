@@ -1,5 +1,6 @@
 package com.bbd.saas.utils;
 
+import com.bbd.saas.constants.Constants;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.StringUtils;
@@ -405,7 +406,7 @@ public class Dates {
 		return df.format(date);
 	}
 	/**
-	 * @param Date
+	 * @param date
 	 * @author String 日期转换成字符串 格式[yyyy/MM/dd HH:mm:ss]
 	 **/
 	public static String dateToString(Date date) {
@@ -567,7 +568,7 @@ public class Dates {
 	 * 获得指定日期的连续的后几天的集合
 	 * @author liyanlei
 	 * @param theDate---指定日期 (1995/11/08|1995-11-08)
-	 * @param format---theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
+	 * format---theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
 	 * @param num---往后推的天数 (5)
 	 * @return (1995-11-08，1995-11-09，1995-11-10，1995-11-11，1995-11-12)
 	 */
@@ -596,7 +597,7 @@ public class Dates {
 	 * @date 2016年1月12日上午11:17:06
 	 * Description: 获得指定日期的连续的几天的集合
 	 * @param theDate	指定日期 (2016/01/08|2016-01-08)
-	 * @param format	theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
+	 * @param formate	theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
 	 * @param num		往后|前推的天数 (3)。 num>0,往后推；num<0,往前推
 	 * @return	2016/01/08，2016/01/09，2016/01/10    ；   2016/01/06，2016/01/07，2016/01/08，
 	 */
@@ -781,7 +782,7 @@ public class Dates {
 
 	/**
 	 * 获取某年某月最后一天日期
-	 * @param year 年份
+	 * @param str 年份
 	 * @return Date
 	 */
 	public static  String getlastDayOfMonth(String str) throws Exception{
@@ -789,7 +790,7 @@ public class Dates {
 	}
 	/**
 	 * 获取某年某月最后一天日期
-	 * @param year 年份
+	 * @param str 年份
 	 * @return Date
 	 */
 	public static  String getlastDayOfMonth(String str, String format) throws Exception{
@@ -1120,8 +1121,8 @@ public class Dates {
 	}
 	/**
 	 * 计算两个日期相差的月数
-	 * @param date1 <String>
-	 * @param date2 <String>
+	 * @param smdate <String>
+	 * @param bdate <String>
 	 * @return int
 	 * @throws ParseException
 	 */

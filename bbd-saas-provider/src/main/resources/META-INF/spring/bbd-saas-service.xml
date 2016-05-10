@@ -47,6 +47,15 @@
         <property name="siteDao">
             <ref bean="siteDao"/>
         </property>
+        <property name="bbtAddressDao">
+            <ref bean="bbtAddressDao"/>
+        </property>
+    </bean>
+    <!-- ToOtherSiteLog Service-->
+    <bean id="toOtherSiteLogService" class="com.bbd.saas.api.impl.mongo.ToOtherSiteLogServiceImpl">
+        <property name="toOtherSiteLogDao">
+            <ref bean="toOtherSiteLogDao"/>
+        </property>
     </bean>
     <!--   end mongodb services    -->
  
@@ -69,6 +78,11 @@
     <bean id="openUserService" class="com.bbd.saas.api.impl.mysql.OpenUserServiceImpl">
         <property name="openUserDao">
             <ref bean="openUserDao"/>
+        </property>
+    </bean>
+    <bean id="smsInfoService" class="com.bbd.saas.api.impl.mysql.SmsInfoServiceImpl">
+        <property name="smsInfoDao">
+            <ref bean="smsInfoDao"/>
         </property>
     </bean>
     <!--    end mysql services   -->

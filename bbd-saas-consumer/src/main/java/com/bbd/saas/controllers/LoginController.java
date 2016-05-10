@@ -10,6 +10,7 @@ import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.LoginForm;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.Numbers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,24 +63,32 @@ public class LoginController {
 	public String processSubmit(@Valid LoginForm loginForm, BindingResult result,
 								@ModelAttribute("ajaxRequest") boolean ajaxRequest,RedirectAttributes redirectAttrs,HttpServletResponse response) {
 		try{
-			if (result.hasErrors()) {
-				return null;
-			}
 			User user = userService.findUserByLoginName(loginForm.getUserName());
 			if(user!=null){
-				logger.info("============");
 				if(loginForm.getPassWord().equals(user.getPassWord())){//login success
-					//判断登录用户的站点状态是否是通过审核状态
-					if (user.getSite() == null || !user.getSite().getFlag().equals("2") || StringUtils.isBlank(user.getSite().getAreaCode())) {
-						return "redirect:/site/updateSite?siteid="+user.getSite().getId().toHexString();
-					}
-					if(user.getUserStatus()== UserStatus.INVALID){
-						redirectAttrs.addFlashAttribute("message", "用户状态无效");
-						return "redirect:/login";
-					}
-					if(user.getRole()!= UserRole.SITEMASTER){
-						redirectAttrs.addFlashAttribute("message", "用户角色不可登录此系统");
-						return "redirect:/login";
+					if(user.getRole()==UserRole.COMPANY){//公司用户
+						Postcompany postcompany = postcompanyService.selectPostmancompanyById(Numbers.parseInt(user.getCompanyId(),0));
+						if(postcompany!=null && "1".equals(postcompany.getSta())){//审核通过
+
+						}else{
+							redirectAttrs.addAttribute("companyId",user.getCompanyId());
+							redirectAttrs.addAttribute("phone",user.getLoginName());
+							return "redirect:register/regitsterCompanyView";
+						}
+					}else{//站长
+						//判断登录用户的站点状态是否是通过审核状态
+						if (user.getSite() == null || !user.getSite().getFlag().equals("2") || StringUtils.isBlank(user.getSite().getAreaCode())) {
+							redirectAttrs.addAttribute("siteid",user.getSite().getId().toString());
+							return "redirect:register/regitsterSiteView";
+						}
+						if(user.getUserStatus()== UserStatus.INVALID){
+							redirectAttrs.addFlashAttribute("message", "用户状态无效");
+							return "redirect:/login";
+						}
+						if(user.getRole()!= UserRole.SITEMASTER && user.getRole()!= UserRole.COMPANY){
+							redirectAttrs.addFlashAttribute("message", "用户角色不可登录此系统");
+							return "redirect:/login";
+						}
 					}
 					int loginCount = user.getLoginCount();
 					loginCount = ++loginCount;

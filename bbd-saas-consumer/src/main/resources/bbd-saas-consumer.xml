@@ -29,6 +29,8 @@
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
     <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />
     <dubbo:reference id="geo" interface="com.bbd.poi.api.Geo" />
+    <!--ToOtherSiteLog Service-->
+    <dubbo:reference id="toOtherSiteLogService" interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" />
 
 
     <!--start mysql services-->
@@ -37,4 +39,5 @@
     <dubbo:reference id="postcompanyService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>
     <dubbo:reference id="postDeliveryService" interface="com.bbd.saas.api.mysql.PostDeliveryService"/>
     <dubbo:reference id="openUserMysqlService" interface="com.bbd.saas.api.mysql.OpenUserService"/>
+    <dubbo:reference id="smsInfoService" interface="com.bbd.saas.api.mysql.SmsInfoService"/>
 </beans>

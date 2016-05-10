@@ -37,9 +37,26 @@ public class PostcompanyServiceImpl implements PostcompanyService {
 		return postcompanyDao.selectAll();
 	}
 
+	/**
+	 * 根据公司ID获取公司信息
+	 * @param id
+	 * @return
+     */
 	@Override
 	@Transactional(readOnly = true)
 	public Postcompany selectPostmancompanyById(Integer id){
 		return postcompanyDao.selectPostmancompanyById(id);
+	}
+
+	/**
+	 * 插入一条新公司
+	 * @param postcompany
+	 * @return
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Postcompany insertCompany(Postcompany postcompany){
+		postcompanyDao.insertCompany(postcompany);
+		return postcompany;
 	}
 }

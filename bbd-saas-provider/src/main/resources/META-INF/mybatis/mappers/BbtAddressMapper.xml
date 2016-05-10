@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.BbtAddressDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.BbtAddress">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="parentid" property="parentid" jdbcType="INTEGER"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="tier" property="tier" jdbcType="VARCHAR"/>
+        <result column="maxstationcode" property="maxstationcode" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+        id,
+        parentid,
+        code,
+        name,
+        tier,
+        maxstationcode
+    </sql>
+
+    <!--根据区域信息ID查询地址-->
+    <select id="getBbtAddressWithProvince" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `bbtaddress` where #{province,jdbcType=VARCHAR} like CONCAT(NAME,'%') ORDER BY tier,id ASC
+    </select>
+    <!--根据地址ID查询地址-->
+    <select id="getBbtAddressWithId" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `bbtaddress` where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateMaxstationcodeByCode" >
+        update bbtaddress set maxstationcode = #{maxstationcode,jdbcType=VARCHAR}  where code = #{code,jdbcType=VARCHAR}
+    </update>
+
+</mapper>
