@@ -33,7 +33,6 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/mailQuery")
-@SessionAttributes("mailQuery")
 public class MailQueryController {
 	
 	public static final Logger logger = LoggerFactory.getLogger(MailQueryController.class);
