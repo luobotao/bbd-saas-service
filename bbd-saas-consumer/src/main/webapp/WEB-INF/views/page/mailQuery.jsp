@@ -381,8 +381,7 @@ function exportData() {
 	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
-	//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#arriveBetween").val());
-}	
+}
 	
 	
 	

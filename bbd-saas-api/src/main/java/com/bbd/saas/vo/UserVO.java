@@ -1,6 +1,7 @@
 package com.bbd.saas.vo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Description: 派件员信息
@@ -15,6 +16,9 @@ public class UserVO implements Serializable{
     private String realName;
     private String phone;
     private String staffId;
+	private BigDecimal lat;//纬度
+	private BigDecimal lng;//经度
+
     
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -49,5 +53,24 @@ public class UserVO implements Serializable{
 	public void setStaffId(String staffId) {
 		this.staffId = staffId;
 	}
-	
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public BigDecimal getLat() {
+		return lat;
+	}
+
+	public void setLat(BigDecimal lat) {
+		this.lat = lat;
+	}
+
+	public BigDecimal getLng() {
+		return lng;
+	}
+
+	public void setLng(BigDecimal lng) {
+		this.lng = lng;
+	}
 }

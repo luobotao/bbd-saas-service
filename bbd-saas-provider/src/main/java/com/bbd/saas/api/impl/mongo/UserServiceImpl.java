@@ -1,14 +1,6 @@
 package com.bbd.saas.api.impl.mongo;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.UpdateResults;
-import org.springframework.stereotype.Service;
-
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.dao.mongo.SiteDao;
 import com.bbd.saas.dao.mongo.UserDao;
@@ -19,6 +11,12 @@ import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.Key;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -204,5 +202,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delUsersBySiteId(String siteId) {
         userDao.delUsersBySiteId(siteId);
+    }
+
+    @Override
+    public List<User> findUserListByCompanyId(String companyId) {
+        return userDao.selectUserListByCompanyId(companyId);
+    }
+
+    @Override
+    public List<User> findUsersBySite(Site site) {
+        return userDao.findUserListBySite(site, UserRole.SENDMEM);
     }
 }

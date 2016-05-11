@@ -1,18 +1,14 @@
 package com.bbd.saas.api.mongo;
 
-import java.util.List;
-
-import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.Query;
-
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
-import com.mongodb.WriteResult;
-import org.mongodb.morphia.query.UpdateResults;
+import org.mongodb.morphia.Key;
+
+import java.util.List;
 
 /**
  * Created by luobotao on 2016/4/11.
@@ -110,4 +106,17 @@ public interface UserService {
      * @param siteId
      */
     void delUsersBySiteId(String siteId);
+
+    /**
+     * 获取指定站点下的所有派件员
+     * @param companyId 公司Id
+     * @return
+     */
+    public List<User> findUserListByCompanyId(String companyId);
+    /**
+     * 获取指定站点下的所有派件员
+     * @param site 站点
+     * @return
+     */
+    public List<User> findUsersBySite(Site site);
 }

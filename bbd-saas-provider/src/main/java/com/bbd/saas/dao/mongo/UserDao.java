@@ -1,14 +1,15 @@
 package com.bbd.saas.dao.mongo;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.regex.Pattern;
-
+import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
+import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.UserQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
@@ -16,15 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.UserRole;
-import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.UserQueryVO;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
@@ -150,5 +145,13 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         Query<User> query = createQuery();
         query.filter("site",site);
         deleteByQuery(query);
+    }
+    public List<User> selectUserListByCompanyId(String companyId){
+        if(StringUtils.isBlank(companyId)){
+            return null;
+        }
+        Query<User> query = createQuery();
+        query.filter("companyId", companyId);
+        return find(query).asList();
     }
 }

@@ -240,6 +240,8 @@ public class SiteServiceImpl implements SiteService {
 		siteVo.setId(site.getId().toString());
 		siteVo.setAreaCode(site.getAreaCode());
 		siteVo.setName(site.getName());
+        siteVo.setLng(site.getLng());
+        siteVo.setLat(site.getLat());
 		return siteVo;
 	}
 

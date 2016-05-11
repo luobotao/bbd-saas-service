@@ -1,11 +1,10 @@
 package com.bbd.saas.dao.mysql;
 
-import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.models.PostmanUser;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
+import java.util.Map;
 
 
 public interface PostmanUserDao {
@@ -31,7 +30,7 @@ public interface PostmanUserDao {
     int selectIdByPhone(@Param("phone") String phone);
     /**
      * 根据phone获取对应的postmanUser
-     * @param phone
+     * @param postmanUser
      * @return List<PostmanUser>
      */
     Integer insertUser(PostmanUser postmanUser);
@@ -63,4 +62,19 @@ public interface PostmanUserDao {
      * @return 
      */
     int updatePostmanUserById(@Param("nickname") String nickname,@Param("id") Integer id);
+
+    /**
+     * 根据公司Id查询所有派件员的经纬度
+     * @param companyId 公司Id
+     * @return
+     */
+    public List<Map<String, Object>> selectLatAndLngByCompanyId(@Param("companyId") String companyId);
+
+    /**
+     * 根据Id集合查询所有派件员的经纬度
+     * @param ids id的集合
+     * @return
+     */
+    public List<Map<String, Object>> selectLatAndLngByIds(@Param("ids") List<Integer> ids);
+
 }
