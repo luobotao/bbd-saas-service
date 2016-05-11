@@ -85,5 +85,10 @@
             <ref bean="smsInfoDao"/>
         </property>
     </bean>
+    <bean id="orderLogService" class="com.bbd.saas.api.impl.mysql.OrderLogServiceImpl">
+        <property name="orderLogDao">
+            <ref bean="orderLogDao"/>
+        </property>
+    </bean>
     <!--    end mysql services   -->
 </beans>

@@ -227,20 +227,11 @@ public class UserManageController {
 			//快递员
 			postmanUser.setPostrole(0);
 
-			int ret = userMysqlService.insertUser(postmanUser);
-			System.out.println("idddd=="+postmanUser.getId());
-			if(kuser!=null && !kuser.getId().equals("")){
-				
-				//postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
-				int postmanuserId = userMysqlService.selectIdByPhone(userForm.getLoginName());
-				user = userService.findOne(kuser.getId().toString());
-				user.setPostmanuserId(postmanuserId);
-				kuser = userService.save(user);
-				return "true";
-			}else{
-				return "false";
-			}
-			
+			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
+			user = userService.findOne(kuser.getId().toString());
+			user.setPostmanuserId(postmanuserId);
+			userService.save(user);
+			return "true";
 		}
 	}
 	

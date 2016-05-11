@@ -57,6 +57,15 @@ public class SiteServiceImpl implements SiteService {
         return siteDao.findOne("areaCode", areaCode);
     }
 
+    /**
+     * 根据手机号查询站点
+     * @param phone
+     * @return
+     */
+    @Override
+    public Site findSiteByUserName(String phone) {
+        return siteDao.findOne("username", phone);
+    }
 
     /**
      * 根据站点状态与关键词进行站点分页查询
@@ -220,6 +229,12 @@ public class SiteServiceImpl implements SiteService {
 		}
 		return siteVoList;
 	}
+
+	@Override
+	public List<Site> findAllSiteList() {
+		return siteDao.find().asList();
+	}
+
 	private SiteVO siteToSiteVO(Site site){
 		SiteVO siteVo = new SiteVO();
 		siteVo.setId(site.getId().toString());

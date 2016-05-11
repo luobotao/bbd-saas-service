@@ -22,7 +22,7 @@ public interface PostmanUserService {
      * @param postmanUser
      * @return ret 成功或失败
      */
-    int insertUser(PostmanUser postmanUser);
+    PostmanUser insertUser(PostmanUser postmanUser);
     /**
      * 根据phone获取对应的postmanUser
      * @param phone
