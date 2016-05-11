@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="com.bbd.saas.mongoModels.User" %>
+<%@ page import="com.bbd.saas.enums.UserRole" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
@@ -18,6 +20,9 @@
 	</script>
 </head>
 <body>
+<% 
+User user = (User)request.getAttribute("user");
+%>
 <!-- S nav -->
 <nav class="navbar navbar-default b-navbar">
 	<div class="container-fluid">
@@ -49,7 +54,11 @@
 		<span class="cloud"><img src="<c:url value="/resources/images/cloud.png" />" /></span>
 		<div class="container">
 			<ul class="row">
-				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+				<% 
+					if(user.getRole()==UserRole.SITEMASTER){
+											
+				%>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
 					<a href="<c:url value="/?typ=arrive" />">
 						<div class="b-status-card">
 							<span><img src="<c:url value="/resources/images/arrive.png" />" alt="包裹到站" /></span>
@@ -57,47 +66,88 @@
 						</div>
 					</a>
 
-				</li>
-				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-					<a href="<c:url value="/?typ=asign" />">
-						<div class="b-status-card">
-							<span><img src="<c:url value="/resources/images/asign.png" />" alt="运单分派" /></span>
-							<h3>运单分派</h3>
-						</div>
-					</a>
-				</li>
-				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-					<a href="<c:url value="/?typ=error" />">
-						<div class="b-status-card">
-							<span><img src="<c:url value="/resources/images/error.png" />" alt="异常件处理" /></span>
-							<h3>异常件处理</h3>
-						</div>
-					</a>
-				</li>
-				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=asign" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/asign.png" />" alt="运单分派" /></span>
+								<h3>运单分派</h3>
+							</div>
+						</a>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=error" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/error.png" />" alt="异常件处理" /></span>
+								<h3>异常件处理</h3>
+							</div>
+						</a>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=query" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/query.png" />" alt="数据查询" /></span>
+								<h3>数据查询</h3>
+							</div>
+						</a>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=set" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/d_area.png" />" alt="配送区域" /></span>
+								<h3>配送区域</h3>
+							</div>
+						</a>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=user" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/set.png" />" alt="系统设置" /></span>
+								<h3>系统设置</h3>
+							</div>
+						</a>
+					</li>
+				
+				<% 
+					}
+					else{
+						
+				%>				
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
 					<a href="<c:url value="/?typ=query" />">
 						<div class="b-status-card">
 							<span><img src="<c:url value="/resources/images/query.png" />" alt="数据查询" /></span>
 							<h3>数据查询</h3>
 						</div>
 					</a>
-				</li>
-				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-					<a href="<c:url value="/?typ=set" />">
-						<div class="b-status-card">
-							<span><img src="<c:url value="/resources/images/d_area.png" />" alt="配送区域" /></span>
-							<h3>配送区域</h3>
-						</div>
-					</a>
-				</li>
-				<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-					<a href="<c:url value="/?typ=user" />">
-						<div class="b-status-card">
-							<span><img src="<c:url value="/resources/images/set.png" />" alt="系统设置" /></span>
-							<h3>系统设置</h3>
-						</div>
-					</a>
-				</li>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=arrive" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/n_capacity.png" />" alt="运力分布" /></span>
+								<h3>运力分布</h3>
+							</div>
+						</a>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=set" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/d_area.png" />" alt="配送区域" /></span>
+								<h3>配送区域</h3>
+							</div>
+						</a>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=user" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/set.png" />" alt="系统设置" /></span>
+								<h3>系统设置</h3>
+							</div>
+						</a>
+					</li>
+				<% 
+					}
+				%>									
 			</ul>
 		</div>
 
