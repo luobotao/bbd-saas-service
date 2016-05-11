@@ -2,20 +2,13 @@ package com.bbd.saas.utils;
 
 import com.bbd.saas.constants.Constants;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Dates {
@@ -1316,11 +1309,31 @@ public class Dates {
 		}
 		return rtn;
 	}
+    public static boolean isSameDay(Date date, Date another) {
+        if(date == null || another == null){
+           return false;
+        }
+        long diff = (date.getTime() - another.getTime())/(1000*60*60);
+        if(diff > -25 && diff < 25 ){
+            return true;
+        }
+        System.out.println("date.getTime()===" + date.getTime() + "  another.getTime()===" + another.getTime() + "  diff===" + diff);
+        return false;
+    }
+
 
     public static void main(String[] args) {
-    	List<Date> a = findDates(new Date(), 7);
+    	/*List<Date> a = findDates(new Date(), 7);
     	for(Date b:a){
     		System.out.println(b);
-    	}
+    	}*/
+
+        try {
+            int i = daysBetween(new Date(2016,5,11,01,01), new Date(2016,5,12,01,00));
+            System.out.println(i);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //isSameDay(new Date(), new Date(2016,5,12));
 	}
 }
