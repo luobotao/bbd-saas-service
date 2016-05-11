@@ -47,15 +47,8 @@ public class StatisticOrderNumByDay {
                                 if (expressList != null && expressList.size() > 0) {
                                     for (Express express : expressList) {
                                         if (Dates.isSameDay(express.getDateAdd(), new Date())){
-                                            OrderLog orderLog = new OrderLog();
-                                            orderLog.setAreaCode(order.getAreaCode());
-                                            orderLog.setOperTime(express.getDateAdd());
-                                            orderLog.setStatus(getStatusByRemark(express.getRemark()));
-                                            orderLog.setOrderNo(order.getOrderNo());
-                                            orderLog.setMailNum(order.getMailNum());
-                                            orderLogService.insert(orderLog);
+                                            saveOrderLog(site, order, express);
                                         }
-
                                     }
                                 }
                             }
@@ -68,13 +61,37 @@ public class StatisticOrderNumByDay {
         }
         logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。");
     }
+
+    private void  saveOrderLog(Site site, Order order, Express express){
+        OrderLog orderLog = new OrderLog();
+        orderLog.setAreaCode(order.getAreaCode());
+        orderLog.setOperTime(express.getDateAdd());
+        orderLog.setStatus(getStatusByRemark(express.getRemark()));
+        orderLog.setOrderNo(order.getOrderNo());
+        orderLog.setMailNum(order.getMailNum());
+        orderLog.setRemark(express.getRemark());
+        orderLog.setSiteName(site.getName());
+        orderLog.setResponser(site.getResponser());
+        orderLog.setProvince(site.getProvince());
+        orderLog.setCity(site.getCity());
+        orderLog.setArea(site.getArea());
+        orderLog.setAddress(site.getAddress());
+        orderLog.setUsername(site.getUsername());
+        orderLog.setCompanyId(site.getCompanyId());
+        orderLog.setCompanyName(site.getCompanyName());
+        orderLog.setCompanycode(site.getCompanycode());
+        orderLog.setLat(site.getLat());
+        orderLog.setLng(site.getLng());
+        orderLog.setDate_new(new Date());
+        orderLogService.insert(orderLog);
+    }
     /**
      * 根据remark获取状态值
      * 0-未到达站点，1-已到达站点，2-正在派送，3-已签收，4-已滞留，5-已拒收，6-转站, 7-已丢失,8-已取消
      * @param remark 物流备注
      * @return 状态值
      */
-    int getStatusByRemark(String remark) {
+    private int getStatusByRemark(String remark) {
         if(remark == null){
             return 0;
         }

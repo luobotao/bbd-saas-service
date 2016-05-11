@@ -3,24 +3,52 @@
 <mapper namespace="com.bbd.saas.dao.mysql.OrderLogDao">
     <resultMap id="baseResultMap" type="com.bbd.saas.models.OrderLog">
         <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="areaCode" property="areaCode" jdbcType="VARCHAR"/>
         <result column="orderNo" property="orderNo" jdbcType="VARCHAR"/>
         <result column="mailNum" property="mailNum" jdbcType="VARCHAR"/>
         <result column="operTime" property="operTime" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
-        <result column="areaCode" property="areaCode" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="siteName" property="siteName" jdbcType="VARCHAR"/>
+        <result column="responser" property="responser" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="companyId" property="companyId" jdbcType="VARCHAR"/>
+        <result column="companyName" property="companyName" jdbcType="VARCHAR"/>
+        <result column="companycode" property="companycode" jdbcType="VARCHAR"/>
+        <result column="lat" property="lat" jdbcType="VARCHAR"/>
+        <result column="lng" property="lng" jdbcType="VARCHAR"/>
+        <result column="date_new" property="date_new" jdbcType="TIMESTAMP"/>
     </resultMap>
     
     <sql id="baseColumnList">
     	id,
     	areaCode,
 		orderNo,
-		mailNum，
-	    date，
-		status
+		mailNum,
+	    operTime,
+		status,
+		remark,
+        siteName,
+        responser,
+        province,
+        city,
+        area,
+        address,
+        username,
+        companyId,
+        companyName,
+        companycode,
+        lat,
+        lng,
+        date_new
     </sql>
     <!-- 插入一条记录  开始  --> 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.OrderLog" >
-        INSERT INTO `OrderLog`(
+        INSERT INTO `order_log`(
         <include refid="baseColumnList"/>
         )
         VALUES (
@@ -29,13 +57,27 @@
 			#{orderNo},
 			#{mailNum},
 			#{operTime},
-			#{status}
+			#{status},
+            #{remark},
+            #{siteName},
+            #{responser},
+            #{province},
+            #{city},
+            #{area},
+            #{address},
+            #{username},
+            #{companyId},
+            #{companyName},
+            #{companycode},
+            #{lat},
+            #{lng},
+            #{date_new}
         )
     </insert>
     <!-- 插入一条记录  结束  -->
     <!-- 根据站点和时间统计不同状态的订单数目  开始   -->
     <select id="selectCountByAreaCodeAndTime" resultType="java.util.HashMap">
-        SELECT `status`, COUNT(*) num FROM `OrderLog`
+        SELECT `status`, COUNT(*) num FROM `order_log`
         <where>
             <if test="areaCode != null and areaCode != ''" >
                 areaCode = #{areaCode }
