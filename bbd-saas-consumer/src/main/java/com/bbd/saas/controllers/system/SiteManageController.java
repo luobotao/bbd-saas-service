@@ -10,6 +10,7 @@ import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.enums.SiteTurnDownReasson;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.SiteForm;
@@ -101,26 +102,58 @@ public class SiteManageController {
 	@RequestMapping(value="/saveSite",method=RequestMethod.POST)
 	public boolean saveSite(HttpServletRequest request,@Valid SiteForm siteForm, BindingResult result, Model model, RedirectAttributes redirectAttrs) throws IOException {
 		User userNow = adminService.get(UserSession.get(request));
+		if(result.hasErrors()){
+			return false;
+		}
 		Site site = new Site();
+		User user = new User();
+		PostmanUser postmanUser = new PostmanUser();
+		if(StringUtils.isNotBlank(siteForm.getAreaCode())){
+			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
+			user = userService.findUserByLoginName(site.getUsername());
+			postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
+		}else{
+			site.setDateAdd(new Date());
+			String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity() + site.getArea());
+			site.setAreaCode(areaCode);
+			site.setUsername(siteForm.getPhone());
+
+			user.setDateAdd(new Date());
+
+			postmanUser.setHeadicon("");
+			postmanUser.setCardidno("");
+			postmanUser.setAlipayAccount("");
+			postmanUser.setToken("");
+			postmanUser.setBbttoken("");
+			postmanUser.setLat(0d);
+			postmanUser.setLon(0d);
+			postmanUser.setHeight(0d);
+			postmanUser.setAddr("");
+			postmanUser.setAddrdes("");
+			postmanUser.setShopurl("");
+			postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
+			postmanUser.setSpreadticket("");
+			postmanUser.setDateNew(new Date());
+			postmanUser.setPoststatus(1);//默认为1
+			postmanUser.setPostrole(0);
+			//staffid就是该用户的手机号
+			postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
+		}
 		BeanUtils.copyProperties(siteForm,site);
-		site.setDateAdd(new Date());
-		site.setDateUpd(new Date());
-		site.setStatus(SiteStatus.APPROVE);
-		String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity() + site.getArea());
-		site.setAreaCode(areaCode);
-		site.setUsername(siteForm.getPhone());
+
 		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
 		if(postcompany!=null){
 			site.setCompanyId(userNow.getCompanyId());
 			site.setCompanyName(postcompany.getCompanyname());
 			site.setCompanycode(postcompany.getCompanycode());
 		}
+		site.setDateUpd(new Date());
+		site.setStatus(SiteStatus.APPROVE);
 		site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
 		Key<Site> siteKey = siteService.save(site);//保存站点
 		setLatAndLng(siteKey.getId().toString());//设置经纬度
-		redirectAttrs.addAttribute("siteid",siteKey.getId().toString());
 		//向用户表插入登录用户
-		User user = new User();
+
 		user.setLoginName(site.getUsername());
 		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
@@ -130,35 +163,21 @@ public class SiteManageController {
 		user.setCompanyId(site.getCompanyId());
 		user.setDateUpdate(new Date());
 		user.setEmail(siteForm.getEmail());
-		userService.save(user);//更新用户
+
 		//向mysql同步用户信息
-		PostmanUser postmanUser = new PostmanUser();
 		postmanUser.setNickname(user.getRealName().replaceAll(" ", ""));
-		postmanUser.setHeadicon("");
-		postmanUser.setCardidno("");
 		postmanUser.setCompanyname(user.getSite().getCompanyName()!=null?user.getSite().getCompanyName():"");
 		postmanUser.setCompanyid(user.getSite().getCompanyId()!=null?Integer.parseInt(user.getSite().getCompanyId()):0);
-
 		postmanUser.setSubstation(user.getSite().getName());
-		postmanUser.setAlipayAccount("");
-		postmanUser.setToken("");
-		postmanUser.setBbttoken("");
-		postmanUser.setLat(0d);
-		postmanUser.setLon(0d);
-		postmanUser.setHeight(0d);
-		postmanUser.setAddr("");
-		postmanUser.setAddrdes("");
-		postmanUser.setShopurl("");
-		postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
-		postmanUser.setSpreadticket("");
 		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
-		//staffid就是该用户的手机号
-		postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
-		postmanUser.setDateNew(new Date());
 		postmanUser.setDateUpd(new Date());
-		postmanUser.setPoststatus(1);//默认为1
-		postmanUser.setPostrole(0);
-		userMysqlService.insertUser(postmanUser);
+		if(StringUtils.isNotBlank(siteForm.getAreaCode())){//修改
+			userMysqlService.updateByPhone(postmanUser);
+		}else{//新增
+			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
+			user.setPostmanuserId(postmanuserId);
+		}
+		userService.save(user);//更新用户
 		return true;
 	}
 	/**
@@ -196,10 +215,16 @@ public class SiteManageController {
      * @return
      */
 	@ResponseBody
+	@RequestMapping(value = "/getSiteByAreaCode", method = RequestMethod.GET)
+	public Site getSiteByAreaCode(HttpServletRequest request, String areaCode) {
+		return siteService.findSiteByAreaCode(areaCode);
+	}
+	@ResponseBody
 	@RequestMapping(value = "/validSite", method = RequestMethod.GET)
-	public boolean validSite(HttpServletRequest request, String siteId) {
-		siteService.validSite(siteId);//审核通过站点
-		setLatAndLng(siteId);//设置经纬度
+	public boolean validSite(HttpServletRequest request, String phone) {
+		Site site = siteService.findSiteByUserName(phone);
+		siteService.validSite(site.getId().toHexString());//审核通过站点
+		setLatAndLng(site.getId().toHexString());//设置经纬度
 		return true;
 	}
 
@@ -227,24 +252,25 @@ public class SiteManageController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/turnDownSite", method = RequestMethod.GET)
-	public boolean turnDownSite(HttpServletRequest request, String siteId,String message) {
-		Site site = siteService.findSite(siteId);
+	public boolean turnDownSite(HttpServletRequest request, String phone,Integer turnDownReason,String otherMessage) {
+		Site site = siteService.findSiteByUserName(phone);
 		site.setMemo( "抱歉，您提交的信息未通过审核。您可修改后重新提交。");
 		site.setStatus(SiteStatus.TURNDOWN);
-		site.setTurnDownMessage(message);
+		site.setTurnDownReasson(SiteTurnDownReasson.status2Obj(turnDownReason));
+		site.setOtherMessage(otherMessage);
 		site.setDateUpd(new Date());
 		siteService.save(site);
 		return true;
 	}
 	/**
      * 停用站点
-     * @param siteId
+     * @param areaCode
      * @return
      */
 	@ResponseBody
 	@RequestMapping(value = "/stopSite", method = RequestMethod.GET)
-	public boolean stopSite(String siteId) {
-		Site site = siteService.findSite(siteId);
+	public boolean stopSite(String areaCode) {
+		Site site = siteService.findSiteByAreaCode(areaCode);
 		site.setStatus(SiteStatus.INVALID);
 		site.setDateUpd(new Date());
 		siteService.save(site);
@@ -252,13 +278,13 @@ public class SiteManageController {
 	}
 	/**
      * 启用站点
-     * @param siteId
+     * @param areaCode
      * @return
      */
 	@ResponseBody
 	@RequestMapping(value = "/startSite", method = RequestMethod.GET)
-	public boolean startSite(String siteId) {
-		Site site = siteService.findSite(siteId);
+	public boolean startSite(String areaCode) {
+		Site site = siteService.findSiteByAreaCode(areaCode);
 		site.setStatus(SiteStatus.APPROVE);
 		site.setDateUpd(new Date());
 		siteService.save(site);
@@ -267,14 +293,15 @@ public class SiteManageController {
 
 	/**
 	 * 删除站点
-	 * @param siteId
+	 * @param areaCode
      * @return
      */
 	@ResponseBody
 	@RequestMapping(value = "/delSite", method = RequestMethod.GET)
-	public boolean delSite(String siteId) {
-		userService.delUsersBySiteId(siteId);//删除此站点下的所有用户
-		siteService.delSiteBySiteId(siteId);//删除站点信息
+	public boolean delSite(String areaCode) {
+		Site site = siteService.findSiteByAreaCode(areaCode);
+		userService.delUsersBySiteId(site.getId().toHexString());//删除此站点下的所有用户
+		siteService.delSiteBySiteId(site.getId().toHexString());//删除站点信息
 		return true;
 	}
 

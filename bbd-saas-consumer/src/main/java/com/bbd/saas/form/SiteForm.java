@@ -8,9 +8,10 @@ public class SiteForm {
 	private String phone;    //用户的登录手机号
 	@NotEmpty
 	private String name;         //站点名称
-	@NotEmpty
+
 	private String companyId;    //公司ID
 	private String companyName;    //公司名称
+	private String areaCode;    //区域码
 	@NotEmpty
 	private String responser;    //负责人
 	@NotEmpty
@@ -99,5 +100,13 @@ public class SiteForm {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
 	}
 }

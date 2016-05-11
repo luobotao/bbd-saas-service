@@ -3,6 +3,7 @@
 <%@ page import="com.bbd.saas.mongoModels.Site" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.SiteStatus" %>
+<%@ page import="com.bbd.saas.enums.SiteTurnDownReasson" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <html>
@@ -80,8 +81,7 @@
                                 </td>
                                 <td><%=site.getAreaCode()%>
                                 </td>
-                                <td><%=site.getProvince()%>-<%=site.getCity()%>
-                                    -<%=site.getArea()%> <%=site.getAddress()%>
+                                <td><%=site.getProvince()%>-<%=site.getCity()%>-<%=site.getArea()%> <%=site.getAddress()%>
                                 </td>
                                 <td><%=site.getResponser()%>
                                 </td>
@@ -96,34 +96,29 @@
                                     <%
                                         if (SiteStatus.WAIT == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);" data-toggle='modal' data-target='#validModal'
-                                       onclick="setSiteId('<%=site.getId() %>')" class="orange">通过</a>
-                                    <a href="javascript:void(0);" data-toggle='modal' data-target='#turnDownModal'
-                                       onclick="setSiteId('<%=site.getId() %>')" class="orange">驳回</a>
+                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>')" class="orange j-pass">通过</a>
+                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>')" class="orange ml6 j-reject">驳回</a>
                                     <%
                                         }
                                         if (SiteStatus.TURNDOWN == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);"
-                                       onclick="searchUser('<%=site.getId() %>','')" class="orange ">查看驳回原因</a>
+                                    <a href="javascript:void(0);" onclick="getTurnDownMessage('<%=site.getTurnDownReasson() %>','<%=site.getTurnDownReasson().getMessage() %>','<%=site.getOtherMessage() %>')" class="orange ml6 j-rejectR">查看驳回原因</a>
                                     <%
                                         }
                                         if (SiteStatus.APPROVE == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);" onclick="searchUser('<%=site.getId() %>','')"
-                                       class="orange">修改</a>
+                                    <a href="javascript:void(0);" onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')"
+                                       class="orange j-siteM">修改</a>
                                     <a href="javascript:void(0);" data-toggle='modal' data-target='#stopModal'
-                                       onclick="setSiteId('<%=site.getId() %>')" class="orange">停用</a>
+                                       onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange">停用</a>
                                     <%
                                         }
                                         if (SiteStatus.INVALID == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);" onclick="searchUser('<%=site.getId() %>','')"
-                                       class="orange">修改</a>
                                     <a href="javascript:void(0);" data-toggle='modal' data-target='#startModal'
-                                       onclick="setSiteId('<%=site.getId() %>')" class="orange">启用</a>
+                                       onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange">启用</a>
                                     <a href="javascript:void(0);" data-toggle='modal' data-target='#delModal'
-                                       onclick="setSiteId('<%=site.getId() %>')" class="orange ml6">删除</a>
+                                       onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange ml6">删除</a>
                                     <%
                                         }
                                     %>
@@ -164,6 +159,7 @@
         <c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data"
               class="form-inline form-inline-n">
+            <input type="hidden" id="areaCode" name="areaCode"/>
             <div class="modal-header b-modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title tc j-cg-txt">新建</h4>
@@ -172,7 +168,7 @@
                 <ul class="b-n-crt b-n-crt-new form-inline-n  y-scroll">
                     <li class="filter clearfix">
                         <i>站点名称：</i>
-                        <input type="text" class="form-control form-bod wp80" id="name"/>
+                        <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
                         <em class="tip-info" id="nameP" style="display:none;">请输入站点名称</em>
                     </li>
                     <li class="filter" id="city_4">
@@ -234,56 +230,86 @@
 <!--E 新建-->
 
 <!--全局的siteId-->
-<input type="hidden" id="siteIdForModal">
+<input type="hidden" id="areaCodeForModal">
+<input type="hidden" id="phoneForModal">
+
+
+
 <!--S 通过-->
-<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="validModalLabel" id="validModal"
-     aria-hidden="true">
-    <div class="modal-dialog b-modal-dialog">
+<div class="j-pass-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog b-modal-dialog middleS" role="document">
         <div class="modal-content">
+
             <div class="modal-header b-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h4 class="modal-title userclass tc"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title tc">通过</h4>
             </div>
             <div class="modal-body b-modal-body">
-                <ul class="b-n-crt">
-                    <li>
-                        确认通过？
-                    </li>
-                </ul>
-                <div class="row mt20">
-                    <span class="col-md-12"><a href="javascript:void(0)" id="conFirmForValidBtn" class="sbtn sbtn2 l">保存</a></span>
+                <em class="f16">确认通过吗？</em>
+                <div class="clearfix mt20">
+                    <a href="javascript:void(0);" id="conFirmForValidBtn" class="sbtn sbtn2 l col-md-12">确认</a>
                 </div>
+
             </div>
+
         </div>
     </div>
 </div>
 <!--E 通过-->
 <!--S 驳回-->
-<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="turnDownModalLabel" id="turnDownModal"
-     aria-hidden="true">
-    <div class="modal-dialog b-modal-dialog">
+<div class="j-reject-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog b-modal-dialog middleS" role="document">
         <div class="modal-content">
+
             <div class="modal-header b-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h4 class="modal-title userclass tc"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title tc">驳回</h4>
             </div>
-            <div class="modal-body b-modal-body">
-                <ul class="b-n-crt">
-                    <li>
-                        确认驳回？
-                    </li>
-                    <input type="text" id="message" name="message" class="form-control form-bod" placeholder="驳回原因"/>
-                </ul>
-                <div class="row mt20">
-                    <span class="col-md-12"><a href="javascript:void(0)" id="conFirmForTurnDownBtn" class="sbtn sbtn2 l">保存</a></span>
+            <div class="modal-body b-modal-body form-inline form-inline-n">
+                <div class="form-group tline">
+                    <label>驳回原因：</label>
+                    <select class="form-control form-con-new j-sel-val" id="turnDownReason">
+                        <%=SiteTurnDownReasson.Stas2HTML(1)%>
+                    </select>
+                    <em class="j-dn"><input type="text" class="form-control mt10 mlP " id="otherMessage"/></em>
                 </div>
+                <div class="row mt20">
+                    <div class="col-md-6">
+                        <a href="javascript:void(0);" data-dismiss="modal" class="sbtn sbtn2 l">取消</a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="javascript:void(0);" id="conFirmForTurnDownBtn" class="sbtn sbtn2 l">确认</a>
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
     </div>
 </div>
 <!--E 驳回-->
+<!--S 查看驳回原因-->
+<div class="j-rejectR-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog b-modal-dialog middleS" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header b-modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title tc">驳回原因</h4>
+            </div>
+            <div class="modal-body b-modal-body">
+                <em class="f16" id="messageEM"></em>
+                <div class="clearfix mt20">
+                    <a href="javascript:void(0);" class="sbtn sbtn2 l col-md-12">确认</a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--E 查看驳回原因-->
 <!--S 停用-->
 <div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="stopModalLabel" id="stopModal"
      aria-hidden="true">
@@ -417,27 +443,27 @@
         var temp = "";
         row += "<td>" + data.name + "</td>";
         row += "<td>" + data.areaCode + "</td>";
-        row += "<td>" + data.province +"-"+ data.city +"-"+ data.area +"-"+ data.address + "</td>";
+        row += "<td>" + data.province +"-"+ data.city +"-"+ data.area +""+ data.address + "</td>";
         row += "<td>" + data.responser + "</td>";
         row += "<td>" + data.username + "</td>";
         row += "<td>" + data.email + "</td>";
         row += "<td>" + data.statusMessage + "</td>";
         row += "<td>";
         if(data.status=="<%=SiteStatus.WAIT%>" ){
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#validModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>通过</a>";
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#turnDownModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>驳回</a>";
+            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"')\" class='orange'>通过</a> ";
+            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"')\" class='orange'>驳回</a>";
         }
         if(data.status=="<%=SiteStatus.TURNDOWN%>" ){
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#validModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>查看驳回原因</a>";
+            row += "<a href='javascript:void(0);' onclick=\"getTurnDownMessage('"+data.turnDownReasson+"','"+data.turnDownReason.message+"','"+data.otherMessage+"')\" class='orange j-rejectR'>查看驳回原因</a>";
         }
         if(data.status=="<%=SiteStatus.APPROVE%>" ){
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#validModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>修改</a>";
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#stopModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>停用</a>";
+            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM'>修改</a> ";
+            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#stopModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>停用</a>";
         }
         if(data.status=="<%=SiteStatus.INVALID%>" ){
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#validModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>修改</a>";
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#startModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>启用</a>";
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#delModal' onclick=\"setSiteId('"+data.id+"')\" class='orange'>删除</a>";
+            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM'>修改</a> ";
+            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#startModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>启用</a> ";
+            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#delModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>删除</a>";
         }
         row += "</td></tr>";
         return row;
@@ -547,7 +573,7 @@
                         $(".j-siteM-pop").modal("hide");
                         gotoPage(0);
                     }else{
-                        alert( "保存用户失败");
+                        alert( "保存站点失败");
                     }
 
                 },
@@ -580,7 +606,7 @@
             url: '<c:url value="/system/siteManage/validSite" />',
             dataType: "text",
             data: {
-                "siteId": $("#siteIdForModal").val()
+                "phone": $("#phoneForModal").val()
             },
             success: function (data) {
                 if (data == 'true') {
@@ -598,8 +624,9 @@
             url: '<c:url value="/system/siteManage/turnDownSite" />',
             dataType: "text",
             data: {
-                "siteId": $("#siteIdForModal").val(),
-                "message": $("#message").val()
+                "phone": $("#phoneForModal").val(),
+                "turnDownReason": $("#turnDownReason").val(),
+                "otherMessage": $("#otherMessage").val()
             },
             success: function (data) {
                 if (data == 'true') {
@@ -617,7 +644,7 @@
             url: '<c:url value="/system/siteManage/stopSite" />',
             dataType: "text",
             data: {
-                "siteId": $("#siteIdForModal").val()
+                "areaCode": $("#areaCodeForModal").val()
             },
             success: function (data) {
                 if (data == 'true') {
@@ -635,7 +662,7 @@
             url: '<c:url value="/system/siteManage/startSite" />',
             dataType: "text",
             data: {
-                "siteId": $("#siteIdForModal").val()
+                "siteId": $("#areaCodeForModal").val()
             },
             success: function (data) {
                 if (data == 'true') {
@@ -653,7 +680,7 @@
             url: '<c:url value="/system/siteManage/delSite" />',
             dataType: "text",
             data: {
-                "siteId": $("#siteIdForModal").val()
+                "siteId": $("#areaCodeForModal").val()
             },
             success: function (data) {
                 if (data == 'true') {
@@ -668,205 +695,65 @@
     });
 
     //赋值
-    function setSiteId(siteId){
-        $('#siteIdForModal').val(siteId);
+    function setAreaCode(areaCode){
+        $('#areaCodeForModal').val(areaCode);
+    }
+    //赋值
+    function setPhone(phone){
+        $('#phoneForModal').val(phone);
+    }
+    //展示驳回原因
+    function getTurnDownMessage(turnDownResson, turnDownRessonMessage, message) {
+        if (turnDownResson == '<%=SiteTurnDownReasson.OTHER%>') {
+            $("#messageEM").html(message);
+        } else {
+            $("#messageEM").html(turnDownRessonMessage);
+        }
     }
 
 
-    function saveUserBtn() {
-
-        var url = "";
-        //operate这个隐藏域就是为了区别这个操作时修改还是新建
-        var getSign = document.getElementById("operate").value;
-        var flag = true;
-        var checkSign = false;
-        var loginNameSign = false;
-        var ataffidSign = false;
-        var returnmess = "";
-        if (getSign == 'edit') {
-            url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
-        } else {
-            url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
-        }
-        //var roleId = $("#roleId").val();
-        var realName = $("#realName").val();
-        realName = realName.replace(/\ +/g, "");
-        var loginName = $("#loginName").val();
-        loginName = loginName.replace(/\ +/g, "");
-        /* var staffid = $("#staffid").val();
-         staffid=staffid.replace(/\ +/g,"");
-         var loginPass = $("#loginPass").val();
-         loginPass=loginPass.replace(/\ +/g,"");
-         var confirmPass = $("#confirmPass").val();
-         confirmPass=confirmPass.replace(/\ +/g,""); */
-        var tel_reg = /^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
-        //var loginpasstemp = true;
-        //var confirmpasstemp = true;
-        /* if (roleId=="-1") {
-         $("#roleIdP").attr("style","color:red");
-         flag = false;
-         }else{
-         $("#roleIdP").attr("style","display:none");
-         } */
-        if (!loginName) {
-            $("#loginNameP").attr("style", "color:red");
-            flag = false;
-        } else {
-            $("#loginNameP").attr("style", "display:none");
-        }
-        if (checkLoginName(loginName)) {
-            //returnmess = '该手机号已存在，请重新输入！';
-            flag = false;
-            checkSign = true;
-        }
-        /* if(checkStaffid(staffid)){
-         returnmess = '该站点下的工号已存在，请重新输入！';
-         flag = false;
-         checkSign = true;
-         staffidSign = true;
-         } */
-        if (!checkMobile(loginName)) {//!tel_reg.test(loginName)
-            $("#loginNameP").text("请重新输入11位手机号!");
-            $("#loginNameP").attr("style", "color:red");
-            flag = false;
-        } else {
-            $("#loginNameP").attr("style", "display:none");
-        }
-        if (!realName) {
-            $("#realNameP").attr("style", "color:red");
-            flag = false;
-        } else {
-            $("#realNameP").attr("style", "display:none");
-        }
-        /*if (!staffid) {
-         $("#staffidP").attr("style","color:red");
-         flag = false;
-         }else{
-         $("#staffidP").attr("style","display:none");
-         }
-         if (!loginPass) {
-         $("#loginpassP").attr("style","color:red");
-         flag = false;
-         loginpasstemp = false;
-         }else{
-         $("#loginpassP").attr("style","display:none");
-         }
-         if (!confirmPass) {
-         $("#confirmPassP").attr("style","color:red");
-         flag = false;
-         confirmpasstemp = false;
-         }else{
-         $("#confirmPassP").attr("style","display:none");
-         }
-         if(loginpasstemp && confirmpasstemp && loginPass==confirmPass){
-         $("#confirmPassP").attr("style","display:none");
-         }else{
-         $("#confirmPassP").attr("style","color:red");
-         flag = false;
-         } */
-        if (flag) {
-
-            console.log("succeful , submit");
-            $("#userForm").ajaxSubmit({
-                type: 'post',
-                url: url,
-                success: function (data) {
-                    if (data == "true") {
-
-                        if (getSign == 'create') {
-                            //alert("保存用户成功");
-                            $(".j-user-pop").modal("hide");
-                            //document.getElementById("userForm").reset();
-                        } else {
-                            alert("修改用户成功");
-                            $(".j-user-pop").modal("hide");
-                            //document.getElementById("staffidTemp").value = staffid;
-                        }
-
-                        gotoPage(0);
-                    } else {
-                        alert("保存用户失败");
-                    }
-
-                },
-                error: function (JsonHttpRequest, textStatus, errorThrown) {
-                    //alert( "服务器异常!");
-                    if (window.top == window.self) {//不存在父页面
-                        window.location.href = "<c:url value="/login" />"
-                    } else {
-                        window.top.location.href = "<c:url value="/login" />"
-                    }
-                }
-            });
-        } else if (checkSign) {
-            //alert(returnmess);
-            //$("#loginNameP").text("手机号已存在，请重新输入11位手机号!");
-            $("#loginNameP").attr("style", "color:red");
-            return false;
-        } else {
-            //alert("有非法内容，请检查内容合法性！");
-            return false;
-        }
-
-    }
-
-
-    function searchUser(id, loginName) {
-        $('.userclass').html('修改');
+    function getSiteByAreaCode(areaCode) {
+        $('#areaCodeForModal').val(areaCode);
         $.ajax({
             type: "GET",
-            url: '<c:url value="/userManage/getOneUser" />',
+            url: '<c:url value="/system/siteManage/getSiteByAreaCode" />',
             data: {
-                "id": id,
-                "loginName": loginName
+                "areaCode": areaCode
             },
+            dataType: "json",
             success: function (data) {
                 if (data != null) {
-                    $("#loginNameP").attr("style", "display:none");
-                    $("#staffidP").attr("style", "display:none");
-                    document.getElementById("userForm").reset();
-                    $("#realName").val(data.realName);
-                    $("#loginName").val(data.loginName);
-                    $("#staffid").val(data.staffid);
-                    $("#roleId").val(data.roleStatus);
-                    $("#loginPass").val(data.passWord);
-                    $("#confirmPass").val(data.passWord);
-                    $("#loginName").attr("readonly", true);
-                    //document.getElementById("sign").value="edit";
-                    document.getElementById("loginNameTemp").value = data.loginName;
-                    document.getElementById("staffidTemp").value = data.staffid;
-                    document.getElementById("operate").value = "edit";
+                    document.getElementById("siteForm").reset();
+                    $("#areaCode").val(data.areaCode);
+                    $("#name").val(data.name);
+                    $("#responser").val(data.responser);
+                    $("#email").val(data.email);
+                    $("#province").val(data.province);
+                    $("#city").val(data.city);
+                    $("#area").val(data.area);
+                    $("#address").val(data.address);
+                    $("#phone").val(data.username);
+                    $("input[name='phone']").attr("readonly","readonly")
+                    defprov = $("#province").val();
+                    defcity = $("#city").val();
+                    defdist = $("#area").val();
+                    $("#city_4").citySelect({
+                        prov:defprov,
+                        city:defcity,
+                        dist:defdist,
+                        nodata: "none"
+                    });
+
                 }
             },
             error: function () {
-                //alert("异常！");
-                //location.href = '<c:url value="/login" />';
-                if (window.top == window.self) {//不存在父页面
-                    window.location.href = "<c:url value="/login" />"
-                } else {
-                    window.top.location.href = "<c:url value="/login" />"
-                }
+
             }
         });
 
 
     }
 
-
-    function restUserModel() {
-        $('.userclass').html('新建');
-        document.getElementById("userForm").reset();
-        $("#loginName").attr("readonly", false);
-        $("#roleIdP").attr("style", "display:none");
-        $("#realNameP").attr("style", "display:none");
-        $("#loginNameP").text("请正确输入11位手机号");
-        $("#staffidP").text("请输入员工ID");
-        $("#staffidP").attr("style", "display:none");
-        $("#loginNameP").attr("style", "display:none");
-        $("#loginpassP").attr("style", "display:none");
-        $("#confirmPassP").attr("style", "display:none");
-        document.getElementById("operate").value = "create";
-    }
 </script>
 </body>
 </html>

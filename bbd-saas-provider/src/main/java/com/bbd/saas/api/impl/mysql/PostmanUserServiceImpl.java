@@ -65,8 +65,9 @@ public class PostmanUserServiceImpl implements PostmanUserService {
      * @param postmanUser
      * @return ret 成功或失败
      */
-	public int insertUser(PostmanUser postmanUser){
-		return postmanUserDao.insertUser(postmanUser);
+	public PostmanUser insertUser(PostmanUser postmanUser){
+		postmanUserDao.insertUser(postmanUser);
+		return postmanUser;
 	}
 	
 	/**

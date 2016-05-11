@@ -1,6 +1,7 @@
 package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.enums.SiteTurnDownReasson;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
@@ -36,7 +37,8 @@ public class Site implements Serializable {
     private String companycode;      //所属公司编码
     private SiteStatus status;       //状态
     private String memo;       //备注
-    private String turnDownMessage;       //驳回原因
+    private SiteTurnDownReasson turnDownReasson;       //驳回原因
+    private String otherMessage;       //其他原因
     private String lat;         //纬度
     private String lng;         //经度
     private String deliveryArea;//配送範圍
@@ -230,12 +232,20 @@ public class Site implements Serializable {
         this.companycode = companycode;
     }
 
-    public String getTurnDownMessage() {
-        return turnDownMessage;
+    public SiteTurnDownReasson getTurnDownReasson() {
+        return turnDownReasson;
     }
 
-    public void setTurnDownMessage(String turnDownMessage) {
-        this.turnDownMessage = turnDownMessage;
+    public void setTurnDownReasson(SiteTurnDownReasson turnDownReasson) {
+        this.turnDownReasson = turnDownReasson;
+    }
+
+    public String getOtherMessage() {
+        return otherMessage;
+    }
+
+    public void setOtherMessage(String otherMessage) {
+        this.otherMessage = otherMessage;
     }
 
     public String getStatusMessage() {

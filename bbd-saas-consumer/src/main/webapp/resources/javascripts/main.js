@@ -181,7 +181,7 @@ $(function () {
         $(".j-cg-txt").html(rvstxt);
     });
     $(".j-sel-val").click(function(){
-        if($(this).val() == 4){
+        if($(this).val() == 5){
             $(".j-dn").show();
         }else{
             $(".j-dn").hide();

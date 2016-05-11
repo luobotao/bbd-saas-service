@@ -40,7 +40,12 @@ public interface SiteService {
      * 2016年4月19日上午10:29:29
      */
     Site findSiteByAreaCode(String areaCode);
-
+    /**
+     * 根据手机号查询站点
+     * @param phone
+     * @return
+     */
+    Site findSiteByUserName(String phone);
     /**
      * Description: 查询同一公司下除站点site的其他所有站点的VO对象
      * @param selfSite 站点
@@ -68,9 +73,9 @@ public interface SiteService {
 
     /**
      * 将此站点审核通过
-     * @param siteId
+     * @param areaCode
      */
-    void validSite(String siteId);
+    void validSite(String areaCode);
 
     /**
      * 根据公司ID获取该公司下的所有站点
@@ -86,4 +91,6 @@ public interface SiteService {
      * @auth liyanlei
      */
     List<SiteVO> findAllSiteVOByCompanyId(String companyId);
+
+
 }
