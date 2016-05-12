@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +117,7 @@ public class UserManageController {
 			}
 			userPage = userService.findUserList(pageModel,userQueryVO,site);
 		}else{//站长
+			userQueryVO.roleId=UserRole.SENDMEM.toString();
 			userPage = userService.findUserList(pageModel,userQueryVO,userNow.getSite());
 		}
 
@@ -149,28 +151,17 @@ public class UserManageController {
      */
 	@ResponseBody
 	@RequestMapping(value="saveUser", method=RequestMethod.POST)
-	public String saveUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model,
-			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
-		/*String realName = "";
-		
-		try {
-			realName=new String(userForm.getRealName().getBytes("iso-8859-1"),"utf-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
+	public String saveUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model) throws IOException {
 		User getuser = adminService.get(UserSession.get(request));
 		//验证该loginName在user表中是否已存在
 		User loginuser = userService.findUserByLoginName(userForm.getLoginName());
-		//验证该在同一个站点下staffid是否已存在
-		//User staffiduser = userService.findOneBySiteByStaffid(getuser.getSite(), userForm.getStaffid());
+		//验证在同一个站点下staffid是否已存在
 		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
 		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
-		System.out.println("ssss");
 		Map<String, Object> map = new HashMap<String, Object>();
-	    java.util.Date dateAdd = new java.util.Date();
+	    Date dateAdd = new Date();
 		User user = new User();
+		user.setCompanyId(getuser.getCompanyId());
 		user.setRealName(userForm.getRealName().replaceAll(" ", ""));
 		user.setLoginName(userForm.getLoginName().replaceAll(" ", ""));
 		//user.setPhone(userForm.getPhone());
@@ -179,17 +170,15 @@ public class UserManageController {
 		user.setOperate(getuser);
 		//staffid就是该用户的手机号
 		user.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
-		user.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
+		user.setRole(UserRole.obj2UserRole(userForm.getRoleId()));
 		user.setDateAdd(dateAdd);
 		user.setDateUpdate(dateAdd);
 		user.setUserStatus(UserStatus.status2Obj(1));
-		System.out.println("============="+user.getUserStatus().getStatus());
-		
+
 		if((loginuser!=null && !loginuser.getId().equals("")) || postmanUser!=null && postmanUser.getId()!=null){
 			////loginName在user表中已存在
 			return "false";
-			
-		}else{ 
+		}else{
 			//loginName在user表中不存在
 			Key<User> kuser = userService.save(user);
 			postmanUser = new PostmanUser();
@@ -217,13 +206,6 @@ public class UserManageController {
 			postmanUser.setDateNew(dateAdd);
 			postmanUser.setDateUpd(dateAdd);
 			postmanUser.setPoststatus(1);//默认为1
-			/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
-				//快递员
-				postmanUser.setPostrole(0);
-			}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
-				//站长
-				postmanUser.setPostrole(4);
-			}*/
 			//快递员
 			postmanUser.setPostrole(0);
 
@@ -244,67 +226,35 @@ public class UserManageController {
 	@RequestMapping(value="editUser", method=RequestMethod.POST)
 	public String editUser(HttpServletRequest request,@Valid UserForm userForm, BindingResult result,Model model,
 			RedirectAttributes redirectAttrs,HttpServletResponse response) throws IOException {
-		System.out.println("ssss");
 		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
-		String retSign = "";
-		PostmanUser getpostmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName()); 
-		/*String realName = "";
-		
-		try {
-			realName=new String(userForm.getRealName().getBytes("iso-8859-1"),"utf-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		User getuser = adminService.get(UserSession.get(request));
+		User currentUser = adminService.get(UserSession.get(request));
 		User olduser = userService.findUserByLoginName(userForm.getLoginNameTemp());
-		
+		olduser.setCompanyId(currentUser.getCompanyId());
 		Map<String, Object> map = new HashMap<String, Object>();
-	    java.util.Date dateUpdate = new java.util.Date();
-		User user = new User();
-		logger.info(userForm.getLoginNameTemp());
+	    Date dateUpdate = new Date();
 		olduser.setRealName(userForm.getRealName().replaceAll(" ", ""));
-		//olduser.setLoginName(userForm.getLoginName());
-		//olduser.setPhone(userForm.getPhone());
-		//olduser.setStaffid(userForm.getStaffid().replaceAll(" ", ""));
 		olduser.setPassWord(userForm.getLoginPass());
-		if(!olduser.getId().equals(getuser.getId())){
+		if(!olduser.getId().equals(currentUser.getId())){
 			//如果修改的用户为站长且修改的用户就是当前登录用户的话，不执行olduser.setOperate(getuser);
-			olduser.setOperate(getuser);
+			olduser.setOperate(currentUser);
 		}
-		olduser.setRole(UserRole.status2Obj(Integer.parseInt(userForm.getRoleId())));
+		olduser.setRole(UserRole.obj2UserRole(userForm.getRoleId()));
 		olduser.setDateUpdate(dateUpdate);
-		
-		Key<User> kuser = userService.save(olduser);
-		PostmanUser postmanUser = new PostmanUser();
-		postmanUser.setDateUpd(dateUpdate);
-		postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
-		postmanUser.setPhone(userForm.getLoginName());
-		/*if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==1){
-			//快递员
-			postmanUser.setPostrole(0);
-			
-		}else if(userForm.getRoleId()!=null && Integer.parseInt(userForm.getRoleId())==0){
-			postmanUser.setPostrole(4);
-		}*/
-		//快递员
-		postmanUser.setPostrole(0);
-		if(kuser!=null && !kuser.getId().equals("") && getpostmanUser!=null && getpostmanUser.getId()!=null){
-			//postmanuser表中有对应的数据,同时更新到mysql的bbt库的postmanuser表中
-			//int ret = userMysqlService.updateByPhone(postmanUser);
-			int updateret = userMysqlService.updatePostmanUserById(userForm.getRealName().replaceAll(" ", ""),getpostmanUser.getId());
-			//return "true";
-			retSign = "true";
-			
-		}else if(kuser!=null && !kuser.getId().equals("") && getpostmanUser==null){
-			//postmanuser表中没有对应的数据,就不更新mysql bbt库中的postmanuser表
-			//return "true";
-			retSign = "true";
-		}else{
-			retSign = "false";
+		userService.save(olduser);
+
+		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName());
+		if (postmanUser != null) {
+			postmanUser.setDateUpd(new Date());
+			postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
+			if(olduser.getRole()==UserRole.SITEMASTER){
+				postmanUser.setPostrole(4);
+			}
+			if(olduser.getRole()==UserRole.SENDMEM){
+				postmanUser.setPostrole(0);
+			}
+			userMysqlService.updateByPhone(postmanUser);
 		}
-		
-		return retSign;
+		return "true";
 	}
 	
 	/**
@@ -556,12 +506,8 @@ public class UserManageController {
 	public User getOneUser(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "loginName", required = true) String loginName) {
 		User user = null;
-		/*try {
-			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
-		} catch (UnsupportedEncodingException e) {
 
-		}*/
-		if(id!=null && !id.equals("")){
+		if(StringUtils.isNotBlank(id)){
 			user = userService.findOne(id);
 		}else if(loginName!=null && !loginName.equals("")){
 			user = userService.findUserByLoginName(loginName);

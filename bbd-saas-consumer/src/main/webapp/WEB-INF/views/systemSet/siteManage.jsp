@@ -49,7 +49,7 @@
                         <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i
                                     class="b-icon p-query p-ser"></i>查询</a>
-                            <a href="javascript:void(0)" class="ser-btn d ml6 j-siteM"><i class="num-add mr10">＋</i><em>新建</em></a>
+                            <a href="javascript:void(0)" class="ser-btn d ml6" data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
 
                         </div>
                     </div>
@@ -176,10 +176,10 @@
                     <li class="filter" id="city_4">
                         <i>站点地址：</i>
                         <em class="wp25">
-                             <select class="form-control form-bod prov" name="prov"></select>
+                             <select class="form-control form-bod w150 prov" name="prov"></select>
                         </em>
                         <em class="wp25">
-                            <select class="form-control form-bod city" disabled="disabled"></select>
+                            <select class="form-control form-bod w150 city" disabled="disabled"></select>
                         </em>
                         <em class="wp25">
                             <select class="form-control form-bod w150 dist" name="dist" disabled="disabled"></select>
@@ -555,7 +555,6 @@
         if (flag) {
             $("#siteForm").ajaxSubmit({
                 success: function(data){
-                    alert(data);
                     if(data==true){
                         $(".j-siteM-pop").modal("hide");
                         gotoPage(0);
@@ -565,12 +564,7 @@
 
                 },
                 error: function(JsonHttpRequest, textStatus, errorThrown){
-                    //alert( "服务器异常!");
-                    if(window.top==window.self){//不存在父页面
-                        window.location.href="<c:url value="/login" />"
-                    }else{
-                        window.top.location.href="<c:url value="/login" />"
-                    }
+                    alert( "服务器异常!");
                 }
             });
         } else {
@@ -688,7 +682,9 @@
         }
     }
 
-
+function createSite(){
+    document.getElementById("siteForm").reset();
+}
     function getSiteByAreaCode(areaCode) {
         $('#areaCodeForModal').val(areaCode);
         $.ajax({
