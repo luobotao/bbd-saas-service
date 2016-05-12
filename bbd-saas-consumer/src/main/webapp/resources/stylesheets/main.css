@@ -1659,6 +1659,12 @@ a.n-login {
   left: 0;
   overflow: hidden;
 }
+.n-progress-inner2{
+  width:467px;
+}
+.n-progress-inner3{
+  width:899px;
+}
 .n-progress-txt {
   padding: 14px 0 92px 0;
 }
@@ -1807,17 +1813,31 @@ input.spe-input{
 }
 .n-result-tip{
   display:block;
-  text-align:center;
   padding:0 0 64px 0;
+  position:relative;
+}
+.n-result-tip img{
+  position:absolute;
+  left:0;
+  top:50%;
+  margin-top:-58px;
 }
 .n-result-tip i{
+  display:inline-block;
+  padding-left:70px;
   font-size:24px;
   line-height:1.1;
   font-weight:bold;
-  padding-left:16px;
   vertical-align:middle;
   text-align:left;
 }
+.n-result-tip em{
+  display:block;
+}
+.red{
+  color:#fd0101;
+}
+
 .c-dn{
   display:none;
 }
@@ -1877,6 +1897,7 @@ input.spe-input{
 .b-prompt-txt {
   display: block;
   min-width: 220px;
+  padding:0 20px;
   height: 50px;
   line-height: 48px;
   font-size: 20px;
@@ -1884,11 +1905,11 @@ input.spe-input{
   text-align: center;
   background: #ffc800;
   border: 1px solid #fc9e28;
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 0;
   margin-left: -110px;
-  z-index: 8;
+  z-index: 1060;
   border-radius: 4px;
 }
 .b-prompt .b-prompt-txt {
@@ -1910,4 +1931,18 @@ input.spe-input{
   transform: translate(0, 0);
 }
 /* E 气泡提示 */
+
+
+
+/* S 上传图片*/
+.show-lcs{
+  min-width:100px;
+  min-height:100px;
+  padding:10px;
+  border: 1px solid #d9d8eb;
+  border-radius:4px;
+  margin-right:15px;
+}
+/* E 上传图片*/
+
 /* E sass 2.0 */

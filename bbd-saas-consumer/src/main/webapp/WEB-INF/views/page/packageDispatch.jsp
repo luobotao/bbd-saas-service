@@ -99,7 +99,7 @@
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
+									if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
 								%>
 										<td></td>
 										<td></td>

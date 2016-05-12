@@ -188,9 +188,31 @@ $(function () {
         }
     })
     // E 站点管理
-    
-    
+    // S 密码
+
+
+    $(".j-n-pwd").on("blur",function(){
+        var pwdval=$(this).val();
+        if(!pwdreg.test(pwdval)){
+            $(".b-prompt").addClass("mov");
+            $(".b-prompt i").html("请输入6-12位数字和字母结合的密码")
+            outDiv();
+        }
+    })
+    //确认密码
+    $(".j-c-pwd").on("blur",function(){
+        if($(this).val() != $(".j-n-pwd").val()){
+            $(".b-prompt").addClass("mov");
+            $(".b-prompt i").html("两次密码不一致")
+            outDiv();
+        }
+    })
+    // E 密码
+
+
+    $(".n-re-con").css({minHeight:winhei-152})
 })
+var pwdreg=/(?!^\d+$)(?!^[a-zA-Z]+$)[0-9a-zA-Z]{6,12}/;
 //iframe 自适应高度
 function iFrameHeight() {
 
@@ -204,3 +226,80 @@ function iFrameHeight() {
 
     }
 }
+// S 自己的alert 提示
+function alert_mine(titile,content){
+    $(".j-alert-pop").modal();
+    $(".j-c-tie").html(titile)
+    $(".j-alert-con").html(content)
+}
+// E 自己的alert 提示
+
+// S 气泡 提示
+function outDiv(content){
+    $(".b-prompt").addClass("mov");
+    $(".b-prompt i").html(content);
+    var txtwid=$(".b-prompt .b-prompt-txt").outerWidth();
+    $(".b-prompt-txt").css({marginLeft:-txtwid/2})
+    setTimeout(function(){
+        $(".b-prompt").removeClass("mov");
+    },2000)
+}
+// E 气泡 提示
+
+
+// S 图片上传
+function setImagePreviews(avalue) {
+    var docObj = document.getElementById("licensePic");
+    var dd = document.getElementById("lcs-img");
+    dd.innerHTML = "";
+    var fileList = docObj.files;
+    for (var i = 0; i < fileList.length; i++) {
+        dd.innerHTML += "<div style='float:left' > <img id='img" + i + "' class='img0'  /> </div>";
+        var imgObjPreview = document.getElementById("img" + i);
+        if (docObj.files && docObj.files[i]) {
+            //火狐下，直接设img属性
+            imgObjPreview.style.display = 'block';
+            imgObjPreview.style.width = '180px';
+            //火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+            imgObjPreview.src = window.URL.createObjectURL(docObj.files[i]);
+        }
+        else {
+            //IE下，使用滤镜
+            docObj.select();
+            var imgSrc = document.selection.createRange().text;
+            var localImagId = document.getElementById("img" + i);
+            //必须设置初始大小
+
+            localImagId.style.width = "150px";
+
+            //图片异常的捕捉，防止用户修改后缀来伪造图片
+
+            try {
+
+                localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+
+                localImagId.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+
+            }
+
+            catch (e) {
+
+                alert("您上传的图片格式不正确，请重新选择!");
+
+                return false;
+
+            }
+
+            imgObjPreview.style.display = 'none';
+
+            document.selection.empty();
+
+        }
+
+    }
+
+
+    return true;
+
+}
+// E 图片上传

@@ -47,7 +47,8 @@ public class Site implements Serializable {
 
     @Transient
     private String statusMessage;//JS展示状态
-
+    @Transient
+    private String turnDownMessage;//JS展示状态
     public ObjectId getId() {
         return id;
     }
@@ -256,5 +257,13 @@ public class Site implements Serializable {
 
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
+    }
+
+    public String getTurnDownMessage() {
+        return turnDownMessage;
+    }
+
+    public void setTurnDownMessage(String turnDownMessage) {
+        this.turnDownMessage = turnDownMessage;
     }
 }

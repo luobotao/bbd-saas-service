@@ -51,4 +51,13 @@ public enum SiteTurnDownReasson {
         }
         return null;
     }
+    public static SiteTurnDownReasson objStr2Obj(String obj) {
+        SiteTurnDownReasson[] stas = SiteTurnDownReasson.values();
+        for (SiteTurnDownReasson s : stas) {
+            if (obj.equals(s.toString()) ) {
+                return s;
+            }
+        }
+        return null;
+    }
 }

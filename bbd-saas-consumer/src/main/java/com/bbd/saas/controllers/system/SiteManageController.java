@@ -110,15 +110,18 @@ public class SiteManageController {
 		PostmanUser postmanUser = new PostmanUser();
 		if(StringUtils.isNotBlank(siteForm.getAreaCode())){
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
+			BeanUtils.copyProperties(siteForm,site);
 			user = userService.findUserByLoginName(site.getUsername());
 			postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
 		}else{
+			BeanUtils.copyProperties(siteForm,site);
 			site.setDateAdd(new Date());
 			String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity() + site.getArea());
 			site.setAreaCode(areaCode);
 			site.setUsername(siteForm.getPhone());
 
 			user.setDateAdd(new Date());
+			user.setLoginName(site.getUsername());
 
 			postmanUser.setHeadicon("");
 			postmanUser.setCardidno("");
@@ -139,7 +142,7 @@ public class SiteManageController {
 			//staffid就是该用户的手机号
 			postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
 		}
-		BeanUtils.copyProperties(siteForm,site);
+
 
 		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
 		if(postcompany!=null){
@@ -154,7 +157,7 @@ public class SiteManageController {
 		setLatAndLng(siteKey.getId().toString());//设置经纬度
 		//向用户表插入登录用户
 
-		user.setLoginName(site.getUsername());
+
 		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		user.setSite(site);
@@ -207,6 +210,9 @@ public class SiteManageController {
 		pageModel.setPageNo(pageIndex);
 
 		PageModel<Site> sitePage = siteService.getSitePage(pageModel,user.getCompanyId(),status,keyword);
+		for(Site site :sitePage.getDatas()){
+			site.setTurnDownMessage(site.getTurnDownReasson()==null?"":site.getTurnDownReasson().getMessage());
+		}
 		return sitePage;
 	}
 	/**
@@ -254,7 +260,7 @@ public class SiteManageController {
 	@RequestMapping(value = "/turnDownSite", method = RequestMethod.GET)
 	public boolean turnDownSite(HttpServletRequest request, String phone,Integer turnDownReason,String otherMessage) {
 		Site site = siteService.findSiteByUserName(phone);
-		site.setMemo( "抱歉，您提交的信息未通过审核。您可修改后重新提交。");
+		site.setMemo( "抱歉，您的棒棒达快递账号未审核通过。具体原因如下：");
 		site.setStatus(SiteStatus.TURNDOWN);
 		site.setTurnDownReasson(SiteTurnDownReasson.status2Obj(turnDownReason));
 		site.setOtherMessage(otherMessage);
