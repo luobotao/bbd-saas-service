@@ -495,6 +495,13 @@ public class Dates {
 		String currentStr = dateToString(current, format);
 		return currentStr;
 	}
+    public static Date addDays(Date date, int num){
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE,num);
+        return c.getTime();
+    }
+
 	/**
 	 * 获得指定日期的连续的前几天的集合
 	 * @author liyanlei
@@ -1336,4 +1343,6 @@ public class Dates {
         }
         //isSameDay(new Date(), new Date(2016,5,12));
 	}
+
+
 }

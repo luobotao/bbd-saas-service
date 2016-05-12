@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -31,9 +32,10 @@ public class StatisticOrderNumByDay {
     SiteService siteService;
 
     //每个凌晨1点统计昨天的数据
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 46 12 * * ?")
     public void sysOrderExpressToMysql() {
         logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger start ...");
+        int i = 0;
         try {
             List<Site> siteList = siteService.findAllSiteList();
             List<Express> expressList = null;
@@ -46,7 +48,11 @@ public class StatisticOrderNumByDay {
                                 expressList = order.getExpresses();
                                 if (expressList != null && expressList.size() > 0) {
                                     for (Express express : expressList) {
-                                        if (Dates.isSameDay(express.getDateAdd(), new Date())){
+                                        if (Dates.addDays(new Date(), -1).compareTo(express.getDateAdd()) >=0){
+                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                            // public final String format(Date date)
+                                            String s = sdf.format(express.getDateAdd());
+                                            logger.info("订单的物流信息同步到mysql数据库中 date== " + s);
                                             saveOrderLog(site, order, express);
                                         }
                                     }
@@ -59,7 +65,7 @@ public class StatisticOrderNumByDay {
         } catch (Exception e) {
             logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
         }
-        logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。");
+        logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。添加订单数目==="+i);
     }
 
     private void  saveOrderLog(Site site, Order order, Express express){
