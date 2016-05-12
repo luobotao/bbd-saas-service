@@ -24,7 +24,6 @@ import java.util.List;
  * Created by luobotao on 2016/4/1.
  * 管理员接口
  */
-@Service("orderService")
 public class OrderServiceImpl implements OrderService {
 	
     private OrderDao orderDao;

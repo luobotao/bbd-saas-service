@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
  * Created by luobotao on 2016/4/1.
  * 管理员接口
  */
-@Service("adminUserService")
 public class AdminUserServiceImpl implements AdminUserService {
     private AdminUserDao adminUserDao;
     /**
