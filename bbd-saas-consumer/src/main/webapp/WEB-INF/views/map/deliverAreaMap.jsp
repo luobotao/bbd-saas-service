@@ -4,7 +4,7 @@
 <%@ include file="/WEB-INF/views/main.jsp"%>
 <html>
 <head>
-	<title>配送区域 - 系统设置 - 棒棒达快递</title>
+	<title>配送区域 - 棒棒达快递</title>
 </head>
 <body>
 <body class="fbg">

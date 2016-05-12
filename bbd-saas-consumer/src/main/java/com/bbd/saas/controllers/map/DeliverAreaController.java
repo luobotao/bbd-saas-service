@@ -32,6 +32,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/deliverArea")
 public class DeliverAreaController {
+
 	public static final Logger logger = LoggerFactory.getLogger(DeliverAreaController.class);
 	@Autowired
 	AdminService adminService;
