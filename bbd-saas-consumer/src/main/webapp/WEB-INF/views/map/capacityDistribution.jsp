@@ -183,7 +183,6 @@
 		}
 		//显示派件员
 		if (userList != null) {
-			console.log("8888888888888     centerSite.lng=" + centerSite.lng +"  centerSite.lat="+centerSite.lat);
 			var user = null;
 			for (var i = 0;i < userList.length ; i++) {
 				user = userList[i];
