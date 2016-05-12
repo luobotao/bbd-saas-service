@@ -285,7 +285,20 @@ public class UserManageController {
 		}
 		
 	}
-	
+	@ResponseBody
+	@RequestMapping(value="/editPass", method=RequestMethod.POST)
+	public boolean editPass(HttpServletRequest request,@RequestParam(value = "passwordOld", required = true) String passwordOld,@RequestParam(value = "password", required = true) String password,HttpServletResponse response) {
+		User currentUser = adminService.get(UserSession.get(request));
+		if(passwordOld.equals(currentUser.getPassWord())){
+			currentUser.setPassWord(password);
+			userService.save(currentUser);
+			adminService.put(currentUser);//set user to redis
+			return true;
+		}else
+			return false;
+
+	}
+
 	/**
 	 * ajax异步调用
      * 根据user的主键id或者loginName修改user的状态     

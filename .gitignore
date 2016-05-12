@@ -16,4 +16,6 @@ conf/evolutions
 */target
 .myumldata
 .tern-project
+.shardingContext.xml
+.mongo-conf.properties
 

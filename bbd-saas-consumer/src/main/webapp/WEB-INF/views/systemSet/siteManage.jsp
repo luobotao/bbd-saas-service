@@ -164,7 +164,7 @@
             <input type="hidden" id="areaCode" name="areaCode"/>
             <div class="modal-header b-modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title tc j-cg-txt">新建</h4>
+                <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
             </div>
             <div class="modal-body b-modal-body">
                 <ul class="b-n-crt b-n-crt-new form-inline-n  y-scroll">
@@ -450,7 +450,7 @@
         if(data.status=="<%=SiteStatus.INVALID%>" ){
             row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange'  data-toggle='modal' data-target='#siteModal'>修改</a> ";
             row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#startModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>启用</a> ";
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#delModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>删除</a>";
+//            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#delModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>删除</a>";
         }
         row += "</td></tr>";
         return row;
@@ -686,6 +686,7 @@ function createSite(){
     document.getElementById("siteForm").reset();
 }
     function getSiteByAreaCode(areaCode) {
+        $('#titleName').html("修改");
         $('#areaCodeForModal').val(areaCode);
         $.ajax({
             type: "GET",
