@@ -2,7 +2,6 @@
 <%@ page import="com.bbd.saas.enums.UserRole" %>
 <%@ page import="com.bbd.saas.enums.UserStatus" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
-<%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -34,7 +33,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        					<div class="row pb20">
 									<c:if test="${userNow.role==UserRole.COMPANY}">
 										<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-											<label>站点：</label>
+											<label>　站点：</label>
 											<select id="sites" name="sites" class="form-control form-con-new">
 												<option value ="-1" selected ="selected">全部</option>
 												<c:forEach var="site" items="${siteList}">
@@ -62,17 +61,20 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        								<%=UserStatus.Srcs2HTML(-1)%>
 	        							</select>
 	        						</div>
-	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	        							<label>关键字：</label>
-	        							<input type="text" id="keyword" name="keyword" placeholder="真实姓名/手机号" class="form-control"  />
-	        						</div>
-	        						
 	        					</div>
+								<div class="row pb20">
+									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+										<label>关键字：</label>
+										<input type="text" id="keyword" name="keyword" placeholder="真实姓名/手机号" class="form-control"  />
+									</div>
+								</div>
 	        					<div class="row pb20">
 	        						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	        							<a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
-	        							<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
-	        							
+										<c:if test="${userNow.role==UserRole.SITEMASTER}">
+											<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
+										</c:if>
+
 	        						</div>
 	        					</div>
 	        				</div>
@@ -133,8 +135,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 												%>
 												
 												<a href="javascript:void(0)" onclick="changeStatus(1,'','<%=user.getLoginName() %>')" class="orange ml6">启用</a>
-												<a href="javascript:void(0)" onclick="delUser('<%=user.getLoginName() %>')" class="orange ml6">删除</a>
-												<% 
+												<%
 											}
 											
 											
@@ -192,30 +193,10 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								<input type="text" id="realName" name="realName" class="form-control form-bod" placeholder="真实姓名" />
 								<p class="help-block" id="realNameP" style="display:none;">请输入姓名</p>
 							</li>
-							<!--  
-							<li>
-								<input type="text" id="phone" name="phone" class="form-control form-bod" placeholder="手机号" />
-								<p class="help-block" id="phoneP" style="display:none;">请正确输入11位手机号</p>
-							</li>
-							-->
 							<li>
 								<input type="text" id="loginName" name="loginName" onblur="checkLoginName(this.value)" class="form-control form-bod" placeholder="手机号" />
 								<p class="help-block" id="loginNameP" style="display:none;">请正确输入11位手机号</p>
 							</li>
-							<!--  
-							<li>
-								<input type="text" id="staffid" name="staffid" onblur="checkStaffid(this.value)" class="form-control form-bod" placeholder="员工ID" />
-								<p class="help-block" id="staffidP" style="display:none;">请输入员工ID</p>
-							</li>
-							<li>
-								<input type="password" id="loginPass" name="loginPass" class="form-control form-bod" placeholder="登录密码" />
-								<p class="help-block" id="loginpassP" style="display:none;">请输入密码</p>
-							</li>
-							<li>
-								<input type="password" id="confirmPass" name="confirmPass" class="form-control form-bod" placeholder="确认密码" />
-								<p class="help-block" id="confirmPassP" style="display:none;">请再次输入密码</p>
-							</li>
-							-->
 						</ul>
 							
 						
@@ -303,7 +284,6 @@ function getRowHtml(data){
 		row += "<a href='javascript:void(0)' onclick=\"changeStatus(3,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
 	}else{
 		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
-		row += "<a href='javascript:void(0)' onclick=\"delUser('"+data.loginName+"')\" class=\"orange ml6\">删除</a></td>";
 	}
 
 	row += "</tr>";
@@ -369,95 +349,6 @@ function checkLoginName(loginName) {
 	
 	return ret;
 
-}
-
-
-function checkStaffid(staffid) {
-	staffid=staffid.replace(/\ +/g,"");
-	var operate = document.getElementById("operate").value;
-	var oldstaffid = document.getElementById("staffidTemp").value;
-	var newstaffid = staffid;
-	var url = '<c:url value="/userManage/checkStaffIdBySiteByStaffid" />';
-	var ret = false;
-	if(staffid!==''){
-		
-		if(operate=='create'){
-			
-			$.ajax({
-				url: url+'?staffid='+staffid,
-				type: 'GET',
-				cache: false,
-				dataType: "text",
-				async: false,
-				data: {},
-				success: function(response){
-					console.log(response);
-					if(response=="true"){
-						//alert("您输入的登录名目前已存在，请重新输入");
-						$("#staffidP").text("该站点下的工号已存在，请重新输入!");
-					    $("#staffidP").attr("style","color:red");
-					    //document.getElementById("flagstaffid").value='false';
-					    //return true;
-					    ret = true;
-					}else{
-						//document.getElementById("flagstaffid").value='true';
-						$("#staffidP").attr("style","display:none");
-						//return false;
-						ret = false;
-					}
-				},
-				error: function(){
-					//alert('服务器繁忙，请稍后再试！');
-					//return true;
-					ret = true;
-					if(window.top==window.self){//不存在父页面
-						window.location.href="<c:url value="/login" />"
-					}else{
-						window.top.location.href="<c:url value="/login" />"
-					}
-				}
-			});
-		}else{
-			if(newstaffid!==oldstaffid){
-				$.ajax({
-					url: url+'?staffid='+staffid,
-					type: 'GET',
-					cache: false,
-					dataType: "text",
-					async: false,
-					data: {},
-					success: function(response){
-						console.log(response);
-						if(response=="true"){
-							//alert("您输入的登录名目前已存在，请重新输入");
-							$("#staffidP").text("该站点下的工号已存在，请重新输入!");
-						    $("#staffidP").attr("style","color:red");
-						    //document.getElementById("flagstaffid").value='false';
-						    //return true;
-						    ret = true;
-						}else{
-							//document.getElementById("flagstaffid").value='true';
-							$("#staffidP").attr("style","display:none");
-							//return false;
-							ret = false;
-						}
-					},
-					error: function(){
-						alert('服务器繁忙，请稍后再试！');
-						//return true;
-						ret = true;
-					}
-				});
-			}else{
-				//document.getElementById("flagstaffid").value='true';
-				$("#staffidP").attr("style","display:none");
-				//return false;
-				ret = false;
-			}
-		}
-		
-	}
-	return ret;
 }
 
 
@@ -582,12 +473,6 @@ function saveUserBtn(){
 		flag = false;
 		checkSign = true;
 	}
-	/* if(checkStaffid(staffid)){
-		returnmess = '该站点下的工号已存在，请重新输入！';
-		flag = false;
-		checkSign = true;
-		staffidSign = true;
-	} */
 	if (!checkMobile(loginName)) {//!tel_reg.test(loginName)
 		$("#loginNameP").text("请重新输入11位手机号!");
 		$("#loginNameP").attr("style","color:red");

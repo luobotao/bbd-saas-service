@@ -76,12 +76,8 @@
 								<a href="javascript:void(0);" class="sbtn blue mb10 f24" onclick="submitForm()">登　录</a>
 							</div>
 							<div class="col-md-12">
-								<a href="javascript:void(0);" class="sbtn lblue j-login f24">注　册</a>
+								<a href="<c:url value="/register/registerFirst" />" class="sbtn lblue f24">注　册</a>
 							</div>
-							<div class="col-md-12">
-								<a href="<c:url value="/register/registerFirst" />" target="iframe1" class="sbtn lblue f24">新 版 注　册</a>
-							</div>
-
 						</div>
 					</form:form>
 					<p class="warm-tips">若账号有问题，请联系客服：4009 616 090</p>

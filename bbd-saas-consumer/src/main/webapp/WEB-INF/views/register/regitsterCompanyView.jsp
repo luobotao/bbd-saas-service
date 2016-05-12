@@ -6,106 +6,81 @@
 	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body >
-<!-- Content Header (Page header) -->
-<section class="content-header">
-	<h1 style="float:left; margin-left:40px">
-		<c:if test="${postcompany.sta==0}">审核中</c:if>
-		<c:if test="${postcompany.sta==1}">审核通过</c:if>
-		<c:if test="${postcompany.sta==2}">驳回</c:if>
-	</h1>
-</section>
 
-<!-- Main content -->
-<section class="content">
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="span12">
-				<div class="tab-content" style="height:800px;">
-						<div class="box-body">
-							<div class="row">
-								<div class="col-xs-12" style="margin-top:10px;">
-									<label>
-										<c:if test="${postcompany.sta==0}">恭喜，您的棒棒达快递账号申请信息提交成功。我们将在1-3个⼯作⽇内完成审核</c:if>
-										<c:if test="${postcompany.sta==1}">审核通过</c:if>
-										<c:if test="${postcompany.sta==2}">驳回</c:if>
-									</label>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-xs-1" style="margin-top:10px;">
-									<label style="float: right;">账号类型:</label>
-								</div>
-								<div class="col-xs-4" style="margin-top:10px;">
-									<label>配送公司</label>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-xs-1" style="margin-top:10px;">
-									<label style="float: right;">手机号:</label>
-								</div>
-								<div class="col-xs-4" style="margin-top:10px;">
-									<label>${user.loginName}</label>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-xs-1" style="margin-top:10px;">
-									<label style="float: right;">公司名称:</label>
-								</div>
-								<div class="col-xs-4" style="margin-top:10px;">
-									<label>${postcompany.companyname}</label>
-								</div>
-							</div>
-							<div class="row" id="licensePicDiv" style="margin-top: 10px;">
-								<div class="col-xs-1">
-									<label style="float: right;">营业执照:</label>
-								</div>
-								<div class="col-xs-4">
-									<img style="width: 200px;height: 200px;" alt="" src="${ossUrl}${postcompany.licensePic}@200w"/>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-xs-1" style="margin-top:10px;">
-									<label style="float: right;">负责人:</label>
-								</div>
-								<div class="col-xs-4" style="margin-top:10px;">
-									<label>${user.realName}</label>
-								</div>
-							</div>
+<!-- S nav -->
+<nav class="navbar navbar-default b-navbar">
+	<div class="container">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#"><img src="<c:url value="/resources/images/logo.png" />" alt="logo" /></a>
+		</div>
 
-							<div class="row" id="emailDiv" style="margin-top:10px;">
-								<div class="col-xs-1">
-									<label style="float: right;">联系邮箱:</label>
-								</div>
-								<div class="col-xs-4">
-									<label>${user.email}</label>
-								</div>
-							</div>
-							<div class="row" style="margin-top:10px ;">
-								<div class="col-xs-1">
-									<label style="float: right ;">省市区:</label>
-								</div>
-								<div class="col-xs-4">
-									<label>${postcompany.province} ${postcompany.city} ${postcompany.area} </label>
-								</div>
-							</div>
-							<div class="row" style="margin-top:10px ;">
-								<div class="col-xs-1">
-									<label style="float: right ;">详细地址: </label>
-								</div>
-								<div class="col-xs-4">
-									<label>${postcompany.address}</label>
-								</div>
-							</div>
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<i class="nav navbar-nav navbar-right re-navbar f16">已有账号？<a href="<c:url value="/login"/>"  class="orange n-login">马上登录</a></i>
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container-fluid -->
+</nav>
 
-						</div><!-- /.box-body -->
-						<div class="box-footer">
-							<button type="button" class="btn btn-primary" style="margin-left: 170px ;" onclick="window.location.href='<c:url value="/login"/>'">
-								返回</button>
-						</div>
-				</div>
+<!-- S content-->
+<div class="container n-re-con">
+	<!-- S 注册结果 -->
+	<!-- S 注册成功 配送公司 -->
+	<div class="n-site-c">
+				<span class="n-result-tip">
+					<c:if test="${postcompany.sta==0}">
+						<img src="<c:url value="/resources/images/n_success.png" />" />
+						<i>您的棒棒达快递账号申请信息提交成功。我们将在1-3个⼯作⽇内完成审核</i>
+					</c:if>
+					<c:if test="${postcompany.sta==1}">
+						<img src="<c:url value="/resources/images/n_success.png" />" />
+						<i>您的棒棒达快递账号已审核通过</i>
+					</c:if>
+					<c:if test="${postcompany.sta==2}">
+						<img src="<c:url value="/resources/images/n_warning.png" />" />
+						<i>您的棒棒达快递账号已审核通过</i>
+					</c:if>
+
+				</span>
+		<div class="n-result-info">
+			<div class="txt-input pb30">
+				<i>账号类型：</i>配送公司
 			</div>
+			<div class="txt-input pb30">
+				<i>手机号：</i>${user.loginName}
+			</div>
+			<div class="txt-input pb30">
+				<i>公司名称：</i>${postcompany.companyname}
+			</div>
+			<div class="txt-input pb30 clearfix">
+				<i class="fl">营业执照：</i><img style="width: 200px;height: 200px;" alt="" src="${ossUrl}${postcompany.licensePic}@200w"/>
+			</div>
+			<div class="txt-input pb30">
+				<i>所在地：</i>${postcompany.province}-${postcompany.city}-${postcompany.area} ${postcompany.address}
+			</div>
+			<div class="txt-input pb30">
+				<i>负责人姓名：</i>${user.realName}
+			</div>
+			<div class="txt-input pb30">
+				<i>联系邮箱：</i>${user.email}
+			</div>
+			<span class="ser-btn l mli-wid" onclick="window.location.href='<c:url value="/login"/>'">返回首页</span>
 		</div>
 	</div>
-</section>
+	<!-- E 注册成功 配送公司-->
+</div>
+<!-- E content-->
+
+<!-- S footer -->
+<footer class="container tc">
+	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
+</footer>
+<!-- E footer -->
 </body>
 </html>

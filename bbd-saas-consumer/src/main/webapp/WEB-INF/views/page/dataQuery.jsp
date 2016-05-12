@@ -120,7 +120,7 @@
 									<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 									<%
-										if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
+										if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
 									%>
 											<td></td>
 											<td></td>
