@@ -104,7 +104,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         orderNumVO.setArrived(count(queryArrive));//已到站
         return orderNumVO;
     }
-
+    /**
+     * 根据站点编码获取该站点历史未到站订单数目
+     * @param areaCode
+     * @return
+     */
+    public long getNoArriveHis(String areaCode) {
+        OrderNumVO orderNumVO = new OrderNumVO();
+        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+        return count(query);//历史未到站
+    }
     /**
      * 更新订单状态
      * 此处需要再加上包裹下的订单的状态更新

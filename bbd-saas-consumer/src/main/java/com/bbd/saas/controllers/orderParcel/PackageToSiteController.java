@@ -161,6 +161,7 @@ public class PackageToSiteController {
 		expressList.add(express);//增加一条物流信息
 		order.setExpressStatus(ExpressStatus.ArriveStation);
 		order.setExpresses(expressList);
+		order.setDateUpd(new Date());
 		orderService.save(order);
 		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
 		if(orderParcel!=null){

@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -167,5 +166,10 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> getTodayUpdateOrdersBySite(String areaCode) {
 		return orderDao.getTodayUpdateOrdersByAreaCode(areaCode);
+	}
+
+	@Override
+	public long getNoArriveHis(String areaCode) {
+		return orderDao.getNoArriveHis(areaCode);
 	}
 }

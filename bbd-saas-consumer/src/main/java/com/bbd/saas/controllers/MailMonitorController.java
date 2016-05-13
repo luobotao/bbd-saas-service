@@ -160,6 +160,8 @@ public class MailMonitorController {
 		}
 		//转站从mongodb中toOtherSiteLog表中取数据，其他数据从mysql中的orderLog表中取数据
 		OrderMonitorVO orderMonitorVO = orderLogService.statisticOrderNum(areaCode, start, end);
+		//历史未到站订单数
+		orderMonitorVO.setNoArrive(orderService.getNoArriveHis(areaCode));
 		//查询转站数目
 		orderMonitorVO.setToOtherSite(toOtherSiteLogService.countByFromAreaCodeAndTime(areaCode, timeBetween));
 		return orderMonitorVO;

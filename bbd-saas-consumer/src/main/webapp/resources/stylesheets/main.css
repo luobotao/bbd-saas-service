@@ -1395,7 +1395,7 @@ select.form-control::-ms-expand { display: none; }
 .pl20 {
     padding-left: 20px;
 }
-@media screen and (-webkit-min-device-pixel-ratio:0){.daterangepicker{width:670px;}}}{} /* safari(Chrome) 有效 */
+@media screen and (-webkit-min-device-pixel-ratio:0){.daterangepicker{width:670px;}}{} /* safari(Chrome) 有效 */
 .daterangepicker .calendar{
   max-width:300px !important;;
 }
@@ -1944,5 +1944,27 @@ input.spe-input{
   margin-right:15px;
 }
 /* E 上传图片*/
-
+/* S color */
+.l-blue{
+  color:#43acef;
+}
+.purple{
+  color:#8145cb;
+}
+.d-red{
+  color:#f85820;
+}
+.black{
+  color:#33333d;
+}
+.d-blue{
+  color:#1272c4;
+}
+.brown{
+  color:#ab6a03;
+}
+.l-green{
+  color:#17c7c5;
+}
+/* E color */
 /* E sass 2.0 */

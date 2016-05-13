@@ -104,5 +104,11 @@ public interface OrderService {
 	 * @return 订单集合
 	 */
 	public List<Order> getTodayUpdateOrdersBySite(String areaCode);
+	/**
+	 * 根据站点编码获取该站点历史未到站订单数目
+	 * @param areaCode
+	 * @return
+	 */
+	public long getNoArriveHis(String areaCode);
 
 }

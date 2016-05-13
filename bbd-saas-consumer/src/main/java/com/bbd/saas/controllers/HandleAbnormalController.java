@@ -184,6 +184,8 @@ public class HandleAbnormalController {
 				express.setLon(currUser.getSite().getLng());
 				expressList.add(express);
 				order.setExpresses(expressList);
+				//更新修改时间
+				order.setDateUpd(new Date());
 				//更新运单
 				Key<Order> r = orderService.save(order);
 				if(r != null){
