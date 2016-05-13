@@ -266,7 +266,7 @@
 
 	// 百度地图API功能
 	var allmapPs = new BMap.Map("allmapPs", {enableMapClick:false,minZoom:5});
-	/*初始化加载=======start*/
+	/*================初始化加载配送区域=======================start===============*/
 	function initDeliveryMap(){
 		allmapPs.enableScrollWheelZoom(true);
 		//设置地图中心点和放大级别
@@ -281,6 +281,8 @@
 				}
 			}
 		%>
+		var areaMapDiv = $("#allmapPs");
+		allmapPs.panBy(areaMapDiv.width/2, areaMapDiv.height/2);
 	}
 	function getPointBySite2(lng, lat){
 		var point = null;
@@ -307,7 +309,7 @@
 		allmapPs.addOverlay(circle);            //增加圆
 	}
 	initDeliveryMap();
-	/*================初始化加载=======================end===============*/
+	/*================初始化加载配送区域=======================end===============*/
 
 
 	//更改站点
