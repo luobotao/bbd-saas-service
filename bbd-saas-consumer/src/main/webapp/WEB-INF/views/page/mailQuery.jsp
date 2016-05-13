@@ -39,7 +39,7 @@
 									<option value="">全部</option>
 									<c:if test="${not empty siteList}">
 										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
+											<option value="${site.areaCode}">${site.name}</option>
 										</c:forEach>
 									</c:if>
 								</select>
