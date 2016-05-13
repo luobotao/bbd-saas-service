@@ -158,11 +158,15 @@ public class RegisterController {
 	@ResponseBody
 	@RequestMapping(value="/checkLoginName", method=RequestMethod.GET)
 	public Boolean checkLoginName(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
-		User user = userService.findUserByLoginName(loginName);
-		if(user==null)
-			return true;
-		else
+		try{
+			User user = userService.findUserByLoginName(loginName);
+			if(user==null)
+				return true;
+			else
+				return false;
+		}catch (Exception e){
 			return false;
+		}
 	}
 	/**
 	 * 注册用户基本信息
