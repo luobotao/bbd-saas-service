@@ -64,7 +64,7 @@
                                 <th>站点名称</th>
                                 <th>区域码</th>
                                 <th width="20%">站点地址</th>
-                                <th>站点姓名</th>
+                                <th>站长姓名</th>
                                 <th>手机号</th>
                                 <th>邮箱</th>
                                 <th>状态</th>
@@ -96,8 +96,8 @@
                                     <%
                                         if (SiteStatus.WAIT == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>')" class="orange" data-toggle='modal' data-target='#validModal'>通过</a>
-                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>')" class="orange ml6 j-reject">驳回</a>
+                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange" data-toggle='modal' data-target='#validModal'>通过</a>
+                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange ml6 j-reject">驳回</a>
                                     <%
                                         }
                                         if (SiteStatus.TURNDOWN == site.getStatus()) {
@@ -240,7 +240,7 @@
                 <h4 class="modal-title tc">通过</h4>
             </div>
             <div class="modal-body b-modal-body">
-                <em class="f16">确认通过吗？</em>
+                <em class="f16" id="validSiteName">确认将站点"AAA"审核通过吗？</em>
                 <div class="clearfix mt20">
                     <a href="javascript:void(0);" id="conFirmForValidBtn" class="sbtn sbtn2 l col-md-12">确认</a>
                 </div>
@@ -252,7 +252,7 @@
 </div>
 <!--E 通过-->
 <!--S 驳回-->
-<div class="j-reject-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="j-reject-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="turnDownModal">
     <div class="modal-dialog b-modal-dialog middleS" role="document">
         <div class="modal-content">
 
@@ -430,8 +430,8 @@
         row += "<td>" + data.statusMessage + "</td>";
         row += "<td>";
         if(data.status=="<%=SiteStatus.WAIT%>" ){
-            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"')\" class='orange' data-toggle='modal' data-target='#validModal'>通过</a> ";
-            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"')\" class='orange'>驳回</a>";
+            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"','"+data.name+"')\" class='orange' data-toggle='modal' data-target='#validModal'>通过</a> ";
+            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"','"+data.name+"')\" class='orange' data-toggle='modal' data-target='#turnDownModal'>驳回</a>";
         }
         if(data.status=="<%=SiteStatus.TURNDOWN%>" ){
             row += "<a href='javascript:void(0);' onclick=\"getTurnDownMessage('"+data.turnDownReasson+"','"+data.turnDownMessage+"','"+data.otherMessage+"')\" class='orange ml6' data-toggle='modal' data-target='#messageModal'>查看驳回原因</a>";
@@ -665,8 +665,9 @@
         $('#areaCodeForModal').val(areaCode);
     }
     //赋值
-    function setPhone(phone){
+    function setPhone(phone,siteName){
         $('#phoneForModal').val(phone);
+        $('#validSiteName').html('确认将站点"'+siteName+'"审核通过吗？');
     }
     //展示驳回原因
     function getTurnDownMessage(turnDownResson, turnDownRessonMessage, message) {

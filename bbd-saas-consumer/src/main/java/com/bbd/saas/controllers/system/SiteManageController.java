@@ -115,6 +115,12 @@ public class SiteManageController {
 			postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
 			if(postmanUser==null)
 				postmanUser = new PostmanUser();
+			Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
+			if(postcompany!=null){
+				site.setCompanyId(userNow.getCompanyId());
+				site.setCompanyName(postcompany.getCompanyname());
+				site.setCompanycode(postcompany.getCompanycode());
+			}
 		}else{
 			if("1".equals(siteForm.getFrom())){//外部注册 驳回时的修改
 				Site siteTemp = siteService.findSiteByUserName(siteForm.getPhone());
@@ -167,7 +173,7 @@ public class SiteManageController {
 			postmanUser.setSpreadticket("");
 			postmanUser.setDateNew(new Date());
 			postmanUser.setPoststatus(1);//默认为1
-			postmanUser.setPostrole(0);
+			postmanUser.setPostrole(4);
 			//staffid就是该用户的手机号
 			postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
 		}

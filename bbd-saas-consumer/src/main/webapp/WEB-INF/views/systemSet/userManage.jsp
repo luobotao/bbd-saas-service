@@ -425,24 +425,28 @@ function saveUserBtn(){
 		outDiv("请输入正确的手机号");
 		return false;
 	}
+
 	<c:if test="${userNow.role==UserRole.COMPANY}">
-	var password = $.trim($('input[name="loginPass"]').val());
-	if(password==""){
-		outDiv("请输入密码");
-		return false;
-	}
-	if(!pwdreg.test(password)){
-		outDiv("请输入6-12位数字和字母结合的密码");
-		return false;
-	}
-	var passwordC = $.trim($('input[name="passwordC"]').val());
-	if(passwordC==""){
-		outDiv("请确认密码");
-		return false;
-	}
-	if(passwordC!=password){
-		outDiv("两次密码不一致");
-		return false;
+	var roleId = $("#roleId").val();
+	if(roleId=="<%=UserRole.SITEMASTER%>"){
+		var password = $.trim($('input[name="loginPass"]').val());
+		if(password==""){
+			outDiv("请输入密码");
+			return false;
+		}
+		if(!pwdreg.test(password)){
+			outDiv("请输入6-12位数字和字母结合的密码");
+			return false;
+		}
+		var passwordC = $.trim($('input[name="passwordC"]').val());
+		if(passwordC==""){
+			outDiv("请确认密码");
+			return false;
+		}
+		if(passwordC!=password){
+			outDiv("两次密码不一致");
+			return false;
+		}
 	}
 	</c:if>
 
