@@ -19,6 +19,7 @@ public class CompanyForm {
 	private String address;      //详细地址
 
 	private String prePic;       //历史图片
+	private String companyId;       //更新公司时填写
 
 	public String getCompanyname() {
 		return companyname;
@@ -90,5 +91,13 @@ public class CompanyForm {
 
 	public void setPrePic(String prePic) {
 		this.prePic = prePic;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }

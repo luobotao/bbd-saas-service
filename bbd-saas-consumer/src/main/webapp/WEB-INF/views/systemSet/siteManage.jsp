@@ -159,8 +159,7 @@
     <div class="modal-dialog b-modal-dialog b-guide-dialog" role="document">
         <div class="modal-content">
         <c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
-        <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data"
-              class="form-inline form-inline-n">
+        <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
             <input type="hidden" id="areaCode" name="areaCode"/>
             <div class="modal-header b-modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>

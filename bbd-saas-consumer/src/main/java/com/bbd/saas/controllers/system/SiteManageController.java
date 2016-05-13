@@ -116,12 +116,39 @@ public class SiteManageController {
 			if(postmanUser==null)
 				postmanUser = new PostmanUser();
 		}else{
-			BeanUtils.copyProperties(siteForm,site);
-			site.setDateAdd(new Date());
-			String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity() + site.getArea());
-			site.setAreaCode(areaCode);
-			site.setUsername(siteForm.getPhone());
+			if("1".equals(siteForm.getFrom())){//外部注册 驳回时的修改
+				Site siteTemp = siteService.findSiteByUserName(siteForm.getPhone());
+				if(siteTemp!=null){//更新操作
+					site = siteTemp;
+				}
+				BeanUtils.copyProperties(siteForm,site);
+				Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(siteForm.getCompanyId(),0)) ;//当前登录公司用户的公司ID
+				if(postcompany!=null){
+					site.setCompanyId(siteForm.getCompanyId());
+					site.setCompanyName(postcompany.getCompanyname());
+					site.setCompanycode(postcompany.getCompanycode());
+				}
+				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
+				if(postmanUser==null)
+					postmanUser = new PostmanUser();
+				site.setStatus(SiteStatus.WAIT);
+				site.setMemo("您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日完成审核。");
+			}else{//公司用户创建
+				BeanUtils.copyProperties(siteForm,site);
+				String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity());
+				site.setAreaCode(areaCode);
+				Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
+				if(postcompany!=null){
+					site.setCompanyId(userNow.getCompanyId());
+					site.setCompanyName(postcompany.getCompanyname());
+					site.setCompanycode(postcompany.getCompanycode());
+				}
+				site.setStatus(SiteStatus.APPROVE);
+				site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
+			}
 
+			site.setDateAdd(new Date());
+			site.setUsername(siteForm.getPhone());
 			user.setDateAdd(new Date());
 			user.setLoginName(site.getUsername());
 
@@ -146,15 +173,9 @@ public class SiteManageController {
 		}
 
 
-		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
-		if(postcompany!=null){
-			site.setCompanyId(userNow.getCompanyId());
-			site.setCompanyName(postcompany.getCompanyname());
-			site.setCompanycode(postcompany.getCompanycode());
-		}
+
 		site.setDateUpd(new Date());
-		site.setStatus(SiteStatus.APPROVE);
-		site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
+
 		Key<Site> siteKey = siteService.save(site);//保存站点
 		setLatAndLng(siteKey.getId().toString());//设置经纬度
 		//向用户表插入登录用户

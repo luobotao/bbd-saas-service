@@ -13,6 +13,7 @@ public class SiteForm {
 	private String companyId;    //公司ID
 	private String companyName;    //公司名称
 	private String areaCode;    //区域码
+	private String from;    //1注册
 	@NotEmpty
 	private String responser;    //负责人
 	@NotEmpty
@@ -117,5 +118,13 @@ public class SiteForm {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
 	}
 }

@@ -59,4 +59,14 @@ public class PostcompanyServiceImpl implements PostcompanyService {
 		postcompanyDao.insertCompany(postcompany);
 		return postcompany;
 	}
+
+	/**
+	 * 更新公司
+	 * @param postcompany
+     */
+	@Override
+	public Postcompany updateCompany(Postcompany postcompany) {
+		postcompanyDao.updateCompany(postcompany);
+		return postcompany;
+	}
 }

@@ -26,4 +26,10 @@ public interface PostcompanyDao {
      * @return
      */
     int insertCompany(Postcompany postcompany);
+
+    /**
+     * 更新公司
+     * @param postcompany
+     */
+    void updateCompany(Postcompany postcompany);
 }

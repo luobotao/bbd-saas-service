@@ -28,4 +28,10 @@ public interface PostcompanyService {
      * @return
      */
     Postcompany insertCompany(Postcompany postcompany);
+
+    /**
+     * 更新公司
+     * @param postcompany
+     */
+    Postcompany updateCompany(Postcompany postcompany);
 }

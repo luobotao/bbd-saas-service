@@ -125,7 +125,6 @@
 
 
 	$("#saveSiteBtn").click(function () {
-		var flag = true;
 		var name = $.trim($('input[name="name"]').val());
 		var nameP = $("#nameP").val();
 		if (name == "" || name == 0) {

@@ -29,6 +29,7 @@ public class Postcompany implements Serializable {
     private String city;         //市
     private String area;         //区
     private String address;      //详细地址
+    private String errorMessage;      //审核失败原因
 
     private Date dateNew;
     private Date dateUpd;
@@ -183,5 +184,13 @@ public class Postcompany implements Serializable {
 
     public void setDateUpd(Date dateUpd) {
         this.dateUpd = dateUpd;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }
