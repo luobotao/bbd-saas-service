@@ -83,6 +83,22 @@ public class Dates {
         }
         return DATE_FORMAT_IMPORT.format(date);
     }
+
+    /**
+     * 获得日期0点开始的时间
+     * @param num num >0,往后推num天；num <0,往前推num天
+     * @return
+     */
+    public static Date getDayTime(int num){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, num);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
     /**
      * yyyy.MM.dd
      * @param date
@@ -1335,12 +1351,17 @@ public class Dates {
     		System.out.println(b);
     	}*/
 
+        Date date = getDayTime(-1);
+        Date date2 = getDayTime(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println("small===" + sdf.format(date) + "  big==" + sdf.format(date2));
+       /*
         try {
             int i = daysBetween(new Date(2016,5,11,01,01), new Date(2016,5,12,01,00));
             System.out.println(i);
         } catch (ParseException e) {
             e.printStackTrace();
-        }
+        }*/
         //isSameDay(new Date(), new Date(2016,5,12));
 	}
 

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -35,37 +34,42 @@ public class StatisticOrderNumByDay {
     @Scheduled(cron = "0 46 12 * * ?")
     public void sysOrderExpressToMysql() {
         logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger start ...");
-        int i = 0;
+        int siteNum = 0, orderNum = 0, exprNum = 0, i = 0, oneSiteNum = 0;
         try {
             List<Site> siteList = siteService.findAllSiteList();
             List<Express> expressList = null;
             if (siteList != null && siteList.size() > 0) {
                 for (Site site : siteList) {
+                    siteNum++;
                     List<Order> orderList = orderService.getTodayUpdateOrdersBySite(site.getAreaCode());
                     if (orderList != null && orderList.size() > 0) {
+                        oneSiteNum = 0;
                         for (Order order : orderList) {
+                            orderNum++;
+                            //logger.info("order=======orderNo==== " + order.getOrderNo() + "  mailNum==== " + order.getMailNum());
                             if (order != null && order.getExpresses() != null && order.getExpresses().size() > 0) {
                                 expressList = order.getExpresses();
                                 if (expressList != null && expressList.size() > 0) {
                                     for (Express express : expressList) {
-                                        if (Dates.addDays(new Date(), -1).compareTo(express.getDateAdd()) >=0){
-                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                            // public final String format(Date date)
-                                            String s = sdf.format(express.getDateAdd());
-                                            logger.info("订单的物流信息同步到mysql数据库中 date== " + s);
+                                        exprNum++;
+										if (Dates.getDayTime(-1).compareTo(express.getDateAdd()) <= 0 && Dates.getDayTime(0).compareTo(express.getDateAdd()) >= 0){
                                             saveOrderLog(site, order, express);
+                                            i++;
+                                            oneSiteNum++;
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                    logger.info("====站点==site===  " + site.getName() + "  同步数据条数 =num==" + oneSiteNum);
                 }
             }
         } catch (Exception e) {
             logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
         }
-        logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。添加订单数目==="+i);
+        logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。添加订单数目");
+        logger.info("i==="+i+" siteNum" + siteNum + "  orderNum===" + orderNum + " exprNum==" + exprNum);
     }
 
     private void  saveOrderLog(Site site, Order order, Express express){
