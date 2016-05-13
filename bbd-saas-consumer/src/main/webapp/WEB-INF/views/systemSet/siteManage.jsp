@@ -206,11 +206,11 @@
                     </li>
                     <li class="filter">
                         <i>登录密码：</i>
-                        <input type="password" class="form-control form-bod wp80" id="password" />
+                        <input type="password" class="form-control form-bod wp80" id="password" name="password"/>
                     </li>
                     <li class="filter">
                         <i>确认密码：</i>
-                        <input type="password" class="form-control form-bod wp80" id="passwordConfirm"/>
+                        <input type="password" class="form-control form-bod wp80" id="passwordConfirm" name="passwordConfirm"/>
                     </li>
                 </ul>
                 <div class="clearfix mt20">
@@ -682,6 +682,8 @@ function createSite(){
     $('#titleName').html("新建");
     document.getElementById("siteForm").reset();
     $("input[name='phone']").removeAttr("readonly");
+    $('#areaCode').val('');
+    $('#areaCodeForModal').val('');
 }
     function getSiteByAreaCode(areaCode) {
         $('#titleName').html("修改");

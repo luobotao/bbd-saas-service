@@ -246,7 +246,7 @@ public class RegisterController {
 			site.setCompanyName(postcompany.getCompanyname());
 			site.setCompanycode(postcompany.getCompanycode());
 		}
-		site.setMemo("您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日内完成审核。");
+		site.setMemo("您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日完成审核。");
 		Key<Site> siteKey = siteService.save(site);//保存站点
 		redirectAttrs.addAttribute("siteid",siteKey.getId().toString());
 		//向用户表插入登录用户

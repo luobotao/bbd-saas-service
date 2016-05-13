@@ -36,7 +36,7 @@
 				<span class="n-result-tip">
 					<c:if test="${postcompany.sta==0}">
 						<img src="<c:url value="/resources/images/n_success.png" />" />
-						<i>您的棒棒达快递账号申请信息提交成功。我们将在1-3个⼯作⽇内完成审核</i>
+						<i>您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日内完成审核</i>
 					</c:if>
 					<c:if test="${postcompany.sta==1}">
 						<img src="<c:url value="/resources/images/n_success.png" />" />

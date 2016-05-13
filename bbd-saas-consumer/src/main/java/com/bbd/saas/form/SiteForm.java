@@ -8,6 +8,7 @@ public class SiteForm {
 	private String phone;    //用户的登录手机号
 	@NotEmpty
 	private String name;         //站点名称
+	private String password;         //密码
 
 	private String companyId;    //公司ID
 	private String companyName;    //公司名称
@@ -108,5 +109,13 @@ public class SiteForm {
 
 	public void setAreaCode(String areaCode) {
 		this.areaCode = areaCode;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }
