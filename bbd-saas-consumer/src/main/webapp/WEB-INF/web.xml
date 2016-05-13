@@ -14,13 +14,13 @@
 		<param-name>logbackConfigLocation</param-name>
 		<param-value>classpath:logback.xml</param-value>
 	</context-param>
-	<listener>
-		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
-	</listener>
+	<!--<listener>-->
+		<!--<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>-->
+	<!--</listener>-->
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+	<!--<listener>-->
+		<!--<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>-->
+	<!--</listener>-->
 
 	<filter>
 		<filter-name>csrfFilter</filter-name>
