@@ -119,8 +119,8 @@
                                        class="orange">修改</a>
                                     <a href="javascript:void(0);" data-toggle='modal' data-target='#startModal'
                                        onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange">启用</a>
-                                    <a href="javascript:void(0);" data-toggle='modal' data-target='#delModal'
-                                       onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange ml6">删除</a>
+                                    <%--<a href="javascript:void(0);" data-toggle='modal' data-target='#delModal'--%>
+                                       <%--onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange ml6">删除</a>--%>
                                     <%
                                         }
                                     %>
