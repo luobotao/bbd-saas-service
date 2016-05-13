@@ -69,14 +69,14 @@ public class TimeController {
 							}
 						}
 					}
-					logger.info("====站点==site===  " + site.getName() + "  同步数据条数 =num==" + oneSiteNum);
+					logger.info("====站点名称==  " + site.getName() + "    ===同步数据条数 =num==" + oneSiteNum);
 				}
 			}
 		} catch (Exception e) {
 			logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
 		}
+		logger.info("同步数据总条数==="+i+"       站点总数==" + siteNum + "       订单总数===" + orderNum + "      物流总条数==" + exprNum);
 		logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。添加订单数目");
-		logger.info("i==="+i+" siteNum" + siteNum + "  orderNum===" + orderNum + " exprNum==" + exprNum);
 		return "map/time";
 	}
 
@@ -132,9 +132,9 @@ public class TimeController {
 			return 8;
 		} else if (remark.contains("您的订单已送达")) {//您的订单已送达
 			return 9;
-		} else if (remark.contains("订单已被拒收")) {//订单已被拒收
+		} else if (remark.contains("已被拒收")) {//订单已被拒收
 			return 10;
-		} else if (remark.contains("用户已签收")) { //用户已签收
+		} else if (remark.contains("已签收")) { //用户已签收
 			return 11;
 		} else{
 			return 0; //未到站

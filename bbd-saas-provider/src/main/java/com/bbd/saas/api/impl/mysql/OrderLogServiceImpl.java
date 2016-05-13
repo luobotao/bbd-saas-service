@@ -37,6 +37,7 @@ public class OrderLogServiceImpl implements OrderLogService {
 
 	@Override
 	public OrderMonitorVO statisticOrderNum(String areaCode, String startDate, String endDate) {
+		System.out.println("areaCode==="+areaCode);
 		List<Map<String, Object>> dataList = orderLogDao.selectCountByAreaCodeAndTime(areaCode, startDate, endDate);
 		if (dataList == null){
 			return null;
@@ -56,18 +57,17 @@ public class OrderLogServiceImpl implements OrderLogService {
 	 * @param orderMonitorVO
 	 */
 	private  void getOrderMonitorVO(Integer status, Long count, OrderMonitorVO orderMonitorVO){
-		//0-未到达站点，1-已到达站点，2-正在派送，3-已签收，4-已滞留，5-已拒收，6-转站, 7-已丢失,8-已取消
-		if(status == 0){
-			orderMonitorVO.setNoArrive(count);
-		}else if (status == 1){
+		System.out.println("status==="+status + " count=="+count);
+		//5-已到达站点，6|8-正在派送，9-已签收，7-已滞留，10-已拒收
+		if (status == 5){
 			orderMonitorVO.setArrived(count);
-		}else if (status == 2){
-			orderMonitorVO.setDispatched(count);
-		}else if (status == 3){
+		}else if (status == 6 || status == 8){
+			orderMonitorVO.setDispatched(orderMonitorVO.getDispatched() + count);
+		}else if (status == 9){
 			orderMonitorVO.setSigned(count);
-		}else if (status == 4){
+		}else if (status == 7){
 			orderMonitorVO.setRetention(count);
-		}else if (status == 5){
+		}else if (status == 10){
 			orderMonitorVO.setRejection(count);
 		}
 	}

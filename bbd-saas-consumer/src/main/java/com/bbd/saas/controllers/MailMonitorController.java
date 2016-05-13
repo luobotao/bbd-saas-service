@@ -62,7 +62,7 @@ public class MailMonitorController {
 	public String index(Integer pageIndex, String areaCode, String timeBetween, final HttpServletRequest request, Model model) {
 		try {
 			//设置默认查询条件
-			timeBetween = StringUtil.initStr(timeBetween, Dates.getBetweenTime(new Date(), -1));
+			timeBetween = StringUtil.initStr(timeBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<OrderMonitorVO> orderMonitorVOPage = getList(pageIndex, areaCode, timeBetween, request);
 			//当前登录的用户信息

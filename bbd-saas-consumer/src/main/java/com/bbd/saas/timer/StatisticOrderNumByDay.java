@@ -30,8 +30,8 @@ public class StatisticOrderNumByDay {
     @Autowired
     SiteService siteService;
 
-    //每个凌晨1点统计昨天的数据
-    @Scheduled(cron = "0 46 12 * * ?")
+    //每个凌晨0:10统计昨天的数据
+    @Scheduled(cron = "0 10 0 * * ?")
     public void sysOrderExpressToMysql() {
         logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger start ...");
         int siteNum = 0, orderNum = 0, exprNum = 0, i = 0, oneSiteNum = 0;
@@ -52,7 +52,7 @@ public class StatisticOrderNumByDay {
                                 if (expressList != null && expressList.size() > 0) {
                                     for (Express express : expressList) {
                                         exprNum++;
-										if (Dates.getDayTime(-1).compareTo(express.getDateAdd()) <= 0 && Dates.getDayTime(0).compareTo(express.getDateAdd()) >= 0){
+                                        if (Dates.getDayTime(-1).compareTo(express.getDateAdd()) <= 0 && Dates.getDayTime(0).compareTo(express.getDateAdd()) > 0){
                                             saveOrderLog(site, order, express);
                                             i++;
                                             oneSiteNum++;
@@ -62,14 +62,14 @@ public class StatisticOrderNumByDay {
                             }
                         }
                     }
-                    logger.info("====站点==site===  " + site.getName() + "  同步数据条数 =num==" + oneSiteNum);
+                    logger.info("====站点名称==  " + site.getName() + "    ===同步数据条数 =num==" + oneSiteNum);
                 }
             }
         } catch (Exception e) {
             logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
         }
+        logger.info("同步数据总条数==="+i+"       站点总数==" + siteNum + "       订单总数===" + orderNum + "      物流总条数==" + exprNum);
         logger.info("把当天的更新的订单的物流信息同步到mysql数据库中 trigger end。添加订单数目");
-        logger.info("i==="+i+" siteNum" + siteNum + "  orderNum===" + orderNum + " exprNum==" + exprNum);
     }
 
     private void  saveOrderLog(Site site, Order order, Express express){
@@ -102,26 +102,32 @@ public class StatisticOrderNumByDay {
      * @return 状态值
      */
     private int getStatusByRemark(String remark) {
-        if(remark == null){
+        if (remark == null) {
             return 0;
         }
-        if (remark.contains("已到达站点")) {
+        if (remark.contains("已打印")) {//订单已打印
             return 1;
-        } else if (remark.contains("正在派送")) {
+        } else if (remark.contains("分拣中")) {//订单分拣中
             return 2;
-        } else if (remark.contains("签收")) { //您的订单已完成签收
+        } else if (remark.contains("已打包")) {//订单已打包
             return 3;
-        } else if (remark.contains("已滞留")) {//您的订单已滞留
+        } else if (remark.contains("司机已取货")) {//司机已取货
             return 4;
-        } else if (remark.contains("被拒收")) {//您的订单被拒收
+        } else if (remark.contains("已送达【")) {//订单已送达【
             return 5;
-        } else if (remark.contains("转送到")) {
+        } else if (remark.contains("正在为您派件")) {//正在为您派件
             return 6;
-        } else if (remark.contains("丢失")) {
+        } else if (remark.contains("已被滞留")) {//订单已被滞留
             return 7;
-        }else if (remark.contains("取消")) {
+        } else if (remark.contains("重新派件")) {//重新派件
             return 8;
-        }else{
+        } else if (remark.contains("您的订单已送达")) {//您的订单已送达
+            return 9;
+        } else if (remark.contains("已被拒收")) {//订单已被拒收
+            return 10;
+        } else if (remark.contains("已签收")) { //用户已签收
+            return 11;
+        } else {
             return 0; //未到站
         }
     }
