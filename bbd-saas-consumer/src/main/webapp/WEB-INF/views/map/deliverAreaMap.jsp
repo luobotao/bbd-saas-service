@@ -1,10 +1,15 @@
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page import="com.bbd.saas.vo.SiteVO" %>
+<%@ page import="java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/views/main.jsp"%>
 <html>
 <head>
-	<title>配送区域 - 棒棒达快递</title>
+	<title>配送区域 - 系统设置 - 棒棒达快递</title>
+	<%
+		List<SiteVO> siteList = (List<SiteVO>)request.getAttribute("siteList");
+	%>
 </head>
 <body>
 <body class="fbg">
@@ -53,7 +58,18 @@
 								设置配送范围后，将优先匹配站点附近的订单。
 							</div>
 							<form  method="POST" id="siteRadiusForm">
-								<div class="col-md-12 pb20">
+								<div class="col-md-3 pb20">
+									<label>站点：　</label>
+									<select id="siteId" class="form-control form-con-new">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+								</div>
+								<div class="col-md-4 pb20">
 									<label class="f16">
 										站点周围：<c:set var="count" value="20"/>
 										<select id="radius" name="radius"  class="form-control form-con-new f16">
@@ -62,9 +78,7 @@
 												<option value ="${temp}" <c:if test="${temp eq site.getDeliveryArea()}">selected</c:if>>${temp}</option>
 											</c:forEach>
 										</select>  公里
-										<input type="hidden" id="siteId" name="siteId" value="${site.getId()}"/>
 									</label>
-
 								</div>
 								<div class="col-md-12">
 									<div class="b-map">
@@ -192,26 +206,26 @@
 </footer>
 <!-- E footer -->
 <div class="b-loading">
-<div class="spinner" style="display:none">
-	<div class="spinner-container container1">
-		<div class="circle1"></div>
-		<div class="circle2"></div>
-		<div class="circle3"></div>
-		<div class="circle4"></div>
+	<div class="spinner" style="display:none">
+		<div class="spinner-container container1">
+			<div class="circle1"></div>
+			<div class="circle2"></div>
+			<div class="circle3"></div>
+			<div class="circle4"></div>
+		</div>
+		<div class="spinner-container container2">
+			<div class="circle1"></div>
+			<div class="circle2"></div>
+			<div class="circle3"></div>
+			<div class="circle4"></div>
+		</div>
+		<div class="spinner-container container3">
+			<div class="circle1"></div>
+			<div class="circle2"></div>
+			<div class="circle3"></div>
+			<div class="circle4"></div>
+		</div>
 	</div>
-	<div class="spinner-container container2">
-		<div class="circle1"></div>
-		<div class="circle2"></div>
-		<div class="circle3"></div>
-		<div class="circle4"></div>
-	</div>
-	<div class="spinner-container container3">
-		<div class="circle1"></div>
-		<div class="circle2"></div>
-		<div class="circle3"></div>
-		<div class="circle4"></div>
-	</div>
-</div>
 </div>
 
 <!-- S pop -->
@@ -247,57 +261,205 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-	// 导入文件
-	$(".import-file").on("change",function(){
-		$(".j-import-pop").modal();
-	})
-	$("input[type='checkbox']").iCheck({
-		checkboxClass : 'icheckbox_square-blue'
-	});
-	$("#selectAll").on('ifUnchecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
-	}).on('ifChecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("check");
-	});;
-	//保存站点配送范围信息
-	$("#saveSiteBtn").click(function(){
-		var radiusVal = $("#radius option:selected").val();
-		if(radiusVal==0){
-			alert("请选择站点配送范围");
-			return false;
-		}else{
-			$.ajax({
-				url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
-				type: 'get',
-				cache: false,
-				dataType: "text",
-				data: {},
-				success: function(response){
-					alert("保存成功");
-					window.location.href="${ctx}/deliverRegion/map/1";
-				},
-				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+	var defaultCenter = new BMap.Point("116.404", "39.915");
+	var defaultZoom = 11;
+
+	// 百度地图API功能
+	var allmapPs = new BMap.Map("allmapPs", {enableMapClick:false,minZoom:5});
+	/*初始化加载=======start*/
+	function initDeliveryMap(){
+		allmapPs.enableScrollWheelZoom(true);
+		//设置地图中心点和放大级别
+		allmapPs.centerAndZoom(defaultCenter, 11);
+		//显示站点和配送区域
+		<%
+			if (siteList != null) {
+				for (SiteVO site : siteList) {
+		%>
+		showOneSiteArea2("<%=site.getLng()%>", "<%=site.getLat()%>", "<%=site.getDeliveryArea()%>");
+		<%
 				}
-			});
+			}
+		%>
+	}
+	function getPointBySite2(lng, lat){
+		var point = null;
+		if(lng != null && lng != "0.000000" && lng != "null" && lat != null && lat != "null" && lat != "0.000000" ){
+			point = new BMap.Point(lng, lat);
+		}else{
+			point = defaultCenter;//设置默认中心点
 		}
-	})
-	$("#importBtn").click(function(){
-		$(this).parents(".j-import-pop").hide();
-		$(".spinner").show();
-		$("#importFileForm").submit();
-	})
+		return point;
+	}
+	//显示一个站点及其配送范围
+	function showOneSiteArea2(lng, lat, radius){
+		var point = getPointBySite2(lng, lat);
+		if(radius == null || radius == "null" ||  radius == ""){
+			radius = 0;
+		}
+		console.log("radius===" + radius);
+		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
+		var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
+		allmapPs.addOverlay(marker);               // 将标注添加到地图中
+		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+		//var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
+		var circle = new BMap.Circle(point, radius*1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
+		allmapPs.addOverlay(circle);            //增加圆
+	}
+	initDeliveryMap();
+	/*================初始化加载=======================end===============*/
+
+
+	//更改站点
+	$("#siteId").change(function(){
+		var siteId = $("#siteId").val();
+		showSiteChangeMap(siteId);
+	});
 	//更改配送范围
 	$("#radius").change(function(){
-		var radius = $("#radius option:selected").val();
-		showMap(radius*1000);
+		var siteId = $("#siteId").val();
+		var radius = $("#radius").val();
+		if (siteId == "") {//全部
+			alert("请选择一个站点。");
+			return;
+		}
+		showRadiusChangeMap(siteId, radius);
 	})
+	//展示配送范围--更改站点
+	function showSiteChangeMap(siteId){
+		$.ajax({
+			type : "GET",  //提交方式
+			url : "${ctx}/deliverArea/getSiteById",//路径
+			data : {
+				"siteId" : siteId
+			},//数据，这里使用的是Json格式进行传输
+			success : function(dataObject) {//返回数据
+				//清除所有覆盖物
+				allmapPs.clearOverlays();
+				if (siteId == ""){//全部
+					//更新配送区域
+					$("#radius").val(0);
+					var centerSite = dataObject.centerSite;
+					var siteList = dataObject.siteList;
 
+					//显示站点和配送区域
+					if (siteList != null) {
+						var center = getPointBySite(centerSite);
+						//设置地图中心点和放大级别
+						allmapPs.centerAndZoom(center, defaultZoom);
+						var circle = new BMap.Circle(center, radius * 1000);
+						allmapPs.addOverlay(circle);
+						//显示站点和配送区域
+						for (var i = 0;i < siteList.length ; i++) {
+							showOneSiteArea(siteList[i]);
+						}
+					}
+				} else {
+					var site = dataObject.site;
+					var center = getPointBySite(site);
+					var zoom = getMapZoom(site.deliveryArea);
+					//设置地图中心点和放大级别
+					allmapPs.centerAndZoom(center, zoom);
+					//显示站点和配送区域
+					showOneSiteArea(site);
+					//更新配送区域
+					if(site.deliveryArea == null || site.deliveryArea == ""){
+						$("#radius").val(0);
+					}else {
+						$("#radius").val(site.deliveryArea);
+					}
+				}
+			},
+			error : function() {
+				alert("服务器繁忙，请稍后再试！");
+			}
+		});
+	}
+	//根据半径获得地图放大级别
+	function getMapZoom(radius){
+		//地图放大级别
+		var radiusVal = 11;
+		if(radius == null){
+			return radiusVal;
+		}
+		radius = radius * 1000;
+		if(radius<2000){
+			radiusVal = 15;
+		}else if(radius<3000){
+			radiusVal = 14;
+		}else if(radius<5000){
+			radiusVal = 13;
+		}else if(radius<10000){
+			radiusVal = 12;
+		}else{
+			radiusVal = 11;
+		}
+		//console.log("==单个=radiusVal="+radiusVal + "  radius==" + radius);
+		return radiusVal;
+	}
+
+	function getPointBySite(site){
+		var point = null;
+		if(site != null && site.lng != null && site.lng != "0.000000" && site.lng != "null" && site.lat != null && site.lat != "null" && site.lat != "0.000000" ){
+			point = new BMap.Point(site.lng, site.lat);
+		}else{
+			point = defaultCenter;//设置默认中心点
+		}
+		return point;
+	}
+	//显示一个站点及其配送范围
+	function showOneSiteArea(site, radius){
+		//console.log("showONe==radius=" + radius );
+		var point = getPointBySite(site);
+		//radius优先级高于site.deliveryArea
+		if(radius == null || radius == ""){
+			if(site.deliveryArea == null || site.deliveryArea == ""){
+				radius = 0;
+			}else{
+				radius = site.deliveryArea;
+			}
+		}
+		//radius = 2;
+		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
+		var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
+		allmapPs.addOverlay(marker);               // 将标注添加到地图中
+
+		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+		//var circle = new BMap.Circle(point, radius * 1000);
+		var circle = new BMap.Circle(point, radius * 1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
+		 allmapPs.addOverlay(circle);          //增加圆
+		console.log("=======radius===" + radius +"  circle===" + circle+" site==="+site.name);
+	}
+
+	//展示配送范围--更改半径
+	function showRadiusChangeMap(siteId, radius){
+		$.ajax({
+			type : "GET",  //提交方式
+			url : "${ctx}/deliverArea/getSiteById",//路径
+			data : {
+				"siteId" : siteId
+			},//数据，这里使用的是Json格式进行传输
+			success : function(dataObject) {//返回数据
+				//清除所有覆盖物
+				allmapPs.clearOverlays();
+				var site = dataObject.site;
+				var center = getPointBySite(site);
+				var zoom = getMapZoom(radius);
+				//设置地图中心点和放大级别
+				allmapPs.centerAndZoom(center, zoom);
+				//显示站点和配送区域
+				showOneSiteArea(site, radius);
+			},
+			error : function() {
+				alert("服务器繁忙，请稍后再试！");
+			}
+		});
+	}
 
 	//展示配送范围
 	function showMap(radius){
 		// 百度地图API功能
-		var allmapPs = new BMap.Map("allmapPs", {enableMapClick:false,minZoom:11});
+		//var allmapPs = new BMap.Map("allmapPs", {enableMapClick:false,minZoom:11});
 		var pointPs = new BMap.Point(${site.lng}, ${site.lat});
 		var radiusVal = 15;
 		if(radius<2000){
@@ -321,6 +483,47 @@
 		allmapPs.addOverlay(circle);            //增加圆
 		allmapPs.enableScrollWheelZoom(true);
 	}
+	// 导入文件
+	$(".import-file").on("change",function(){
+		$(".j-import-pop").modal();
+	})
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
+	$("#selectAll").on('ifUnchecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
+	}).on('ifChecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("check");
+	});;
+	//保存站点配送范围信息
+	$("#saveSiteBtn").click(function(){
+		var radiusVal = $("#radius").val();
+		if(radiusVal==0){
+			alert("请选择站点配送范围。");
+			return false;
+		}else{
+			$.ajax({
+				url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
+				type: 'get',
+				cache: false,
+				dataType: "text",
+				data: {},
+				success: function(response){
+					alert("保存成功");
+					window.location.href="${ctx}/deliverRegion/map/1";
+				},
+				error: function(){
+					alert('服务器繁忙，请稍后再试！');
+				}
+			});
+		}
+	})
+	$("#importBtn").click(function(){
+		$(this).parents(".j-import-pop").hide();
+		$(".spinner").show();
+		$("#importFileForm").submit();
+	})
+
 
 	//--------------------panel 3------------------------------------
 	$("#between").daterangepicker({
@@ -355,9 +558,9 @@
 	})
 
 	//显示分页条
-	var pageStr = paginNav(${page}, ${pageNum}, ${pageCount});
-	$("#pagin").html(pageStr);
-
+	/*var pageStr = paginNav(${page}, ${pageNum}, ${pageCount});
+	 $("#pagin").html(pageStr);
+	 */
 	//加载带有查询条件的指定页的数据
 	function gotoPage(pageIndex,keyword,between) {
 		$("#page").val(pageIndex);

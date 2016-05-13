@@ -13,18 +13,22 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.vo.SiteVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 配送区域
@@ -51,42 +55,53 @@ public class DeliverAreaController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/map/{activeNum}", method=RequestMethod.GET)
-	public String toMapPage(@PathVariable String activeNum, Model model, HttpServletRequest request ) {
+	@RequestMapping(value="/map", method=RequestMethod.GET)
+	public String toMapPage(String siteId, String activeNum, Model model, HttpServletRequest request ) {
 		try{
 			String userId = UserSession.get(request);
-			if(userId!=null&&!"".equals(userId)) {
-				User user = adminService.get(userId);
-				//获取用户站点信息
-				//--------panel 1-----------------------
-				Site site = siteService.findSite(user.getSite().getId().toString());
+			if(userId != null && !"".equals(userId)) {
+				//当前登录的用户信息
+				User currUser = adminService.get(userId);
+				//查询登录用户的公司下的所有站点
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+				//获取参数
+				siteId = StringUtil.initStr(siteId, "");
 				String between = request.getParameter("between");
-				String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
+				String keyword = StringUtil.initStr(request.getParameter("keyword"), "");
 				int page = Numbers.parseInt(request.getParameter("page"), 0);
-				//导入地址关键词
-				//--------panel 3-----------------------
-				PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-				if (StringUtils.isNotBlank(between)) {//预计到站时间
-					DateBetween dateBetween = new DateBetween(between);
-					logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
+				siteId = currUser.getSite().getId().toString();
+				//业务开始
+				if(siteId != null && !"".equals(siteId)){//只查询一个站点
+					//获取用户站点信息
+					//--------panel 1-----------------------
+					Site site = siteService.findSite(siteId);
 					//导入地址关键词
-					siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", dateBetween.getStart(), dateBetween.getEnd(), page, 10, keyword);
-				} else {
-					siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
-				}
-				model.addAttribute("activeNum", activeNum);
-				model.addAttribute("site", site);
-				model.addAttribute("between", between);
-				model.addAttribute("keyword", keyword);
-				model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
-				model.addAttribute("page", siteKeywordPage.getPage());
-				model.addAttribute("pageNum", siteKeywordPage.getPageNum());
-				model.addAttribute("pageCount", siteKeywordPage.getCount());
+					//--------panel 3-----------------------
+					PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+					if (StringUtils.isNotBlank(between)) {//预计到站时间
+						DateBetween dateBetween = new DateBetween(between);
+						logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
+						//导入地址关键词
+						siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", dateBetween.getStart(), dateBetween.getEnd(), page, 10, keyword);
+					} else {
+						siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
+					}
+					model.addAttribute("siteList", siteVOList);
+					model.addAttribute("activeNum", activeNum);
+					model.addAttribute("site", site);
+					model.addAttribute("between", between);
+					model.addAttribute("keyword", keyword);
+					model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
+					model.addAttribute("page", siteKeywordPage.getPage());
+					model.addAttribute("pageNum", siteKeywordPage.getPageNum());
+					model.addAttribute("pageCount", siteKeywordPage.getCount());
+					List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(currUser.getSite().getId().toString());
+					String siteStr = dealSitePoints(sitePoints);
+					model.addAttribute("sitePoints", siteStr);
+				}else {//查询本公司下的所有站点 （全部）
 
-				List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());
-				String siteStr = dealSitePoints(sitePoints);
-				model.addAttribute("sitePoints", siteStr);
-				return "systemSet/deliverRegionMap";
+				}
+				return "map/deliverAreaMap";
 			}else{
 				return "redirect:/login";
 			}
@@ -114,4 +129,45 @@ public class DeliverAreaController {
 		return sb.toString();
 	}
 
+	@ResponseBody
+	@RequestMapping(value="/getSiteById", method=RequestMethod.GET)
+	public Map<String, Object> getSiteById(String siteId, final HttpServletRequest request) {
+		//查询数据
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(siteId != null && !"".equals(siteId)){//只查询一个站点
+			//获取用户站点信息
+			//--------panel 1-----------------------
+			Site site = siteService.findSite(siteId);
+			SiteVO siteVO = new SiteVO();
+			siteVO.setName(site.getName());
+			siteVO.setLat(site.getLat());
+			siteVO.setLng(site.getLng());
+			siteVO.setDeliveryArea(site.getDeliveryArea());
+			map.put("site", site);
+		}else {//查询本公司下的所有站点 （全部）
+			String userId = UserSession.get(request);
+			if(userId != null && !"".equals(userId)) {
+				//当前登录的用户信息
+				User currUser = adminService.get(userId);
+				//查询登录用户的公司下的所有站点
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+				//设置地图默认的中心点
+				SiteVO centerSite = new SiteVO();
+				centerSite.setName("");
+				centerSite.setLat("39.915");
+				centerSite.setLng("116.404");
+				centerSite.setDeliveryArea("5000");
+				map.put("centerSite", centerSite);
+				map.put("siteList", siteVOList);
+			}else{
+				SiteVO centerSite = new SiteVO();
+				centerSite.setName("");
+				centerSite.setLat("39.915");
+				centerSite.setLng("116.404");
+				centerSite.setDeliveryArea("5000");
+				map.put("centerSite", centerSite);
+			}
+		}
+		return map;
+	}
 }

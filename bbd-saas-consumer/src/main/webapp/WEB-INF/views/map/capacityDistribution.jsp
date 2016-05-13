@@ -138,7 +138,6 @@
 
 	//加载站点和派件员名称和经纬度信息
 	function loadDataAndShow(siteId){
-		//查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式
 			url : "<%=path%>/capacityDistribution/getSiteAndCourierList",//路径

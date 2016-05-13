@@ -241,6 +241,7 @@ public class SiteServiceImpl implements SiteService {
 		siteVo.setName(site.getName());
         siteVo.setLng(site.getLng());
         siteVo.setLat(site.getLat());
+        siteVo.setDeliveryArea(site.getDeliveryArea());
 		return siteVo;
 	}
 
