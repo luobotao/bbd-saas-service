@@ -90,7 +90,7 @@ public class LoginController {
 								return "redirect:register/regitsterSiteUpdate";
 							}
 							//未审核
-							if( StringUtils.isBlank(user.getSite().getAreaCode()) || user.getSite().getStatus()!= SiteStatus.WAIT){
+							if( StringUtils.isBlank(user.getSite().getAreaCode()) || user.getSite().getStatus()== SiteStatus.WAIT){
 								redirectAttrs.addAttribute("siteid",user.getSite().getId().toString());
 								return "redirect:register/regitsterSiteView";
 							}
