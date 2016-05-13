@@ -352,7 +352,7 @@ function getRowHtml(data){
 	row += "<td>" + data.user.loginName + "</td>";
 	 */
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userId == null || data.userId == ""){
+	if(order.userVO()==null || data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";
