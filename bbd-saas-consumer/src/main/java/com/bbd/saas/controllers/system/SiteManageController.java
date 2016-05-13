@@ -159,7 +159,7 @@ public class SiteManageController {
 		setLatAndLng(siteKey.getId().toString());//设置经纬度
 		//向用户表插入登录用户
 
-
+		user.setPassWord(siteForm.getPassword());
 		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		user.setSite(site);
@@ -218,7 +218,7 @@ public class SiteManageController {
 		return sitePage;
 	}
 	/**
-     * 审核通过站点
+     * 根据区域码获取站点
      * @param
      * @return
      */
@@ -227,6 +227,13 @@ public class SiteManageController {
 	public Site getSiteByAreaCode(HttpServletRequest request, String areaCode) {
 		return siteService.findSiteByAreaCode(areaCode);
 	}
+
+	/**
+	 * 审核通过站点
+	 * @param request
+	 * @param phone
+     * @return
+     */
 	@ResponseBody
 	@RequestMapping(value = "/validSite", method = RequestMethod.GET)
 	public boolean validSite(HttpServletRequest request, String phone) {
@@ -307,14 +314,13 @@ public class SiteManageController {
 		Site site = siteService.findSiteByAreaCode(areaCode);
 		site.setStatus(SiteStatus.APPROVE);
 		site.setDateUpd(new Date());
-
+		siteService.save(site);
 		try {
 			Result result = sitePoiApi.enableSite(site.getId().toString());
 			logger.info(result+"==========");
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-
 		return true;
 	}
 

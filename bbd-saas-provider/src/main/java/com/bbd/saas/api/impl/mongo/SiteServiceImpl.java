@@ -99,7 +99,7 @@ public class SiteServiceImpl implements SiteService {
         Site site = findSite(siteId);
         site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
         //生成区域码（棒棒达）----------------------------------------------------------
-        String areaCode = dealOrderWithGetAreaCode(site.getProvince() + site.getCity() + site.getArea());
+        String areaCode = dealOrderWithGetAreaCode(site.getProvince() + site.getCity());//只通过省市
         site.setAreaCode(areaCode);
         site.setStatus(SiteStatus.APPROVE);
         site.setDateUpd(new Date());
@@ -124,30 +124,26 @@ public class SiteServiceImpl implements SiteService {
     public String dealOrderWithGetAreaCode(String address) {
         address = address.replaceAll("省", "");
         address = address.replaceAll("市", "");
-        String str[] = new String[3];
+        String str[] = new String[2];
         int tempNum = 0;
         while (true) {
-            str = dealOrderWithProvince(str, address);
-            //如果区的数值不存在，则继续搜索
-            if (StringUtils.isBlank(str[2])) {
-                //替换省市的信息继续搜索
-                if (!StringUtils.isBlank(str[1])) {
-                    address = address.replace(str[1].split("-")[1], "").trim();
-                } else if (!StringUtils.isBlank(str[0])) {
-                    address = address.replace(str[0].split("-")[1], "").trim();
-                }
-            } else {
-                break;
+            str = dealOrderWithProvince(str, address);//河南-濮阳
+            //替换省市的信息继续搜索
+            if (!StringUtils.isBlank(str[1])) {
+                address = address.replace(str[1].split("-")[1], "").trim();
+            } else if (!StringUtils.isBlank(str[0])) {
+                address = address.replace(str[0].split("-")[1], "").trim();
             }
+
             tempNum++;
-            if (tempNum >= 3) {
+            if (tempNum >= 2) {
                 break;
             }
         }
         String areaCode = "";
         if (str != null && str.length > 1) {
             //处理区，生成区域码
-            String area = str[str.length - 1];
+            String area = str[str.length - 1];//
             String[] areas = area.split("-");
             BbtAddress bbtAddress = bbtAddressDao.getBbtAddressWithId(areas[0]);
             if (bbtAddress != null) {
