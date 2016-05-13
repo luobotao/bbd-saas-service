@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  * Created by luobotao on 2016/4/1.
  * 管理员接口
  */
-@Component("statisticTaskJob")
 public class StatisticTaskJob {
     private OrderDao orderDao;
 

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
  * Created by luobotao on 2016/4/1.
  * 管理员接口
  */
-@Service("toOtherSiteLogService")
 public class ToOtherSiteLogServiceImpl implements ToOtherSiteLogService {
     private ToOtherSiteLogDao toOtherSiteLogDao;
 

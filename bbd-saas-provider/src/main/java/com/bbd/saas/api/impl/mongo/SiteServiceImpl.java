@@ -22,7 +22,6 @@ import java.util.List;
  * Created by luobotao on 2016/4/1.
  * 管理员接口
  */
-@Service("siteService")
 public class SiteServiceImpl implements SiteService {
     private SiteDao siteDao;
     private BbtAddressDao bbtAddressDao;

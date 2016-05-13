@@ -114,9 +114,7 @@ folder instead of downloading all of them to reduce the load. -->
 				<div class="clearfix mt20">
 					<a href="javascript:void(0);" class="sbtn sbtn2 l col-md-12" data-dismiss="modal">确认</a>
 				</div>
-
 			</div>
-
 		</div>
 	</div>
 </div>

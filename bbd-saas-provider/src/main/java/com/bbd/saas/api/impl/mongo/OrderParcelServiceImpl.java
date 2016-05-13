@@ -12,7 +12,6 @@ import java.util.List;
  * Created by luobotao on 2016/4/13.
  * 包裹接口
  */
-@Service("orderParcelService")
 public class OrderParcelServiceImpl implements OrderParcelService {
 	
     private OrderParcelDao orderParcelDao;

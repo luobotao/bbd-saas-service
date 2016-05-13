@@ -125,29 +125,22 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 											<% 
 											
 											if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
-												
+
 												%>
 												<a href="javascript:void(0)" onclick="changeStatus(3,'','<%=user.getLoginName() %>')" class="orange ml6">停用</a>
-											
-												<% 
+
+												<%
 											}else{
-												
 												%>
-												
 												<a href="javascript:void(0)" onclick="changeStatus(1,'','<%=user.getLoginName() %>')" class="orange ml6">启用</a>
 												<%
 											}
-											
-											
 											%>
-											
 											</td>
-											
 										</tr>
 										<%
 											}
 										%>
-	        							
 	        						</tbody>
 	        					</table>
 	        				</div>
@@ -184,8 +177,15 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 					<div class="modal-body b-modal-body">
 						<ul class="b-n-crt">
 							<li>
-								<select id="roleId" name="roleId" class="form-control form-bod">
-									<option value ="1" selected ="selected">派件员</option>
+								<select id="roleId" name="roleId" class="form-control form-bod" onchange="showPass();">
+									<c:if test="${userNow.role==UserRole.COMPANY}">
+										<option value ="-1" selected ="selected">全部</option>
+										<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
+										<option value ="<%=UserRole.SENDMEM%>"><%=UserRole.SENDMEM.getMessage()%></option>
+									</c:if>
+									<c:if test="${userNow.role==UserRole.SITEMASTER}">
+										<option value ="<%=UserRole.SENDMEM%>" selected ="selected"><%=UserRole.SENDMEM.getMessage()%></option>
+									</c:if>
 								</select>
 								<p class="help-block" id="roleIdP" style="display:none;">请选中一个角色</p>
 							</li>
@@ -195,11 +195,16 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 							</li>
 							<li>
 								<input type="text" id="loginName" name="loginName" onblur="checkLoginName(this.value)" class="form-control form-bod" placeholder="手机号" />
-								<p class="help-block" id="loginNameP" style="display:none;">请正确输入11位手机号</p>
 							</li>
+							<c:if test="${userNow.role==UserRole.COMPANY}">
+								<li id="passLi" >
+									<input type="password" id="loginPass" name="loginPass" class="form-control form-bod" placeholder="密码" />
+								</li>
+								<li id="passCLi" >
+									<input type="password" id="passwordC" name="passwordC" class="form-control form-bod" placeholder="确认密码" />
+								</li>
+							</c:if>
 						</ul>
-							
-						
 						<div class="row mt20">
 							<span class="col-md-12"><a href="javascript:void(0)" id="saveuserid" onclick="saveUserBtn()" class="sbtn sbtn2 l">保存</a></span>
 						</div>
@@ -215,6 +220,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 			</div>
 		</div>
 		<!--E 新建-->
+
         <!-- E pop -->
 <script type="text/javascript">
 //显示分页条
@@ -307,9 +313,7 @@ function checkLoginName(loginName) {
 	var url = '<c:url value="/userManage/checkLognName" />';
 	var ret = false;
 	if(loginName!=''){
-		
 		if(operate=='create'){
-			
 			$.ajax({
 				url: url+'?loginName='+loginName,
 				type: 'GET',
@@ -320,35 +324,17 @@ function checkLoginName(loginName) {
 				success: function(response){
 					console.log(response);
 					if(response=="true"){
-						$("#loginNameP").text("手机号已存在，请重新输入11位手机号!");
-					    $("#loginNameP").attr("style","color:red");
-					    //document.getElementById("flaglogin").value='false';
-					    //return true;
+						outDiv("手机号已存在，请重新输入11位手机号!")
 					    ret = true;
-					}else{
-						//document.getElementById("flaglogin").value='true';
-						$("#loginNameP").attr("style","display:none");
-						//return false;
-						ret = false;
 					}
 				},
 				error: function(){
-					//alert('服务器繁忙，请稍后再试！');
-					//return true;
-					ret = true;
-					if(window.top==window.self){//不存在父页面
-						window.location.href="<c:url value="/login" />"
-					}else{
-						window.top.location.href="<c:url value="/login" />"
-					}
+					alert('服务器繁忙，请稍后再试！');
 				}
 			});
 		}
 		
 	}
-	
-	return ret;
-
 }
 
 
@@ -414,13 +400,8 @@ function delUser(loginName){
 				} 
 	        },
 	        error : function() {  
-	       		//alert("异常！");  
-	        	if(window.top==window.self){//不存在父页面
-					window.location.href="<c:url value="/login" />"
-				}else{
-					window.top.location.href="<c:url value="/login" />"
-				}
-	  		}    
+	       		alert("异常！");
+	  		}
 	    });
 	}
 	
@@ -428,7 +409,44 @@ function delUser(loginName){
 }
 
 function saveUserBtn(){
-	
+	var realName = $("#realName").val();
+	realName=realName.replace(/\ +/g,"");
+	if(realName==""){
+		outDiv("请输入姓名");
+		return false;
+	}
+	var loginName = $("#loginName").val();
+	loginName=loginName.replace(/\ +/g,"");
+	if(loginName==""){
+		outDiv("请输入手机号");
+		return false;
+	}
+	if(checkMobile(loginName)==false){
+		outDiv("请输入正确的手机号");
+		return false;
+	}
+	<c:if test="${userNow.role==UserRole.COMPANY}">
+	var password = $.trim($('input[name="loginPass"]').val());
+	if(password==""){
+		outDiv("请输入密码");
+		return false;
+	}
+	if(!pwdreg.test(password)){
+		outDiv("请输入6-12位数字和字母结合的密码");
+		return false;
+	}
+	var passwordC = $.trim($('input[name="passwordC"]').val());
+	if(passwordC==""){
+		outDiv("请确认密码");
+		return false;
+	}
+	if(passwordC!=password){
+		outDiv("两次密码不一致");
+		return false;
+	}
+	</c:if>
+
+
 	var url = "";
 	//operate这个隐藏域就是为了区别这个操作时修改还是新建
 	var getSign = document.getElementById("operate").value;
@@ -439,126 +457,70 @@ function saveUserBtn(){
 	var returnmess = "";
 	if(getSign=='edit'){
 		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
+		$("#userForm").ajaxSubmit({
+			type: 'post',
+			url: url ,
+			success: function(data){
+				if(data=="true"){
+					$(".j-user-pop").modal("hide");
+					gotoPage(0);
+				}else{
+					alert( "保存用户失败");
+				}
+			},
+			error: function(JsonHttpRequest, textStatus, errorThrown){
+				alert( "服务器异常!");
+			}
+		});
 	}else{
 		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
-	}
-	//var roleId = $("#roleId").val();
-	var realName = $("#realName").val();
-	realName=realName.replace(/\ +/g,"");
-	var loginName = $("#loginName").val();
-	loginName=loginName.replace(/\ +/g,"");
-	/* var staffid = $("#staffid").val();
-	staffid=staffid.replace(/\ +/g,"");
-	var loginPass = $("#loginPass").val();
-	loginPass=loginPass.replace(/\ +/g,"");
-	var confirmPass = $("#confirmPass").val();
-	confirmPass=confirmPass.replace(/\ +/g,""); */
-	var tel_reg = /^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
-	//var loginpasstemp = true;
-	//var confirmpasstemp = true;
-	/* if (roleId=="-1") {
-	    $("#roleIdP").attr("style","color:red");
-		flag = false;
-	}else{
-		$("#roleIdP").attr("style","display:none");
-	} */
-	if (!loginName) {
-	    $("#loginNameP").attr("style","color:red");
-		flag = false;
-	}else{
-		$("#loginNameP").attr("style","display:none");
-	}
-	if(checkLoginName(loginName)){
-		//returnmess = '该手机号已存在，请重新输入！';
-		flag = false;
-		checkSign = true;
-	}
-	if (!checkMobile(loginName)) {//!tel_reg.test(loginName)
-		$("#loginNameP").text("请重新输入11位手机号!");
-		$("#loginNameP").attr("style","color:red");
-		flag = false;
-	}else{
-		$("#loginNameP").attr("style","display:none");
-	}
-	if (!realName) {
-	    $("#realNameP").attr("style","color:red");
-		flag = false;
-	}else{
-		$("#realNameP").attr("style","display:none");
-	}
-	/*if (!staffid) {
-	    $("#staffidP").attr("style","color:red");
-		flag = false;
-	}else{
-		$("#staffidP").attr("style","display:none");
-	}
-	if (!loginPass) {
-	    $("#loginpassP").attr("style","color:red");
-		flag = false;
-		loginpasstemp = false;
-	}else{
-		$("#loginpassP").attr("style","display:none");
-	}
-	if (!confirmPass) {
-	    $("#confirmPassP").attr("style","color:red");
-		flag = false;
-		confirmpasstemp = false;
-	}else{
-		$("#confirmPassP").attr("style","display:none");
-	}
-	if(loginpasstemp && confirmpasstemp && loginPass==confirmPass){
-		$("#confirmPassP").attr("style","display:none");
-	}else{
-		$("#confirmPassP").attr("style","color:red");
-		flag = false;
-	} */
-	if(flag){
-		
-		console.log("succeful , submit");
-		$("#userForm").ajaxSubmit({  
-	        type: 'post',  
-	        url: url ,  
-	        success: function(data){  
-	        	if(data=="true"){
-	        		 
-	        		if(getSign=='create'){
-	        			//alert("保存用户成功"); 
-	        			$(".j-user-pop").modal("hide");
-	        			//document.getElementById("userForm").reset();
-	        		}else{
-	        			alert("修改用户成功"); 
-	        			$(".j-user-pop").modal("hide");
-	        			//document.getElementById("staffidTemp").value = staffid;
-	        		}
-	        		
-	        		gotoPage(0);
-	        	}else{
-	        		alert( "保存用户失败");  
-	        	}
-
-	        },  
-	        error: function(JsonHttpRequest, textStatus, errorThrown){  
-	            //alert( "服务器异常!");  
-	        	if(window.top==window.self){//不存在父页面
-					window.location.href="<c:url value="/login" />"
+		$.ajax({
+			url: "<c:url value="/userManage/checkLognName" />"+"?loginName="+loginName,
+			type: 'GET',
+			cache: false,
+			dataType: "text",
+			async: false,
+			data: {},
+			success: function(response){
+				if(response=="true"){
+					outDiv("手机号已存在，请重新输入11位手机号!")
+					ret = true;
 				}else{
-					window.top.location.href="<c:url value="/login" />"
+					$("#userForm").ajaxSubmit({
+						type: 'post',
+						url: url ,
+						success: function(data){
+							if(data=="true"){
+								$(".j-user-pop").modal("hide");
+								gotoPage(0);
+							}else{
+								alert( "保存用户失败");
+							}
+						},
+						error: function(JsonHttpRequest, textStatus, errorThrown){
+							alert( "服务器异常!");
+						}
+					});
 				}
-	        }  
-	    });
-	}else if(checkSign){
-		//alert(returnmess);
-		//$("#loginNameP").text("手机号已存在，请重新输入11位手机号!");
-		$("#loginNameP").attr("style","color:red");
-		return false;
-	}else {
-		//alert("有非法内容，请检查内容合法性！");
-		return false;
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
+			}
+		});
 	}
-	
 }
 
-
+function showPass() {
+	<c:if test="${userNow.role==UserRole.COMPANY}">
+	if($("#roleId").val()=="<%=UserRole.SITEMASTER%>"){
+		$("#passLi").attr("style","");
+		$("#passCLi").attr("style","");
+	}else{
+		$("#passLi").attr("style","display:none;");
+		$("#passCLi").attr("style","display:none;");
+	}
+	</c:if>
+}
 function searchUser(id,loginName){
 	$('.userclass').html('修改');
 	$.ajax({
@@ -576,9 +538,18 @@ function searchUser(id,loginName){
 				$("#realName").val(data.realName);
 				$("#loginName").val(data.loginName);
 				$("#staffid").val(data.staffid);
-				$("#roleId").val(data.roleStatus);
-				$("#loginPass").val(data.passWord);
-				$("#confirmPass").val(data.passWord);
+				$("#roleId").val(data.role);
+				if($("#roleId").val()=="<%=UserRole.SITEMASTER%>"){
+					<c:if test="${userNow.role==UserRole.COMPANY}">
+						$("#passLi").attr("style","");
+						$("#passCLi").attr("style","");
+					</c:if>
+				}else{
+					$("#passLi").attr("style","display:none;");
+					$("#passCLi").attr("style","display:none;");
+				}
+
+
 				$("#loginName").attr("readonly",true);
 				//document.getElementById("sign").value="edit";
 				document.getElementById("loginNameTemp").value=data.loginName;
@@ -587,14 +558,8 @@ function searchUser(id,loginName){
 			}    
         },
         error : function() {  
-       		//alert("异常！");  
-        	//location.href = '<c:url value="/login" />';
-        	if(window.top==window.self){//不存在父页面
-				window.location.href="<c:url value="/login" />"
-			}else{
-				window.top.location.href="<c:url value="/login" />"
-			}
-  		}    
+       		alert("异常！");
+  		}
     });
 	
 	
@@ -605,14 +570,6 @@ function restUserModel(){
 	$('.userclass').html('新建');
 	document.getElementById("userForm").reset();
 	$("#loginName").attr("readonly",false);
-	$("#roleIdP").attr("style","display:none");
-	$("#realNameP").attr("style","display:none");
-	$("#loginNameP").text("请正确输入11位手机号");
-	$("#staffidP").text("请输入员工ID");
-	$("#staffidP").attr("style","display:none");
-	$("#loginNameP").attr("style","display:none");
-	$("#loginpassP").attr("style","display:none");
-	$("#confirmPassP").attr("style","display:none");
 	document.getElementById("operate").value = "create";
 }
 </script>

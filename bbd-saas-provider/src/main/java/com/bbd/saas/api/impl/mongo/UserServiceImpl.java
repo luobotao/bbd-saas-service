@@ -22,7 +22,6 @@ import java.util.List;
  * Created by luobotao on 2016/4/1.
  * 管理员接口
  */
-@Service("userService")
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;

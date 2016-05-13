@@ -236,19 +236,19 @@ public class SiteManageController {
 
 	private void setLatAndLng(String siteId) {
 		//设置经纬度
-//		Site site = siteService.findSite(siteId);
-//		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
-//		logger.info(site.getId().toString());
-//		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getName(),siteAddress,0);
-//		//更新站点的经度和纬度
-//		logger.info("[addSitePOI]result :"+result.toString());
-//		if(result.code==0&&result.data!=null) {
-//			double[] data = result.data;
-//			site.setLng(data[0] + "");    //经度
-//			site.setLat(data[1] + "");    //纬度
-//			site.setDeliveryArea("0");
-//			siteService.save(site);
-//		}
+		Site site = siteService.findSite(siteId);
+		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
+		logger.info(site.getId().toString());
+		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getName(),siteAddress,0);
+		//更新站点的经度和纬度
+		logger.info("[addSitePOI]result :"+result.toString());
+		if(result.code==0&&result.data!=null) {
+			double[] data = result.data;
+			site.setLng(data[0] + "");    //经度
+			site.setLat(data[1] + "");    //纬度
+			site.setDeliveryArea("0");
+			siteService.save(site);
+		}
 	}
 
 	/**
@@ -280,6 +280,8 @@ public class SiteManageController {
 		site.setStatus(SiteStatus.INVALID);
 		site.setDateUpd(new Date());
 		siteService.save(site);
+		Result result = sitePoiApi.disableSite(site.getId().toString());
+		logger.info(result+"==========");
 		return true;
 	}
 	/**
@@ -294,6 +296,8 @@ public class SiteManageController {
 		site.setStatus(SiteStatus.APPROVE);
 		site.setDateUpd(new Date());
 		siteService.save(site);
+		Result result = sitePoiApi.enableSite(site.getId().toString());
+		logger.info(result+"==========");
 		return true;
 	}
 
