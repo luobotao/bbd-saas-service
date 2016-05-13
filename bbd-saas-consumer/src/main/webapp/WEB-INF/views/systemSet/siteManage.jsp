@@ -171,7 +171,6 @@
                     <li class="filter clearfix">
                         <i>站点名称：</i>
                         <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
-                        <em class="tip-info" id="nameP" style="display:none;">请输入站点名称</em>
                     </li>
                     <li class="filter" id="city_4">
                         <i>站点地址：</i>
@@ -193,30 +192,25 @@
                     <li class="filter">
                         <i>站长姓名：</i>
                         <input type="text" class="form-control form-bod wp80" id="responser" name="responser">
-                        <em class="tip-info" id="responserP" style="display:none;">请输站长姓名</em>
                     </li>
                     <li class="filter">
                         <i>站长手机号：</i>
                         <input type="text" class="form-control form-bod wp80" id="phone" name="phone" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="checkSiteWithUsername(this.value)">
                         <input type="text" class="form-control" id="phoneFlag" name="phoneFlag" value="1" style="display:none;">
-                        <em class="tip-info" id="phoneP" style="display:none;">请输入正确的手机号,不允许重复</em>
                         <em class="tip-info-g">保存成功后站长可使用手机号登录系统</em>
                     </li>
                     <li class="filter">
                         <i>邮 箱：</i>
                         <input type="text" class="form-control form-bod wp80" id="email" name="email"
                                onkeyup="value=value.replace(/[^a-zA-Z\-_@@\.0-9]/g,'')">
-                        <em class="tip-info" id="emailP" style="display:none;">请输入邮箱且格式正确</em>
                     </li>
                     <li class="filter">
                         <i>登录密码：</i>
                         <input type="password" class="form-control form-bod wp80" id="password" />
-                        <em class="tip-info" id="passwordP" style="display:none;">请输入登录密码</em>
                     </li>
                     <li class="filter">
                         <i>确认密码：</i>
                         <input type="password" class="form-control form-bod wp80" id="passwordConfirm"/>
-                        <em class="tip-info" id="passwordConfirmP" style="display:none;">请确认登录密码</em>
                     </li>
                 </ul>
                 <div class="clearfix mt20">
@@ -462,6 +456,11 @@
         gotoPage(0, status, keyword);
     }
     function checkSiteWithUsername(loginName){
+        var readonly = $("input[name='phone']").attr("readonly");
+        if(readonly=="readonly"){
+            $("#phoneFlag").val(1);
+            return true;
+        }
         if(loginName!=""){
             var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />"+loginName
             $.ajax({
@@ -474,11 +473,9 @@
                     console.log(response);
                     if(response=="false"){
                         $("#phoneFlag").val(0);
-                        $("#phoneP").html("手机号已存在");
-                        $("#phoneP").attr("style","color:red");
+                        outDiv("手机号已存在");
                     }else{
                         $("#phoneFlag").val(1);
-                        $("#phoneP").attr("style","display:none");
                     }
                 },
                 error: function(){
@@ -490,12 +487,10 @@
     $("#saveSiteBtn").click(function () {
         var flag = true;
         var name = $.trim($("#name").val());
-        var nameP = $("#nameP").val();
-        if (name == "" || name == 0) {
-            $("#nameP").attr("style", "color:red");
-            flag = false;
+        if (name == "" ) {
+            outDiv("请输入站点名称");
+            return false;
         }
-
         var province = $(".prov").val();
         var city = $(".city").val();
         var area = $(".dist").val();
@@ -505,71 +500,72 @@
 
         var responser = $("#responser").val();
         if(responser==""){
-            $("#responserP").attr("style","color:red");
-            flag = false;
+            outDiv("请输站长姓名");
+            return false;
+        }
+
+        var phone = $.trim($('input[name="phone"]').val());
+        var phoneFlag = $("#phoneFlag").val();
+        if(phone==""){
+            outDiv("请输入手机号");
+            return false;
         } else{
-            $("#responserP").attr("style","display:none");
+            if(checkMobile(phone)==false){
+                outDiv("请输入正确的手机");
+                return false;
+            }else{
+                if(phoneFlag==0){
+                    outDiv("手机号已存在");
+                    return false;
+                }
+            }
         }
         var password = $("#password").val();
         if(password==""){
-            $("#passwordP").attr("style","color:red");
-            flag = false;
-        } else{
-            $("#passwordP").attr("style","display:none");
-        }
-        var phone = $.trim($('input[name="phone"]').val());
-        var phoneFlag = $("#phoneFlag").val();
-        if(phone==""||phoneFlag==0){
-            $("#phoneP").attr("style","color:red");
-            flag = false;
-        } else{
-            if(checkMobile(phone)==false){
-                $("#phoneP").html("请输入正确的手机号");
-                $("#phoneP").attr("style","color:red");
-                flag = false;
-            }else{
-                $("#phoneP").attr("style","display:none");
-            }
+            outDiv("请输入登录密码");
+            return false;
         }
         var passwordConfirm = $("#passwordConfirm").val();
         if(passwordConfirm==""){
-            $("#passwordConfirmP").attr("style","color:red");
-            flag = false;
-        } else{
-            $("#passwordConfirmP").attr("style","display:none");
+            outDiv("请确认登录密码");
+            return false;
+        }
+
+        if(!pwdreg.test(password)){
+            outDiv("请输入6-12位数字和字母结合的密码");
+            return false;
+        }
+        if(passwordConfirm!=password){
+            outDiv("两次密码不一致");
+            return false;
         }
 
         var email = $("#email").val();
         if(email==""){
-            $("#emailP").attr("style","color:red");
-            flag = false;
+            outDiv("请输入邮箱");
+            return false;
         } else{
             var emailFlag = checkemail(email);
             if(emailFlag==false){
-                $("#emailP").attr("style","color:red");
-                flag = false;
-            }else{
-                $("#emailP").attr("style","display:none");
+                outDiv("邮箱格式不正确");
+                return false;
             }
         }
-        if (flag) {
-            $("#siteForm").ajaxSubmit({
-                success: function(data){
-                    if(data==true){
-                        $(".j-siteM-pop").modal("hide");
-                        gotoPage(0);
-                    }else{
-                        alert( "保存站点失败");
-                    }
-
-                },
-                error: function(JsonHttpRequest, textStatus, errorThrown){
-                    alert( "服务器异常!");
+        $("#siteForm").ajaxSubmit({
+            success: function(data){
+                if(data==true){
+                    $(".j-siteM-pop").modal("hide");
+                    gotoPage(0);
+                }else{
+                    alert( "保存站点失败");
                 }
-            });
-        } else {
-            return false;
-        }
+
+            },
+            error: function(JsonHttpRequest, textStatus, errorThrown){
+                alert( "服务器异常!");
+            }
+        });
+
     })
 
     $("#conFirmForValidBtn").click(function(){
@@ -683,7 +679,9 @@
     }
 
 function createSite(){
+    $('#titleName').html("新建");
     document.getElementById("siteForm").reset();
+    $("input[name='phone']").removeAttr("readonly");
 }
     function getSiteByAreaCode(areaCode) {
         $('#titleName').html("修改");

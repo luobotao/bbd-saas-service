@@ -113,6 +113,8 @@ public class SiteManageController {
 			BeanUtils.copyProperties(siteForm,site);
 			user = userService.findUserByLoginName(site.getUsername());
 			postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
+			if(postmanUser==null)
+				postmanUser = new PostmanUser();
 		}else{
 			BeanUtils.copyProperties(siteForm,site);
 			site.setDateAdd(new Date());
@@ -174,7 +176,7 @@ public class SiteManageController {
 		postmanUser.setSubstation(user.getSite().getName());
 		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
 		postmanUser.setDateUpd(new Date());
-		if(StringUtils.isNotBlank(siteForm.getAreaCode())){//修改
+		if(StringUtils.isNotBlank(siteForm.getAreaCode()) || postmanUser.getId()!=null){//修改
 			userMysqlService.updateByPhone(postmanUser);
 		}else{//新增
 			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
@@ -239,16 +241,21 @@ public class SiteManageController {
 		Site site = siteService.findSite(siteId);
 		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
 		logger.info(site.getId().toString());
-		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getName(),siteAddress,0);
-		//更新站点的经度和纬度
-		logger.info("[addSitePOI]result :"+result.toString());
-		if(result.code==0&&result.data!=null) {
-			double[] data = result.data;
-			site.setLng(data[0] + "");    //经度
-			site.setLat(data[1] + "");    //纬度
-			site.setDeliveryArea("0");
-			siteService.save(site);
+		try {
+			Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getName(),siteAddress,0);
+			//更新站点的经度和纬度
+			logger.info("[addSitePOI]result :"+result.toString());
+			if(result.code==0&&result.data!=null) {
+				double[] data = result.data;
+				site.setLng(data[0] + "");    //经度
+				site.setLat(data[1] + "");    //纬度
+				site.setDeliveryArea("0");
+				siteService.save(site);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -280,8 +287,13 @@ public class SiteManageController {
 		site.setStatus(SiteStatus.INVALID);
 		site.setDateUpd(new Date());
 		siteService.save(site);
-		Result result = sitePoiApi.disableSite(site.getId().toString());
-		logger.info(result+"==========");
+		try {
+			Result result = sitePoiApi.disableSite(site.getId().toString());
+			logger.info(result+"==========");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 		return true;
 	}
 	/**
@@ -295,9 +307,14 @@ public class SiteManageController {
 		Site site = siteService.findSiteByAreaCode(areaCode);
 		site.setStatus(SiteStatus.APPROVE);
 		site.setDateUpd(new Date());
-		siteService.save(site);
-		Result result = sitePoiApi.enableSite(site.getId().toString());
-		logger.info(result+"==========");
+
+		try {
+			Result result = sitePoiApi.enableSite(site.getId().toString());
+			logger.info(result+"==========");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 		return true;
 	}
 
