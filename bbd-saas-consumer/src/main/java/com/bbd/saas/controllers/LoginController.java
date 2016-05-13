@@ -69,18 +69,31 @@ public class LoginController {
 				if(loginForm.getPassWord().equals(user.getPassWord())){//login success
 					if(user.getRole()==UserRole.COMPANY){//公司用户
 						Postcompany postcompany = postcompanyService.selectPostmancompanyById(Numbers.parseInt(user.getCompanyId(),0));
-						if(postcompany!=null && "1".equals(postcompany.getSta())){//审核通过
-
-						}else{
-							redirectAttrs.addAttribute("companyId",user.getCompanyId());
-							redirectAttrs.addAttribute("phone",user.getLoginName());
-							return "redirect:register/regitsterCompanyView";
+						if(postcompany!=null){
+							if( "0".equals(postcompany.getSta())){//未审核
+								redirectAttrs.addAttribute("companyId",user.getCompanyId());
+								redirectAttrs.addAttribute("phone",user.getLoginName());
+								return "redirect:register/regitsterCompanyView";
+							}
+							if( "2".equals(postcompany.getSta())){//审核失败
+								redirectAttrs.addAttribute("companyId",user.getCompanyId());
+								redirectAttrs.addAttribute("phone",user.getLoginName());
+								return "redirect:register/regitsterCompanyUpdate";
+							}
 						}
 					}else{//站长
 						//判断登录用户的站点状态是否是通过审核状态
-						if (user.getSite() == null || user.getSite().getStatus()!= SiteStatus.APPROVE|| StringUtils.isBlank(user.getSite().getAreaCode())) {
-							redirectAttrs.addAttribute("siteid",user.getSite().getId().toString());
-							return "redirect:register/regitsterSiteView";
+						if(user.getSite()!=null){
+							//驳回
+							if(user.getSite().getStatus()== SiteStatus.TURNDOWN){
+								redirectAttrs.addAttribute("siteid",user.getSite().getId().toString());
+								return "redirect:register/regitsterSiteUpdate";
+							}
+							//未审核
+							if( StringUtils.isBlank(user.getSite().getAreaCode()) || user.getSite().getStatus()!= SiteStatus.WAIT){
+								redirectAttrs.addAttribute("siteid",user.getSite().getId().toString());
+								return "redirect:register/regitsterSiteView";
+							}
 						}
 						if(user.getUserStatus()== UserStatus.INVALID){
 							redirectAttrs.addFlashAttribute("message", "用户状态无效");

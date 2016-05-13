@@ -106,12 +106,48 @@ public class RegisterController {
 		return "register/regitsterCompanyView";
 	}
 
+	/**
+	 * 审核中的页面
+	 * @param model
+	 * @param request
+     * @return
+     */
 	@RequestMapping(value="/regitsterSiteView", method=RequestMethod.GET)
 	public String regitsterSiteView(Model model, HttpServletRequest request) {
 		Site site =siteService.findSite(request.getParameter("siteid"));
 		model.addAttribute("site",site);
 		model.addAttribute("ossUrl",ossUrl);
 		return "register/regitsterSiteView";
+	}
+
+	/**
+	 * 站点驳回后修改信息
+	 * @param model
+	 * @param request
+     * @return
+     */
+	@RequestMapping(value="/regitsterSiteUpdate", method=RequestMethod.GET)
+	public String regitsterSiteUpdate(Model model, HttpServletRequest request) {
+		Site site =siteService.findSite(request.getParameter("siteid"));
+		List<Postcompany> postcompanyList = postcompanyService.selectAll();
+		model.addAttribute("postcompanyList",postcompanyList);
+		model.addAttribute("site",site);
+		return "register/regitsterSiteUpdate";
+	}
+	/**
+	 * 公司驳回后修改信息
+	 * @param model
+	 * @param request
+     * @return
+     */
+	@RequestMapping(value="/regitsterCompanyUpdate", method=RequestMethod.GET)
+	public String regitsterCompanyUpdate(Model model, HttpServletRequest request) {
+		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(request.getParameter("companyId"),0));
+		User user = userService.findUserByLoginName(request.getParameter("phone"));
+		model.addAttribute("postcompany",postcompany);
+		model.addAttribute("user",user);
+		model.addAttribute("ossUrl",ossUrl);
+		return "register/regitsterCompanyUpdate";
 	}
 	/**
 	 * 验证用户名是否存在
@@ -185,6 +221,9 @@ public class RegisterController {
 							  RedirectAttributes redirectAttrs) throws IOException {
 		User user = userService.findUserByLoginName(companyForm.getPhone());//
 		Postcompany postcompany = new Postcompany();
+		if(StringUtils.isNotBlank(companyForm.getCompanyId())){
+			postcompany = postcompanyService.selectPostmancompanyById(Numbers.parseInt(companyForm.getCompanyId(),0));
+		}
 		BeanUtils.copyProperties(companyForm,postcompany);
 		if (licensePic != null  && licensePic.getInputStream() != null && licensePic.getSize()>0) {
 			String fileName = licensePic.getOriginalFilename();
@@ -198,24 +237,35 @@ public class RegisterController {
 			}
 		}
 		postcompany.setCompanycode(PinyinUtil.getFirstSpell(postcompany.getCompanyname()));//暂时未检查重复问题
-		// TODO: 2016/5/6  检查重复问题
-		postcompany.setAlipaypublickey("");
-		postcompany.setAppid("");
-		postcompany.setDeliveryflag("1");
-		postcompany.setIshot("0");
-		postcompany.setLogo("");
-		postcompany.setPrivatekey("");
-		postcompany.setDateNew(new Date());
-		postcompany.setDateUpd(new Date());
-		postcompany.setSta("0");//未审核
-		int companyId = postcompanyService.insertCompany(postcompany).getId();
-		user.setCompanyId(String.valueOf(companyId));
-		user.setDateUpdate(new Date());
-		user.setRealName(companyForm.getResponser());
-		user.setEmail(companyForm.getEmail());
-		user.setRole(UserRole.COMPANY);
-		userService.save(user);//更新用户
-		redirectAttrs.addAttribute("companyId",companyId);
+		if(StringUtils.isBlank(companyForm.getCompanyId())){
+			postcompany.setAlipaypublickey("");
+			postcompany.setAppid("");
+			postcompany.setDeliveryflag("1");
+			postcompany.setIshot("0");
+			postcompany.setLogo("");
+			postcompany.setPrivatekey("");
+			postcompany.setDateNew(new Date());
+			postcompany.setDateUpd(new Date());
+			postcompany.setSta("0");//未审核
+			int companyId = postcompanyService.insertCompany(postcompany).getId();
+			user.setCompanyId(String.valueOf(companyId));
+			user.setDateUpdate(new Date());
+			user.setRealName(companyForm.getResponser());
+			user.setEmail(companyForm.getEmail());
+			user.setRole(UserRole.COMPANY);
+			userService.save(user);//更新用户
+			redirectAttrs.addAttribute("companyId",companyId);
+		}else {
+			user.setDateUpdate(new Date());
+			user.setRealName(companyForm.getResponser());
+			user.setEmail(companyForm.getEmail());
+			user.setRole(UserRole.COMPANY);
+			userService.save(user);//更新用户
+			postcompany.setDateUpd(new Date());
+			postcompany.setSta("0");//未审核
+			postcompanyService.updateCompany(postcompany);
+			redirectAttrs.addAttribute("companyId",companyForm.getCompanyId());
+		}
 		redirectAttrs.addAttribute("phone",companyForm.getPhone());
 		return "redirect:regitsterCompanyView";
 	}
@@ -239,6 +289,7 @@ public class RegisterController {
 		site.setDateAdd(new Date());
 		site.setDateUpd(new Date());
 		site.setStatus(SiteStatus.WAIT);
+		site.setMemo("您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日完成审核。");
 		site.setAreaCode("");
 		site.setUsername(siteForm.getPhone());
 		Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(site.getCompanyId(),0)) ;
@@ -246,7 +297,6 @@ public class RegisterController {
 			site.setCompanyName(postcompany.getCompanyname());
 			site.setCompanycode(postcompany.getCompanycode());
 		}
-		site.setMemo("您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日完成审核。");
 		Key<Site> siteKey = siteService.save(site);//保存站点
 		redirectAttrs.addAttribute("siteid",siteKey.getId().toString());
 		//向用户表插入登录用户
