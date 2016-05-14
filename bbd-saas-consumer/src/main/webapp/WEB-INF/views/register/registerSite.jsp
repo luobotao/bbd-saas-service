@@ -56,7 +56,7 @@
 				<div class="txt-input pb30 clearfix">
 					<i class="fl">所属公司：</i>
 					<em class="sel-mar">
-						<select class="form-control form-bod w150" id="companyId" name="companyId">
+						<select class="form-control form-bod min-w150" id="companyId" name="companyId">
 							<c:forEach var="postcompany" items="${postcompanyList}">
 								<option value="${postcompany.id}">${postcompany.companyname}</option>
 							</c:forEach>

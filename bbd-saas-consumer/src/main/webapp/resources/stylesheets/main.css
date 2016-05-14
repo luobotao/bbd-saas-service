@@ -150,6 +150,9 @@ a.orange {
 .w150{
 	width:150px !important;
 }
+.min-w150{
+  min-width:150px !important;
+}
 .form-inline-n .form-control {
   height: 40px;
   border: 1px solid #d9d8eb;
