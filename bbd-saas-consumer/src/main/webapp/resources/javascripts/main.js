@@ -228,6 +228,7 @@ $(function () {
         parentD.removeClass("modal-open").css({paddingRight:"0"});
     })
     $(".n-re-con").css({minHeight:winhei-152})
+    
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
 //iframe 自适应高度

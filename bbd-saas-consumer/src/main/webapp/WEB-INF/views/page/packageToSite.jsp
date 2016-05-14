@@ -32,7 +32,7 @@
 							<dd>订单数</dd>
 						</dl>
 					</li>
-					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4" onclick="historyNotArri();">
 						<dl class="arrive-status c2">
 							<dt class="b-order" id="history_non_arrival_num">${history_non_arrival_num}</dt>
 							<dd>历史未到站 </dd>
@@ -295,6 +295,14 @@
 	function searchOrder(){
 		$("#parcelCode").val("");
 		$("#mailNum").val("");
+		gotoPage(0);
+	}
+	//历史未到站事件
+	function historyNotArri(){
+		$("#parcelCode").val("");
+		$("#mailNum").val("");
+		$("#between").val("");
+		$('#arriveStatus').val(<%=ArriveStatus.NOTARR.getStatus()%>);
 		gotoPage(0);
 	}
 	//回车事件
