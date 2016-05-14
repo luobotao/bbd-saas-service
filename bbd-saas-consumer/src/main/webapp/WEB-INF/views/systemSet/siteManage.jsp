@@ -29,7 +29,7 @@
             <!-- S detail -->
             <div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
                 <!-- S 搜索区域 -->
-                <div class="search-area">
+                <div class="search-area form-inline form-inline-n">
                     <div class="row pb20">
 
                         <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
