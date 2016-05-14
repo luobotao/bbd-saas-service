@@ -86,7 +86,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @author: liyanlei
      * 2016年4月14日下午8:04:44
      */
-    public List<User> findUserListBySite(Site site, UserRole userRole) {
+    public List<User> findUserListBySite(Site site, UserRole userRole,UserStatus userStatus) {
     	Query<User> query = createQuery();
     	if(site != null){
     		query.filter("site", site);
@@ -94,8 +94,9 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     	if(userRole != null){
     		query.filter("role", userRole);
     	}
-    	//有效用户
-    	query.filter("userStatus", UserStatus.status2Obj(1));
+        if(userStatus!=null){
+            query.filter("userStatus", userStatus);
+        }
         return  find(query).asList();
     }
     

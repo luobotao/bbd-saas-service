@@ -32,4 +32,10 @@ public interface PostcompanyDao {
      * @param postcompany
      */
     void updateCompany(Postcompany postcompany);
+
+    /**
+     * 根据公司状态获取该状态下的所有公司列表
+     * @return
+     */
+    List<Postcompany> selectAllByStatus(String sta);
 }

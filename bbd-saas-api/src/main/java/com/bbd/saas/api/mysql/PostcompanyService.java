@@ -15,6 +15,12 @@ public interface PostcompanyService {
      * @return
      */
     List<Postcompany> selectAll();
+    /**
+     * 根据公司状态获取该状态下的所有公司列表
+     * @param sta
+     * @return
+     */
+    List<Postcompany>selectAllByStatus(String sta) ;
 
     /**
      * 根据公司ID获取公司信息

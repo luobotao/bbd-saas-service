@@ -79,7 +79,7 @@
                             <tr>
                                 <td><%=site.getName()%>
                                 </td>
-                                <td><%=site.getAreaCode()%>
+                                <td><%=site.getAreaCode()==null?"":site.getAreaCode()%>
                                 </td>
                                 <td><%=site.getProvince()%>-<%=site.getCity()%>-<%=site.getArea()%> <%=site.getAddress()%>
                                 </td>
@@ -205,11 +205,11 @@
                     </li>
                     <li class="filter">
                         <i>登录密码：</i>
-                        <input type="password" class="form-control form-bod wp80" id="password" name="password"/>
+                        <input type="password" class="form-control form-bod wp80 j-n-pwd" id="password" name="password"/>
                     </li>
                     <li class="filter">
                         <i>确认密码：</i>
-                        <input type="password" class="form-control form-bod wp80" id="passwordConfirm" name="passwordConfirm"/>
+                        <input type="password" class="form-control form-bod wp80 j-c-pwd" id="passwordConfirm" name="passwordConfirm"/>
                     </li>
                 </ul>
                 <div class="clearfix mt20">

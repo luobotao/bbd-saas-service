@@ -203,8 +203,7 @@
 		$("#siteForm").ajaxSubmit({
 			success: function(data){
 				if(data==true){
-					$(".j-siteM-pop").modal("hide");
-					gotoPage(0);
+					window.location.href="<c:url value="/register/regitsterSiteView?siteid="/>${site.id}";
 				}else{
 					alert( "保存站点失败");
 				}

@@ -5,6 +5,8 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.vo.SiteVO;
@@ -84,7 +86,7 @@ public class CapacityDistributionController {
 		try {
 			if(siteId != null && !"".equals(siteId)){//只查询一个站点
 				Site site = siteService.findSite(siteId);
-				List<User> userList = userService.findUsersBySite(site);
+				List<User> userList = userService.findUsersBySite(site, UserRole.SENDMEM, UserStatus.VALID);//所有小件员
 				if (userList != null && userList.size() >0){
 					List<Integer> postmanIdList = new ArrayList<Integer>();
 					for (User user : userList){

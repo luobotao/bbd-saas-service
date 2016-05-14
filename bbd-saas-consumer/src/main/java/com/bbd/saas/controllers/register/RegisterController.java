@@ -90,7 +90,7 @@ public class RegisterController {
 	@RequestMapping(value="/registerSite", method=RequestMethod.GET)
 	public String registerSite(@RequestParam(value = "phone", required = true) String phone,Model model) {
 		model.addAttribute("phone",phone);
-		List<Postcompany> postcompanyList = postcompanyService.selectAll();
+		List<Postcompany> postcompanyList = postcompanyService.selectAllByStatus("1");//审核通过的公司列表
 		model.addAttribute("postcompanyList",postcompanyList);
 		return "register/registerSite";
 	}
@@ -129,7 +129,7 @@ public class RegisterController {
 	@RequestMapping(value="/regitsterSiteUpdate", method=RequestMethod.GET)
 	public String regitsterSiteUpdate(Model model, HttpServletRequest request) {
 		Site site =siteService.findSite(request.getParameter("siteid"));
-		List<Postcompany> postcompanyList = postcompanyService.selectAll();
+		List<Postcompany> postcompanyList = postcompanyService.selectAllByStatus("1");//审核通过的公司列表
 		model.addAttribute("postcompanyList",postcompanyList);
 		model.addAttribute("site",site);
 		return "register/regitsterSiteUpdate";
@@ -191,7 +191,7 @@ public class RegisterController {
 				user.setPassWord(password);
 				user.setDateAdd(new Date());
 				user.setDateUpdate(new Date());
-				user.setUserStatus(UserStatus.VALID);//注册出来的用户默认为有效
+				user.setUserStatus(UserStatus.INVALID);//注册出来的用户默认为无效
 				Key<User> userKey = userService.save(user);
 				user.setId((ObjectId)userKey.getId());
 				redisService.delete(Constants.BBD_SAAS_VERIFY_CODE + username);//验证码失效

@@ -201,7 +201,7 @@ $(function () {
     })
     //确认密码
     $(".j-c-pwd").on("blur",function(){
-        if($(this).val() != $(".j-n-pwd").val()){
+        if($(this).val()!="" && $(this).val() != $(".j-n-pwd").val()){
             $(".b-prompt").addClass("mov");
             $(".b-prompt i").html("两次密码不一致")
             outDiv();

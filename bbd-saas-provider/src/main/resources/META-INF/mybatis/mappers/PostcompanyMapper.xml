@@ -61,6 +61,13 @@
         <include refid="baseColumnList"/>
         FROM `postcompany`
     </select>
+    <!--根据公司状态获取该状态下的所有公司列表-->
+    <select id="selectAllByStatus" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `postcompany`
+        WHERE <![CDATA[ sta = #{sta,jdbcType=VARCHAR}]]>
+    </select>
 
     <!-- 插入公司-->
     <insert id="insertCompany" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.Postcompany" >
