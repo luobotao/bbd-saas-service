@@ -227,8 +227,14 @@ $(function () {
         $(".j-siteM-pop").hide().removeClass("in");
         parentD.removeClass("modal-open").css({paddingRight:"0"});
     })
-    $(".n-re-con").css({minHeight:winhei-152})
     
+    $(".n-re-con").css({minHeight:winhei-152});
+
+    if(window.screen.availHeight<800){
+        $(".y-scroll").css({maxHeight:"200px"})
+    }else{
+        $(".y-scroll").css({maxHeight:"300px"})
+    }
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
 //iframe 自适应高度
