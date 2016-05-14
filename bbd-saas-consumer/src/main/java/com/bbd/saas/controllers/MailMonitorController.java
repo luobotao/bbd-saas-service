@@ -205,7 +205,8 @@ public class MailMonitorController {
 			//表头
 			String[] titles = {"站点", "未到站订单数", "已到站订单数", "未分派数", "已分派数", "签收数", "滞留数", "拒收数", "转站数"};
 			int[] colWidths = {10000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
-			ExportUtil.exportExcel("运单监控", dataList, titles, colWidths, response);
+			ExportUtil exportUtil = new ExportUtil();
+			exportUtil.exportExcel("运单监控", dataList, titles, colWidths, response);
 		} catch (Exception e) {
 			logger.error("===运单监控数据导出===出错:" + e.getMessage());
 		}

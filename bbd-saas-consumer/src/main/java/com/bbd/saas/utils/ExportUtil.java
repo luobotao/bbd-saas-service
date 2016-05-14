@@ -1,31 +1,30 @@
 package com.bbd.saas.utils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.List;
+import org.apache.poi.hssf.usermodel.DVConstraint;
+import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.xssf.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 public class ExportUtil
 {
 	public static final Logger logger = LoggerFactory.getLogger(ExportUtil.class);
 	
-	private XSSFWorkbook wb = null;
+	private  XSSFWorkbook wb = null;
 
-	private XSSFSheet sheet = null;
+	private  XSSFSheet sheet = null;
+	//默认构造方法
+	public ExportUtil(){};
 
 	/**
 	 * @param wb
@@ -132,14 +131,14 @@ public class ExportUtil
 	 * @author: liyanlei
 	 * 2016年4月20日上午11:02:03
 	 */
-	public static void exportExcel(String fileName,List<List<String>> dataList, String[] titles, int[] colWidths, final HttpServletResponse response){
+	public  void exportExcel(String fileName,List<List<String>> dataList, String[] titles, int[] colWidths, final HttpServletResponse response){
 		ServletOutputStream outputStream = null;
 		try{
 			// 创建一个workbook 对应一个excel应用文件
-			XSSFWorkbook workBook = new XSSFWorkbook();
+			wb = new XSSFWorkbook();
 			// 在workbook中添加一个sheet,对应Excel文件中的sheet
-			XSSFSheet sheet = workBook.createSheet(fileName);
-			ExportUtil exportUtil = new ExportUtil(workBook, sheet);
+			sheet = wb.createSheet(fileName);
+			ExportUtil exportUtil = new ExportUtil(wb, sheet);
 			XSSFCellStyle headStyle = exportUtil.getHeadStyle();
 			XSSFCellStyle bodyStyle = exportUtil.getBodyStyle();
 			// 构建表头
@@ -176,7 +175,7 @@ public class ExportUtil
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
 			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
 			outputStream = response.getOutputStream();
-			workBook.write(outputStream);
+			wb.write(outputStream);
 			outputStream.flush();
 			outputStream.close();
 		}catch (IOException e){
@@ -189,6 +188,49 @@ public class ExportUtil
 				logger.info(fileName + "--导出数据--数据输出流无法关闭。");
 			}
 		}
+	}
+	/**
+	 * 为指定列设置下拉框
+	 * @param colNum
+	 * @param list
+	 * @return
+	 */
+	public Workbook setSelectOption(int colNum, List<String> list){
+		if (list == null){
+			return null;
+		}
+		sheet = wb.getSheetAt(0);
+		sheet = setHSSFValidation(sheet, list, 1, 1001, colNum, colNum);
+		return wb;
+	}
+
+	/**
+	 * 设置下拉选项
+	 * @param sheet 表单
+	 * @param list  下拉选项数据
+	 * @param firstRow  开始行
+	 * @param endRow  结束行
+	 * @param firstCol 开始列
+     * @param endCol 结束列
+     * @return
+     */
+	private XSSFSheet setHSSFValidation(XSSFSheet sheet, List<String> list, int firstRow,
+										int endRow, int firstCol, int endCol) {
+		String[] sb = new String[list.size()];
+		for(int count=0;count<list.size();count++){
+			sb[count] = list.get(count);
+		}
+		/*XmlOptions xmlOptions = new XmlOptions();
+		CTDataValidation constraint = CTDataValidation.Factory.newInstance(xmlOptions);
+		CellRangeAddressList regions = new CellRangeAddressList(firstRow,endRow, firstCol, endCol);
+		// 数据有效性对象
+		XSSFDataValidation validationList = new XSSFDataValidation(regions, constraint);*/
+		DVConstraint constraint = DVConstraint.createExplicitListConstraint(sb);
+		CellRangeAddressList regions = new CellRangeAddressList(firstRow,endRow, firstCol, endCol);
+		// 数据有效性对象
+		HSSFDataValidation validationList = new HSSFDataValidation(regions, constraint);
+		sheet.addValidationData(validationList);
+		return sheet;
 	}
 	
 }

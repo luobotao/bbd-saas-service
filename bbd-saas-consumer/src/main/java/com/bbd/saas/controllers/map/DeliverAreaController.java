@@ -92,7 +92,7 @@ public class DeliverAreaController {
 					model.addAttribute("between", between);
 					model.addAttribute("keyword", keyword);
 					model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
-					model.addAttribute("page", siteKeywordPage.getPage());
+					model.addAttribute("pageIndex", siteKeywordPage.getPage());
 					model.addAttribute("pageNum", siteKeywordPage.getPageNum());
 					model.addAttribute("pageCount", siteKeywordPage.getCount());
 					List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(currUser.getSite().getId().toString());
@@ -134,7 +134,7 @@ public class DeliverAreaController {
 	}
 
 	/**
-	 * 获取站点的配送范围
+	 * 获取站点的配送范围--半径
 	 * @param siteId 站点Id
 	 * @param request 请求
      * @return
@@ -239,5 +239,51 @@ public class DeliverAreaController {
 			}
 		}
 		return map;
+	}
+
+	/**
+	 * 获取站点关键词
+	 * @param siteId 站点Id
+	 * @param request 请求
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/queryKeyWord", method=RequestMethod.GET)
+	public PageList<SiteKeyword> getKeyWordBySiteId(String siteId, final HttpServletRequest request) {
+		//查询数据
+		Map<String, Object> map = new HashMap<String, Object>();
+		String between = request.getParameter("between");
+		String keyword = StringUtil.initStr(request.getParameter("keyword"), "");
+		int pageIndex = Numbers.parseInt(request.getParameter("pageIndex"), 0);
+		if(siteId != null && !"".equals(siteId)){//只查询一个站点
+			//导入地址关键词
+
+		}else {//查询本公司下的所有站点 （全部）
+			siteId = null;
+		}
+		//--------panel 3-----------------------
+		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+		if (StringUtils.isNotBlank(between)) {//预计到站时间
+			DateBetween dateBetween = new DateBetween(between);
+			logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
+			//导入地址关键词
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId + "", dateBetween.getStart(), dateBetween.getEnd(), pageIndex, 10, keyword);
+		} else {
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId + "", null, null, pageIndex, 10, keyword);
+		}
+		List<SiteKeyword> keywordList = siteKeywordPage.getList();
+		if (keywordList != null && keywordList.size() > 0){
+			System.out.println("count====="+keywordList.size());
+			String siteName = null;
+			for(SiteKeyword siteKeyword : keywordList){
+				Site site = siteService.findSite(siteKeyword.getSiteId());
+				if(site != null){
+					siteKeyword.siteId = StringUtil.initStr(site.getName(), "");
+				}else {
+					siteKeyword.siteId = "";
+				}
+			}
+		}
+		return siteKeywordPage;
 	}
 }

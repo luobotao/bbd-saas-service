@@ -124,8 +124,19 @@
 						<!-- S 导入地址关键词 -->
 						<div class="clearfix tab-pane fade" id="import-key">
 							<div class="row pb20">
-								<c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
-								<form action="${ctx}/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
+								<c:url var="importKeywordUrl" value="/siteKeyWord/importKeyword?${_csrf.parameterName}=${_csrf.token}"/>
+								<form action="${ctx}/deliverArea/queryKeyWord" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
+									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+										<label>站点：　</label>
+										<select id="keywordSiteId" name="siteId" class="form-control form-con-new">
+											<option value="">请选择</option>
+											<c:if test="${not empty siteList}">
+												<c:forEach var="site" items="${siteList}">
+													<option value="${site.id}">${site.name}</option>
+												</c:forEach>
+											</c:if>
+										</select>
+									</div>
 									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
@@ -137,19 +148,25 @@
 									<div class="form-group col-xs-12 col-sm-6 col-md-2 col-lg-2">
 										<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
 									</div>
-									<input type="hidden" id="page" value="${page}" name="page">
+									<input type="hidden" id="pageIndex" value="${pageIndex}" name="pageIndex">
 								</form>
 							</div>
 							<div class="row pb20">
 								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-									<form action="${importSiteKeywordFileUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
+									<form action="${importKeywordUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
+										<input type="hidden" name="siteId" id="imptSiteId" />
 										<label class="ser-btn b fileup_ui fl">
 											<span>导入地址关键词</span>
 											<input type="file" name="file" class="import-file" />
 										</label>
 
 										<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
-										<a href="${ctx}/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
+										<a href="javascript:void(0)" onclick="exportKeyword();" class="ser-btn b ml10">导出地址关键词</a>
+									</form>
+									<form action="${ctx}/siteKeyWord/exportKeyWord" method="get" id="exptForm">
+										<input id="siteId_expt" name="siteId" type="hidden" />
+										<input id="between_expt" name="between" type="hidden" />
+										<input id="keyword_expt" name="keyword" type="hidden" />
 									</form>
 								</div>
 							</div>
@@ -161,6 +178,7 @@
 										<thead>
 										<tr>
 											<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox" id="selectAll" /></th>
+											<th>站点名称</th>
 											<th>导入日期</th>
 											<th>省</th>
 											<th>市</th>
@@ -443,7 +461,7 @@
 		//var circle = new BMap.Circle(point, radius * 1000);
 		var circle = new BMap.Circle(point, radius * 1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 		 areaMap.addOverlay(circle);          //增加圆
-		console.log("=======radius===" + radius +"  circle===" + circle+" site==="+site.name);
+		//console.log("=======radius===" + radius +"  circle===" + circle+" site==="+site.name);
 	}
 
 	//展示配送范围--更改半径
@@ -486,7 +504,7 @@
 				data: {},
 				success: function(response){
 					outDiv("保存成功");
-					//window.location.href="${ctx}/deliverRegion/map/1";
+					//window.location.href="${ctx}/deliverArea/map/1";
 				},
 				error: function(){
 					alert('服务器繁忙，请稍后再试！');
@@ -629,7 +647,7 @@
 		loadMyOverlay: function(){
 			var map = this.map;
 			this.clearAll();
-			console.log(this.myOverlay);
+			//console.log(this.myOverlay);
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
 				this.myPolygon = myPolygon;
@@ -645,7 +663,7 @@
 						fenceMap.delPolygon(e);
 					}
 				});
-				console.log(myPolygon);
+				//console.log(myPolygon);
 				fenceMap.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
 			})
@@ -710,7 +728,7 @@
 		clearAll: function() {
 			var map = this.map;
 			var overlays = this.overlays;
-			console.log(overlays);
+			//console.log(overlays);
 			for(var i = 0; i < overlays.length; i++){
 				map.removeOverlay(overlays[i]);
 			}
@@ -737,8 +755,8 @@
 		},
 		// 用经纬度设置地图中心点
 		theLocation:function(){
-			console.log("xxxx");
-			console.log(this.map);
+			//console.log("xxxx");
+			//console.log(this.map);
 			this.map.panTo(this.point);
 		}
 	};
@@ -807,17 +825,17 @@
 		fenceMap.overlays.forEach(function (e) {
 			var arrs = e.ro;
 			if(arrs.length>2){
-				console.log("保存经纬度====" + arrs);
+				//console.log("保存经纬度====" + arrs);
 				for (var i = 0; i < arrs.length; i++) {
 					jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
 					if (i < arrs.length - 1) {
 						jsonStr = jsonStr + ",";
 					}
-					console.log("保存经纬度==一个围栏==" + jsonStr);
+					//console.log("保存经纬度==一个围栏==" + jsonStr);
 				}
 				jsonStr.substring(0, jsonStr.length - 1);
 				jsonStr = jsonStr + ";";
-				console.log("保存经纬度==多个围栏==" + jsonStr);
+				//console.log("保存经纬度==多个围栏==" + jsonStr);
 			}
 		})
 		if ("" != jsonStr) {
@@ -830,7 +848,7 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					console.log(data);
+					//console.log(data);
 					if(data == "success"){
 						alert("提交成功");
 					}else{
@@ -853,7 +871,7 @@
 	var isPanelShow = false;
 	$("showPanelBtn").onclick = showPanel;
 	function showPanel(){
-		console.log(isPanelShow);
+		//console.log(isPanelShow);
 		if (isPanelShow == false) {
 			isPanelShow = true;
 			$("showPanelBtn").style.right = "230px";
@@ -884,7 +902,7 @@
 	//console.log(fenceMap.myOverlay);
 	fenceMap.init();
 	$('.b-tab a').click(function (e) {
-		console.log($(this));
+		//console.log($(this));
 		e.preventDefault();
 		$(this).tab('show');
 		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
@@ -910,6 +928,12 @@
 
 	// 导入文件
 	$(".import-file").on("change",function(){
+		var siteId = $("#keywordSiteId").val();
+		//console.log("siteId====="+siteId);
+		if(siteId == ""){//全部
+			alert("请先选择站点。");
+			return;
+		}
 		$(".j-import-pop").modal();
 	})
 	$("input[type='checkbox']").iCheck({
@@ -923,9 +947,43 @@
 
 
 	$("#importBtn").click(function(){
-		$(this).parents(".j-import-pop").hide();
-		$(".spinner").show();
-		$("#importFileForm").submit();
+		$(this).parents(".j-import-pop").modal('hide');
+		$(".spinner").modal('show');
+		$("#imptSiteId").val($("#keywordSiteId").val());
+		//console.log("siteId===imprt="+$("#imptSiteId").val());
+		$("#importFileForm").ajaxSubmit({
+			type: 'post',
+			url: "${ctx}/siteKeyWord/ajaxImportKeyword?${_csrf.parameterName}=${_csrf.token}",
+			//data : $( '#importFileForm').serialize(),
+			enctype: 'multipart/form-data',
+			async : false,
+			timeout: 0,
+			success: function(pageTable){
+				$(".spinner").modal('hide');
+				console.log(pageTable);
+				var tbody = $("#dataList");
+				var dataList = pageTable.list;
+				console.log("dataList.length= count  ==000====import=="+dataList.length);
+				if(dataList != null){
+					var datastr = "";
+					console.log("dataList.length= count  ======import=="+dataList.length);
+					for(var i = 0; i < dataList.length; i++){
+						datastr += getRowHtml(dataList[i]);
+					}
+					tbody.html(datastr);
+					console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
+					//更新分页条
+					var pageStr = paginNav(pageTable.page, pageTable.pageNum, pageTable.count);
+					$("#pagin").html(pageStr);
+				}
+				//loadTableHtml(data);
+			},
+			error: function(JsonHttpRequest, textStatus, errorThrown){
+				console.log( "超时，服务器异常!");
+				$(".spinner").modal('hide');
+			}
+		});
+		//$("#importFileForm").submit();
 	})
 
 
@@ -943,7 +1001,8 @@
 		format: 'YYYY/MM/DD'
 	});
 	$("#querySiteBtn").click(function(){
-		$("#siteKeywordForm").submit();
+		/*$("#siteKeywordForm").submit();*/
+		gotoPage(0);
 	})
 	//批量删除
 	$("#piliangDel").click(function(){
@@ -957,21 +1016,111 @@
 			return false;
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
-			window.location.href="${ctx}/site/piliangDeleteSitePoiKeyword/"+delIds
+			var url = "${ctx}/siteKeyWord/batchDeleteKeyword/"+delIds;
+			doDelete(url);
 		}
 	})
 
 	//显示分页条
-	/*var pageStr = paginNav(${page}, ${pageNum}, ${pageCount});
+	var pageStr = paginNav(${pageIndex}, ${pageNum}, ${pageCount});
 	 $("#pagin").html(pageStr);
-	 */
+
 	//加载带有查询条件的指定页的数据
-	function gotoPage(pageIndex,keyword,between) {
-		$("#page").val(pageIndex);
-		$("#siteKeywordForm").submit();
+	function gotoPage(pageIndex) {
+		//查询所有派件员
+		$.ajax({
+			type : "GET",  //提交方式
+			url : "${ctx}/deliverArea/queryKeyWord",//路径
+			data : {
+				"pageIndex" : pageIndex,
+				"siteId" : $("#keywordSiteId").val(),
+				"between" : $("#between").val(),
+				"keyword" : $("#keyword").val()
+			},//数据，这里使用的是Json格式进行传输
+			success : function(pageTable) {//刷新列表
+				//console.log("pageTable==="+pageTable);
+				loadTableHtml(pageTable);
+			},
+			error : function() {
+				//alert("加载分页数据异常！");
+				if(window.top==window.self){//不存在父页面
+					window.location.href="<c:url value="/login" />"
+				}else{
+					window.top.location.href="<c:url value="/login" />"
+				}
+			}
+		});
+		//$("#siteKeywordForm").submit();
 	}
+	//刷新列表
+	function loadTableHtml(pageTable){
+		var tbody = $("#dataList");
+		var dataList = pageTable.list;
+		if(dataList != null){
+			var datastr = "";
+			console.log("dataList.length= count  ======5555=="+dataList.length);
+			for(var i = 0; i < dataList.length; i++){
+				datastr += getRowHtml(dataList[i]);
+			}
+			tbody.html(datastr);
+			console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
+			//更新分页条
+			var pageStr = paginNav(pageTable.page, pageTable.pageNum, pageTable.count);
+			$("#pagin").html(pageStr);
+		}
 
+	}
+	//封装一行的数据
+	function getRowHtml(data){
 
+		var row = "<tr>";
+		row +=  "<td><input type='checkbox' value='" + data.id + " name='inputC' class='c-cbox'/></td>";
+		row += "<td>" + data.siteId + "</td>";
+		row += "<td>" + getDate1(data.createAt) + "</td>";
+		row += "<td>" + data.province + "</td>";
+		row += "<td>" + data.city + "</td>";
+		row += "<td>" + data.distict + "</td>";
+		var keyword = $("#keyword").val();
+		if(keyword == null || keyword == ""){//没有按照关键词查，不需要着色
+			row += "<td>" + data.keyword + "</td>";
+		}else{
+			row += "<td>" + data.keyword.replace(keyword, "<span class='font-bg-color'>" + keyword + "</span>") + "</td>";
+		}
+		row += "<td><a href='javascript:void(0)' onclick='deleteKeyword(data.id)' class='orange'>删除</a></td>";
+		row += "</tr>";
+		return row;
+	}
+	function deleteKeyword(id){
+		if(id == null || id == ""){
+			alert("关键词无编号，无法删除。")
+			return ;
+		}
+		var url = "${ctx}/siteKeyWord/deleteKeyword/"+id;
+		doDelete(url);
+	}
+	function doDelete(url){
+		var pageIndex = $(".pagination .active a").html();
+		console.log("pageIndex====" + pageIndex);
+		//查询所有派件员
+		$.ajax({
+			type : "GET",  //提交方式
+			url : url,//路径
+			data : {
+				"pageIndex" : pageIndex,
+				"siteId" : $("#keywordSiteId").val(),
+				"between" : $("#between").val(),
+				"keyword" : $("#keyword").val()
+			},//数据，这里使用的是Json格式进行传输
+			success : function(dataObject) {//返回数据根据结果进行相应的处理
+				var result = dataObject.result;
+				if(result){//删除成功，刷新列表
+					loadTableHtml(dataObject.list);
+				}
+			},
+			error : function() {
+			}
+		});
+	}
 	//--------------------panel 2------------------------------------
 	// 地图全屏显示
 	var winwid=window.screen.availWidth;
@@ -1002,6 +1151,14 @@
 		}
 	})
 
+	//导出关键词
+	function exportKeyword() {
+		$("#siteId_expt").val($("#keywordSiteId").val());
+		$("#between_expt").val($("#between").val());
+		$("#keyword_expt").val($("#keyword").val());
+		$("#exptForm").submit();
+		//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#arriveBetween").val());
+	}
 
 </script>
 </body>

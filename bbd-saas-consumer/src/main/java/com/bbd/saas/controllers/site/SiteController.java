@@ -7,29 +7,21 @@ import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.Result;
 import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.Services.RedisService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
-import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.SiteStatus;
-import com.bbd.saas.enums.UserRole;
-import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.form.SiteForm;
-import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.*;
+import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.ExportUtil;
+import com.bbd.saas.utils.Numbers;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.*;
-import org.apache.xmlbeans.impl.common.ConcurrentReaderHashMap;
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +30,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -47,7 +38,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,8 +79,13 @@ public class SiteController {
 
 	public static final int MAXSIZE = 100000;
 
-
-
+	/**
+	 * 更新配送范围
+	 * @param radius 半径
+	 * @param siteId 站点编号
+	 * @param request 请求
+     * @return
+     */
 	@ResponseBody
 	@RequestMapping(value="/updateSiteWithRadius/{radius}/{siteId}", method = RequestMethod.GET)
 	public String updateSiteWithRadius(@PathVariable String radius,@PathVariable String siteId,  HttpServletRequest request ) {
@@ -104,12 +99,26 @@ public class SiteController {
 		return "success";
 	}
 
+	/**
+	 * 删除站点关键词
+	 * @param id 关键词id
+	 * @param model
+	 * @param request 请求
+     * @return
+     */
 	@RequestMapping(value="/deleteSitePoiKeyword/{id}", method=RequestMethod.GET)
 	public String deleteSitePoiKeyword(@PathVariable String id, Model model, HttpServletRequest request){
 		Result result = siteKeywordApi.deleteSitePoiKeyword(id);
 		return "redirect:/deliverRegion/map/3";
 	}
 
+	/**
+	 * 批量删除
+	 * @param ids id编号集合
+	 * @param model
+	 * @param request 请求
+     * @return
+     */
 	@RequestMapping(value="/piliangDeleteSitePoiKeyword/{ids}", method=RequestMethod.GET)
 	public String piliangDeleteSitePoiKeyword(@PathVariable String ids, Model model, HttpServletRequest request){
 		List<String> idList = Arrays.asList(ids.split(","));
@@ -119,7 +128,7 @@ public class SiteController {
 	}
 
 	/**
-	 * 导入
+	 * 导入关键词
 	 * @return
 	 */
 	@RequestMapping(value = "importSiteKeywordFile", method=RequestMethod.POST)
@@ -349,7 +358,7 @@ public class SiteController {
 		String keyword = request.getParameter("keyword")==null?"":request.getParameter("keyword");
 		int page = Numbers.parseInt(request.getParameter("page"),0);
 		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-		if(StringUtils.isNotBlank(between)) {//预计到站时间
+		if(StringUtils.isNotBlank(between)) {//导入时间
 			DateBetween dateBetween = new DateBetween(between);
 			logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
 			//导入地址关键词

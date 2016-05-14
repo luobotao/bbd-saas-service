@@ -238,7 +238,8 @@ public class MailQueryController {
 			//表头
 			String[] titles = { "包裹号", "运单号", "订单号", "来源", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
 			int[] colWidths = { 4000, 5000, 5000, 2000, 2000, 3500, 12000, 5500, 3500, 5500, 2000, 3500, 2000};
-			ExportUtil.exportExcel("运单查询", dataList, titles, colWidths, response);
+			ExportUtil exportUtil = new ExportUtil();
+			exportUtil.exportExcel("地址关键词模板", dataList, titles, colWidths, response);
 		} catch (Exception e) {
 			logger.error("===运单查询数据导出===出错:" + e.getMessage());
 		}
