@@ -116,6 +116,7 @@ public class SiteManageController {
 			postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
 			if(postmanUser==null)
 				postmanUser = new PostmanUser();
+
 			Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
 			if(postcompany!=null){
 				site.setCompanyId(userNow.getCompanyId());
@@ -280,8 +281,44 @@ public class SiteManageController {
 		//将用户设置为有效
 		try{
 			User user = userService.findUserByLoginName(phone);
-			userService.updateUserStatu(site.getUsername(), UserStatus.VALID);
-			userMysqlService.updateById(UserStatus.VALID.getStatus(),user.getPostmanuserId());
+
+			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(phone);
+
+			if(postmanUser==null)
+				postmanUser = new PostmanUser();
+			postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
+			postmanUser.setHeadicon("");
+			postmanUser.setCardidno("");
+			postmanUser.setAlipayAccount("");
+			postmanUser.setToken("");
+			postmanUser.setBbttoken("");
+			postmanUser.setLat(0d);
+			postmanUser.setLon(0d);
+			postmanUser.setHeight(0d);
+			postmanUser.setAddr("");
+			postmanUser.setAddrdes("");
+			postmanUser.setShopurl("");
+			postmanUser.setSpreadticket("");
+			postmanUser.setDateNew(new Date());
+			postmanUser.setPoststatus(1);//默认为1
+			postmanUser.setPostrole(4);//站长角色
+			//staffid就是该用户的手机号
+			postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
+			//向mysql同步用户信息
+			postmanUser.setNickname(user.getRealName().replaceAll(" ", ""));
+			postmanUser.setCompanyname(user.getSite().getCompanyName()!=null?user.getSite().getCompanyName():"");
+			postmanUser.setCompanyid(user.getSite().getCompanyId()!=null?Integer.parseInt(user.getSite().getCompanyId()):0);
+			postmanUser.setSubstation(user.getSite().getName());
+			postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
+			postmanUser.setDateUpd(new Date());
+			if(postmanUser.getId()!=null){//修改
+				userMysqlService.updateByPhone(postmanUser);
+			}else{//新增
+				int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
+				user.setPostmanuserId(postmanuserId);
+			}
+			user.setUserStatus(UserStatus.VALID);
+			userService.save(user);//更新用户
 		}catch (Exception e){
 			e.printStackTrace();
 		}
