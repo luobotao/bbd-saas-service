@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserVO> findUserListBySite(Site site) {
-        List<User> userList = userDao.findUserListBySite(site, UserRole.SENDMEM);
+        List<User> userList = userDao.findUserListBySite(site, UserRole.SENDMEM,UserStatus.VALID);
         List<UserVO> userVoList = new ArrayList<UserVO>();
         if (userList != null && userList.size() > 0) {
             for (User user : userList) {
@@ -209,7 +209,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findUsersBySite(Site site) {
-        return userDao.findUserListBySite(site, UserRole.SENDMEM);
+    public List<User> findUsersBySite(Site site,UserRole userRole,UserStatus userStatus) {
+        return userDao.findUserListBySite(site, userRole,userStatus);
     }
 }

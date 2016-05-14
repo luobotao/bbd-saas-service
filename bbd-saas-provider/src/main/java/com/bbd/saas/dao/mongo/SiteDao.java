@@ -50,7 +50,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         }
         if(StringUtils.isNotBlank(keyword)){
             keyword = keyword.trim();
-            query.or(query.criteria("responser").containsIgnoreCase(keyword),query.criteria("username").containsIgnoreCase(keyword));
+            query.or(query.criteria("responser").containsIgnoreCase(keyword),query.criteria("name").containsIgnoreCase(keyword),query.criteria("username").containsIgnoreCase(keyword));
         }
 
         List<Site> siteList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();

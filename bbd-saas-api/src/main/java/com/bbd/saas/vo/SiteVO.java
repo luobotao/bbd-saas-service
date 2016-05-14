@@ -17,6 +17,7 @@ public class SiteVO implements Serializable{
 	private String lat;//纬度
 	private String lng;//经度
 	private String deliveryArea;//配送范围
+	private String eFence; //电子围栏
      
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -66,5 +67,13 @@ public class SiteVO implements Serializable{
 
 	public void setDeliveryArea(String deliveryArea) {
 		this.deliveryArea = deliveryArea;
+	}
+
+	public String geteFence() {
+		return eFence;
+	}
+
+	public void seteFence(String eFence) {
+		this.eFence = eFence;
 	}
 }

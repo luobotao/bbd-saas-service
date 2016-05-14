@@ -24,6 +24,7 @@ import com.bbd.saas.utils.OSSUtils;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.SignUtil;
 import com.bbd.saas.vo.UserQueryVO;
+import com.bbd.saas.vo.UserVO;
 import flexjson.JSONDeserializer;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -108,13 +109,21 @@ public class SiteManageController {
 		Site site = new Site();
 		User user = new User();
 		PostmanUser postmanUser = new PostmanUser();
-		if(StringUtils.isNotBlank(siteForm.getAreaCode())){
+		if(StringUtils.isNotBlank(siteForm.getAreaCode())){//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			BeanUtils.copyProperties(siteForm,site);
 			user = userService.findUserByLoginName(site.getUsername());
 			postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
 			if(postmanUser==null)
 				postmanUser = new PostmanUser();
+			Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
+			if(postcompany!=null){
+				site.setCompanyId(userNow.getCompanyId());
+				site.setCompanyName(postcompany.getCompanyname());
+				site.setCompanycode(postcompany.getCompanycode());
+			}
+			user.setPassWord(siteForm.getPassword());
+			user.setUserStatus(UserStatus.VALID);//公司修改设置为有效
 		}else{
 			if("1".equals(siteForm.getFrom())){//外部注册 驳回时的修改
 				Site siteTemp = siteService.findSiteByUserName(siteForm.getPhone());
@@ -133,6 +142,9 @@ public class SiteManageController {
 					postmanUser = new PostmanUser();
 				site.setStatus(SiteStatus.WAIT);
 				site.setMemo("您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日完成审核。");
+				user = userService.findUserByLoginName(site.getUsername());
+				user.setUserStatus(UserStatus.INVALID);//设置为无效
+				postmanUser.setSta("3");//对应mongdb user表中的userStatus,默认3位无效
 			}else{//公司用户创建
 				BeanUtils.copyProperties(siteForm,site);
 				String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity());
@@ -145,6 +157,9 @@ public class SiteManageController {
 				}
 				site.setStatus(SiteStatus.APPROVE);
 				site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
+				user.setPassWord(siteForm.getPassword());
+				postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
+				user.setUserStatus(UserStatus.VALID);//公司创建的为有效
 			}
 
 			site.setDateAdd(new Date());
@@ -163,11 +178,11 @@ public class SiteManageController {
 			postmanUser.setAddr("");
 			postmanUser.setAddrdes("");
 			postmanUser.setShopurl("");
-			postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
+
 			postmanUser.setSpreadticket("");
 			postmanUser.setDateNew(new Date());
 			postmanUser.setPoststatus(1);//默认为1
-			postmanUser.setPostrole(0);
+			postmanUser.setPostrole(4);
 			//staffid就是该用户的手机号
 			postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
 		}
@@ -180,11 +195,11 @@ public class SiteManageController {
 		setLatAndLng(siteKey.getId().toString());//设置经纬度
 		//向用户表插入登录用户
 
-		user.setPassWord(siteForm.getPassword());
+
 		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		user.setSite(site);
-		user.setUserStatus(UserStatus.VALID);
+
 		user.setRole(UserRole.SITEMASTER);
 		user.setCompanyId(site.getCompanyId());
 		user.setDateUpdate(new Date());
@@ -261,6 +276,16 @@ public class SiteManageController {
 		Site site = siteService.findSiteByUserName(phone);
 		siteService.validSite(site.getId().toHexString());//审核通过站点
 		setLatAndLng(site.getId().toHexString());//设置经纬度
+
+		//将用户设置为有效
+		try{
+			User user = userService.findUserByLoginName(phone);
+			userService.updateUserStatu(site.getUsername(), UserStatus.VALID);
+			userMysqlService.updateById(UserStatus.VALID.getStatus(),user.getPostmanuserId());
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 		return true;
 	}
 
@@ -321,7 +346,11 @@ public class SiteManageController {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-
+		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER,UserStatus.VALID);//所有有效站长
+		for(User user:userList){//将站点下的所有站长置为无效
+			userService.updateUserStatu(site.getUsername(), UserStatus.INVALID);
+			userMysqlService.updateById(UserStatus.INVALID.getStatus(),user.getPostmanuserId());
+		}
 		return true;
 	}
 	/**
@@ -341,6 +370,11 @@ public class SiteManageController {
 			logger.info(result+"==========");
 		}catch (Exception e){
 			e.printStackTrace();
+		}
+		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER,null);//所有站长
+		for(User user:userList){//将站点下的所有站长置为有效
+			userService.updateUserStatu(site.getUsername(), UserStatus.VALID);
+			userMysqlService.updateById(UserStatus.VALID.getStatus(),user.getPostmanuserId());
 		}
 		return true;
 	}

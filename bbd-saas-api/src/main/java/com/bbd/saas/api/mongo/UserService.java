@@ -1,5 +1,6 @@
 package com.bbd.saas.api.mongo;
 
+import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
@@ -116,7 +117,8 @@ public interface UserService {
     /**
      * 获取指定站点下的所有派件员
      * @param site 站点
+     * @param userRole 角色
      * @return
      */
-    public List<User> findUsersBySite(Site site);
+    public List<User> findUsersBySite(Site site, UserRole userRole,UserStatus userStatus);
 }

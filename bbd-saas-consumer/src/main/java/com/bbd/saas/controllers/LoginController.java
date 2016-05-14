@@ -96,7 +96,7 @@ public class LoginController {
 							}
 						}
 						if(user.getUserStatus()== UserStatus.INVALID){
-							redirectAttrs.addFlashAttribute("message", "用户状态无效");
+							redirectAttrs.addFlashAttribute("message", "此账号已停用，请联系公司相关负责人开通");
 							return "redirect:/login";
 						}
 						if(user.getRole()!= UserRole.SITEMASTER && user.getRole()!= UserRole.COMPANY){

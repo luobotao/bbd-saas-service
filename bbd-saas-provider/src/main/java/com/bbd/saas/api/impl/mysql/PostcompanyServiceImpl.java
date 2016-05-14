@@ -28,15 +28,23 @@ public class PostcompanyServiceImpl implements PostcompanyService {
 	}
 
 	/**
-	 * 获取所有公司列表
+	 * 根据公司状态获取该状态下的所有公司列表
 	 * @return
      */
+	@Override
+	@Transactional(readOnly = true)
+	public List<Postcompany> selectAllByStatus(String sta) {
+		return postcompanyDao.selectAllByStatus(sta);
+	}
+	/**
+	 * 获取所有公司列表
+	 * @return
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public List<Postcompany> selectAll() {
 		return postcompanyDao.selectAll();
 	}
-
 	/**
 	 * 根据公司ID获取公司信息
 	 * @param id
