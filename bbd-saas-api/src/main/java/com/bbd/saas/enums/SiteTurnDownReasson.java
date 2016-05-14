@@ -11,7 +11,7 @@ public enum SiteTurnDownReasson {
     NOTTHISCOMPANY(1, "此站点不属于本公司"),
     SITENAMEERROR(2, "站点名称不正确"),
     SITEADDERROR(3, "站点地址不正确"),
-    MASTERINFOERROR(4, "站⻓信息不正确"),
+    MASTERINFOERROR(4, "站长信息不正确"),
     OTHER(5, "其他");
     private int status;
     private String message;

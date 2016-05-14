@@ -10,6 +10,7 @@ public class Constants {
     public static final String REDIS_ADMIN_ID = "SAAS_ADMINUSER_ID_";//adminid Key in redis session
 
     public static final String BBD_SAAS_VERIFY_CODE = "BBD_SAAS_VERIFY_CODE_";//verifycode id Key in redis
+    public static final String BBD_SAAS_VERIFY_CODE_TIME = "BBD_SAAS_VERIFY_CODE_TIME_";//60秒发送间隔
 
     public final static String COMMA = ",";
 

@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -310,35 +311,12 @@ public class UserManageController {
 	public String changestatus(Model model,@RequestParam(value = "id", required = true) String id,
 			@RequestParam(value = "status", required = true) String status,
 			@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
-		User user = null;
-		/*try {
-			loginName=new String(loginName.getBytes("iso-8859-1"),"utf-8");
-			 
-		} catch (UnsupportedEncodingException e) {
-
-		}
-		
-		if(id!=null && !id.equals("")){
-			user = userService.findOne(id);
-		}else if(loginName!=null && !loginName.equals("")){
-			user = userService.findUserByLoginName(loginName);
-		}System.out.println("================="+UserStatus.status2Obj(Integer.parseInt(status)));
-		user.setUserStatus(UserStatus.status2Obj(Integer.parseInt(status)));
-		logger.info("id"+id);
-		logger.info("loginName"+loginName);
-		Key<User> kuser = userService.save(user);
-		
-		if(kuser!=null && !kuser.getId().equals("")){ 
-			int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
-			return "true";
-		}else{
-			return "false";
-		}*/
-		
 		if(loginName!=null && !loginName.equals("")){
-			user = userService.findUserByLoginName(loginName);
-			
-			if(user!=null && !user.getId().equals("")){ 
+			User user = userService.findUserByLoginName(loginName);
+			if(user!=null && !user.getId().equals("")){
+				if(user.getRole()==UserRole.SITEMASTER && user.getSite().getStatus()!= SiteStatus.APPROVE){//站点无效 且为站长用户
+					return "false";
+				}
 				userService.updateUserStatu(loginName, UserStatus.status2Obj(Integer.parseInt(status)));
 				int ret = userMysqlService.updateById(Integer.parseInt(status),user.getPostmanuserId());
 				return "true";

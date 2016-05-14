@@ -158,7 +158,7 @@
 							if(response!="" && response!=null && response.status=="1"){
 								alert_mine("成功","发送成功");
 							}else{
-								alert_mine("失败","发送失败");
+								alert_mine("失败",response.msg);
 							}
 						},
 						error: function(){

@@ -141,11 +141,18 @@ public class IndexController {
             result.put("msg", ErrorCode.getErrorMsg("global.phoneError"));
             return result;
         }
+        String codeTemp = redisService.get(Constants.BBD_SAAS_VERIFY_CODE_TIME + phone);
+        if(StringUtils.isNotBlank(codeTemp)){//60秒内刚发过
+            result.put("status", ErrorCode.getErrorCode("global.verifyTimeError"));
+            result.put("msg", ErrorCode.getErrorMsg("global.verifyTimeError"));
+            return result;
+        }
         String code = redisService.get(Constants.BBD_SAAS_VERIFY_CODE + phone);
         if (StringUtils.isBlank(code)) {
             code = StringUtil.genRandomCode(4);//生成四位随机数
         }
-        redisService.set(Constants.BBD_SAAS_VERIFY_CODE + phone, code, 60 * 30);//写入redis
+        redisService.set(Constants.BBD_SAAS_VERIFY_CODE + phone, code, 60 * 30);//写入redis 半小时内有效
+        redisService.set(Constants.BBD_SAAS_VERIFY_CODE_TIME + phone, code, 60 );//写入redis 一分钟有效
         smsInfoService.saveVerify(phone, code, "1");//写入短信表 1注册
         result.put("status", "1");
         result.put("msg", "发送成功");

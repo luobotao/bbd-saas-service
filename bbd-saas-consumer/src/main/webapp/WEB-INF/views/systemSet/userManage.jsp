@@ -364,7 +364,9 @@ function changeStatus(status,id,loginName){
 				if(data == 'true'){
 					//alert("更新成功");
 					gotoPage(0);
-				} 
+				} else{
+					alert_mine("错误","站点状态无效,请核实");
+				}
 	        },
 	        error : function() {  
 	       		//alert("异常！");  

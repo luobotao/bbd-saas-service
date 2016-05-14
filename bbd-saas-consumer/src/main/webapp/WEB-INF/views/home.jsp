@@ -116,7 +116,7 @@ User user = (User)request.getAttribute("user");
 						
 				%>				
 					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-					<a href="<c:url value="/?typ=query" />">
+					<a href="<c:url value="/?typ=mailQuery" />">
 						<div class="b-status-card">
 							<span><img src="<c:url value="/resources/images/query.png" />" alt="数据查询" /></span>
 							<h3>数据查询</h3>
@@ -124,7 +124,7 @@ User user = (User)request.getAttribute("user");
 					</a>
 					</li>
 					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<a href="<c:url value="/?typ=arrive" />">
+						<a href="<c:url value="/?typ=capacityDistribution" />">
 							<div class="b-status-card">
 								<span><img src="<c:url value="/resources/images/n_capacity.png" />" alt="运力分布" /></span>
 								<h3>运力分布</h3>
@@ -132,7 +132,7 @@ User user = (User)request.getAttribute("user");
 						</a>
 					</li>
 					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<a href="<c:url value="/?typ=set" />">
+						<a href="<c:url value="/?typ=deliverArea" />">
 							<div class="b-status-card">
 								<span><img src="<c:url value="/resources/images/d_area.png" />" alt="配送区域" /></span>
 								<h3>配送区域</h3>
