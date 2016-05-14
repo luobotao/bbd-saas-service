@@ -166,15 +166,14 @@
 <!-- E alert -->
 
 <script>
-
-	$(".menu li").click(function(){
-		$(this).addClass("curr").siblings().removeClass("curr");
+	$('.b-sidebar .menu li').click(function() {
+		$(this).addClass('curr').siblings('li').removeClass('curr');
 	});
 	var typ="${typ}";
 	if(typ!=null && typ!=""){
 		$("li").each(function(){
 			if($(this).attr("id")==typ){
-				$(this).addClass("side-cur").siblings().removeClass("side-cur");
+				$(this).addClass("curr").siblings().removeClass("curr");
 				if ($(this).parents('ul.menu').css("display") == "block") {//menu有dn
 					$(this).parents('ul.menu').slideUp();
 				} else {//menu没有dn

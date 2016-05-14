@@ -49,7 +49,7 @@
                         <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i
                                     class="b-icon p-query p-ser"></i>查询</a>
-                            <a href="javascript:void(0)" class="ser-btn d ml6" data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
+                            <a href="javascript:void(0)" class="ser-btn d ml6 j-siteM" data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
 
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                                         if (SiteStatus.APPROVE == site.getStatus()) {
                                     %>
                                     <a href="javascript:void(0);" onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
-                                       class="orange">修改</a>
+                                       class="orange j-siteM">修改</a>
                                     <a href="javascript:void(0);" data-toggle='modal' data-target='#stopModal'
                                        onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange">停用</a>
                                     <%
@@ -116,7 +116,7 @@
                                         if (SiteStatus.INVALID == site.getStatus()) {
                                     %>
                                     <a href="javascript:void(0);" onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
-                                       class="orange">修改</a>
+                                       class="orange j-siteM">修改</a>
                                     <a href="javascript:void(0);" data-toggle='modal' data-target='#startModal'
                                        onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange">启用</a>
                                     <%--<a href="javascript:void(0);" data-toggle='modal' data-target='#delModal'--%>
@@ -154,6 +154,7 @@
 </footer>
 <!-- E footer -->
 <!-- S pop -->
+<div id="mask"></div>
 <!--S 新建/修改-->
 <div class="j-siteM-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="siteModal">
     <div class="modal-dialog b-modal-dialog b-guide-dialog" role="document">
@@ -162,7 +163,7 @@
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
             <input type="hidden" id="areaCode" name="areaCode"/>
             <div class="modal-header b-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
             </div>
             <div class="modal-body b-modal-body">
@@ -437,11 +438,11 @@
             row += "<a href='javascript:void(0);' onclick=\"getTurnDownMessage('"+data.turnDownReasson+"','"+data.turnDownMessage+"','"+data.otherMessage+"')\" class='orange ml6' data-toggle='modal' data-target='#messageModal'>查看驳回原因</a>";
         }
         if(data.status=="<%=SiteStatus.APPROVE%>" ){
-            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange' data-toggle='modal' data-target='#siteModal'>修改</a> ";
+            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM' data-toggle='modal' data-target='#siteModal'>修改</a> ";
             row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#stopModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>停用</a>";
         }
         if(data.status=="<%=SiteStatus.INVALID%>" ){
-            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange'  data-toggle='modal' data-target='#siteModal'>修改</a> ";
+            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM'  data-toggle='modal' data-target='#siteModal'>修改</a> ";
             row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#startModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>启用</a> ";
 //            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#delModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>删除</a>";
         }

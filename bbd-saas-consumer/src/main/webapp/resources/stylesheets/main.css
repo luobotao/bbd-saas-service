@@ -988,13 +988,13 @@ footer {
   width: 84%;
 }
 #mask {
-  background: #555555;
+  background: #000;
   width: 100%;
   height: 100%;
   position: absolute;
   left: 0;
   top: 0;
-  opacity: 0.3;
+  opacity: 0.5;
   z-index: 1000;
   display: none;
 }
@@ -1910,7 +1910,6 @@ input.spe-input{
   top: 0;
   margin-left: -110px;
   z-index: 1060;
-  border-radius: 4px;
 }
 .b-prompt .b-prompt-txt {
   -webkit-transition: -webkit-transform .3s ease-out;

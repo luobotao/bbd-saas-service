@@ -98,7 +98,7 @@ folder instead of downloading all of them to reduce the load. -->
 <body>
 <!--S 提示信息-->
 <div class="b-prompt">
-	<i class="b-prompt-txt">用户名不存在</i>
+	<i class="b-prompt-txt"></i>
 </div>
 <!--E 提示信息-->
 <!-- S alert -->
