@@ -23,6 +23,7 @@ $(function () {
             $(this).addClass('side-cur').next('ul.menu').slideDown();
         }
     });
+
     $(window).resize(function () {
         counthei();
     });
@@ -30,8 +31,7 @@ $(function () {
 
 // S 站点管理
 
-    // 新建
-    shP(".j-siteM",".j-siteM-pop");
+
     // 修改
     shP(".j-siteM-rvs",".j-siteM-pop");
     // 通过
@@ -209,7 +209,24 @@ $(function () {
     })
     // E 密码
 
+    // S 站点管理新建
+    // 新建
 
+    $(".j-siteM").on("click", function (e) {
+        e.stopPropagation();
+        $(".j-siteM-pop").addClass("in").show();
+        $("#mask").show();
+        $("#mask").css({left:"16%"})
+        $('.j-siteM-pop').css({top:$(parent.window).scrollTop()});
+        parentD.addClass("modal-open").css({paddingRight:"17px"});
+    })
+
+    $(".j-f-close").on("click",function(){
+        $(this).parent().parent().parent().parent().parent().hide();
+        $("#mask").hide();
+        $(".j-siteM-pop").hide().removeClass("in");
+        parentD.removeClass("modal-open").css({paddingRight:"0"});
+    })
     $(".n-re-con").css({minHeight:winhei-152})
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
@@ -236,6 +253,7 @@ function alert_mine(titile,content){
 
 // S 气泡 提示
 function outDiv(content){
+    $('.b-prompt-txt').css({top:$(parent.window).scrollTop()});
     $(".b-prompt").addClass("mov");
     $(".b-prompt i").html(content);
     var txtwid=$(".b-prompt .b-prompt-txt").outerWidth();
