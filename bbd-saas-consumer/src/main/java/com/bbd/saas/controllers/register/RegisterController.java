@@ -307,7 +307,6 @@ public class RegisterController {
 		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		user.setSite(site);
-		user.setUserStatus(UserStatus.VALID);
 		user.setRole(UserRole.SITEMASTER);
 		user.setCompanyId(site.getCompanyId());
 		user.setDateUpdate(new Date());
