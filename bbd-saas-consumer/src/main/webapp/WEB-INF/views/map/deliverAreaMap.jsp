@@ -1167,7 +1167,6 @@
 		}
 	}
 	function doDelete(url){
-		//var pageIndexStr = $(".pagination .active a").html();
 		var pageIndex = (parseInt($(".pagination .active a").html()) - 1);
 		//查询所有派件员
 		$.ajax({
