@@ -1025,23 +1025,9 @@
 			timeout: 0,
 			success: function(pageTable){
 				$(".spinner").modal('hide');
-				//console.log(pageTable);
-				var tbody = $("#dataList");
-				var dataList = pageTable.list;
-				//console.log("dataList.length= count  ==000====import=="+dataList.length);
-				if(dataList != null){
-					var datastr = "";
-					//console.log("dataList.length= count  ======import=="+dataList.length);
-					for(var i = 0; i < dataList.length; i++){
-						datastr += getRowHtml(dataList[i]);
-					}
-					tbody.html(datastr);
-					//console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
-					//更新分页条
-					var pageStr = paginNav(pageTable.page, pageTable.pageNum, pageTable.count);
-					$("#pagin").html(pageStr);
-				}
-				//loadTableHtml(data);
+				console.log(pageTable);
+				console.log("start  load  ");
+				loadTableHtml(pageTable);
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
 				console.log( "超时，服务器异常!");
@@ -1104,7 +1090,7 @@
 			},//数据，这里使用的是Json格式进行传输
 			success : function(pageTable) {//刷新列表
 				//console.log("pageTable==="+pageTable);
-				loadTableHtml(pageTable);
+				loadTableHtml(pageTable.pageList);
 			},
 			error : function() {
 				//alert("加载分页数据异常！");
