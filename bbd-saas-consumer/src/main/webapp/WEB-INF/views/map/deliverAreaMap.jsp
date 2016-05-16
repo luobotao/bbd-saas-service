@@ -1167,8 +1167,8 @@
 		}
 	}
 	function doDelete(url){
-		var pageIndex = $(".pagination .active a").html();
-		console.log("pageIndex====" + pageIndex);
+		//var pageIndexStr = $(".pagination .active a").html();
+		var pageIndex = (parseInt($(".pagination .active a").html()) - 1);
 		//查询所有派件员
 		$.ajax({
 			type : "GET",  //提交方式
@@ -1183,6 +1183,8 @@
 				var result = dataObject.result;
 				console.log(dataObject);
 				if(result){//删除成功，刷新列表
+					console.log(dataObject.pageList);
+					console.log("start===");
 					loadTableHtml(dataObject.pageList);
 				}else{
 					alert("删除失败。");
