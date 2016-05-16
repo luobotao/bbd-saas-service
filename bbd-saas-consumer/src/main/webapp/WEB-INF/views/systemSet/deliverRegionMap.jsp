@@ -278,7 +278,12 @@
 					window.location.href="${ctx}/deliverRegion/map/1";
 				},
 				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+					alert("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
+					if(window.top==window.self){//不存在父页面
+						window.location.href="<c:url value="/login" />"
+					}else{
+						window.top.location.href="<c:url value="/login" />"
+					}
 				}
 			});
 		}
@@ -419,7 +424,12 @@
 					}
 				},
 				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+					alert("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
+					if(window.top==window.self){//不存在父页面
+						window.location.href="<c:url value="/login" />"
+					}else{
+						window.top.location.href="<c:url value="/login" />"
+					}
 				}
 			});
 			/*          $("#jsonStr").val(jsonStr);
