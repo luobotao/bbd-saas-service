@@ -1,19 +1,19 @@
 package com.bbd.saas.api.impl.mysql;
 
-import javax.annotation.Resource;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.dao.mysql.PostcompanyDao;
 import com.bbd.saas.models.Postcompany;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * 公司Service实现
  * Created by luobotao on 2016/4/16.
  */
-@Service("orderMysqlService")
+@Service("postcompanyService")
 @Transactional
 public class PostcompanyServiceImpl implements PostcompanyService {
 	@Resource

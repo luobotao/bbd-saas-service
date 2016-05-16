@@ -150,6 +150,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
     	Query<Order> query = createQuery();
     	if(orderQueryVO != null){
+            //公司Id
+           /* //站点查询
+            if(StringUtils.isNotBlank(orderQueryVO.companyId)){
+                query.filter("areaCode", orderQueryVO.areaCode);
+            }*/
     		//站点查询
             if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
                 query.filter("areaCode", orderQueryVO.areaCode);

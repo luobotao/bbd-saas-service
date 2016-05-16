@@ -115,13 +115,22 @@ public class MailQueryController {
 			status = Numbers.defaultIfNull(status, -1);
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId());
+			List<String> areaCodeList = new ArrayList<String>();
+			if(siteVOList != null && siteVOList.size() > 0){
+				for (SiteVO siteVO : siteVOList){
+					areaCodeList.add(siteVO.getAreaCode());
+				}
+			}
+
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
 			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
-			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+			/*orderQueryVO.areaCodeList =
+			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);*/
 			//设置包裹号,派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();

@@ -285,7 +285,7 @@ public class SiteController {
 
 	//电子围栏
 	@RequestMapping(value="putAllOverLay", method=RequestMethod.POST)
-	public  @ResponseBody String putAllOverLay(@RequestParam String jsonStr){
+	public  @ResponseBody String putAllOverLay(@RequestParam String siteId, @RequestParam String jsonStr){
 		//处理电子围栏数据
 		String[] pointArr = jsonStr.split(";");
 		List<List<MapPoint>> points = new ArrayList<List<MapPoint>>();
@@ -299,8 +299,8 @@ public class SiteController {
 			}
 			points.add(mapPointList);
 		}
-		User user = adminService.get(UserSession.get(request));
-		String siteId = user.getSite().getId().toString();
+		/*User user = adminService.get(UserSession.get(request));
+		String siteId = user.getSite().getId().toString();*/
 		Result result = sitePoiApi.updateSiteEfence(siteId,points);
 		logger.info(result.code+":"+result.toString());
 		return "success";

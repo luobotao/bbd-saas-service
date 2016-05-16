@@ -78,6 +78,9 @@
 					<ul class="menu dn">
 						<li id="user"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
 					</ul>
+					<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-query"></i>运力分布</a></li>
+
+					<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-query"></i>配送区域</a></li>
 					<%
 						}
 					%>
