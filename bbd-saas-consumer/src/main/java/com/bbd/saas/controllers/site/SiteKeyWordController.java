@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -114,7 +113,7 @@ public class SiteKeyWordController {
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=ISO8859_1");
 		try{
 			ServletOutputStream outputStream = response.getOutputStream();
-			String fileName = new String(("关键词").getBytes(), "ISO8859_1")+Dates.formatDate2(new Date());
+			String fileName = new String(("地址关键词").getBytes(), "ISO8859_1")+Dates.formatDate2(new Date());
 			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
 
 			String[] titles = { "站点名称", "省/直辖市", "市", "区", "地址关键词"};
@@ -153,19 +152,37 @@ public class SiteKeyWordController {
 		String between = request.getParameter("between");
 		String keyword = StringUtil.initStr(request.getParameter("keyword"), "");
 		DateBetween dateBetween = new DateBetween(between);
+
 		if(siteId == null || "".equals(siteId) ){// 查询全部站点
 			if(siteVOList != null && siteVOList.size() > 0){
 				PageList<SiteKeyword> siteKeywordPageList = null;
 				List<SiteKeyword> keywordList = null;
-				for (SiteVO siteVO : siteVOList){
-					siteKeywordPageList = siteKeywordApi.findSiteKeyword(siteVO.getId()+"",dateBetween.getStart(), dateBetween.getEnd(), 0,MAXSIZE, keyword);
-					keywordList = siteKeywordPageList.list;
-					getOneSiteKeyWords(siteVO.getName(), keywordList, sheet, bodyStyle);
+				if(StringUtils.isNotBlank(between)) {//预计到站时间
+					logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
+					for (SiteVO siteVO : siteVOList){
+						siteKeywordPageList = siteKeywordApi.findSiteKeyword(siteVO.getId()+"", dateBetween.getStart(), dateBetween.getEnd(), 0, MAXSIZE, keyword);
+						keywordList = siteKeywordPageList.list;
+						getOneSiteKeyWords(siteVO.getName(), keywordList, sheet, bodyStyle);
+					}
+				}else{
+					for (SiteVO siteVO : siteVOList){
+						siteKeywordPageList = siteKeywordApi.findSiteKeyword(siteVO.getId()+"", null, null, 0, MAXSIZE, keyword);
+						keywordList = siteKeywordPageList.list;
+						getOneSiteKeyWords(siteVO.getName(), keywordList, sheet, bodyStyle);
+					}
 				}
+
 			}
 		}else{//单个站点
-			PageList<SiteKeyword> siteKeywordPageList = siteKeywordApi.findSiteKeyword(siteId+"",dateBetween.getStart(), dateBetween.getEnd(), 0,MAXSIZE, keyword);
-			List<SiteKeyword> keywordList = siteKeywordPageList.list;
+			PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+			if(StringUtils.isNotBlank(between)) {//预计到站时间
+				logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
+				//导入地址关键词
+				siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId,dateBetween.getStart(),dateBetween.getEnd(), 0, MAXSIZE, keyword);
+			}else{
+				siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId, null, null, 0, MAXSIZE, keyword);
+			}
+			List<SiteKeyword> keywordList = siteKeywordPage.list;
 			Site site = siteService.findSite(siteId);
 			String siteName = null;
 			if(site == null){
@@ -272,42 +289,8 @@ public class SiteKeyWordController {
 		return "redirect:/deliverArea/map/3";
 	}
 
-	/**
-	 * 删除关键词
-	 * @param id 关键词id
-	 * @param model
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value="/deleteSitePoiKeyword/{id}", method=RequestMethod.GET)
-	public String deleteSitePoiKeyword(@PathVariable String id, Model model, HttpServletRequest request){
-		Result result = siteKeywordApi.deleteSitePoiKeyword(id);
-		return "redirect:/deliverRegion/map/3";
-	}
-
-	/**
-	 * 批量删除关键词
-	 * @param ids 关键词id集合
-	 * @param model
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value="/piliangDeleteSitePoiKeyword/{ids}", method=RequestMethod.GET)
-	public String piliangDeleteSitePoiKeyword(@PathVariable String ids, Model model, HttpServletRequest request){
-		List<String> idList = Arrays.asList(ids.split(","));
-		Result result = siteKeywordApi.deleteSitePoiKeyword(idList);
-		logger.info("批量删除完成");
-		return "redirect:/deliverRegion/map/3";
-	}
-
-
-
 	//--------------------------站点配送区域引导--------------------------------------------------
-	@ResponseBody
-	@RequestMapping(value="/deliverRegionWithAjax", method=RequestMethod.POST)
-	public Map<String, Object> deliverRegionWithAjax(Model model, HttpServletRequest request){
-		return dealSiteKeywordWithAjax(request, null);
-	}
+
 
 	@ResponseBody
 	@RequestMapping(value = "ajaxImportKeyword", method=RequestMethod.POST)
@@ -335,7 +318,7 @@ public class SiteKeyWordController {
 		catch (Exception e){
 			e.printStackTrace();
 		}
-		Map<String, Object> model = dealSiteKeywordWithAjax(request, null);
+		Map<String, Object> model = dealSiteKeywordWithAjax(siteId, null);
 		return model;
 	}
 	/**
@@ -380,17 +363,17 @@ public class SiteKeyWordController {
 
 	/**
 	 * 处理ajax返回的关键词的信息
-	 * @param request
-	 * @return
+	 * @param siteId
+	 * @param map
+     * @return
      */
-	public  Map<String, Object> dealSiteKeywordWithAjax(HttpServletRequest request, Map<String, Object> map) {
+	public  Map<String, Object> dealSiteKeywordWithAjax(String siteId, Map<String, Object> map) {
 		if (map == null){
 			map = new HashMap<String, Object>();
 		}
 		//获取用户站点信息
 		//--------panel 1-----------------------
-		User user = adminService.get(UserSession.get(request));
-		Site site = siteService.findSite(user.getSite().getId().toString());
+		Site site = siteService.findSite(siteId);
 		String between = request.getParameter("between");
 		String keyword = request.getParameter("keyword")==null?"":request.getParameter("keyword");
 		int pageIndex = Numbers.parseInt(request.getParameter("pageIndex"),0);
@@ -440,7 +423,8 @@ public class SiteKeyWordController {
 		}*/
 		if(result != null ){//删除成功，刷新列表
 			map.put("result", true);
-			dealSiteKeywordWithAjax(request, map);
+			String siteId = request.getParameter("siteId");
+			dealSiteKeywordWithAjax(siteId, map);
 		}else{
 			map.put("result", false);
 		}
@@ -461,7 +445,8 @@ public class SiteKeyWordController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(result != null && result.code == 1){//删除成功，刷新列表
 			map.put("result", true);
-			dealSiteKeywordWithAjax(request, map);
+			String siteId = request.getParameter("siteId");
+			dealSiteKeywordWithAjax(siteId, map);
 		}else{
 			map.put("result", false);
 		}

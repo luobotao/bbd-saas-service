@@ -10,6 +10,29 @@
 	<%
 		List<SiteVO> siteList = (List<SiteVO>)request.getAttribute("siteList");
 	%>
+	<style>
+		.capacity-map .BMapLabel{
+			max-width:inherit;
+			margin-bottom:0;
+			border-radius:4px;
+			padding:6px !important;
+		}
+		.capacity-map .BMapLabel:after {
+			content: '';
+			display: block;/*这个也很关键的*/
+			position: absolute;
+			width: 0px;
+			height: 0px;
+			bottom: -6px;
+			left:32px;
+			/*left: 50%;
+            margin-left:-6px;*/
+			border: 6px solid transparent;
+			border-top: 6px solid rgba(4, 4, 4,0.7);
+			border-bottom: none;
+			z-index: 1;
+		}
+	</style>
 </head>
 <body>
 <body class="fbg">
@@ -51,7 +74,7 @@
 						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map" >绘制电子围栏</a></li>
 						<li <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
 					</ul>
-					<div class="b-tab-con form-inline form-inline-n tab-content">
+					<div class="b-tab-con form-inline form-inline-n tab-content capacity-map">
 						<!-- S 配送区域 -->
 						<div class="row tab-pane fade" id="send-range">
 							<div class="col-md-12 pb20 f16">
@@ -108,7 +131,7 @@
 							</div>
 							<div class="col-md-12">
 								<div class="b-map">
-									<div id="fenceMap" class="bod-rad" style="height: 533px;"></div>
+									<div id="fenceMap" class="bod-rad capacity-map" style="height: 533px;"></div>
 									<a href="javascript:void(0)" onclick="fenceMap.theLocation()" class="pos-adr"></a>
 									<div class="b-f-screen b-forward-full j-full-btn"></div>
 									<div class="draw-btn" id="eFenceTool">
@@ -309,7 +332,7 @@
 			if (siteList != null) {
 				for (SiteVO site : siteList) {
 		%>
-		showOneSiteArea2("<%=site.getLng()%>", "<%=site.getLat()%>", "<%=site.getDeliveryArea()%>");
+		showOneSiteArea2("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>", "<%=site.getDeliveryArea()%>");
 		<%
 				}
 			}
@@ -329,7 +352,7 @@
 		return point;
 	}
 	//显示一个站点及其配送范围
-	function showOneSiteArea2(lng, lat, radius){
+	function showOneSiteArea2(name, lng, lat, radius){
 		var point = getPointBySite2(lng, lat);
 		if(radius == null || radius == "null" ||  radius == ""){
 			radius = 0;
@@ -337,8 +360,8 @@
 		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 		var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
 		areaMap.addOverlay(marker);               // 将标注添加到地图中
-		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-		//var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
+		var label = newLabel(point, name);
+		areaMap.addOverlay(label);               // 将label添加到地图中
 		var circle = new BMap.Circle(point, radius*1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 		areaMap.addOverlay(circle);            //增加圆
 	}
@@ -463,14 +486,28 @@
 		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 		var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
 		areaMap.addOverlay(marker);               // 将标注添加到地图中
-
-		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-		//var circle = new BMap.Circle(point, radius * 1000);
+		var label = newLabel(point, site.name);
+		areaMap.addOverlay(label);               // 将label添加到地图中
 		var circle = new BMap.Circle(point, radius * 1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 		areaMap.addOverlay(circle);          //增加圆
 		//console.log("=======radius===" + radius +"  circle===" + circle+" site==="+site.name);
 	}
 
+	function newLabel(point, name){
+		var opts = {
+			position : point,    // 指定文本标注所在的地理位置
+			offset   : new BMap.Size(-36, -70)    //设置文本偏移量
+		}
+		var label = new BMap.Label(name, opts);  // 创建文本标注对象
+		label.setStyle({
+			color : "#fff",
+			border : "0",
+			fontSize : "18px",
+			fontFamily:"simhei",
+			backgroundColor:"rgba(4, 4, 4,0.7)",
+		});
+		return label;
+	}
 	//展示配送范围--更改半径
 	function showRadiusChangeMap(siteId, radius){
 		$.ajax({
@@ -629,9 +666,10 @@
 			var marker = new BMap.Marker(new BMap.Point(lng, lat),{icon:myIcon});  // 创建标注
 			marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
-			var label = new BMap.Label(name, {offset:new BMap.Size(20,-10)});
-			marker.setLabel(label);
 			this.map.addOverlay(marker);               // 将标注添加到地图中
+			var label =newLabel(new BMap.Point(lng, lat), name);
+			this.map.addOverlay(label);               // 将label添加到地图中
+
 		},
 		loadAllSite: function(siteId){//加载站点标注
 			//加载所有站点
@@ -1023,11 +1061,11 @@
 			enctype: 'multipart/form-data',
 			async : false,
 			timeout: 0,
-			success: function(pageTable){
+			success: function(map){
 				$(".spinner").modal('hide');
-				console.log(pageTable);
+				console.log(map);
 				console.log("start  load  ");
-				loadTableHtml(pageTable);
+				loadTableHtml(map.pageList);
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
 				console.log( "超时，服务器异常!");
@@ -1106,6 +1144,8 @@
 	//刷新列表
 	function loadTableHtml(pageTable){
 		var tbody = $("#dataList");
+		console.log(pageTable);
+		console.log("load start=========");
 		var dataList = pageTable.list;
 		console.log(dataList);
 		if(dataList != null){
