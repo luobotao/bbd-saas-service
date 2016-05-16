@@ -1090,7 +1090,7 @@
 			},//数据，这里使用的是Json格式进行传输
 			success : function(pageTable) {//刷新列表
 				//console.log("pageTable==="+pageTable);
-				loadTableHtml(pageTable.pageList);
+				loadTableHtml(pageTable);
 			},
 			error : function() {
 				//alert("加载分页数据异常！");
