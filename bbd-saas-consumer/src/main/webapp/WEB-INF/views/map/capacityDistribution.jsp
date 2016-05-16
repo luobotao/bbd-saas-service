@@ -195,10 +195,11 @@
 		if(lng == null || lng == "0.000000" || lng == "null" || lat == null || lat == "null" || lat == "0.000000" ){
 			return null;
 		}
-		var iconPic = "b_marker.png";//派件员
+		var iconPic = "courier.png";//派件员
 		if (flag == 0){//站点
 			iconPic = "b_pos.png";
 		}
+		console.log("name=====" + name + "      " + flag + "  ====flag===iconPic====" + iconPic);
 		var icon = new BMap.Icon("<%=path%>/resources/images/" + iconPic, new BMap.Size(64,64));
 		var point = new BMap.Point(lng, lat);
 		var marker = new BMap.Marker(point,{icon:icon});

@@ -432,7 +432,13 @@ public class SiteKeyWordController {
 	public Map<String, Object> deleteSitePoiKeywordWithAjax(@PathVariable String id, HttpServletRequest request){
 		Result result = siteKeywordApi.deleteSitePoiKeyword(id);
 		Map<String, Object> map = new HashMap<String, Object>();
-		if(result != null && result.code == 1){//删除成功，刷新列表
+		/*if(result != null && result.code == 1){//删除成功，刷新列表
+			map.put("result", true);
+			dealSiteKeywordWithAjax(request, map);
+		}else{
+			map.put("result", false);
+		}*/
+		if(result != null ){//删除成功，刷新列表
 			map.put("result", true);
 			dealSiteKeywordWithAjax(request, map);
 		}else{

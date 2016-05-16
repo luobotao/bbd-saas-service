@@ -1,5 +1,6 @@
 package com.bbd.saas.controllers.map;
 
+import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SiteKeywordApi;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
@@ -8,7 +9,9 @@ import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.DateBetween;
@@ -48,6 +51,10 @@ public class DeliverAreaController {
 	SiteKeywordApi siteKeywordApi;
 	@Autowired
 	SitePoiApi sitePoiApi;
+	@Autowired
+	Geo geo;
+	@Autowired
+	PostcompanyService postCompanyService;
 	/**
 	 * description: 跳转到系统设置-配送区域-绘制电子地图页面
 	 * 2016年4月5日下午4:05:01
@@ -56,52 +63,93 @@ public class DeliverAreaController {
 	 * @return
 	 */
 	@RequestMapping(value="/map", method=RequestMethod.GET)
-	public String toMapPage(String siteId, String activeNum, Model model, HttpServletRequest request ) {
+	public String toMapPage(Integer activeNum, Model model, HttpServletRequest request ) {
 		try{
+			activeNum = Numbers.divToPageNum(activeNum, 1);
+			model.addAttribute("activeNum", activeNum);
 			String userId = UserSession.get(request);
 			if(userId != null && !"".equals(userId)) {
+				/******************配送范围*****************start****************/
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
 				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+				String companyAddress = "";
+				Postcompany company = new Postcompany();
+				if (currUser.getCompanyId() != null ){
+					company = postCompanyService.selectPostmancompanyById(Integer.parseInt(currUser.getCompanyId()));
+					if(company != null){
+						StringBuffer  addressBS = new StringBuffer();
+						addressBS.append(StringUtil.initStr(company.getProvince(),""));
+						addressBS.append(StringUtil.initStr(company.getCity(),""));
+						addressBS.append(StringUtil.initStr(company.getArea(),""));
+						addressBS.append(StringUtil.initStr(company.getAddress(),""));
+						companyAddress = addressBS.toString();
+						setCompanyDefaultInfo(company);
+					}else{
+						setCompanyDefaultInfo(company);
+					}
+				}else{
+					setCompanyDefaultInfo(company);
+				}
+				model.addAttribute("company", company);
+
+				SiteVO centerPoint = getDefaultPoint(companyAddress);
+				model.addAttribute("centerPoint", centerPoint);
+				/******************配送范围*****************end****************/
+				/******************绘制电子围栏*****************start****************/
+				//设置电子围栏
+				if(siteVOList != null && siteVOList.size() > 0){
+					for(SiteVO siteVO : siteVOList){
+						List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteVO.getId().toString());
+						String efenceStr = dealSitePoints(sitePoints);
+						siteVO.seteFence(efenceStr);
+						//logger.info("siteName===" + siteVO.getName() + "    efenceStr==="+efenceStr);
+					}
+				}
+				/******************绘制电子围栏****************end****************/
+
+				/******************关键词*****************start****************/
 				//获取参数
-				siteId = StringUtil.initStr(siteId, "");
 				String between = request.getParameter("between");
 				String keyword = StringUtil.initStr(request.getParameter("keyword"), "");
 				int page = Numbers.parseInt(request.getParameter("page"), 0);
-				siteId = currUser.getSite().getId().toString();
-				//业务开始
-				if(siteId != null && !"".equals(siteId)){//只查询一个站点
-					//获取用户站点信息
-					//--------panel 1-----------------------
-					Site site = siteService.findSite(siteId);
-					//导入地址关键词
-					//--------panel 3-----------------------
-					PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-					if (StringUtils.isNotBlank(between)) {//预计到站时间
-						DateBetween dateBetween = new DateBetween(between);
-						logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
-						//导入地址关键词
-						siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", dateBetween.getStart(), dateBetween.getEnd(), page, 10, keyword);
-					} else {
-						siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
-					}
-					model.addAttribute("siteList", siteVOList);
-					model.addAttribute("activeNum", activeNum);
-					model.addAttribute("site", site);
-					model.addAttribute("between", between);
-					model.addAttribute("keyword", keyword);
-					model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
-					model.addAttribute("pageIndex", siteKeywordPage.getPage());
-					model.addAttribute("pageNum", siteKeywordPage.getPageNum());
-					model.addAttribute("pageCount", siteKeywordPage.getCount());
-					List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(currUser.getSite().getId().toString());
-					String siteStr = dealSitePoints(sitePoints);
-					logger.info("siteStr======="+siteStr);
-					model.addAttribute("sitePoints", siteStr);
-				}else {//查询本公司下的所有站点 （全部）
-
+				String siteId = null;
+				if(siteVOList != null && siteVOList.size() > 0){
+					siteId = siteVOList.get(0).getId();
 				}
+				PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+				if (StringUtils.isNotBlank(between)) {//预计到站时间
+					DateBetween dateBetween = new DateBetween(between);
+					logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
+					//导入地址关键词
+					siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId, dateBetween.getStart(), dateBetween.getEnd(), page, 10, keyword);
+				} else {
+					siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId, null, null, page, 10, keyword);
+				}
+				//设置站点名称
+				List<SiteKeyword> keywordList = siteKeywordPage.getList();
+				if (keywordList != null && keywordList.size() > 0){
+					System.out.println("count====="+keywordList.size());
+					String siteName = null;
+					for(SiteKeyword siteKeyword : keywordList){
+						Site site = siteService.findSite(siteKeyword.getSiteId());
+						if(site != null){
+							siteKeyword.siteId = StringUtil.initStr(site.getName(), "");
+						}else {
+							siteKeyword.siteId = "";
+						}
+					}
+				}
+				model.addAttribute("between", between);
+				model.addAttribute("keyword", keyword);
+				model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
+				model.addAttribute("pageIndex", siteKeywordPage.getPage());
+				model.addAttribute("pageNum", siteKeywordPage.getPageNum());
+				model.addAttribute("pageCount", siteKeywordPage.getCount());
+				/******************关键词*****************end****************/
+				//公共
+				model.addAttribute("siteList", siteVOList);
 				return "map/deliverAreaMap";
 			}else{
 				return "redirect:/login";
@@ -112,7 +160,46 @@ public class DeliverAreaController {
 		}
 
 	}
-
+	private void setCompanyDefaultInfo(Postcompany company){
+		company.setCompanycode(StringUtil.initStr(company.getCompanycode(), "BBD"));
+		company.setCompanyname(StringUtil.initStr(company.getCompanyname(), "北京棒棒达快递有限公司"));
+		company.setProvince(StringUtil.initStr(company.getProvince(), "北京"));
+		company.setCity(StringUtil.initStr(company.getCity(), "北京市"));
+		company.setArea(StringUtil.initStr(company.getArea(), "朝阳区"));
+		company.setAddress(StringUtil.initStr(company.getAddress(), "双井"));
+	}
+	//地图默认中心位置--公司公司经纬度
+	private SiteVO getDefaultPoint(String address){
+		SiteVO centerSite = new SiteVO();
+		if(address == null || "".equals(address)){
+			centerSite.setName("");
+			centerSite.setLat("39.915");
+			centerSite.setLng("116.404");
+			centerSite.setDeliveryArea("50000");
+			return centerSite;
+		}
+		try {
+			MapPoint mapPoint = geo.getGeoInfo(address);
+			if (mapPoint != null) {
+				logger.info("[address]:" + address + " [search geo result] 经度:" + mapPoint.getLng() + ",纬度："+ mapPoint.getLat());
+				centerSite.setName("");
+				centerSite.setLat(mapPoint.getLat()+"");
+				centerSite.setLng(mapPoint.getLng()+"");
+				centerSite.setDeliveryArea("50000");
+			}else{//默认中心位置为北京
+				logger.info("[address]:" + address + " [search geo result] null,无法获取经纬度");
+				centerSite.setName("");
+				centerSite.setLat("39.915");
+				centerSite.setLng("116.404");
+				centerSite.setDeliveryArea("50000");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info("[address]:" + address + " [search geo result] exception,异常");
+		}
+		return centerSite;
+		//map.put("centerSite", centerSite);
+	}
 	private String dealSitePoints(List<List<MapPoint>> sitePoints) {
 		if(sitePoints == null){
 			return null;
@@ -137,8 +224,8 @@ public class DeliverAreaController {
 	 * 获取站点的配送范围--半径
 	 * @param siteId 站点Id
 	 * @param request 请求
-     * @return
-     */
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value="/getSiteById", method=RequestMethod.GET)
 	public Map<String, Object> getSiteById(String siteId, final HttpServletRequest request) {
@@ -185,8 +272,8 @@ public class DeliverAreaController {
 	 * 获取站点电子围栏
 	 * @param siteId 站点Id
 	 * @param request 请求
-     * @return
-     */
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value="/getFence", method=RequestMethod.GET)
 	public Map<String, Object> getFenceBySiteId(String siteId, final HttpServletRequest request) {
@@ -205,7 +292,7 @@ public class DeliverAreaController {
 			String eFence = dealSitePoints(sitePoints);
 			siteVO.seteFence(eFence);
 			//logger.info("siteStr======="+siteStr);
-			map.put("site", site);
+			map.put("site", siteVO);
 		}else {//查询本公司下的所有站点 （全部）
 			String userId = UserSession.get(request);
 			if(userId != null && !"".equals(userId)) {
@@ -216,9 +303,10 @@ public class DeliverAreaController {
 				//设置电子围栏
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){
-						List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteId);
-						String eFence = dealSitePoints(sitePoints);
-						siteVO.seteFence(eFence);
+						List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteVO.getId());
+						String efenceStr = dealSitePoints(sitePoints);
+						siteVO.seteFence(efenceStr);
+						//logger.info("siteName===" + siteVO.getName() + "    efenceStr==="+efenceStr);
 					}
 				}
 				//设置地图默认的中心点
@@ -241,6 +329,8 @@ public class DeliverAreaController {
 		return map;
 	}
 
+
+
 	/**
 	 * 获取站点关键词
 	 * @param siteId 站点Id
@@ -255,22 +345,23 @@ public class DeliverAreaController {
 		String between = request.getParameter("between");
 		String keyword = StringUtil.initStr(request.getParameter("keyword"), "");
 		int pageIndex = Numbers.parseInt(request.getParameter("pageIndex"), 0);
-		if(siteId != null && !"".equals(siteId)){//只查询一个站点
+		/*if(siteId != null && !"".equals(siteId)){//只查询一个站点
 			//导入地址关键词
 
 		}else {//查询本公司下的所有站点 （全部）
 			siteId = null;
-		}
+		}*/
 		//--------panel 3-----------------------
 		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
 		if (StringUtils.isNotBlank(between)) {//预计到站时间
 			DateBetween dateBetween = new DateBetween(between);
 			logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
 			//导入地址关键词
-			siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId + "", dateBetween.getStart(), dateBetween.getEnd(), pageIndex, 10, keyword);
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId, dateBetween.getStart(), dateBetween.getEnd(), pageIndex, 10, keyword);
 		} else {
-			siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId + "", null, null, pageIndex, 10, keyword);
+			siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId, null, null, pageIndex, 10, keyword);
 		}
+		//设置站点名称
 		List<SiteKeyword> keywordList = siteKeywordPage.getList();
 		if (keywordList != null && keywordList.size() > 0){
 			System.out.println("count====="+keywordList.size());

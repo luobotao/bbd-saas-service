@@ -29,16 +29,16 @@
 				<div class="search-area d-search-area j-detail-area">
 					<ul class="row pb20">
 						<li class="txt-info txt-info-l">
-							<em>站点名称：</em>
-							<i>${site.name}</i>
+							<em>公司名称：</em>
+							<i>${company.companyname}</i>
 						</li>
 						<li class="txt-info">
-							<em>区域码：</em>
-							<i>${site.areaCode}</i>
+							<em>公司编码：</em>
+							<i>${company.companycode}</i>
 						</li>
 						<li class="txt-info">
-							<em>站点地址：</em>
-							<i>${site.province}-${site.city}-${site.area} ${site.address}</i>
+							<em>公司地址：</em>
+							<i>${company.province}-${company.city}-${company.area} ${company.address}</i>
 						</li>
 					</ul>
 				</div>
@@ -83,8 +83,8 @@
 								<div class="col-md-12">
 									<div class="b-map">
 										<div id="areaMap" style="height: 533px;"></div>
-										<div class="draw-btn">
-											<div class="bg-alpha"></div>
+										<div class="draw-btn" id="areaTool">
+											<div class="bg-alpha" id="areaTool_bg"></div>
 											<a href="javascript:void(0);" class="ser-btn l ml12" id="saveSiteBtn">　保存　</a>
 										</div>
 									</div>
@@ -111,9 +111,8 @@
 									<div id="fenceMap" class="bod-rad" style="height: 533px;"></div>
 									<a href="javascript:void(0)" onclick="fenceMap.theLocation()" class="pos-adr"></a>
 									<div class="b-f-screen b-forward-full j-full-btn"></div>
-									<div class="draw-btn">
-										<div class="bg-alpha"></div>
-										<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
+									<div class="draw-btn" id="eFenceTool">
+										<div class="bg-alpha" id="eFenceTool_bg"></div>
 										<a href="javascript:void(0);" class="ser-btn c ml12" onclick="openDraw()">绘制</a>
 										<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
 									</div>
@@ -129,7 +128,6 @@
 									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 										<label>站点：　</label>
 										<select id="keywordSiteId" name="siteId" class="form-control form-con-new">
-											<option value="">请选择</option>
 											<c:if test="${not empty siteList}">
 												<c:forEach var="site" items="${siteList}">
 													<option value="${site.id}">${site.name}</option>
@@ -188,15 +186,17 @@
 										</tr>
 										</thead>
 										<tbody id="dataList">
+
 										<c:forEach items="${siteKeywordPageList}" var="siteKeyword">
 											<tr>
 												<td><input type="checkbox" value="${siteKeyword.id}" name="inputC" class="c-cbox"/></td>
+												<td>${siteKeyword.siteId}</td>
 												<td>${Dates.formatDateTime_New(siteKeyword.createAt)}</td>
 												<td>${siteKeyword.province}</td>
 												<td>${siteKeyword.city}</td>
 												<td>${siteKeyword.distict}</td>
 												<td>${siteKeyword.keyword}</td>
-												<td><a href="javascript:if(confirm('确认删除？'))location='${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}'" class="orange">删除</a></td>
+												<td><a href="javascript:void(0)" onclick="deleteKeyword('${siteKeyword.id}')"  class="orange">删除</a></td>
 											</tr>
 										</c:forEach>
 										</tbody>
@@ -291,7 +291,8 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-	var defaultCenter = new BMap.Point("116.404", "39.915");
+	console.log("${centerPoint.lng}==="+ ${centerPoint.lng} +"    " + ${centerPoint.lat});
+	var defaultCenter = new BMap.Point(${centerPoint.lng}, ${centerPoint.lat});
 	var defaultZoom = 11;
 
 	// 百度地图API功能
@@ -313,9 +314,11 @@
 				}
 			}
 		%>
-		var areaMapDiv = $("#areaMap");
-		areaMap.panBy(areaMapDiv.width/2, areaMapDiv.height/2);
+		areaMap.panTo(defaultCenter);
 	}
+	window.setTimeout(function(){
+		areaMap.panTo(defaultCenter);
+	}, 500);
 	function getPointBySite2(lng, lat){
 		var point = null;
 		if(lng != null && lng != "0.000000" && lng != "null" && lat != null && lat != "null" && lat != "0.000000" ){
@@ -370,6 +373,8 @@
 				//清除所有覆盖物
 				areaMap.clearOverlays();
 				if (siteId == ""){//全部
+					$("#areaTool").hide();
+					$("#areaTool_bg").hide();
 					//更新配送区域
 					$("#radius").val(0);
 					var centerSite = dataObject.centerSite;
@@ -388,6 +393,8 @@
 						}
 					}
 				} else {
+					$("#areaTool").show();
+					$("#areaTool_bg").show();
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -460,7 +467,7 @@
 		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
 		//var circle = new BMap.Circle(point, radius * 1000);
 		var circle = new BMap.Circle(point, radius * 1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
-		 areaMap.addOverlay(circle);          //增加圆
+		areaMap.addOverlay(circle);          //增加圆
 		//console.log("=======radius===" + radius +"  circle===" + circle+" site==="+site.name);
 	}
 
@@ -512,40 +519,13 @@
 			});
 		}
 	});
-	//展示配送范围
-	function showMap(radius){
-		// 百度地图API功能
-		//var areaMap = new BMap.Map("areaMap", {enableMapClick:false,minZoom:11});
-		var pointPs = new BMap.Point(${site.lng}, ${site.lat});
-		var radiusVal = 15;
-		if(radius<2000){
-			radiusVal = 15;
-		}else if(radius<3000){
-			radiusVal = 14;
-		}else if(radius<5000){
-			radiusVal = 13;
-		}else if(radius<10000){
-			radiusVal = 12;
-		}else{
-			radiusVal = 11;
-		}
-		areaMap.centerAndZoom(pointPs, radiusVal);
-		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
-		var marker = new BMap.Marker(pointPs,{icon:myIcon});  // 创建标注
-		areaMap.addOverlay(marker);               // 将标注添加到地图中
-		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-		//var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
-		var circle = new BMap.Circle(pointPs,radius,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
-		areaMap.addOverlay(circle);            //增加圆
-		areaMap.enableScrollWheelZoom(true);
-	}
-    /************************ 配送区域 ************* end **************************/
+
+	/************************ 配送区域 ************* end **************************/
 
 	/************************ 绘制电子围栏 ************* start **************************/
 	var fenceArray = [];
 	//初始化电子围栏一个站点的数据
 	function addOneEFenceData(efence){
-		efence = $("#sitePoints").val();
 		var siteArr = efence.split(";");
 		for (var i = 0; i < siteArr.length; i++) {
 			var arr = siteArr[i].split(",");
@@ -560,7 +540,6 @@
 	function addAllEFenceData(){
 
 	}
-	addOneEFenceData();
 
 	//console.log(fenceArray);
 	var fenceMap = {
@@ -580,6 +559,14 @@
 			fillOpacity: 0.3,       //填充的透明度，取值范围0 - 1。
 			strokeStyle: 'solid'    //边线的样式，solid或dashed。
 		},
+		notEditOptions: {
+			strokeColor:"black",      //边线颜色。
+			fillColor:"red",        //填充颜色。当参数为空时，圆形将没有填充效果。
+			strokeWeight: 3,        //边线的宽度，以像素为单位。
+			strokeOpacity: 0.8,     //边线透明度，取值范围0 - 1。
+			fillOpacity: 0.3,       //填充的透明度，取值范围0 - 1。
+			strokeStyle: 'solid'    //边线的样式，solid或dashed。
+		},
 		/**
 		 * 实例化
 		 */
@@ -591,7 +578,7 @@
 				centerPoint = defaultCenter;
 			}
 			this.status = true;
-			this.map = new BMap.Map('fenceMap',{enableMapClick:false,minZoom:11,noAnimation:true});
+			this.map = new BMap.Map('fenceMap',{enableMapClick:false,minZoom:5,noAnimation:true});
 			this.point = centerPoint;
 			this.map.centerAndZoom(this.point,12);
 			this.map.enableScrollWheelZoom();
@@ -618,14 +605,15 @@
 			this.map.addControl(bottom_left_control);
 			this.map.addControl(bottom_right_navigation);
 			// E 增加的控件
-			//加载站点
+			//加载所有站点
 			<%
 				if (siteList != null) {
 					for (SiteVO site : siteList) {
 			%>
-						this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
-						//添加围栏到 fenceArray --》this.myOverlay
-						addOneEFenceData("<%=site.geteFence()%>");
+			//加载站点
+			this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
+			//添加围栏到 fenceArray --》this.myOverlay
+			addOneEFenceData("<%=site.geteFence()%>");
 			<%
                     }
                 }
@@ -640,9 +628,25 @@
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 			var marker = new BMap.Marker(new BMap.Point(lng, lat),{icon:myIcon});  // 创建标注
 			marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
+			//marker.enableMassClear;
 			var label = new BMap.Label(name, {offset:new BMap.Size(20,-10)});
 			marker.setLabel(label);
 			this.map.addOverlay(marker);               // 将标注添加到地图中
+		},
+		loadAllSite: function(siteId){//加载站点标注
+			//加载所有站点
+			<%
+				if (siteList != null) {
+					for (SiteVO site : siteList) {
+			%>
+			//加载站点
+			this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
+			//添加围栏到 fenceArray --》this.myOverlay
+			addOneEFenceData("<%=site.geteFence()%>");
+			<%
+                    }
+                }
+            %>
 		},
 		loadMyOverlay: function(){
 			var map = this.map;
@@ -663,6 +667,30 @@
 						fenceMap.delPolygon(e);
 					}
 				});
+				//console.log(myPolygon);
+				fenceMap.overlays.push(myPolygon);
+				map.addOverlay(myPolygon);
+			})
+		},
+		loadNotEditEFence: function(){
+			var map = this.map;
+			this.clearAll();
+			//console.log(this.myOverlay);
+			this.myOverlay.forEach(function(e){
+				myPolygon = new BMap.Polygon(e, this.notEditOptions);
+				this.myPolygon = myPolygon;
+				try{
+					myPolygon.disableEditing();
+					myPolygon.disableMassClear();
+				}catch(e){}
+				/*myPolygon.addEventListener("lineupdate",function(e){
+				 fenceMap.showLatLon(e.currentTarget.ro);
+				 });
+				 myPolygon.addEventListener("rightclick",function(e){
+				 if(confirm("确认删除该电子围栏？")){
+				 fenceMap.delPolygon(e);
+				 }
+				 });*/
 				//console.log(myPolygon);
 				fenceMap.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
@@ -713,6 +741,8 @@
 		delPolygon:function(e){
 			var map = this.map;
 			map.removeOverlay(e.target);
+			console.log(e.target);
+			console.log("remove all ");
 			var overlays = this.overlays;
 			var overlaysTmp = [];
 			for(var i = 0; i < overlays.length; i++){
@@ -728,7 +758,7 @@
 		clearAll: function() {
 			var map = this.map;
 			var overlays = this.overlays;
-			//console.log(overlays);
+			console.log(overlays);
 			for(var i = 0; i < overlays.length; i++){
 				map.removeOverlay(overlays[i]);
 			}
@@ -761,21 +791,29 @@
 		}
 	};
 
-
+	//配送范围-- 绘制电子地图-- 隐藏绘制-保存按钮 -- 默认全部，需要隐藏
+	$(".draw-btn").hide();
+	$(".bg-alpha").hide();
 
 	//绘制电子围栏 -- 更改站点
 	$("#fenceSiteId").change(function(){
+		//console.log("");
 		var siteId = $("#fenceSiteId").val();
 		$.ajax({
 			type : "GET",  //提交方式
-			url : "${ctx}/deliverArea/getSiteById",//路径
+			url : "${ctx}/deliverArea/getFence",//路径
 			data : {
 				"siteId" : siteId
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据
 				//清除所有覆盖物
-				fenceMap.map.clearOverlays();
+				fenceMap.clearAll();
+				//console.log(siteId+"   siteId  ");
 				if (siteId == ""){//全部
+					//隐藏绘制-保存按钮
+					$("#eFenceTool").hide();
+					$("#eFenceTool_bg").hide();
+					//console.log(siteId+"   all  ");
 					var site = dataObject.centerSite;
 					var siteList = dataObject.siteList;
 					var center = getPointBySite(site);
@@ -793,6 +831,10 @@
 					fenceMap.myOverlay = fenceArray;
 					fenceMap.loadMyOverlay();
 				} else {
+					//显示绘制-保存按钮
+					$("#eFenceTool").show();
+					$("#eFenceTool_bg").show();
+
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -801,8 +843,14 @@
 					//显示站点和围栏
 					fenceMap.loadOneSite(site.name, site.lng, site.lat);
 					fenceArray = [];
+					console.log(site);
+					console.log("site   =====  end   ");
+					//console.log("length===="+fenceArray.length+" site.eFence==="+site.eFence);
+
 					addOneEFenceData(site.eFence);
+					console.log(fenceArray);
 					fenceMap.myOverlay = fenceArray;
+					//console.log("length==added=="+fenceArray.length);
 					fenceMap.loadMyOverlay();
 				}
 			},
@@ -824,6 +872,7 @@
 		var jsonStr = "";
 		fenceMap.overlays.forEach(function (e) {
 			var arrs = e.ro;
+			//console.log(arrs);
 			if(arrs.length>2){
 				//console.log("保存经纬度====" + arrs);
 				for (var i = 0; i < arrs.length; i++) {
@@ -838,6 +887,7 @@
 				//console.log("保存经纬度==多个围栏==" + jsonStr);
 			}
 		})
+		//console.log("保存经纬度==多个围栏==" + jsonStr);
 		if ("" != jsonStr) {
 			var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
 			$.ajax({
@@ -845,6 +895,7 @@
 				type: 'POST',
 				cache: false,
 				data: {
+					"siteId" : siteId,
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
@@ -859,7 +910,7 @@
 					alert('服务器繁忙，请稍后再试！');
 				}
 			});
-			/*          $("#jsonStr").val(jsonStr);
+			/*$("#jsonStr").val(jsonStr);
 			 $('#allLaysForm').submit();*/
 		} else {
 			alert("请先绘制电子围栏");
@@ -888,16 +939,30 @@
 	}
 	//绘制按钮事件
 	function openDraw(){
+		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
+			$("#eFenceTool").hide();
 			alert("请先选择站点。");
 			return;
+		}else{
+			$("#eFenceTool").show();
 		}
+		/*var overlays = fenceMap.overlays;
+		 console.log(overlays);
+		 var overlaysTmp = [];
+		 for(var i = 0; i < overlays.length; i++){
+		 if(overlays[i] != e.target){
+		 overlaysTmp.push(overlays[i]);
+		 }
+		 }
+		 this.overlays=overlaysTmp;*/
+		//fenceMap.map.clearAll();
 		fenceMap.drawingManager.open();
 		fenceMap.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
 	}
 
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
-	showMap(${site.deliveryArea*1000});
+	//showMap(${centerPoint.deliveryArea*1000});
 	fenceMap.myOverlay = fenceArray;
 	//console.log(fenceMap.myOverlay);
 	fenceMap.init();
@@ -909,7 +974,7 @@
 		var index=$(this).parent().index();
 		if(index == 1){
 			window.setTimeout(function(){
-				fenceMap.map.panTo(new BMap.Point(${site.lng},${site.lat}));
+				fenceMap.map.panTo(new BMap.Point(${centerPoint.lng},${centerPoint.lat}));
 			}, 500);
 		}
 	})
@@ -926,7 +991,7 @@
 
 	/************************ 导入地址关键词 ************* end **************************/
 
-	// 导入文件
+		// 导入文件
 	$(".import-file").on("change",function(){
 		var siteId = $("#keywordSiteId").val();
 		//console.log("siteId====="+siteId);
@@ -960,18 +1025,18 @@
 			timeout: 0,
 			success: function(pageTable){
 				$(".spinner").modal('hide');
-				console.log(pageTable);
+				//console.log(pageTable);
 				var tbody = $("#dataList");
 				var dataList = pageTable.list;
-				console.log("dataList.length= count  ==000====import=="+dataList.length);
+				//console.log("dataList.length= count  ==000====import=="+dataList.length);
 				if(dataList != null){
 					var datastr = "";
-					console.log("dataList.length= count  ======import=="+dataList.length);
+					//console.log("dataList.length= count  ======import=="+dataList.length);
 					for(var i = 0; i < dataList.length; i++){
 						datastr += getRowHtml(dataList[i]);
 					}
 					tbody.html(datastr);
-					console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
+					//console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
 					//更新分页条
 					var pageStr = paginNav(pageTable.page, pageTable.pageNum, pageTable.count);
 					$("#pagin").html(pageStr);
@@ -1023,7 +1088,7 @@
 
 	//显示分页条
 	var pageStr = paginNav(${pageIndex}, ${pageNum}, ${pageCount});
-	 $("#pagin").html(pageStr);
+	$("#pagin").html(pageStr);
 
 	//加载带有查询条件的指定页的数据
 	function gotoPage(pageIndex) {
@@ -1056,6 +1121,7 @@
 	function loadTableHtml(pageTable){
 		var tbody = $("#dataList");
 		var dataList = pageTable.list;
+		console.log(dataList);
 		if(dataList != null){
 			var datastr = "";
 			console.log("dataList.length= count  ======5555=="+dataList.length);
@@ -1063,7 +1129,7 @@
 				datastr += getRowHtml(dataList[i]);
 			}
 			tbody.html(datastr);
-			console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
+			//console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
 			//更新分页条
 			var pageStr = paginNav(pageTable.page, pageTable.pageNum, pageTable.count);
 			$("#pagin").html(pageStr);
@@ -1086,7 +1152,7 @@
 		}else{
 			row += "<td>" + data.keyword.replace(keyword, "<span class='font-bg-color'>" + keyword + "</span>") + "</td>";
 		}
-		row += "<td><a href='javascript:void(0)' onclick='deleteKeyword(data.id)' class='orange'>删除</a></td>";
+		row += "<td><a href='javascript:void(0)' onclick='deleteKeyword(\"" + data.id + "\")' class='orange'>删除</a></td>";
 		row += "</tr>";
 		return row;
 	}
@@ -1095,8 +1161,10 @@
 			alert("关键词无编号，无法删除。")
 			return ;
 		}
-		var url = "${ctx}/siteKeyWord/deleteKeyword/"+id;
-		doDelete(url);
+		if(confirm('确认删除？')){
+			var url = "${ctx}/siteKeyWord/deleteKeyword/"+id;
+			doDelete(url);
+		}
 	}
 	function doDelete(url){
 		var pageIndex = $(".pagination .active a").html();
@@ -1113,9 +1181,13 @@
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据根据结果进行相应的处理
 				var result = dataObject.result;
+				console.log(dataObject);
 				if(result){//删除成功，刷新列表
-					loadTableHtml(dataObject.list);
+					loadTableHtml(dataObject.pageList);
+				}else{
+					alert("删除失败。");
 				}
+
 			},
 			error : function() {
 			}
