@@ -317,10 +317,13 @@
 	console.log("${centerPoint.lng}==="+ ${centerPoint.lng} +"    " + ${centerPoint.lat});
 	var defaultCenter = new BMap.Point(${centerPoint.lng}, ${centerPoint.lat});
 	var defaultZoom = 11;
-
+	/************************ 配送区域 ************* start **************************/
 	// 百度地图API功能
 	var areaMap = new BMap.Map("areaMap", {enableMapClick:false,minZoom:5});
-	/************************ 配送区域 ************* start **************************/
+	//areaMap.panTo(defaultCenter);
+	/*window.setTimeout(function(){
+		areaMap.panTo(defaultCenter);
+	}, 500);*/
 
 	/*================初始化加载配送区域=======================start===============*/
 	function initDeliveryMap(){
@@ -337,11 +340,9 @@
 				}
 			}
 		%>
-		areaMap.panTo(defaultCenter);
+
 	}
-	window.setTimeout(function(){
-		areaMap.panTo(defaultCenter);
-	}, 500);
+
 	function getPointBySite2(lng, lat){
 		var point = null;
 		if(lng != null && lng != "0.000000" && lng != "null" && lat != null && lat != "null" && lat != "0.000000" ){
@@ -825,7 +826,7 @@
 		theLocation:function(){
 			//console.log("xxxx");
 			//console.log(this.map);
-			this.map.panTo(this.point);
+			//this.map.panTo(this.point);
 		}
 	};
 
