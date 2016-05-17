@@ -163,7 +163,7 @@
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
             <input type="hidden" id="areaCode" name="areaCode"/>
             <div class="modal-header b-modal-header">
-                <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
             </div>
             <div class="modal-body b-modal-body">
@@ -423,7 +423,11 @@
         var row = "<tr>";
         var temp = "";
         row += "<td>" + data.name + "</td>";
-        row += "<td>" + data.areaCode + "</td>";
+        var areaCode = data.areaCode;
+        if(areaCode==null||areaCode=="null"){
+            areaCode = "";
+        }
+        row += "<td>" + areaCode + "</td>";
         row += "<td>" + data.province +"-"+ data.city +"-"+ data.area +""+ data.address + "</td>";
         row += "<td>" + data.responser + "</td>";
         row += "<td>" + data.username + "</td>";
@@ -485,7 +489,7 @@
         }
     }
     $("#saveSiteBtn").click(function () {
-        var flag = true;
+
         var name = $.trim($("#name").val());
         if (name == "" ) {
             outDiv("请输入站点名称");
@@ -555,6 +559,7 @@
             success: function(data){
                 if(data==true){
                     $(".j-siteM-pop").modal("hide");
+                    $("#closeButton").click();
                     gotoPage(0);
                 }else{
                     alert( "保存站点失败");
@@ -562,6 +567,8 @@
 
             },
             error: function(JsonHttpRequest, textStatus, errorThrown){
+                $("#closeButton").click();
+                gotoPage(0);
                 alert( "服务器异常!");
             }
         });

@@ -54,15 +54,21 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){
                 if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站
                     query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
-                }else{
+                    if(StringUtils.isNotBlank(orderQueryVO.between)){//到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                        query.filter("dateArrived >=",dateBetween.getStart());
+                        query.filter("dateArrived <=",dateBetween.getEnd());
+                    }
+                }else{//未到站
                     query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+                    if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                        query.filter("dateMayArrive >=",dateBetween.getStart());
+                        query.filter("dateMayArrive <=",dateBetween.getEnd());
+                    }
                 }
             }
-            if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
-                DateBetween dateBetween = new DateBetween(orderQueryVO.between);
-                query.filter("dateMayArrive >=",dateBetween.getStart());
-                query.filter("dateMayArrive <=",dateBetween.getEnd());
-            }
+
             if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
                 query.filter("mailNum", orderQueryVO.mailNum);
             }
