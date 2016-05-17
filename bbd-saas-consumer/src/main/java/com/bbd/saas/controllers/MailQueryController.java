@@ -12,6 +12,7 @@ import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,21 +117,23 @@ public class MailQueryController {
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
 			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId());
-			List<String> areaCodeList = new ArrayList<String>();
-			if(siteVOList != null && siteVOList.size() > 0){
-				for (SiteVO siteVO : siteVOList){
-					areaCodeList.add(siteVO.getAreaCode());
-				}
-			}
-
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
 			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
-			/*orderQueryVO.areaCodeList =
-			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);*/
+			//公司查询
+			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
+				List<String> areaCodeList = new ArrayList<String>();
+				if(siteVOList != null && siteVOList.size() > 0){
+					for (SiteVO siteVO : siteVOList){
+						areaCodeList.add(siteVO.getAreaCode());
+					}
+				}
+				orderQueryVO.areaCodeList = areaCodeList;
+			}
+			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			//设置包裹号,派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();
@@ -207,6 +210,18 @@ public class MailQueryController {
 			orderQueryVO.arriveBetween = arriveBetween_expt;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
+			//公司查询
+			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
+				//同一个公司的所有站点
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId());
+				List<String> areaCodeList = new ArrayList<String>();
+				if(siteVOList != null && siteVOList.size() > 0){
+					for (SiteVO siteVO : siteVOList){
+						areaCodeList.add(siteVO.getAreaCode());
+					}
+				}
+				orderQueryVO.areaCodeList = areaCodeList;
+			}
 			//查询数据
 			List<Order> orderList = orderService.findOrders(orderQueryVO);	
 			//导出==数据写到Excel中并写入response下载
