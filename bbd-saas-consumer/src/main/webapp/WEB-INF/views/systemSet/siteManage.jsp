@@ -47,7 +47,7 @@
                     </div>
                     <div class="row pb20">
                         <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i
+                            <a href="javascript:void(0)" onclick=" gotoPage(0);" class="ser-btn l"><i
                                     class="b-icon p-query p-ser"></i>查询</a>
                             <a href="javascript:void(0)" class="ser-btn d ml6 j-siteM" data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
 
@@ -163,7 +163,7 @@
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
             <input type="hidden" id="areaCode" name="areaCode"/>
             <div class="modal-header b-modal-header">
-                <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
             </div>
             <div class="modal-body b-modal-body">
@@ -365,27 +365,16 @@
 <!--E 删除-->
 <!-- E pop -->
 <script type="text/javascript">
-    var defprov = "北京";
-    var defcity = "北京";
-    var defdist = "朝阳区";
-    if ($("#province").val() != "") {
-        defprov = $("#province").val();
-        defcity = $("#city").val();
-        defdist = $("#area").val();
-    }
-    $("#city_4").citySelect({
-        prov: defprov,
-        city: defcity,
-        dist: defdist,
-        nodata: "none"
-    });
+
     //显示分页条
     var pageStr = paginNav(<%=sitePage.getPageNo()%>, <%=sitePage.getTotalPages()%>, <%=sitePage.getTotalCount()%>);
     $("#pagin").html(pageStr);
 
 
     //加载带有查询条件的指定页的数据
-    function gotoPage(pageIndex, status, keyword) {
+    function gotoPage(pageIndex) {
+        var status = $("#status").val();
+        var keyword = $("#keyword").val();
         var url = "<c:url value="/system/siteManage/getSitePage" />";
         $.ajax({
             type: "GET",  //提交方式
@@ -423,7 +412,11 @@
         var row = "<tr>";
         var temp = "";
         row += "<td>" + data.name + "</td>";
-        row += "<td>" + data.areaCode + "</td>";
+        var areaCode = data.areaCode;
+        if(areaCode==null||areaCode=="null"){
+            areaCode = "";
+        }
+        row += "<td>" + areaCode + "</td>";
         row += "<td>" + data.province +"-"+ data.city +"-"+ data.area +""+ data.address + "</td>";
         row += "<td>" + data.responser + "</td>";
         row += "<td>" + data.username + "</td>";
@@ -450,11 +443,6 @@
         return row;
     }
 
-    function toSearch() {
-        var status = $("#status").val();
-        var keyword = $("#keyword").val();
-        gotoPage(0, status, keyword);
-    }
     function checkSiteWithUsername(loginName){
         var readonly = $("input[name='phone']").attr("readonly");
         if(readonly=="readonly"){
@@ -485,7 +473,7 @@
         }
     }
     $("#saveSiteBtn").click(function () {
-        var flag = true;
+
         var name = $.trim($("#name").val());
         if (name == "" ) {
             outDiv("请输入站点名称");
@@ -555,6 +543,7 @@
             success: function(data){
                 if(data==true){
                     $(".j-siteM-pop").modal("hide");
+                    $("#closeButton").click();
                     gotoPage(0);
                 }else{
                     alert( "保存站点失败");
@@ -562,6 +551,8 @@
 
             },
             error: function(JsonHttpRequest, textStatus, errorThrown){
+                $("#closeButton").click();
+                gotoPage(0);
                 alert( "服务器异常!");
             }
         });
@@ -685,6 +676,16 @@ function createSite(){
     $("input[name='phone']").removeAttr("readonly");
     $('#areaCode').val('');
     $('#areaCodeForModal').val('');
+    var defprov = "北京";
+    var defcity = "北京";
+    var defdist = "朝阳区";
+
+    $("#city_4").citySelect({
+        prov: defprov,
+        city: defcity,
+        dist: defdist,
+        nodata: "none"
+    });
 }
     function getSiteByAreaCode(areaCode) {
         $('#titleName').html("修改");
@@ -702,6 +703,8 @@ function createSite(){
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
                     $("#responser").val(data.responser);
+                    $("#password").val(data.password);
+                    $("#passwordConfirm").val(data.password);
                     $("#email").val(data.email);
                     $("#province").val(data.province);
                     $("#city").val(data.city);

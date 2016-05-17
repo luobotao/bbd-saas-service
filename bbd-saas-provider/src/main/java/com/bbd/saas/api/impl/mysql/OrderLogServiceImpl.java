@@ -37,7 +37,6 @@ public class OrderLogServiceImpl implements OrderLogService {
 
 	@Override
 	public OrderMonitorVO statisticOrderNum(String areaCode, String startDate, String endDate) {
-		System.out.println("areaCode==="+areaCode);
 		List<Map<String, Object>> dataList = orderLogDao.selectCountByAreaCodeAndTime(areaCode, startDate, endDate);
 		if (dataList == null){
 			return null;

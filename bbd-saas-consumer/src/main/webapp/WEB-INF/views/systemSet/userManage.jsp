@@ -70,7 +70,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 								</div>
 	        					<div class="row pb20">
 	        						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	        							<a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
+	        							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
 										<c:if test="${userNow.role==UserRole.SITEMASTER}">
 											<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
 										</c:if>
@@ -229,7 +229,11 @@ $("#pagin").html(pageStr);
 
 
 //加载带有查询条件的指定页的数据
-function gotoPage(pageIndex,sites,roleId,status,keyword) {
+function gotoPage(pageIndex) {
+	var roleId = $("#saasrole").val();
+	var status = $("#status").val();
+	var keyword = $("#keyword").val();
+	var sites = $("#sites").val();
 	var url = "<c:url value="/userManage/getUserPageFenYe" />";
 	$.ajax({
 		type : "GET",  //提交方式
@@ -296,15 +300,6 @@ function getRowHtml(data){
 	return row;
 }
 
-function toSearch(){
-
-	var roleId = $("#saasrole").val();
-	var status = $("#status").val();
-	var keyword = $("#keyword").val();
-	var sites = $("#sites").val();
-	gotoPage(0,sites,roleId,status,keyword);
-}
-
 function checkLoginName(loginName) {
 	loginName=loginName.replace(/\ +/g,"");
 	var operate = document.getElementById("operate").value;
@@ -343,12 +338,12 @@ function changeStatus(status,id,loginName){
 	var ret = false; 
 	if(status==3){ 
 		//表示要停用
-		if(confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')){  
+		if(confirm('停用后将无法使用棒棒达客户端，确认停用吗？')){
 			ret = true; 
 		} 
 	}else if(status==1){
 		//表示要启用
-		if(confirm('启用后小件员可以使用棒棒达客户端，确认启用吗？')){ 
+		if(confirm('启用后将可以使用棒棒达客户端，确认启用吗？')){
 			ret = true; 
 		}
 	}
@@ -549,6 +544,8 @@ function searchUser(id,loginName){
 					<c:if test="${userNow.role==UserRole.COMPANY}">
 						$("#passLi").attr("style","");
 						$("#passCLi").attr("style","");
+						$("#loginPass").val(data.passWord);
+						$("#passwordC").val(data.passWord);
 					</c:if>
 				}else{
 					$("#passLi").attr("style","display:none;");

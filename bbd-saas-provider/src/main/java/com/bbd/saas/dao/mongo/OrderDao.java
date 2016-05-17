@@ -54,15 +54,21 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){
                 if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站
                     query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
-                }else{
+                    if(StringUtils.isNotBlank(orderQueryVO.between)){//到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                        query.filter("dateArrived >=",dateBetween.getStart());
+                        query.filter("dateArrived <=",dateBetween.getEnd());
+                    }
+                }else{//未到站
                     query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+                    if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                        query.filter("dateMayArrive >=",dateBetween.getStart());
+                        query.filter("dateMayArrive <=",dateBetween.getEnd());
+                    }
                 }
             }
-            if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
-                DateBetween dateBetween = new DateBetween(orderQueryVO.between);
-                query.filter("dateMayArrive >=",dateBetween.getStart());
-                query.filter("dateMayArrive <=",dateBetween.getEnd());
-            }
+
             if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
                 query.filter("mailNum", orderQueryVO.mailNum);
             }
@@ -149,7 +155,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
     	Query<Order> query = createQuery();
-    	if(orderQueryVO != null){
+        query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+
+        if(orderQueryVO != null){
             //公司查询 -- 一个公司下的所有站点的areaCode集合
             if(orderQueryVO.areaCodeList != null && orderQueryVO.areaCodeList.size() > 0){
                 query.filter("areaCode in", orderQueryVO.areaCodeList);

@@ -45,7 +45,6 @@ class="org.apache.log4j.DailyRollingFileAppender">
      </layout>
    </appender>
 
-   <!-- [组件日志] -->
    <logger name="LOGISTICS-COMPONENT">
       <level value="${loggingLevel}" />
       <appender-ref ref="COMPONENT-APPENDER" />

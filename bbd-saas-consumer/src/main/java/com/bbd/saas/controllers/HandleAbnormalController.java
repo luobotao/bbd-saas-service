@@ -301,7 +301,7 @@ public class HandleAbnormalController {
 				//更新物流信息
 				addOrderExpress(order, currUser, site.getName());
 				//更新预计到站时间
-				order.setDateMayArrive(Dates.addDays(order.getDateMayArrive(), 1));
+				order.setDateMayArrive(Dates.addDays(new Date(), 1));
 				order.setDateArrived(null);
 				//更新运单
 				Key<Order> r = orderService.save(order);
