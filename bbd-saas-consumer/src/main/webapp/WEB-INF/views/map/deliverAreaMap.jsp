@@ -300,7 +300,7 @@
 				</div>
 			</div>
 			<div class="modal-footer mt20 bod0">
-				<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal">取消</a>
+				<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal" id="cancelImpt">取消</a>
 				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
 			</div>
 		</div>
@@ -1060,32 +1060,22 @@
 			success: function(map){
 				loadTableHtml(map.pageList);
 				$(".spinner").modal('hide');
-				clearFile();
+				//清空file
+				$(".import-file").val("");
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
 				console.log( "超时，服务器异常!");
 				$(".spinner").modal('hide');
-				clearFile();
+				//清空file
+				$(".import-file").val("");
 			}
 		});
 	});
-	//清空导入文件
-	function clearFile(){
+	$("#cancelImpt").click(function(){
 		//清空file
-		var file = $(".import-file");
-		console.log(file)
-		// for IE, Opera, Safari, Chrome
-		console.log("file.outerHTML===" + file.outerHTML);
-		if (file.outerHTML) {
-			file.outerHTML = file.outerHTML;
-			console.log("outerHTML===" + outerHTML);
-			console.log(file.outerHTML);
-		} else { // FF(包括3.5)
-			file.value = "";
-			console.log(file.value);
-		}
+		$(".import-file").val("");
+	});
 
-	}
 
 	$("input[type='checkbox']").iCheck({
 		checkboxClass : 'icheckbox_square-blue'
