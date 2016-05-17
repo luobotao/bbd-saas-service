@@ -253,7 +253,7 @@
 				</div>
 			</div>
 			<div class="modal-footer mt20 bod0">
-				<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal">取消</a>
+				<a href="javascript:void(0);" class="ser-btn g" id="cancelBtn">取消</a>
 				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
 			</div>
 		</div>
@@ -392,7 +392,10 @@
 		$("#page").val(pageIndex);
 		$("#siteKeywordForm").submit();
 	}
-
+	$("#cancelBtn").click(function(){
+		$(".j-import-pop").modal('hide');
+		$("[name='file']").val("");
+	})
 
 	//--------------------panel 2------------------------------------
 
