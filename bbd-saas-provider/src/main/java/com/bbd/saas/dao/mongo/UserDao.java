@@ -7,6 +7,7 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
+import com.bbd.saas.vo.UserQueryVO2;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
@@ -154,5 +155,38 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         Query<User> query = createQuery();
         query.filter("companyId", companyId);
         return find(query).asList();
+    }
+
+    /**
+     * 根据条件查询用户
+     * @param userQueryVO 查询条件
+     * @return
+     */
+    public List<User> selectUserListByQuerys(UserQueryVO2 userQueryVO){
+        if(userQueryVO == null){
+            return null;
+        }
+        Query<User> query = getQuery(userQueryVO);
+        return find(query).asList();
+    }
+    private Query<User> getQuery(UserQueryVO2 userQueryVO){
+        Query<User> query = createQuery();
+        //状态
+        if(userQueryVO.userStatus != null){
+            query.filter("userStatus", userQueryVO.userStatus);
+        }
+        //角色
+        if(userQueryVO.role != null){
+            query.filter("role", userQueryVO.role);
+        }
+        //员工Id集合
+        if(userQueryVO.postManIdList != null){
+            query.filter("postmanuserId in", userQueryVO.postManIdList);
+        }
+        //公司
+        if(StringUtils.isNotBlank(userQueryVO.companyId)){
+            query.filter("companyId", userQueryVO.companyId);
+        }
+        return  query;
     }
 }

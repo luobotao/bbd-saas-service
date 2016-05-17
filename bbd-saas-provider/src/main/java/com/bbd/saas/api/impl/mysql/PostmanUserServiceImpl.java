@@ -129,6 +129,8 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		List<UserVO> userVOList = new ArrayList<UserVO>();
 		for (Map<String, Object> map : postmanList){
 			UserVO userVO = new UserVO();
+			userVO.setPostManId((Long) map.get("id"));
+			userVO.setLoginName((String) map.get("phone"));
 			userVO.setRealName((String) map.get("nickname"));
 			userVO.setLat((BigDecimal) map.get("lat"));
 			userVO.setLng((BigDecimal) map.get("lon"));

@@ -10,13 +10,15 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
+import com.bbd.saas.vo.UserQueryVO2;
 import com.bbd.saas.vo.UserVO;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -211,5 +213,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findUsersBySite(Site site,UserRole userRole,UserStatus userStatus) {
         return userDao.findUserListBySite(site, userRole,userStatus);
+    }
+    @Override
+    public Map<Long, String> findUserSiteMap(List<Long> postManIdList, String companyId) {
+        UserQueryVO2 query = new UserQueryVO2();
+        query.postManIdList = postManIdList;
+        query.companyId = companyId;
+        List<User> userList = userDao.selectUserListByQuerys(query);
+        Map<Long, String> map = new HashMap<Long, String>();
+        if(userList != null && userList.size() > 0){
+            for (User user : userList){
+                map.put((long) user.getPostmanuserId(), defaultString(user.getSite().getName(), ""));
+            }
+        }
+        return map;
+    }
+    private String defaultString(String  str, String defaultStr){
+        if(str == null){
+            return defaultStr;
+        }else {
+            return str;
+        }
     }
 }

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -56,6 +57,8 @@ public class CapacityDistributionController {
 			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
 			//查询登录用户的公司下的所有派件员信息
 			List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
+			//设置站点名称
+			setUserSiteName(userVOList, currUser.getCompanyId());
 			logger.info("=====运力分布站点===" + siteVOList);
 			//设置地图默认的中心点
 			SiteVO centerSite = new SiteVO();
@@ -73,6 +76,26 @@ public class CapacityDistributionController {
 	}
 
 	/**
+	 * 设置派件员站点名称
+	 * @param userVOList
+     */
+	private void setUserSiteName(List<UserVO> userVOList, String companyId){
+		if(userVOList != null && userVOList.size() > 0){
+			List<Long> postManIdList = new ArrayList<Long>();
+			for (UserVO userVO : userVOList){
+				if(!StringUtils.isEmpty(userVO.getPostManId())){
+					postManIdList.add(userVO.getPostManId());
+				}
+			}
+			Map<Long, String> map = userService.findUserSiteMap(postManIdList, companyId);
+			for (UserVO userVO : userVOList){
+				userVO.setSiteName(map.get(userVO.getPostManId()));
+			}
+		}
+	}
+
+
+	/**
 	 *  根据站点Ajax更新地图
 	 * @param siteId 站点Id
 	 * @param request 请求
@@ -84,6 +107,8 @@ public class CapacityDistributionController {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
 			if(siteId != null && !"".equals(siteId)){//只查询一个站点
 				Site site = siteService.findSite(siteId);
 				List<User> userList = userService.findUsersBySite(site, UserRole.SENDMEM, UserStatus.VALID);//所有小件员
@@ -93,18 +118,20 @@ public class CapacityDistributionController {
 						postmanIdList.add(user.getPostmanuserId());
 					}
 					List<UserVO> userVOList = postmanUserService.findLatAndLngByIds(postmanIdList);
+					//设置站点名称
+					setUserSiteName(userVOList, currUser.getCompanyId());
 					map.put("userList", userList);
 					logger.error("==all===userVOList:" + userVOList.size());
 				}
 				map.put("site", site);
 				map.put("centerSite", site);
 			}else {//查询本公司下的所有站点 （全部）
-				//当前登录的用户信息
-				User currUser = adminService.get(UserSession.get(request));
 				//查询登录用户的公司下的所有站点
 				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
 				//查询登录用户的公司下的所有派件员信息
 				List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
+				//设置站点名称
+				setUserSiteName(userVOList, currUser.getCompanyId());
 				logger.error("==all===userVOList:" + userVOList.size());
 				//设置地图默认的中心点
 				SiteVO centerSite = new SiteVO();
