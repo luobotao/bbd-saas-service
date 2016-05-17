@@ -10,6 +10,7 @@ import com.bbd.saas.vo.UserVO;
 import org.mongodb.morphia.Key;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by luobotao on 2016/4/11.
@@ -121,4 +122,11 @@ public interface UserService {
      * @return
      */
     public List<User> findUsersBySite(Site site, UserRole userRole,UserStatus userStatus);
+
+    /**
+     * 根据staffidList获得同一派件员user与站点名称的对应关系
+     * @param staffidList 员工id
+     * @return
+     */
+    public Map<Long, String> findUserSiteMap(List<Long> staffidList, String companyId);
 }

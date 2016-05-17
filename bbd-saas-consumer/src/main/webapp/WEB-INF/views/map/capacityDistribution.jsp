@@ -129,7 +129,7 @@
 			if (userList != null) {
 				for (UserVO user : userList) {
 		%>
-					showOnePoint("<%=user.getRealName()%>", "<%=user.getLng()%>", "<%=user.getLat()%>", 1);
+					showOnePoint("<%=user.getRealName()%>", "<%=user.getLng()%>", "<%=user.getLat()%>", 1, "<%=user.getSiteName()%>");
 		<%
 				}
 			}
@@ -172,8 +172,10 @@
 		}
 		capamap.centerAndZoom(center, radiusVal);
 		capamap.enableScrollWheelZoom();
+		var isShowAll = false;
 		//显示站点
 		if (siteList != null) {
+			isShowAll = true;//查看全部
 			var site = null;
 			for (var i = 0;i < siteList.length ; i++) {
 				site = siteList[i];
@@ -185,13 +187,19 @@
 			var user = null;
 			for (var i = 0;i < userList.length ; i++) {
 				user = userList[i];
-				showOnePoint(user.realName, user.lng, user.lat, 1);
+				if(isShowAll){//派件员需要显示站点名称
+					showOnePoint(user.realName, user.lng, user.lat, 1, user.siteName);
+				}else {
+					showOnePoint(user.realName, user.lng, user.lat, 1);
+				}
+
 			}
 		}
 	}
 	//展示配送范围
 	//flag-0:站点，flag-1:派件员
-	function showOnePoint(name, lng, lat, flag){
+	//siteName:查看全部的时候需要显示派件员站点名称
+	function showOnePoint(name, lng, lat, flag, siteName){
 		if(lng == null || lng == "0.000000" || lng == "null" || lat == null || lat == "null" || lat == "0.000000" ){
 			return null;
 		}
@@ -206,6 +214,10 @@
 		var opts = {
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-36, -70)    //设置文本偏移量
+		}
+		//查看全部的时候需要显示派件员的站点名称
+		if(siteName != null){
+			name = name + "(" + siteName + ")";
 		}
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({

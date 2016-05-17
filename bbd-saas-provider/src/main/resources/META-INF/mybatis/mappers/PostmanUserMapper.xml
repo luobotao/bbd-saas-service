@@ -190,7 +190,7 @@
         FROM `postmanuser` where <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
     </select>
     <select id="selectLatAndLngByCompanyId" resultType="java.util.HashMap">
-        SELECT nickname, lat, lon
+        SELECT id, phone, nickname, lat, lon
         FROM `postmanuser`  WHERE companyid = #{companyId} and sta = 1
     </select>
     <select id="selectLatAndLngByIds" resultType="java.util.HashMap">

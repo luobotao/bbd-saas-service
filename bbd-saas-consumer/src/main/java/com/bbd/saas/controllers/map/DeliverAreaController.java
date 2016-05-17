@@ -345,12 +345,6 @@ public class DeliverAreaController {
 		String between = request.getParameter("between");
 		String keyword = StringUtil.initStr(request.getParameter("keyword"), "");
 		int pageIndex = Numbers.parseInt(request.getParameter("pageIndex"), 0);
-		/*if(siteId != null && !"".equals(siteId)){//只查询一个站点
-			//导入地址关键词
-
-		}else {//查询本公司下的所有站点 （全部）
-			siteId = null;
-		}*/
 		//--------panel 3-----------------------
 		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
 		if (StringUtils.isNotBlank(between)) {//预计到站时间

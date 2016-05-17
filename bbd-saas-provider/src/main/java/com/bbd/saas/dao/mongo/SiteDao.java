@@ -30,6 +30,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     public List<Site> selectByCompanyCode(String companycode) {
     	Query<Site> query = createQuery();
     	query.filter("companycode", companycode);
+        query.filter("status", SiteStatus.APPROVE);
     	return  find(query).asList();
     }
 
@@ -67,6 +68,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     public List<Site> selectByCompanyId(String companyId) {
         Query<Site> query = createQuery();
         query.filter("companyId", companyId);
+        query.filter("status", SiteStatus.APPROVE);
         return  find(query).asList();
     }
 }
