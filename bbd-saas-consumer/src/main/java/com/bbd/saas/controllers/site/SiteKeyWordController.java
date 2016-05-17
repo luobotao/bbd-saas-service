@@ -444,7 +444,7 @@ public class SiteKeyWordController {
 		List<String> idList = Arrays.asList(ids.split(","));
 		Result result = siteKeywordApi.deleteSitePoiKeyword(idList);
 		Map<String, Object> map = new HashMap<String, Object>();
-		if(result != null && result.code == 1){//删除成功，刷新列表
+		if(result != null){//删除成功，刷新列表
 			map.put("result", true);
 			String siteId = request.getParameter("siteId");
 			dealSiteKeywordWithAjax(siteId, map);

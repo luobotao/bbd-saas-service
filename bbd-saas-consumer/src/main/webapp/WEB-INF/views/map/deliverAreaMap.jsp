@@ -32,6 +32,10 @@
 			border-bottom: none;
 			z-index: 1;
 		}
+		.ckbox {
+			background: rgb(255, 255, 255);
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
@@ -499,7 +503,7 @@
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
 		}
-		console.log("name===" + name);
+		//console.log("name===" + name);
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
 			color : "#fff",//"#fff"
@@ -1030,9 +1034,17 @@
 
 	/************************ 导入地址关键词 ************* start **************************/
 
+	//清空file
+	$(".import-file").on("click",function(){
+		var file = $(".import-file");
+		// for IE, Opera, Safari, Chrome
+		if (file.outerHTML) {
+			file.outerHTML = file.outerHTML;
+		} else { // FF(包括3.5)
+			file.value = "";
+		}
+	});
 
-
-	/************************ 导入地址关键词 ************* end **************************/
 
 		// 导入文件
 	$(".import-file").on("change",function(){
@@ -1053,6 +1065,7 @@
 		$("input[type='checkbox']", "#dis-table").iCheck("check");
 	});
 
+	//$(".spinner").modal('show');
 
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
@@ -1064,13 +1077,10 @@
 			url: "${ctx}/siteKeyWord/ajaxImportKeyword?${_csrf.parameterName}=${_csrf.token}",
 			//data : $( '#importFileForm').serialize(),
 			enctype: 'multipart/form-data',
-			async : false,
 			timeout: 0,
 			success: function(map){
-				$(".spinner").modal('hide');
-				console.log(map);
-				console.log("start  load  ");
 				loadTableHtml(map.pageList);
+				$(".spinner").modal('hide');
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
 				console.log( "超时，服务器异常!");
@@ -1111,6 +1121,7 @@
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
 			var url = "${ctx}/siteKeyWord/batchDeleteKeyword/"+delIds;
+			$(".spinner").modal('show');
 			doDelete(url);
 		}
 	})
@@ -1169,9 +1180,8 @@
 	}
 	//封装一行的数据
 	function getRowHtml(data){
-
 		var row = "<tr>";
-		row +=  "<td><input type='checkbox' value='" + data.id + " name='inputC' class='c-cbox'/></td>";
+		row +=  "<td><input type='checkbox' name='inputC' value='" + data.id + "'  class='ckbox c-cbox'/></td>";
 		row += "<td>" + data.siteId + "</td>";
 		row += "<td>" + getDate1(data.createAt) + "</td>";
 		row += "<td>" + data.province + "</td>";
@@ -1194,6 +1204,7 @@
 		}
 		if(confirm('确认删除？')){
 			var url = "${ctx}/siteKeyWord/deleteKeyword/"+id;
+			$(".spinner").modal('show');
 			doDelete(url);
 		}
 	}
@@ -1219,9 +1230,11 @@
 				}else{
 					alert("删除失败。");
 				}
-
+				$(".spinner").modal('hide');
 			},
 			error : function() {
+				$(".spinner").modal('hide');
+				alert("服务器繁忙，请稍候再试。");
 			}
 		});
 	}
@@ -1263,6 +1276,10 @@
 		$("#exptForm").submit();
 		//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#arriveBetween").val());
 	}
+
+
+
+	/************************ 导入地址关键词 ************* end **************************/
 
 </script>
 </body>
