@@ -47,7 +47,7 @@
                     </div>
                     <div class="row pb20">
                         <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a href="javascript:void(0)" onclick="toSearch();" class="ser-btn l"><i
+                            <a href="javascript:void(0)" onclick=" gotoPage(0);" class="ser-btn l"><i
                                     class="b-icon p-query p-ser"></i>查询</a>
                             <a href="javascript:void(0)" class="ser-btn d ml6 j-siteM" data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
 
@@ -372,7 +372,9 @@
 
 
     //加载带有查询条件的指定页的数据
-    function gotoPage(pageIndex, status, keyword) {
+    function gotoPage(pageIndex) {
+        var status = $("#status").val();
+        var keyword = $("#keyword").val();
         var url = "<c:url value="/system/siteManage/getSitePage" />";
         $.ajax({
             type: "GET",  //提交方式
@@ -441,11 +443,6 @@
         return row;
     }
 
-    function toSearch() {
-        var status = $("#status").val();
-        var keyword = $("#keyword").val();
-        gotoPage(0, status, keyword);
-    }
     function checkSiteWithUsername(loginName){
         var readonly = $("input[name='phone']").attr("readonly");
         if(readonly=="readonly"){
