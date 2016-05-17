@@ -315,6 +315,7 @@
 		$(this).parents(".j-import-pop").hide();
 		$(".spinner").show();
 		$("#importFileForm").submit();
+		$("[name='file']").val("");
 	})
 	//更改配送范围
 	$("#radius").change(function(){

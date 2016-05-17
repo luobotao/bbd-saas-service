@@ -716,6 +716,7 @@
 		}
 		$("#cancelImportBtn").click(function(){
 			$(".j-import-guid-pop").hide();
+			$(".import-guid-file").val("");
 		})
 
 		function getLocalTime(nS) {
