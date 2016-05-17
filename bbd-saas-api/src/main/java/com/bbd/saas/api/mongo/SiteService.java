@@ -1,5 +1,6 @@
 package com.bbd.saas.api.mongo;
 
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.SiteVO;
@@ -64,6 +65,15 @@ public interface SiteService {
      * @return
      */
     PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,Integer status, String keyword);
+
+    /**
+     * 根据站点状态进行站点分页查询
+     * @param pageModel
+     * @param companyId 公司ID
+     * @param status
+     * @return
+     */
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,SiteStatus status);
 
     /**
      * 删除站点

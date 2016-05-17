@@ -111,7 +111,7 @@ public class MailMonitorController {
 				User currUser = adminService.get(UserSession.get(request));
 				PageModel<Site> sitePageModel = new PageModel<Site>();
 				sitePageModel.setPageNo(pageIndex);
-				PageModel<Site> sitePage = siteService.getSitePage(sitePageModel,currUser.getCompanyId(), SiteStatus.APPROVE.getStatus(), null);
+				PageModel<Site> sitePage = siteService.getSitePage(sitePageModel,currUser.getCompanyId(), SiteStatus.APPROVE);
 				pageModel.setTotalCount(sitePage.getTotalCount());//总条数
 				List<Site> siteList = sitePage.getDatas();//数据
 				if(siteList != null && siteList.size() > 0){

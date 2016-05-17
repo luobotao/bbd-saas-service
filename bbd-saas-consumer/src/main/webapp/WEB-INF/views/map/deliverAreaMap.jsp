@@ -397,8 +397,8 @@
 				//清除所有覆盖物
 				areaMap.clearOverlays();
 				if (siteId == ""){//全部
-					$("#areaTool").hide();
-					$("#areaTool_bg").hide();
+					/*$("#areaTool").hide();
+					$("#areaTool_bg").hide();*/
 					//更新配送区域
 					$("#radius").val(0);
 					var centerSite = dataObject.centerSite;
@@ -417,8 +417,8 @@
 						}
 					}
 				} else {
-					$("#areaTool").show();
-					$("#areaTool_bg").show();
+					/*$("#areaTool").show();
+					$("#areaTool_bg").show();*/
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -537,26 +537,30 @@
 
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
+		var siteId = $("#siteId").val();
+		if(siteId == "" || siteId == null){
+			alert("请先选择站点。");
+			return false;
+		}
 		var radiusVal = $("#radius").val();
 		if(radiusVal==0){
 			alert("请选择站点配送范围。");
 			return false;
-		}else{
-			$.ajax({
-				url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
-				type: 'get',
-				cache: false,
-				dataType: "text",
-				data: {},
-				success: function(response){
-					outDiv("保存成功");
-					//window.location.href="${ctx}/deliverArea/map/1";
-				},
-				error: function(){
-					alert('服务器繁忙，请稍后再试！');
-				}
-			});
 		}
+		$.ajax({
+			url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
+			type: 'get',
+			cache: false,
+			dataType: "text",
+			data: {},
+			success: function(response){
+				outDiv("保存成功");
+				//window.location.href="${ctx}/deliverArea/map/1";
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
+			}
+		});
 	});
 
 	/************************ 配送区域 ************* end **************************/
@@ -833,8 +837,8 @@
 	};
 
 	//配送范围-- 绘制电子地图-- 隐藏绘制-保存按钮 -- 默认全部，需要隐藏
-	$(".draw-btn").hide();
-	$(".bg-alpha").hide();
+	/*$(".draw-btn").hide();
+	$(".bg-alpha").hide();*/
 
 	//绘制电子围栏 -- 更改站点
 	$("#fenceSiteId").change(function(){
@@ -853,8 +857,8 @@
 				//console.log(siteId+"   siteId  ");
 				if (siteId == ""){//全部
 					//隐藏绘制-保存按钮
-					$("#eFenceTool").hide();
-					$("#eFenceTool_bg").hide();
+					/*$("#eFenceTool").hide();
+					$("#eFenceTool_bg").hide();*/
 					//console.log(siteId+"   all  ");
 					var site = dataObject.centerSite;
 					var siteList = dataObject.siteList;
@@ -874,8 +878,8 @@
 					fenceMap.loadMyOverlay();
 				} else {
 					//显示绘制-保存按钮
-					$("#eFenceTool").show();
-					$("#eFenceTool_bg").show();
+					/*$("#eFenceTool").show();
+					$("#eFenceTool_bg").show();*/
 
 					var site = dataObject.site;
 					var center = getPointBySite(site);
@@ -983,11 +987,8 @@
 	function openDraw(){
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			$("#eFenceTool").hide();
 			alert("请先选择站点。");
 			return;
-		}else{
-			$("#eFenceTool").show();
 		}
 		/*var overlays = fenceMap.overlays;
 		 console.log(overlays);
