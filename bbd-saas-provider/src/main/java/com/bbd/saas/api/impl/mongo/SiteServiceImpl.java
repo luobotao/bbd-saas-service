@@ -11,7 +11,6 @@ import com.bbd.saas.vo.SiteVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -122,8 +121,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public List<Site> findSiteListByCompanyId(String companyId) {
-        return siteDao.selectByCompanyId(companyId);
+    public List<Site> findSiteListByCompanyId(String companyId, SiteStatus status) {
+        return siteDao.selectByCompanyId(companyId, status);
     }
 
     /**
@@ -223,8 +222,8 @@ public class SiteServiceImpl implements SiteService {
 	}
 
 	@Override
-	public List<SiteVO> findAllSiteVOByCompanyId(String companyId) {
-		List<Site> siteList = this.siteDao.selectByCompanyId(companyId);
+	public List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status) {
+		List<Site> siteList = this.siteDao.selectByCompanyId(companyId, status);
 		List<SiteVO> siteVoList = null;
 		if(siteList != null && siteList.size() > 0){
 			siteVoList = new ArrayList<SiteVO>();

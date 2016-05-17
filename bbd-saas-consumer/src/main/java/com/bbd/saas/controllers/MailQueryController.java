@@ -78,7 +78,7 @@ public class MailQueryController {
 			}
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
 			logger.info("=====运单查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
@@ -116,7 +116,7 @@ public class MailQueryController {
 			status = Numbers.defaultIfNull(status, -1);
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId());
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId(), null);
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
@@ -213,7 +213,7 @@ public class MailQueryController {
 			//公司查询
 			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
 				//同一个公司的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId());
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId(), null);
 				List<String> areaCodeList = new ArrayList<String>();
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){

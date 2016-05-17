@@ -1,24 +1,22 @@
 package com.bbd.saas.controllers.system;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.OpenUserService;
+import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
+import com.bbd.saas.form.UserForm;
+import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.Site;
-import com.google.common.collect.Lists;
+import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.SignUtil;
+import com.bbd.saas.vo.UserQueryVO;
+import flexjson.JSONDeserializer;
 import org.apache.commons.lang3.StringUtils;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
@@ -31,24 +29,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.UserService;
-import com.bbd.saas.api.mysql.OpenUserService;
-import com.bbd.saas.api.mysql.PostmanUserService;
-import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.UserRole;
-import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.form.UserForm;
-import com.bbd.saas.models.PostmanUser;
-import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.SignUtil;
-import com.bbd.saas.vo.UserQueryVO;
-
-import flexjson.JSONDeserializer;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 版权：zuowenhai新石器时代<br/>
@@ -81,7 +71,7 @@ public class UserManageController {
 	public String index(HttpServletRequest request,Model model) {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
 		if(userNow.getRole()==UserRole.COMPANY){
-			List<Site> siteList = siteService.findSiteListByCompanyId(userNow.getCompanyId());
+			List<Site> siteList = siteService.findSiteListByCompanyId(userNow.getCompanyId(), null);
 			model.addAttribute("siteList", siteList);
 		}
 		PageModel<User> userPage = getUserPage(request,0,null,null,null,null);

@@ -68,7 +68,7 @@ public class MailMonitorController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 			logger.info("=====运单监控页面列表===" + orderMonitorVOPage);
 			model.addAttribute("orderMonitorVOPage", orderMonitorVOPage);
 			model.addAttribute("timeBetween", timeBetween);
@@ -190,7 +190,7 @@ public class MailMonitorController {
 				//当前登录的用户信息
 				User currUser = adminService.get(UserSession.get(request));
 				//当前公司下的所有站点
-				List<Site> siteList = siteService.findSiteListByCompanyId(currUser.getCompanyId());
+				List<Site> siteList = siteService.findSiteListByCompanyId(currUser.getCompanyId(), null);
 				if (siteList != null && siteList.size() > 0) {
 					//列表数据
 					for (Site site : siteList) {

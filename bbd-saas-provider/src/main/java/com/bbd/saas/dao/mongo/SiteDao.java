@@ -107,10 +107,14 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param companyId
      * @return
      */
-    public List<Site> selectByCompanyId(String companyId) {
+    public List<Site> selectByCompanyId(String companyId, SiteStatus status) {
         Query<Site> query = createQuery().order("areaCode");
-        query.filter("companyId", companyId);
-        query.filter("status", SiteStatus.APPROVE);
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(status != null){
+            query.filter("status", status);
+        }
         return  find(query).asList();
     }
 }

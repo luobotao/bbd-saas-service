@@ -92,7 +92,7 @@ public interface SiteService {
      * @param companyId
      * @return
      */
-    List<Site> findSiteListByCompanyId(String companyId);
+    List<Site> findSiteListByCompanyId(String companyId, SiteStatus status);
     /**
      * 查询指定公司下的所有站点
      * @param companyId 公司名称
@@ -100,7 +100,7 @@ public interface SiteService {
      * @date 2016/5/5 17:59
      * @auth liyanlei
      */
-    List<SiteVO> findAllSiteVOByCompanyId(String companyId);
+    List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status);
 
     /**
      * 查询所有站点
