@@ -499,9 +499,10 @@
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
 		}
+		console.log("name===" + name);
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
-			color : "#fff",
+			color : "#fff",//"#fff"
 			border : "0",
 			fontSize : "18px",
 			fontFamily:"simhei",
@@ -668,7 +669,7 @@
 			marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			var label =newLabel(new BMap.Point(lng, lat), name);
+			var label = newLabel(new BMap.Point(lng, lat), name);
 			this.map.addOverlay(label);               // 将label添加到地图中
 
 		},
@@ -689,7 +690,7 @@
 		},
 		loadMyOverlay: function(){
 			var map = this.map;
-			this.clearAll();
+			//this.clearAll();
 			//console.log(this.myOverlay);
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
@@ -795,6 +796,7 @@
 		 * 清除覆盖物
 		 */
 		clearAll: function() {
+			console.log("执行clearAll-----");
 			var map = this.map;
 			var overlays = this.overlays;
 			console.log(overlays);
@@ -847,6 +849,7 @@
 			success : function(dataObject) {//返回数据
 				//清除所有覆盖物
 				fenceMap.clearAll();
+				console.log("cleanAll  end   ");
 				//console.log(siteId+"   siteId  ");
 				if (siteId == ""){//全部
 					//隐藏绘制-保存按钮
