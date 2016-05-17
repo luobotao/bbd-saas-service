@@ -1,15 +1,20 @@
 package com.bbd.saas.controllers.map;
 
+import com.bbd.poi.api.Geo;
+import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
+import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
@@ -43,6 +48,10 @@ public class CapacityDistributionController {
 	PostmanUserService postmanUserService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	Geo geo;
+	@Autowired
+	PostcompanyService postCompanyService;
 	/**
 	 * 跳转到运力分布页面
 	 * @param request
@@ -61,11 +70,21 @@ public class CapacityDistributionController {
 			//设置站点名称
 			setUserSiteName(userVOList, currUser.getCompanyId());
 			logger.info("=====运力分布站点===" + siteVOList);
+			String companyAddress = "";
+			Postcompany company = new Postcompany();
+			if (currUser.getCompanyId() != null ){
+				company = postCompanyService.selectPostmancompanyById(Integer.parseInt(currUser.getCompanyId()));
+				if(company != null){
+					StringBuffer  addressBS = new StringBuffer();
+					addressBS.append(StringUtil.initStr(company.getProvince(),""));
+					addressBS.append(StringUtil.initStr(company.getCity(),""));
+					addressBS.append(StringUtil.initStr(company.getArea(),""));
+					addressBS.append(StringUtil.initStr(company.getAddress(),""));
+					companyAddress = addressBS.toString();
+				}
+			}
 			//设置地图默认的中心点
-			SiteVO centerSite = new SiteVO();
-			centerSite.setName("");
-			centerSite.setLat("39.915");
-			centerSite.setLng("116.404");
+			SiteVO centerSite = getDefaultPoint(companyAddress);
 			model.addAttribute("centerSite", centerSite);
 			model.addAttribute("siteList", siteVOList);
 			model.addAttribute("userList", userVOList);
@@ -79,7 +98,7 @@ public class CapacityDistributionController {
 	/**
 	 * 设置派件员站点名称
 	 * @param userVOList
-     */
+	 */
 	private void setUserSiteName(List<UserVO> userVOList, String companyId){
 		if(userVOList != null && userVOList.size() > 0){
 			List<Long> postManIdList = new ArrayList<Long>();
@@ -93,6 +112,39 @@ public class CapacityDistributionController {
 				userVO.setSiteName(map.get(userVO.getPostManId()));
 			}
 		}
+	}
+
+	//地图默认中心位置--公司公司经纬度
+	private SiteVO getDefaultPoint(String address){
+		SiteVO centerSite = new SiteVO();
+		if(address == null || "".equals(address)){
+			centerSite.setName("");
+			centerSite.setLat("39.915");
+			centerSite.setLng("116.404");
+			centerSite.setDeliveryArea("50000");
+			return centerSite;
+		}
+		try {
+			MapPoint mapPoint = geo.getGeoInfo(address);
+			if (mapPoint != null) {
+				logger.info("[address]:" + address + " [search geo result] 经度:" + mapPoint.getLng() + ",纬度："+ mapPoint.getLat());
+				centerSite.setName("");
+				centerSite.setLat(mapPoint.getLat()+"");
+				centerSite.setLng(mapPoint.getLng()+"");
+				centerSite.setDeliveryArea("50000");
+			}else{//默认中心位置为北京
+				logger.info("[address]:" + address + " [search geo result] null,无法获取经纬度");
+				centerSite.setName("");
+				centerSite.setLat("39.915");
+				centerSite.setLng("116.404");
+				centerSite.setDeliveryArea("50000");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info("[address]:" + address + " [search geo result] exception,异常");
+		}
+		return centerSite;
+		//map.put("centerSite", centerSite);
 	}
 
 
