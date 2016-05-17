@@ -674,7 +674,7 @@
 		loadOneSite: function(name, lng, lat){//加载站点标注
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 			var marker = new BMap.Marker(new BMap.Point(lng, lat),{icon:myIcon});  // 创建标注
-			marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
+			//marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
 			var label = newLabel(new BMap.Point(lng, lat), name);
@@ -1034,18 +1034,6 @@
 
 	/************************ 导入地址关键词 ************* start **************************/
 
-	//清空file
-	$(".import-file").on("click",function(){
-		var file = $(".import-file");
-		// for IE, Opera, Safari, Chrome
-		if (file.outerHTML) {
-			file.outerHTML = file.outerHTML;
-		} else { // FF(包括3.5)
-			file.value = "";
-		}
-	});
-
-
 		// 导入文件
 	$(".import-file").on("change",function(){
 		var siteId = $("#keywordSiteId").val();
@@ -1055,18 +1043,9 @@
 			return;
 		}
 		$(".j-import-pop").modal();
-	})
-	$("input[type='checkbox']").iCheck({
-		checkboxClass : 'icheckbox_square-blue'
-	});
-	$("#selectAll").on('ifUnchecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
-	}).on('ifChecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("check");
-	});
 
-	//$(".spinner").modal('show');
 
+	});
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');
@@ -1081,15 +1060,43 @@
 			success: function(map){
 				loadTableHtml(map.pageList);
 				$(".spinner").modal('hide');
+				clearFile();
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
 				console.log( "超时，服务器异常!");
 				$(".spinner").modal('hide');
+				clearFile();
 			}
 		});
-		//$("#importFileForm").submit();
-	})
+	});
+	//清空导入文件
+	function clearFile(){
+		//清空file
+		var file = $(".import-file");
+		console.log(file)
+		// for IE, Opera, Safari, Chrome
+		console.log("file.outerHTML===" + file.outerHTML);
+		if (file.outerHTML) {
+			file.outerHTML = file.outerHTML;
+			console.log("outerHTML===" + outerHTML);
+			console.log(file.outerHTML);
+		} else { // FF(包括3.5)
+			file.value = "";
+			console.log(file.value);
+		}
 
+	}
+
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
+	$("#selectAll").on('ifUnchecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
+	}).on('ifChecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("check");
+	});
+
+	//$(".spinner").modal('show');
 
 	//--------------------panel 3------------------------------------
 	$("#between").daterangepicker({
@@ -1123,6 +1130,7 @@
 			var url = "${ctx}/siteKeyWord/batchDeleteKeyword/"+delIds;
 			$(".spinner").modal('show');
 			doDelete(url);
+			$("#selectAll").attr("checked",false);
 		}
 	})
 
