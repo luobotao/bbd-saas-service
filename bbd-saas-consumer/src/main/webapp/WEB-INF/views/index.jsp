@@ -59,7 +59,7 @@
 						<li id="mailQuery"><a href="<c:url value="/mailQuery" />" target="iframe1">运单查询</a></li>
 						<li><a href="<c:url value="/mailMonitor" />" target="iframe1">运单监控</a></li>
 					</ul>
-					<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-query"></i>运力分布</a></li>
+					<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-capacity"></i>运力分布</a></li>
 					<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-dis"></i>配送区域</a></li>
 					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
 					<ul class="menu dn">
