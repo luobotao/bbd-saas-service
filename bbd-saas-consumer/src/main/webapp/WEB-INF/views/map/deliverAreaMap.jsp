@@ -148,7 +148,7 @@
 							<div class="row pb20">
 								<c:url var="importKeywordUrl" value="/siteKeyWord/importKeyword?${_csrf.parameterName}=${_csrf.token}"/>
 								<form action="${ctx}/deliverArea/queryKeyWord" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<div class="form-group col-lg-3">
 										<label>站点：　</label>
 										<select id="keywordSiteId" name="siteId" class="form-control form-con-new">
 											<c:if test="${not empty siteList}">
@@ -158,15 +158,15 @@
 											</c:if>
 										</select>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<div class="form-group col-lg-3">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<div class="form-group col-lg-3">
 										<label>关键词：</label>
 										<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-2 col-lg-2">
+									<div class="form-group col-lg-2">
 										<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
 									</div>
 									<input type="hidden" id="pageIndex" value="${pageIndex}" name="pageIndex">
@@ -499,9 +499,10 @@
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
 		}
+		console.log("name===" + name);
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
-			color : "#fff",
+			color : "#fff",//"#fff"
 			border : "0",
 			fontSize : "18px",
 			fontFamily:"simhei",
@@ -668,7 +669,7 @@
 			marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			var label =newLabel(new BMap.Point(lng, lat), name);
+			var label = newLabel(new BMap.Point(lng, lat), name);
 			this.map.addOverlay(label);               // 将label添加到地图中
 
 		},
@@ -689,7 +690,7 @@
 		},
 		loadMyOverlay: function(){
 			var map = this.map;
-			this.clearAll();
+			//this.clearAll();
 			//console.log(this.myOverlay);
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
@@ -795,6 +796,7 @@
 		 * 清除覆盖物
 		 */
 		clearAll: function() {
+			console.log("执行clearAll-----");
 			var map = this.map;
 			var overlays = this.overlays;
 			console.log(overlays);
@@ -847,6 +849,7 @@
 			success : function(dataObject) {//返回数据
 				//清除所有覆盖物
 				fenceMap.clearAll();
+				console.log("cleanAll  end   ");
 				//console.log(siteId+"   siteId  ");
 				if (siteId == ""){//全部
 					//隐藏绘制-保存按钮
