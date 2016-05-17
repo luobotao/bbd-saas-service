@@ -430,13 +430,15 @@
 			}
 		})
 		if ("" != jsonStr) {
+			var siteId =  $("#siteId").val();
 			var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
 			$.ajax({
 				url: url,
 				type: 'POST',
 				cache: false,
 				data: {
-					"jsonStr" : jsonStr
+					"jsonStr" : jsonStr,
+					"siteId":siteId
 				},
 				success: function(data){
 					//console.log(data);
