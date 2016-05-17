@@ -343,12 +343,12 @@ function changeStatus(status,id,loginName){
 	var ret = false; 
 	if(status==3){ 
 		//表示要停用
-		if(confirm('停用后小件员将无法使用棒棒达客户端，确认停用吗？')){  
+		if(confirm('停用后将无法使用棒棒达客户端，确认停用吗？')){
 			ret = true; 
 		} 
 	}else if(status==1){
 		//表示要启用
-		if(confirm('启用后小件员可以使用棒棒达客户端，确认启用吗？')){ 
+		if(confirm('启用后将可以使用棒棒达客户端，确认启用吗？')){
 			ret = true; 
 		}
 	}
@@ -549,6 +549,8 @@ function searchUser(id,loginName){
 					<c:if test="${userNow.role==UserRole.COMPANY}">
 						$("#passLi").attr("style","");
 						$("#passCLi").attr("style","");
+						$("#loginPass").val(data.passWord);
+						$("#passwordC").val(data.passWord);
 					</c:if>
 				}else{
 					$("#passLi").attr("style","display:none;");

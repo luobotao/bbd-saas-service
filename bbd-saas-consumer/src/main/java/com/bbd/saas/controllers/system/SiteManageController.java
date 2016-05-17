@@ -385,7 +385,7 @@ public class SiteManageController {
 		}
 		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER,UserStatus.VALID);//所有有效站长
 		for(User user:userList){//将站点下的所有站长置为无效
-			userService.updateUserStatu(site.getUsername(), UserStatus.INVALID);
+			userService.updateUserStatu(user.getLoginName(), UserStatus.INVALID);
 			userMysqlService.updateById(UserStatus.INVALID.getStatus(),user.getPostmanuserId());
 		}
 		return true;

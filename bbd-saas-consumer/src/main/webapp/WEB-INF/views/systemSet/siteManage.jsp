@@ -365,20 +365,7 @@
 <!--E 删除-->
 <!-- E pop -->
 <script type="text/javascript">
-    var defprov = "北京";
-    var defcity = "北京";
-    var defdist = "朝阳区";
-    if ($("#province").val() != "") {
-        defprov = $("#province").val();
-        defcity = $("#city").val();
-        defdist = $("#area").val();
-    }
-    $("#city_4").citySelect({
-        prov: defprov,
-        city: defcity,
-        dist: defdist,
-        nodata: "none"
-    });
+
     //显示分页条
     var pageStr = paginNav(<%=sitePage.getPageNo()%>, <%=sitePage.getTotalPages()%>, <%=sitePage.getTotalCount()%>);
     $("#pagin").html(pageStr);
@@ -692,6 +679,16 @@ function createSite(){
     $("input[name='phone']").removeAttr("readonly");
     $('#areaCode').val('');
     $('#areaCodeForModal').val('');
+    var defprov = "北京";
+    var defcity = "北京";
+    var defdist = "朝阳区";
+
+    $("#city_4").citySelect({
+        prov: defprov,
+        city: defcity,
+        dist: defdist,
+        nodata: "none"
+    });
 }
     function getSiteByAreaCode(areaCode) {
         $('#titleName').html("修改");
@@ -709,6 +706,8 @@ function createSite(){
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
                     $("#responser").val(data.responser);
+                    $("#password").val(data.password);
+                    $("#passwordConfirm").val(data.password);
                     $("#email").val(data.email);
                     $("#province").val(data.province);
                     $("#city").val(data.city);
