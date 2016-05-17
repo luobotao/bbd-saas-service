@@ -148,7 +148,7 @@
 							<div class="row pb20">
 								<c:url var="importKeywordUrl" value="/siteKeyWord/importKeyword?${_csrf.parameterName}=${_csrf.token}"/>
 								<form action="${ctx}/deliverArea/queryKeyWord" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<div class="form-group col-lg-3">
 										<label>站点：　</label>
 										<select id="keywordSiteId" name="siteId" class="form-control form-con-new">
 											<c:if test="${not empty siteList}">
@@ -158,15 +158,15 @@
 											</c:if>
 										</select>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<div class="form-group col-lg-3">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<div class="form-group col-lg-3">
 										<label>关键词：</label>
 										<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
 									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-2 col-lg-2">
+									<div class="form-group col-lg-2">
 										<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
 									</div>
 									<input type="hidden" id="pageIndex" value="${pageIndex}" name="pageIndex">
