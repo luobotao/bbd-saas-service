@@ -155,7 +155,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
     	Query<Order> query = createQuery();
-    	if(orderQueryVO != null){
+        query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+
+        if(orderQueryVO != null){
             //公司查询 -- 一个公司下的所有站点的areaCode集合
             if(orderQueryVO.areaCodeList != null && orderQueryVO.areaCodeList.size() > 0){
                 query.filter("areaCode in", orderQueryVO.areaCodeList);
