@@ -855,6 +855,7 @@
 			if(this.pointArray == null || this.pointArray == ""){
 				return;
 			}
+			console.log("isEdit===="+isEdit);
 			//console.log("name=="+ this.name + " this.pointStrs=="+this.pointStrs+ "   this.siteLng=="+this.siteLng+"      lat=== "+this.siteLat);
 			var name = this.name;
 			var lng = this.siteLng;
@@ -893,10 +894,10 @@
 				}
 			});
 		}
-		this.loadDataAndShow = function(){
+		this.loadDataAndShow = function(isEdit){
 			//console.log("name=="+ this.name + " this.pointStrs=="+this.pointStrs+ "   this.siteLng=="+this.siteLng+"      lat=== "+this.siteLat);
 			this.loadData();
-			this.show();
+			this.show(isEdit);
 		}
 
 	}
