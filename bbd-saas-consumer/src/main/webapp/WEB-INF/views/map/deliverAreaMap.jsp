@@ -690,8 +690,8 @@
 			//marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			var label = newLabel(new BMap.Point(lng, lat), name);
-			this.map.addOverlay(label);               // 将label添加到地图中
+			/*var label = newLabel(new BMap.Point(lng, lat), name);
+			this.map.addOverlay(label);               // 将label添加到地图中*/
 		},
 		loadAllSiteAndEFence: function(){//加载站点标注
 			//加载所有站点
@@ -1114,6 +1114,7 @@
 
 
 	});
+	$(".spinner").modal('show');
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');
