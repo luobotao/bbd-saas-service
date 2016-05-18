@@ -47,7 +47,7 @@ public class OrderLogServiceImpl implements OrderLogService {
 			getOrderMonitorVO((Integer) map.get("status"), (Long) map.get("num"), orderMonitorVO);
 		}
 		//未分派
-		orderMonitorVO.setNoDispatch(orderMonitorVO.getArrived() - orderMonitorVO.getDispatched());
+		//orderMonitorVO.setNoDispatch(orderMonitorVO.getArrived() - orderMonitorVO.getDispatched());
 		return orderMonitorVO;
 	}
 

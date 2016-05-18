@@ -113,7 +113,7 @@ public class CapacityDistributionController {
 				System.out.println("postmanId = " + entry.getKey() + ", siteName = " + entry.getValue());
 			}*/
 			for (UserVO userVO : userVOList){
-				logger.info("username="+userVO.getRealName() + "  siteName==="+map.get(userVO.getPostManId()));
+				//logger.info("username="+userVO.getRealName() + "  siteName==="+map.get(userVO.getPostManId()));
 				userVO.setSiteName(map.get(userVO.getPostManId()));
 			}
 		}
