@@ -249,14 +249,13 @@ function iFrameHeight() {
         /*if(ifm.height){
             console.log("ht===000="+ifm.height);
         }*/
-
-        if(ifm.height < 1110){
+        if(ifm.height < 1150){
             ifm.height = subWeb.body.scrollHeight + 150;
         }else{
-            ifm.height = 1110;
+            ifm.height = 1150;
         }
     }
-   // console.log("ht===="+ifm.height);
+    //console.log("ht===="+ifm.height);
 }
 // S 自己的alert 提示
 function alert_mine(titile,content){
