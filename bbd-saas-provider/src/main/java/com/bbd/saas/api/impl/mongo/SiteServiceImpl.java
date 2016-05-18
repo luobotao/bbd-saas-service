@@ -202,9 +202,7 @@ public class SiteServiceImpl implements SiteService {
     }
 	@Override
 	public List<SiteVO> findAllOtherSiteVOList(Site selfSite) {
-        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-        statusList.add(SiteStatus.APPROVE);
-        List<Site> siteList = this.siteDao.selectByCompanyId(selfSite.getCompanyId(), statusList);
+        List<Site> siteList = this.siteDao.selectByCompanyId(selfSite.getCompanyId(), SiteStatus.APPROVE);
 		String areaCode = selfSite.getAreaCode();
 		if(areaCode == null){
 			areaCode = "";
