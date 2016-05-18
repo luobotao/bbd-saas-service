@@ -59,7 +59,7 @@
 				<!-- 用于导出 -->
 				<form action="<%=request.getContextPath()%>/mailMonitor/exportToExcel" method="get" id="exptForm">
 					<input id="areaCode_expt" name="areaCode" type="hidden" />
-					<input id="timeBetween_expt" name="timeBetween_expt" type="hidden" />
+					<input id="timeBetween_expt" name="timeBetween" type="hidden" />
 				</form>
 				<!-- E 搜索区域 -->
 				<div class="tab-bod mt20">
@@ -209,8 +209,7 @@ function exportData() {
 	$("#areaCode_expt").val($("#areaCode").val());
 	$("#timeBetween_expt").val($("#timeBetween").val());
 	$("#exptForm").submit();
-	//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#timeBetween").val());
-}	
+}
 
 </script>
 </body>

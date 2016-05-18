@@ -233,7 +233,6 @@
 		if (flag == 0){//站点
 			iconPic = "b_pos.png";
 		}
-		//console.log("name=====" + name + "      " + point.lng + "  ====lng===lat====" + point.lat);
 		var icon = new BMap.Icon("<%=path%>/resources/images/" + iconPic, new BMap.Size(64,64));
 		var marker = new BMap.Marker(point,{icon:icon});
 		var opts = {
