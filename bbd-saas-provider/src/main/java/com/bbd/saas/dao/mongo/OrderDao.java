@@ -247,6 +247,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     	return query;
     }
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
+        /*//公司查询 -- 一个公司下的所有站点的areaCode集合
+        if(orderQueryVO.areaCodeList == null || orderQueryVO.areaCodeList.size() == 0){
+            return null;
+        }*/
         //设置查询条件
     	Query<Order> query = getQuery(orderQueryVO);
     	//设置排序

@@ -244,13 +244,17 @@ function iFrameHeight() {
 
     var subWeb = document.frames ? document.frames["iframe1"].document : ifm.contentDocument;
 
+    //console.log("ht===000="+ifm.height);
     if (ifm != null && subWeb != null) {
-
-        if(ifm.height < 1300){
+        /*if(ifm.height){
+            console.log("ht===000="+ifm.height);
+        }*/
+        ifm.height = subWeb.body.scrollHeight;
+        if(ifm.height < 1580){
             ifm.height = subWeb.body.scrollHeight + 150;
         }
     }
-    //console.log("ht===="+ifm.height);
+    console.log("ht===="+ifm.height);
 }
 // S 自己的alert 提示
 function alert_mine(titile,content){

@@ -16,9 +16,9 @@
         <!--测试环境内网IP-->
         <!--<property name="url" value="jdbc:mysql://10.173.0.222:3306/bbt?useUnicode=true&amp;characterEncoding=UTF-8"/>-->
         <!--生产环境内网IP-->
-        <!--<property name="url" value="jdbc:mysql://10.171.97.155:3306/bbt?useUnicode=true&amp;characterEncoding=UTF-8"/>-->
+        <property name="url" value="jdbc:mysql://10.171.97.155:3306/bbt?useUnicode=true&amp;characterEncoding=UTF-8"/>
         <!--测试环境外网IP-->
-        <property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt?useUnicode=true&amp;characterEncoding=UTF-8"/>
+        <!--<property name="url" value="jdbc:mysql://182.92.227.140:3306/bbt?useUnicode=true&amp;characterEncoding=UTF-8"/>-->
         <!--生产环境外网IP-->
         <!--<property name="url" value="jdbc:mysql://182.92.237.254:3306/bbt?useUnicode=true&amp;characterEncoding=UTF-8"/>-->
         <property name="username" value="yangtao"/>

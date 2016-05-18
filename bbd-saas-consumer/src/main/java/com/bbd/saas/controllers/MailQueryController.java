@@ -75,21 +75,26 @@ public class MailQueryController {
 			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
-			for(Order order : orderPage.getDatas()){
-				String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
-				order.setParcelCode(parcelCodeTemp);//设置包裹号
+			if(orderPage != null && orderPage.getDatas() != null){
+				for(Order order : orderPage.getDatas()){
+					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
+					order.setParcelCode(parcelCodeTemp);//设置包裹号
+				}
+				//当前登录的用户信息
+				User currUser = adminService.get(UserSession.get(request));
+				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+				statusList.add(SiteStatus.APPROVE);
+				statusList.add(SiteStatus.INVALID);
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
+				logger.info("=====运单查询页面列表===" + orderPage);
+				model.addAttribute("orderPage", orderPage);
+				//model.addAttribute("arriveBetween", arriveBetween);
+				model.addAttribute("siteList", siteVOList);
+				return "page/mailQuery";
+			}else{
+				orderPage = new PageModel<Order>();
+				model.addAttribute("orderPage", orderPage);
 			}
-			//当前登录的用户信息
-			User currUser = adminService.get(UserSession.get(request));
-			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-			statusList.add(SiteStatus.APPROVE);
-			statusList.add(SiteStatus.INVALID);
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
-			logger.info("=====运单查询页面列表===" + orderPage);
-			model.addAttribute("orderPage", orderPage);
-			//model.addAttribute("arriveBetween", arriveBetween);
-			model.addAttribute("siteList", siteVOList);
-			return "page/mailQuery";
 		} catch (Exception e) {
 			logger.error("===跳转到运单查询页面==出错 :" + e.getMessage());
 		}
@@ -112,7 +117,7 @@ public class MailQueryController {
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<Order> getList(Integer pageIndex, String areaCode, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
 		//查询数据
-		PageModel<Order> orderPage = null;
+		PageModel<Order> orderPage = new PageModel<Order>();
 		try {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
@@ -141,8 +146,14 @@ public class MailQueryController {
 					}
 				}
 				orderQueryVO.areaCodeList = areaCodeList;
+				//查询数据
+				if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+					orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+				}
+			}else{
+				orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			}
-			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+
 			//设置包裹号,派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();
@@ -219,6 +230,8 @@ public class MailQueryController {
 			//orderQueryVO.arriveBetween = arriveBetween_expt;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
+			//查询数据
+			List<Order> orderList = null;
 			//公司查询
 			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
 				//同一个公司的所有站点
@@ -233,9 +246,13 @@ public class MailQueryController {
 					}
 				}
 				orderQueryVO.areaCodeList = areaCodeList;
+				if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+					orderList = orderService.findOrders(orderQueryVO);
+				}
+			}else{
+				orderList = orderService.findOrders(orderQueryVO);
 			}
-			//查询数据
-			List<Order> orderList = orderService.findOrders(orderQueryVO);	
+
 			//导出==数据写到Excel中并写入response下载
 			//表格数据
 			List<List<String>> dataList = new ArrayList<List<String>>();

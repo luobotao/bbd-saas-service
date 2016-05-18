@@ -358,10 +358,6 @@
 	/************************ 配送区域 ************* start **************************/
 	// 百度地图API功能
 	var areaMap = new BMap.Map("areaMap", {enableMapClick:false,minZoom:5});
-	//areaMap.panTo(defaultCenter);
-	/*window.setTimeout(function(){
-		areaMap.panTo(defaultCenter);
-	}, 500);*/
 
 	/*================初始化加载配送区域=======================start===============*/
 	function initDeliveryMap(){
@@ -936,7 +932,7 @@
 					//显示站点和围栏
 					fenceObj.loadOneSite(site.name, site.lng, site.lat);
 
-					//加载电子围栏
+					//加载电子围栏f
 					var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
 					efenceObj.loadDataAndShow(true);
 
