@@ -187,7 +187,6 @@
                         <input id="city" name="city" type="hidden" class="form-control"/>
                         <input id="area" name="area" type="hidden" class="form-control"/>
                         <input type="text" class="form-control form-bod wp80 input-d" id="address" name="address" placeholder="请输入详细地址"/>
-                        <em class="tip-info" id="addressP" style="display:none;">请输入详细地址</em>
                     </li>
                     <li class="filter">
                         <i>站长姓名：</i>
@@ -485,8 +484,12 @@
         $("#province").val(province);
         $("#city").val(city);
         $("#area").val(area);
-
-        var responser = $("#responser").val();
+        var address = $("#address").val();
+        if(address==""){
+            outDiv("请输入详细地址");
+            return false;
+        }
+        var responser = $("#address").val();
         if(responser==""){
             outDiv("请输站长姓名");
             return false;
@@ -539,6 +542,7 @@
                 return false;
             }
         }
+
         $("#siteForm").ajaxSubmit({
             success: function(data){
                 if(data==true){
