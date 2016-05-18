@@ -152,7 +152,6 @@ public class CapacityDistributionController {
 		//map.put("centerSite", centerSite);
 	}
 
-
 	/**
 	 *  根据站点Ajax更新地图
 	 * @param siteId 站点Id

@@ -114,7 +114,6 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         query.filter("site",site);
         return findOne(query);
     }
-    
     /**
      * 更新用户状态
      * @param loginName 、UserStatus
