@@ -354,12 +354,14 @@
 			})
 			if ("" != jsonStr) {
 				var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
+				var siteId =  $("#siteId").val();
 				$.ajax({
 					url: url,
 					type: 'POST',
 					cache: false,
 					data: {
-						"jsonStr" : jsonStr
+						"jsonStr" : jsonStr,
+						"siteId":siteId
 					},
 					success: function(data){
 						console.log(data);
