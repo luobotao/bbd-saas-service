@@ -230,6 +230,8 @@ public class MailQueryController {
 			//orderQueryVO.arriveBetween = arriveBetween_expt;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
+			//查询数据
+			List<Order> orderList = null;
 			//公司查询
 			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
 				//同一个公司的所有站点
@@ -244,12 +246,13 @@ public class MailQueryController {
 					}
 				}
 				orderQueryVO.areaCodeList = areaCodeList;
-			}
-			//查询数据
-			List<Order> orderList = null;
-			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+				if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+					orderList = orderService.findOrders(orderQueryVO);
+				}
+			}else{
 				orderList = orderService.findOrders(orderQueryVO);
 			}
+
 			//导出==数据写到Excel中并写入response下载
 			//表格数据
 			List<List<String>> dataList = new ArrayList<List<String>>();
