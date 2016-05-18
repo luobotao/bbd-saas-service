@@ -246,9 +246,11 @@ function iFrameHeight() {
 
     if (ifm != null && subWeb != null) {
 
-        ifm.height = subWeb.body.scrollHeight + 60;
-
+        if(ifm.height < 1300){
+            ifm.height = subWeb.body.scrollHeight + 150;
+        }
     }
+    //console.log("ht===="+ifm.height);
 }
 // S 自己的alert 提示
 function alert_mine(titile,content){

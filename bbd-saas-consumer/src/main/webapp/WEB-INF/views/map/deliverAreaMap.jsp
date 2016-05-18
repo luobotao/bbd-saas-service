@@ -71,7 +71,6 @@
 		}
 	</style>
 </head>
-<body>
 <body class="fbg">
 <!-- S content -->
 <div class="clearfix b-branch">
@@ -354,7 +353,6 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-	console.log("${centerPoint.lng}==="+ ${centerPoint.lng} +"    " + ${centerPoint.lat});
 	var defaultCenter = new BMap.Point(${centerPoint.lng}, ${centerPoint.lat});
 	var defaultZoom = 11;
 	/************************ 配送区域 ************* start **************************/
@@ -498,7 +496,6 @@
 		}else{
 			radiusVal = 11;
 		}
-		//console.log("==单个=radiusVal="+radiusVal + "  radius==" + radius);
 		return radiusVal;
 	}
 
@@ -513,7 +510,6 @@
 	}
 	//显示一个站点及其配送范围
 	function showOneSiteArea(site, radius){
-		//console.log("showONe==radius=" + radius );
 		var point = getPointBySite(site);
 		//radius优先级高于site.deliveryArea
 		if(radius == null || radius == ""){
@@ -531,7 +527,6 @@
 		areaMap.addOverlay(label);               // 将label添加到地图中
 		var circle = new BMap.Circle(point, radius * 1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 		areaMap.addOverlay(circle);          //增加圆
-		//console.log("=======radius===" + radius +"  circle===" + circle+" site==="+site.name);
 	}
 
 	function newLabel(point, name){
@@ -539,7 +534,6 @@
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
 		}
-		console.log("name=label==" + name);
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
 			color : "#fff",//"#fff"
@@ -623,10 +617,6 @@
 	function addAllEFenceData(){
 
 	}
-
-
-
-	//console.log(fenceArray);
 	var fenceObj = {
 		status: false,
 		map: '',
@@ -718,8 +708,6 @@
 		},
 		loadMyOverlay: function(){
 			var map = this.map;
-			//this.clearAll();
-			//console.log(this.myOverlay);
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
 				this.myPolygon = myPolygon;
@@ -735,7 +723,6 @@
 						fenceObj.delPolygon(e);
 					}
 				});
-				//console.log(myPolygon);
 				fenceObj.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
 			})
@@ -750,7 +737,6 @@
 			}
 			this.overlaysCache = arr;
 			$("panelWrap").innerHTML = '<ul>'+ s +'</ul>';
-			//console.log("[arr]:"+arr);
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
@@ -785,8 +771,6 @@
 		delPolygon:function(e){
 			var map = this.map;
 			map.removeOverlay(e.target);
-			console.log(e.target);
-			console.log("remove all ");
 			var overlays = this.overlays;
 			var overlaysTmp = [];
 			for(var i = 0; i < overlays.length; i++){
@@ -800,10 +784,8 @@
 		 * 清除覆盖物
 		 */
 		clearAll: function() {
-			console.log("执行clearAll-----");
 			var map = this.map;
 			var overlays = this.overlays;
-			console.log(overlays);
 			for(var i = 0; i < overlays.length; i++){
 				map.removeOverlay(overlays[i]);
 			}
@@ -816,7 +798,6 @@
 		 */
 		getOverLay: function(){
 			var box = this.myPolygon ? this.myPolygon : this.overlays[this.overlays.length - 1];
-			//console.log(box.ro);
 		},
 		getCount: function(){
 			var n = 0;
@@ -826,12 +807,9 @@
 			if (this.overlays) {
 				n = n + this.overlays.length;
 			};
-			//console.log(n);
 		},
 		// 用经纬度设置地图中心点
 		theLocation:function(){
-			//console.log("xxxx");
-			//console.log(this.map);
 			this.map.panTo(this.point);
 		}
 	};
@@ -862,8 +840,6 @@
 			if(this.pointArray == null || this.pointArray == ""){
 				return;
 			}
-			console.log("isEdit===="+isEdit);
-			//console.log("name=="+ this.name + " this.pointStrs=="+this.pointStrs+ "   this.siteLng=="+this.siteLng+"      lat=== "+this.siteLat);
 			var name = this.name;
 			var lng = this.siteLng;
 			var lat = this.siteLat;
@@ -902,7 +878,6 @@
 			});
 		}
 		this.loadDataAndShow = function(isEdit){
-			//console.log("name=="+ this.name + " this.pointStrs=="+this.pointStrs+ "   this.siteLng=="+this.siteLng+"      lat=== "+this.siteLat);
 			this.loadData();
 			this.show(isEdit);
 		}
@@ -928,8 +903,6 @@
 			success : function(dataObject) {//返回数据
 				//清除所有覆盖物
 				fenceObj.clearAll();
-				console.log("cleanAll  end   ");
-				//console.log(siteId+"   siteId  ");
 				if (siteId == ""){//全部
 					var site = dataObject.centerSite;
 					var siteList = dataObject.siteList;
@@ -955,7 +928,6 @@
 					//显示绘制-保存按钮
 					/*$("#eFenceTool").show();
 					 $("#eFenceTool_bg").show();*/
-					console.log(dataObject);
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -967,11 +939,7 @@
 					//加载电子围栏
 					var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
 					efenceObj.loadDataAndShow(true);
-					/*
-					 addOneEFenceData(site.eFence);
-					 console.log(fenceArray);
-					 fenceObj.myOverlay = fenceArray;
-					 fenceObj.loadMyOverlay();*/
+
 				}
 			},
 			error : function() {
@@ -989,22 +957,17 @@
 		var jsonStr = "";
 		fenceObj.overlays.forEach(function (e) {
 			var arrs = e.ro;
-			//console.log(arrs);
 			if(arrs.length>2){
-				//console.log("保存经纬度====" + arrs);
 				for (var i = 0; i < arrs.length; i++) {
 					jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
 					if (i < arrs.length - 1) {
 						jsonStr = jsonStr + ",";
 					}
-					//console.log("保存经纬度==一个围栏==" + jsonStr);
 				}
 				jsonStr.substring(0, jsonStr.length - 1);
 				jsonStr = jsonStr + ";";
-				//console.log("保存经纬度==多个围栏==" + jsonStr);
 			}
 		})
-		//console.log("保存经纬度==多个围栏==" + jsonStr);
 		if ("" != jsonStr) {
 			var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
 			$.ajax({
@@ -1016,21 +979,19 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					//console.log(data);
 					if(data == "success"){
 						outDiv("提交成功");
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);
 					}else{
-						console.log("error:"+data);
+						outDiv("error:"+data);
 					}
 				},
 				error: function(){
 					outDiv('服务器繁忙，请稍后再试');
 				}
 			});
-			/*$("#jsonStr").val(jsonStr);
-			 $('#allLaysForm').submit();*/
+
 		} else {
 			outDiv("请先绘制电子围栏");
 		}
@@ -1041,7 +1002,6 @@
 	var isPanelShow = false;
 	$("showPanelBtn").onclick = showPanel;
 	function showPanel(){
-		//console.log(isPanelShow);
 		if (isPanelShow == false) {
 			isPanelShow = true;
 			$("showPanelBtn").style.right = "230px";
@@ -1063,27 +1023,14 @@
 			outDiv("请先选择站点");
 			return;
 		}
-		/*var overlays = fenceObj.overlays;
-		 console.log(overlays);
-		 var overlaysTmp = [];
-		 for(var i = 0; i < overlays.length; i++){
-		 if(overlays[i] != e.target){
-		 overlaysTmp.push(overlays[i]);
-		 }
-		 }
-		 this.overlays=overlaysTmp;*/
-		//fenceObj.map.clearAll();
 		fenceObj.drawingManager.open();
 		fenceObj.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
 	}
 
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
-	//showMap(${centerPoint.deliveryArea*1000});
 	fenceObj.myOverlay = fenceArray;
-	//console.log(fenceObj.myOverlay);
 	fenceObj.init();
 	$('.b-tab a').click(function (e) {
-		//console.log($(this));
 		e.preventDefault();
 		$(this).tab('show');
 		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
@@ -1112,7 +1059,6 @@
 		// 导入文件
 	$(".import-file").on("change",function(){
 		var siteId = $("#keywordSiteId").val();
-		//console.log("siteId====="+siteId);
 		if(siteId == ""){//全部
 			outDiv("请先选择站点");
 			return;
@@ -1125,7 +1071,6 @@
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');
 		$("#imptSiteId").val($("#keywordSiteId").val());
-		//console.log("siteId===imprt="+$("#imptSiteId").val());
 		$("#importFileForm").ajaxSubmit({
 			type: 'post',
 			url: "${ctx}/siteKeyWord/ajaxImportKeyword?${_csrf.parameterName}=${_csrf.token}",
@@ -1139,7 +1084,7 @@
 				$(".import-file").val("");
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
-				console.log( "超时，服务器异常!");
+				outDiv( "超时，服务器异常!");
 				$(".spinner").modal('hide');
 				//清空file
 				$(".import-file").val("");
@@ -1216,7 +1161,6 @@
 				"keyword" : $("#keyword").val()
 			},//数据，这里使用的是Json格式进行传输
 			success : function(pageTable) {//刷新列表
-				//console.log("pageTable==="+pageTable);
 				loadTableHtml(pageTable);
 			},
 			error : function() {
@@ -1233,18 +1177,13 @@
 	//刷新列表
 	function loadTableHtml(pageTable){
 		var tbody = $("#dataList");
-		console.log(pageTable);
-		console.log("load start=========");
 		var dataList = pageTable.list;
-		console.log(dataList);
 		if(dataList != null){
 			var datastr = "";
-			console.log("dataList.length= count  ======5555=="+dataList.length);
 			for(var i = 0; i < dataList.length; i++){
 				datastr += getRowHtml(dataList[i]);
 			}
 			tbody.html(datastr);
-			//console.log(pageTable.page+"   " +pageTable.pageNum+"   " + pageTable.count)
 			//更新分页条
 			var pageStr = paginNav(pageTable.page, pageTable.pageNum, pageTable.count);
 			$("#pagin").html(pageStr);
@@ -1303,10 +1242,7 @@
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据根据结果进行相应的处理
 				var result = dataObject.result;
-				console.log(dataObject);
 				if(result){//删除成功，刷新列表
-					console.log(dataObject.pageList);
-					console.log("start===");
 					loadTableHtml(dataObject.pageList);
 				}else{
 					outDiv("删除失败");
@@ -1355,7 +1291,6 @@
 		$("#between_expt").val($("#between").val());
 		$("#keyword_expt").val($("#keyword").val());
 		$("#exptForm").submit();
-		//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#arriveBetween").val());
 	}
 
 
