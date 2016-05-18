@@ -177,6 +177,7 @@
 				if ($(this).parents('ul.menu').css("display") == "block") {//menu有dn
 					$(this).parents('ul.menu').slideUp();
 				} else {//menu没有dn
+					$(this).addClass("side-cur").siblings().removeClass("side-cur");
 					$(this).parents('ul.menu').prev().addClass("side-cur");
 					$(this).parents('ul.menu').slideDown();
 				}

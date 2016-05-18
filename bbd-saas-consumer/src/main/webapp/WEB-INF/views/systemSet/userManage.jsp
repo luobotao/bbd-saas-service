@@ -311,9 +311,9 @@ function getRowHtml(data){
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(3,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
+		row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#changeModal' onclick=\"changeStatus(3,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
 	}else{
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
+		row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#changeModal' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
 	}
 
 	row += "</tr>";
