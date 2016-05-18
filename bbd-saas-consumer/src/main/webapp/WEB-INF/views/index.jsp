@@ -54,13 +54,13 @@
 						User user = (User) request.getAttribute("user");
 						if (user!=null && UserRole.COMPANY.equals(user.getRole())) {
 					%>
-					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>数据查询</a></li>
+					<li class="lv1"><a href="#"><i class="b-icon p-query"></i>数据查询</a></li>
 					<ul class="menu dn">
 						<li id="mailQuery"><a href="<c:url value="/mailQuery" />" target="iframe1">运单查询</a></li>
 						<%--<li><a href="<c:url value="/mailMonitor" />" target="iframe1">运单监控</a></li>--%>
 					</ul>
-					<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-query"></i>运力分布</a></li>
-					<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-query"></i>配送区域</a></li>
+					<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-capacity"></i>运力分布</a></li>
+					<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-dis"></i>配送区域</a></li>
 					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
 					<ul class="menu dn">
 						<li id="siteManage"><a href="<c:url value="/system/siteManage" />" target="iframe1">站点管理</a></li>
@@ -77,14 +77,6 @@
 					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
 					<ul class="menu dn">
 						<li id="user"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
-					</ul>
-					<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-query"></i>运力分布</a></li>
-
-					<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-query"></i>配送区域</a></li>
-					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>数据查询</a></li>
-					<ul class="menu dn">
-						<li><a href="<c:url value="/mailQuery" />" target="iframe1">运单查询</a></li>
-						<li><a href="<c:url value="/mailMonitor" />" target="iframe1">运单监控</a></li>
 					</ul>
 					<%
 						}
@@ -126,7 +118,7 @@
 						</li>
 						<li class="pb20">
 							<i>　新密码：</i>
-							<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="密码"  />
+							<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="新密码"  />
 						</li>
 						<li class="pb20">
 							<i>确认密码：</i>
@@ -176,6 +168,7 @@
 <script>
 	$('.b-sidebar .menu li').click(function() {
 		$(this).addClass('curr').siblings('li').removeClass('curr');
+		$(this).addClass('side-cur').siblings('li').removeClass('side-cur');
 	});
 	var typ="${typ}";
 	if(typ!=null && typ!=""){
@@ -185,6 +178,7 @@
 				if ($(this).parents('ul.menu').css("display") == "block") {//menu有dn
 					$(this).parents('ul.menu').slideUp();
 				} else {//menu没有dn
+					$(this).addClass("side-cur").siblings().removeClass("side-cur");
 					$(this).parents('ul.menu').prev().addClass("side-cur");
 					$(this).parents('ul.menu').slideDown();
 				}
@@ -207,7 +201,7 @@
 		}
 		var password = $.trim($('input[name="password"]').val());
 		if(password==""){
-			outDiv("请输入密码");
+			outDiv("请输入新密码");
 			return false;
 		}
 		if(!pwdreg.test(password)){
@@ -216,11 +210,11 @@
 		}
 		var passwordC = $.trim($('input[name="passwordC"]').val());
 		if(passwordC==""){
-			outDiv("请确认密码");
+			outDiv("请输入确认密码");
 			return false;
 		}
 		if(passwordC!=password){
-			outDiv("两次密码不一致");
+			outDiv("新密码和确认密码不一致，请检查");
 			return false;
 		}
 		$("#userForm").ajaxSubmit({
@@ -230,7 +224,8 @@
 					$(".j-pwd-pop").modal("hide");
 					outDiv("密码修改成功");
 				}else{
-					alert_mine("错误","原始密码不正确");
+					outDiv("原始密码不正确");
+					return false;
 				}
 
 			},

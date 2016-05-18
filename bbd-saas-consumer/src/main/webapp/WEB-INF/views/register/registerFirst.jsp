@@ -231,7 +231,7 @@
 		}
 		var passwordC = $.trim($('input[name="passwordC"]').val());
 		if(passwordC==""){
-			outDiv("请确认密码");
+			outDiv("请输入确认密码");
 			return false;
 		}
 		if(passwordC!=password){
