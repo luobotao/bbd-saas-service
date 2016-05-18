@@ -557,7 +557,6 @@
             error: function(JsonHttpRequest, textStatus, errorThrown){
                 $("#closeButton").click();
                 gotoPage(0);
-                alert( "服务器异常!");
             }
         });
 

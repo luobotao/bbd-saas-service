@@ -18,6 +18,6 @@ conf/evolutions
 .tern-project
 shardingContext.xml
 mongo-conf.properties
-jquery.cityselect.js
+.jquery.cityselect.js
 
 
