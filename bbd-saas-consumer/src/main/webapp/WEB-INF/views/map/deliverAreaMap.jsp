@@ -32,6 +32,10 @@
 			border-bottom: none;
 			z-index: 1;
 		}
+		.ckbox {
+			background: rgb(255, 255, 255);
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
@@ -296,7 +300,7 @@
 				</div>
 			</div>
 			<div class="modal-footer mt20 bod0">
-				<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal">取消</a>
+				<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal" id="cancelImpt">取消</a>
 				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
 			</div>
 		</div>
@@ -397,8 +401,8 @@
 				//清除所有覆盖物
 				areaMap.clearOverlays();
 				if (siteId == ""){//全部
-					$("#areaTool").hide();
-					$("#areaTool_bg").hide();
+					/*$("#areaTool").hide();
+					$("#areaTool_bg").hide();*/
 					//更新配送区域
 					$("#radius").val(0);
 					var centerSite = dataObject.centerSite;
@@ -417,8 +421,8 @@
 						}
 					}
 				} else {
-					$("#areaTool").show();
-					$("#areaTool_bg").show();
+					/*$("#areaTool").show();
+					$("#areaTool_bg").show();*/
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -499,7 +503,7 @@
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
 		}
-		console.log("name===" + name);
+		//console.log("name===" + name);
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
 			color : "#fff",//"#fff"
@@ -537,26 +541,30 @@
 
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
+		var siteId = $("#siteId").val();
+		if(siteId == "" || siteId == null){
+			alert("请先选择站点。");
+			return false;
+		}
 		var radiusVal = $("#radius").val();
 		if(radiusVal==0){
 			alert("请选择站点配送范围。");
 			return false;
-		}else{
-			$.ajax({
-				url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
-				type: 'get',
-				cache: false,
-				dataType: "text",
-				data: {},
-				success: function(response){
-					outDiv("保存成功");
-					//window.location.href="${ctx}/deliverArea/map/1";
-				},
-				error: function(){
-					alert('服务器繁忙，请稍后再试！');
-				}
-			});
 		}
+		$.ajax({
+			url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
+			type: 'get',
+			cache: false,
+			dataType: "text",
+			data: {},
+			success: function(response){
+				outDiv("保存成功");
+				//window.location.href="${ctx}/deliverArea/map/1";
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
+			}
+		});
 	});
 
 	/************************ 配送区域 ************* end **************************/
@@ -666,7 +674,7 @@
 		loadOneSite: function(name, lng, lat){//加载站点标注
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 			var marker = new BMap.Marker(new BMap.Point(lng, lat),{icon:myIcon});  // 创建标注
-			marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
+			//marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
 			var label = newLabel(new BMap.Point(lng, lat), name);
@@ -833,8 +841,8 @@
 	};
 
 	//配送范围-- 绘制电子地图-- 隐藏绘制-保存按钮 -- 默认全部，需要隐藏
-	$(".draw-btn").hide();
-	$(".bg-alpha").hide();
+	/*$(".draw-btn").hide();
+	$(".bg-alpha").hide();*/
 
 	//绘制电子围栏 -- 更改站点
 	$("#fenceSiteId").change(function(){
@@ -853,8 +861,8 @@
 				//console.log(siteId+"   siteId  ");
 				if (siteId == ""){//全部
 					//隐藏绘制-保存按钮
-					$("#eFenceTool").hide();
-					$("#eFenceTool_bg").hide();
+					/*$("#eFenceTool").hide();
+					$("#eFenceTool_bg").hide();*/
 					//console.log(siteId+"   all  ");
 					var site = dataObject.centerSite;
 					var siteList = dataObject.siteList;
@@ -874,8 +882,8 @@
 					fenceMap.loadMyOverlay();
 				} else {
 					//显示绘制-保存按钮
-					$("#eFenceTool").show();
-					$("#eFenceTool_bg").show();
+					/*$("#eFenceTool").show();
+					$("#eFenceTool_bg").show();*/
 
 					var site = dataObject.site;
 					var center = getPointBySite(site);
@@ -983,11 +991,8 @@
 	function openDraw(){
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			$("#eFenceTool").hide();
 			alert("请先选择站点。");
 			return;
-		}else{
-			$("#eFenceTool").show();
 		}
 		/*var overlays = fenceMap.overlays;
 		 console.log(overlays);
@@ -1029,10 +1034,6 @@
 
 	/************************ 导入地址关键词 ************* start **************************/
 
-
-
-	/************************ 导入地址关键词 ************* end **************************/
-
 		// 导入文件
 	$(".import-file").on("change",function(){
 		var siteId = $("#keywordSiteId").val();
@@ -1042,17 +1043,9 @@
 			return;
 		}
 		$(".j-import-pop").modal();
-	})
-	$("input[type='checkbox']").iCheck({
-		checkboxClass : 'icheckbox_square-blue'
-	});
-	$("#selectAll").on('ifUnchecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
-	}).on('ifChecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("check");
-	});
 
 
+	});
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');
@@ -1063,22 +1056,37 @@
 			url: "${ctx}/siteKeyWord/ajaxImportKeyword?${_csrf.parameterName}=${_csrf.token}",
 			//data : $( '#importFileForm').serialize(),
 			enctype: 'multipart/form-data',
-			async : false,
 			timeout: 0,
 			success: function(map){
-				$(".spinner").modal('hide');
-				console.log(map);
-				console.log("start  load  ");
 				loadTableHtml(map.pageList);
+				$(".spinner").modal('hide');
+				//清空file
+				$(".import-file").val("");
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
 				console.log( "超时，服务器异常!");
 				$(".spinner").modal('hide');
+				//清空file
+				$(".import-file").val("");
 			}
 		});
-		//$("#importFileForm").submit();
-	})
+	});
+	$("#cancelImpt").click(function(){
+		//清空file
+		$(".import-file").val("");
+	});
 
+
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
+	$("#selectAll").on('ifUnchecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
+	}).on('ifChecked', function() {
+		$("input[type='checkbox']", "#dis-table").iCheck("check");
+	});
+
+	//$(".spinner").modal('show');
 
 	//--------------------panel 3------------------------------------
 	$("#between").daterangepicker({
@@ -1110,7 +1118,9 @@
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
 			var url = "${ctx}/siteKeyWord/batchDeleteKeyword/"+delIds;
+			$(".spinner").modal('show');
 			doDelete(url);
+			$("#selectAll").attr("checked",false);
 		}
 	})
 
@@ -1168,9 +1178,8 @@
 	}
 	//封装一行的数据
 	function getRowHtml(data){
-
 		var row = "<tr>";
-		row +=  "<td><input type='checkbox' value='" + data.id + " name='inputC' class='c-cbox'/></td>";
+		row +=  "<td><input type='checkbox' name='inputC' value='" + data.id + "'  class='ckbox c-cbox'/></td>";
 		row += "<td>" + data.siteId + "</td>";
 		row += "<td>" + getDate1(data.createAt) + "</td>";
 		row += "<td>" + data.province + "</td>";
@@ -1193,6 +1202,7 @@
 		}
 		if(confirm('确认删除？')){
 			var url = "${ctx}/siteKeyWord/deleteKeyword/"+id;
+			$(".spinner").modal('show');
 			doDelete(url);
 		}
 	}
@@ -1218,9 +1228,11 @@
 				}else{
 					alert("删除失败。");
 				}
-
+				$(".spinner").modal('hide');
 			},
 			error : function() {
+				$(".spinner").modal('hide');
+				alert("服务器繁忙，请稍候再试。");
 			}
 		});
 	}
@@ -1262,6 +1274,10 @@
 		$("#exptForm").submit();
 		//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#arriveBetween").val());
 	}
+
+
+
+	/************************ 导入地址关键词 ************* end **************************/
 
 </script>
 </body>

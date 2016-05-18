@@ -78,7 +78,7 @@ public class MailQueryController {
 			}
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
 			logger.info("=====运单查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
@@ -116,7 +116,7 @@ public class MailQueryController {
 			status = Numbers.defaultIfNull(status, -1);
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId());
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId(), null);
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
@@ -213,7 +213,7 @@ public class MailQueryController {
 			//公司查询
 			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
 				//同一个公司的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId());
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId(), null);
 				List<String> areaCodeList = new ArrayList<String>();
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){
@@ -246,7 +246,7 @@ public class MailQueryController {
 					address.append(order.getReciever().getArea());
 					address.append(order.getReciever().getAddress());
 					row.add(address.toString());
-					row.add(Dates.formatDateTime_New(order.getDatePrint()));
+					row.add(Dates.formatDateTime_New(order.getDateDriverGeted()));
 					row.add(Dates.formatDate2(order.getDateMayArrive()));
 					row.add(Dates.formatDateTime_New(order.getDateArrived()));
 					setCourier(order.getUserId(), row);
@@ -263,7 +263,7 @@ public class MailQueryController {
 			String[] titles = { "包裹号", "运单号", "订单号", "来源", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
 			int[] colWidths = { 4000, 5000, 5000, 2000, 2000, 3500, 12000, 5500, 3500, 5500, 2000, 3500, 2000};
 			ExportUtil exportUtil = new ExportUtil();
-			exportUtil.exportExcel("地址关键词模板", dataList, titles, colWidths, response);
+			exportUtil.exportExcel("运单查询", dataList, titles, colWidths, response);
 		} catch (Exception e) {
 			logger.error("===运单查询数据导出===出错:" + e.getMessage());
 		}

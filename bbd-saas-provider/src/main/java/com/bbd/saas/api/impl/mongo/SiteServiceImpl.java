@@ -11,7 +11,6 @@ import com.bbd.saas.vo.SiteVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -78,6 +77,17 @@ public class SiteServiceImpl implements SiteService {
     public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, Integer status, String keyword) {
         return siteDao.findSites(pageModel, companyId, status, keyword);
     }
+    /**
+     * 根据站点状态与关键词进行站点分页查询
+     *
+     * @param pageModel
+     * @param status
+     * @return
+     */
+    @Override
+    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, SiteStatus status) {
+        return siteDao.findSites(pageModel, companyId, status);
+    }
 
     /**
      * 删除站点
@@ -111,8 +121,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public List<Site> findSiteListByCompanyId(String companyId) {
-        return siteDao.selectByCompanyId(companyId);
+    public List<Site> findSiteListByCompanyId(String companyId, SiteStatus status) {
+        return siteDao.selectByCompanyId(companyId, status);
     }
 
     /**
@@ -192,7 +202,7 @@ public class SiteServiceImpl implements SiteService {
     }
 	@Override
 	public List<SiteVO> findAllOtherSiteVOList(Site selfSite) {
-		List<Site> siteList = this.siteDao.selectByCompanyCode(selfSite.getCompanycode());
+		List<Site> siteList = this.siteDao.selectByCompanyId(selfSite.getCompanyId(), SiteStatus.APPROVE);
 		String areaCode = selfSite.getAreaCode();
 		if(areaCode == null){
 			areaCode = "";
@@ -212,8 +222,8 @@ public class SiteServiceImpl implements SiteService {
 	}
 
 	@Override
-	public List<SiteVO> findAllSiteVOByCompanyId(String companyId) {
-		List<Site> siteList = this.siteDao.selectByCompanyId(companyId);
+	public List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status) {
+		List<Site> siteList = this.siteDao.selectByCompanyId(companyId, status);
 		List<SiteVO> siteVoList = null;
 		if(siteList != null && siteList.size() > 0){
 			siteVoList = new ArrayList<SiteVO>();

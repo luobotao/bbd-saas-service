@@ -107,7 +107,7 @@
 	function initMap(){
 		console.log("centerSite.lng=" + ${centerSite.lng} +"  centerSite.lat="+${centerSite.lat});
 		var center = new BMap.Point(${centerSite.lng}, ${centerSite.lat});
-		var radiusVal = 13;//显示大小级别--单个站点
+		var radiusVal = 11;//显示大小级别--单个站点
 		if (siteId == ""){//显示大小级别-全部
 			radiusVal = 6;
 		}

@@ -10,6 +10,7 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.SiteKeyTemp;
 import com.bbd.saas.mongoModels.User;
@@ -76,7 +77,7 @@ public class SiteKeyWordController {
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 			List<String> siteOptionList = null;
 			if(siteVOList != null && siteVOList.size() > 0){
 				siteOptionList = new ArrayList<String>();
@@ -106,7 +107,7 @@ public class SiteKeyWordController {
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
 		//查询登录用户的公司下的所有站点
-		List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId());
+		List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 		//火狐浏览器没有扩展名
 		//response.setContentType("application/binary;charset=ISO8859_1");
 		//扩展名.xlsx
@@ -443,7 +444,7 @@ public class SiteKeyWordController {
 		List<String> idList = Arrays.asList(ids.split(","));
 		Result result = siteKeywordApi.deleteSitePoiKeyword(idList);
 		Map<String, Object> map = new HashMap<String, Object>();
-		if(result != null && result.code == 1){//删除成功，刷新列表
+		if(result != null){//删除成功，刷新列表
 			map.put("result", true);
 			String siteId = request.getParameter("siteId");
 			dealSiteKeywordWithAjax(siteId, map);

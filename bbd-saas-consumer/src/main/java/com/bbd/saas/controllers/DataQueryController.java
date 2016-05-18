@@ -208,7 +208,7 @@ public class DataQueryController {
 					address.append(order.getReciever().getArea());
 					address.append(order.getReciever().getAddress());
 					row.add(address.toString());
-					row.add(Dates.formatDateTime_New(order.getDatePrint()));
+					row.add(Dates.formatDateTime_New(order.getDateDriverGeted()));
 					row.add(Dates.formatDate2(order.getDateMayArrive()));
 					row.add(Dates.formatDateTime_New(order.getDateArrived()));
 					setCourier(order.getUserId(), row);
