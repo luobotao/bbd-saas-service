@@ -148,25 +148,27 @@
 					$("#usernameFlag").val(0);
 				}else{
 					$("#usernameFlag").val(1);
-					time();
-					$.ajax({
-						url: "<c:url value="/sendVerifyCode?phone=" />"+phone,
-						type: 'GET',
-						cache: false,
-						dataType: "json",
-						data: {},
-						success: function(response){
-							console.log(response);
-							if(response!="" && response!=null && response.status=="1"){
-								alert_mine("成功","发送成功");
-							}else{
-								alert_mine("失败",response.msg);
+					if(typeof($("#sendVerifyCode").attr("disabled"))=="undefined" ){
+						time();
+						$.ajax({
+							url: "<c:url value="/sendVerifyCode?phone=" />" + phone,
+							type: 'GET',
+							cache: false,
+							dataType: "json",
+							data: {},
+							success: function (response) {
+								console.log(response);
+								if (response != "" && response != null && response.status == "1") {
+									alert_mine("成功", "发送成功");
+								} else {
+									alert_mine("失败", response.msg);
+								}
+							},
+							error: function () {
+								alert('服务器繁忙，请稍后再试！');
 							}
-						},
-						error: function(){
-							alert('服务器繁忙，请稍后再试！');
-						}
-					});
+						});
+					}
 				}
 			},
 			error: function(){
@@ -178,7 +180,7 @@
 	function time() {
 		var o = $("#sendVerifyCode");
 		if (wait == 0) {
-			o.attr("disabled");
+			o.removeAttr("disabled");
 			o.html("获取验证码");
 			wait = 60;
 		} else {
