@@ -99,7 +99,7 @@
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
+									if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
 								%>
 										<td></td>
 										<td></td>
@@ -332,7 +332,7 @@ function getRowHtml(data){
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userId == null || data.userId == ""){
+	if(data.userVO==null || data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";

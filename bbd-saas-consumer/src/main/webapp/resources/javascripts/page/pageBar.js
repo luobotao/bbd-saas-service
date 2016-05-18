@@ -8,7 +8,7 @@ function paginNav(currPage, totalPage, count){
 	pagestr += (currPage + 1) + "/" + totalPage + " &nbsp;&nbsp; 共计" + count + "条记录";
 	pagestr += "</div>";
 	pagestr += "<div class='dataTables_paginate paging_bootstrap ml12'>";
-	pagestr += "<ul class='pagination '>";
+	pagestr += "<ul class='pagination'>";
 	//首页和上一页
 	if (currPage < 1){
 		pagestr += "<li class='prev disabled  c-disable'><a href='#'>首页</a></li>";
@@ -72,7 +72,7 @@ function paginNavMin(currPage, totalPage, count){
 	pagestr += (currPage + 1) + "/" + totalPage + " &nbsp;&nbsp; 共" + count + "条";
 	pagestr += "</div>";
 	pagestr += "<div class='dataTables_paginate paging_bootstrap ml12'>";
-	pagestr += "<ul class='pagination '>";
+	pagestr += "<ul class='pagination'>";
 	//首页和上一页
 	if (currPage < 1){
 		pagestr += "<li class='prev disabled  c-disable'><a href='#'>首页</a></li>";

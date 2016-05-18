@@ -1,19 +1,18 @@
 package com.bbd.saas.api.impl.mysql;
 
-import javax.annotation.Resource;
-
-import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
-import com.bbd.saas.dao.mysql.PostcompanyDao;
 import com.bbd.saas.dao.mysql.PostmanUserDao;
-import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.models.PostmanUser;
-
+import com.bbd.saas.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 公司Service实现
@@ -65,8 +64,9 @@ public class PostmanUserServiceImpl implements PostmanUserService {
      * @param postmanUser
      * @return ret 成功或失败
      */
-	public int insertUser(PostmanUser postmanUser){
-		return postmanUserDao.insertUser(postmanUser);
+	public PostmanUser insertUser(PostmanUser postmanUser){
+		postmanUserDao.insertUser(postmanUser);
+		return postmanUser;
 	}
 	
 	/**
@@ -104,4 +104,38 @@ public class PostmanUserServiceImpl implements PostmanUserService {
     public int updatePostmanUserById(String nickname,Integer id){
     	return postmanUserDao.updatePostmanUserById(nickname, id);
     }
+	/**
+	 * 根据公司Id查询所有派件员的经纬度
+	 * @param companyId 公司Id
+	 * @return
+	 */
+	public List<UserVO> findLatAndLngByCompanyId(String companyId){
+		List<Map<String, Object>> postmanList = postmanUserDao.selectLatAndLngByCompanyId(companyId);
+		return toUserVOList(postmanList);
+	}
+	/**
+	 * 根据派件员id集合查询所有派件员的经纬度
+	 * @param ids 派件员id(id1,id2,id3---)
+	 * @return
+	 */
+	public List<UserVO> findLatAndLngByIds(List<Integer> ids){
+		List<Map<String, Object>> postmanList = postmanUserDao.selectLatAndLngByIds(ids);
+		return toUserVOList(postmanList);
+	}
+	private List<UserVO> toUserVOList(List<Map<String, Object>> postmanList){
+		if (postmanList == null){
+			return null;
+		}
+		List<UserVO> userVOList = new ArrayList<UserVO>();
+		for (Map<String, Object> map : postmanList){
+			UserVO userVO = new UserVO();
+			userVO.setPostManId((Long) map.get("id"));
+			userVO.setLoginName((String) map.get("phone"));
+			userVO.setRealName((String) map.get("nickname"));
+			userVO.setLat((BigDecimal) map.get("lat"));
+			userVO.setLng((BigDecimal) map.get("lon"));
+			userVOList.add(userVO);
+		}
+		return userVOList;
+	}
 }

@@ -14,6 +14,10 @@ public class SiteVO implements Serializable{
 	private String id;
     private String areaCode;
     private String name;
+	private String lat;//纬度
+	private String lng;//经度
+	private String deliveryArea;//配送范围
+	private String eFence; //电子围栏
      
 	public static long getSerialversionuid() {
 		return serialVersionUID;
@@ -36,5 +40,40 @@ public class SiteVO implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-   
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public String getLat() {
+		return lat;
+	}
+
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+
+	public String getLng() {
+		return lng;
+	}
+
+	public void setLng(String lng) {
+		this.lng = lng;
+	}
+
+	public String getDeliveryArea() {
+		return deliveryArea;
+	}
+
+	public void setDeliveryArea(String deliveryArea) {
+		this.deliveryArea = deliveryArea;
+	}
+
+	public String geteFence() {
+		return eFence;
+	}
+
+	public void seteFence(String eFence) {
+		this.eFence = eFence;
+	}
 }

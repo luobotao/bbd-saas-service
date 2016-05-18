@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 
 
 public class StringUtil {
-
+	private static final Pattern PHONE_PATTERN = Pattern.compile("^((1))\\d{10}$");
 	/**
 	 * 字符串为空时替换称指定文字
 	 * @param oldString
@@ -249,7 +249,31 @@ public class StringUtil {
 		}
 		return true;
 	}
-	
+	/**
+	 * 验证是否电话
+	 *
+	 * @param phone
+	 * @return
+	 */
+	public static boolean checkPhone(String phone) {
+		if (!PHONE_PATTERN.matcher(phone).matches()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	/**
+	 * 生成随机数
+	 *
+	 * @return
+	 */
+	public static String genRandomCode(int Length) {
+		String key = "";
+		for (int i = 0; i < (Length-1); i++) {
+			key += Math.round(Math.random() * 9); // 生成验证码随机数
+		}
+		return "1" + key;
+	}
 	/**
 	 * 对时间的解析
 	 * @param time

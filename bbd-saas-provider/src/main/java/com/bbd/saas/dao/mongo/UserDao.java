@@ -1,14 +1,16 @@
 package com.bbd.saas.dao.mongo;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
+import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.enums.UserStatus;
+import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.UserQueryVO;
+import com.bbd.saas.vo.UserQueryVO2;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
@@ -16,15 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.UserRole;
-import com.bbd.saas.enums.UserStatus;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.UserQueryVO;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
@@ -50,7 +46,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     }
     /**
      * 获取用户列表信息
-     * @param PageModel<User>
+     * @param pageModel
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site) {
@@ -59,24 +55,25 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     	//设置排序
     	query.order("-dateUpdate");
     	if(userQueryVO!=null){
-    		
-    		query.filter("role", UserRole.status2Obj(1));
-    		/*if(userQueryVO.roleId!=null && userQueryVO.roleId!=-1){
-    			query.filter("role", UserRole.status2Obj(userQueryVO.roleId));
-    		}*/
-    		query.filter("site", site);
+    		if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
+                query.filter("companyId", userQueryVO.companyId);
+            }
+            query.filter("role <>", UserRole.COMPANY);
+    		if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){
+    			query.filter("role", userQueryVO.roleId);
+    		}
+            if(site!=null){
+                query.filter("site", site);
+            }
     		if(userQueryVO.status!=null && userQueryVO.status!=-1){
     			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
     		}
     		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			System.out.println("userQueryVO.keyword=="+userQueryVO.keyword);
     			query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
     			
     		}
-
         }
     	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-    	System.out.println("userList.size()=="+userList.size());
         pageModel.setDatas(userList);
         pageModel.setTotalCount(count(query));
     	
@@ -90,7 +87,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @author: liyanlei
      * 2016年4月14日下午8:04:44
      */
-    public List<User> findUserListBySite(Site site, UserRole userRole) {
+    public List<User> findUserListBySite(Site site, UserRole userRole,UserStatus userStatus) {
     	Query<User> query = createQuery();
     	if(site != null){
     		query.filter("site", site);
@@ -98,8 +95,9 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     	if(userRole != null){
     		query.filter("role", userRole);
     	}
-    	//有效用户
-    	query.filter("userStatus", UserStatus.status2Obj(1));
+        if(userStatus!=null){
+            query.filter("userStatus", userStatus);
+        }
         return  find(query).asList();
     }
     
@@ -116,7 +114,6 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         query.filter("site",site);
         return findOne(query);
     }
-    
     /**
      * 更新用户状态
      * @param loginName 、UserStatus
@@ -128,5 +125,67 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         UpdateOperations<User> ops = createUpdateOperations().set("userStatus",userStatus).set("dateUpdate",new Date());
         return update(query,ops);
     }
-    
+    /**
+     * 根据用户名（手机号）去更新此用户的公司ID
+     * @param companyId
+     * @param loginName
+     */
+    public UpdateResults updateCompanyIdByLoginName(int companyId, String loginName) {
+        Query<User> query = createQuery();
+        query.filter("loginName",loginName);
+        UpdateOperations<User> ops = createUpdateOperations().set("companyId",companyId).set("dateUpdate",new Date());
+        return update(query,ops);
+    }
+
+    /**
+     * 删除此站点下的所有用户
+     * @param siteId
+     */
+    public void delUsersBySiteId(String siteId) {
+        Site site = getDatastore().get(Site.class,new ObjectId(siteId));
+        Query<User> query = createQuery();
+        query.filter("site",site);
+        deleteByQuery(query);
+    }
+    public List<User> selectUserListByCompanyId(String companyId){
+        if(StringUtils.isBlank(companyId)){
+            return null;
+        }
+        Query<User> query = createQuery();
+        query.filter("companyId", companyId);
+        return find(query).asList();
+    }
+
+    /**
+     * 根据条件查询用户
+     * @param userQueryVO 查询条件
+     * @return
+     */
+    public List<User> selectUserListByQuerys(UserQueryVO2 userQueryVO){
+        if(userQueryVO == null){
+            return null;
+        }
+        Query<User> query = getQuery(userQueryVO);
+        return find(query).asList();
+    }
+    private Query<User> getQuery(UserQueryVO2 userQueryVO){
+        Query<User> query = createQuery();
+        //状态
+        if(userQueryVO.userStatus != null){
+            query.filter("userStatus", userQueryVO.userStatus);
+        }
+        //角色
+        if(userQueryVO.role != null){
+            query.filter("role", userQueryVO.role);
+        }
+        //员工Id集合
+        if(userQueryVO.postManIdList != null){
+            query.filter("postmanuserId in", userQueryVO.postManIdList);
+        }
+        //公司
+        if(StringUtils.isNotBlank(userQueryVO.companyId)){
+            query.filter("companyId", userQueryVO.companyId);
+        }
+        return  query;
+    }
 }

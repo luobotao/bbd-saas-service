@@ -23,6 +23,8 @@
 				<value>/userManage/changestatusOuter</value>
 				<value>/bbd/postAllAreaCode</value>
 				<value>/login</value>
+				<value>register</value>
+				<value>main</value>
 			</list>
 		</property>
 	</bean>

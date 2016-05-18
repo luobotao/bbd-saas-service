@@ -147,6 +147,7 @@ public class UpdateOrderStatusController {
 			}
 			//更新运单状态
 			order.setOrderStatus(OrderStatus.status2Obj(status));
+			order.setDateUpd(new Date());
 			//更新运单
 			Key<Order> r = orderService.save(order);
 			if(r != null){

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.SmsInfoDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.SmsInfo">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="tpl_id" property="tplId" jdbcType="VARCHAR"/>
+        <result column="args" property="args" jdbcType="VARCHAR"/>
+        <result column="flg" property="flg" jdbcType="VARCHAR"/>
+        <result column="typ" property="typ" jdbcType="VARCHAR"/>
+        <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
+        <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="baseColumnList">
+        id,
+        phone,
+        tpl_id,
+        args,
+        flg,
+        typ,
+        date_new,
+        date_upd
+    </sql>
+
+    <insert id="insertSmsinfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.SmsInfo">
+        INSERT INTO `smsinfo`(
+        <include refid="baseColumnList"/>
+        )
+        VALUES (
+        #{id,jdbcType=INTEGER},
+        #{phone,jdbcType=VARCHAR},
+        #{tplId,jdbcType=INTEGER},
+        #{args,jdbcType=VARCHAR},
+        #{flg,jdbcType=VARCHAR},
+        #{typ,jdbcType=VARCHAR},
+        #{dateNew,jdbcType=TIMESTAMP},
+        #{dateUpd,jdbcType=TIMESTAMP}
+        )
+    </insert>
+</mapper>

@@ -26,6 +26,10 @@
     <bean id="orderParcelDao" class="com.bbd.saas.dao.mongo.OrderParcelDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- ToOtherSiteLog DAO-->
+    <bean id="toOtherSiteLogDao" class="com.bbd.saas.dao.mongo.ToOtherSiteLogDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->
@@ -44,6 +48,18 @@
     </bean>
     <bean id="openUserDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.OpenUserDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+    <bean id="smsInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.SmsInfoDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+    <bean id="bbtAddressDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.BbtAddressDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+    <bean id="orderLogDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.OrderLogDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
     <!--  end mysql daos  -->

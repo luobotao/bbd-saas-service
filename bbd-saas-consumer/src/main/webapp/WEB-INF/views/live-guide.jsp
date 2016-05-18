@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/main.jsp"%>
+<%@ include file="main.jsp"%>
 <html>
 	<head></head>
 </html>
@@ -354,12 +354,14 @@
 			})
 			if ("" != jsonStr) {
 				var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
+				var siteId =  $("#siteId").val();
 				$.ajax({
 					url: url,
 					type: 'POST',
 					cache: false,
 					data: {
-						"jsonStr" : jsonStr
+						"jsonStr" : jsonStr,
+						"siteId":siteId
 					},
 					success: function(data){
 						console.log(data);
@@ -616,6 +618,7 @@
 		$("#querySiteBtn").click(function(){
 			console.log("query site start");
 			$(".table-responsive").addClass("guide-tab");
+			$("#page").val("0");
 			querySiteKey();
 
 		})
@@ -716,6 +719,7 @@
 		}
 		$("#cancelImportBtn").click(function(){
 			$(".j-import-guid-pop").hide();
+			$(".import-guid-file").val("");
 		})
 
 		function getLocalTime(nS) {

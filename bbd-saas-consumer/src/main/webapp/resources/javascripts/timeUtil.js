@@ -66,3 +66,9 @@ function getDate2(tm){
     var date = new Date(tm);
     return date.Format("yyyy-MM-dd");
 }
+
+function getDateStr(AddDayCount) {
+    var dd = new Date();
+    dd.setDate(dd.getDate()+AddDayCount);//获取AddDayCount天后的日期
+    return dd.Format("yyyy/MM/dd");
+}

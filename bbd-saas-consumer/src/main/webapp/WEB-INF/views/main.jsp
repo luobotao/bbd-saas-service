@@ -93,8 +93,31 @@ folder instead of downloading all of them to reduce the load. -->
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
 </head>
 <body>
-
+<!--S 提示信息-->
+<div class="b-prompt">
+	<i class="b-prompt-txt"></i>
+</div>
+<!--E 提示信息-->
+<!-- S alert -->
+<div class="j-alert-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog b-modal-dialog middleS" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc j-c-tie">提示信息</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				<em class="f16 j-alert-con">alert内容</em>
+				<div class="clearfix mt20">
+					<a href="javascript:void(0);" class="sbtn sbtn2 l col-md-12" data-dismiss="modal">确认</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- E alert -->
 </body>
 </html>

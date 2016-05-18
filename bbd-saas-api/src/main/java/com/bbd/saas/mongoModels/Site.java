@@ -1,6 +1,7 @@
 package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.enums.SiteTurnDownReasson;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
@@ -36,13 +37,18 @@ public class Site implements Serializable {
     private String companycode;      //所属公司编码
     private SiteStatus status;       //状态
     private String memo;       //备注
-    private String flag;         //标识 0站点注册 1审核中 2审核通过 3驳回
+    private SiteTurnDownReasson turnDownReasson;       //驳回原因
+    private String otherMessage;       //其他原因
     private String lat;         //纬度
     private String lng;         //经度
     private String deliveryArea;//配送範圍
     private Date dateAdd;      //充值时间
     private Date dateUpd;      //更新时间
 
+    @Transient
+    private String statusMessage;//JS展示状态
+    @Transient
+    private String turnDownMessage;//JS展示状态
     public ObjectId getId() {
         return id;
     }
@@ -179,14 +185,6 @@ public class Site implements Serializable {
         this.memo = memo;
     }
 
-    public String getFlag() {
-        return flag;
-    }
-
-    public void setFlag(String flag) {
-        this.flag = flag;
-    }
-
     public String getLat() {
         return lat;
     }
@@ -233,5 +231,39 @@ public class Site implements Serializable {
 
     public void setCompanycode(String companycode) {
         this.companycode = companycode;
+    }
+
+    public SiteTurnDownReasson getTurnDownReasson() {
+        return turnDownReasson;
+    }
+
+    public void setTurnDownReasson(SiteTurnDownReasson turnDownReasson) {
+        this.turnDownReasson = turnDownReasson;
+    }
+
+    public String getOtherMessage() {
+        return otherMessage;
+    }
+
+    public void setOtherMessage(String otherMessage) {
+        this.otherMessage = otherMessage;
+    }
+
+    public String getStatusMessage() {
+        if(status==null)
+            return "";
+        return status.getMessage();
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
+    public String getTurnDownMessage() {
+        return turnDownMessage;
+    }
+
+    public void setTurnDownMessage(String turnDownMessage) {
+        this.turnDownMessage = turnDownMessage;
     }
 }

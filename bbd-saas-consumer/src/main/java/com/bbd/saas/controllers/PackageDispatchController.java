@@ -167,6 +167,7 @@ public class PackageDispatchController {
 		setOrderExpress(order, user);
 		//更新运单状态--已分派
 		order.setOrderStatus(OrderStatus.DISPATCHED);
+		order.setDateUpd(new Date());
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null){

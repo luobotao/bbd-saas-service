@@ -2,13 +2,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/main.jsp"%>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
 	<title>配送区域 - 系统设置 - 棒棒达快递</title>
+	<style>
+		.capacity-map .BMapLabel{
+			max-width:inherit;
+			margin-bottom:0;
+			border-radius:4px;
+			padding:6px !important;
+		}
+		.capacity-map .BMapLabel:after {
+			content: '';
+			display: block;/*这个也很关键的*/
+			position: absolute;
+			width: 0px;
+			height: 0px;
+			bottom: -6px;
+			left:32px;
+			/*left: 50%;
+            margin-left:-6px;*/
+			border: 6px solid transparent;
+			border-top: 6px solid rgba(4, 4, 4,0.7);
+			border-bottom: none;
+			z-index: 1;
+		}
+	</style>
 </head>
-<body>
-<body class="fbg">
+<body class="fbg" >
 <!-- S content -->
 <div class="clearfix b-branch">
 	<div class="container-fluid">
@@ -47,7 +69,7 @@
 						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map" >绘制电子围栏</a></li>
 						<li <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
 					</ul>
-					<div class="b-tab-con form-inline form-inline-n tab-content">
+					<div class="b-tab-con form-inline form-inline-n tab-content capacity-map">
 						<!-- S 配送区域 -->
 						<div class="row tab-pane fade" id="send-range">
 							<div class="col-md-12 pb20 f16">
@@ -188,9 +210,11 @@
 </div>
 <!-- E content -->
 <!-- S footer -->
+
 <footer class="pos-footer tc">
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
+
 <!-- E footer -->
 <div class="b-loading">
 <div class="spinner" style="display:none">
@@ -230,7 +254,7 @@
 				</div>
 			</div>
 			<div class="modal-footer mt20 bod0">
-				<a href="javascript:void(0);" class="ser-btn g" data-dismiss="modal">取消</a>
+				<a href="javascript:void(0);" class="ser-btn g" id="cancelBtn">取消</a>
 				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
 			</div>
 		</div>
@@ -292,6 +316,7 @@
 		$(this).parents(".j-import-pop").hide();
 		$(".spinner").show();
 		$("#importFileForm").submit();
+		$("[name='file']").val("");
 	})
 	//更改配送范围
 	$("#radius").change(function(){
@@ -342,6 +367,7 @@
 		format: 'YYYY/MM/DD'
 	});
 	$("#querySiteBtn").click(function(){
+		$("#page").val("0");
 		$("#siteKeywordForm").submit();
 	})
 	//批量删除
@@ -369,7 +395,10 @@
 		$("#page").val(pageIndex);
 		$("#siteKeywordForm").submit();
 	}
-
+	$("#cancelBtn").click(function(){
+		$(".j-import-pop").modal('hide');
+		$("[name='file']").val("");
+	})
 
 	//--------------------panel 2------------------------------------
 
@@ -393,30 +422,32 @@
 		bmap.overlays.forEach(function (e) {
 			var arrs = e.ro;
 			if(arrs.length>2){
-				console.log(arrs);
+				//console.log(arrs);
 				for (var i = 0; i < arrs.length; i++) {
 					jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
 					if (i < arrs.length - 1) {
 						jsonStr = jsonStr + ",";
 					}
-					console.log(jsonStr);
+					//console.log(jsonStr);
 				}
 				jsonStr.substring(0, jsonStr.length - 1);
 				jsonStr = jsonStr + ";";
-				console.log(jsonStr);
+				//console.log(jsonStr);
 			}
 		})
 		if ("" != jsonStr) {
+			var siteId =  $("#siteId").val();
 			var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
 			$.ajax({
 				url: url,
 				type: 'POST',
 				cache: false,
 				data: {
-					"jsonStr" : jsonStr
+					"jsonStr" : jsonStr,
+					"siteId":siteId
 				},
 				success: function(data){
-					console.log(data);
+					//console.log(data);
 					if(data == "success"){
 						alert("提交成功");
 					}else{
@@ -439,6 +470,22 @@
 		}
 	})
 
+	function newLabel(point, name){
+		var opts = {
+			position : point,    // 指定文本标注所在的地理位置
+			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
+		}
+		//console.log("name===" + name);
+		var label = new BMap.Label(name, opts);  // 创建文本标注对象
+		label.setStyle({
+			color : "#fff",//"#fff"
+			border : "0",
+			fontSize : "18px",
+			fontFamily:"simhei",
+			backgroundColor:"rgba(4, 4, 4,0.7)",
+		});
+		return label;
+	}
 	var bmap = {
 		status: false,
 		map: '',
@@ -476,6 +523,9 @@
 			var marker = new BMap.Marker(this.point,{icon:myIcon});  // 创建标注
 			marker.disableMassClear();
 			this.map.addOverlay(marker);               // 将标注添加到地图中
+			/*var label = new BMap.Label("${site.name}",{offset:new BMap.Size(20,-10)});
+			marker.setLabel(label);*/
+
 			//实例化鼠标绘制工具
 			this.drawingManager = new BMapLib.DrawingManager(map, {
 				isOpen: false, //是否开启绘制模式
@@ -493,6 +543,10 @@
 			if (this.myOverlay) {
 				this.loadMyOverlay();
 			};
+			//console.log("siteName===${site.name}");
+			//添加label
+			var label = newLabel(this.point, "${site.name}");
+			this.map.addOverlay(label);
 			// S 增加的控件
 			var bottom_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});// 左上角，添加比例尺
 			var bottom_right_navigation = new BMap.NavigationControl({
@@ -506,8 +560,8 @@
 		loadMyOverlay: function(){
 			var map = this.map;
 			this.clearAll();
-			console.log("ctt")
-			console.log(this.myOverlay);
+			//console.log("ctt")
+			//console.log(this.myOverlay);
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
 				this.myPolygon = myPolygon;
@@ -521,7 +575,7 @@
 						bmap.delPolygon(e);
 					}
 				});
-				console.log(myPolygon);
+				//console.log(myPolygon);
 				bmap.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
 			})
@@ -586,7 +640,8 @@
 		clearAll: function() {
 			var map = this.map;
 			var overlays = this.overlays;
-			console.log(overlays);
+			console.log("执行clearAll---");
+			//console.log(overlays);
 			for(var i = 0; i < overlays.length; i++){
 				map.removeOverlay(overlays[i]);
 			}
@@ -613,8 +668,8 @@
 		},
 		// 用经纬度设置地图中心点
 		theLocation:function(){
-			console.log("xxxx");
-			console.log(this.map);
+			//console.log("xxxx");
+			//console.log(this.map);
 			this.map.panTo(this.point);
 		}
 	};
@@ -623,7 +678,7 @@
 	var isPanelShow = false;
 	$("showPanelBtn").onclick = showPanel;
 	function showPanel(){
-		console.log(isPanelShow);
+		//console.log(isPanelShow);
 		if (isPanelShow == false) {
 			isPanelShow = true;
 			$("showPanelBtn").style.right = "230px";
@@ -656,10 +711,10 @@
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
 	showMap(${site.deliveryArea*1000});
 	bmap.myOverlay=bmapArr;
-	console.log(bmap.myOverlay);
+	//console.log(bmap.myOverlay);
 	bmap.init();
 	$('.b-tab a').click(function (e) {
-		console.log($(this));
+		//console.log($(this));
 		e.preventDefault();
 		$(this).tab('show');
 		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");

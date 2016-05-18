@@ -1,17 +1,16 @@
 package com.bbd.saas.api.mongo;
 
-import java.util.List;
-
-import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.Query;
-
+import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserVO;
-import com.mongodb.WriteResult;
+import org.mongodb.morphia.Key;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by luobotao on 2016/4/11.
@@ -47,7 +46,7 @@ public interface UserService {
     
     /**
      * 根据用户名检索站点用户
-     * @param loginName
+     * @param realName
      * @return
      */
     User findUserByRealName(String realName);
@@ -61,7 +60,7 @@ public interface UserService {
     
     /**
      * 获取用户列表信息
-     * @param PageModel<User>
+     * @param pageModel
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site);
@@ -96,5 +95,38 @@ public interface UserService {
      * return UpdateResults
      */
     public void updateUserStatu(String loginName, UserStatus userStatus);
-    
+
+    /**
+     * 根据用户名（手机号）去更新此用户的公司ID
+     * @param companyId
+     * @param phone
+     */
+    void updateCompanyIdByLoginName(int companyId, String phone);
+
+    /**
+     * 删除此站点下的所有用户
+     * @param siteId
+     */
+    void delUsersBySiteId(String siteId);
+
+    /**
+     * 获取指定站点下的所有派件员
+     * @param companyId 公司Id
+     * @return
+     */
+    public List<User> findUserListByCompanyId(String companyId);
+    /**
+     * 获取指定站点下的所有派件员
+     * @param site 站点
+     * @param userRole 角色
+     * @return
+     */
+    public List<User> findUsersBySite(Site site, UserRole userRole,UserStatus userStatus);
+
+    /**
+     * 根据staffidList获得同一派件员user与站点名称的对应关系
+     * @param staffidList 员工id
+     * @return
+     */
+    public Map<Long, String> findUserSiteMap(List<Long> staffidList, String companyId);
 }

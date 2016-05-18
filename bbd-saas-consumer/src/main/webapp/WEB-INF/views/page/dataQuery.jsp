@@ -4,9 +4,9 @@
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
-	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
 	String proPath = request.getContextPath();
@@ -120,7 +120,7 @@
 									<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 									<%
-										if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
+										if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
 									%>
 											<td></td>
 											<td></td>
@@ -131,13 +131,42 @@
 											<td><%=order.getUserVO().getLoginName()%></td>
 									<%
 										}
-										if(order.getOrderStatus() == null){//未到站
+										//样式
+										if(order.getOrderStatus() == null || order.getOrderStatus() == OrderStatus.NOTARR){//未到站--
 									%>
-											<td>未到站</td>
+											<td><em class="l-blue">未到站</em></td>
 									<%
-										}else{
+										}else if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
 									%>
-											<td><%=order.getOrderStatus().getMessage()%></td>
+											<td><em class="orange">未分派</em></td>
+									<%
+										}else if(order.getOrderStatus() == OrderStatus.DISPATCHED){
+									%>
+											<td><em class="c-green">已分派</em></td>
+									<%
+										}else if(order.getOrderStatus() == OrderStatus.RETENTION){
+									%>
+											<td><em class="purple">滞留</em></td>
+									<%
+										}else if(order.getOrderStatus() == OrderStatus.REJECTION){
+									%>
+											<td><em class="d-red">拒收</em></td>
+									<%
+										}else if(order.getOrderStatus() == OrderStatus.SIGNED){
+									%>
+											<td><em class="black">已签收</em></td>
+									<%
+										}else if(order.getOrderStatus() == OrderStatus.TO_OTHER_EXPRESS){
+									%>
+											<td><em class="d-blue">已转其他快递</em></td>
+									<%
+										}else if(order.getOrderStatus() == OrderStatus.APPLY_RETURN){
+									%>
+											<td><em class="brown">申请退货</em></td>
+									<%
+										}else if(order.getOrderStatus() == OrderStatus.RETURNED){
+									%>
+											<td><em class="l-green">退货完成</em></td>
 									<%
 										}
 									%>
@@ -155,7 +184,7 @@
 				<div class="clearfix pad20" id="pagin"></div>
 				<!-- E tableBot -->
 				</div>
-  				
+
 			</div>
 			<!-- E detail -->
 		</div>
@@ -272,7 +301,7 @@ function getRowHtml(data){
 	row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userId == null || data.userId == ""){
+	if(data.userVO==null ||data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";
@@ -324,44 +353,44 @@ function getSrcName(src) {
 //转义状态
 function getStatus(status) {
 	if(status == null){
-		return "未到站";
+		return "<em class='l-blue'>未到站</em>";
 	}
-    x = "未到站";
+	x = "<em class='l-blue'>未到站</em>";
 	switch (status)
 	{
-	case "NOTARR":
-	  	x = "未到站";
-	 	break;
-	case "NOTDISPATCH":
-	  	x =  "未分派";
-	  	break;
-	case "DISPATCHED":
-	  	x =  "已分派";
-	  	break;
-	case "RETENTION":
-	  x =  "滞留";
-	  break; 
-	case "REJECTION":
-	  	x =  "拒收";
-	  	break;
-	case "SIGNED":
-	  	x =  "已签收";
-	  	break;
-	case "TO_OTHER_EXPRESS":
-	  	x =  "已转其他快递";
-	  	break;
-	case "APPLY_RETURN":
-	  	x =  "申请退货";
-	  	break;
-	case "RETURNED":
-	  	x =  "退货完成";
-	  	break; 	
-	default : 
-		//x = "未到站";
-		x = status;
+		case "NOTARR":
+			x = "<em class='l-blue'>未到站</em>";
+			break;
+		case "NOTDISPATCH":
+			x =  "<em class='orange'>未分派</em>";
+			break;
+		case "DISPATCHED":
+			x =  "<em class='c-green'>已分派</em>";
+			break;
+		case "RETENTION":
+			x =  "<em class='purple'>滞留</em>";
+			break;
+		case "REJECTION":
+			x =  "<em class='d-red'>拒收</em>";
+			break;
+		case "SIGNED":
+			x =  "<em class='black'>已签收</em>";
+			break;
+		case "TO_OTHER_EXPRESS":
+			x =  "<em class='d-blue'>已转其他快递</em>";
+			break;
+		case "APPLY_RETURN":
+			x =  "<em class='brown'>申请退货</em>";
+			break;
+		case "RETURNED":
+			x =  "<em class='l-green'>退货完成</em>";
+			break;
+		default :
+			//x = "未到站";
+			x = status;
 	}
 	return x;
-}	
+}
 
 //导出数据
 function exportData() {

@@ -1,7 +1,7 @@
 package com.bbd.saas.controllers.orderParcel;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderPacelService;
+import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
@@ -39,7 +39,7 @@ public class PackageToSiteController {
 	@Autowired
 	OrderService orderService;
 	@Autowired
-	OrderPacelService orderPacelService;
+	OrderParcelService orderPacelService;
 	@Autowired
 	AdminService adminService;
 
@@ -161,6 +161,7 @@ public class PackageToSiteController {
 		expressList.add(express);//增加一条物流信息
 		order.setExpressStatus(ExpressStatus.ArriveStation);
 		order.setExpresses(expressList);
+		order.setDateUpd(new Date());
 		orderService.save(order);
 		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
 		if(orderParcel!=null){

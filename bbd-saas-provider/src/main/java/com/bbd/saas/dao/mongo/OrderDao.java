@@ -1,10 +1,14 @@
 package com.bbd.saas.dao.mongo;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-
+import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderNumVO;
+import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
+import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
@@ -16,14 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
@@ -54,15 +54,21 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){
                 if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站
                     query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
-                }else{
+                    if(StringUtils.isNotBlank(orderQueryVO.between)){//到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                        query.filter("dateArrived >=",dateBetween.getStart());
+                        query.filter("dateArrived <=",dateBetween.getEnd());
+                    }
+                }else{//未到站
                     query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+                    if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                        query.filter("dateMayArrive >=",dateBetween.getStart());
+                        query.filter("dateMayArrive <=",dateBetween.getEnd());
+                    }
                 }
             }
-            if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
-                DateBetween dateBetween = new DateBetween(orderQueryVO.between);
-                query.filter("dateMayArrive >=",dateBetween.getStart());
-                query.filter("dateMayArrive <=",dateBetween.getEnd());
-            }
+
             if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
                 query.filter("mailNum", orderQueryVO.mailNum);
             }
@@ -104,7 +110,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         orderNumVO.setArrived(count(queryArrive));//已到站
         return orderNumVO;
     }
-
+    /**
+     * 根据站点编码获取该站点历史未到站订单数目
+     * @param areaCode
+     * @return
+     */
+    public long getNoArriveHis(String areaCode) {
+        OrderNumVO orderNumVO = new OrderNumVO();
+        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+        return count(query);//历史未到站
+    }
     /**
      * 更新订单状态
      * 此处需要再加上包裹下的订单的状态更新
@@ -138,7 +155,13 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
     	Query<Order> query = createQuery();
-    	if(orderQueryVO != null){
+        query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+
+        if(orderQueryVO != null){
+            //公司查询 -- 一个公司下的所有站点的areaCode集合
+            if(orderQueryVO.areaCodeList != null && orderQueryVO.areaCodeList.size() > 0){
+                query.filter("areaCode in", orderQueryVO.areaCodeList);
+            }
     		//站点查询
             if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
                 query.filter("areaCode", orderQueryVO.areaCode);
@@ -283,4 +306,84 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     	return ops;
     }
 
+    /**
+     * 根据站点编码和时间获取该站点订单统计数据--运单监控数据
+     * @param areaCode
+     * @return
+     */
+    public OrderNumVO getOrderMonitorVO(String areaCode, String between) {
+        OrderNumVO orderNumVO = new OrderNumVO();
+        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+        orderNumVO.setNoArriveHis(count(query));//历史未到站
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        query.filter("dateMayArrive >=",cal.getTime());
+        cal.add(Calendar.DAY_OF_YEAR,1);
+        query.filter("dateMayArrive <=",cal.getTime());
+        orderNumVO.setNoArrive(count(query));//今天未到站
+        cal.add(Calendar.DAY_OF_YEAR,-1);
+        queryArrive.filter("dateArrived <=",new Date()).filter("dateArrived >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
+        orderNumVO.setArrived(count(queryArrive));//已到站
+        return orderNumVO;
+    }
+    /**
+     * 根据站点编码和时间获取该站点已分派的订单数
+     * @param areaCode 站点编号
+     * @param betweenTime 查询时间范围
+     * @return
+     */
+    public long getDispatchedNums(String areaCode, String betweenTime) {
+        OrderNumVO orderNumVO = new OrderNumVO();
+        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        //
+        if(StringUtils.isNotBlank(betweenTime)){
+            DateBetween dateBetween = new DateBetween(betweenTime);
+            //expressQuery.criteria("expresses.dateAdd").greaterThanOrEq(dateBetween.getStart());
+            //expressQuery.criteria("expresses.dateAdd").lessThanOrEq(dateBetween.getEnd());
+            //物流状态--模糊查询
+            /*expressQuery.and(query.criteria("expresses.remark").contains("正在派送"),
+                    query.criteria("expresses.dateAdd").greaterThanOrEq(dateBetween.getStart()),
+                    query.criteria("expresses.dateAdd").lessThanOrEq(dateBetween.getEnd())
+            );*/
+            //String  expressQuery =" {'dateAdd' : {'$gte' : {'$date' :'2016-04-27T16:00:00.000Z'}}} , {'dateAdd' : {'$lte' : {'$date' :'2016-05-09T15:59:59.000Z'}}}";
+            BasicDBObject expressQuery = new BasicDBObject();
+            expressQuery.put("remark", new BasicDBObject("$regex", "正在派送"));
+            expressQuery.put("dateAdd", new BasicDBObject("$gte",  dateBetween.getStart())
+                    .append("$lte", dateBetween.getEnd()));  // i.e.   start <= dateAdd <= end
+            query.filter("expresses elem", expressQuery);
+        }
+        return count(query);
+    }
+
+    /**
+     * 得到指定站点当天更新的所有订单
+     * @param areaCode 站点编号
+     * @return 订单集合
+     */
+    public List<Order> getTodayUpdateOrdersByAreaCode(String areaCode) {
+        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        //昨天0:0:0:0 - 23:59:59:999
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR,-1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        query.filter("dateUpd >=",cal.getTime());
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        query.filter("dateUpd <=",cal.getTime());
+        //查询数据
+        return find(query).asList();
+    }
 }

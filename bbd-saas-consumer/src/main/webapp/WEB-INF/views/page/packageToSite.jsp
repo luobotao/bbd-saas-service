@@ -25,22 +25,22 @@
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 状态 -->
 				<ul class="row">
-					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<dl class="arrive-status  c1">
+					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+						<dl class="arrive-status  c1" onclick="todayNotArri();" style="cursor: pointer">
 							<dt class="b-order" id="non_arrival_num">${non_arrival_num}</dt>
 							<dd>今日未到站 </dd>
 							<dd>订单数</dd>
 						</dl>
 					</li>
-					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<dl class="arrive-status c2">
+					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+						<dl class="arrive-status c2" onclick="historyNotArri();" style="cursor: pointer">
 							<dt class="b-order" id="history_non_arrival_num">${history_non_arrival_num}</dt>
 							<dd>历史未到站 </dd>
 							<dd>订单数</dd>
 						</dl>
 					</li>
-					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<dl class="arrive-status c3">
+					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+						<dl class="arrive-status c3" onclick="todayArri();" style="cursor: pointer">
 							<dt class="b-order"id="arrived_num">${arrived_num}</dt>
 							<dd>今日已到站 </dd>
 							<dd>订单数</dd>
@@ -295,6 +295,30 @@
 	function searchOrder(){
 		$("#parcelCode").val("");
 		$("#mailNum").val("");
+		gotoPage(0);
+	}
+	//历史未到站事件
+	function historyNotArri(){
+		$("#parcelCode").val("");
+		$("#mailNum").val("");
+		$("#between").val("");
+		$('#arriveStatus').val(<%=ArriveStatus.NOTARR.getStatus()%>);
+		gotoPage(0);
+	}
+	//今日未到站事件
+	function todayNotArri(){
+		$("#parcelCode").val("");
+		$("#mailNum").val("");
+		$("#between").val(getDateStr(0)+" - "+getDateStr(0));
+		$('#arriveStatus').val(<%=ArriveStatus.NOTARR.getStatus()%>);
+		gotoPage(0);
+	}
+	//今日已到站事件
+	function todayArri(){
+		$("#parcelCode").val("");
+		$("#mailNum").val("");
+		$("#between").val(getDateStr(0)+" - "+getDateStr(0));
+		$('#arriveStatus').val(<%=ArriveStatus.ARRIVED.getStatus()%>);
 		gotoPage(0);
 	}
 	//回车事件

@@ -4,15 +4,18 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class SiteForm {
 	
-	private String id;         //站点主键ID
+	@NotEmpty
+	private String phone;    //用户的登录手机号
 	@NotEmpty
 	private String name;         //站点名称
-	@NotEmpty
+	private String password;         //密码
+
 	private String companyId;    //公司ID
 	private String companyName;    //公司名称
+	private String areaCode;    //区域码
+	private String from;    //1注册
 	@NotEmpty
 	private String responser;    //负责人
-	private String telephone;    //固定电话
 	@NotEmpty
 	private String email;        //邮箱
 	private String province;     //省
@@ -20,21 +23,13 @@ public class SiteForm {
 	private String area;         //区
 	@NotEmpty
 	private String address;      //详细地址
-	@NotEmpty
-	private String username;     //账号
-	@NotEmpty
-	private String password;     //密码
-	private String prePic;       //历史图片
 
-	private String lng;			//经度
-	private String lat;			//纬度
-
-	public String getId() {
-		return id;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String getName() {
@@ -45,20 +40,28 @@ public class SiteForm {
 		this.name = name;
 	}
 
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
 	public String getResponser() {
 		return responser;
 	}
 
 	public void setResponser(String responser) {
 		this.responser = responser;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
 	}
 
 	public String getEmail() {
@@ -101,12 +104,12 @@ public class SiteForm {
 		this.address = address;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getAreaCode() {
+		return areaCode;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
 	}
 
 	public String getPassword() {
@@ -117,43 +120,11 @@ public class SiteForm {
 		this.password = password;
 	}
 
-	public String getPrePic() {
-		return prePic;
+	public String getFrom() {
+		return from;
 	}
 
-	public void setPrePic(String prePic) {
-		this.prePic = prePic;
-	}
-
-	public String getLat() {
-		return lat;
-	}
-
-	public void setLat(String lat) {
-		this.lat = lat;
-	}
-
-	public String getLng() {
-		return lng;
-	}
-
-	public void setLng(String lng) {
-		this.lng = lng;
-	}
-
-	public String getCompanyId() {
-		return companyId;
-	}
-
-	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
-	}
-
-	public String getCompanyName() {
-		return companyName;
-	}
-
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setFrom(String from) {
+		this.from = from;
 	}
 }

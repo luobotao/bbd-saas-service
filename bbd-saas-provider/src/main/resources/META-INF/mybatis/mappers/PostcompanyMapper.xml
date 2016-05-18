@@ -15,33 +15,151 @@
         <result column="alipaypublickey" property="alipaypublickey" jdbcType="VARCHAR"/>
         <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
         <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+        <!--20160506新增属性-->
+        <result column="licensePic" property="licensePic" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="errorMessage" property="errorMessage" jdbcType="VARCHAR"/>
     </resultMap>
     
     <sql id="baseColumnList">
         id,
         companyname,
         companycode,
+        logo,
         sta,
+        ishot,
+        nsort,
         deliveryflag,
         appid,
         privatekey,
         alipaypublickey,
+        licensePic,
+        email,
+        province,
+        city,
+        area,
+        address,
+        errorMessage,
         date_new,
         date_upd
     </sql>
 
+    <!--根据公司ID查询公司-->
     <select id="selectPostmancompanyById" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postcompany` where <![CDATA[ id = #{id,jdbcType=INTEGER}]]>
     </select>
-    
 
-    
-    
+    <!--查询所有公司-->
     <select id="selectAll" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postcompany`
     </select>
+    <!--根据公司状态获取该状态下的所有公司列表-->
+    <select id="selectAllByStatus" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `postcompany`
+        WHERE <![CDATA[ sta = #{sta,jdbcType=VARCHAR}]]>
+    </select>
+
+    <!-- 插入公司-->
+    <insert id="insertCompany" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.Postcompany" >
+        INSERT INTO `postcompany`(
+        <include refid="baseColumnList"/>
+        )
+        VALUES (
+        #{id},
+        #{companyname},
+        #{companycode},
+        #{logo},
+        #{sta},
+        #{ishot},
+        #{nsort},
+        #{deliveryflag},
+        #{appid},
+        #{privatekey},
+        #{alipaypublickey},
+        #{licensePic},
+        #{email},
+        #{province},
+        #{city},
+        #{area},
+        #{address},
+        #{errorMessage},
+        #{dateNew},
+        #{dateUpd}
+        )
+    </insert>
+
+    <update id="updateCompany" parameterType="com.bbd.saas.models.Postcompany">
+        UPDATE `postcompany`
+        <set>
+            <if test="companyname != null">
+                companyname = #{companyname,jdbcType=VARCHAR},
+            </if>
+            <if test="companycode != null">
+                companycode = #{companycode,jdbcType=VARCHAR},
+            </if>
+            <if test="logo != null">
+                logo = #{logo,jdbcType=VARCHAR},
+            </if>
+            <if test="sta != null">
+                sta = #{sta,jdbcType=VARCHAR},
+            </if>
+            <if test="ishot != null">
+                ishot = #{ishot,jdbcType=VARCHAR},
+            </if>
+            <if test="nsort != null">
+                nsort = #{nsort,jdbcType=INTEGER},
+            </if>
+            <if test="deliveryflag != null">
+                deliveryflag = #{deliveryflag,jdbcType=VARCHAR},
+            </if>
+            <if test="appid != null">
+                appid = #{appid,jdbcType=VARCHAR},
+            </if>
+            <if test="privatekey != null">
+                privatekey = #{privatekey,jdbcType=VARCHAR},
+            </if>
+            <if test="alipaypublickey != null">
+                alipaypublickey = #{alipaypublickey,jdbcType=VARCHAR},
+            </if>
+            <if test="licensePic != null">
+                licensePic = #{licensePic,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=DOUBLE},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=DOUBLE},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMessage != null">
+                errorMessage = #{errorMessage,jdbcType=VARCHAR},
+            </if>
+
+            <if test="dateNew != null">
+                date_new = #{dateNew,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dateUpd != null">
+                date_upd = #{dateUpd,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        WHERE <![CDATA[ id = #{id,jdbcType=VARCHAR}]]>
+    </update>
 </mapper>

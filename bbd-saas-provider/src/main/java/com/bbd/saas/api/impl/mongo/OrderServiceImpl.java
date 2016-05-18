@@ -1,17 +1,6 @@
 package com.bbd.saas.api.impl.mongo;
 
 
-import java.util.Date;
-import java.util.List;
-
-import com.bbd.saas.vo.*;
-import com.google.common.collect.Lists;
-
-import org.apache.commons.lang.StringUtils;
-import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.UpdateResults;
-import org.springframework.stereotype.Service;
-
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
@@ -20,12 +9,20 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderNumVO;
+import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.OrderUpdateVO;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
+import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.UpdateResults;
+
+import java.util.List;
 
 /**
  * Created by luobotao on 2016/4/1.
  * 管理员接口
  */
-@Service("orderService")
 public class OrderServiceImpl implements OrderService {
 	
     private OrderDao orderDao;
@@ -154,11 +151,25 @@ public class OrderServiceImpl implements OrderService {
 	public int updateOrder(OrderUpdateVO orderUpdateVO,
 			OrderQueryVO orderQueryVO) {
 		//派件员员工Id
-    	
     	UpdateResults r = orderDao.updateOrder(orderUpdateVO, orderQueryVO);
     	if(r != null){
     		return r.getUpdatedCount();
     	}
 		return 0;
+	}
+
+	@Override
+	public long getDispatchedNums(String areaCode, String betweenTime) {
+		return  orderDao.getDispatchedNums(areaCode, betweenTime);
+	}
+
+	@Override
+	public List<Order> getTodayUpdateOrdersBySite(String areaCode) {
+		return orderDao.getTodayUpdateOrdersByAreaCode(areaCode);
+	}
+
+	@Override
+	public long getNoArriveHis(String areaCode) {
+		return orderDao.getNoArriveHis(areaCode);
 	}
 }

@@ -1,20 +1,14 @@
 package com.bbd.saas.utils;
 
+import com.bbd.saas.constants.Constants;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Dates {
@@ -88,6 +82,22 @@ public class Dates {
             return "";
         }
         return DATE_FORMAT_IMPORT.format(date);
+    }
+
+    /**
+     * 获得日期0点开始的时间
+     * @param num num >0,往后推num天；num <0,往前推num天
+     * @return
+     */
+    public static Date getDayTime(int num){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_YEAR, num);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
     }
     /**
      * yyyy.MM.dd
@@ -405,7 +415,7 @@ public class Dates {
 		return df.format(date);
 	}
 	/**
-	 * @param Date
+	 * @param date
 	 * @author String 日期转换成字符串 格式[yyyy/MM/dd HH:mm:ss]
 	 **/
 	public static String dateToString(Date date) {
@@ -501,6 +511,13 @@ public class Dates {
 		String currentStr = dateToString(current, format);
 		return currentStr;
 	}
+    public static Date addDays(Date date, int num){
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE,num);
+        return c.getTime();
+    }
+
 	/**
 	 * 获得指定日期的连续的前几天的集合
 	 * @author liyanlei
@@ -567,7 +584,7 @@ public class Dates {
 	 * 获得指定日期的连续的后几天的集合
 	 * @author liyanlei
 	 * @param theDate---指定日期 (1995/11/08|1995-11-08)
-	 * @param format---theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
+	 * format---theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
 	 * @param num---往后推的天数 (5)
 	 * @return (1995-11-08，1995-11-09，1995-11-10，1995-11-11，1995-11-12)
 	 */
@@ -596,7 +613,7 @@ public class Dates {
 	 * @date 2016年1月12日上午11:17:06
 	 * Description: 获得指定日期的连续的几天的集合
 	 * @param theDate	指定日期 (2016/01/08|2016-01-08)
-	 * @param format	theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
+	 * @param formate	theDate的日期格式 (yyyy/MM/dd|yyyy-MM-dd)
 	 * @param num		往后|前推的天数 (3)。 num>0,往后推；num<0,往前推
 	 * @return	2016/01/08，2016/01/09，2016/01/10    ；   2016/01/06，2016/01/07，2016/01/08，
 	 */
@@ -781,7 +798,7 @@ public class Dates {
 
 	/**
 	 * 获取某年某月最后一天日期
-	 * @param year 年份
+	 * @param str 年份
 	 * @return Date
 	 */
 	public static  String getlastDayOfMonth(String str) throws Exception{
@@ -789,7 +806,7 @@ public class Dates {
 	}
 	/**
 	 * 获取某年某月最后一天日期
-	 * @param year 年份
+	 * @param str 年份
 	 * @return Date
 	 */
 	public static  String getlastDayOfMonth(String str, String format) throws Exception{
@@ -1120,8 +1137,8 @@ public class Dates {
 	}
 	/**
 	 * 计算两个日期相差的月数
-	 * @param date1 <String>
-	 * @param date2 <String>
+	 * @param smdate <String>
+	 * @param bdate <String>
 	 * @return int
 	 * @throws ParseException
 	 */
@@ -1315,11 +1332,38 @@ public class Dates {
 		}
 		return rtn;
 	}
+    public static boolean isSameDay(Date date, Date another) {
+        if(date == null || another == null){
+           return false;
+        }
+        long diff = (date.getTime() - another.getTime())/(1000*60*60);
+        if(diff > -25 && diff < 25 ){
+            return true;
+        }
+        System.out.println("date.getTime()===" + date.getTime() + "  another.getTime()===" + another.getTime() + "  diff===" + diff);
+        return false;
+    }
+
 
     public static void main(String[] args) {
-    	List<Date> a = findDates(new Date(), 7);
+    	/*List<Date> a = findDates(new Date(), 7);
     	for(Date b:a){
     		System.out.println(b);
-    	}
+    	}*/
+
+        Date date = getDayTime(-1);
+        Date date2 = getDayTime(0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println("small===" + sdf.format(date) + "  big==" + sdf.format(date2));
+       /*
+        try {
+            int i = daysBetween(new Date(2016,5,11,01,01), new Date(2016,5,12,01,00));
+            System.out.println(i);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
+        //isSameDay(new Date(), new Date(2016,5,12));
 	}
+
+
 }

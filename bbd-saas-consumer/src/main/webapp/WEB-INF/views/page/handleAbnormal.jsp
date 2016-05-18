@@ -87,7 +87,7 @@
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派
+									if(order.getUserVO()==null ||order.getUserId() == null && !"".equals(order.getUserId())){//未分派
 								%>
 										<td></td>
 										<td></td>
@@ -345,14 +345,14 @@ function getRowHtml(data){
 	var row = "<tr>";
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
-	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
+	row += "<td class='tl'>" + data.reciever.province +" "+ data.reciever.city +" "+ data.reciever.area +" "+ data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	/* //派件员姓名和电话
 	row += "<td>" + data.user.realName + "</td>";
 	row += "<td>" + data.user.loginName + "</td>";
 	 */
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userId == null || data.userId == ""){
+	if( data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";
@@ -462,14 +462,16 @@ function chooseCourier() {
 	//保存分派信息
 	$.ajax({
 		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/reDispatch",//路径  
+        url : "<%=path%>/handleAbnormal/reDispatch",//路径
+		dataType: "json",
         data : {  
             "mailNum" : mailNum, //全局变量
             "userId" : $("#courier_select").val(), //全局变量
             "pageIndex" : pageIndex,//更新列表的参数
             "status" : $("#status").val(), 
             "arriveBetween" : $("#arriveBetween").val() 
-        },//数据，这里使用的是Json格式进行传输  
+        },//数据，这里使用的是Json格式进行传输
+
         success : function(data) {//返回数据根据结果进行相应的处理  
         	if(data.operFlag == 1){
         		//分派成功，刷新列表！
