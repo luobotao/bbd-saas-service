@@ -122,6 +122,7 @@
 			}
 		});
 	}
+	var wait=60;
 	function sendVerifyCode(){
 		var phone = $("#username").val();
 		if(phone==""){
@@ -147,6 +148,7 @@
 					$("#usernameFlag").val(0);
 				}else{
 					$("#usernameFlag").val(1);
+					time();
 					$.ajax({
 						url: "<c:url value="/sendVerifyCode?phone=" />"+phone,
 						type: 'GET',
@@ -171,6 +173,23 @@
 				alert_mine("错误","服务器繁忙，请稍后再试！");
 			}
 		});
+	}
+
+	function time() {
+		var o = $("#sendVerifyCode");
+		if (wait == 0) {
+			o.attr("disabled");
+			o.html("获取验证码");
+			wait = 60;
+		} else {
+			o.attr("disabled", true);
+			o.html("重新发送(" + wait + ")");
+			wait--;
+			setTimeout(function() {
+						time()
+					},
+					1000)
+		}
 	}
 
 	$("#saveUserBtn").click(function(){
