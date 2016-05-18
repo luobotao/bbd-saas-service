@@ -246,10 +246,14 @@ function iFrameHeight() {
 
     //console.log("ht===000="+ifm.height);
     if (ifm != null && subWeb != null) {
-        if(ifm.height < 1100){
+        /*if(ifm.height){
+            console.log("ht===000="+ifm.height);
+        }*/
+
+        if(ifm.height < 1110){
             ifm.height = subWeb.body.scrollHeight + 150;
         }else{
-            ifm.height = 1100;
+            ifm.height = 1110;
         }
     }
    // console.log("ht===="+ifm.height);
