@@ -181,10 +181,14 @@
 		var o = $("#sendVerifyCode");
 		if (wait == 0) {
 			o.removeAttr("disabled");
+			o.addClass("l");
+			o.removeClass("b");
 			o.html("获取验证码");
 			wait = 60;
 		} else {
 			o.attr("disabled", true);
+			o.removeClass("l");
+			o.addClass("b");
 			o.html("重新发送(" + wait + ")");
 			wait--;
 			setTimeout(function() {
