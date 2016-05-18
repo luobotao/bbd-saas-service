@@ -26,7 +26,7 @@
 			bottom: -6px;
 			left:32px;
 			/*left: 50%;
-            margin-left:-6px;*/
+			margin-left:-6px;*/
 			border: 6px solid transparent;
 			border-top: 6px solid rgba(4, 4, 4,0.7);
 			border-bottom: none;
@@ -432,7 +432,7 @@
 				areaMap.clearOverlays();
 				if (siteId == ""){//全部
 					/*$("#areaTool").hide();
-					$("#areaTool_bg").hide();*/
+					 $("#areaTool_bg").hide();*/
 					//更新配送区域
 					$("#radius").val(0);
 					var centerSite = dataObject.centerSite;
@@ -452,7 +452,7 @@
 					}
 				} else {
 					/*$("#areaTool").show();
-					$("#areaTool_bg").show();*/
+					 $("#areaTool_bg").show();*/
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -526,9 +526,30 @@
 	}
 
 	function newLabel(point, name){
+
 		var opts = {
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
+		}
+		var label = new BMap.Label(name, opts);  // 创建文本标注对象
+		label.setStyle({
+			color : "#fff",//"#fff"
+			border : "0",
+			fontSize : "18px",
+			fontFamily:"simhei",
+			backgroundColor:"rgba(4, 4, 4,0.7)",
+		});
+		return label;
+	}
+	function newEFenceLabel(point, name){
+		var index = 25;
+		/*if(){
+
+		 }*/
+
+		var opts = {
+			position : point,    // 指定文本标注所在的地理位置
+			offset   : new BMap.Size(-45, -20)    //设置文本偏移量
 		}
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
@@ -673,8 +694,8 @@
 			/*加载所有站点和其多边形围栏*/
 			this.loadAllSiteAndEFence();
 			/*if (this.myOverlay) {
-				this.loadMyOverlay();
-			};*/
+			 this.loadMyOverlay();
+			 };*/
 
 		},
 		loadOneSite: function(name, lng, lat){//加载站点标注
@@ -683,8 +704,8 @@
 			//marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			/*var label = newLabel(new BMap.Point(lng, lat), name);
-			this.map.addOverlay(label);               // 将label添加到地图中*/
+			var label = newLabel(new BMap.Point(lng, lat), name);
+			this.map.addOverlay(label);               // 将label添加到地图中
 		},
 		loadAllSiteAndEFence: function(){//加载站点标注
 			//加载所有站点
@@ -692,11 +713,11 @@
 				if (siteList != null) {
 					for (SiteVO site : siteList) {
 			%>
-					//加载站点
-					this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
-					//加载电子围栏
-					var efenceObj = new EFenceObj("<%=site.getName()%>", "<%=site.geteFence()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
-					efenceObj.loadDataAndShow(false);
+			//加载站点
+			this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
+			//加载电子围栏
+			var efenceObj = new EFenceObj("<%=site.getName()%>", "<%=site.geteFence()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
+			efenceObj.loadDataAndShow(false);
 			<%
                     }
                 }
@@ -861,16 +882,16 @@
 				//在多边形中心点显示站点名称
 				var bounds = myPolygon.getBounds();
 				var poi = bounds.getCenter();
-				var labelctt = newLabel(poi, name);
-				fenceObj.map.addOverlay(labelctt);
+				var efencelabel = newEFenceLabel(poi, name);
+				fenceObj.map.addOverlay(efencelabel);
 
 				//站点不在多边形中，在多边形中心点显示站点名称
-				var iscontain = bounds.containsPoint(new BMap.Point(lng, lat));
-				if(!iscontain){
-					var poi = bounds.getCenter();
-					var labelctt = newLabel(poi, name);
-					fenceObj.map.addOverlay(labelctt);
-				}
+				/*var iscontain = bounds.containsPoint(new BMap.Point(lng, lat));//不起作用
+				 if(!iscontain){
+				 var poi = bounds.getCenter();
+				 var efencelabel = newEFenceLabel(poi, name);
+				 fenceObj.map.addOverlay(efencelabel);
+				 }*/
 			});
 		}
 		this.loadDataAndShow = function(isEdit){
@@ -882,7 +903,7 @@
 
 	//配送范围-- 绘制电子地图-- 隐藏绘制-保存按钮 -- 默认全部，需要隐藏
 	/*$(".draw-btn").hide();
-	$(".bg-alpha").hide();*/
+	 $(".bg-alpha").hide();*/
 
 	//绘制电子围栏 -- 更改站点
 	$("#fenceSiteId").change(function(){
