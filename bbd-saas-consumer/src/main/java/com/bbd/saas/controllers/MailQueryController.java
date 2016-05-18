@@ -142,6 +142,11 @@ public class MailQueryController {
 				}
 				orderQueryVO.areaCodeList = areaCodeList;
 			}
+			//查询数据
+			List<Order> orderList = null;
+			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+				orderList = orderService.findOrders(orderQueryVO);
+			}
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			//设置包裹号,派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
@@ -235,7 +240,10 @@ public class MailQueryController {
 				orderQueryVO.areaCodeList = areaCodeList;
 			}
 			//查询数据
-			List<Order> orderList = orderService.findOrders(orderQueryVO);	
+			List<Order> orderList = null;
+			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+				orderList = orderService.findOrders(orderQueryVO);
+			}
 			//导出==数据写到Excel中并写入response下载
 			//表格数据
 			List<List<String>> dataList = new ArrayList<List<String>>();
