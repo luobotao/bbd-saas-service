@@ -161,7 +161,7 @@ public class MailMonitorController {
 		//转站从mongodb中toOtherSiteLog表中取数据，其他数据从mysql中的orderLog表中取数据
 		OrderMonitorVO orderMonitorVO = orderLogService.statisticOrderNum(areaCode, start, end);
 		//历史未到站订单数
-		orderMonitorVO.setNoArrive(orderService.getNoArriveHis(areaCode));
+		//orderMonitorVO.setNoArrive(orderService.getNoArriveHis(areaCode));
 		//查询转站数目
 		orderMonitorVO.setToOtherSite(toOtherSiteLogService.countByFromAreaCodeAndTime(areaCode, timeBetween));
 		return orderMonitorVO;
@@ -202,9 +202,9 @@ public class MailMonitorController {
 			}
 			//导出==数据写到Excel中并写入response下载
 			List<List<String>> dataList = objectToTable(monitorVOList);
-			//表头
-			String[] titles = {"站点", "未到站订单数", "已到站订单数", "未分派数", "已分派数", "签收数", "滞留数", "拒收数", "转站数"};
-			int[] colWidths = {10000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
+			//表头 "未到站订单数",  3000,
+			String[] titles = {"站点",  "已到站订单数", "未分派数", "已分派数", "签收数", "滞留数", "拒收数", "转站数"};
+			int[] colWidths = {10000,  3000, 3000, 3000, 3000, 3000, 3000, 3000};
 			ExportUtil exportUtil = new ExportUtil();
 			exportUtil.exportExcel("运单监控", dataList, titles, colWidths, response);
 		} catch (Exception e) {
@@ -219,7 +219,7 @@ public class MailMonitorController {
 			for (OrderMonitorVO monitorVO : monitorVOList) {
 				row = new ArrayList<String>();
 				row.add(monitorVO.getSiteName());//
-				row.add(monitorVO.getNoArrive() + "");//
+				//row.add(monitorVO.getNoArrive() + "");//
 				row.add(monitorVO.getArrived() + "");//
 				row.add(monitorVO.getNoDispatch() + "");//
 				row.add(monitorVO.getDispatched() + "");//
