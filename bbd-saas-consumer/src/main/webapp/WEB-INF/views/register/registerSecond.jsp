@@ -2,10 +2,10 @@
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
 	<title>注册页面</title>
-	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body>
 <!-- S nav -->

@@ -5,10 +5,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
 	<title>系统设置-用户管理页面</title>
-	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body class="fbg">
 <% 
@@ -127,12 +127,11 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 											if(user.getUserStatus()!=null && user.getUserStatus().getStatus()==1){
 
 												%>
-												<a href="javascript:void(0)" onclick="changeStatus(3,'','<%=user.getLoginName() %>')" class="orange ml6">停用</a>
-
+												<a href="javascript:void(0)" data-toggle='modal' data-target='#changeModal' onclick="changeStatus(3,'','<%=user.getLoginName() %>')" class="orange ml6">停用</a>
 												<%
 											}else{
 												%>
-												<a href="javascript:void(0)" onclick="changeStatus(1,'','<%=user.getLoginName() %>')" class="orange ml6">启用</a>
+												<a href="javascript:void(0)" data-toggle='modal' data-target='#changeModal' onclick="changeStatus(1,'','<%=user.getLoginName() %>')" class="orange ml6">启用</a>
 												<%
 											}
 											%>
@@ -220,7 +219,28 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 			</div>
 		</div>
 		<!--E 新建-->
-
+<!--S 修改用户状态-->
+<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="changeModalLabel" id="changeModal"
+	 aria-hidden="true">
+	<div class="modal-dialog b-modal-dialog middleS" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">确认修改</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				<input type="hidden" id="loginNameForChange" name="loginNameForChange"/>
+				<input type="hidden" id="statusForChange" name="statusForChange"/>
+				<input type="hidden" id="idForChange" name="idForChange"/>
+				<em class="f16" id="messageForConfirm">确认删除？删除站点将会将该站点下的所有用户删除？</em>
+				<div class="clearfix mt20">
+					<a href="javascript:void(0);" id="conFirmForChangeBtn" class="sbtn sbtn2 l col-md-12">确认</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 修改用户状态-->
         <!-- E pop -->
 <script type="text/javascript">
 //显示分页条
@@ -334,46 +354,44 @@ function checkLoginName(loginName) {
 
 
 function changeStatus(status,id,loginName){
-	
-	var ret = false; 
-	if(status==3){ 
+	$("#idForChange").val(id);
+	$("#statusForChange").val(status);
+	$("#loginNameForChange").val(loginName);
+	if(status==3){
 		//表示要停用
-		if(confirm('停用后将无法使用棒棒达客户端，确认停用吗？')){
-			ret = true; 
-		} 
+		$("#messageForConfirm").html('停用后将无法使用棒棒达客户端，确认停用吗？');
 	}else if(status==1){
 		//表示要启用
-		if(confirm('启用后将可以使用棒棒达客户端，确认启用吗？')){
-			ret = true; 
-		}
+		$("#messageForConfirm").html('启用后将可以使用棒棒达客户端，确认启用吗？');
 	}
-	
-	if(ret){
-		$.ajax({
-			type : "GET",  
-	        url : '<c:url value="/userManage/changestatus" />', 
-	        data : {  
-	            "id" : id,"status" : status,"loginName" : loginName  
-	        },
-	        success : function(data) {
-				if(data == 'true'){
-					//alert("更新成功");
-					gotoPage(0);
-				} else{
-					alert_mine("错误","站点状态无效,请核实");
-				}
-	        },
-	        error : function() {  
-	       		//alert("异常！");  
-	        	if(window.top==window.self){//不存在父页面
-					window.location.href="<c:url value="/login" />"
-				}else{
-					window.top.location.href="<c:url value="/login" />"
-				}
-	  		}    
-	    });
-	}
+
 }
+$("#conFirmForChangeBtn").click(function(){
+	$("#closeButton").click();
+	var id = $("#idForChange").val();
+	var status = $("#statusForChange").val();
+	var loginName=$("#loginNameForChange").val();
+	$.ajax({
+		type : "GET",
+		url : '<c:url value="/userManage/changestatus" />',
+		data : {
+			"id" : id,
+			"status" : status,
+			"loginName" : loginName
+		},
+		success : function(data) {
+			if(data == 'true'){
+				gotoPage(0);
+			} else{
+				alert_mine("错误","站点状态无效,请核实");
+			}
+		},
+		error : function() {
+			alert_mine("错误","请重新登录");
+
+		}
+	});
+});
 
 function delUser(loginName){
 	

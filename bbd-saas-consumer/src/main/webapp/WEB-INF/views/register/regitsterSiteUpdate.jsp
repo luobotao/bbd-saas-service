@@ -3,9 +3,9 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="com.bbd.saas.enums.SiteStatus" %>
 <%@ page import="com.bbd.saas.enums.SiteTurnDownReasson" %>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
-	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body >
 

@@ -118,7 +118,7 @@
 					</li>
 					<li class="pb20">
 						<i>　新密码：</i>
-						<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="密码"  />
+						<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="新密码"  />
 					</li>
 					<li class="pb20">
 						<i>确认密码：</i>
@@ -199,7 +199,7 @@
 		}
 		var password = $.trim($('input[name="password"]').val());
 		if(password==""){
-			outDiv("请输入密码");
+			outDiv("请输入新密码");
 			return false;
 		}
 		if(!pwdreg.test(password)){
@@ -208,11 +208,11 @@
 		}
 		var passwordC = $.trim($('input[name="passwordC"]').val());
 		if(passwordC==""){
-			outDiv("请确认密码");
+			outDiv("请输入确认密码");
 			return false;
 		}
 		if(passwordC!=password){
-			outDiv("两次密码不一致");
+			outDiv("新密码和确认密码不一致，请检查");
 			return false;
 		}
 		$("#userForm").ajaxSubmit({
@@ -222,7 +222,8 @@
 					$(".j-pwd-pop").modal("hide");
 					outDiv("密码修改成功");
 				}else{
-					alert_mine("错误","原始密码不正确");
+					outDiv("原始密码不正确功");
+					return false;
 				}
 
 			},

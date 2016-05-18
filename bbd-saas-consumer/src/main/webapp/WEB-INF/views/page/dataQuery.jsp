@@ -4,9 +4,9 @@
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
-	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <%
 	String proPath = request.getContextPath();

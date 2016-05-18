@@ -147,6 +147,10 @@ public class SiteManageController {
 				user.setUserStatus(UserStatus.INVALID);//设置为无效
 				postmanUser.setSta("3");//对应mongdb user表中的userStatus,默认3位无效
 			}else{//公司用户创建
+				Site siteTemp = siteService.findSiteByUserName(siteForm.getPhone());
+				if(siteTemp!=null){//更新操作
+					site = siteTemp;
+				}
 				BeanUtils.copyProperties(siteForm,site);
 				String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity());
 				site.setAreaCode(areaCode);

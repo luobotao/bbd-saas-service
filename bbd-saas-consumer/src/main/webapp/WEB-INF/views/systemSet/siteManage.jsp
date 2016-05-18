@@ -6,10 +6,10 @@
 <%@ page import="com.bbd.saas.enums.SiteTurnDownReasson" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
     <title>系统设置-站点管理</title>
-    <jsp:include page="../main.jsp" flush="true"/>
 </head>
 <body class="fbg">
 <%
@@ -510,12 +510,12 @@
         }
         var password = $("#password").val();
         if(password==""){
-            outDiv("请输入登录密码");
+            outDiv("请输入新密码");
             return false;
         }
         var passwordConfirm = $("#passwordConfirm").val();
         if(passwordConfirm==""){
-            outDiv("请确认登录密码");
+            outDiv("请输入确认密码");
             return false;
         }
 

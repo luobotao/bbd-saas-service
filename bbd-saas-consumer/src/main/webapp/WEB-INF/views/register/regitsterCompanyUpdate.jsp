@@ -1,9 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
-	<jsp:include page="../main.jsp" flush="true" />
 </head>
 <body >
 

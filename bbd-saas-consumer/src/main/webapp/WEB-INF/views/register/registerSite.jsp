@@ -2,10 +2,10 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
+<%@ include file="../main.jsp"%>
 <html>
 <head>
 	<title>站点注册</title>
-	<jsp:include page="../main.jsp" flush="true"/>
 </head>
 <body >
 <!-- S nav -->
