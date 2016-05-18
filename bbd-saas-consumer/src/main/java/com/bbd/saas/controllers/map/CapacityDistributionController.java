@@ -9,7 +9,6 @@ import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
-import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
@@ -153,7 +152,6 @@ public class CapacityDistributionController {
 		//map.put("centerSite", centerSite);
 	}
 
-
 	/**
 	 *  根据站点Ajax更新地图
 	 * @param siteId 站点Id
@@ -170,7 +168,7 @@ public class CapacityDistributionController {
 			User currUser = adminService.get(UserSession.get(request));
 			if(siteId != null && !"".equals(siteId)){//只查询一个站点
 				Site site = siteService.findSite(siteId);
-				List<User> userList = userService.findUsersBySite(site, UserRole.SENDMEM, UserStatus.VALID);//所有小件员
+				List<User> userList = userService.findUsersBySite(site, null, UserStatus.VALID);//所有小件员
 				if (userList != null && userList.size() >0){
 					List<Integer> postmanIdList = new ArrayList<Integer>();
 					for (User user : userList){
