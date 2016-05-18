@@ -209,13 +209,13 @@
 	function getRandom(numStr){
 		var flag = Math.round(Math.random() * 2);
 		var num = 0;
-		var random = Math.random() * 0.0005;
+		var random = Math.random() * 0.005;
 		if(flag > 1){
 			num = parseFloat(numStr) + random;
 		}else{
 			num = parseFloat(numStr) - random;
 		}
-		console.log("  numStr == "+ numStr + "   random===="+ random + " num ==="+num);
+		//console.log("  numStr == "+ numStr + "   random===="+ random + " num ==="+num);
 		return num;
 	}
 	//展示配送范围
@@ -233,7 +233,7 @@
 		if (flag == 0){//站点
 			iconPic = "b_pos.png";
 		}
-		console.log("name=====" + name + "      " + point.lng + "  ====lng===lat====" + point.lat);
+		//console.log("name=====" + name + "      " + point.lng + "  ====lng===lat====" + point.lat);
 		var icon = new BMap.Icon("<%=path%>/resources/images/" + iconPic, new BMap.Size(64,64));
 		var marker = new BMap.Marker(point,{icon:icon});
 		var opts = {
