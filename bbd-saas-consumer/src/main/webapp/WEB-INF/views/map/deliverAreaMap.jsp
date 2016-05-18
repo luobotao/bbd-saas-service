@@ -32,6 +32,21 @@
 			border-bottom: none;
 			z-index: 1;
 		}
+		.prompt-txt {
+			display: block;
+			min-width: 300px;
+			padding: 0 20px;
+			height: 50px;
+			line-height: 48px;
+			font-size: 20px;
+			color: #3d3838;
+			text-align: center;
+			background: #ffc800;
+			border: 1px solid #fc9e28;
+			left: 60%;
+			margin-left: 80px;
+			z-index: 1060;
+		}
 		.ckbox {
 			background: rgb(255, 255, 255);
 			cursor: pointer;
@@ -405,7 +420,7 @@
 		var siteId = $("#siteId").val();
 		var radius = $("#radius").val();
 		if (siteId == "") {//全部
-			outDiv("请选择一个站点。");
+			outDiv("请选择一个站点");
 			return;
 		}
 		showRadiusChangeMap(siteId, radius);
@@ -460,7 +475,7 @@
 				}
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试！");
+				outDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -555,7 +570,7 @@
 				showOneSiteArea(site, radius);
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试！");
+				outDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -564,12 +579,12 @@
 	$("#saveSiteBtn").click(function(){
 		var siteId = $("#siteId").val();
 		if(siteId == "" || siteId == null){
-			outDiv("请先选择站点。");
+			outDiv("请先选择站点");
 			return false;
 		}
 		var radiusVal = $("#radius").val();
 		if(radiusVal==0){
-			outDiv("请选择站点配送范围。");
+			outDiv("请选择站点配送范围");
 			return false;
 		}
 		$.ajax({
@@ -583,7 +598,7 @@
 				//window.location.href="${ctx}/deliverArea/map/1";
 			},
 			error: function(){
-				outDiv('服务器繁忙，请稍后再试！');
+				outDiv('服务器繁忙，请稍后再试');
 			}
 		});
 	});
@@ -624,14 +639,6 @@
 		drawingManager: '',
 		styleOptions: {
 			strokeColor:"red",      //边线颜色。
-			fillColor:"red",        //填充颜色。当参数为空时，圆形将没有填充效果。
-			strokeWeight: 3,        //边线的宽度，以像素为单位。
-			strokeOpacity: 0.8,     //边线透明度，取值范围0 - 1。
-			fillOpacity: 0.3,       //填充的透明度，取值范围0 - 1。
-			strokeStyle: 'solid'    //边线的样式，solid或dashed。
-		},
-		notEditOptions: {
-			strokeColor:"black",      //边线颜色。
 			fillColor:"red",        //填充颜色。当参数为空时，圆形将没有填充效果。
 			strokeWeight: 3,        //边线的宽度，以像素为单位。
 			strokeOpacity: 0.8,     //边线透明度，取值范围0 - 1。
@@ -968,7 +975,7 @@
 				}
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试！");
+				outDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -976,7 +983,7 @@
 	$("#formBtn").click(function () {
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			outDiv("请先选择站点。");
+			outDiv("请先选择站点");
 			return;
 		}
 		var jsonStr = "";
@@ -1019,7 +1026,7 @@
 					}
 				},
 				error: function(){
-					outDiv('服务器繁忙，请稍后再试！');
+					outDiv('服务器繁忙，请稍后再试');
 				}
 			});
 			/*$("#jsonStr").val(jsonStr);
@@ -1053,7 +1060,7 @@
 	function openDraw(){
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			outDiv("请先选择站点。");
+			outDiv("请先选择站点");
 			return;
 		}
 		/*var overlays = fenceObj.overlays;
@@ -1107,14 +1114,13 @@
 		var siteId = $("#keywordSiteId").val();
 		//console.log("siteId====="+siteId);
 		if(siteId == ""){//全部
-			outDiv("请先选择站点。");
+			outDiv("请先选择站点");
 			return;
 		}
 		$(".j-import-pop").modal();
 
 
 	});
-	$(".spinner").modal('show');
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');
@@ -1214,7 +1220,7 @@
 				loadTableHtml(pageTable);
 			},
 			error : function() {
-				//outDiv("加载分页数据异常！");
+				//outDiv("加载分页数据异常");
 				if(window.top==window.self){//不存在父页面
 					window.location.href="<c:url value="/login" />"
 				}else{
@@ -1274,7 +1280,7 @@
 	}
 	function deleteKeyword(id){
 		if(id == null || id == ""){
-			outDiv("关键词无编号，无法删除。")
+			outDiv("关键词无编号，无法删除")
 			return ;
 		}
 		if(confirm('确认删除？')){
@@ -1303,13 +1309,13 @@
 					console.log("start===");
 					loadTableHtml(dataObject.pageList);
 				}else{
-					outDiv("删除失败。");
+					outDiv("删除失败");
 				}
 				$(".spinner").modal('hide');
 			},
 			error : function() {
 				$(".spinner").modal('hide');
-				outDiv("服务器繁忙，请稍候再试。");
+				outDiv("服务器繁忙，请稍候再试");
 			}
 		});
 	}
