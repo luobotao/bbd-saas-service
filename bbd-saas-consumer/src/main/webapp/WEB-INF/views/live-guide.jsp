@@ -618,6 +618,7 @@
 		$("#querySiteBtn").click(function(){
 			console.log("query site start");
 			$(".table-responsive").addClass("guide-tab");
+			$("#page").val("0");
 			querySiteKey();
 
 		})

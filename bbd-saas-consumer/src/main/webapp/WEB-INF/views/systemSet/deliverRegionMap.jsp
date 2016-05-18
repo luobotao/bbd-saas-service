@@ -366,6 +366,7 @@
 		format: 'YYYY/MM/DD'
 	});
 	$("#querySiteBtn").click(function(){
+		$("#page").val("0");
 		$("#siteKeywordForm").submit();
 	})
 	//批量删除
