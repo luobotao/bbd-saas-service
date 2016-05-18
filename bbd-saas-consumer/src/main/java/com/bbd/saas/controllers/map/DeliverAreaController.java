@@ -131,7 +131,6 @@ public class DeliverAreaController {
 				//设置站点名称
 				List<SiteKeyword> keywordList = siteKeywordPage.getList();
 				if (keywordList != null && keywordList.size() > 0){
-					System.out.println("count====="+keywordList.size());
 					String siteName = null;
 					for(SiteKeyword siteKeyword : keywordList){
 						Site site = siteService.findSite(siteKeyword.getSiteId());
@@ -359,7 +358,6 @@ public class DeliverAreaController {
 		//设置站点名称
 		List<SiteKeyword> keywordList = siteKeywordPage.getList();
 		if (keywordList != null && keywordList.size() > 0){
-			System.out.println("count====="+keywordList.size());
 			String siteName = null;
 			for(SiteKeyword siteKeyword : keywordList){
 				Site site = siteService.findSite(siteKeyword.getSiteId());
