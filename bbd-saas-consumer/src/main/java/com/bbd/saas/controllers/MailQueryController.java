@@ -75,21 +75,26 @@ public class MailQueryController {
 			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
-			for(Order order : orderPage.getDatas()){
-				String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
-				order.setParcelCode(parcelCodeTemp);//设置包裹号
+			if(orderPage != null){
+				for(Order order : orderPage.getDatas()){
+					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
+					order.setParcelCode(parcelCodeTemp);//设置包裹号
+				}
+				//当前登录的用户信息
+				User currUser = adminService.get(UserSession.get(request));
+				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+				statusList.add(SiteStatus.APPROVE);
+				statusList.add(SiteStatus.INVALID);
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
+				logger.info("=====运单查询页面列表===" + orderPage);
+				model.addAttribute("orderPage", orderPage);
+				//model.addAttribute("arriveBetween", arriveBetween);
+				model.addAttribute("siteList", siteVOList);
+				return "page/mailQuery";
+			}else{
+				orderPage = new PageModel<Order>();
+				model.addAttribute("orderPage", orderPage);
 			}
-			//当前登录的用户信息
-			User currUser = adminService.get(UserSession.get(request));
-			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-			statusList.add(SiteStatus.APPROVE);
-			statusList.add(SiteStatus.INVALID);
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
-			logger.info("=====运单查询页面列表===" + orderPage);
-			model.addAttribute("orderPage", orderPage);
-			//model.addAttribute("arriveBetween", arriveBetween);
-			model.addAttribute("siteList", siteVOList);
-			return "page/mailQuery";
 		} catch (Exception e) {
 			logger.error("===跳转到运单查询页面==出错 :" + e.getMessage());
 		}
