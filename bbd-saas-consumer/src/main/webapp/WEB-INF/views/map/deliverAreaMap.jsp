@@ -1173,6 +1173,14 @@
 			//更新分页条
 			var pageStr = paginNav(pageTable.page, pageTable.pageNum, pageTable.count);
 			$("#pagin").html(pageStr);
+			$("input[type='checkbox']").iCheck({
+				checkboxClass : 'icheckbox_square-blue'
+			});
+			$("#selectAll").on('ifUnchecked', function() {
+				$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
+			}).on('ifChecked', function() {
+				$("input[type='checkbox']", "#dis-table").iCheck("check");
+			});
 		}
 
 	}
