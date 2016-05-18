@@ -75,7 +75,7 @@ public class MailQueryController {
 			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
-			if(orderPage != null){
+			if(orderPage != null && orderPage.getDatas() != null){
 				for(Order order : orderPage.getDatas()){
 					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
 					order.setParcelCode(parcelCodeTemp);//设置包裹号
@@ -117,7 +117,7 @@ public class MailQueryController {
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
 	public PageModel<Order> getList(Integer pageIndex, String areaCode, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
 		//查询数据
-		PageModel<Order> orderPage = null;
+		PageModel<Order> orderPage = new PageModel<Order>();
 		try {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
