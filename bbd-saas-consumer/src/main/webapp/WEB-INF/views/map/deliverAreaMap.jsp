@@ -405,7 +405,7 @@
 		var siteId = $("#siteId").val();
 		var radius = $("#radius").val();
 		if (siteId == "") {//全部
-			alert("请选择一个站点。");
+			outDiv("请选择一个站点。");
 			return;
 		}
 		showRadiusChangeMap(siteId, radius);
@@ -460,7 +460,7 @@
 				}
 			},
 			error : function() {
-				alert("服务器繁忙，请稍后再试！");
+				outDiv("服务器繁忙，请稍后再试！");
 			}
 		});
 	}
@@ -555,7 +555,7 @@
 				showOneSiteArea(site, radius);
 			},
 			error : function() {
-				alert("服务器繁忙，请稍后再试！");
+				outDiv("服务器繁忙，请稍后再试！");
 			}
 		});
 	}
@@ -564,12 +564,12 @@
 	$("#saveSiteBtn").click(function(){
 		var siteId = $("#siteId").val();
 		if(siteId == "" || siteId == null){
-			alert("请先选择站点。");
+			outDiv("请先选择站点。");
 			return false;
 		}
 		var radiusVal = $("#radius").val();
 		if(radiusVal==0){
-			alert("请选择站点配送范围。");
+			outDiv("请选择站点配送范围。");
 			return false;
 		}
 		$.ajax({
@@ -583,7 +583,7 @@
 				//window.location.href="${ctx}/deliverArea/map/1";
 			},
 			error: function(){
-				alert('服务器繁忙，请稍后再试！');
+				outDiv('服务器繁忙，请稍后再试！');
 			}
 		});
 	});
@@ -704,8 +704,7 @@
 					this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
 					//加载电子围栏
 					var efenceObj = new EFenceObj("<%=site.getName()%>", "<%=site.geteFence()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
-					efenceObj.loadDataAndShow();
-			/*addOneEFenceData("<%=site.geteFence()%>");*/
+					efenceObj.loadDataAndShow(false);
 			<%
                     }
                 }
@@ -773,7 +772,7 @@
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
-				alert('不能再删除, 请保留3个以上的点.');
+				outDiv('不能再删除, 请保留3个以上的点.');
 				return;
 			}
 			this.overlaysCache.splice(i,1);
@@ -877,7 +876,7 @@
 				this.pointArray.push(barr);
 			}
 		}
-		this.show = function(){
+		this.show = function(isEdit){
 			if(this.pointArray == null || this.pointArray == ""){
 				return;
 			}
@@ -888,18 +887,20 @@
 			this.pointArray.forEach(function(e){
 				var myPolygon = new BMap.Polygon(e);
 				//this.myPolygon = myPolygon;
-				try{
-					myPolygon.enableEditing();
-					myPolygon.enableMassClear();
-				}catch(e){}
-				myPolygon.addEventListener("lineupdate",function(e){
-					fenceMap.showLatLon(e.currentTarget.ro);
-				});
-				myPolygon.addEventListener("rightclick",function(e){
-					if(confirm("确认删除该电子围栏？")){
-						fenceMap.delPolygon(e);
-					}
-				});
+				if(isEdit){//单个站点可编辑
+					try{
+						myPolygon.enableEditing();
+						myPolygon.enableMassClear();
+					}catch(e){}
+					myPolygon.addEventListener("lineupdate",function(e){
+						fenceMap.showLatLon(e.currentTarget.ro);
+					});
+					myPolygon.addEventListener("rightclick",function(e){
+						if(confirm("确认删除该电子围栏？")){
+							fenceMap.delPolygon(e);
+						}
+					});
+				}
 				fenceMap.overlays.push(myPolygon);//可删除
 				fenceMap.map.addOverlay(myPolygon);
 				//在多边形中心点显示站点名称
@@ -961,7 +962,7 @@
 							fenceMap.loadOneSite(site.name, site.lng, site.lat);
 							//加载电子围栏
 							var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
-							efenceObj.loadDataAndShow();
+							efenceObj.loadDataAndShow(false);
 							/*addOneEFenceData(site.eFence);*/
 						});
 					}
@@ -982,7 +983,7 @@
 
 					//加载电子围栏
 					var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
-					efenceObj.loadDataAndShow();
+					efenceObj.loadDataAndShow(true);
 					/*
 					 addOneEFenceData(site.eFence);
 					 console.log(fenceArray);
@@ -991,7 +992,7 @@
 				}
 			},
 			error : function() {
-				alert("服务器繁忙，请稍后再试！");
+				outDiv("服务器繁忙，请稍后再试！");
 			}
 		});
 	}
@@ -999,7 +1000,7 @@
 	$("#formBtn").click(function () {
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			alert("请先选择站点。");
+			outDiv("请先选择站点。");
 			return;
 		}
 		var jsonStr = "";
@@ -1034,7 +1035,7 @@
 				success: function(data){
 					//console.log(data);
 					if(data == "success"){
-						alert("提交成功");
+						outDiv("提交成功");
 						//重新加载地图
 						eFenceMapChangeSite(siteId);
 					}else{
@@ -1042,13 +1043,13 @@
 					}
 				},
 				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+					outDiv('服务器繁忙，请稍后再试！');
 				}
 			});
 			/*$("#jsonStr").val(jsonStr);
 			 $('#allLaysForm').submit();*/
 		} else {
-			alert("请先绘制电子围栏");
+			outDiv("请先绘制电子围栏");
 		}
 	});
 
@@ -1076,7 +1077,7 @@
 	function openDraw(){
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			alert("请先选择站点。");
+			outDiv("请先选择站点。");
 			return;
 		}
 		/*var overlays = fenceMap.overlays;
@@ -1124,7 +1125,7 @@
 		var siteId = $("#keywordSiteId").val();
 		//console.log("siteId====="+siteId);
 		if(siteId == ""){//全部
-			alert("请先选择站点。");
+			outDiv("请先选择站点。");
 			return;
 		}
 		$(".j-import-pop").modal();
@@ -1198,7 +1199,7 @@
 		});
 		var delIds = id_array.join(',');
 		if(delIds==""){
-			alert("请选择要删除的站点关键词");
+			outDiv("请选择要删除的站点关键词");
 			return false;
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
@@ -1230,7 +1231,7 @@
 				loadTableHtml(pageTable);
 			},
 			error : function() {
-				//alert("加载分页数据异常！");
+				//outDiv("加载分页数据异常！");
 				if(window.top==window.self){//不存在父页面
 					window.location.href="<c:url value="/login" />"
 				}else{
@@ -1290,7 +1291,7 @@
 	}
 	function deleteKeyword(id){
 		if(id == null || id == ""){
-			alert("关键词无编号，无法删除。")
+			outDiv("关键词无编号，无法删除。")
 			return ;
 		}
 		if(confirm('确认删除？')){
@@ -1319,13 +1320,13 @@
 					console.log("start===");
 					loadTableHtml(dataObject.pageList);
 				}else{
-					alert("删除失败。");
+					outDiv("删除失败。");
 				}
 				$(".spinner").modal('hide');
 			},
 			error : function() {
 				$(".spinner").modal('hide');
-				alert("服务器繁忙，请稍候再试。");
+				outDiv("服务器繁忙，请稍候再试。");
 			}
 		});
 	}
