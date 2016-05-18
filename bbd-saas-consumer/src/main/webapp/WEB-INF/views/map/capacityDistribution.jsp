@@ -92,8 +92,12 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
+	var defaultLng = ${centerSite.lng};
+	var defaultLat = ${centerSite.lat};
 	// 百度地图API功能
 	var capamap = new BMap.Map("capamap", {enableMapClick:false,minZoom:8});
+	//显示全部站点 -- 地图中心为公司经纬度
+	var defaultPoint = new BMap.Point(${centerSite.lng}, ${centerSite.lat});
 	$(document).ready(function() {
 		//显示站点和派件员信息
 		initMap();
@@ -147,10 +151,16 @@
 			success : function(dataObject) {//返回数据
 				capamap.clearOverlays();
 				if (siteId == ""){//全部
-					showJsonMap(dataObject.centerSite, dataObject.siteList, dataObject.userList);
+					var center = dataObject.centerSite
+					defaultLng = center.lng;
+					defaultLat = center.lat;
+					showJsonMap(center, dataObject.siteList, dataObject.userList);
 				}else {
 					//设置中心位置和显示派件员
-					showJsonMap(dataObject.site, null, dataObject.userList);
+					var site = dataObject.site;
+					defaultLng = site.lng;
+					defaultLat = site.lat;
+					showJsonMap(site, null, dataObject.userList);
 					//站点
 					var site = dataObject.site;
 					showOnePoint(site.name, site.lng, site.lat, 0);
@@ -182,6 +192,7 @@
 				showOnePoint(site.name, site.lng, site.lat, 0);
 			}
 		}
+
 		//显示派件员
 		if (userList != null) {
 			var user = null;
@@ -189,27 +200,41 @@
 				user = userList[i];
 				if(isShowAll){//派件员需要显示站点名称
 					showOnePoint(user.realName, user.lng, user.lat, 1, user.siteName);
-				}else {
+				}else {//单个站点
 					showOnePoint(user.realName, user.lng, user.lat, 1);
 				}
-
 			}
 		}
+	}
+	function getRandom(numStr){
+		var flag = Math.round(Math.random() * 2);
+		var num = 0;
+		var random = Math.random() * 0.0005;
+		if(flag > 1){
+			num = parseFloat(numStr) + random;
+		}else{
+			num = parseFloat(numStr) - random;
+		}
+		console.log("  numStr == "+ numStr + "   random===="+ random + " num ==="+num);
+		return num;
 	}
 	//展示配送范围
 	//flag-0:站点，flag-1:派件员
 	//siteName:查看全部的时候需要显示派件员站点名称
 	function showOnePoint(name, lng, lat, flag, siteName){
+		var point = null;
+		//经纬度为空，显示在公司周围或者站点周围
 		if(lng == null || lng == "0.000000" || lng == "null" || lat == null || lat == "null" || lat == "0.000000" ){
-			return null;
+			point = new BMap.Point(getRandom(defaultLng), getRandom(defaultLat));
+		}else{
+			point = new BMap.Point(lng, lat);
 		}
 		var iconPic = "courier.png";//派件员
 		if (flag == 0){//站点
 			iconPic = "b_pos.png";
 		}
-		console.log("name=====" + name + "      " + flag + "  ====flag===iconPic====" + iconPic);
+		console.log("name=====" + name + "      " + point.lng + "  ====lng===lat====" + point.lat);
 		var icon = new BMap.Icon("<%=path%>/resources/images/" + iconPic, new BMap.Size(64,64));
-		var point = new BMap.Point(lng, lat);
 		var marker = new BMap.Marker(point,{icon:icon});
 		var opts = {
 			position : point,    // 指定文本标注所在的地理位置

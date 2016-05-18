@@ -202,7 +202,9 @@ public class SiteServiceImpl implements SiteService {
     }
 	@Override
 	public List<SiteVO> findAllOtherSiteVOList(Site selfSite) {
-		List<Site> siteList = this.siteDao.selectByCompanyId(selfSite.getCompanyId(), SiteStatus.APPROVE);
+        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+        statusList.add(SiteStatus.APPROVE);
+        List<Site> siteList = this.siteDao.selectByCompanyId(selfSite.getCompanyId(), statusList);
 		String areaCode = selfSite.getAreaCode();
 		if(areaCode == null){
 			areaCode = "";
@@ -222,8 +224,8 @@ public class SiteServiceImpl implements SiteService {
 	}
 
 	@Override
-	public List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status) {
-		List<Site> siteList = this.siteDao.selectByCompanyId(companyId, status);
+	public List<SiteVO> findAllSiteVOByCompanyIdAndStatusList(String companyId, List<SiteStatus> statusList) {
+        List<Site> siteList = this.siteDao.selectByCompanyId(companyId, statusList);
 		List<SiteVO> siteVoList = null;
 		if(siteList != null && siteList.size() > 0){
 			siteVoList = new ArrayList<SiteVO>();
@@ -234,6 +236,21 @@ public class SiteServiceImpl implements SiteService {
 		}
 		return siteVoList;
 	}
+    @Override
+    public List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status) {
+        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+        statusList.add(status);
+        List<Site> siteList = this.siteDao.selectByCompanyId(companyId, statusList);
+        List<SiteVO> siteVoList = null;
+        if(siteList != null && siteList.size() > 0){
+            siteVoList = new ArrayList<SiteVO>();
+            SiteVO siteVo = null;
+            for(Site site : siteList){
+                siteVoList.add(siteToSiteVO(site));
+            }
+        }
+        return siteVoList;
+    }
 
 	@Override
 	public List<Site> findAllSiteList() {

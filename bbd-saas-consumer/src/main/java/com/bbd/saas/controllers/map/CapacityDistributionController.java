@@ -69,6 +69,7 @@ public class CapacityDistributionController {
 			List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
 			//设置站点名称
 			setUserSiteName(userVOList, currUser.getCompanyId());
+			//setUserSiteName(userVOList, null);
 			logger.info("=====运力分布站点===" + siteVOList);
 			String companyAddress = "";
 			Postcompany company = new Postcompany();
@@ -105,10 +106,15 @@ public class CapacityDistributionController {
 			for (UserVO userVO : userVOList){
 				if(!StringUtils.isEmpty(userVO.getPostManId())){
 					postManIdList.add(userVO.getPostManId());
+					//System.out.println("postmanId ==入参== " + userVO.getPostManId());
 				}
 			}
 			Map<Long, String> map = userService.findUserSiteMap(postManIdList, companyId);
+			/*for (Map.Entry<Long, String> entry : map.entrySet()) {
+				System.out.println("postmanId = " + entry.getKey() + ", siteName = " + entry.getValue());
+			}*/
 			for (UserVO userVO : userVOList){
+				logger.info("username="+userVO.getRealName() + "  siteName==="+map.get(userVO.getPostManId()));
 				userVO.setSiteName(map.get(userVO.getPostManId()));
 			}
 		}
@@ -173,7 +179,7 @@ public class CapacityDistributionController {
 					List<UserVO> userVOList = postmanUserService.findLatAndLngByIds(postmanIdList);
 					//设置站点名称
 					setUserSiteName(userVOList, currUser.getCompanyId());
-					map.put("userList", userList);
+					map.put("userList", userVOList);
 					logger.error("==all===userVOList:" + userVOList.size());
 				}
 				map.put("site", site);

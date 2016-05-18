@@ -100,6 +100,14 @@ public interface SiteService {
      * @date 2016/5/5 17:59
      * @auth liyanlei
      */
+    List<SiteVO> findAllSiteVOByCompanyIdAndStatusList(String companyId, List<SiteStatus> statusList);
+    /**
+     * 查询指定公司下的所有站点
+     * @param companyId 公司名称
+     * @return
+     * @date 2016/5/5 17:59
+     * @auth liyanlei
+     */
     List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status);
 
     /**

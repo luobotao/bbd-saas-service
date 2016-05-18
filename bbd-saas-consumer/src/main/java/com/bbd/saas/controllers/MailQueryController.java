@@ -6,6 +6,7 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
@@ -78,7 +79,10 @@ public class MailQueryController {
 			}
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			statusList.add(SiteStatus.INVALID);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
 			logger.info("=====运单查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
@@ -116,7 +120,10 @@ public class MailQueryController {
 			status = Numbers.defaultIfNull(status, -1);
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId(), null);
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			statusList.add(SiteStatus.INVALID);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(user.getCompanyId(), statusList);
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
@@ -213,7 +220,10 @@ public class MailQueryController {
 			//公司查询
 			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
 				//同一个公司的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(user.getCompanyId(), null);
+				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+				statusList.add(SiteStatus.APPROVE);
+				statusList.add(SiteStatus.INVALID);
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(user.getCompanyId(), statusList);
 				List<String> areaCodeList = new ArrayList<String>();
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){

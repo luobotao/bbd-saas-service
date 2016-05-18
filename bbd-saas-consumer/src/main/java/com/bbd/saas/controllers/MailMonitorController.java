@@ -190,7 +190,7 @@ public class MailMonitorController {
 				//当前登录的用户信息
 				User currUser = adminService.get(UserSession.get(request));
 				//当前公司下的所有站点
-				List<Site> siteList = siteService.findSiteListByCompanyId(currUser.getCompanyId(), null);
+				List<Site> siteList = siteService.findSiteListByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 				if (siteList != null && siteList.size() > 0) {
 					//列表数据
 					for (Site site : siteList) {
