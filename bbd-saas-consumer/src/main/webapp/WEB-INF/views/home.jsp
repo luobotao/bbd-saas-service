@@ -22,6 +22,29 @@
 	</script>
 </head>
 <body>
+
+<!--S 提示信息-->
+<div class="b-prompt">
+	<i class="b-prompt-txt">用户名不存在</i>
+</div>
+<!--E 提示信息-->
+<!-- S alert -->
+<div class="j-alert-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="margin-left: -110px">
+	<div class="modal-dialog b-modal-dialog middleS" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc j-c-tie">提示信息</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				<em class="f16 j-alert-con">alert内容</em>
+				<div class="clearfix mt20">
+					<a href="javascript:void(0);" class="sbtn sbtn2 l col-md-12" data-dismiss="modal">确认</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <% 
 User user = (User)request.getAttribute("user");
 %>
@@ -214,28 +237,6 @@ User user = (User)request.getAttribute("user");
 <!--E 修改密码-->
 
 
-<!--S 提示信息-->
-<div class="b-prompt">
-	<i class="b-prompt-txt">用户名不存在</i>
-</div>
-<!--E 提示信息-->
-<!-- S alert -->
-<div class="j-alert-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog b-modal-dialog middleS" role="document">
-		<div class="modal-content">
-			<div class="modal-header b-modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<h4 class="modal-title tc j-c-tie">提示信息</h4>
-			</div>
-			<div class="modal-body b-modal-body">
-				<em class="f16 j-alert-con">alert内容</em>
-				<div class="clearfix mt20">
-					<a href="javascript:void(0);" class="sbtn sbtn2 l col-md-12" data-dismiss="modal">确认</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 <!-- E alert -->
 <footer class="container tc">
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
@@ -289,6 +290,8 @@ User user = (User)request.getAttribute("user");
 			}
 		});
 	})
+
 </script>
 </body>
+
 </html>
