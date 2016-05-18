@@ -146,11 +146,14 @@ public class MailQueryController {
 					}
 				}
 				orderQueryVO.areaCodeList = areaCodeList;
-			}
-			//查询数据
-			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+				//查询数据
+				if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
+					orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+				}
+			}else{
 				orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			}
+
 			//设置包裹号,派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();
