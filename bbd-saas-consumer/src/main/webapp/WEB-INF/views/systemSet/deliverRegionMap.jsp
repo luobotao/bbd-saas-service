@@ -721,10 +721,11 @@
 		var index=$(this).parent().index();
 		if(index == 1){
 			window.setTimeout(function(){
-				bmap.map.panTo(new BMap.Point(${site.lng},${site.lat}));
+				bmap.map.reset();
 			}, 500);
 		}
-	})
+	});
+
 
 	var winhei2=window.screen.availHeight;
 	var inithei=$("#allmap").height();
