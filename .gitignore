@@ -16,7 +16,8 @@ conf/evolutions
 */target
 .myumldata
 .tern-project
-.shardingContext.xml
-.mongo-conf.properties
+shardingContext.xml
+mongo-conf.properties
 .jquery.cityselect.js
+
 

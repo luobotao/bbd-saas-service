@@ -220,7 +220,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 		</div>
 		<!--E 新建-->
 <!--S 修改用户状态-->
-<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="changeModalLabel" id="changeModal"
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="changeModalLabel" id="changeModal"
 	 aria-hidden="true">
 	<div class="modal-dialog b-modal-dialog middleS" role="document">
 		<div class="modal-content">
@@ -311,9 +311,9 @@ function getRowHtml(data){
 	
 	
 	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(3,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
+		row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#changeModal' onclick=\"changeStatus(3,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
 	}else{
-		row += "<a href='javascript:void(0)' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
+		row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#changeModal' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
 	}
 
 	row += "</tr>";

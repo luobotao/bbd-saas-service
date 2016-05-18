@@ -92,12 +92,12 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-	var defaultLng = ${centerSite.lng};
-	var defaultLat = ${centerSite.lat};
+	var defaultLng = "${centerSite.lng}";
+	var defaultLat = "${centerSite.lat}";
 	// 百度地图API功能
 	var capamap = new BMap.Map("capamap", {enableMapClick:false,minZoom:8});
 	//显示全部站点 -- 地图中心为公司经纬度
-	var defaultPoint = new BMap.Point(${centerSite.lng}, ${centerSite.lat});
+	var defaultPoint = new BMap.Point("${centerSite.lng}", "${centerSite.lat}");
 	$(document).ready(function() {
 		//显示站点和派件员信息
 		initMap();
@@ -109,8 +109,7 @@
 	});
 	//默认展示全部站点和所有派件员
 	function initMap(){
-		console.log("centerSite.lng=" + ${centerSite.lng} +"  centerSite.lat="+${centerSite.lat});
-		var center = new BMap.Point(${centerSite.lng}, ${centerSite.lat});
+		var center = new BMap.Point("${centerSite.lng}", "${centerSite.lat}");
 		var radiusVal = 11;//显示大小级别--单个站点
 		if (siteId == ""){//显示大小级别-全部
 			radiusVal = 6;

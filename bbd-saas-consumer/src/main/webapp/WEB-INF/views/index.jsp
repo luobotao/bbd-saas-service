@@ -168,6 +168,7 @@
 <script>
 	$('.b-sidebar .menu li').click(function() {
 		$(this).addClass('curr').siblings('li').removeClass('curr');
+		$(this).addClass('side-cur').siblings('li').removeClass('side-cur');
 	});
 	var typ="${typ}";
 	if(typ!=null && typ!=""){
@@ -177,6 +178,7 @@
 				if ($(this).parents('ul.menu').css("display") == "block") {//menu有dn
 					$(this).parents('ul.menu').slideUp();
 				} else {//menu没有dn
+					$(this).addClass("side-cur").siblings().removeClass("side-cur");
 					$(this).parents('ul.menu').prev().addClass("side-cur");
 					$(this).parents('ul.menu').slideDown();
 				}
@@ -222,7 +224,7 @@
 					$(".j-pwd-pop").modal("hide");
 					outDiv("密码修改成功");
 				}else{
-					outDiv("原始密码不正确功");
+					outDiv("原始密码不正确");
 					return false;
 				}
 

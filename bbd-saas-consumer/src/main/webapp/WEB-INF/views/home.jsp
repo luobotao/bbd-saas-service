@@ -255,7 +255,7 @@ User user = (User)request.getAttribute("user");
 		}
 		var password = $.trim($('input[name="password"]').val());
 		if(password==""){
-			outDiv("请输入密码");
+			outDiv("请输入新密码");
 			return false;
 		}
 		if(!pwdreg.test(password)){
@@ -264,11 +264,11 @@ User user = (User)request.getAttribute("user");
 		}
 		var passwordC = $.trim($('input[name="passwordC"]').val());
 		if(passwordC==""){
-			outDiv("请确认密码");
+			outDiv("请输入确认密码");
 			return false;
 		}
 		if(passwordC!=password){
-			outDiv("两次密码不一致");
+			outDiv("新密码和确认密码不一致，请检查");
 			return false;
 		}
 		$("#userForm").ajaxSubmit({
@@ -279,7 +279,8 @@ User user = (User)request.getAttribute("user");
 					outDiv("密码修改成功");
 					location.reload();
 				}else{
-					alert_mine("错误","原始密码不正确");
+					outDiv("原始密码不正确");
+					return false;
 				}
 
 			},

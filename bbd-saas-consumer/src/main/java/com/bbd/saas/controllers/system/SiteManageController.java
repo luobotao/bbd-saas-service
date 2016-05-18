@@ -70,11 +70,17 @@ public class SiteManageController {
 	@ResponseBody
 	@RequestMapping(value="/checkSiteWithLoginName", method=RequestMethod.GET)
 	public Boolean checkSiteWithUsername(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
-		User user = userService.findUserByLoginName(loginName);
-		if(user==null)
-			return true;
-		else
+		try{
+			User user = userService.findUserByLoginName(loginName);
+			if(user==null)
+				return true;
+			else
+				return false;
+		}catch (Exception e){
+			e.printStackTrace();
 			return false;
+		}
+
 	}
 //	@RequestMapping(value="/updateSite", method=RequestMethod.GET)
 //	public String updateSite(Model model, HttpServletRequest request) {
