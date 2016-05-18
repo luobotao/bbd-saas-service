@@ -50,17 +50,21 @@
 	  								<%=OrderStatus.Srcs2HTML(-1)%>
 	  							</select>
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+	  						<%--<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
 	  							<label>到站时间：</label>
 	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
-	  						</div>
-	  					</div>
-						<div class="row pb20">
+	  						</div>--%>
 							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
 								<label>运单号：</label>
 								<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
 							</div>
-						</div>
+	  					</div>
+						<%--<div class="row pb20">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+								<label>运单号：</label>
+								<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
+							</div>
+						</div>--%>
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
@@ -73,7 +77,7 @@
 				<form action="<%=request.getContextPath()%>/mailQuery/exportToExcel" method="get" id="exptForm">
 					<input id="status_expt" name="status" type="hidden" />
 					<input id="areaCode_expt" name="areaCode" type="hidden" />
-					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
+					<%--<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />--%>
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
 				<!-- E 搜索区域 -->
@@ -241,7 +245,7 @@ $(document).ready(function() {
 	$("#pagin").html(pageStr);
 	
 	//初始化到站时间框
-	$("#arriveBetween").daterangepicker({
+	/*$("#arriveBetween").daterangepicker({
 		locale: {
 			applyLabel: '确定',
 			cancelLabel: '取消',
@@ -252,7 +256,7 @@ $(document).ready(function() {
 			showDropdowns: true
 		},
 		format: 'YYYY/MM/DD'
-	});
+	});*/
 });
 
 //加载带有查询条件的指定页的数据
@@ -265,7 +269,7 @@ function gotoPage(pageIndex) {
             "pageIndex" : pageIndex,
 			"areaCode" : $("#areaCode").val(),
             "status" : $("#status").val(), 
-            "arriveBetween" : $("#arriveBetween").val(), 
+            //"arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
@@ -408,7 +412,7 @@ function getStatus(status) {
 function exportData() {
 	$("#status_expt").val($("#status").val());
 	$("#areaCode_expt").val($("#areaCode").val());
-	$("#arriveBetween_expt").val($("#arriveBetween").val());
+	//$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
 }

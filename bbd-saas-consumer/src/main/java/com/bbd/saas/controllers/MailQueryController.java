@@ -9,7 +9,10 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.*;
+import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.ExportUtil;
+import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
@@ -26,7 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,7 +72,7 @@ public class MailQueryController {
 			//设置默认查询条件
 			status = Numbers.defaultIfNull(status, -1);//全部
 			//到站时间
-			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
+			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
 			for(Order order : orderPage.getDatas()){
@@ -85,7 +87,7 @@ public class MailQueryController {
 			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
 			logger.info("=====运单查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
-			model.addAttribute("arriveBetween", arriveBetween);
+			//model.addAttribute("arriveBetween", arriveBetween);
 			model.addAttribute("siteList", siteVOList);
 			return "page/mailQuery";
 		} catch (Exception e) {
@@ -127,7 +129,7 @@ public class MailQueryController {
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
-			orderQueryVO.arriveBetween = arriveBetween;
+			//orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
 			//公司查询
@@ -214,7 +216,7 @@ public class MailQueryController {
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
-			orderQueryVO.arriveBetween = arriveBetween_expt;
+			//orderQueryVO.arriveBetween = arriveBetween_expt;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
 			//公司查询

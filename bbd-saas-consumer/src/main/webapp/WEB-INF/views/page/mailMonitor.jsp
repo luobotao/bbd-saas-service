@@ -59,7 +59,7 @@
 				<!-- 用于导出 -->
 				<form action="<%=request.getContextPath()%>/mailMonitor/exportToExcel" method="get" id="exptForm">
 					<input id="areaCode_expt" name="areaCode" type="hidden" />
-					<input id="timeBetween_expt" name="timeBetween_expt" type="hidden" />
+					<input id="timeBetween_expt" name="timeBetween" type="hidden" />
 				</form>
 				<!-- E 搜索区域 -->
 				<div class="tab-bod mt20">
@@ -69,7 +69,7 @@
   						<thead>
   							<tr>
   								<th>站点</th>
-								<th>未到站订单数</th>
+								<%--<th>未到站订单数</th>--%>
 								<th>已到站订单数</th>
 								<th>未分派数</th>
 								<th>已分派数</th>
@@ -93,7 +93,7 @@
 							%>
 								<tr>
 									<td><%=orderMonitorVO.getSiteName()%></td>
-									<td><%=orderMonitorVO.getNoArrive()%></td>
+									<%--<td><%=orderMonitorVO.getNoArrive()%></td>--%>
 									<td><%=orderMonitorVO.getArrived()%></td>
 									<td><%=orderMonitorVO.getNoDispatch()%></td>
 									<td><%=orderMonitorVO.getDispatched()%></td>
@@ -191,7 +191,7 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var row = "<tr>";
 	row += "<td>" + data.siteName + "</td>";
-	row += "<td>" + data.noArrive + "</td>";
+	//row += "<td>" + data.noArrive + "</td>";
 	row += "<td>" + data.arrived + "</td>";
 	row += "<td>" + data.noDispatch + "</td>";
 	row += "<td>" + data.dispatched + "</td>";
@@ -209,8 +209,7 @@ function exportData() {
 	$("#areaCode_expt").val($("#areaCode").val());
 	$("#timeBetween_expt").val($("#timeBetween").val());
 	$("#exptForm").submit();
-	//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#timeBetween").val());
-}	
+}
 
 </script>
 </body>
