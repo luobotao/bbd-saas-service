@@ -154,7 +154,7 @@
 							<div class="col-md-12">
 								<div class="b-map">
 									<div id="fenceMap" class="bod-rad capacity-map" style="height: 533px;"></div>
-									<a href="javascript:void(0)" onclick="fenceMap.theLocation()" class="pos-adr"></a>
+									<a href="javascript:void(0)" onclick="fenceObj.theLocation()" class="pos-adr"></a>
 									<div class="b-f-screen b-forward-full j-full-btn"></div>
 									<div class="draw-btn" id="eFenceTool">
 										<div class="bg-alpha" id="eFenceTool_bg"></div>
@@ -612,7 +612,7 @@
 
 
 	//console.log(fenceArray);
-	var fenceMap = {
+	var fenceObj = {
 		status: false,
 		map: '',
 		point: '',
@@ -649,8 +649,8 @@
 				centerPoint = defaultCenter;
 			}
 			this.status = true;
-			this.map = new BMap.Map('fenceMap',{enableMapClick:false,minZoom:5,noAnimation:true});
 			this.point = centerPoint;
+			this.map = new BMap.Map('fenceMap',{enableMapClick:false,minZoom:5,noAnimation:true});
 			this.map.centerAndZoom(this.point,12);
 			this.map.enableScrollWheelZoom();
 			this.map.disableInertialDragging();
@@ -667,7 +667,7 @@
 				polygonOptions: styleOptions, //多边形的样式
 			});
 			//添加鼠标绘制工具监听事件，用于获取绘制结果
-			this.drawingManager.addEventListener('overlaycomplete', fenceMap.overlaycomplete);
+			this.drawingManager.addEventListener('overlaycomplete', fenceObj.overlaycomplete);
 			// S 增加的控件
 			var bottom_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});// 左上角，添加比例尺
 			var bottom_right_navigation = new BMap.NavigationControl({
@@ -721,39 +721,15 @@
 					myPolygon.enableMassClear();
 				}catch(e){}
 				myPolygon.addEventListener("lineupdate",function(e){
-					fenceMap.showLatLon(e.currentTarget.ro);
+					fenceObj.showLatLon(e.currentTarget.ro);
 				});
 				myPolygon.addEventListener("rightclick",function(e){
 					if(confirm("确认删除该电子围栏？")){
-						fenceMap.delPolygon(e);
+						fenceObj.delPolygon(e);
 					}
 				});
 				//console.log(myPolygon);
-				fenceMap.overlays.push(myPolygon);
-				map.addOverlay(myPolygon);
-			})
-		},
-		loadNotEditEFence: function(){
-			var map = this.map;
-			this.clearAll();
-			//console.log(this.myOverlay);
-			this.myOverlay.forEach(function(e){
-				myPolygon = new BMap.Polygon(e, this.notEditOptions);
-				this.myPolygon = myPolygon;
-				try{
-					myPolygon.disableEditing();
-					myPolygon.disableMassClear();
-				}catch(e){}
-				/*myPolygon.addEventListener("lineupdate",function(e){
-				 fenceMap.showLatLon(e.currentTarget.ro);
-				 });
-				 myPolygon.addEventListener("rightclick",function(e){
-				 if(confirm("确认删除该电子围栏？")){
-				 fenceMap.delPolygon(e);
-				 }
-				 });*/
-				//console.log(myPolygon);
-				fenceMap.overlays.push(myPolygon);
+				fenceObj.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
 			})
 		},
@@ -763,7 +739,7 @@
 			var arr = [];
 			for(var i =0 ; i < len-1; i++){
 				arr.push([a[i].lng, a[i].lat]);
-				s += '<li>'+ a[i].lng +','+ a[i].lat +'<span class="red" title="删除" onclick="fenceMap.delPoint('+i+')">X</span></li>';
+				s += '<li>'+ a[i].lng +','+ a[i].lat +'<span class="red" title="删除" onclick="fenceObj.delPoint('+i+')">X</span></li>';
 			}
 			this.overlaysCache = arr;
 			$("panelWrap").innerHTML = '<ul>'+ s +'</ul>';
@@ -787,14 +763,14 @@
 		 *回调获得覆盖物信息
 		 */
 		overlaycomplete: function(e){
-			fenceMap.overlays.push(e.overlay);
+			fenceObj.overlays.push(e.overlay);
 			e.overlay.enableEditing();
 			e.overlay.addEventListener("lineupdate",function(e){
-				fenceMap.showLatLon(e.currentTarget.ro);
+				fenceObj.showLatLon(e.currentTarget.ro);
 			});
 			e.overlay.addEventListener("rightclick",function(e){
 				if(confirm("确认删除该电子围栏？")){
-					fenceMap.delPolygon(e);
+					fenceObj.delPolygon(e);
 				}
 			});
 		},
@@ -849,7 +825,7 @@
 		theLocation:function(){
 			//console.log("xxxx");
 			//console.log(this.map);
-			//this.map.panTo(this.point);
+			this.map.panTo(this.point);
 		}
 	};
 
@@ -892,28 +868,28 @@
 						myPolygon.enableMassClear();
 					}catch(e){}
 					myPolygon.addEventListener("lineupdate",function(e){
-						fenceMap.showLatLon(e.currentTarget.ro);
+						fenceObj.showLatLon(e.currentTarget.ro);
 					});
 					myPolygon.addEventListener("rightclick",function(e){
 						if(confirm("确认删除该电子围栏？")){
-							fenceMap.delPolygon(e);
+							fenceObj.delPolygon(e);
 						}
 					});
 				}
-				fenceMap.overlays.push(myPolygon);//可删除
-				fenceMap.map.addOverlay(myPolygon);
+				fenceObj.overlays.push(myPolygon);//可删除
+				fenceObj.map.addOverlay(myPolygon);
 				//在多边形中心点显示站点名称
 				var bounds = myPolygon.getBounds();
 				var poi = bounds.getCenter();
 				var labelctt = newLabel(poi, name);
-				fenceMap.map.addOverlay(labelctt);
+				fenceObj.map.addOverlay(labelctt);
 
 				//站点不在多边形中，在多边形中心点显示站点名称
 				var iscontain = bounds.containsPoint(new BMap.Point(lng, lat));
 				if(!iscontain){
 					var poi = bounds.getCenter();
 					var labelctt = newLabel(poi, name);
-					fenceMap.map.addOverlay(labelctt);
+					fenceObj.map.addOverlay(labelctt);
 				}
 			});
 		}
@@ -943,7 +919,7 @@
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据
 				//清除所有覆盖物
-				fenceMap.clearAll();
+				fenceObj.clearAll();
 				console.log("cleanAll  end   ");
 				//console.log(siteId+"   siteId  ");
 				if (siteId == ""){//全部
@@ -952,21 +928,21 @@
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
 					//设置地图中心点和放大级别
-					fenceMap.map.centerAndZoom(center, zoom);
+					fenceObj.map.centerAndZoom(center, zoom);
 					//显示站点和围栏
 					if (siteList != null){
 						//fenceArray = [];
 						siteList.forEach(function(site){
 							//加载
-							fenceMap.loadOneSite(site.name, site.lng, site.lat);
+							fenceObj.loadOneSite(site.name, site.lng, site.lat);
 							//加载电子围栏
 							var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
 							efenceObj.loadDataAndShow(false);
 							/*addOneEFenceData(site.eFence);*/
 						});
 					}
-					/*fenceMap.myOverlay = fenceArray;
-					 fenceMap.loadMyOverlay();*/
+					/*fenceObj.myOverlay = fenceArray;
+					 fenceObj.loadMyOverlay();*/
 				} else {
 					//显示绘制-保存按钮
 					/*$("#eFenceTool").show();
@@ -976,9 +952,9 @@
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
 					//设置地图中心点和放大级别
-					fenceMap.map.centerAndZoom(center, zoom);
+					fenceObj.map.centerAndZoom(center, zoom);
 					//显示站点和围栏
-					fenceMap.loadOneSite(site.name, site.lng, site.lat);
+					fenceObj.loadOneSite(site.name, site.lng, site.lat);
 
 					//加载电子围栏
 					var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
@@ -986,8 +962,8 @@
 					/*
 					 addOneEFenceData(site.eFence);
 					 console.log(fenceArray);
-					 fenceMap.myOverlay = fenceArray;
-					 fenceMap.loadMyOverlay();*/
+					 fenceObj.myOverlay = fenceArray;
+					 fenceObj.loadMyOverlay();*/
 				}
 			},
 			error : function() {
@@ -1003,7 +979,7 @@
 			return;
 		}
 		var jsonStr = "";
-		fenceMap.overlays.forEach(function (e) {
+		fenceObj.overlays.forEach(function (e) {
 			var arrs = e.ro;
 			//console.log(arrs);
 			if(arrs.length>2){
@@ -1079,7 +1055,7 @@
 			outDiv("请先选择站点。");
 			return;
 		}
-		/*var overlays = fenceMap.overlays;
+		/*var overlays = fenceObj.overlays;
 		 console.log(overlays);
 		 var overlaysTmp = [];
 		 for(var i = 0; i < overlays.length; i++){
@@ -1088,28 +1064,34 @@
 		 }
 		 }
 		 this.overlays=overlaysTmp;*/
-		//fenceMap.map.clearAll();
-		fenceMap.drawingManager.open();
-		fenceMap.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
+		//fenceObj.map.clearAll();
+		fenceObj.drawingManager.open();
+		fenceObj.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
 	}
 
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
 	//showMap(${centerPoint.deliveryArea*1000});
-	fenceMap.myOverlay = fenceArray;
-	//console.log(fenceMap.myOverlay);
-	fenceMap.init();
+	fenceObj.myOverlay = fenceArray;
+	//console.log(fenceObj.myOverlay);
+	fenceObj.init();
 	$('.b-tab a').click(function (e) {
 		//console.log($(this));
 		e.preventDefault();
 		$(this).tab('show');
 		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");
 		var index=$(this).parent().index();
+
 		if(index == 1){
 			window.setTimeout(function(){
-				fenceMap.map.panTo(new BMap.Point(${centerPoint.lng},${centerPoint.lat}));
-			}, 500);
+				//fenceObj.map.panTo(new BMap.Point(${centerPoint.lng},${centerPoint.lat}));
+				fenceObj.map.reset();
+			}, 300);
+
 		}
-	})
+	});
+	window.setTimeout(function(){
+		areaMap.reset();
+	}, 300);
 
 	var winhei2=window.screen.availHeight;
 	var inithei=$("#fenceMap").height();
