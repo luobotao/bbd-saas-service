@@ -67,6 +67,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         query.filter("dateMayArrive <=",dateBetween.getEnd());
                     }
                 }
+            }else{
+                if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
+                    DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                    query.filter("dateMayArrive >=",dateBetween.getStart());
+                    query.filter("dateMayArrive <=",dateBetween.getEnd());
+                }
             }
 
             if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
