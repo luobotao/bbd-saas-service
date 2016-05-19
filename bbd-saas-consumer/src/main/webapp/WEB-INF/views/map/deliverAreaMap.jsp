@@ -535,7 +535,7 @@
 		label.setStyle({
 			color : "#fff",//"#fff"
 			border : "0",
-			fontSize : "18px",
+			fontSize : "16px",
 			fontFamily:"simhei",
 			backgroundColor:"rgba(4, 4, 4,0.7)",
 		});
@@ -555,7 +555,7 @@
 		label.setStyle({
 			color : "#fff",//"#fff"
 			border : "0",
-			fontSize : "18px",
+			fontSize : "16px",
 			fontFamily:"simhei",
 			backgroundColor:"rgba(4, 4, 4,0.7)",
 		});
@@ -704,8 +704,8 @@
 			//marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			var label = newLabel(new BMap.Point(lng, lat), name);
-			this.map.addOverlay(label);               // 将label添加到地图中
+			/*var label = newLabel(new BMap.Point(lng, lat), name);
+			this.map.addOverlay(label);               // 将label添加到地图中*/
 		},
 		loadAllSiteAndEFence: function(){//加载站点标注
 			//加载所有站点
