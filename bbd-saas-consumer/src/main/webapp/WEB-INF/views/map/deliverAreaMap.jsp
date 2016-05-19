@@ -525,7 +525,6 @@
 		areaMap.addOverlay(circle);          //增加圆
 	}
 	function newLabel(point, name){
-
 		var opts = {
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
