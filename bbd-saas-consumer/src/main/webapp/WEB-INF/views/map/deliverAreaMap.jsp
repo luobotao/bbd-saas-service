@@ -524,7 +524,6 @@
 		var circle = new BMap.Circle(point, radius * 1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 		areaMap.addOverlay(circle);          //增加圆
 	}
-
 	function newLabel(point, name){
 
 		var opts = {
