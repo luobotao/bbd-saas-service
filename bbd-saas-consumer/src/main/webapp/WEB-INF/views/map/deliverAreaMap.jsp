@@ -524,9 +524,7 @@
 		var circle = new BMap.Circle(point, radius * 1000,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
 		areaMap.addOverlay(circle);          //增加圆
 	}
-
 	function newLabel(point, name){
-
 		var opts = {
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
@@ -535,7 +533,7 @@
 		label.setStyle({
 			color : "#fff",//"#fff"
 			border : "0",
-			fontSize : "18px",
+			fontSize : "16px",
 			fontFamily:"simhei",
 			backgroundColor:"rgba(4, 4, 4,0.7)",
 		});
@@ -555,7 +553,7 @@
 		label.setStyle({
 			color : "#fff",//"#fff"
 			border : "0",
-			fontSize : "18px",
+			fontSize : "16px",
 			fontFamily:"simhei",
 			backgroundColor:"rgba(4, 4, 4,0.7)",
 		});
@@ -704,8 +702,8 @@
 			//marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
 			//marker.enableMassClear;
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			var label = newLabel(new BMap.Point(lng, lat), name);
-			this.map.addOverlay(label);               // 将label添加到地图中
+			/*var label = newLabel(new BMap.Point(lng, lat), name);
+			this.map.addOverlay(label);               // 将label添加到地图中*/
 		},
 		loadAllSiteAndEFence: function(){//加载站点标注
 			//加载所有站点

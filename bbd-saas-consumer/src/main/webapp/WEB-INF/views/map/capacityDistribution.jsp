@@ -38,7 +38,7 @@
 		}
 	</style>
 </head>
-<body>
+<body class="fbg">
 <!-- S content -->
 <div class="clearfix b-branch">
 	<div class="container-fluid">
@@ -83,6 +83,11 @@
 	</div>
 </div>
 <!-- E content -->
+<!-- S footer -->
+<footer class="pos-footer tc">
+	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
+</footer>
+<!-- E footer -->
 
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->

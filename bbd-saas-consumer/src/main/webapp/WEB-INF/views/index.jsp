@@ -110,23 +110,23 @@
 			<div class="modal-body b-modal-body form-inline form-inline-n">
 				<c:url var="actionUrl" value="/userManage/editPass?${_csrf.parameterName}=${_csrf.token}"/>
 				<form role="form" action="${actionUrl}" method="post" id="userForm" class="form-inline form-inline-n">
-					<ul class="txt-complex f16">
-						<li class="pb20">
-							<i>　用户名：</i> ${user.realName}
-						</li>
-						<li class="pb20">
-							<i>原始密码：</i>
-							<input type="password" class="form-control form-bod" id="passwordOld" name="passwordOld" placeholder="原始密码"/>
-						</li>
-						<li class="pb20">
-							<i>　新密码：</i>
-							<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="新密码"  />
-						</li>
-						<li class="pb20">
-							<i>确认密码：</i>
-							<input type="password" class="form-control form-bod j-c-pwd" id="passwordC" name="passwordC" placeholder="确认密码"   />
-						</li>
-					</ul>
+				<ul class="txt-complex f16">
+					<li class="pb20">
+						<i>　用户名：</i> ${user.realName}
+					</li>
+					<li class="pb20">
+						<i>原始密码：</i>
+						<input type="password" class="form-control form-bod" id="passwordOld" name="passwordOld" placeholder="原始密码"/>
+					</li>
+					<li class="pb20">
+						<i>　新密码：</i>
+						<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="新密码"  />
+					</li>
+					<li class="pb20">
+						<i>确认密码：</i>
+						<input type="password" class="form-control form-bod j-c-pwd" id="passwordC" name="passwordC" placeholder="确认密码"   />
+					</li>
+				</ul>
 				</form>
 				<div>
 
@@ -141,6 +141,7 @@
 	</div>
 </div>
 <!--E 修改密码-->
+
 
 <!--S 提示信息-->
 <div class="b-prompt">

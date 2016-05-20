@@ -15,7 +15,7 @@
 <style type="text/css">
 .font-bg-color { background-color: #FFED97; }
 </style>
-<body >
+<body class="fbg">
 
 <!-- S content -->
 <div class="clearfix b-branch">

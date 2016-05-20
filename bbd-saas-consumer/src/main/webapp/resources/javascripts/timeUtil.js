@@ -63,6 +63,10 @@ function getDate1(tm){
  * @returns {string}
  */
 function getDate2(tm){
+    if(tm == null){
+        return "";
+    }
+
     var date = new Date(tm);
     return date.Format("yyyy-MM-dd");
 }
