@@ -10,6 +10,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>棒棒达快递</title>
+	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
+	<link rel="bookmark" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
