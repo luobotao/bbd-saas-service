@@ -7,8 +7,6 @@
 
     <dubbo:application name="bbd-saas-consumer" owner="saas" organization="bbd"/>
 
-    <dubbo:protocol accesslog="true" />
-
     <!-- 	启动时不检查提供者 	-->
 	<dubbo:consumer check="false" timeout="30000"></dubbo:consumer>
 
