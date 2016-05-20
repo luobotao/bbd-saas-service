@@ -640,8 +640,6 @@
 		clearAll: function() {
 			var map = this.map;
 			var overlays = this.overlays;
-			console.log("执行clearAll---");
-			//console.log(overlays);
 			for(var i = 0; i < overlays.length; i++){
 				map.removeOverlay(overlays[i]);
 			}

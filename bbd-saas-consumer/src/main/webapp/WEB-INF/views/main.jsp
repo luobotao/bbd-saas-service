@@ -5,7 +5,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="Access-Control-Allow-Origin" content="*">
 	<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-
+	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
+	<link rel="bookmark" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<c:set var="ctx" value="<%=request.getContextPath()%>"/>
 
 	<!-- Bootstrap 3.3.2 -->

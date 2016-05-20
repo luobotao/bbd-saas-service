@@ -10,6 +10,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>棒棒达快递</title>
+	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
+	<link rel="bookmark" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
@@ -108,23 +110,23 @@
 			<div class="modal-body b-modal-body form-inline form-inline-n">
 				<c:url var="actionUrl" value="/userManage/editPass?${_csrf.parameterName}=${_csrf.token}"/>
 				<form role="form" action="${actionUrl}" method="post" id="userForm" class="form-inline form-inline-n">
-					<ul class="txt-complex f16">
-						<li class="pb20">
-							<i>　用户名：</i> ${user.realName}
-						</li>
-						<li class="pb20">
-							<i>原始密码：</i>
-							<input type="password" class="form-control form-bod" id="passwordOld" name="passwordOld" placeholder="原始密码"/>
-						</li>
-						<li class="pb20">
-							<i>　新密码：</i>
-							<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="新密码"  />
-						</li>
-						<li class="pb20">
-							<i>确认密码：</i>
-							<input type="password" class="form-control form-bod j-c-pwd" id="passwordC" name="passwordC" placeholder="确认密码"   />
-						</li>
-					</ul>
+				<ul class="txt-complex f16">
+					<li class="pb20">
+						<i>　用户名：</i> ${user.realName}
+					</li>
+					<li class="pb20">
+						<i>原始密码：</i>
+						<input type="password" class="form-control form-bod" id="passwordOld" name="passwordOld" placeholder="原始密码"/>
+					</li>
+					<li class="pb20">
+						<i>　新密码：</i>
+						<input type="password" class="form-control form-bod j-n-pwd" id="password" name="password" placeholder="新密码"  />
+					</li>
+					<li class="pb20">
+						<i>确认密码：</i>
+						<input type="password" class="form-control form-bod j-c-pwd" id="passwordC" name="passwordC" placeholder="确认密码"   />
+					</li>
+				</ul>
 				</form>
 				<div>
 
@@ -139,6 +141,7 @@
 	</div>
 </div>
 <!--E 修改密码-->
+
 
 <!--S 提示信息-->
 <div class="b-prompt">
