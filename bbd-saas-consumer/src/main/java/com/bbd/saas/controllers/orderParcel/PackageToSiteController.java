@@ -192,6 +192,7 @@ public class PackageToSiteController {
 							}
 						}
 						if(flagForUpdateTrackNo){//可以更新orderTrack下的状态
+							orderTrack.dateUpd = new Date();
 							orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
 							orderTrackService.updateOrderTrack(trackNo,orderTrack);
 						}
