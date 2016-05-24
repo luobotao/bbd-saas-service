@@ -45,8 +45,10 @@ public interface OrderParcelService {
 	void saveOrderParcel(OrderParcel orderParcel);
 
 	/**
-	 * 根据运单号获取所有关联的站点
+	 * 根据TrackNo找此编号下的所有包裹
 	 * @param trackNo
 	 */
 	List<OrderParcel> findOrderParcelListByTrackCode(String trackNo);
+
+
 }

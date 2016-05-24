@@ -26,6 +26,12 @@
             <artifactId>bbd-saas-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!--bbd-drivers-api-->
+        <dependency>
+            <groupId>com.bbd</groupId>
+            <artifactId>bbd-drivers-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- bbd poi-->
         <dependency>
             <groupId>com.bbd</groupId>
