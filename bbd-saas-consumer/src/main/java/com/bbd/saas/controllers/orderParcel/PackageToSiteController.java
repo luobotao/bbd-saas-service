@@ -1,8 +1,11 @@
 package com.bbd.saas.controllers.orderParcel;
 
+import com.bbd.drivers.api.mongo.OrderTrackService;
+import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -11,6 +14,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
@@ -41,7 +45,11 @@ public class PackageToSiteController {
 	@Autowired
 	OrderParcelService orderPacelService;
 	@Autowired
+	OrderTrackService orderTrackService;
+	@Autowired
 	AdminService adminService;
+	@Autowired
+	IncomeService incomeService;
 
 
 	/**
@@ -175,6 +183,26 @@ public class PackageToSiteController {
 				orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
 				orderParcel.setDateUpd(new Date());
 				orderPacelService.saveOrderParcel(orderParcel);
+				/**修改orderTrack里的状态*/
+				String trackNo = orderParcel.getTrackNo();
+				if(StringUtils.isNotBlank(trackNo)){
+					OrderTrack orderTrack =orderTrackService.findOneByTrackNo(trackNo);
+					if(orderTrack!=null){
+						List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
+						Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
+						for(OrderParcel orderParcel1 : orderParcelList){
+							if(orderParcel1.getStatus()!=ParcelStatus.ArriveStation){
+								flagForUpdateTrackNo = false;//不可更新
+							}
+						}
+						if(flagForUpdateTrackNo){//可以更新orderTrack下的状态
+							orderTrack.dateUpd = new Date();
+							orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
+							orderTrackService.updateOrderTrack(trackNo,orderTrack);
+							incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId,0),orderTrack.actOrderPrice,orderTrack.trackNo);
+						}
+					}
+				}
 			}
 		}
 	}

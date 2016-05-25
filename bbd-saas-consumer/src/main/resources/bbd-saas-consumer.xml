@@ -7,13 +7,11 @@
 
     <dubbo:application name="bbd-saas-consumer" owner="saas" organization="bbd"/>
 
-    <dubbo:protocol accesslog="true" />
-
     <!-- 	启动时不检查提供者 	-->
 	<dubbo:consumer check="false" timeout="30000"></dubbo:consumer>
 
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
-    <!--<dubbo:registry address="zookeeper://10.173.0.222:2181"/>-->
+    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
+    <dubbo:registry address="zookeeper://10.173.0.222:2181"/>
     <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
 
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.mongo.AdminUserService"/>
@@ -31,7 +29,8 @@
     <dubbo:reference id="geo" interface="com.bbd.poi.api.Geo" />
     <!--ToOtherSiteLog Service-->
     <dubbo:reference id="toOtherSiteLogService" interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" />
-
+    <!--orderTrackService from bbd-driver-api -->
+    <dubbo:reference id="orderTrackService" interface="com.bbd.drivers.api.mongo.OrderTrackService" />
 
     <!--start mysql services-->
     <!--<dubbo:reference id="orderMysqlService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>-->
@@ -41,4 +40,5 @@
     <dubbo:reference id="openUserMysqlService" interface="com.bbd.saas.api.mysql.OpenUserService"/>
     <dubbo:reference id="smsInfoService" interface="com.bbd.saas.api.mysql.SmsInfoService"/>
     <dubbo:reference id="orderLogService" interface="com.bbd.saas.api.mysql.OrderLogService"/>
+    <dubbo:reference id="incomeService" interface="com.bbd.saas.api.mysql.IncomeService"/>
 </beans>

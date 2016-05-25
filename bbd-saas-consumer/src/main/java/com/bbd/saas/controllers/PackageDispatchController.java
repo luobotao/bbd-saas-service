@@ -16,6 +16,7 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.Sender;
 import com.bbd.saas.vo.UserVO;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
@@ -258,15 +259,25 @@ public class PackageDispatchController {
 			postDelivery.setReceiver_name(order.getReciever().getName());
 			postDelivery.setReceiver_phone(order.getReciever().getPhone());
 			postDelivery.setReceiver_province(order.getReciever().getProvince());
-			postDelivery.setSender_address(order.getSender().getAddress());
-			postDelivery.setSender_city(order.getSender().getCity());
 			postDelivery.setSender_company_name(order.getSrc().getMessage());
-			postDelivery.setSender_name(order.getSender().getName());
-			postDelivery.setSender_phone(order.getSender().getPhone());
-			postDelivery.setSender_province(order.getSender().getProvince());
+			Sender sender = order.getSender();
+			if(sender!=null){
+				postDelivery.setSender_address(order.getSender().getAddress());
+				postDelivery.setSender_city(order.getSender().getCity());
+				postDelivery.setSender_name(order.getSender().getName());
+				postDelivery.setSender_phone(order.getSender().getPhone());
+				postDelivery.setSender_province(order.getSender().getProvince());
+			}else{
+				postDelivery.setSender_address("");
+				postDelivery.setSender_city("");
+				postDelivery.setSender_name("");
+				postDelivery.setSender_phone("");
+				postDelivery.setSender_province("");
+			}
+
 			postDelivery.setStaffid(user.getStaffid());
 			postDelivery.setGoods_fee(0);
-			postDelivery.setGoods_number(order.getGoods().size());
+			postDelivery.setGoods_number(order.getGoods()==null?0:order.getGoods().size());
 			postDelivery.setPay_status("1");
 			postDelivery.setPay_mode("4");
 			postDelivery.setFlg("1");

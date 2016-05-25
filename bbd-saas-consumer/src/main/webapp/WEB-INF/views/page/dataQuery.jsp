@@ -320,31 +320,41 @@ function getSrcName(src) {
 		return "";
 	}
     x = "";
-	switch (src)
-	{
+	switch (src) {
 	case "BBT":
-	  	x = "棒棒糖";
-	 	break;
-	case "棒棒糖":
-	  	x =  "京东";
-	  	break;
+		x = "棒棒达";
+		break;
+	case "JD":
+		x =  "京东";
+		break;
 	case "TAOBAO":
-	  	x =  "淘宝";
-	  	break;
+		x =  "淘宝";
+		break;
 	case "TIANMAO":
-	  x =  "天猫";
-	  break; 
+		x =  "天猫";
+		break;
+	case "YIHAODIAN":
+		x =  "1号店";
+		break;
 	case "BAIDUWAIMAI":
-	  	x =  "百度外卖";
-	  	break;
+		x =  "百度外卖";
+		break;
 	case "PINHAOHUO":
-	  	x =  "拼好货";
-	  	break;
+		x =  "拼好货";
+		break;
+	case "HANWEI":
+		x =  "汉维";
+		break;
+	case "DDKY":
+		x =  "叮当快药";
+		break;
+	case "WEIXINXIAODIAN":
+		x =  "微信小店";
+		break;
 	case "OTHERS":
-	  	x =  "其他";
-	  	break;
-	default : 
-		//x = "棒棒糖";
+		x =  "其他";
+		break;
+	default :
 		x = src;
 	}
 	return x;
