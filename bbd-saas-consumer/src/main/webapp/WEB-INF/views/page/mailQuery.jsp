@@ -356,6 +356,9 @@ function getSrcName(src) {
 	case "PINHAOHUO":
 	  	x =  "拼好货";
 	  	break;
+	case "WEIXINXIAODIAN":
+		x =  "微信小店";
+		break;
 	case "OTHERS":
 	  	x =  "其他";
 	  	break;
