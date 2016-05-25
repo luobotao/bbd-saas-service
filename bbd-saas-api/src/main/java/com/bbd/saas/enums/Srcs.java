@@ -8,13 +8,16 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum Srcs {
 
-    BBT(0,"棒棒糖"),
+    BBT(0,"棒棒达"),
     JD(1,"京东"),
     TAOBAO(2,"淘宝"),
     TIANMAO(3,"天猫"),
+    YIHAODIAN(4,"1号店"),
     BAIDUWAIMAI(5,"百度外卖"),
     PINHAOHUO(6,"拼好货"),
     HANWEI(7,"汉维"),
+    DDKY(8,"叮当快药"),
+    WEIXINXIAODIAN(9,"微信小店"),
     OTHERS(99,"其他");
     private int status;
     private String message;
