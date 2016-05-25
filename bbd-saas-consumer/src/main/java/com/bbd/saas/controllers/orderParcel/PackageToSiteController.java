@@ -155,16 +155,16 @@ public class PackageToSiteController {
 	 * @param order
 	 * @param user
      */
-	public void orderToSite(Order order,User user){
-		orderService.updateOrderOrderStatu(order.getMailNum(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
-		order = orderService.findOneByMailNum(user.getSite().getAreaCode(),order.getMailNum().toString());
+	public void orderToSite(Order order,User user) {
+		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
+		order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
 		Express express = new Express();
 		express.setDateAdd(new Date());
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		express.setRemark("订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 		List<Express> expressList = order.getExpresses();
-		if(expressList==null)
+		if (expressList == null)
 			expressList = Lists.newArrayList();
 		expressList.add(express);//增加一条物流信息
 		order.setExpressStatus(ExpressStatus.ArriveStation);
@@ -172,37 +172,42 @@ public class PackageToSiteController {
 		order.setDateUpd(new Date());
 		orderService.save(order);
 		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
-		if(orderParcel!=null){
+		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
-			for(Order orderTemp : orderParcel.getOrderList()){
-				if(orderTemp.getOrderStatus()==null || orderTemp.getOrderStatus()==OrderStatus.NOTARR){
+			for (Order orderTemp : orderParcel.getOrderList()) {
+				if (orderTemp.getOrderStatus() == null || orderTemp.getOrderStatus() == OrderStatus.NOTARR) {
 					flag = false;
 				}
 			}
-			if(flag){//更新包裹状态，做包裹到站操作
+			if (flag) {//更新包裹状态，做包裹到站操作
 				orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
 				orderParcel.setDateUpd(new Date());
 				orderPacelService.saveOrderParcel(orderParcel);
 				/**修改orderTrack里的状态*/
-				String trackNo = orderParcel.getTrackNo();
-				if(StringUtils.isNotBlank(trackNo)){
-					OrderTrack orderTrack =orderTrackService.findOneByTrackNo(trackNo);
-					if(orderTrack!=null){
-						List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
-						Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
-						for(OrderParcel orderParcel1 : orderParcelList){
-							if(orderParcel1.getStatus()!=ParcelStatus.ArriveStation){
-								flagForUpdateTrackNo = false;//不可更新
+				try {
+					String trackNo = orderParcel.getTrackNo();
+					if (StringUtils.isNotBlank(trackNo)) {
+						OrderTrack orderTrack = orderTrackService.findOneByTrackNo(trackNo);
+						if (orderTrack != null) {
+							List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
+							Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
+							for (OrderParcel orderParcel1 : orderParcelList) {
+								if (orderParcel1.getStatus() != ParcelStatus.ArriveStation) {
+									flagForUpdateTrackNo = false;//不可更新
+								}
+							}
+							if (flagForUpdateTrackNo) {//可以更新orderTrack下的状态
+								orderTrack.dateUpd = new Date();
+								orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
+								orderTrackService.updateOrderTrack(trackNo, orderTrack);
+								incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
 							}
 						}
-						if(flagForUpdateTrackNo){//可以更新orderTrack下的状态
-							orderTrack.dateUpd = new Date();
-							orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
-							orderTrackService.updateOrderTrack(trackNo,orderTrack);
-							incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId,0),orderTrack.actOrderPrice,orderTrack.trackNo);
-						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+
 			}
 		}
 	}
