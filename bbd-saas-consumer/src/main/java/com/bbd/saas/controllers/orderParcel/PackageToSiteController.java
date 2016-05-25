@@ -5,6 +5,7 @@ import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -13,6 +14,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
@@ -46,6 +48,8 @@ public class PackageToSiteController {
 	OrderTrackService orderTrackService;
 	@Autowired
 	AdminService adminService;
+	@Autowired
+	IncomeService incomeService;
 
 
 	/**
@@ -195,6 +199,7 @@ public class PackageToSiteController {
 							orderTrack.dateUpd = new Date();
 							orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
 							orderTrackService.updateOrderTrack(trackNo,orderTrack);
+							incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId,0),orderTrack.actOrderPrice,orderTrack.trackNo);
 						}
 					}
 				}

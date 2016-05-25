@@ -32,5 +32,6 @@
 	<dubbo:service interface="com.bbd.saas.api.mysql.OrderLogService" ref="orderLogService" />
 
     <dubbo:service interface="com.bbd.saas.api.mysql.SmsInfoService" ref="smsInfoService" />
+    <dubbo:service interface="com.bbd.saas.api.mysql.IncomeService" ref="incomeService" />
 
 </beans>
