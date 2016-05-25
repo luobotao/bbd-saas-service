@@ -1,6 +1,7 @@
 package com.bbd.saas.controllers.orderParcel;
 
 import com.bbd.drivers.api.mongo.OrderTrackService;
+import com.bbd.drivers.enums.TransStatus;
 import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderParcelService;
@@ -199,6 +200,7 @@ public class PackageToSiteController {
 							if (flagForUpdateTrackNo) {//可以更新orderTrack下的状态
 								orderTrack.dateUpd = new Date();
 								orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
+								orderTrack.transStatus = TransStatus.YWC;
 								orderTrackService.updateOrderTrack(trackNo, orderTrack);
 								incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
 							}
