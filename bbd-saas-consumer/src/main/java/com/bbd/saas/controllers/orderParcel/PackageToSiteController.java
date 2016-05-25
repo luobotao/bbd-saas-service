@@ -1,5 +1,7 @@
 package com.bbd.saas.controllers.orderParcel;
 
+import com.bbd.drivers.api.mongo.OrderTrackService;
+import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
@@ -40,6 +42,8 @@ public class PackageToSiteController {
 	OrderService orderService;
 	@Autowired
 	OrderParcelService orderPacelService;
+	@Autowired
+	OrderTrackService orderTrackService;
 	@Autowired
 	AdminService adminService;
 
@@ -175,6 +179,25 @@ public class PackageToSiteController {
 				orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
 				orderParcel.setDateUpd(new Date());
 				orderPacelService.saveOrderParcel(orderParcel);
+				/**修改orderTrack里的状态*/
+				String trackNo = orderParcel.getTrackNo();
+				if(StringUtils.isNotBlank(trackNo)){
+					OrderTrack orderTrack =orderTrackService.findOneByTrackNo(trackNo);
+					if(orderTrack!=null){
+						List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
+						Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
+						for(OrderParcel orderParcel1 : orderParcelList){
+							if(orderParcel1.getStatus()!=ParcelStatus.ArriveStation){
+								flagForUpdateTrackNo = false;//不可更新
+							}
+						}
+						if(flagForUpdateTrackNo){//可以更新orderTrack下的状态
+							orderTrack.dateUpd = new Date();
+							orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
+							orderTrackService.updateOrderTrack(trackNo,orderTrack);
+						}
+					}
+				}
 			}
 		}
 	}

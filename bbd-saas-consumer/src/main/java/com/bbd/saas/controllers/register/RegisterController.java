@@ -182,7 +182,7 @@ public class RegisterController {
 		Map<String, Object> result = new ConcurrentReaderHashMap();
 		String verifyCodeInRedis = redisService.get(Constants.BBD_SAAS_VERIFY_CODE + username);
 		logger.info("用户输入的验证码为："+verifyCode+"；数据库中存在的验证码为："+verifyCodeInRedis);
-		if(verifyCode.equals(verifyCodeInRedis) || verifyCode.equals("1111")){
+		if(verifyCode.equals(verifyCodeInRedis) ){
 			User userTemp = userService.findUserByLoginName(username);//再次确认此手机号不存在
 			if(userTemp==null){
 				//向用户表插入登录用户
