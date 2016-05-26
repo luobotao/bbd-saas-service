@@ -15,10 +15,7 @@ import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.ErrorCode;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.common.ConcurrentReaderHashMap;
 import org.slf4j.Logger;
@@ -30,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -174,5 +173,34 @@ public class IndexController {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 生成图片验证码
+     *
+     * @param model
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/test/authImage")
+    public void authImage(Model model, HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+        response.setContentType("image/jpeg");
+
+        //生成随机字串
+        String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
+        //存入会话session
+        HttpSession session = request.getSession(true);
+        session.setAttribute("rand", verifyCode.toLowerCase());
+        //生成图片
+        int w = 200, h = 80;
+        try {
+            VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
