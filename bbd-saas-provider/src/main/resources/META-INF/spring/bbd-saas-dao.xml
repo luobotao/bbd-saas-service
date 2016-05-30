@@ -62,5 +62,9 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.OrderLogDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+    <bean id="incomeDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.IncomeDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
     <!--  end mysql daos  -->
 </beans>

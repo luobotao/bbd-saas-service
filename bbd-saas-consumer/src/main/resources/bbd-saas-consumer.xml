@@ -40,4 +40,5 @@
     <dubbo:reference id="openUserMysqlService" interface="com.bbd.saas.api.mysql.OpenUserService"/>
     <dubbo:reference id="smsInfoService" interface="com.bbd.saas.api.mysql.SmsInfoService"/>
     <dubbo:reference id="orderLogService" interface="com.bbd.saas.api.mysql.OrderLogService"/>
+    <dubbo:reference id="incomeService" interface="com.bbd.saas.api.mysql.IncomeService"/>
 </beans>

@@ -1,10 +1,12 @@
 package com.bbd.saas.controllers.orderParcel;
 
 import com.bbd.drivers.api.mongo.OrderTrackService;
+import com.bbd.drivers.enums.TransStatus;
 import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -13,6 +15,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
@@ -46,14 +49,16 @@ public class PackageToSiteController {
 	OrderTrackService orderTrackService;
 	@Autowired
 	AdminService adminService;
+	@Autowired
+	IncomeService incomeService;
 
 
 	/**
 	 * 根据运单号检查是否存在此订单
 	 * @param request
 	 * @param mailNum
-     * @return
-     */
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value="/checkOrderByMailNum", method=RequestMethod.GET)
 	public Order checkOrderByMailNum(HttpServletRequest request,@RequestParam(value = "mailNum", required = true) String mailNum) {
@@ -65,7 +70,7 @@ public class PackageToSiteController {
 	 * 重新计算到站的数据统计
 	 * @param request
 	 * @return
-     */
+	 */
 	@ResponseBody
 	@RequestMapping(value="/updateOrderNumVO", method=RequestMethod.GET)
 	public OrderNumVO updateOrderNumVO(HttpServletRequest request) {
@@ -76,8 +81,8 @@ public class PackageToSiteController {
 	 * 根据包裹号检查当前登录用户是否有此包裹
 	 * @param request
 	 * @param parcelCode
-     * @return
-     */
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value="/checkOrderParcelByParcelCode", method=RequestMethod.GET)
 	public boolean checkOrderParcelByParcelCode(HttpServletRequest request,@RequestParam(value = "parcelCode", required = true) String parcelCode) {
@@ -97,8 +102,8 @@ public class PackageToSiteController {
 	 * @param between
 	 * @param parcelCode
 	 * @param mailNum
-     * @return
-     */
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/getOrderPage", method = RequestMethod.GET)
 	public PageModel<Order> getOrderPage(HttpServletRequest request,Integer pageIndex, Integer arriveStatus,String between,String parcelCode, String mailNum) {
@@ -129,8 +134,8 @@ public class PackageToSiteController {
 	/**
 	 * 批量到站
 	 * @param ids
-     * @return
-     */
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/arriveBatch", method = RequestMethod.POST)
 	public boolean arriveBatch(HttpServletRequest request,String ids) {
@@ -150,17 +155,17 @@ public class PackageToSiteController {
 	 * 单个订单到站方法
 	 * @param order
 	 * @param user
-     */
-	public void orderToSite(Order order,User user){
-		orderService.updateOrderOrderStatu(order.getMailNum(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
-		order = orderService.findOneByMailNum(user.getSite().getAreaCode(),order.getMailNum().toString());
+	 */
+	public void orderToSite(Order order,User user) {
+		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
+		order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
 		Express express = new Express();
 		express.setDateAdd(new Date());
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		express.setRemark("订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 		List<Express> expressList = order.getExpresses();
-		if(expressList==null)
+		if (expressList == null)
 			expressList = Lists.newArrayList();
 		expressList.add(express);//增加一条物流信息
 		order.setExpressStatus(ExpressStatus.ArriveStation);
@@ -168,36 +173,43 @@ public class PackageToSiteController {
 		order.setDateUpd(new Date());
 		orderService.save(order);
 		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
-		if(orderParcel!=null){
+		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
-			for(Order orderTemp : orderParcel.getOrderList()){
-				if(orderTemp.getOrderStatus()==null || orderTemp.getOrderStatus()==OrderStatus.NOTARR){
+			for (Order orderTemp : orderParcel.getOrderList()) {
+				if (orderTemp.getOrderStatus() == null || orderTemp.getOrderStatus() == OrderStatus.NOTARR) {
 					flag = false;
 				}
 			}
-			if(flag){//更新包裹状态，做包裹到站操作
+			if (flag) {//更新包裹状态，做包裹到站操作
 				orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
 				orderParcel.setDateUpd(new Date());
 				orderPacelService.saveOrderParcel(orderParcel);
 				/**修改orderTrack里的状态*/
-				String trackNo = orderParcel.getTrackNo();
-				if(StringUtils.isNotBlank(trackNo)){
-					OrderTrack orderTrack =orderTrackService.findOneByTrackNo(trackNo);
-					if(orderTrack!=null){
-						List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
-						Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
-						for(OrderParcel orderParcel1 : orderParcelList){
-							if(orderParcel1.getStatus()!=ParcelStatus.ArriveStation){
-								flagForUpdateTrackNo = false;//不可更新
+				try {
+					String trackNo = orderParcel.getTrackNo();
+					if (StringUtils.isNotBlank(trackNo)) {
+						OrderTrack orderTrack = orderTrackService.findOneByTrackNo(trackNo);
+						if (orderTrack != null) {
+							List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
+							Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
+							for (OrderParcel orderParcel1 : orderParcelList) {
+								if (orderParcel1.getStatus() != ParcelStatus.ArriveStation) {
+									flagForUpdateTrackNo = false;//不可更新
+								}
+							}
+							if (flagForUpdateTrackNo) {//可以更新orderTrack下的状态
+								orderTrack.dateUpd = new Date();
+								orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
+								orderTrack.transStatus = TransStatus.YWC;
+								orderTrackService.updateOrderTrack(trackNo, orderTrack);
+								incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
 							}
 						}
-						if(flagForUpdateTrackNo){//可以更新orderTrack下的状态
-							orderTrack.dateUpd = new Date();
-							orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
-							orderTrackService.updateOrderTrack(trackNo,orderTrack);
-						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+
 			}
 		}
 	}
@@ -207,7 +219,7 @@ public class PackageToSiteController {
 	 * 2016年4月1日下午6:13:46
 	 * @author: liyanlei
 	 * @param model
-	 * @return 
+	 * @return
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Model model,HttpServletRequest request) {

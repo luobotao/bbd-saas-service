@@ -90,5 +90,10 @@
             <ref bean="orderLogDao"/>
         </property>
     </bean>
+    <bean id="incomeService" class="com.bbd.saas.api.impl.mysql.IncomeServiceImpl">
+        <property name="incomeDao">
+            <ref bean="incomeDao"/>
+        </property>
+    </bean>
     <!--    end mysql services   -->
 </beans>
