@@ -126,9 +126,10 @@ public class BbdExpressApiController {
 		return str;
 	}
 
-	@RequestMapping(value="/getDistance",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
+	@RequestMapping(value="/getDistance")
 	@ResponseBody
 	public String getDistance(String city, String start, String ends) throws IOException {
+		logger.info("getDistance with info, city:"+city+" start:"+start+" ends:"+ends);
 		Gson gson = new Gson();
 		MapPoint mapPoint  = gson.fromJson(start, MapPoint.class);
 		List<MapPoint> mapPointList = gson.fromJson(ends, new TypeToken<List<MapPoint>>(){}.getType());
@@ -157,6 +158,7 @@ public class BbdExpressApiController {
 		int length = 0;
 		if(!"".equals(city)&&mapPoint!=null&&mapPointList!=null&&mapPointList.size()>0) {
 			length = geo.getDistance(city, mapPoint, mapPointList);
+			logger.info("getDistance with info [success] distance:"+length);
 		}
 		return JSON.json(length);
 	}
