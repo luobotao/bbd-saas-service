@@ -14,6 +14,8 @@ public class Sender implements Serializable{
     private String city;
     private String area;
     private String address;
+    public String lat; //纬度
+    public String lon;//经度
 
     public String getName() {
         return name;
@@ -61,5 +63,21 @@ public class Sender implements Serializable{
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
     }
 }

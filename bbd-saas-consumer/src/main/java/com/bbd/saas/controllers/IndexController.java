@@ -175,32 +175,4 @@ public class IndexController {
         return sb.toString();
     }
 
-    /**
-     * 生成图片验证码
-     *
-     * @param model
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/test/authImage")
-    public void authImage(Model model, HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("Pragma", "No-cache");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expires", 0);
-        response.setContentType("image/jpeg");
-
-        //生成随机字串
-        String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
-        //存入会话session
-        HttpSession session = request.getSession(true);
-        session.setAttribute("rand", verifyCode.toLowerCase());
-        //生成图片
-        int w = 200, h = 80;
-        try {
-            VerifyCodeUtils.outputImage(w, h, response.getOutputStream(), verifyCode);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -5,9 +5,14 @@ import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.Result;
+import com.bbd.saas.api.mongo.AdminUserService;
 import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Site;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +20,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,6 +35,8 @@ public class BbdExpressApiController {
 	SiteService siteService;
 	@Autowired
 	SitePoiApi sitePoiApi;
+	@Autowired
+	AdminUserService adminUserService;
 	@Autowired
 	Geo geo;
 	/**
@@ -114,5 +124,40 @@ public class BbdExpressApiController {
 			logger.info("[address]:" + address + " [search geo result] exception,异常");
 		}
 		return str;
+	}
+
+	@RequestMapping(value="/getDistance",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
+	@ResponseBody
+	public String getDistance(String city, String start, String ends) throws IOException {
+		Gson gson = new Gson();
+		MapPoint mapPoint  = gson.fromJson(start, MapPoint.class);
+		List<MapPoint> mapPointList = gson.fromJson(ends, new TypeToken<List<MapPoint>>(){}.getType());
+		/*logger.info("adminUserId："+adminUserId);
+		logger.info("sites："+sites);
+		String str = "";
+		try {
+			String siteIds = "57222002c35cc51be28b318c,57222002c35cc51be28b318c";
+			AdminUser adminUser = adminUserService.findOne(adminUserId);//"56cad121a72ec72fb4c6dfe4"
+			MapPoint startMapPoint = new MapPoint(Double.parseDouble("116.47644937457"),Double.parseDouble("39.904454406601"));
+			//MapPoint startMapPoint = new MapPoint(Double.parseDouble(adminUser.getSender().getLon()),Double.parseDouble(adminUser.getSender().getLat()));
+			//getDistance(String city, final MapPoint start, List<MapPoint> ends)
+			List<MapPoint> mapPoints = new ArrayList<MapPoint>();
+			for (String siteId: siteIds.split(",")) {
+				Site site = siteService.findSite(siteId);
+				MapPoint siteMapPoint = new MapPoint(Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
+				mapPoints.add(siteMapPoint);
+			}
+			int length = geo.getDistance(adminUser.getSender().getCity(),startMapPoint,mapPoints);
+			str = length+"";
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info(" exception,异常");
+		}
+		return str;*/
+		int length = 0;
+		if(!"".equals(city)&&mapPoint!=null&&mapPointList!=null&&mapPointList.size()>0) {
+			length = geo.getDistance(city, mapPoint, mapPointList);
+		}
+		return JSON.json(length);
 	}
 }
