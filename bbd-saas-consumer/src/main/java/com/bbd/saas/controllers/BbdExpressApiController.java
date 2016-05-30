@@ -5,11 +5,8 @@ import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.Result;
-import com.bbd.saas.api.mongo.AdminUserService;
 import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Site;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -35,8 +30,6 @@ public class BbdExpressApiController {
 	SiteService siteService;
 	@Autowired
 	SitePoiApi sitePoiApi;
-	@Autowired
-	AdminUserService adminUserService;
 	@Autowired
 	Geo geo;
 	/**
