@@ -95,5 +95,13 @@
             <ref bean="incomeDao"/>
         </property>
     </bean>
+
+    <bean id="expressCompanyService" class="com.bbd.saas.api.impl.mysql.ExpressCompanyServiceImpl">
+        <property name="expressCompanyDao">
+            <ref bean="expressCompanyDao"/>
+        </property>
+    </bean>
+
+
     <!--    end mysql services   -->
 </beans>

@@ -5,10 +5,12 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.ToOtherSiteLogService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.models.ExpressCompany;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.ToOtherSiteLog;
@@ -54,6 +56,11 @@ public class HandleAbnormalController {
 	ToOtherSiteLogService toOtherSiteLogService;
 	@Autowired
 	PostDeliveryService postDeliveryService;
+
+	@Autowired
+	ExpressCompanyService  expressCompanyService;
+
+
 	/**
 	 * description: 跳转到异常件处理页面
 	 * 2016年4月1日下午6:13:46
@@ -459,6 +466,35 @@ public class HandleAbnormalController {
 		return map;
 	}
 	/**************************申请退货***************结束***********************************/
-	
-	
+
+
+	/**************************转为其他快递   得到所有的快递公司***************开始***********************************/
+	@ResponseBody
+	@RequestMapping(value="/getExpressCompanys", method=RequestMethod.GET)
+	public  List<ExpressCompany> getExpressCompanys( Model model) {
+		List<ExpressCompany> expressCompanys = expressCompanyService.getExpressCompany();
+		    if(expressCompanys!=null&&expressCompanys.size()!=0){
+				return expressCompanys;
+			}else{
+				return null;
+			}
+
+	}
+
+	/**
+	 *
+	 * @param mailNum 运单号
+	 * @return
+     */
+	@ResponseBody
+	@RequestMapping(value="/getOrderByMailNums", method=RequestMethod.GET)
+	public Order getOrderByMailNums( String mailNum) {
+
+		Order order = orderService.findOneByMailNum("", mailNum);
+		  if(order!=null){
+			  return order;
+		  }
+            return null;
+	}
+		/**************************转为其他快递   得到所有的快递公司***************结束***********************************/
 }
