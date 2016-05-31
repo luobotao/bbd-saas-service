@@ -3,8 +3,7 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="com.bbd.saas.vo.UserVO" %>
-<%@ page import="java.util.List" %>
+<%@ page import="com.bbd.saas.enums.ReturnReason" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
  
@@ -104,6 +103,7 @@
 									<td>
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
+										<br>
 										<a href="javascript:void(0);" onclick="showOtherExpressDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 
@@ -116,6 +116,7 @@
 										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a> --%>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<a href="javascript:void(0);" onclick="showOtherExpressDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<br>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 
 									</td>
@@ -197,16 +198,12 @@
 			<div class="modal-body b-modal-body">
 				选择退货原因:
 				<select id="rtnReason" name="rtnReason" class="form-control form-bod">
-					<option value ="货物破损">货物破损</option>  
-					<option value ="超时配送">超时配送</option>  
-					<option value="客户端要求退换">客户端要求退换</option>  
-					<option value="其他">其他</option> 
+					<%=ReturnReason.Srcs2HTML(-1)%>
 				</select>
 				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20" col="3" placeholder="请输入退货原因"></textarea>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideApplyReturnDiv()" class="sbtn sbtn2 g">取消</a></span>
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="applyReturn()" class="sbtn sbtn2 l">确定</a></span>
-					
 				</div>
 			</div>
 		</div>
@@ -297,11 +294,11 @@ $(document).ready(function() {
 	
 	//退货原因，选择其他的原因弹出详情输入框
 	$("#rtnReason").change(function(){
-		if(this.value == "其他"){
+		/*if(this.value == "4"){//其他
 			$("#rtnRemark").modal("show");
 		} else {
 			$("#rtnRemark").modal("hide");
-		}
+		}*/
 	});
 	
 	//初始化快递员列表
@@ -608,6 +605,18 @@ function hideApplyReturnDiv() {
 }
 //确定退货
 function applyReturn(mailNum) {
+	//表单校验
+	var rtnRemark = $("#rtnRemark").val();
+	if(rtnRemark == "" || rtnRemark == null){
+		outDiv("请选择退货原因");
+		return false;
+	}else{
+		if(rtnRemark == "5"){//其他
+			outDiv("请填写备注");
+			$("#rtnRemark").focus();
+			return false;
+		}
+	}
 	//获取当前页
 	var pageIndex = getCurrPage();
 	//保存退货信息

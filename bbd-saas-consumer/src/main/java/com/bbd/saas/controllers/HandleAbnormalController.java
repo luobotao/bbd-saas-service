@@ -431,6 +431,8 @@ public class HandleAbnormalController {
 			if(order != null){
 				order.setRtnReason(rtnReason);//退货原因
 				order.setRtnRemark(rtnRemark);//退货备注
+				order.setDateAplyRtn(new Date());//申请退货时间
+				order.setOrderStatus(OrderStatus.APPLY_RETURN);//状态
 				//更新运单
 				Key<Order> r = orderService.save(order);
 				if(r != null){
