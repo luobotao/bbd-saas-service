@@ -5,7 +5,7 @@ package com.bbd.saas.vo;
  */
 public class Expree100RequestVO {
      private String schema;
-    private Expree100BodyVO param;
+    private String param;
 
     public String getSchema() {
         return schema;
@@ -15,11 +15,11 @@ public class Expree100RequestVO {
         this.schema = schema;
     }
 
-    public Expree100BodyVO getParam() {
+    public String getParam() {
         return param;
     }
 
-    public void setParam(Expree100BodyVO param) {
+    public void setParam(String param) {
         this.param = param;
     }
 }

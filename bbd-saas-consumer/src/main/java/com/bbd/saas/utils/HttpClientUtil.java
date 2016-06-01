@@ -30,7 +30,7 @@ import org.apache.http.util.EntityUtils;
 
 
 public class HttpClientUtil {
-    private RequestConfig requestConfig = RequestConfig.custom()
+    private static RequestConfig requestConfig = RequestConfig.custom()
             .setSocketTimeout(15000)
             .setConnectTimeout(15000)
             .setConnectionRequestTimeout(15000)
@@ -83,7 +83,7 @@ public class HttpClientUtil {
      * @param httpUrl 地址
      * @param maps    参数
      */
-    public String sendHttpPost(String httpUrl, Map<String, String> maps) {
+    public static String sendHttpPost(String httpUrl, Map<String, String> maps) {
         HttpPost httpPost = new HttpPost(httpUrl);// 创建httpPost
         // 创建参数队列
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -127,7 +127,7 @@ public class HttpClientUtil {
      * @param httpPost
      * @return
      */
-    private String sendHttpPost(HttpPost httpPost) {
+    private static String sendHttpPost(HttpPost httpPost) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         HttpEntity entity = null;

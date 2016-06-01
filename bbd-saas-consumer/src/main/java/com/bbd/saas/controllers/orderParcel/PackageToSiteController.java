@@ -201,6 +201,7 @@ public class PackageToSiteController {
 								orderTrack.dateUpd = new Date();
 								orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
 								orderTrack.transStatus = TransStatus.YWC;
+								orderTrack.preSchedule="已送达";
 								orderTrackService.updateOrderTrack(trackNo, orderTrack);
 								incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
 							}
