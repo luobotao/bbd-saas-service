@@ -5,7 +5,6 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
-import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -485,11 +484,50 @@ public class HandleAbnormalController {
      */
     @ResponseBody
     @RequestMapping(value = "/toOtherExpressCompanys", method = RequestMethod.POST)
-    public Order toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew) {
+    public Map<String, Object> toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            //当前登录的用户信息
+            User currUser = adminService.get(UserSession.get(request));
+            //查询运单信息
+            Order order = updExpressForToOtherCmp(companyId, mailNum, mailNumNew, currUser);
+            //StringBuffer fromSB = new StringBuffer();
+            //Sender
+            ResultResposeDTO resposeDTO = goTo100Subscribe("", "", companyId, mailNum,
+                    order.getSender().getAddress(), order.getReciever().getAddress(), mailNumNew);
+            if(resposeDTO != null){
+                //更新运单
+                Key<Order> r = orderService.save(order);
+                if(r != null){
+                    map.put("success", true);//成功
+                    map.put("msg", "转其他快递操作成功");//0
+                    //刷新列表
+                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+                }else{
+                    map.put("success", false);//失败
+                    map.put("msg", "转其他快递操作失败，请稍候再试");
+                }
+            }else{
+                map.put("success", false);//0:运单号不存在
+                map.put("msg", "运单不存在");//0
+            }
+        } catch (Exception e) {
+            logger.error("===转其他快递操作===出错:" + e.getMessage());
+        }
+        return map;
+    }
 
+    /**
+     * 转其他快递物流信息
+     * @param companyId 要转到的快递公司的Id
+     * @param mailNum
+     * @param mailNumNew
+     * @return
+     */
+    private Order updExpressForToOtherCmp(String companyId, String mailNum, String mailNumNew, User currUser){
         String companyName = null;
         String companyCode = null;
-
+        Order order = null;
         if (StringUtils.isNoneBlank(companyId)) {
             ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
             if (null != expressCompany) {
@@ -498,41 +536,40 @@ public class HandleAbnormalController {
             }
         }
         if (StringUtils.isNotBlank(mailNum)) {
-
-            Order order = orderService.findOneByMailNum("", mailNum);
+            order = orderService.findOneByMailNum("", mailNum);
             if (order != null) {
+                //更新状态
+                order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
+                //更新getOtherExprees字段
                 List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
                 if (otherExpressList == null || otherExpressList.isEmpty()) {
                     otherExpressList = Lists.newArrayList();
                 }
-
                 OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
-
                 if (StringUtils.isNotBlank(mailNumNew)) {
                     otherExpreeVO.setMailNum(mailNumNew);
                 }
                 otherExpreeVO.setCompanyname(companyName);
                 otherExpreeVO.setContext("订单超出站点配送 范围，已转发【" + companyName + "快递】，快递单号：" + mailNumNew + "");
-
                 otherExpreeVO.setCompanycode(companyCode);
                 otherExpreeVO.setDateUpd(new Date());
-
                 otherExpressList.add(otherExpreeVO);
                 order.setOtherExprees(otherExpressList);
-                order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
                 order.setDateUpd(new Date());
-
-                orderService.save(order);
-                return order;
+                //更新expresses字段
+                StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发：【") ;
+                expRemark.append(companyName);
+                expRemark.append("，快递单号：");
+                expRemark.append(mailNumNew);
+                expRemark.append("。");
+                addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
             }
         }
-        return null;
+        return order;
+
     }
-
-
-    @ResponseBody
-    @RequestMapping(value = "/goTo100Subscribe", method = RequestMethod.POST)
-    public ResultResposeDTO goTo100Subscribe(String salt, String resultv2, String companyId, String mailNum, String from, String to, String mailNumNew) {
+    public ResultResposeDTO goTo100Subscribe(String salt, String resultv2, String companyId, String mailNum,
+            String from, String to, String mailNumNew) {
         String epree100Resultv2 = "";
         String epree100_salt = "";
         String companyName = null;
@@ -597,9 +634,6 @@ public class HandleAbnormalController {
 
            e.printStackTrace();
         }
-
-        ;
-
         return resultResposeDTO;
     }
 

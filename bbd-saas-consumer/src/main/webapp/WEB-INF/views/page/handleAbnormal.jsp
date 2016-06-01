@@ -629,7 +629,6 @@ function applyReturn() {
 	//表单校验
 	var rtnReason = $("#rtnReason").val();
 	var rtnRemark = $("#rtnRemark").val();
-	console.log("");
 	if(rtnReason == "" || rtnReason == null){
 		outDiv("请选择退货原因");
 		return false;
@@ -666,8 +665,7 @@ function applyReturn() {
 			}
 		},
 		error : function() {
-			//alert("退货发生异常，请重试！");
-			//gotoLoginPage();
+			outDiv("服务器繁忙，请稍后再试！");
 		}
 	});
 	//隐藏面板
@@ -762,32 +760,66 @@ function hideExpressCompanyDiv() {
 
 //转其他快递公司
 function toOtherExpressCompanys() {
+	//表单校验id="mailNum"
 	var companyId = $("#express_select").find("option:selected").val();
-	var mailNumNew=$("#mailNum").val();
+	var mailNumNew = $("#mailNum").val();
+	if (companyId == "" || companyId == null) {
+		outDiv("请选择快递公司");
+		return false;
+	}
+	if (mailNumNew == "" || mailNumNew == null) {
+		outDiv("请填写运单号");
+		$("#mailNum").focus();
+		return false;
+	}
+	//获取当前页
+	var pageIndex = getCurrPage();
 
 	//转其他快递公司
 	$.ajax({
-		type : "POST",  //提交方式
-		url : "<%=path%>/handleAbnormal/toOtherExpressCompanys",//路径
-		data : {
-			"mailNum" : mailNum, //运单号
-			"companyId" : companyId,
-			"mailNumNew":mailNumNew //输入的运单号
+		type: "POST",  //提交方式
+		url: "<%=path%>/handleAbnormal/toOtherExpressCompanys",//路径
+		data: {
+			"mailNum": mailNum, //运单号
+			"companyId": companyId,
+			"mailNumNew": mailNumNew,//输入的运单号
+			"pageIndex": pageIndex,//更新列表
+			"status": $("#status").val(),
+			"arriveBetween": $("#arriveBetween").val()
 		},//数据，这里使用的是Json格式进行传输
-		success : function(data) {//返回数据根据结果进行相应的处理
-
-			     if(data!=null){
-					 from=data.sender.address;
-					 to=data.reciever.address;
-
-				 }
-			goTo100Subscribe(companyId,mailNumNew);
+		success: function (data) {//返回数据根据结果进行相应的处理
+			outDiv(data.msg);
+			if (data.success) {//分派成功，刷新列表！
+				//outDiv有延迟，所以页面刷新需要同步延迟
+				setTimeout(function () {
+					refreshTable(data.orderPage);
+				}, 2000);
+			}
+		},
+		error: function () {
+			outDiv("服务器繁忙，请稍后再试！");
 		}
 
 	});
+	//隐藏面板
+	$("#chooseOtherExpress_div").modal("hide");
+}
 //调用快递100 接口并返回数据
 function goTo100Subscribe(companyId,mailNumNew) {
-
+	//表单校验id="mailNum"
+	var express_select = $("#express_select").val();
+	var mailNum = $("#mailNum").val();
+	if(express_select == "" || express_select == null){
+		outDiv("请选择快递公司");
+		return false;
+	}
+	if(mailNum == "" || mailNum == null){
+		outDiv("请填写运单号");
+		$("#mailNum").focus();
+		return false;
+	}
+	//获取当前页
+	var pageIndex = getCurrPage();
 	$.ajax({
 		type: "POST",  //提交方式
 		 url:"<%=path%>/handleAbnormal/goTo100Subscribe",
@@ -798,20 +830,26 @@ function goTo100Subscribe(companyId,mailNumNew) {
 			"mailNum": mailNum,
 			"from": from,
 			"to": to,
-			"mailNumNew": mailNumNew
-
+			"mailNumNew": mailNumNew,
+			"pageIndex" : pageIndex,//更新列表
+			"status" : $("#status").val(),
+			"arriveBetween" : $("#arriveBetween").val()
 		},//数据，这里使用的是Json格式进行传输
 		success: function (data) {//返回数据根据结果进行相应的处理
-                if(data!=null){
-
-				}
+			outDiv(data.msg);
+			if(data.success){//分派成功，刷新列表！
+				//outDiv有延迟，所以页面刷新需要同步延迟
+				setTimeout(function(){
+					refreshTable(data.orderPage);
+				},2000);
+			}
 		},
 		error: function () {
-			//alert("服务器繁忙，请稍后再试！");
-			gotoLoginPage();
+			outDiv("服务器繁忙，请稍后再试！");
 		}
 	});
-i
+	//隐藏面板
+	$("#chooseOtherExpress_div").modal("hide");
 }
 	//隐藏面板
 	$(".j-site-pop").modal("hide");
