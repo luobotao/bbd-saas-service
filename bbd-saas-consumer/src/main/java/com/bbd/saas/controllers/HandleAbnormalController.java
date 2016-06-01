@@ -5,6 +5,7 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -463,7 +464,9 @@ public class HandleAbnormalController {
     /**************************申请退货***************结束***********************************/
 
 
-    /**************************  转为其他快递   得到所有的快递公司*************** 开始 *****************************/
+    /**************************
+     * 转为其他快递   得到所有的快递公司***************开始
+     ***********************************/
     @ResponseBody
     @RequestMapping(value = "/getExpressCompanys", method = RequestMethod.GET)
     public List<ExpressCompany> getExpressCompanys(Model model) {
@@ -516,6 +519,7 @@ public class HandleAbnormalController {
 
                 otherExpressList.add(otherExpreeVO);
                 order.setOtherExprees(otherExpressList);
+                order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
                 order.setDateUpd(new Date());
 
                 orderService.save(order);
@@ -533,11 +537,10 @@ public class HandleAbnormalController {
         String epree100_salt = "";
         String companyName = null;
         String companyCode = null;
-        ResultResposeDTO resultResposeDTO = new ResultResposeDTO();
+
         if (StringUtils.isNoneBlank(resultv2)) {
             epree100Resultv2 = resultv2;
         }
-
 
         if (StringUtils.isNoneBlank(epree100_salt)) {
             epree100Resultv2 = salt;
@@ -576,99 +579,30 @@ public class HandleAbnormalController {
         requestVO.put("schema", "json/xml");
 
 
-        RestRequestDTO restRequestDTO = null;
-        String restRequestDTOStr = null;
+        ResultResposeDTO resultResposeDTO = null;
+        String resultResposeDTOstr = null;
 
         try {
-            restRequestDTOStr = HttpClientUtil.sendHttpPost(EPREE100_URL, requestVO);
-            if (StringUtils.isNoneBlank(restRequestDTOStr)) {
-                restRequestDTO = JSON.parse(restRequestDTOStr, RestRequestDTO.class);
-                if (null != restRequestDTO) {
-                    LastResultVO lastResult = restRequestDTO.getLastResult();
-                    if (null != lastResult) {
-                        List<NewContextVO> data = lastResult.getData();
-                        if (data != null && data.size() != 0) {
+            resultResposeDTOstr = HttpClientUtil.sendHttpPost(EPREE100_URL, requestVO);
 
-                            if (StringUtils.isNotBlank(mailNum)) {
-                                Order order = orderService.findOneByMailNum("", mailNum);
-                                if (order != null) {
-                                    List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
-                                    if (otherExpressList == null || otherExpressList.isEmpty()) {
-                                        otherExpressList = Lists.newArrayList();
-                                    }
+            if (StringUtils.isNoneBlank(resultResposeDTOstr)) {
+                resultResposeDTO = JSON.parse(resultResposeDTOstr, ResultResposeDTO.class);
+                if (null != resultResposeDTO) {
 
-                                    String resultv21 = expree100ParametersVO.getResultv2();
-                                    for (NewContextVO newContext : data) {
-                                        if (StringUtils.isNoneBlank(resultv21) && StringUtils.isNotBlank(mailNumNew)) {
-                                            OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
-                                            otherExpreeVO.setContext(newContext.getContext());
-                                            otherExpreeVO.setMailNum(mailNumNew);
-                                            otherExpreeVO.setCompanyname(companyName);
-                                            otherExpreeVO.setAreaCode(newContext.getAreaCode());
-                                            otherExpreeVO.setAreaName(newContext.getAreaName());
-                                            otherExpreeVO.setCompanycode(companyCode);
-                                            otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.getFtime()));
-                                            otherExpreeVO.setStatus(newContext.getStatus());
-                                            otherExpressList.add(otherExpreeVO);
-                                        } else {
-                                            OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
-                                            otherExpreeVO.setContext(newContext.getContext());
-                                            otherExpreeVO.setMailNum(mailNumNew);
-                                            otherExpreeVO.setCompanyname(companyName);
-                                            otherExpreeVO.setCompanycode(companyCode);
-                                            otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.getFtime()));
-                                            otherExpressList.add(otherExpreeVO);
-                                        }
-                                    }
-
-
-                                    order.setOtherExprees(otherExpressList);
-
-                                    String state = lastResult.getState();
-                                    String status = restRequestDTO.getStatus();
-                                    String message = restRequestDTO.getMessage();
-
-                                    if (StringUtils.isNotBlank(status) && state != null) {
-                                        if ("shutdown".equals(status) && ("3".equals(state) || "4".equals(state))) {
-                                            order.setOrderStatus(OrderStatus.SIGNED);
-                                        }
-                                    }
-                                    if (StringUtils.isNotBlank(message) && StringUtils.isNotBlank(status)) {
-                                        if (("3天查询无记录".equals(message) && "abort".equals(status))
-                                                || ("60天无变化时".equals(message) && "abort".equals(status))) {
-                                            order.setOrderStatus(OrderStatus.SIGNED);
-                                        }
-
-                                    }
-
-                                    order.setDateUpd(new Date());
-
-                                    orderService.save(order);
-
-
-                                }
-
-
-                            }
-                        }
-                    }
+                    return resultResposeDTO;
 
                 }
             }
-        } catch (Exception e) {
+        }catch (Exception e) {
 
-            e.printStackTrace();
-            resultResposeDTO.setResult(false);
-            resultResposeDTO.setMessage("转运信息失败");
-
-            return resultResposeDTO;
+           e.printStackTrace();
         }
 
-        resultResposeDTO.setResult(true);
-        resultResposeDTO.setMessage("转运信息添加成功");
+        ;
 
         return resultResposeDTO;
     }
+
 
 
 }

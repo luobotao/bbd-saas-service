@@ -802,14 +802,16 @@ function goTo100Subscribe(companyId,mailNumNew) {
 
 		},//数据，这里使用的是Json格式进行传输
 		success: function (data) {//返回数据根据结果进行相应的处理
-            alert(data);
+                if(data!=null){
+
+				}
 		},
 		error: function () {
 			//alert("服务器繁忙，请稍后再试！");
 			gotoLoginPage();
 		}
 	});
-
+i
 }
 	//隐藏面板
 	$(".j-site-pop").modal("hide");
