@@ -100,25 +100,22 @@
 									if(order.getOrderStatus() == OrderStatus.RETENTION){
 								%>
 									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
-									<td>
+									<td align="left">
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<br>
 										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
-
 									</td>
 								<%
 									}else{
 								%>
 									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
-									<td>
-										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a> --%>
+									<td align="left">
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<br>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
-
 									</td>
 								<%
 									}
@@ -372,11 +369,12 @@ function getRowHtml(data){
 		 row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
 		 row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a>";
 		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
-		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>申请退货</a></td>";
+		row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange ml16'>申请退货</a></td>";
 	}else{
 		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
 		row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
-		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a></td>";
+		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
+		row += "<br><a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange'>申请退货</a></td>";
 	}
 	row += "</tr>";
 	return row;
@@ -668,25 +666,32 @@ function chooseOtherExpress(mailNum) {
 
 /************************申请退货***************开始***************************************/
 //显示申请退货div
-function showApplyReturnDiv(mailNum) {
+function showApplyReturnDiv(mailNumStr) {
+	mailNum = mailNumStr;
 	$("#apply_return_div").modal("show");
 }
+
 //隐藏申请退货div
 function hideApplyReturnDiv() {
+	mailNum = null;
 	$("#apply_return_div").modal("hide");
 }
 //确定退货
-function applyReturn(mailNum) {
+function applyReturn() {
 	//表单校验
+	var rtnReason = $("#rtnReason").val();
 	var rtnRemark = $("#rtnRemark").val();
-	if(rtnRemark == "" || rtnRemark == null){
+	console.log("");
+	if(rtnReason == "" || rtnReason == null){
 		outDiv("请选择退货原因");
 		return false;
 	}else{
-		if(rtnRemark == "5"){//其他
-			outDiv("请填写备注");
-			$("#rtnRemark").focus();
-			return false;
+		if(rtnReason == "4"){//其他
+			if(rtnRemark == "" || rtnRemark == null){
+				outDiv("请填写备注");
+				$("#rtnRemark").focus();
+				return false;
+			}
 		}
 	}
 	//获取当前页
@@ -694,30 +699,30 @@ function applyReturn(mailNum) {
 	//保存退货信息
 	$.ajax({
 		type : "POST",  //提交方式
-        url : "<%=path%>/handleAbnormal/doReturn",//路径
-        data : {  
-            "mailNum" : mailNum, //
-            "rtnReason" : $("#rtnReason").val(),
-            "rtnRemark" : $("#rtnRemark").val(),
+		url : "<%=path%>/handleAbnormal/doReturn?${_csrf.parameterName}=${_csrf.token}",//路径
+		data : {
+			"mailNum" : mailNum, //
+			"rtnReason" : rtnReason,
+			"rtnRemark" : rtnRemark,
 			"pageIndex" : pageIndex,//更新列表
 			"status" : $("#status").val(),
 			"arriveBetween" : $("#arriveBetween").val()
 		},//数据，这里使用的是Json格式进行传输
-        success : function(data) {//返回数据根据结果进行相应的处理
+		success : function(data) {//返回数据根据结果进行相应的处理
 			outDiv(data.msg);
-        	if(data.success){//分派成功，刷新列表！
+			if(data.success){//分派成功，刷新列表！
 				//outDiv有延迟，所以页面刷新需要同步延迟
 				setTimeout(function(){
 					refreshTable(data.orderPage);
 				},2000);
-    		}
-        },
-        error : function() {  
-       		//alert("退货发生异常，请重试！");  
-			gotoLoginPage();
-  		}    
-    });
-    //隐藏面板
+			}
+		},
+		error : function() {
+			//alert("退货发生异常，请重试！");
+			//gotoLoginPage();
+		}
+	});
+	//隐藏面板
 	$("#apply_return_div").modal("hide");
 }
 //获取当前页

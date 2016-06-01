@@ -12,6 +12,7 @@ import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.ReturnReason;
 import com.bbd.saas.models.ExpressCompany;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
@@ -21,17 +22,18 @@ import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -303,7 +305,9 @@ public class HandleAbnormalController {
 				order.setUserId("");//未分派
 				order.setDateUpd(new Date());//更新时间
 				//更新物流信息
-				addOrderExpress(order, currUser, site.getName());
+				//订单已由【A站点】出库，正在转送到【B站点】进行配送
+				String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
+				addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
 				//更新预计到站时间
 				order.setDateMayArrive(Dates.addDays(new Date(), 1));
 				order.setDateArrived(null);
@@ -333,15 +337,15 @@ public class HandleAbnormalController {
 		
 	}
 	/**
-	 * Description: 设置订单的物流信息--转其他站点
+	 * 增加订单物流信息
+	 * @param expressStatus 物流状态
 	 * @param order 订单
-	 * @param user 派件员
-	 * @author liyanlei
-	 * 2016年4月22日下午3:32:35
+	 * @param user 当前用户
+	 * @param remark 物流信息
 	 */
-	private void addOrderExpress(Order order, User user, String siteName){
+	private void addOrderExpress(ExpressStatus expressStatus,Order order, User user, String remark){
 		//更新物流状态
-		order.setExpressStatus(ExpressStatus.Packed);
+		order.setExpressStatus(expressStatus);
 		//更新物流信息
 		List<Express> expressList = order.getExpresses();
 		if(expressList == null){
@@ -349,21 +353,20 @@ public class HandleAbnormalController {
 		}
 		Express express = new Express();
 		express.setDateAdd(new Date());
-		//订单已由【A站点】出库，正在转送到【B站点】进行配送
-		express.setRemark("订单已由【" + user.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。");
+		express.setRemark(remark);
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		boolean expressIsNotAdd = true;//防止多次添加
 		//检查是否添加过了
 		for (Express express1 : expressList) {
-		    if (express.getRemark().equals(express1.getRemark())) {
-		    	expressIsNotAdd = false;
-		        break;
-		    }
+			if (express.getRemark().equals(express1.getRemark())) {
+				expressIsNotAdd = false;
+				break;
+			}
 		}
 		if (expressIsNotAdd) {//防止多次添加
 			expressList.add(express);
-		    order.setExpresses(expressList);
+			order.setExpresses(expressList);
 		}
 	}
 	/**************************转其他站点***************结束***********************************/
@@ -419,24 +422,39 @@ public class HandleAbnormalController {
      * @param request 请求
      * @return  operFlag=1，orderPage = 当前页的数据； operFlag=0
      */
+	@ResponseBody
 	@RequestMapping(value="/doReturn", method=RequestMethod.POST)
-	public Map<String, Object> dispatch(String mailNum, String rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+	public Map<String, Object> dispatch(String mailNum, Integer rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			//查询运单信息
 			Order order = orderService.findOneByMailNum("", mailNum);
 			if(order != null){
-				order.setRtnReason(rtnReason);//退货原因
+				ReturnReason reason = ReturnReason.status2Obj(rtnReason);
+				//当前登录的用户信息
+				User currUser = adminService.get(UserSession.get(request));
+				order.setRtnReason(reason.getMessage());//退货原因
 				order.setRtnRemark(rtnRemark);//退货备注
 				order.setDateAplyRtn(new Date());//申请退货时间
 				order.setOrderStatus(OrderStatus.APPLY_RETURN);//状态
+				//更新物流信息
+				StringBuffer expRemark = new StringBuffer("订单已申请退货，退货原因：") ;
+				if((ReturnReason.OTHER.getStatus()+"").equals(rtnReason)){//其他
+					expRemark.append(rtnRemark);
+				}else {
+					expRemark.append(reason.getMessage());
+					if(StringUtil.isNotEmpty(rtnRemark)){
+						expRemark.append("，");
+						expRemark.append(rtnRemark);
+					}
+				}
+				expRemark.append("。");
+				addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
 				//更新运单
 				Key<Order> r = orderService.save(order);
 				if(r != null){
 					map.put("success", true);//成功
 					map.put("msg", "申请退货成功");//0
-					//当前登录的用户信息
-					User currUser = adminService.get(UserSession.get(request));
 					//刷新列表
 					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
 				}else{
