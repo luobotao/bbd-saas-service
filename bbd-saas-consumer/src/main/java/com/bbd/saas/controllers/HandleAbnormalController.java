@@ -369,24 +369,6 @@ public class HandleAbnormalController {
 	/**************************转其他站点***************结束***********************************/
 	/**************************转其他快递公司***************开始***********************************/
 	/**
-	 * Description: 获取快递公司
-	 * @param model
-	 * @return
-	 * @author: liyanlei
-	 * 2016年4月11日下午4:15:05
-	 */
-	@ResponseBody
-	@RequestMapping(value="/getAllExpressCompanyList", method=RequestMethod.GET)
-	public List<UserVO> getAllExpressCompanyList(Model model) {
-		List<UserVO> userVoList = null;
-		try {
-			return null;
-		} catch (Exception e) {
-			logger.error("===获取快递公司===出错:" + e.getMessage());
-		}
-		return userVoList;
-	}
-	/**
 	 * Description: 转其他快递
 	 * @param mailNum
 	 * @param expressId
@@ -425,37 +407,45 @@ public class HandleAbnormalController {
 	/**************************转其他快递公司***************结束***********************************/
 	
 	/**************************申请退货***************开始***********************************/
+
 	/**
-	 * Description: 退货
+	 * 退货
 	 * @param mailNum 运单号
-	 * @param returnReasonType 退货原因类型
-	 * @param returnReasonInfo 其他原因--原因详情
-	 * @param model
-	 * @return
-	 * @author: liyanlei
-	 * 2016年4月14日下午1:57:12
-	 */
-	@RequestMapping(value="/saveReturn", method=RequestMethod.GET)
-	public Map<String, Object> dispatch(String mailNum, String returnReasonType, String returnReasonInfo, Model model) {
+	 * @param rtnReason 退货原因
+	 * @param rtnRemark 其他原因--原因详情
+	 * @param status 状态
+	 * @param pageIndex 当前页
+	 * @param arriveBetween 到站时间
+     * @param request 请求
+     * @return  operFlag=1，orderPage = 当前页的数据； operFlag=0
+     */
+	@RequestMapping(value="/doReturn", method=RequestMethod.POST)
+	public Map<String, Object> dispatch(String mailNum, String rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			//查询运单信息
 			Order order = orderService.findOneByMailNum("", mailNum);
 			if(order != null){
-				//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
-				if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-					||ExpressStatus.Delay.equals(order.getExpressStatus())
-					|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-					if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
-						//saveOrderMail(order, staffId, map);
-					}else{//重复扫描，此运单已分派过了
-						map.put("operFlag", 2);
-					}
-				}else{//重复扫描，此运单已分派过了
-					map.put("operFlag", 2);
+				order.setRtnReason(rtnReason);//退货原因
+				order.setRtnRemark(rtnRemark);//退货备注
+				order.setDateAplyRtn(new Date());//申请退货时间
+				order.setOrderStatus(OrderStatus.APPLY_RETURN);//状态
+				//更新运单
+				Key<Order> r = orderService.save(order);
+				if(r != null){
+					map.put("success", true);//成功
+					map.put("msg", "申请退货成功");//0
+					//当前登录的用户信息
+					User currUser = adminService.get(UserSession.get(request));
+					//刷新列表
+					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+				}else{
+					map.put("success", false);//失败
+					map.put("msg", "退货失败，请稍候再试");
 				}
 			}else{
-				map.put("erroFlag", 0);//0:运单号不存在
+				map.put("success", false);//0:运单号不存在
+				map.put("msg", "运单不存在");//0
 			}
 		} catch (Exception e) {
 			logger.error("===退货===出错:" + e.getMessage());

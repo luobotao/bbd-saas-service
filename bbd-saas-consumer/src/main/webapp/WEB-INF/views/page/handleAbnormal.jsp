@@ -3,8 +3,7 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="com.bbd.saas.vo.UserVO" %>
-<%@ page import="java.util.List" %>
+<%@ page import="com.bbd.saas.enums.ReturnReason" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
  
@@ -104,8 +103,9 @@
 									<td>
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
+										<br>
 										<a href="javascript:void(0);" onclick="showOtherExpressDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
-										  <a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
+										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 
 									</td>
 								<%
@@ -115,6 +115,10 @@
 									<td>
 										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a> --%>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
+										<a href="javascript:void(0);" onclick="showOtherExpressDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<br>
+										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
+
 									</td>
 								<%
 									}
@@ -193,17 +197,13 @@
 			</div>
 			<div class="modal-body b-modal-body">
 				选择退货原因:
-				<select id="returnReasonType" name="returnReasonType" class="form-control form-bod">
-					<option value ="货物破损">货物破损</option>  
-					<option value ="超时配送">超时配送</option>  
-					<option value="客户端要求退换">客户端要求退换</option>  
-					<option value="其他">其他</option> 
+				<select id="rtnReason" name="rtnReason" class="form-control form-bod">
+					<%=ReturnReason.Srcs2HTML(-1)%>
 				</select>
-				<textarea id="returnReasonInfo" name="returnReasonInfo" class="form-control form-bod mt20" col="3" placeholder="请输入退货原因"></textarea>
+				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20" col="3" placeholder="请输入退货原因"></textarea>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideApplyReturnDiv()" class="sbtn sbtn2 g">取消</a></span>
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="applyReturn()" class="sbtn sbtn2 l">确定</a></span>
-					
 				</div>
 			</div>
 		</div>
@@ -293,12 +293,12 @@ $(document).ready(function() {
 	});
 	
 	//退货原因，选择其他的原因弹出详情输入框
-	$("#returnReasonType").change(function(){
-		if(this.value == "其他"){
-			$("#returnReasonInfo").modal("show");
+	$("#rtnReason").change(function(){
+		/*if(this.value == "4"){//其他
+			$("#rtnRemark").modal("show");
 		} else {
-			$("#returnReasonInfo").modal("hide");
-		}
+			$("#rtnRemark").modal("hide");
+		}*/
 	});
 	
 	//初始化快递员列表
@@ -594,6 +594,7 @@ function chooseOtherSite() {
 }
 /**************************转其他站点***************结束***********************************/
 
+<<<<<<< HEAD
 /*************************************下面的暂时不做*****************************************************/
 
 /************************转其他快递公司***************开始***************************************/	
@@ -666,6 +667,8 @@ function chooseOtherExpress(mailNum) {
 }*/
 
 /************************转其他快递公司***************结束***************************************/
+=======
+>>>>>>> 0af2d90952080973889bbe6bd449df9583419c4d
 
 /************************申请退货***************开始***************************************/
 //显示申请退货div
@@ -678,29 +681,44 @@ function hideApplyReturnDiv() {
 }
 //确定退货
 function applyReturn(mailNum) {
+	//表单校验
+	var rtnRemark = $("#rtnRemark").val();
+	if(rtnRemark == "" || rtnRemark == null){
+		outDiv("请选择退货原因");
+		return false;
+	}else{
+		if(rtnRemark == "5"){//其他
+			outDiv("请填写备注");
+			$("#rtnRemark").focus();
+			return false;
+		}
+	}
+	//获取当前页
+	var pageIndex = getCurrPage();
 	//保存退货信息
 	$.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/saveReturn",//路径  
+		type : "POST",  //提交方式
+        url : "<%=path%>/handleAbnormal/doReturn",//路径
         data : {  
             "mailNum" : mailNum, //
-            "returnReasonType" : $("#returnReasonType").val(), 
-            "returnReasonInfo" : $("#returnReasonInfo").val() 
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.success){
-        		alert("退货成功！");  
-        		//退货成功，刷新列表！
-        		//获取当前页
-        		var pageIndex = getCurrPage();
-			    gotoPage(pageIndex);
-    		}else{
-        		alert("退货失败，请重试！");  
-        	}
+            "rtnReason" : $("#rtnReason").val(),
+            "rtnRemark" : $("#rtnRemark").val(),
+			"pageIndex" : pageIndex,//更新列表
+			"status" : $("#status").val(),
+			"arriveBetween" : $("#arriveBetween").val()
+		},//数据，这里使用的是Json格式进行传输
+        success : function(data) {//返回数据根据结果进行相应的处理
+			outDiv(data.msg);
+        	if(data.success){//分派成功，刷新列表！
+				//outDiv有延迟，所以页面刷新需要同步延迟
+				setTimeout(function(){
+					refreshTable(data.orderPage);
+				},2000);
+    		}
         },
         error : function() {  
        		//alert("退货发生异常，请重试！");  
-       		gotoLoginPage();
+			gotoLoginPage();
   		}    
     });
     //隐藏面板
