@@ -45,13 +45,10 @@ public class Order implements Serializable {
     private String errorRemark;//异常信息
     private List<Goods> goods;
     private List<Express> expresses;
-<<<<<<< HEAD
     private List<OtherExpreeVO> otherExprees;
-=======
     private String rtnReason;//退货原因
     private String rtnRemark;//退货原因备注（退货原因为其他时，此字段不为空）
     private Date dateAplyRtn;//申请退货时间
->>>>>>> 0af2d90952080973889bbe6bd449df9583419c4d
     private Date orderCreate;//订单创建时间
     private Date orderPay;     //订单支付时间
     private Date dateAdd;

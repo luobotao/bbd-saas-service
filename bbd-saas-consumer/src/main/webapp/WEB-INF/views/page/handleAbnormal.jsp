@@ -104,7 +104,7 @@
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<br>
-										<a href="javascript:void(0);" onclick="showOtherExpressDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 
 									</td>
@@ -115,7 +115,7 @@
 									<td>
 										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a> --%>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
-										<a href="javascript:void(0);" onclick="showOtherExpressDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<br>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 
@@ -368,17 +368,16 @@ function getRowHtml(data){
 	 }
 	 //状态
 	 if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
-	 row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
-	 row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
-	 /*row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a></td>";*/
-	row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a></td>";
-}else{
-	row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
-	row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
-	row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a></td>";
-}
-/*row +="<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
-	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>";*/
+		 row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
+		 row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
+		 row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a>";
+		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
+		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>申请退货</a></td>";
+	}else{
+		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
+		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a></td>";
+	}
 	row += "</tr>";
 	return row;
 }
@@ -594,7 +593,6 @@ function chooseOtherSite() {
 }
 /**************************转其他站点***************结束***********************************/
 
-<<<<<<< HEAD
 /*************************************下面的暂时不做*****************************************************/
 
 /************************转其他快递公司***************开始***************************************/	
@@ -667,8 +665,6 @@ function chooseOtherExpress(mailNum) {
 }*/
 
 /************************转其他快递公司***************结束***************************************/
-=======
->>>>>>> 0af2d90952080973889bbe6bd449df9583419c4d
 
 /************************申请退货***************开始***************************************/
 //显示申请退货div
@@ -810,11 +806,14 @@ function hideExpressCompanyDiv() {
 	$("#chooseOtherExpress_div").modal("hide");
 }
 
-var companyId = $("#express_select").find("option:selected").text();
-var mailNumNew=$("#mailNum").val();
+
 //转其他快递公司
 function toOtherExpressCompanys() {
-alert(companyId);
+	var companyId = $("#express_select").find("option:selected").val();
+	var mailNumNew=$("#mailNum").val();
+	alert(companyId);
+	alert(mailNumNew);
+	alert(mailNum);
 
 	//转其他快递公司
 	$.ajax({
