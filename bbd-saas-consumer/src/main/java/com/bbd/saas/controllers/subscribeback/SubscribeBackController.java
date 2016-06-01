@@ -74,7 +74,8 @@ public class SubscribeBackController {
                                 for (HashMap<String,String> newContext : data) {
                                              Express   express=new Express();
                                                 express.setRemark(newContext.get("context"));
-                                                 express.setDateAdd(Dates.parseFullDate(newContext.get("time"))  );
+                                            express.setDateAdd(new Date() );
+                                                /* express.setDateAdd(Dates.parseFullDate(newContext.get("time"))  );*/
                                                  express.setLat("38.042309700115");
                                                   express.setLon("114.54567066289");
                                       /*  OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
