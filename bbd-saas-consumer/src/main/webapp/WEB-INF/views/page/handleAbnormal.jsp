@@ -407,15 +407,10 @@ function gotoLoginPage() {
 		window.top.location.href="<c:url value="/login" />"
 	}
 } 
-// 重新分派
-  //  shP(".j-sel", ".j-sel-pop");
+
 //显示选择派件员div
 function showCourierDiv(mailNumStr) {
-
 	mailNum = mailNumStr;
-	//staffId = staffIdStr;
-	//console.log("v==mailNum=="+mailNum);
-	//console.log("courierList===="+courierList);
 	if(courierList != null){
 		loadCouriers(courierList);
 	}else{//重新查询所有派件员
@@ -433,14 +428,10 @@ function showCourierDiv(mailNumStr) {
 	    });
 	}
 	$(".j-sel-pop").modal("show");
-	//$("#chooseCourier_div").modal("show");
 }
  
 //把派件员添加到下拉框中
 function loadCouriers(courierList, staffId) {
-	/* if(staffId == null || staffId == "undefined"){
-		staffId = "";
-	} */
 	var courier_select = $("#courier_select");
 	// 清空select  
 	courier_select.empty(); 
@@ -455,9 +446,7 @@ function loadCouriers(courierList, staffId) {
 //隐藏选择派件员div
 function hideCourierDiv() {
 	mailNum = null;
-	//staffId = null;
 	$(".j-sel-pop").modal("hide");
-	//$("#chooseCourier_div").modal("hide");
 }
 
 //重新分派
@@ -482,17 +471,15 @@ function chooseCourier() {
         		//分派成功，刷新列表！
         		refreshTable(data.orderPage);
         	}else{
-        		alert("重新分派失败，请稍后再试！");  
+				outDiv("重新分派失败，请稍后再试！");
         	}
         },
         error : function() {  
-       		//alert("服务器繁忙，请稍后再试！");  
-       		gotoLoginPage();
-  		}    
+       		outDiv("服务器繁忙，请稍后再试！");
+  		}
     });
     //隐藏面板
     $(".j-sel-pop").modal("hide");
-    //$("#chooseCourier_div").modal("hide");
 }
 /**************************重新分派***************结束***********************************/
 
@@ -534,8 +521,6 @@ function showOtherSiteDiv(mailNumStr) {
 	  		}    
 	    });
 	}
-	//$(".j-site-pop").modal("show");
-	//alert(123);
 	$("#chooseOtherSite_div").modal("show");
 }
 //把站点添加到下拉框中
@@ -572,20 +557,19 @@ function chooseOtherSite() {
         },//数据，这里使用的是Json格式进行传输  
         success : function(data) {//返回数据根据结果进行相应的处理  
         	if(data.operFlag == 1){
-        		//分派成功，刷新列表！
-        		refreshTable(data.orderPage);
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
         	}else{
-        		alert("转其他站点失败，请稍后再试！");  
+        		outDiv("转其他站点失败，请稍后再试！");
         	}
         },
         error : function() {  
-       		//alert("服务器繁忙，请稍后再试！"); 
-       		gotoLoginPage(); 
+       		outDiv("服务器繁忙，请稍后再试！");
+       		//gotoLoginPage();
   		}    
     });
-    //隐藏面板
-    $(".j-site-pop").modal("hide");
-	//$("#chooseOtherSite_div").modal("hide");
+	//隐藏面板
+	$(".j-site-pop").modal("hide");
 }
 /**************************转其他站点***************结束***********************************/
 
@@ -674,7 +658,6 @@ function applyReturn() {
 //获取当前页
 function getCurrPage(){
 	//获取当前页
-	//var pageIndex = $(".pages .active span").html();
 	var pageIndex = $(".pagination .active a").html();
 	var currPage = 0;
 	if(pageIndex != null && pageIndex != ""){
@@ -711,10 +694,7 @@ function initExpressCompanys() {
 //显示其他快递公司div
 function showExpressCompanyDiv(mailNumStr) {
 	mailNum = mailNumStr;
-	/*company=companycode;*/
-	//console.log("siteList==="+siteList+" mailNumStr==="+mailNumStr);
 	if(expressCompanysList != null){
-		//console.log("siteList != null== load div=");
 		loadExpressCompanys(expressCompanysList);
 	}else{//重新查询所有快递公司
 		$.ajax({
@@ -725,30 +705,23 @@ function showExpressCompanyDiv(mailNumStr) {
 				loadExpressCompanys(dataList);
 			},
 			error : function() {
-				//alert("服务器繁忙，请稍后再试！");
-				gotoLoginPage();
+				outDiv("服务器繁忙，请稍后再试！");
 			}
 		});
 	}
-	//$(".j-site-pop").modal("show");
-	//alert(123);
 	$("#chooseOtherExpress_div").modal("show");
 }
 //把公司信息添加到下拉框中
 function loadExpressCompanys(expressCompanysList) {
-
 	var express_select = $("#express_select");
 	// 清空select
 	express_select.empty();
-
 	if(expressCompanysList != null){
 		for(var i = 0; i < expressCompanysList.length; i++){
 			data = expressCompanysList[i];
 			express_select.append("<option value='"+data.id+"'>"+data.companyname+"</option>");
 		}
-
 	}
-
 }
 //隐藏转其他站点div
 function hideExpressCompanyDiv() {
@@ -799,61 +772,10 @@ function toOtherExpressCompanys() {
 		error: function () {
 			outDiv("服务器繁忙，请稍后再试！");
 		}
-
 	});
 	//隐藏面板
 	$("#chooseOtherExpress_div").modal("hide");
 }
-//调用快递100 接口并返回数据
-function goTo100Subscribe(companyId,mailNumNew) {
-	//表单校验id="mailNum"
-	var express_select = $("#express_select").val();
-	var mailNum = $("#mailNum").val();
-	if(express_select == "" || express_select == null){
-		outDiv("请选择快递公司");
-		return false;
-	}
-	if(mailNum == "" || mailNum == null){
-		outDiv("请填写运单号");
-		$("#mailNum").focus();
-		return false;
-	}
-	//获取当前页
-	var pageIndex = getCurrPage();
-	$.ajax({
-		type: "POST",  //提交方式
-		 url:"<%=path%>/handleAbnormal/goTo100Subscribe",
-		data: {
-			"salt": "",
-			"resultv2" :"",
-		   "companyId": companyId,
-			"mailNum": mailNum,
-			"from": from,
-			"to": to,
-			"mailNumNew": mailNumNew,
-			"pageIndex" : pageIndex,//更新列表
-			"status" : $("#status").val(),
-			"arriveBetween" : $("#arriveBetween").val()
-		},//数据，这里使用的是Json格式进行传输
-		success: function (data) {//返回数据根据结果进行相应的处理
-			outDiv(data.msg);
-			if(data.success){//分派成功，刷新列表！
-				//outDiv有延迟，所以页面刷新需要同步延迟
-				setTimeout(function(){
-					refreshTable(data.orderPage);
-				},2000);
-			}
-		},
-		error: function () {
-			outDiv("服务器繁忙，请稍后再试！");
-		}
-	});
-	//隐藏面板
-	$("#chooseOtherExpress_div").modal("hide");
-}
-	//隐藏面板
-	//$(".j-site-pop").modal("hide");
-	//$("#chooseOtherSite_div").modal("hide");
 
 /**********************转为其他快递公司2**************************结束************************************/
 </script>
