@@ -1,11 +1,12 @@
 package com.bbd.saas.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by huozhijie on 2016/5/31.
  */
-public class OtherExpreeVO {
+public class OtherExpreeVO implements Serializable {
     private Integer id;
     private String context;/*内容*/
     private String companyname;
