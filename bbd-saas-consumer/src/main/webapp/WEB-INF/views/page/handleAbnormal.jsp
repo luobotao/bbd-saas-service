@@ -595,7 +595,7 @@ function chooseOtherSite() {
 
 /************************转其他快递公司***************开始***************************************/	
 //初始化快递公司
-/*function initExpressCompany() {
+ function initExpressCompany() {
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -660,7 +660,7 @@ function chooseOtherExpress(mailNum) {
     });
     //隐藏面板
 	$("#chooseOtherExpress_div").modal("hide");
-}*/
+}
 
 /************************转其他快递公司***************结束***************************************/
 
@@ -816,9 +816,6 @@ function hideExpressCompanyDiv() {
 function toOtherExpressCompanys() {
 	var companyId = $("#express_select").find("option:selected").val();
 	var mailNumNew=$("#mailNum").val();
-	alert(companyId);
-	alert(mailNumNew);
-	alert(mailNum);
 
 	//转其他快递公司
 	$.ajax({
@@ -836,12 +833,12 @@ function toOtherExpressCompanys() {
 					 to=data.reciever.address;
 
 				 }
-			goTo100Subscribe();
+			goTo100Subscribe(companyId,mailNumNew);
 		}
 
 	});
 //调用快递100 接口并返回数据
-function goTo100Subscribe() {
+function goTo100Subscribe(companyId,mailNumNew) {
 
 	$.ajax({
 		type: "POST",  //提交方式

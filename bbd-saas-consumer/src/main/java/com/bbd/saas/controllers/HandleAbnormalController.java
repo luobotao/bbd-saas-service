@@ -1,6 +1,7 @@
 package com.bbd.saas.controllers;
 
 import com.alibaba.dubbo.common.json.JSON;
+import com.alibaba.dubbo.common.serialize.support.json.JsonSerialization;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
@@ -12,7 +13,6 @@ import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.ReturnReason;
 import com.bbd.saas.models.ExpressCompany;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
@@ -22,27 +22,26 @@ import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.HttpClient;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
 @RequestMapping("/handleAbnormal")
 @SessionAttributes("handleAbnormal")
 public class HandleAbnormalController {
-	
+
 	public static final Logger logger = LoggerFactory.getLogger(HandleAbnormalController.class);
-	
+
 	@Autowired
 	OrderService orderService;
 	@Autowired
@@ -65,7 +64,7 @@ public class HandleAbnormalController {
 	 * 2016年4月1日下午6:13:46
 	 * @author: liyanlei
 	 * @param model
-	 * @return 
+	 * @return
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public String index(Integer pageIndex, Integer status, String arriveBetween, final HttpServletRequest request, Model model) {
@@ -81,10 +80,10 @@ public class HandleAbnormalController {
 			model.addAttribute("arriveBetween", arriveBetween);
 		} catch (Exception e) {
 			logger.error("===跳转到异常件处理页面===出错:" + e.getMessage());
-		}		
+		}
 		return "page/handleAbnormal";
 	}
-	
+
 	//分页Ajax更新
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
@@ -119,7 +118,7 @@ public class HandleAbnormalController {
 		} catch (Exception e) {
 			logger.error("===分页Ajax更新列表数据===出错:" + e.getMessage());
 		}
-		return orderPage;		
+		return orderPage;
 	}
 	/**************************重新分派***************开始***********************************/
 	/**
@@ -142,7 +141,7 @@ public class HandleAbnormalController {
 		}
 		return userVoList;
 	}
-	
+
 	/**
 	 * Description: 运单重新分派--把异常的包裹重新分派给派件员
 	 * @param mailNum 运单号
@@ -182,10 +181,10 @@ public class HandleAbnormalController {
 				Express express = new Express();
 				express.setDateAdd(new Date());
 				if(new Date().getHours() < 19){
-	            	express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-	            }else{
-	            	express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-	            }
+					express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
+				}else{
+					express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
+				}
 				express.setLat(currUser.getSite().getLat());//站点经纬度
 				express.setLon(currUser.getSite().getLng());
 				expressList.add(express);
@@ -199,17 +198,17 @@ public class HandleAbnormalController {
 					postDeliveryService.updatePostAndStatusAndCompany(mailNum, courier.getPostmanuserId(), courier.getStaffid(), "1", null);
 					map.put("operFlag", 1);//1:分派成功
 					//刷新列表
-					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween)); 
+					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
 				}else{
 					map.put("operFlag", 0);//0:分派失败
-				}		
+				}
 			}
 		} catch (Exception e) {
 			logger.error("===运单重新分派===出错:" + e.getMessage());
 		}
 		return map;
 	}
-	
+
 	/**
 	 * Description: 查询列表数据--刷新列表
 	 * @param areaCode 站点编号
@@ -239,11 +238,11 @@ public class HandleAbnormalController {
 				userVO.setRealName(courier.getRealName());
 				order.setUserVO(userVO);
 			}
-		}		
-		return orderPage;		
+		}
+		return orderPage;
 	}
 	/**************************重新分派***************结束***********************************/
-	
+
 	/**************************转其他站点***************开始***********************************/
 	/**
 	 * Description: 查询除本站点外的其他所有站点的VO对象
@@ -264,7 +263,7 @@ public class HandleAbnormalController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Description: 转其他站点
 	 * @param mailNum 运单号
@@ -305,9 +304,7 @@ public class HandleAbnormalController {
 				order.setUserId("");//未分派
 				order.setDateUpd(new Date());//更新时间
 				//更新物流信息
-				//订单已由【A站点】出库，正在转送到【B站点】进行配送
-				String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
-				addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
+				addOrderExpress(order, currUser, site.getName());
 				//更新预计到站时间
 				order.setDateMayArrive(Dates.addDays(new Date(), 1));
 				order.setDateArrived(null);
@@ -326,26 +323,26 @@ public class HandleAbnormalController {
 					map.put("operFlag", 1);//1:成功
 					//刷新列表
 					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-				}else{ 
+				}else{
 					map.put("operFlag", 0);//0:失败
 				}
 			}
 		} catch (Exception e) {
 			logger.error("===转其他站点===出错:" + e.getMessage());
 		}
-		return map;		
-		
+		return map;
+
 	}
 	/**
-	 * 增加订单物流信息
-	 * @param expressStatus 物流状态
+	 * Description: 设置订单的物流信息--转其他站点
 	 * @param order 订单
-	 * @param user 当前用户
-	 * @param remark 物流信息
+	 * @param user 派件员
+	 * @author liyanlei
+	 * 2016年4月22日下午3:32:35
 	 */
-	private void addOrderExpress(ExpressStatus expressStatus,Order order, User user, String remark){
+	private void addOrderExpress(Order order, User user, String siteName){
 		//更新物流状态
-		order.setExpressStatus(expressStatus);
+		order.setExpressStatus(ExpressStatus.Packed);
 		//更新物流信息
 		List<Express> expressList = order.getExpresses();
 		if(expressList == null){
@@ -353,7 +350,8 @@ public class HandleAbnormalController {
 		}
 		Express express = new Express();
 		express.setDateAdd(new Date());
-		express.setRemark(remark);
+		//订单已由【A站点】出库，正在转送到【B站点】进行配送
+		express.setRemark("订单已由【" + user.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。");
 		express.setLat(user.getSite().getLat());
 		express.setLon(user.getSite().getLng());
 		boolean expressIsNotAdd = true;//防止多次添加
@@ -387,10 +385,10 @@ public class HandleAbnormalController {
 			//查询运单信息
 			Order order = orderService.findOneByMailNum("", mailNum);
 			if(order != null){
-				//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
+				//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派
 				if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-					||ExpressStatus.Delay.equals(order.getExpressStatus())
-					|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
+						||ExpressStatus.Delay.equals(order.getExpressStatus())
+						|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
 					if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
 						//saveOrderMail(order, staffId, map);
 					}else{//重复扫描，此运单已分派过了
@@ -408,7 +406,7 @@ public class HandleAbnormalController {
 		return map;
 	}
 	/**************************转其他快递公司***************结束***********************************/
-	
+
 	/**************************申请退货***************开始***********************************/
 
 	/**
@@ -419,42 +417,27 @@ public class HandleAbnormalController {
 	 * @param status 状态
 	 * @param pageIndex 当前页
 	 * @param arriveBetween 到站时间
-     * @param request 请求
-     * @return  operFlag=1，orderPage = 当前页的数据； operFlag=0
-     */
-	@ResponseBody
+	 * @param request 请求
+	 * @return  operFlag=1，orderPage = 当前页的数据； operFlag=0
+	 */
 	@RequestMapping(value="/doReturn", method=RequestMethod.POST)
-	public Map<String, Object> dispatch(String mailNum, Integer rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+	public Map<String, Object> dispatch(String mailNum, String rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			//查询运单信息
 			Order order = orderService.findOneByMailNum("", mailNum);
 			if(order != null){
-				ReturnReason reason = ReturnReason.status2Obj(rtnReason);
-				//当前登录的用户信息
-				User currUser = adminService.get(UserSession.get(request));
-				order.setRtnReason(reason.getMessage());//退货原因
+				order.setRtnReason(rtnReason);//退货原因
 				order.setRtnRemark(rtnRemark);//退货备注
 				order.setDateAplyRtn(new Date());//申请退货时间
 				order.setOrderStatus(OrderStatus.APPLY_RETURN);//状态
-				//更新物流信息
-				StringBuffer expRemark = new StringBuffer("订单已申请退货，退货原因：") ;
-				if((ReturnReason.OTHER.getStatus()+"").equals(rtnReason)){//其他
-					expRemark.append(rtnRemark);
-				}else {
-					expRemark.append(reason.getMessage());
-					if(StringUtil.isNotEmpty(rtnRemark)){
-						expRemark.append("，");
-						expRemark.append(rtnRemark);
-					}
-				}
-				expRemark.append("。");
-				addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
 				//更新运单
 				Key<Order> r = orderService.save(order);
 				if(r != null){
 					map.put("success", true);//成功
 					map.put("msg", "申请退货成功");//0
+					//当前登录的用户信息
+					User currUser = adminService.get(UserSession.get(request));
 					//刷新列表
 					map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
 				}else{
@@ -478,11 +461,11 @@ public class HandleAbnormalController {
 	@RequestMapping(value="/getExpressCompanys", method=RequestMethod.GET)
 	public  List<ExpressCompany> getExpressCompanys( Model model) {
 		List<ExpressCompany> expressCompanys = expressCompanyService.getExpressCompany();
-		    if(expressCompanys!=null&&expressCompanys.size()!=0){
-				return expressCompanys;
-			}else{
-				return null;
-			}
+		if(expressCompanys!=null&&expressCompanys.size()!=0){
+			return expressCompanys;
+		}else{
+			return null;
+		}
 
 	}
 
@@ -490,7 +473,7 @@ public class HandleAbnormalController {
 	 *
 	 * @param mailNum 运单号
 	 * @return
-     */
+	 */
 	@ResponseBody
 	@RequestMapping(value="/toOtherExpressCompanys",method=RequestMethod.POST)
 	public Order toOtherExpressCompanys( String mailNum,String companyId,String mailNumNew) {
@@ -538,160 +521,162 @@ public class HandleAbnormalController {
 
 
 
-		@ResponseBody
-		@RequestMapping(value="/goTo100Subscribe", method=RequestMethod.POST)
-		public ResultResposeDTO goTo100Subscribe(String salt ,String resultv2,String companyId,String mailNum,String from,String to,String mailNumNew ) {
-			        String epree100Resultv2="";
-			         String epree100_salt= "";
-			         String companyName=null;
-			         String companyCode=null;
-			ResultResposeDTO resultResposeDTO=new ResultResposeDTO();
-			if(StringUtils.isNoneBlank(resultv2)){
-						 epree100Resultv2=resultv2;
-					 }
+	@ResponseBody
+	@RequestMapping(value="/goTo100Subscribe", method=RequestMethod.POST)
+	public ResultResposeDTO goTo100Subscribe(String salt ,String resultv2,String companyId,String mailNum,String from,String to,String mailNumNew ) {
+		String epree100Resultv2="";
+		String epree100_salt= "";
+		String companyName=null;
+		String companyCode=null;
+		ResultResposeDTO resultResposeDTO=new ResultResposeDTO();
+		if(StringUtils.isNoneBlank(resultv2)){
+			epree100Resultv2=resultv2;
+		}
 
 
-			if(StringUtils.isNoneBlank(epree100_salt)){
-				epree100Resultv2=salt;
+		if(StringUtils.isNoneBlank(epree100_salt)){
+			epree100Resultv2=salt;
+		}
+		if(StringUtils.isNoneBlank(companyId)){
+			ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
+			if(null!=expressCompany){
+				companyName=expressCompany.getCompanyname();
+				companyCode=expressCompany.getCompanycode();
 			}
-			if(StringUtils.isNoneBlank(companyId)){
-				ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
-				   if(null!=expressCompany){
-                       companyName=expressCompany.getCompanyname();
-					   companyCode=expressCompany.getCompanycode();
-				   }
-			}
+		}
 
-			Expree100RequestVO expree100RequestVO=new Expree100RequestVO();
-			Expree100BodyVO  expree100BodyVO=new Expree100BodyVO();
-			Expree100ParametersVO expree100ParametersVO=new Expree100ParametersVO();
+		Expree100RequestVO expree100RequestVO=new Expree100RequestVO();
+		Expree100BodyVO  expree100BodyVO=new Expree100BodyVO();
+		Expree100ParametersVO expree100ParametersVO=new Expree100ParametersVO();
 
-            expree100ParametersVO.setCallbackurl(Constants.EPREE100_CALLBACK_URL);
-			expree100ParametersVO.setSalt(epree100Resultv2);
-            expree100ParametersVO.setResultv2(epree100Resultv2);
+		expree100ParametersVO.setCallbackurl(Constants.EPREE100_CALLBACK_URL);
+		expree100ParametersVO.setSalt(epree100Resultv2);
+		expree100ParametersVO.setResultv2(epree100Resultv2);
 
-			expree100BodyVO.setCompany(companyCode);
+		expree100BodyVO.setCompany(companyCode);
 
-			  if(StringUtils.isNotBlank(from)){
-			expree100BodyVO.setFrom(from);
-			 }
-			if(StringUtils.isNotBlank(to)){
-				expree100BodyVO.setTo(to);
-			}
-
-			expree100BodyVO.setKey(Constants.EPREE100_KEY);
-
-			 if(StringUtils.isNotBlank(mailNumNew)){
+		if(StringUtils.isNotBlank(mailNumNew)){
 			expree100BodyVO.setNumber(mailNumNew);
-			 }
+		}
 
-			expree100BodyVO.setParameters(expree100ParametersVO);
+		if(StringUtils.isNotBlank(from)){
+			expree100BodyVO.setFrom(from);
+		}
+		if(StringUtils.isNotBlank(to)){
+			expree100BodyVO.setTo(to);
+		}
 
-			expree100RequestVO.setParam(expree100BodyVO);
-			expree100RequestVO.setSchema( "json/xml");
+		expree100BodyVO.setKey(Constants.EPREE100_KEY);
 
 
-			String expree100RequestStr =null;
-			RestRequestDTO restRequestDTO =null;
-			String restRequestDTOStr  =null;
 
-			try {
+		expree100BodyVO.setParameters(expree100ParametersVO);
 
-				  expree100RequestStr = JSON.json(expree100RequestVO);
-                if(StringUtils.isNoneBlank(expree100RequestStr)){
+		expree100RequestVO.setParam(expree100BodyVO);
+		expree100RequestVO.setSchema( "json/xml");
+
+
+		String expree100RequestStr =null;
+		RestRequestDTO restRequestDTO =null;
+		String restRequestDTOStr  =null;
+
+		try {
+
+			expree100RequestStr = JSON.json(expree100RequestVO);
+			if(StringUtils.isNoneBlank(expree100RequestStr)){
 				restRequestDTOStr  = HttpClientUtil.doPostJson(Constants.EPREE100_URL , expree100RequestStr);
-               if(StringUtils.isNoneBlank(restRequestDTOStr)){
-				restRequestDTO = JSON.parse(restRequestDTOStr, RestRequestDTO.class);
-                if(null!=restRequestDTO) {
-					LastResultVO lastResult = restRequestDTO.getLastResult();
-					if (null != lastResult) {
-						List<NewContextVO> data = lastResult.getData();
-						if (data != null && data.size() != 0) {
+				if(StringUtils.isNoneBlank(restRequestDTOStr)){
+					restRequestDTO = JSON.parse(restRequestDTOStr, RestRequestDTO.class);
+					if(null!=restRequestDTO) {
+						LastResultVO lastResult = restRequestDTO.getLastResult();
+						if (null != lastResult) {
+							List<NewContextVO> data = lastResult.getData();
+							if (data != null && data.size() != 0) {
 
-							if (StringUtils.isNotBlank(mailNum)) {
+								if (StringUtils.isNotBlank(mailNum)) {
 
-								Order order = orderService.findOneByMailNum("", mailNum);
-								if (order != null) {
-									List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
-									if (otherExpressList == null || otherExpressList.isEmpty()) {
-										otherExpressList = Lists.newArrayList();
-									}
-
-									String resultv21 = expree100ParametersVO.getResultv2();
-
-
-									for (NewContextVO newContext : data) {
-										if (StringUtils.isNoneBlank(resultv21)&& StringUtils.isNotBlank(mailNumNew)) {
-											OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
-											otherExpreeVO.setContext(newContext.getContext());
-											otherExpreeVO.setMailNum(mailNumNew);
-											otherExpreeVO.setCompanyname(companyName);
-											otherExpreeVO.setAreaCode(newContext.getAreaCode());
-											otherExpreeVO.setAreaName(newContext.getAreaName());
-											    otherExpreeVO.setCompanycode(companyCode);
-											otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.getFtime()));
-											otherExpreeVO.setStatus(newContext.getStatus());
-											otherExpressList.add(otherExpreeVO);
-										} else {
-											OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
-											 otherExpreeVO.setContext(newContext.getContext());
-											otherExpreeVO.setMailNum(mailNumNew);
-											otherExpreeVO.setCompanyname(companyName);
-											otherExpreeVO.setCompanycode(companyCode);
-											otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.getFtime()));
-											otherExpressList.add(otherExpreeVO);
-										}
-									}
-
-
-									order.setOtherExprees(otherExpressList);
-
-									String state = lastResult.getState();
-									String status = restRequestDTO.getStatus();
-									String message = restRequestDTO.getMessage();
-
-									if(StringUtils.isNotBlank(status)&& state!=null) {
-										if ( "shutdown".equals(status)&& ("3".equals(state)||"4".equals(state))) {
-										 order.setOrderStatus(OrderStatus.SIGNED);
-										}
-									}
-									if(StringUtils.isNotBlank(message)&&StringUtils.isNotBlank(status) ){
-										if(("3天查询无记录".equals(message)&& "abort".equals(status))
-												||("60天无变化时".equals(message)&& "abort".equals(status))){
-											order.setOrderStatus(OrderStatus.SIGNED);
+									Order order = orderService.findOneByMailNum("", mailNum);
+									if (order != null) {
+										List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
+										if (otherExpressList == null || otherExpressList.isEmpty()) {
+											otherExpressList = Lists.newArrayList();
 										}
 
+										String resultv21 = expree100ParametersVO.getResultv2();
+
+
+										for (NewContextVO newContext : data) {
+											if (StringUtils.isNoneBlank(resultv21)&& StringUtils.isNotBlank(mailNumNew)) {
+												OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
+												otherExpreeVO.setContext(newContext.getContext());
+												otherExpreeVO.setMailNum(mailNumNew);
+												otherExpreeVO.setCompanyname(companyName);
+												otherExpreeVO.setAreaCode(newContext.getAreaCode());
+												otherExpreeVO.setAreaName(newContext.getAreaName());
+												otherExpreeVO.setCompanycode(companyCode);
+												otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.getFtime()));
+												otherExpreeVO.setStatus(newContext.getStatus());
+												otherExpressList.add(otherExpreeVO);
+											} else {
+												OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
+												otherExpreeVO.setContext(newContext.getContext());
+												otherExpreeVO.setMailNum(mailNumNew);
+												otherExpreeVO.setCompanyname(companyName);
+												otherExpreeVO.setCompanycode(companyCode);
+												otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.getFtime()));
+												otherExpressList.add(otherExpreeVO);
+											}
+										}
+
+
+										order.setOtherExprees(otherExpressList);
+
+										String state = lastResult.getState();
+										String status = restRequestDTO.getStatus();
+										String message = restRequestDTO.getMessage();
+
+										if(StringUtils.isNotBlank(status)&& state!=null) {
+											if ( "shutdown".equals(status)&& ("3".equals(state)||"4".equals(state))) {
+												order.setOrderStatus(OrderStatus.SIGNED);
+											}
+										}
+										if(StringUtils.isNotBlank(message)&&StringUtils.isNotBlank(status) ){
+											if(("3天查询无记录".equals(message)&& "abort".equals(status))
+													||("60天无变化时".equals(message)&& "abort".equals(status))){
+												order.setOrderStatus(OrderStatus.SIGNED);
+											}
+
+										}
+
+										order.setDateUpd(new Date());
+
+										orderService.save(order);
+
+
 									}
-
-									order.setDateUpd(new Date());
-
-									orderService.save(order);
 
 
 								}
-
-
 							}
 						}
+
 					}
-
 				}
-			   }
-				}
-			} catch (Exception e) {
-
-				e.printStackTrace();
-				resultResposeDTO.setResult(false);
-				resultResposeDTO.setMessage("转运信息失败");
-
-				return resultResposeDTO;
 			}
+		} catch (Exception e) {
 
-			resultResposeDTO.setResult(true);
-			resultResposeDTO.setMessage("转运信息添加成功");
+			e.printStackTrace();
+			resultResposeDTO.setResult(false);
+			resultResposeDTO.setMessage("转运信息失败");
 
 			return resultResposeDTO;
 		}
+
+		resultResposeDTO.setResult(true);
+		resultResposeDTO.setMessage("转运信息添加成功");
+
+		return resultResposeDTO;
+	}
 
 
 }
