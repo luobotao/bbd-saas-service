@@ -29,6 +29,7 @@ import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,12 @@ public class HandleAbnormalController {
     @Autowired
     ExpressCompanyService expressCompanyService;
 
+    @Value("${EPREE100_KEY}")
+    private String EPREE100_KEY ;
+    @Value("${EPREE100_CALLBACK_URL}")
+    private String EPREE100_CALLBACK_URL ;
+    @Value("${EPREE100_URL}")
+    private String EPREE100_URL;
 
     /**
      * description: 跳转到异常件处理页面
@@ -560,7 +567,7 @@ public class HandleAbnormalController {
         Map<String, String> requestVO = new HashMap<>();
         Expree100BodyVO expree100BodyVO = new Expree100BodyVO();
         Expree100ParametersVO expree100ParametersVO = new Expree100ParametersVO();
-        expree100ParametersVO.setCallbackurl(Constants.EPREE100_CALLBACK_URL);
+        expree100ParametersVO.setCallbackurl(EPREE100_CALLBACK_URL);
         expree100ParametersVO.setSalt(epree100Resultv2);
         expree100ParametersVO.setResultv2(epree100Resultv2);
         expree100BodyVO.setCompany(companyCode);
@@ -575,7 +582,7 @@ public class HandleAbnormalController {
         if (StringUtils.isNotBlank(to)) {
             expree100BodyVO.setTo(to);
         }
-        expree100BodyVO.setKey(Constants.EPREE100_KEY);
+        expree100BodyVO.setKey(EPREE100_KEY);
         expree100BodyVO.setParameters(expree100ParametersVO);
         JSONSerializer jsonSerializer = new JSONSerializer();
 
@@ -587,7 +594,7 @@ public class HandleAbnormalController {
         String restRequestDTOStr = null;
 
         try {
-            restRequestDTOStr = HttpClientUtil.sendHttpPost(Constants.EPREE100_URL, requestVO);
+            restRequestDTOStr = HttpClientUtil.sendHttpPost(EPREE100_URL, requestVO);
             if (StringUtils.isNoneBlank(restRequestDTOStr)) {
                 restRequestDTO = JSON.parse(restRequestDTOStr, RestRequestDTO.class);
                 if (null != restRequestDTO) {
