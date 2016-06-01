@@ -1,11 +1,7 @@
 package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.*;
-import com.bbd.saas.vo.Express;
-import com.bbd.saas.vo.Goods;
-import com.bbd.saas.vo.Reciever;
-import com.bbd.saas.vo.Sender;
-import com.bbd.saas.vo.UserVO;
+import com.bbd.saas.vo.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -49,6 +45,13 @@ public class Order implements Serializable {
     private String errorRemark;//异常信息
     private List<Goods> goods;
     private List<Express> expresses;
+<<<<<<< HEAD
+    private List<OtherExpreeVO> otherExprees;
+=======
+    private String rtnReason;//退货原因
+    private String rtnRemark;//退货原因备注（退货原因为其他时，此字段不为空）
+    private Date dateAplyRtn;//申请退货时间
+>>>>>>> 0af2d90952080973889bbe6bd449df9583419c4d
     private Date orderCreate;//订单创建时间
     private Date orderPay;     //订单支付时间
     private Date dateAdd;
@@ -66,6 +69,13 @@ public class Order implements Serializable {
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
 
+    public List<OtherExpreeVO> getOtherExprees() {
+        return otherExprees;
+    }
+
+    public void setOtherExprees(List<OtherExpreeVO> otherExprees) {
+        this.otherExprees = otherExprees;
+    }
 
     public ObjectId getId() {
         return id;
@@ -302,7 +312,40 @@ public class Order implements Serializable {
 	public void setUserVO(UserVO userVO) {
 		this.userVO = userVO;
 	}
-	public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getRtnReason() {
+        return rtnReason;
+    }
+
+    public void setRtnReason(String rtnReason) {
+        this.rtnReason = rtnReason;
+    }
+
+    public Date getDateAplyRtn() {
+        return dateAplyRtn;
+    }
+
+    public void setDateAplyRtn(Date dateAplyRtn) {
+        this.dateAplyRtn = dateAplyRtn;
+    }
+
+    public void setSrcMessage(String srcMessage) {
+        this.srcMessage = srcMessage;
+    }
+
+    public String getRtnRemark() {
+        return rtnRemark;
+    }
+
+    public void setRtnRemark(String rtnRemark) {
+        this.rtnRemark = rtnRemark;
+    }
+
+    public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
 		if(expressList == null){
 			return "";
 		}

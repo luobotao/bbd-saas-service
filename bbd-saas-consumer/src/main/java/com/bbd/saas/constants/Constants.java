@@ -84,4 +84,12 @@ public class Constants {
     public static final String TYPE_AVERAGE = "4";
     //空
     public static final String STRING_BLANK = "";
+
+
+   /* 向快递100 订阅请求 相关信息*/
+    public static final String  EPREE100_KEY="qWmaQkHp269";
+    public static final String  EPREE100_BASE_URL="http://localhost:18080";
+    public static final String EPREE100_CALLBACK_URL=EPREE100_BASE_URL+"/subscribe/subscribeback";
+
+    public static final String  EPREE100_URL	= "http://www.kuaidi100.com/poll";
 }

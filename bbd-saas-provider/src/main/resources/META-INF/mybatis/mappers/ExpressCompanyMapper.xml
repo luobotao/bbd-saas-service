@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.ExpressCompanyDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.ExpressCompany">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="companyname" property="companyname" jdbcType="VARCHAR"/>
+        <result column="companycode" property="companycode" jdbcType="VARCHAR"/>
+        <result column="sta" property="sta" jdbcType="VARCHAR"/>
+        <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
+        <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+
+    </resultMap>
+
+    <sql id="baseColumnList">
+        id,
+        companyname,
+        companycode,
+        sta,
+        date_new,
+        date_upd
+    </sql>
+
+    <!--查询所有公司-->
+    <select id="getExpressCompany" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `expresscompany`
+    </select>
+
+    <!--根据公司ID查询公司-->
+    <select id="getExpressCompanyById" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `expresscompany` where <![CDATA[ id = #{ecompanyId,jdbcType=INTEGER}]]>
+    </select>
+</mapper>
