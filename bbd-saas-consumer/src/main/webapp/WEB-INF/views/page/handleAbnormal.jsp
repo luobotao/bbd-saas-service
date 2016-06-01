@@ -852,9 +852,9 @@ function goTo100Subscribe(companyId,mailNumNew) {
 	$("#chooseOtherExpress_div").modal("hide");
 }
 	//隐藏面板
-	$(".j-site-pop").modal("hide");
+	//$(".j-site-pop").modal("hide");
 	//$("#chooseOtherSite_div").modal("hide");
-}
+
 /**********************转为其他快递公司2**************************结束************************************/
 </script>
 </body>
