@@ -642,10 +642,11 @@ function applyReturn() {
 		success : function(data) {//返回数据根据结果进行相应的处理
 			outDiv(data.msg);
 			if(data.success){//分派成功，刷新列表！
+				refreshTable(data.orderPage);
 				//outDiv有延迟，所以页面刷新需要同步延迟
-				setTimeout(function(){
+				/*setTimeout(function(){
 					refreshTable(data.orderPage);
-				},2000);
+				},2000);*/
 			}
 		},
 		error : function() {
@@ -764,9 +765,10 @@ function toOtherExpressCompanys() {
 			outDiv(data.msg);
 			if (data.success) {//分派成功，刷新列表！
 				//outDiv有延迟，所以页面刷新需要同步延迟
-				setTimeout(function () {
+				refreshTable(data.orderPage);
+				/*setTimeout(function () {
 					refreshTable(data.orderPage);
-				}, 2000);
+				}, 2000);*/
 			}
 		},
 		error: function () {
