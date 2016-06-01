@@ -30,6 +30,10 @@
     <bean id="toOtherSiteLogDao" class="com.bbd.saas.dao.mongo.ToOtherSiteLogDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- ReturnReason DAO-->
+    <bean id="returnReasonDao" class="com.bbd.saas.dao.mongo.ReturnReasonDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->

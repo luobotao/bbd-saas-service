@@ -3,7 +3,6 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="com.bbd.saas.enums.ReturnReason" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
  
@@ -63,7 +62,7 @@
 								<th>派送员姓名</th>
 								<th>派送员手机</th>
 								<th>状态</th>
-								<th width="20%">操作</th>
+								<th width="180px">操作</th>
   							</tr>
   						</thead>
   						<tbody id="dataList">
@@ -100,7 +99,7 @@
 									if(order.getOrderStatus() == OrderStatus.RETENTION){
 								%>
 									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
-									<td align="left">
+									<td class="tl">
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<br>
@@ -111,7 +110,7 @@
 									}else{
 								%>
 									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
-									<td align="left">
+									<td class="tl">
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<br>
@@ -195,7 +194,6 @@
 			<div class="modal-body b-modal-body">
 				选择退货原因:
 				<select id="rtnReason" name="rtnReason" class="form-control form-bod">
-					<%=ReturnReason.Srcs2HTML(-1)%>
 				</select>
 				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20" col="3" placeholder="请输入退货原因"></textarea>
 				<div class="row mt20">
@@ -365,14 +363,14 @@ function getRowHtml(data){
 	 }
 	 //状态
 	 if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
-		 row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
+		 row += "<td class='tl'><%=AbnormalStatus.RETENTION.getMessage()%></td>";
 		 row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
 		 row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a>";
 		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
 		row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange ml16'>申请退货</a></td>";
 	}else{
-		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
-		row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
+		row += "<td class='tl'><%=AbnormalStatus.REJECTION.getMessage()%></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点1</a>";
 		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
 		row += "<br><a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange'>申请退货</a></td>";
 	}
@@ -591,8 +589,6 @@ function chooseOtherSite() {
 }
 /**************************转其他站点***************结束***********************************/
 
-/*************************************下面的暂时不做*****************************************************/
-
 /************************转其他快递公司***************开始***************************************/	
 //初始化快递公司
  function initExpressCompany() {
@@ -668,6 +664,27 @@ function chooseOtherExpress(mailNum) {
 //显示申请退货div
 function showApplyReturnDiv(mailNumStr) {
 	mailNum = mailNumStr;
+	//加载退货原因
+	$.ajax({
+		type : "GET",  //提交方式
+		url : "<%=path%>/handleAbnormal/getRtnReasonList",//路径
+		data : {},//数据，这里使用的是Json格式进行传输
+		success : function(dataList) {//返回数据根据结果进行相应的处理
+			var rtnReasonObj = $("#rtnReason");
+			// 清空select
+			rtnReasonObj.empty();
+			if(dataList != null){
+				for(var i = 0; i < dataList.length; i++){
+					data = dataList[i];
+					rtnReasonObj.append("<option value='"+data.status+"'>"+data.message+"</option>");
+				}
+			}
+		},
+		error : function() {
+			//alert("服务器繁忙，请稍后再试！");
+			gotoLoginPage();
+		}
+	});
 	$("#apply_return_div").modal("show");
 }
 
