@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/bbd")
@@ -126,33 +127,12 @@ public class BbdExpressApiController {
 		Gson gson = new Gson();
 		MapPoint mapPoint  = gson.fromJson(start, MapPoint.class);
 		List<MapPoint> mapPointList = gson.fromJson(ends, new TypeToken<List<MapPoint>>(){}.getType());
-		/*logger.info("adminUserId："+adminUserId);
-		logger.info("sites："+sites);
-		String str = "";
-		try {
-			String siteIds = "57222002c35cc51be28b318c,57222002c35cc51be28b318c";
-			AdminUser adminUser = adminUserService.findOne(adminUserId);//"56cad121a72ec72fb4c6dfe4"
-			MapPoint startMapPoint = new MapPoint(Double.parseDouble("116.47644937457"),Double.parseDouble("39.904454406601"));
-			//MapPoint startMapPoint = new MapPoint(Double.parseDouble(adminUser.getSender().getLon()),Double.parseDouble(adminUser.getSender().getLat()));
-			//getDistance(String city, final MapPoint start, List<MapPoint> ends)
-			List<MapPoint> mapPoints = new ArrayList<MapPoint>();
-			for (String siteId: siteIds.split(",")) {
-				Site site = siteService.findSite(siteId);
-				MapPoint siteMapPoint = new MapPoint(Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
-				mapPoints.add(siteMapPoint);
-			}
-			int length = geo.getDistance(adminUser.getSender().getCity(),startMapPoint,mapPoints);
-			str = length+"";
-		}catch(Exception e){
-			e.printStackTrace();
-			logger.info(" exception,异常");
-		}
-		return str;*/
-		int length = 0;
+		long length = 0;
 		if(!"".equals(city)&&mapPoint!=null&&mapPointList!=null&&mapPointList.size()>0) {
-			length = geo.getDistance(city, mapPoint, mapPointList);
+			length = geo.getDistance(city, mapPoint, mapPointList,false);
 			logger.info("getDistance with info [success] distance:"+length);
 		}
 		return JSON.json(length);
 	}
+
 }
