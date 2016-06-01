@@ -1,6 +1,7 @@
 package com.bbd.saas.vo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,15 +25,7 @@ public class LastResultVO {
 
       private String   nu ; /*单号*/
 
-      private List<NewContextVO> data=new ArrayList<NewContextVO>();/*每一条信息详情*/
-
-    public List<NewContextVO> getData() {
-        return data;
-    }
-
-    public void setData(List<NewContextVO> data) {
-        this.data = data;
-    }
+      private List<HashMap<String,String>> data;/*每一条信息详情*/
 
     public String getMessage() {
         return message;
@@ -40,14 +33,6 @@ public class LastResultVO {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getState() {
@@ -58,6 +43,13 @@ public class LastResultVO {
         this.state = state;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getCondition() {
         return condition;
@@ -89,5 +81,13 @@ public class LastResultVO {
 
     public void setNu(String nu) {
         this.nu = nu;
+    }
+
+    public List<HashMap<String, String>> getData() {
+        return data;
+    }
+
+    public void setData(List<HashMap<String, String>> data) {
+        this.data = data;
     }
 }

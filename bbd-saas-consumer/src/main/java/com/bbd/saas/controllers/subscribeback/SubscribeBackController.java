@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -55,7 +56,7 @@ public class SubscribeBackController {
             if(null!=restRequestDTO) {
                 LastResultVO lastResult = restRequestDTO.getLastResult();
                 if (null != lastResult) {
-                    List<NewContextVO> data = lastResult.getData();
+                    List<HashMap<String,String>> data = lastResult.getData();
                     if (data != null && data.size() != 0) {
 
                            String mailNum=  lastResult.getNu();
@@ -70,22 +71,20 @@ public class SubscribeBackController {
                                 }
 
 
-                                for (NewContextVO newContext : data) {
+                                for (HashMap<String,String> newContext : data) {
 
                                         OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
-                                        otherExpreeVO.setContext(newContext.getContext());
+                                        otherExpreeVO.setContext(newContext.get("context"));
                                         otherExpreeVO.setMailNum(mailNum);
                                         //otherExpreeVO.setCompanyname(companyName);
-                                        otherExpreeVO.setAreaCode(newContext.getAreaCode());
-                                        otherExpreeVO.setAreaName(newContext.getAreaName());
+                                        otherExpreeVO.setAreaCode(newContext.get("areaCode"));
+                                        otherExpreeVO.setAreaName(newContext.get("areaName"));
                                        // otherExpreeVO.setCompanycode(companyCode);
-                                        otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.getFtime()));
-                                        otherExpreeVO.setStatus(newContext.getStatus());
+                                        otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.get("ftime")));
+                                        otherExpreeVO.setStatus(newContext.get("status"));
                                         otherExpressList.add(otherExpreeVO);
 
                                 }
-
-
                                 order.setOtherExprees(otherExpressList);
 
                                 state = lastResult.getState();
@@ -122,30 +121,7 @@ public class SubscribeBackController {
             e.printStackTrace();
         }
 
-        /*try {
-            if (StringUtils.isNoneBlank(param)) {
-                param = new String(param.getBytes("ISO-8859-1"), "UTF-8");
-                restRequestDTO = JSON.parse(param, RestRequestDTO.class);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            resultResposeDTO.setMessage("推送成功");
-            resultResposeDTO.setReturnCode(200);
-            resultResposeDTO.setResult(true);
-            return resultResposeDTO;
-        }*/
 
-        /*String state = null;*//*快递单当前签收状态，包括0在途中、1已揽收、2疑难、3已签收、4退签、5同城派送中、6退回、7转单等7个状态*//*
-        String status = restRequestDTO.getStatus();*//*监控状态:polling:监控中，shutdown:结束，abort:中止，updateall： 重新推送。其中当快递单为已签收时status=shutdown，当message为“3天查询无记录”或“60天无变化时”status= abort*//*
-*/
-       /* LastResultVO lastResult = restRequestDTO.getLastResult();
-
-        if (lastResult != null) {
-            state = lastResult.getState();
-        }
-
-
-        String message = restRequestDTO.getMessage();*/
 
     /*Status：当快递单本身为已签收时，status=shutdown，即监控结束，表示此单的生命周期已结束；*/
         if (StringUtils.isNotBlank(status) && state != null) {
