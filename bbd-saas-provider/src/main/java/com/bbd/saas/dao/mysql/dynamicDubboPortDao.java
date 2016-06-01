@@ -1,13 +1,20 @@
 package com.bbd.saas.dao.mysql;
 
-import java.util.Map;
+import com.bbd.saas.models.DubboPort;
 
+/**
+ * dubbo管理
+ *
+ * @author luobotao
+ */
+public interface DynamicDubboPortDao {
 
-public interface dynamicDubboPortDao {
 
     /**
-     * 向司机返现
-     * @param parms
+     * 根据IP获取指定的端口
+     *
+     * @param ip
+     * @return
      */
-    void driverIncome(Map<String, Object> parms);
+    DubboPort findPortByIp(String ip);
 }

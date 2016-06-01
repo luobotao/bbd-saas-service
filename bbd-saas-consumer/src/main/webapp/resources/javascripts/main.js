@@ -254,7 +254,7 @@ function iFrameHeight() {
             ifm.height = subWeb.body.scrollHeight + 150;
         }
     }
-    console.log("ht===="+ifm.height);
+    //console.log("ht===="+ifm.height);
 }
 // S 自己的alert 提示
 function alert_mine(titile,content){

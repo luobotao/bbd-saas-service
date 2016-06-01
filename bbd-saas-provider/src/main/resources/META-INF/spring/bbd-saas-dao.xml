@@ -38,6 +38,10 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostcompanyDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+    <bean id="dynamicDubboPortDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.DynamicDubboPortDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
     <bean id="postmanUserDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostmanUserDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
