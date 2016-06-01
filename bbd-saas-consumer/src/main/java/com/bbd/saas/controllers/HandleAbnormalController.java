@@ -2,22 +2,15 @@ package com.bbd.saas.controllers;
 
 import com.alibaba.dubbo.common.json.JSON;
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderService;
-import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.api.mongo.ToOtherSiteLogService;
-import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.ReturnReason;
 import com.bbd.saas.models.ExpressCompany;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.mongoModels.ToOtherSiteLog;
-import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
@@ -51,6 +44,8 @@ public class HandleAbnormalController {
 	AdminService adminService;
 	@Autowired
 	SiteService siteService;
+	@Autowired
+	ReturnReasonService returnReasonService;
 	@Autowired
 	ToOtherSiteLogService toOtherSiteLogService;
 	@Autowired
@@ -370,47 +365,27 @@ public class HandleAbnormalController {
 		}
 	}
 	/**************************转其他站点***************结束***********************************/
-	/**************************转其他快递公司***************开始***********************************/
+
+	/**************************申请退货***************开始***********************************/
 	/**
-	 * Description: 转其他快递
-	 * @param mailNum
-	 * @param expressId
-	 * @param model
+	 * 查询所有的退货原因
+	 * @param request
 	 * @return
 	 * @author: liyanlei
-	 * 2016年4月14日下午2:04:59
+	 * 2016年4月18日上午10:32:14
 	 */
-	@RequestMapping(value="/toOtherExpress", method=RequestMethod.GET)
-	public Map<String, Object> toOtherExpress(String mailNum, String expressId, Model model) {
-		Map<String, Object> map = new HashMap<String, Object>();
+	@ResponseBody
+	@RequestMapping(value="/getRtnReasonList", method=RequestMethod.GET)
+	public List<ReturnReason> getRtnReasonList(final HttpServletRequest request) {
 		try {
-			//查询运单信息
-			Order order = orderService.findOneByMailNum("", mailNum);
-			if(order != null){
-				//当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派	
-				if(ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-					||ExpressStatus.Delay.equals(order.getExpressStatus())
-					|| ExpressStatus.Refuse.equals(order.getExpressStatus())){
-					if(order.getUserId() == null && !"".equals(order.getUserId())){//未分派，可以分派
-						//saveOrderMail(order, staffId, map);
-					}else{//重复扫描，此运单已分派过了
-						map.put("operFlag", 2);
-					}
-				}else{//重复扫描，此运单已分派过了
-					map.put("operFlag", 2);
-				}
-			}else{
-				map.put("erroFlag", 0);//0:运单号不存在
-			}
+			//当前登录的用户信息
+			User user = adminService.get(UserSession.get(request));
+			return returnReasonService.findAll();
 		} catch (Exception e) {
-			logger.error("===转其他快递===出错:" + e.getMessage());
+			logger.error("===查询所有退货原因===出错:" + e.getMessage());
 		}
-		return map;
+		return null;
 	}
-	/**************************转其他快递公司***************结束***********************************/
-	
-	/**************************申请退货***************开始***********************************/
-
 	/**
 	 * 退货
 	 * @param mailNum 运单号
@@ -430,7 +405,7 @@ public class HandleAbnormalController {
 			//查询运单信息
 			Order order = orderService.findOneByMailNum("", mailNum);
 			if(order != null){
-				ReturnReason reason = ReturnReason.status2Obj(rtnReason);
+				ReturnReason reason = returnReasonService.findOneByStatus(rtnReason);
 				//当前登录的用户信息
 				User currUser = adminService.get(UserSession.get(request));
 				order.setRtnReason(reason.getMessage());//退货原因
@@ -439,7 +414,7 @@ public class HandleAbnormalController {
 				order.setOrderStatus(OrderStatus.APPLY_RETURN);//状态
 				//更新物流信息
 				StringBuffer expRemark = new StringBuffer("订单已申请退货，退货原因：") ;
-				if((ReturnReason.OTHER.getStatus()+"").equals(rtnReason)){//其他
+				if(rtnReason.equals("4")){//其他
 					expRemark.append(rtnRemark);
 				}else {
 					expRemark.append(reason.getMessage());

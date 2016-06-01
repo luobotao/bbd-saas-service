@@ -31,6 +31,8 @@
     <dubbo:reference id="toOtherSiteLogService" interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" />
     <!--orderTrackService from bbd-driver-api -->
     <dubbo:reference id="orderTrackService" interface="com.bbd.drivers.api.mongo.OrderTrackService" />
+    <!--ReturnReason Service-->
+    <dubbo:reference id="returnReasonService" interface="com.bbd.saas.api.mongo.ReturnReasonService" />
 
     <!--start mysql services-->
     <!--<dubbo:reference id="orderMysqlService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>-->
