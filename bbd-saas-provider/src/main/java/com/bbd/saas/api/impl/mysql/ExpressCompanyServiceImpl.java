@@ -36,4 +36,10 @@ public class ExpressCompanyServiceImpl implements ExpressCompanyService {
         List<ExpressCompany> expressCompanys = expressCompanyDao.getExpressCompany();
         return expressCompanys;
     }
+
+    @Override
+    public ExpressCompany getExpressCompanyById(Integer ecompanyId) {
+        ExpressCompany expressCompany=  expressCompanyDao.getExpressCompanyById(ecompanyId);
+        return expressCompany;
+    }
 }

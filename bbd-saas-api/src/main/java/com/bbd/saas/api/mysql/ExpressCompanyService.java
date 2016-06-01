@@ -14,4 +14,10 @@ public interface  ExpressCompanyService {
      * @return List<ExpressCompanyVO>
      */
     List<ExpressCompany> getExpressCompany();
+
+    /**
+     *
+     * @return
+     */
+    ExpressCompany  getExpressCompanyById( Integer ecompanyId);
 }

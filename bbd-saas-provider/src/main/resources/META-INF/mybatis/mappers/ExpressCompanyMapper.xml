@@ -27,4 +27,10 @@
         FROM `expresscompany`
     </select>
 
+    <!--根据公司ID查询公司-->
+    <select id="getExpressCompanyById" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `expresscompany` where <![CDATA[ id = #{ecompanyId,jdbcType=INTEGER}]]>
+    </select>
 </mapper>

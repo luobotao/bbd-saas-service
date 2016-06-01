@@ -14,4 +14,12 @@ public interface ExpressCompanyDao {
      * @return
      */
     List<ExpressCompany> getExpressCompany();
+
+    /**
+     * 根据id查询
+     * @param ecompanyId
+     * @return
+     */
+    ExpressCompany getExpressCompanyById(Integer ecompanyId);
 }
+

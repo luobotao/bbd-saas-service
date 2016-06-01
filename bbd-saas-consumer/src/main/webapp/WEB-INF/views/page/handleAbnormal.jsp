@@ -227,9 +227,9 @@
 				</select>
 				运单号：<textarea id="mailNum" name="mailNum"  class="form-control form-bod mt20" col="3" placeholder="请输入运单号"></textarea>
 				<div class="row mt20">
-					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideOtherExpressDiv()" class="sbtn sbtn2 g">取消</a></span>
-					<span class="col-md-6"><a href="javascript:void(0)" onclick="getOrderExpressCompany()" class="sbtn sbtn2 l">确定</a></span>
-					
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideExpressCompanyDiv()" class="sbtn sbtn2 g">取消</a></span>
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="toOtherExpressCompanys()" class="sbtn sbtn2 l">确定</a></span>
+
 				</div>
 			</div>
 		</div>
@@ -360,23 +360,24 @@ function getRowHtml(data){
 	row += "<td>" + data.user.loginName + "</td>";
 	 */
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if( data.userId == null || data.userId == ""){
-		row += "<td></td><td></td>";
-	}else{
-		row += "<td>" + data.userVO.realName + "</td>";
-		row += "<td>" + data.userVO.loginName + "</td>";
-	}
-	//状态
-	if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
-		row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
-		row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
-		/*row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a></td>";*/
-		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a></td>";
-	}else{
-		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
-		row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
-	}
-	/*row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
+	 if( data.userId == null || data.userId == ""){
+	 row += "<td></td><td></td>";
+	 }else{
+	 row += "<td>" + data.userVO.realName + "</td>";
+	 row += "<td>" + data.userVO.loginName + "</td>";
+	 }
+	 //状态
+	 if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
+	 row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
+	 row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
+	 /*row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a></td>";*/
+	row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a></td>";
+}else{
+	row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
+	row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
+	row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a></td>";
+}
+/*row +="<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
 	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>";*/
 	row += "</tr>";
 	return row;
@@ -597,7 +598,7 @@ function chooseOtherSite() {
 
 /************************转其他快递公司***************开始***************************************/	
 //初始化快递公司
-function initExpressCompany() {
+/*function initExpressCompany() {
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -662,7 +663,7 @@ function chooseOtherExpress(mailNum) {
     });
     //隐藏面板
 	$("#chooseOtherExpress_div").modal("hide");
-}
+}*/
 
 /************************转其他快递公司***************结束***************************************/
 
@@ -721,6 +722,11 @@ function getCurrPage(){
 
 
 /**********************转为其他快递公司2**************************开始************************************/
+
+var from=null;
+var to=null;
+
+
 //初始化快递公司信息
 function initExpressCompanys() {
 	//查询所有站点
@@ -786,75 +792,50 @@ function hideExpressCompanyDiv() {
 	$("#chooseOtherExpress_div").modal("hide");
 }
 
-//根据运单号获取订单信息
-function getOrderExpressCompany() {
-
-	var companyname = $("#express_select").find("option:selected").text();
+var companyId = $("#express_select").find("option:selected").text();
+var mailNumNew=$("#mailNum").val();
+//转其他快递公司
+function toOtherExpressCompanys() {
+alert(companyId);
 
 	//转其他快递公司
 	$.ajax({
-		type : "GET",  //提交方式
-		url : "<%=path%>/handleAbnormal/getOrderByMailNums",//路径
+		type : "POST",  //提交方式
+		url : "<%=path%>/handleAbnormal/toOtherExpressCompanys",//路径
 		data : {
 			"mailNum" : mailNum, //运单号
+			"companyId" : companyId,
+			"mailNumNew":mailNumNew //输入的运单号
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据根据结果进行相应的处理
-			var company=null;
-			 var number=null;
-			 var from=null;
-			var to=null;
+
 			     if(data!=null){
-					 company=companyname;
-					 number=data.mailNum;
 					 from=data.sender.address;
 					 to=data.reciever.address;
-					 key="qWmaQkHp269";
-					 callbackurl="http://localhost:18080//subscribe/subscribeback";
-					 salt= "any string";
-					 resultv2	= "1"
-					 parameters= {
-						 "callbackurl":callbackurl ,
-								 "salt":salt,
-								 "resultv2":resultv2
-					 };
 
 				 }
-			alert(company+number+from+to);
+			goTo100Subscribe();
 		}
 
 	});
-//转其他站点
-function chooseExpressCompanys() {
-	//获取当前页
-	var pageIndex = getCurrPage();
-	$.ajax({
-		type: "GET",  //提交方式
-		url: "http://www.kuaidi100.com/poll",//路径
-		data: {
-			"company": "yuantong",
-			"number": "12345678",
-			"from": "广东深圳",
-			"to": "北京朝阳",
-			"key": "qWmaQkHp269",
-			"parameters": {
+//调用快递100 接口并返回数据
+function goTo100Subscribe() {
 
-				"callbackurl":'<c:url value="/page/handleAbnormal/chooseExpressCompanys" />'+ "/subscribe/subscribeback",
-				"salt": "any string",
-				"resultv2": "1"
-			},
-			"mailNum": mailNum, //
-			"siteId": $("#site_select").val(),//站点编号
-			"pageIndex": pageIndex,//更新列表
-			"status": $("#status").val(),
-			"arriveBetween": $("#arriveBetween").val()
+	$.ajax({
+		type: "POST",  //提交方式
+		 url:"<%=path%>/handleAbnormal/goTo100Subscribe",
+		data: {
+			"salt": "",
+			"resultv2" :"",
+		   "companyId": companyId,
+			"mailNum": mailNum,
+			"from": from,
+			"to": to,
+			"mailNumNew": mailNumNew
+
 		},//数据，这里使用的是Json格式进行传输
 		success: function (data) {//返回数据根据结果进行相应的处理
-			if (data.operFlag == 1) {
-				//分派成功，刷新列表！
-				refreshTable(data.orderPage);
-			} else {
-				alert("转其他站点失败，请稍后再试！");
-			}
+            alert(data);
 		},
 		error: function () {
 			//alert("服务器繁忙，请稍后再试！");
