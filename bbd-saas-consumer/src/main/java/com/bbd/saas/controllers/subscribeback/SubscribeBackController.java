@@ -51,7 +51,7 @@ public class SubscribeBackController {
         String message = null;
         try {
         if(StringUtils.isNoneBlank(param)){
-                param = new String(param.getBytes("ISO-8859-1"), "UTF-8");
+               /* param = new String(param.getBytes("ISO-8859-1"), "UTF-8");*/
                 restRequestDTO = JSON.parse(param, RestRequestDTO.class);
             if(null!=restRequestDTO) {
                 LastResultVO lastResult = restRequestDTO.getLastResult();
@@ -65,15 +65,19 @@ public class SubscribeBackController {
 
                             Order order = orderService.findOneByMailNum("", mailNum);
                             if (order != null) {
-                                List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
-                                if (otherExpressList == null || otherExpressList.isEmpty()) {
-                                    otherExpressList = Lists.newArrayList();
+                                List<Express> expressList = order.getExpresses();
+                                if (expressList == null || expressList.isEmpty()) {
+                                    expressList = Lists.newArrayList();
                                 }
 
 
                                 for (HashMap<String,String> newContext : data) {
-
-                                        OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
+                                             Express   express=new Express();
+                                                express.setRemark(newContext.get("context"));
+                                                 express.setDateAdd(Dates.parseFullDate(newContext.get("time"))  );
+                                                 express.setLat("38.042309700115");
+                                                  express.setLon("114.54567066289");
+                                      /*  OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
                                         otherExpreeVO.setContext(newContext.get("context"));
                                         otherExpreeVO.setMailNum(mailNum);
                                         //otherExpreeVO.setCompanyname(companyName);
@@ -81,11 +85,11 @@ public class SubscribeBackController {
                                         otherExpreeVO.setAreaName(newContext.get("areaName"));
                                        // otherExpreeVO.setCompanycode(companyCode);
                                         otherExpreeVO.setDateUpd(Dates.parseFullDate(newContext.get("ftime")));
-                                        otherExpreeVO.setStatus(newContext.get("status"));
-                                        otherExpressList.add(otherExpreeVO);
+                                        otherExpreeVO.setStatus(newContext.get("status"));*/
+                                    expressList.add(express);
 
                                 }
-                                order.setOtherExprees(otherExpressList);
+                                order.setExpresses(expressList);
 
                                 state = lastResult.getState();
                                  status = restRequestDTO.getStatus();
