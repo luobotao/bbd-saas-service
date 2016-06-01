@@ -1,30 +1,20 @@
 package com.bbd.saas.controllers;
 
 import com.alibaba.dubbo.common.json.JSON;
-import com.alibaba.dubbo.common.json.JSONObject;
-import com.alibaba.dubbo.common.serialize.support.json.JsonSerialization;
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderService;
-import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.api.mongo.ToOtherSiteLogService;
-import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
-import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.ExpressCompany;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.mongoModels.ToOtherSiteLog;
-import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpClient;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -53,6 +45,8 @@ public class HandleAbnormalController {
     AdminService adminService;
     @Autowired
     SiteService siteService;
+    @Autowired
+    ReturnReasonService returnReasonService;
     @Autowired
     ToOtherSiteLogService toOtherSiteLogService;
     @Autowired
@@ -319,7 +313,9 @@ public class HandleAbnormalController {
                 order.setUserId("");//未分派
                 order.setDateUpd(new Date());//更新时间
                 //更新物流信息
-                addOrderExpress(order, currUser, site.getName());
+                //订单已由【A站点】出库，正在转送到【B站点】进行配送
+                String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
+                addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
                 //更新预计到站时间
                 order.setDateMayArrive(Dates.addDays(new Date(), 1));
                 order.setDateArrived(null);
@@ -350,25 +346,23 @@ public class HandleAbnormalController {
     }
 
     /**
-     * Description: 设置订单的物流信息--转其他站点
-     *
+     * 增加订单物流信息
+     * @param expressStatus 物流状态
      * @param order 订单
-     * @param user  派件员
-     * @author liyanlei
-     * 2016年4月22日下午3:32:35
+     * @param user 当前用户
+     * @param remark 物流信息
      */
-    private void addOrderExpress(Order order, User user, String siteName) {
+    private void addOrderExpress(ExpressStatus expressStatus,Order order, User user, String remark){
         //更新物流状态
-        order.setExpressStatus(ExpressStatus.Packed);
+        order.setExpressStatus(expressStatus);
         //更新物流信息
         List<Express> expressList = order.getExpresses();
-        if (expressList == null) {
+        if(expressList == null){
             expressList = new ArrayList<Express>();
         }
         Express express = new Express();
         express.setDateAdd(new Date());
-        //订单已由【A站点】出库，正在转送到【B站点】进行配送
-        express.setRemark("订单已由【" + user.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。");
+        express.setRemark(remark);
         express.setLat(user.getSite().getLat());
         express.setLon(user.getSite().getLng());
         boolean expressIsNotAdd = true;//防止多次添加
@@ -385,85 +379,79 @@ public class HandleAbnormalController {
         }
     }
     /**************************转其他站点***************结束***********************************/
-    /**************************转其他快递公司***************开始***********************************/
-    /**
-     * Description: 转其他快递
-     *
-     * @param mailNum
-     * @param expressId
-     * @param model
-     * @return
-     * @author: liyanlei
-     * 2016年4月14日下午2:04:59
-     */
-    @RequestMapping(value = "/toOtherExpress", method = RequestMethod.GET)
-    public Map<String, Object> toOtherExpress(String mailNum, String expressId, Model model) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        try {
-            //查询运单信息
-            Order order = orderService.findOneByMailNum("", mailNum);
-            if (order != null) {
-                //当运单到达站点，首次分派;当运单状态处于滞留拒收时，可以重新分派
-                if (ExpressStatus.ArriveStation.equals(order.getExpressStatus())
-                        || ExpressStatus.Delay.equals(order.getExpressStatus())
-                        || ExpressStatus.Refuse.equals(order.getExpressStatus())) {
-                    if (order.getUserId() == null && !"".equals(order.getUserId())) {//未分派，可以分派
-                        //saveOrderMail(order, staffId, map);
-                    } else {//重复扫描，此运单已分派过了
-                        map.put("operFlag", 2);
-                    }
-                } else {//重复扫描，此运单已分派过了
-                    map.put("operFlag", 2);
-                }
-            } else {
-                map.put("erroFlag", 0);//0:运单号不存在
-            }
-        } catch (Exception e) {
-            logger.error("===转其他快递===出错:" + e.getMessage());
-        }
-        return map;
-    }
-    /**************************转其他快递公司***************结束***********************************/
-
     /**************************申请退货***************开始***********************************/
 
     /**
-     * 退货
-     *
-     * @param mailNum       运单号
-     * @param rtnReason     退货原因
-     * @param rtnRemark     其他原因--原因详情
-     * @param status        状态
-     * @param pageIndex     当前页
-     * @param arriveBetween 到站时间
-     * @param request       请求
-     * @return operFlag=1，orderPage = 当前页的数据； operFlag=0
+     * 查询所有的退货原因
+     * @param request
+     * @return
+     * @author: liyanlei
+     * 2016年4月18日上午10:32:14
      */
-    @RequestMapping(value = "/doReturn", method = RequestMethod.POST)
-    public Map<String, Object> dispatch(String mailNum, String rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+    @ResponseBody
+    @RequestMapping(value="/getRtnReasonList", method=RequestMethod.GET)
+    public List<ReturnReason> getRtnReasonList(final HttpServletRequest request) {
+        try {
+            //当前登录的用户信息
+            User user = adminService.get(UserSession.get(request));
+            return returnReasonService.findAll();
+        } catch (Exception e) {
+            logger.error("===查询所有退货原因===出错:" + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * 退货
+     * @param mailNum 运单号
+     * @param rtnReason 退货原因
+     * @param rtnRemark 其他原因--原因详情
+     * @param status 状态
+     * @param pageIndex 当前页
+     * @param arriveBetween 到站时间
+     * @param request 请求
+     * @return  operFlag=1，orderPage = 当前页的数据； operFlag=0
+     */
+    @ResponseBody
+    @RequestMapping(value="/doReturn", method=RequestMethod.POST)
+    public Map<String, Object> dispatch(String mailNum, Integer rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             //查询运单信息
             Order order = orderService.findOneByMailNum("", mailNum);
-            if (order != null) {
-                order.setRtnReason(rtnReason);//退货原因
+            if(order != null){
+                ReturnReason reason = returnReasonService.findOneByStatus(rtnReason);
+                //当前登录的用户信息
+                User currUser = adminService.get(UserSession.get(request));
+                order.setRtnReason(reason.getMessage());//退货原因
                 order.setRtnRemark(rtnRemark);//退货备注
                 order.setDateAplyRtn(new Date());//申请退货时间
                 order.setOrderStatus(OrderStatus.APPLY_RETURN);//状态
+                //更新物流信息
+                StringBuffer expRemark = new StringBuffer("订单已申请退货，退货原因：") ;
+                if(rtnReason.equals("4")){//其他
+                    expRemark.append(rtnRemark);
+                }else {
+                    expRemark.append(reason.getMessage());
+                    if(StringUtil.isNotEmpty(rtnRemark)){
+                        expRemark.append("，");
+                        expRemark.append(rtnRemark);
+                    }
+                }
+                expRemark.append("。");
+                addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
                 //更新运单
                 Key<Order> r = orderService.save(order);
-                if (r != null) {
+                if(r != null){
                     map.put("success", true);//成功
                     map.put("msg", "申请退货成功");//0
-                    //当前登录的用户信息
-                    User currUser = adminService.get(UserSession.get(request));
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                } else {
+                }else{
                     map.put("success", false);//失败
                     map.put("msg", "退货失败，请稍候再试");
                 }
-            } else {
+            }else{
                 map.put("success", false);//0:运单号不存在
                 map.put("msg", "运单不存在");//0
             }
@@ -475,9 +463,7 @@ public class HandleAbnormalController {
     /**************************申请退货***************结束***********************************/
 
 
-    /**************************
-     * 转为其他快递   得到所有的快递公司***************开始
-     ***********************************/
+    /**************************  转为其他快递   得到所有的快递公司*************** 开始 *****************************/
     @ResponseBody
     @RequestMapping(value = "/getExpressCompanys", method = RequestMethod.GET)
     public List<ExpressCompany> getExpressCompanys(Model model) {
