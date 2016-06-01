@@ -17,7 +17,9 @@ public enum ExpressStatus {
     Cancel(7, "已取消"),
     Delay(8, "已滞留"),
     Refuse(9, "已拒收"),
-    LOST(10, "已丢失");
+    LOST(10, "已丢失"),
+    APPLY_RETURN(11, "申请退货"),
+    RETURNED(12, "退货完成");
 
     private int status;
     private String message;

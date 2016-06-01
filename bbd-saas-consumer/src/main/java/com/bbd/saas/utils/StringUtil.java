@@ -1,16 +1,13 @@
 package com.bbd.saas.utils;
 
+import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.springframework.util.StringUtils;
 
 
 
@@ -28,7 +25,32 @@ public class StringUtil {
 		else
 			return oldString;
 	}
-	
+
+	/**
+	 * 判断字符串不为空
+	 * @param str 待判断字符串
+	 * @return true : 不为空； false : 为空
+     */
+	public static final boolean isNotEmpty(String str){
+		if (str != null && str.length() > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	 * 判断字符串为空
+	 * @param str 待判断字符串
+	 * @return true : 为空； false : 不为空
+	 */
+	public static final boolean isEmpty(String str){
+		if (str == null || str.length() == 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
 	
 	/**
