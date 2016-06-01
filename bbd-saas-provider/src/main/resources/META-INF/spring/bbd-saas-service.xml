@@ -64,6 +64,12 @@
             <ref bean="toOtherSiteLogDao"/>
         </property>
     </bean>
+    <!-- ReturnReason Service-->
+    <bean id="returnReasonService" class="com.bbd.saas.api.impl.mongo.ReturnReasonServiceImpl">
+        <property name="returnReasonDao">
+            <ref bean="returnReasonDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->
