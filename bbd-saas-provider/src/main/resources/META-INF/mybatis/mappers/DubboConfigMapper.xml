@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.DynamicDubboPortDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.DubboPort">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="port" property="port" jdbcType="INTEGER"/>
+        <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="baseColumnList">
+        id,
+        ip,
+        port,
+        date_new
+    </sql>
+
+
+
+    <!--根据IP获取指定的端口-->
+    <select id="findPortByIp" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `dubbo_port` where ip = #{ip,jdbcType=VARCHAR} limit 1
+    </select>
+</mapper>
