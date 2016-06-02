@@ -3,6 +3,7 @@ package com.bbd.saas.controllers.system;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.BalanceService;
 import com.bbd.saas.api.mysql.OpenUserService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
@@ -10,6 +11,7 @@ import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.UserForm;
+import com.bbd.saas.models.Balance;
 import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
@@ -34,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.awt.image.BandCombineOp;
 import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,9 +61,12 @@ public class UserManageController {
 	private PostmanUserService userMysqlService;	
 	@Autowired
 	private OpenUserService openUserMysqlService;
+
+	@Autowired
+	BalanceService balanceService;
+
 	@Autowired
 	SiteService siteService;
-	
 
 	/**
      * 获取用户列表信息
@@ -203,7 +209,20 @@ public class UserManageController {
 			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
 			user = userService.findOne(kuser.getId().toString());
 			user.setPostmanuserId(postmanuserId);
+
 			userService.save(user);
+
+			Balance balance=new Balance();
+			balance.setuId(postmanuserId);
+			balance.setPhone(postmanUser.getPhone());
+			balance.setCanuse(0);
+			balance.setBalance(0);
+			balance.setWithdraw(0);
+			balance.setRemark("");
+			  balance.setDateUpd(new Date());
+			balance.setDateNew(new Date());
+			balanceService.insertBalance(balance);
+
 			return "true";
 		}
 	}

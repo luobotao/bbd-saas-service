@@ -567,7 +567,6 @@ public class HandleAbnormalController {
             if (order != null) {
                 //更新状态
                 order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
-                order.setExpressStatus(ExpressStatus.TO_OTHER_EXPRESS);
                 //更新getOtherExprees字段
                 List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
                 if (otherExpressList == null || otherExpressList.isEmpty()) {
@@ -589,7 +588,7 @@ public class HandleAbnormalController {
                 order.setOtherExprees(otherExpressList);
                 order.setDateUpd(new Date());
                 //更新expresses字段
-                addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
+                addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
             }
         }
         return order;

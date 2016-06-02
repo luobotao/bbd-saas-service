@@ -109,5 +109,11 @@
     </bean>
 
 
+    <bean id="balanceService" class="com.bbd.saas.api.impl.mysql.BalanceServiceImpl">
+        <property name="balanceDao">
+            <ref bean="balanceDao"/>
+        </property>
+    </bean>
+
     <!--    end mysql services   -->
 </beans>

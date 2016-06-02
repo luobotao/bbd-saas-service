@@ -47,4 +47,5 @@
      <!--转为其他快递    获取所有的快递公司-->
     <dubbo:reference id="expressCompanyService" interface="com.bbd.saas.api.mysql.ExpressCompanyService"/>
 
+    <dubbo:reference id="balanceService" interface="com.bbd.saas.api.mysql.BalanceService"/>
 </beans>

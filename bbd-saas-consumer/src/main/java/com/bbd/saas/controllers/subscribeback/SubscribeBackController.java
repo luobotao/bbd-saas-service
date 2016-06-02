@@ -2,7 +2,9 @@ package com.bbd.saas.controllers.subscribeback;
 
 import com.alibaba.dubbo.common.json.JSON;
 import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mysql.BalanceService;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.models.Balance;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.LastResultVO;
@@ -36,6 +38,8 @@ public class SubscribeBackController {
     public static final Logger logger = LoggerFactory.getLogger(SubscribeBackController.class);
     @Autowired
     OrderService orderService;
+    @Autowired
+    BalanceService balanceService;
 
     /**
      * @param param json格式的body，快递100 传来的的json 数据
@@ -149,4 +153,5 @@ public class SubscribeBackController {
         resultResposeDTO.setResult(false);
         return resultResposeDTO;
     }
+
 }

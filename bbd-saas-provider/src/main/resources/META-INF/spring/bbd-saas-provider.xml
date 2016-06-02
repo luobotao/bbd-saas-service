@@ -38,5 +38,6 @@
     <!--转为其他快递    获取所有的快递公司-->
     <dubbo:service interface="com.bbd.saas.api.mysql.ExpressCompanyService" ref="expressCompanyService" />
 
+    <dubbo:service interface="com.bbd.saas.api.mysql.BalanceService" ref="balanceService" />
 
 </beans>
