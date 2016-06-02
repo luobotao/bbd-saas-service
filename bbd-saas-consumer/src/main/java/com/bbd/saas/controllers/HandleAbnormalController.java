@@ -438,7 +438,6 @@ public class HandleAbnormalController {
                         expRemark.append(rtnRemark);
                     }
                 }
-                expRemark.append("。");
                 addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
                 //更新运单
                 Key<Order> r = orderService.save(order);
@@ -583,7 +582,6 @@ public class HandleAbnormalController {
                 expRemark.append(companyName);
                 expRemark.append("】，快递单号：");
                 expRemark.append(mailNumNew);
-                expRemark.append("。");
                 otherExpreeVO.setContext(expRemark.toString());
                 otherExpreeVO.setCompanycode(companyCode);
                 otherExpreeVO.setDateUpd(new Date());
