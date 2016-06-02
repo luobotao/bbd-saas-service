@@ -1,12 +1,24 @@
 package com.bbd.saas.vo;
 
-/**
+/**封装parameter对象
  * Created by huozhijie on 2016/5/31.
  */
 public class Expree100ParametersVO {
-    private String callbackurl;
-    private String salt;
-    private String resultv2 ;
+    /*  例子： param=body{
+       "company": "yuantong",
+               "number": "12345678",
+               "from": "广东深圳",
+               "to": "北京朝阳",
+               "key": "qWmaQkHp269",
+               "parameters": {
+           "callbackurl": " http://baidu.com",
+                   "salt": "any string",
+                   "resultv2": "1"
+       }
+   }*/
+    private String callbackurl;//回调地址
+    private String salt;//签名用随机字符串（可选）
+    private String resultv2 ;//添加此字段表示开通行政区域解析功能
 
     public String getCallbackurl() {
         return callbackurl;

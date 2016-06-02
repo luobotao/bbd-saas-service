@@ -52,7 +52,7 @@ public class SubscribeBackController {
 
         String state = null;//订单状态
         String status = null;//监控状态
-        String message = null;//
+        String message = null;//监控状态相关信息
         try {
 
             if (StringUtils.isNotBlank(param)) {
@@ -60,7 +60,7 @@ public class SubscribeBackController {
                // 把请求数据转化成restRequestDTO对象
                 restRequestDTO = JSON.parse(param, RestRequestDTO.class);
 
-
+               //从请求参数restRequestDTO 中获取数据
                 if (null != restRequestDTO) {
                     LastResultVO lastResult = restRequestDTO.getLastResult();//获取最新内容对象
                     if (null != lastResult) {
@@ -70,12 +70,13 @@ public class SubscribeBackController {
                             if (StringUtils.isNotBlank(mailNum)) {
                                 Order order = orderService.findOneByNewMailNum(mailNum);//根据其他快递的运单号查询订单
                                 if (order != null) {
-                                    //如果从order 有expressList  ,从order中取出，没有new 一个新的
+                                    //如果order 有expressList  ,从order中取出，没有new 一个新的
                                     List<Express> expressList = order.getExpresses();
                                     if (expressList == null || expressList.isEmpty()) {
                                         expressList = Lists.newArrayList();
                                     }
-
+                                    Collections.reverse(data);
+                                    //从把从快递100返回的结果填充到expressList中
                                     for (HashMap<String, String> newContext : data) {
                                         Express express = new Express();
                                         express.setRemark(newContext.get("context"));
@@ -83,21 +84,28 @@ public class SubscribeBackController {
                                         expressList.add(express);
                                     }
                                     Collections.reverse(expressList);
+
+                                    //填充order
                                     order.setExpresses(expressList);
 
-                                    state = lastResult.getState();
-                                    status = restRequestDTO.getStatus();
-                                    message = restRequestDTO.getMessage();
+                                    //根据lastResult中的，监控状态，订单状态，监控状态信息进行判断
+                                    state = lastResult.getState();//订单状态
+                                    status = restRequestDTO.getStatus();//监控状态
+                                    message = restRequestDTO.getMessage(); //监控状态信息
 
-
+                                    //Status：当快递单本身为已签收时，status=shutdown，即监控结束，表示此单的生命周期已结束；
                                     if (StringUtils.isNotBlank(status) && state != null) {
+                                        /*state 快递单当前签收状态，包括0在途中、1已揽收、2疑难、3已签收、4退签、5同城派送中、6退回、7转单等7个状态，*/
                                         if ("shutdown".equals(status) && ("3".equals(state) || "4".equals(state))) {
+                                              //更改订单为签收状态
                                             order.setOrderStatus(OrderStatus.SIGNED);
                                         }
                                     }
+                                    // 当message为“3天查询无记录”或“60天无变化时”，status= abort，即监控中止。
                                     if (StringUtils.isNotBlank(message) && StringUtils.isNotBlank(status)) {
                                         if (("3天查询无记录".equals(message) && "abort".equals(status))
                                                 || ("60天无变化时".equals(message) && "abort".equals(status))) {
+                                            //更改订单为签收状态
                                             order.setOrderStatus(OrderStatus.SIGNED);
                                         }
                                     }
@@ -112,6 +120,7 @@ public class SubscribeBackController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("[login error]"+e.getMessage());
         }
         //Status：当快递单本身为已签收时，status=shutdown，即监控结束，表示此单的生命周期已结束；
         if (StringUtils.isNotBlank(status) && state != null) {

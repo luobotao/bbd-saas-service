@@ -467,7 +467,7 @@ public class HandleAbnormalController {
      ***********************************/
     @ResponseBody
     @RequestMapping(value = "/getExpressCompanys", method = RequestMethod.GET)
-    public List<ExpressCompany> getExpressCompanys(Model model) {
+    public List<ExpressCompany> getExpressCompanys() {
         List<ExpressCompany> expressCompanys = expressCompanyService.getExpressCompany();
         if (expressCompanys != null && expressCompanys.size() != 0) {
             return expressCompanys;
@@ -520,7 +520,7 @@ public class HandleAbnormalController {
                 if(message.contains("重复订阅")) {//失败
                     map.put("success", false);
                     map.put("msg", "重复订阅");
-                    logger.info("===重复订阅==="  );
+                    logger.info("= 转其他快递==重复订阅==="  );
                 }else{//成功
                     //更新运单
                     Key<Order> r = orderService.save(order);
@@ -598,8 +598,8 @@ public class HandleAbnormalController {
 
     /**
      *    向快递100接口 订阅
-     * @param salt
-     * @param resultv2
+     * @param salt 签名用随机字符串（可选）
+     * @param resultv2  添加此字段表示开通行政区域解析功能
      * @param companyId 其他快递公司的id
      * @param mailNum  运单号
      * @param from  运单寄出地址
@@ -631,19 +631,23 @@ public class HandleAbnormalController {
                 companyCode = expressCompany.getCompanycode();
             }
         }
-         //创建requestVo,
-        Map<String, String> requestVO = new HashMap<>();
-        Expree100BodyVO expree100BodyVO = new Expree100BodyVO();
-        Expree100ParametersVO expree100ParametersVO = new Expree100ParametersVO();
+           //为快递100 订阅 填充参数数据
+
+        Map<String, String> requestVO = new HashMap<>();//创建requestVo,用于封装订阅 快递100 的单个对象
+        Expree100BodyVO expree100BodyVO = new Expree100BodyVO();//用于封装requestVO对象，封装expree100ParametersVO对象
+        Expree100ParametersVO expree100ParametersVO = new Expree100ParametersVO();//用于封装parameters 对象
+
+       //填充expree100ParametersVO对象
         expree100ParametersVO.setCallbackurl(EPREE100_CALLBACK_URL);
         expree100ParametersVO.setSalt(epree100Resultv2);
         expree100ParametersVO.setResultv2(epree100Resultv2);
+
+        //填充expree100BodyVO对象
         expree100BodyVO.setCompany(companyCode);
 
         if (StringUtils.isNotBlank(mailNumNew)) {
             expree100BodyVO.setNumber(mailNumNew);
         }
-
         if (StringUtils.isNotBlank(from)) {
             expree100BodyVO.setFrom(from);
         }
@@ -652,18 +656,20 @@ public class HandleAbnormalController {
         }
         expree100BodyVO.setKey(EPREE100_KEY);
         expree100BodyVO.setParameters(expree100ParametersVO);
-        JSONSerializer jsonSerializer = new JSONSerializer();
 
+        //填充requestVO对象
+        JSONSerializer jsonSerializer = new JSONSerializer();
         requestVO.put("param", jsonSerializer.serialize(expree100BodyVO));
         requestVO.put("schema", "json/xml");
 
 
-        ResultResposeDTO resultResposeDTO = null;
-        String resultResposeDTOstr = null;
+        ResultResposeDTO resultResposeDTO = null;//封装httpClient 的返回结果对象
+        String resultResposeDTOstr = null;//封装httpClient 的返回结果字符串
 
         try {
+            //向快递100发送订阅信息
             resultResposeDTOstr = HttpClientUtil.sendHttpPost(EPREE100_URL, requestVO);
-
+            //填充返回结果信息
             if (StringUtils.isNoneBlank(resultResposeDTOstr)) {
                 resultResposeDTO = JSON.parse(resultResposeDTOstr, ResultResposeDTO.class);
                 if (null != resultResposeDTO) {
@@ -672,6 +678,7 @@ public class HandleAbnormalController {
                         resultResposeDTO.setMessage("重复订阅");
                         resultResposeDTO.setResult(false);
                         resultResposeDTO.setReturnCode(500);
+                        logger.info("------------重复订阅--------" );
                     }
                     return resultResposeDTO;
 
@@ -680,6 +687,7 @@ public class HandleAbnormalController {
         }catch (Exception e) {
 
            e.printStackTrace();
+            logger.info("[login error]"+e.getMessage());
         }
         return resultResposeDTO;
     }
