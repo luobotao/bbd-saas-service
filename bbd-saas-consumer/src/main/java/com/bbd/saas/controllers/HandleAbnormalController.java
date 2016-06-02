@@ -572,9 +572,9 @@ public class HandleAbnormalController {
                 order.setOtherExprees(otherExpressList);
                 order.setDateUpd(new Date());
                 //更新expresses字段
-                StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发：【") ;
+                StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发【") ;
                 expRemark.append(companyName);
-                expRemark.append("，快递单号：");
+                expRemark.append("】，快递单号：");
                 expRemark.append(mailNumNew);
                 expRemark.append("。");
                 addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
