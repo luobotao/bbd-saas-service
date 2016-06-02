@@ -87,8 +87,6 @@ public class SubscribeBackController {
                                         express.setDateAdd(new Date());
                                         expressList.add(express);
                                     }
-                                    Collections.reverse(expressList);
-
                                     //填充order
                                     order.setExpresses(expressList);
 
