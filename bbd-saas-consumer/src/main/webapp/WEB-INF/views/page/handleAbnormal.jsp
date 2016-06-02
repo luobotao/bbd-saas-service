@@ -361,7 +361,7 @@ function getRowHtml(data){
 		row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange ml16'>申请退货</a></td>";
 	}else{
 		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
-		row += "<td class='tl' width='190px'><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点1</a>";
+		row += "<td class='tl' width='190px'><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a>";
 		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
 		row += "<br><a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange'>申请退货</a></td>";
 	}
@@ -693,6 +693,7 @@ function initExpressCompanys() {
 }
 //显示其他快递公司div
 function showExpressCompanyDiv(mailNumStr) {
+	$("#mailNum").val("");
 	mailNum = mailNumStr;
 	if(expressCompanysList != null){
 		loadExpressCompanys(expressCompanysList);
