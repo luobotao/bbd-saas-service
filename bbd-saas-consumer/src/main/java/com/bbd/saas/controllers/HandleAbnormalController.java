@@ -491,10 +491,25 @@ public class HandleAbnormalController {
             User currUser = adminService.get(UserSession.get(request));
             //查询运单信息
             Order order = updExpressForToOtherCmp(companyId, mailNum, mailNumNew, currUser);
-            //StringBuffer fromSB = new StringBuffer();
-            //Sender
+            Sender sender = order.getSender();
+            Reciever reciever = order.getReciever();
+
+            StringBuffer fromSB = new StringBuffer();
+            StringBuffer toSB = new StringBuffer();
+            if (sender != null){
+                fromSB.append(sender.getProvince());
+                fromSB.append(sender.getCity());
+                fromSB.append(sender.getArea());
+                fromSB.append(sender.getAddress());
+            }
+            if (reciever != null){
+                toSB.append(reciever.getProvince());
+                toSB.append(reciever.getCity());
+                toSB.append(reciever.getArea());
+                toSB.append(reciever.getAddress());
+            }
             ResultResposeDTO resposeDTO = goTo100Subscribe("", "", companyId, mailNum,
-                    order.getSender().getAddress(), order.getReciever().getAddress(), mailNumNew);
+                    fromSB.toString(), toSB.toString(), mailNumNew);
             if(resposeDTO != null){
                 //更新运单
                 Key<Order> r = orderService.save(order);
