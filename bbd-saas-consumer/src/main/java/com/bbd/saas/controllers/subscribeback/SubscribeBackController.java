@@ -62,7 +62,7 @@ public class SubscribeBackController {
                         if (data != null && !data.isEmpty()) {
                             String mailNum = lastResult.getNu();
                             if (StringUtils.isNotBlank(mailNum)) {
-                                Order order = orderService.findOneByMailNum("", mailNum);
+                                Order order = orderService.findOneByNewMailNum(mailNum);//根据其他快递的运单号查询订单
                                 if (order != null) {
                                     List<Express> expressList = order.getExpresses();
                                     if (expressList == null || expressList.isEmpty()) {

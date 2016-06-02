@@ -396,4 +396,16 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         //查询数据
         return find(query).asList();
     }
+
+    /**
+     * 根据其他快递的运单号查询订单
+     * @param newMailNum
+     * @return
+     */
+    public Order findOneByNewMailNum(String newMailNum) {
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(newMailNum))
+            query.filter("otherExprees.mailNum",newMailNum);
+        return findOne(query);
+    }
 }
