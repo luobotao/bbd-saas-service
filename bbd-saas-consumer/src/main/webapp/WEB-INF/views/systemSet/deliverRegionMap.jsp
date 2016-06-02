@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
@@ -723,9 +724,9 @@
 			}, 500);
 		}
 	});
-
+	parentE=$('#psrE',window.parent.document);
+	var winhei2=parentE.height();
 	var winwid=window.screen.availWidth;
-	var winhei2=window.screen.availHeight;
 	var initwid=$(".b-map").width();
 	var inithei=$("#allmap").height();
 
@@ -734,12 +735,12 @@
 		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){
 			parentF.css({overflowY:"hidden"});
-			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2+2});
+			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2});
 			$(".pos-footer").hide();
-			$("#allmap,.b-map").css({width:winwid,height:winhei2-60,marginLeft:"-10px"});
+			$("#allmap,.b-map").css({width:winwid,height:winhei2,marginLeft:"-10px"});
 			$(".j-full-div").css({left:"-16%"});
 			$(".b-f-screen,.pos-adr").css({right:"25px"});
-			$(".draw-btn").css({marginLeft:"-10px"})
+			$(".draw-btn").css({marginLeft:"-7px"})
 			$(".full-screen").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
