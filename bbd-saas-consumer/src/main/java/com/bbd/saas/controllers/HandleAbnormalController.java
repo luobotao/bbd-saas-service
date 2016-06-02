@@ -429,7 +429,7 @@ public class HandleAbnormalController {
                 order.setOrderStatus(OrderStatus.APPLY_RETURN);//状态
                 //更新物流信息
                 StringBuffer expRemark = new StringBuffer("订单已申请退货，退货原因：") ;
-                if(rtnReason.equals("4")){//其他
+                if(rtnReason == 4 ){//其他
                     expRemark.append(rtnRemark);
                 }else {
                     expRemark.append(reason.getMessage());
