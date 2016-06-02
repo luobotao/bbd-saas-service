@@ -195,7 +195,7 @@
 				选择退货原因:
 				<select id="rtnReason" name="rtnReason" class="form-control form-bod">
 				</select>
-				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20" col="3" placeholder="请输入退货原因"></textarea>
+				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20" col="3" placeholder="备注"></textarea>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideApplyReturnDiv()" class="sbtn sbtn2 g">取消</a></span>
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="applyReturn()" class="sbtn sbtn2 l">确定</a></span>
@@ -611,7 +611,7 @@ function applyReturn() {
 	}else{
 		if(rtnReason == "4"){//其他
 			if(rtnRemark == "" || rtnRemark == null){
-				ioutDiv("请填写备注");
+				ioutDiv("请输入备注");
 				$("#rtnRemark").focus();
 				return false;
 			}
@@ -734,7 +734,7 @@ function toOtherExpressCompanys() {
 		return false;
 	}
 	if (mailNumNew == "" || mailNumNew == null) {
-		ioutDiv("请填写运单号");
+		ioutDiv("请输⼊运单号");
 		$("#mailNum").focus();
 		return false;
 	}

@@ -449,7 +449,7 @@ public class HandleAbnormalController {
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
                 }else{
                     map.put("success", false);//失败
-                    map.put("msg", "退货失败，请稍候再试");
+                    map.put("msg", "申请退货失败，请稍候再试");
                 }
             }else{
                 map.put("success", false);//0:运单号不存在
@@ -479,8 +479,15 @@ public class HandleAbnormalController {
     }
 
     /**
-     * @param mailNum 运单号
-     * @return
+     * 转其他快递
+     * @param mailNum 原有的运单号
+     * @param companyId 要转到的快递公司Id
+     * @param mailNumNew 新运单号
+     * @param status 分页查询-运单状态
+     * @param pageIndex 分页查询-当前页数
+     * @param arriveBetween 分页查询-到站时间范围
+     * @param request 请求
+     * @return success：true|false（成功|失败）; msg: 信息详情
      */
     @ResponseBody
     @RequestMapping(value = "/toOtherExpressCompanys", method = RequestMethod.POST)
@@ -493,7 +500,6 @@ public class HandleAbnormalController {
             Order order = updExpressForToOtherCmp(companyId, mailNum, mailNumNew, currUser);
             Sender sender = order.getSender();
             Reciever reciever = order.getReciever();
-
             StringBuffer fromSB = new StringBuffer();
             StringBuffer toSB = new StringBuffer();
             if (sender != null){
@@ -511,26 +517,27 @@ public class HandleAbnormalController {
             ResultResposeDTO resposeDTO = goTo100Subscribe("", "", companyId, mailNum,
                     fromSB.toString(), toSB.toString(), mailNumNew);
             if(resposeDTO != null){
-                //更新运单
-                Key<Order> r = orderService.save(order);
-                if(r != null){
-                    map.put("success", true);//成功
-                    map.put("msg", "转其他快递操作成功");//0
-                    //刷新列表
-                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                }else{
-                    map.put("success", false);//失败
-                    map.put("msg", "转其他快递操作失败，请稍候再试");
-                }
-
                 String message=   resposeDTO.getMessage();
-                if(message.contains("重复订阅")) {
+                if(message.contains("重复订阅")) {//失败
+                    map.put("success", false);
                     map.put("msg", "重复订阅");
                     logger.info("===重复订阅==="  );
+                }else{//成功
+                    //更新运单
+                    Key<Order> r = orderService.save(order);
+                    if(r != null){
+                        map.put("success", true);//成功
+                        map.put("msg", "转运信息添加成功");//0
+                        //刷新列表
+                        map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+                    }else{
+                        map.put("success", false);//失败
+                        map.put("msg", "转运信息添加失败，请稍候再试");
+                    }
                 }
             }else{
                 map.put("success", false);//0:运单号不存在
-                map.put("msg", "运单不存在");//0
+                map.put("msg", "转运信息添加失败，请稍候再试");//0
             }
         } catch (Exception e) {
             logger.error("===转其他快递操作===出错:" + e.getMessage());
@@ -571,18 +578,18 @@ public class HandleAbnormalController {
                     otherExpreeVO.setMailNum(mailNumNew);
                 }
                 otherExpreeVO.setCompanyname(companyName);
-                otherExpreeVO.setContext("订单超出站点配送 范围，已转发【" + companyName + "快递】，快递单号：" + mailNumNew + "");
+                StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发【") ;
+                expRemark.append(companyName);
+                expRemark.append("】，快递单号：");
+                expRemark.append(mailNumNew);
+                expRemark.append("。");
+                otherExpreeVO.setContext(expRemark.toString());
                 otherExpreeVO.setCompanycode(companyCode);
                 otherExpreeVO.setDateUpd(new Date());
                 otherExpressList.add(otherExpreeVO);
                 order.setOtherExprees(otherExpressList);
                 order.setDateUpd(new Date());
                 //更新expresses字段
-                StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发【") ;
-                expRemark.append(companyName);
-                expRemark.append("】，快递单号：");
-                expRemark.append(mailNumNew);
-                expRemark.append("。");
                 addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
             }
         }
