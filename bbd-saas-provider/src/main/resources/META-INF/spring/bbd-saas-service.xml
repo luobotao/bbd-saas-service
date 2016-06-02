@@ -8,13 +8,6 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
     <import resource="classpath:META-INF/spring/bbd-saas-dao.xml" />
 
-    <!-- dynamicDubboPortReader Service-->
-    <bean id="dynamicDubboPortReader" class="com.bbd.saas.config.DynamicDubboPortReader" init-method="init" >
-        <property name="dynamicDubboPortDao">
-            <ref bean="dynamicDubboPortDao"/>
-        </property>
-    </bean>
-
 	<!-- start mongodb services   -->
     <!-- adminUser Service-->
     <bean id="adminUserService" class="com.bbd.saas.api.impl.mongo.AdminUserServiceImpl">
