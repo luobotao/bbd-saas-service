@@ -33,21 +33,7 @@
 			border-bottom: none;
 			z-index: 1;
 		}
-		.prompt-txt {
-			display: block;
-			min-width: 300px;
-			padding: 0 20px;
-			height: 50px;
-			line-height: 48px;
-			font-size: 20px;
-			color: #3d3838;
-			text-align: center;
-			background: #ffc800;
-			border: 1px solid #fc9e28;
-			left: 60%;
-			margin-left: 80px;
-			z-index: 1060;
-		}
+
 		.ckbox {
 			background: rgb(255, 255, 255);
 			cursor: pointer;
@@ -296,27 +282,7 @@
 <!-- E footer -->
 <div class="b-loading">
 	<div class="spinner" style="display:none">
-		<div class="spinner-container container1">
-			<div class="circle1"></div>
-			<div class="circle2"></div>
-			<div class="circle3"></div>
-			<div class="circle4"></div>
-		</div>
-		<div class="spinner-container container2">
-			<div class="circle1"></div>
-			<div class="circle2"></div>
-			<div class="circle3"></div>
-			<div class="circle4"></div>
-		</div>
-		<div class="spinner-container container3">
-			<div class="circle1"></div>
-			<div class="circle2"></div>
-			<div class="circle3"></div>
-			<div class="circle4"></div>
-		</div>
-		<div class="">
-			<i class="prompt-txt" >正在导入，请稍候...</i>
-		</div>
+		<i class="prompt-txt" ><img src="${ctx}/resources/images/loading.gif" width="25" class="mr10 load-img" />正在导入，请稍候...</i>
 	</div>
 </div>
 
@@ -1082,6 +1048,7 @@
 
 
 	});
+
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');

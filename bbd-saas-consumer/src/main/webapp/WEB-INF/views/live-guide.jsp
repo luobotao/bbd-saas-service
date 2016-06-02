@@ -168,24 +168,7 @@
 	<!-- E footer -->
 	<div class="b-loading">
 		<div class="spinner" style="display:none">
-			<div class="spinner-container container1">
-				<div class="circle1"></div>
-				<div class="circle2"></div>
-				<div class="circle3"></div>
-				<div class="circle4"></div>
-			</div>
-			<div class="spinner-container container2">
-				<div class="circle1"></div>
-				<div class="circle2"></div>
-				<div class="circle3"></div>
-				<div class="circle4"></div>
-			</div>
-			<div class="spinner-container container3">
-				<div class="circle1"></div>
-				<div class="circle2"></div>
-				<div class="circle3"></div>
-				<div class="circle4"></div>
-			</div>
+			<i class="prompt-txt" ><img src="${ctx}/resources/images/loading.gif" width="25" class="mr10 load-img" />正在导入，请稍候...</i>
 		</div>
 	</div>
 	<!-- E pop -->

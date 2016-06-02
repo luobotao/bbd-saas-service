@@ -1517,8 +1517,22 @@ select.form-control::-ms-expand { display: none; }
 .b-loading{
   position:absolute;
   top:40%;
-  left:56%;
-  margin:-90px 0 0 -30px;
+  left:58%;
+  min-width: 300px;
+  margin:-90px 0 0 -150px;
+}
+.prompt-txt {
+  display: block;
+  min-width: 300px;
+  padding: 0 20px;
+  height: 50px;
+  line-height: 48px;
+  font-size: 20px;
+  color: #3d3838;
+  text-align: center;
+  background: #ffc800;
+  border: 1px solid #fc9e28;
+  z-index: 1060;
 }
 /* 循环加载 结束*/
 /* S pop 样式修改 */
@@ -1894,6 +1908,9 @@ input.spe-input{
 }
 /* E 配送系统 */
 /* S 气泡提示 */
+.load-img{
+  margin-top:-4px;
+}
 .b-prompt {
   opacity: 0;
 }
