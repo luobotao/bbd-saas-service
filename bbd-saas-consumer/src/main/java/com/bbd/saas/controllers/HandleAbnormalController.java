@@ -625,7 +625,7 @@ public class HandleAbnormalController {
         if (StringUtils.isNoneBlank(epree100_salt)) {
             epree100Resultv2 = salt;
         }
-        //根据快递公司的id查询出其他ku
+        //根据快递公司的id查询出其他快递公司,为companyNmame,companyCode 赋值
         if (StringUtils.isNoneBlank(companyId)) {
             ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
             if (null != expressCompany) {
@@ -633,7 +633,7 @@ public class HandleAbnormalController {
                 companyCode = expressCompany.getCompanycode();
             }
         }
-
+         //创建requestVo,
         Map<String, String> requestVO = new HashMap<>();
         Expree100BodyVO expree100BodyVO = new Expree100BodyVO();
         Expree100ParametersVO expree100ParametersVO = new Expree100ParametersVO();
