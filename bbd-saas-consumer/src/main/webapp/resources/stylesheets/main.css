@@ -111,6 +111,9 @@ a.orange {
 .mr15 {
   margin-right: 15px;
 }
+.mt5{
+  margin-top: 5px;
+}
 .mt10{
   margin-top: 10px;
 }
@@ -1987,3 +1990,9 @@ input.spe-input{
 }
 /* E color */
 /* E sass 2.0 */
+
+/* S saas2.1 */
+.txtA{
+  min-height:100px;
+}
+/* E saas2.1 */

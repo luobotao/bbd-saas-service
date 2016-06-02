@@ -191,11 +191,11 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 				<h4 class="modal-title tc">申请退货</h4>
 			</div>
-			<div class="modal-body b-modal-body">
+			<div class="modal-body b-modal-body form-inline form-inline-n">
 				选择退货原因:
-				<select id="rtnReason" name="rtnReason" class="form-control form-bod">
+				<select id="rtnReason" name="rtnReason" class="form-control form-bod wp100 mt5">
 				</select>
-				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20" col="3" placeholder="备注"></textarea>
+				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20 wp100 txtA" col="3" placeholder="备注"></textarea>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideApplyReturnDiv()" class="sbtn sbtn2 g">取消</a></span>
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="applyReturn()" class="sbtn sbtn2 l">确定</a></span>
@@ -215,12 +215,19 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 				<h4 class="modal-title tc">转其他快递</h4>
 			</div>
-			<div class="modal-body b-modal-body">
-				快递公司:
-				<select id="express_select" name="companyname" class="form-control form-bod">
-					<option>请选择快递公司</option>
-				</select>
-				运单号：<textarea id="mailNum" name="mailNum"  class="form-control form-bod mt20" col="3" placeholder="请输入运单号"></textarea>
+			<div class="modal-body b-modal-body form-inline form-inline-n">
+				<ul class="txt-complex f16">
+					<li class="pb20">
+						<i>快递公司：</i>
+						<select id="express_select" name="companyname" class="form-control form-bod">
+							<option>请选择快递公司</option>
+						</select>
+					</li>
+					<li>
+						<i>　运单号：</i>
+						<input id="mailNum" name="mailNum"  class="form-control form-bod" type="text" placeholder="请输入运单号" />
+					</li>
+				</ul>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideExpressCompanyDiv()" class="sbtn sbtn2 g">取消</a></span>
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="toOtherExpressCompanys()" class="sbtn sbtn2 l">确定</a></span>
@@ -357,7 +364,7 @@ function getRowHtml(data){
 		 row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
 		 row += "<td class='tl' width='190px'><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
 		 row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a>";
-		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
+		row += "<br><a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange'>转其他快递</a>";
 		row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange ml16'>申请退货</a></td>";
 	}else{
 		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
