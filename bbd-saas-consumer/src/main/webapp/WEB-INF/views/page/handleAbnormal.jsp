@@ -286,16 +286,7 @@ $(document).ready(function() {
 		},
 		format: 'YYYY/MM/DD'
 	});
-	
-	//退货原因，选择其他的原因弹出详情输入框
-	$("#rtnReason").change(function(){
-		/*if(this.value == "4"){//其他
-			$("#rtnRemark").modal("show");
-		} else {
-			$("#rtnRemark").modal("hide");
-		}*/
-	});
-	
+
 	//初始化快递员列表
 	initCourierList();
 	//初始化站点列表
@@ -589,6 +580,7 @@ function showApplyReturnDiv(mailNumStr) {
 			// 清空select
 			rtnReasonObj.empty();
 			if(dataList != null){
+				rtnReasonObj.append("<option value=''>请选择</option>");
 				for(var i = 0; i < dataList.length; i++){
 					data = dataList[i];
 					rtnReasonObj.append("<option value='"+data.status+"'>"+data.message+"</option>");
@@ -688,7 +680,6 @@ function initExpressCompanys() {
 		},
 		error : function() {
 			expressCompanysList = null;
-			gotoLoginPage();
 		}
 	});
 }
@@ -718,6 +709,7 @@ function loadExpressCompanys(expressCompanysList) {
 	// 清空select
 	express_select.empty();
 	if(expressCompanysList != null){
+		express_select.append("<option value=''>请选择</option>");
 		for(var i = 0; i < expressCompanysList.length; i++){
 			data = expressCompanysList[i];
 			express_select.append("<option value='"+data.id+"'>"+data.companyname+"</option>");
