@@ -522,6 +522,12 @@ public class HandleAbnormalController {
                     map.put("success", false);//失败
                     map.put("msg", "转其他快递操作失败，请稍候再试");
                 }
+
+                String message=   resposeDTO.getMessage();
+                if(message.contains("重复订阅")) {
+                    map.put("msg", "重复订阅");
+                    logger.info("===重复订阅==="  );
+                }
             }else{
                 map.put("success", false);//0:运单号不存在
                 map.put("msg", "运单不存在");//0
@@ -585,6 +591,8 @@ public class HandleAbnormalController {
     }
     public ResultResposeDTO goTo100Subscribe(String salt, String resultv2, String companyId, String mailNum,
             String from, String to, String mailNumNew) {
+
+        logger.info("向100快递 ------订阅");
         String epree100Resultv2 = "";
         String epree100_salt = "";
         String companyName = null;
@@ -640,7 +648,12 @@ public class HandleAbnormalController {
             if (StringUtils.isNoneBlank(resultResposeDTOstr)) {
                 resultResposeDTO = JSON.parse(resultResposeDTOstr, ResultResposeDTO.class);
                 if (null != resultResposeDTO) {
-
+                    String message=   resultResposeDTO.getMessage();
+                    if(message.contains("重复订阅")){
+                        resultResposeDTO.setMessage("重复订阅");
+                        resultResposeDTO.setResult(false);
+                        resultResposeDTO.setReturnCode(500);
+                    }
                     return resultResposeDTO;
 
                 }
