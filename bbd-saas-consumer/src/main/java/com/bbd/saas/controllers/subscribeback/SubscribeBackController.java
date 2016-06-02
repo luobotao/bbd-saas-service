@@ -3,6 +3,7 @@ package com.bbd.saas.controllers.subscribeback;
 import com.alibaba.dubbo.common.json.JSON;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mysql.BalanceService;
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.Balance;
 import com.bbd.saas.mongoModels.Order;
@@ -101,6 +102,7 @@ public class SubscribeBackController {
                                         if ("shutdown".equals(status) && ("3".equals(state) || "4".equals(state))) {
                                               //更改订单为签收状态
                                             order.setOrderStatus(OrderStatus.SIGNED);
+                                            order.setExpressStatus(ExpressStatus.Success);
                                         }
                                     }
                                     // 当message为“3天查询无记录”或“60天无变化时”，status= abort，即监控中止。
@@ -109,6 +111,7 @@ public class SubscribeBackController {
                                                 || ("60天无变化时".equals(message) && "abort".equals(status))) {
                                             //更改订单为签收状态
                                             order.setOrderStatus(OrderStatus.SIGNED);
+                                            order.setExpressStatus(ExpressStatus.Success);
                                         }
                                     }
                                     order.setDateUpd(new Date());
