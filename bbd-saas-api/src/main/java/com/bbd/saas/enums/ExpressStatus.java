@@ -19,6 +19,7 @@ public enum ExpressStatus {
     Refuse(9, "已拒收"),
     LOST(10, "已丢失"),
     APPLY_RETURN(11, "申请退货"),
+    TO_OTHER_EXPRESS(13, "已转其他快递"),
     RETURNED(12, "退货完成");
 
     private int status;

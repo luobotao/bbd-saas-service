@@ -568,6 +568,7 @@ public class HandleAbnormalController {
             if (order != null) {
                 //更新状态
                 order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
+                order.setExpressStatus(ExpressStatus.TO_OTHER_EXPRESS);
                 //更新getOtherExprees字段
                 List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
                 if (otherExpressList == null || otherExpressList.isEmpty()) {
