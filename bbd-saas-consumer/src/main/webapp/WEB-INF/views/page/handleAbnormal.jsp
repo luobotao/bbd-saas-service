@@ -514,12 +514,14 @@ function showOtherSiteDiv(mailNumStr) {
 	}
 	$("#chooseOtherSite_div").modal("show");
 }
+
 //把站点添加到下拉框中
 function loadSites(siteList) {
 	var site_select = $("#site_select");
-	// 清空select  
-	site_select.empty(); 
+	// 清空select
+	site_select.empty();
 	if(siteList != null){
+		site_select.append("<option value=''>请选择</option>");
 		for(var i = 0; i < siteList.length; i++){
 			data = siteList[i];
 			site_select.append("<option value='"+data.id+"'>"+data.name+"</option>");
@@ -534,31 +536,36 @@ function hideOtherSiteDiv() {
 }
 //转其他站点
 function chooseOtherSite() {
+	var siteId = $("#site_select").val();
+	if (siteId == "" || siteId == null) {
+		ioutDiv("请选择站点");
+		return false;
+	}
 	//获取当前页
-    var pageIndex = getCurrPage(); 
-    $.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
-        data : {  
-            "mailNum" : mailNum, //
-            "siteId" : $("#site_select").val(),//站点编号
-            "pageIndex" : pageIndex,//更新列表
-            "status" : $("#status").val(), 
-            "arriveBetween" : $("#arriveBetween").val() 
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.operFlag == 1){
+	var pageIndex = getCurrPage();
+	$.ajax({
+		type : "GET",  //提交方式
+		url : "<%=path%>/handleAbnormal/toOtherSite",//路径
+		data : {
+			"mailNum" : mailNum, //
+			"siteId" : siteId,//站点编号
+			"pageIndex" : pageIndex,//更新列表
+			"status" : $("#status").val(),
+			"arriveBetween" : $("#arriveBetween").val()
+		},//数据，这里使用的是Json格式进行传输
+		success : function(data) {//返回数据根据结果进行相应的处理
+			if(data.operFlag == 1){
 				//分派成功，刷新列表！
 				refreshTable(data.orderPage);
-        	}else{
-        		ioutDiv("转其他站点失败，请稍后再试！");
-        	}
-        },
-        error : function() {  
-       		ioutDiv("服务器繁忙，请稍后再试！");
-       		//gotoLoginPage();
-  		}    
-    });
+			}else{
+				ioutDiv("转其他站点失败，请稍后再试！");
+			}
+		},
+		error : function() {
+			ioutDiv("服务器繁忙，请稍后再试！");
+			//gotoLoginPage();
+		}
+	});
 	//隐藏面板
 	$(".j-site-pop").modal("hide");
 }
@@ -710,6 +717,7 @@ function loadExpressCompanys(expressCompanysList) {
 	// 清空select
 	express_select.empty();
 	if(expressCompanysList != null){
+		express_select.append("<option value=''>请选择</option>");
 		for(var i = 0; i < expressCompanysList.length; i++){
 			data = expressCompanysList[i];
 			express_select.append("<option value='"+data.id+"'>"+data.companyname+"</option>");
@@ -734,7 +742,7 @@ function toOtherExpressCompanys() {
 		return false;
 	}
 	if (mailNumNew == "" || mailNumNew == null) {
-		ioutDiv("请填写运单号");
+		ioutDiv("请输入运单号");
 		$("#mailNum").focus();
 		return false;
 	}
