@@ -47,41 +47,48 @@ public class SubscribeBackController {
     public ResultResposeDTO subscribeback(String param, @RequestParam(value = "sign", required = false) String sign) {
 
         logger.info("get form kuaidi 100 is: "+param);
-        RestRequestDTO restRequestDTO =null;
-        ResultResposeDTO resultResposeDTO = new ResultResposeDTO();
+        RestRequestDTO restRequestDTO =null;//封装 param  请求参数对象
+        ResultResposeDTO resultResposeDTO = new ResultResposeDTO();//封装返回快递100 信息的对象
 
-        String state = null;
-        String status = null;
-        String message = null;
+        String state = null;//订单状态
+        String status = null;//监控状态
+        String message = null;//
         try {
+
             if (StringUtils.isNotBlank(param)) {
                /* param = new String(param.getBytes("ISO-8859-1"), "UTF-8");*/
+               // 把请求数据转化成restRequestDTO对象
                 restRequestDTO = JSON.parse(param, RestRequestDTO.class);
+
+
                 if (null != restRequestDTO) {
-                    LastResultVO lastResult = restRequestDTO.getLastResult();
+                    LastResultVO lastResult = restRequestDTO.getLastResult();//获取最新内容对象
                     if (null != lastResult) {
-                        List<HashMap<String, String>> data = lastResult.getData();
+                        List<HashMap<String, String>> data = lastResult.getData();//获取最新内容对象的list 对象
                         if (data != null && !data.isEmpty()) {
-                            String mailNum = lastResult.getNu();
+                            String mailNum = lastResult.getNu();//获取新运单号
                             if (StringUtils.isNotBlank(mailNum)) {
                                 Order order = orderService.findOneByNewMailNum(mailNum);//根据其他快递的运单号查询订单
                                 if (order != null) {
+                                    //如果从order 有expressList  ,从order中取出，没有new 一个新的
                                     List<Express> expressList = order.getExpresses();
                                     if (expressList == null || expressList.isEmpty()) {
                                         expressList = Lists.newArrayList();
                                     }
-                                    Collections.reverse(data);
+
                                     for (HashMap<String, String> newContext : data) {
                                         Express express = new Express();
                                         express.setRemark(newContext.get("context"));
                                         express.setDateAdd(new Date());
                                         expressList.add(express);
                                     }
+                                    Collections.reverse(expressList);
                                     order.setExpresses(expressList);
 
                                     state = lastResult.getState();
                                     status = restRequestDTO.getStatus();
                                     message = restRequestDTO.getMessage();
+
 
                                     if (StringUtils.isNotBlank(status) && state != null) {
                                         if ("shutdown".equals(status) && ("3".equals(state) || "4".equals(state))) {

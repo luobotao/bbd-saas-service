@@ -670,16 +670,17 @@ var to=null;
 
 //初始化快递公司信息
 function initExpressCompanys() {
-	//查询所有站点
+	//查询所有其他快递公司
 	$.ajax({
 		type : "GET",  //提交方式
 		url : "<%=path%>/handleAbnormal/getExpressCompanys",//路径
 		data : {},//数据，这里使用的是Json格式进行传输
 		success : function(dataList) {//返回数据根据结果进行相应的处理
-			expressCompanysList = dataList;
+			expressCompanysList = dataList;  //查询所有的快递公司数据
 		},
 		error : function() {
 			expressCompanysList = null;
+			gotoLoginPage();
 		}
 	});
 }
@@ -703,20 +704,19 @@ function showExpressCompanyDiv(mailNumStr) {
 	}
 	$("#chooseOtherExpress_div").modal("show");
 }
-//把公司信息添加到下拉框中
+//把其他快递公司信息添加到下拉框中
 function loadExpressCompanys(expressCompanysList) {
 	var express_select = $("#express_select");
 	// 清空select
 	express_select.empty();
 	if(expressCompanysList != null){
-		express_select.append("<option value=''>请选择</option>");
 		for(var i = 0; i < expressCompanysList.length; i++){
 			data = expressCompanysList[i];
 			express_select.append("<option value='"+data.id+"'>"+data.companyname+"</option>");
 		}
 	}
 }
-//隐藏转其他站点div
+//隐藏转其他快递公司div
 function hideExpressCompanyDiv() {
 	mailNum = null;
 	//$(".j-site-pop").modal("hide");
@@ -734,7 +734,7 @@ function toOtherExpressCompanys() {
 		return false;
 	}
 	if (mailNumNew == "" || mailNumNew == null) {
-		ioutDiv("请输⼊运单号");
+		ioutDiv("请填写运单号");
 		$("#mailNum").focus();
 		return false;
 	}
@@ -759,8 +759,8 @@ function toOtherExpressCompanys() {
 				//outDiv有延迟，所以页面刷新需要同步延迟
 				refreshTable(data.orderPage);
 				/*setTimeout(function () {
-					refreshTable(data.orderPage);
-				}, 2000);*/
+				 refreshTable(data.orderPage);
+				 }, 2000);*/
 			}
 		},
 		error: function () {
