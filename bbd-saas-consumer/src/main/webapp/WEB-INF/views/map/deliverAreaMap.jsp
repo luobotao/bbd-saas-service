@@ -414,7 +414,7 @@
 		var siteId = $("#siteId").val();
 		var radius = $("#radius").val();
 		if (siteId == "") {//全部
-			outDiv("请选择一个站点");
+			ioutDiv("请选择一个站点");
 			return;
 		}
 		showRadiusChangeMap(siteId, radius);
@@ -469,7 +469,7 @@
 				}
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试");
+				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -579,7 +579,7 @@
 				showOneSiteArea(site, radius);
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试");
+				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -588,12 +588,12 @@
 	$("#saveSiteBtn").click(function(){
 		var siteId = $("#siteId").val();
 		if(siteId == "" || siteId == null){
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return false;
 		}
 		var radiusVal = $("#radius").val();
 		if(radiusVal==0){
-			outDiv("请选择站点配送范围");
+			ioutDiv("请选择站点配送范围");
 			return false;
 		}
 		$.ajax({
@@ -603,11 +603,11 @@
 			dataType: "text",
 			data: {},
 			success: function(response){
-				outDiv("保存成功");
+				ioutDiv("保存成功");
 				//window.location.href="${ctx}/deliverArea/map/1";
 			},
 			error: function(){
-				outDiv('服务器繁忙，请稍后再试');
+				ioutDiv('服务器繁忙，请稍后再试');
 			}
 		});
 	});
@@ -755,7 +755,7 @@
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
-				outDiv('不能再删除, 请保留3个以上的点.');
+				ioutDiv('不能再删除, 请保留3个以上的点.');
 				return;
 			}
 			this.overlaysCache.splice(i,1);
@@ -958,7 +958,7 @@
 				}
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试");
+				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -966,7 +966,7 @@
 	$("#formBtn").click(function () {
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return;
 		}
 		var jsonStr = "";
@@ -995,20 +995,20 @@
 				},
 				success: function(data){
 					if(data == "success"){
-						outDiv("提交成功");
+						ioutDiv("提交成功");
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);
 					}else{
-						outDiv("error:"+data);
+						ioutDiv("error:"+data);
 					}
 				},
 				error: function(){
-					outDiv('服务器繁忙，请稍后再试');
+					ioutDiv('服务器繁忙，请稍后再试');
 				}
 			});
 
 		} else {
-			outDiv("请先绘制电子围栏");
+			ioutDiv("请先绘制电子围栏");
 		}
 	});
 
@@ -1035,7 +1035,7 @@
 	function openDraw(){
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return;
 		}
 		fenceObj.drawingManager.open();
@@ -1075,7 +1075,7 @@
 	$(".import-file").on("change",function(){
 		var siteId = $("#keywordSiteId").val();
 		if(siteId == ""){//全部
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return;
 		}
 		$(".j-import-pop").modal();
@@ -1099,7 +1099,7 @@
 				$(".import-file").val("");
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
-				outDiv( "超时，服务器异常!");
+				ioutDiv( "超时，服务器异常!");
 				$(".spinner").modal('hide');
 				//清空file
 				$(".import-file").val("");
@@ -1148,7 +1148,7 @@
 		});
 		var delIds = id_array.join(',');
 		if(delIds==""){
-			outDiv("请选择要删除的站点关键词");
+			ioutDiv("请选择要删除的站点关键词");
 			return false;
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
@@ -1179,7 +1179,7 @@
 				loadTableHtml(pageTable);
 			},
 			error : function() {
-				//outDiv("加载分页数据异常");
+				//ioutDiv("加载分页数据异常");
 				if(window.top==window.self){//不存在父页面
 					window.location.href="<c:url value="/login" />"
 				}else{
@@ -1234,7 +1234,7 @@
 	}
 	function deleteKeyword(id){
 		if(id == null || id == ""){
-			outDiv("关键词无编号，无法删除")
+			ioutDiv("关键词无编号，无法删除")
 			return ;
 		}
 		if(confirm('确认删除？')){
@@ -1260,13 +1260,13 @@
 				if(result){//删除成功，刷新列表
 					loadTableHtml(dataObject.pageList);
 				}else{
-					outDiv("删除失败");
+					ioutDiv("删除失败");
 				}
 				$(".spinner").modal('hide');
 			},
 			error : function() {
 				$(".spinner").modal('hide');
-				outDiv("服务器繁忙，请稍候再试");
+				ioutDiv("服务器繁忙，请稍候再试");
 			}
 		});
 	}

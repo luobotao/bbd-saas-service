@@ -205,11 +205,11 @@
                     </li>
                     <li class="filter">
                         <i>登录密码：</i>
-                        <input type="password" class="form-control form-bod wp80 j-n-pwd" id="password" name="password"/>
+                        <input type="password" class="form-control form-bod wp80 j-nf-pwd" id="password" name="password"/>
                     </li>
                     <li class="filter">
                         <i>确认密码：</i>
-                        <input type="password" class="form-control form-bod wp80 j-c-pwd" id="passwordConfirm" name="passwordConfirm"/>
+                        <input type="password" class="form-control form-bod wp80 j-cf-pwd" id="passwordConfirm" name="passwordConfirm"/>
                     </li>
                 </ul>
                 <div class="clearfix mt20">
@@ -460,7 +460,7 @@
                     console.log(response);
                     if(response=="false"){
                         $("#phoneFlag").val(0);
-                        outDiv("手机号已存在");
+                        ioutDiv("手机号已存在");
                     }else{
                         $("#phoneFlag").val(1);
                     }
@@ -475,7 +475,7 @@
 
         var name = $.trim($("#name").val());
         if (name == "" ) {
-            outDiv("请输入站点名称");
+            ioutDiv("请输入站点名称");
             return false;
         }
         var province = $(".prov").val();
@@ -486,59 +486,60 @@
         $("#area").val(area);
         var address = $("#address").val();
         if(address==""){
-            outDiv("请输入详细地址");
+            ioutDiv("请输入详细地址");
             return false;
         }
         var responser = $("#address").val();
         if(responser==""){
-            outDiv("请输站长姓名");
+            ioutDiv("请输站长姓名");
             return false;
         }
 
         var phone = $.trim($('input[name="phone"]').val());
         var phoneFlag = $("#phoneFlag").val();
         if(phone==""){
-            outDiv("请输入手机号");
+            ioutDiv("请输入手机号");
             return false;
         } else{
             if(checkMobile(phone)==false){
-                outDiv("请输入正确的手机");
+                ioutDiv("请输入正确的手机");
                 return false;
             }else{
                 if(phoneFlag==0){
-                    outDiv("手机号已存在");
+                    ioutDiv("手机号已存在");
                     return false;
                 }
             }
         }
         var password = $("#password").val();
         if(password==""){
-            outDiv("请输入新密码");
-            return false;
-        }
-        var passwordConfirm = $("#passwordConfirm").val();
-        if(passwordConfirm==""){
-            outDiv("请输入确认密码");
+            ioutDiv("请输入新密码");
             return false;
         }
 
         if(!pwdreg.test(password)){
-            outDiv("请输入6-12位数字和字母结合的密码");
+            ioutDiv("请输入6-12位数字和字母结合的密码");
+            return false;
+        }
+
+        var passwordConfirm = $("#passwordConfirm").val();
+        if(passwordConfirm==""){
+            ioutDiv("请输入确认密码");
             return false;
         }
         if(passwordConfirm!=password){
-            outDiv("两次密码不一致");
+            ioutDiv("两次密码不一致");
             return false;
         }
 
         var email = $("#email").val();
         if(email==""){
-            outDiv("请输入邮箱");
+            ioutDiv("请输入邮箱");
             return false;
         } else{
             var emailFlag = checkemail(email);
             if(emailFlag==false){
-                outDiv("邮箱格式不正确");
+                ioutDiv("邮箱格式不正确");
                 return false;
             }
         }

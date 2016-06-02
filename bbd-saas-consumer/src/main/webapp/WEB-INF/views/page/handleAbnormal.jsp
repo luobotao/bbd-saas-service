@@ -471,11 +471,11 @@ function chooseCourier() {
         		//分派成功，刷新列表！
         		refreshTable(data.orderPage);
         	}else{
-				outDiv("重新分派失败，请稍后再试！");
+				ioutDiv("重新分派失败，请稍后再试！");
         	}
         },
         error : function() {  
-       		outDiv("服务器繁忙，请稍后再试！");
+       		ioutDiv("服务器繁忙，请稍后再试！");
   		}
     });
     //隐藏面板
@@ -560,11 +560,11 @@ function chooseOtherSite() {
 				//分派成功，刷新列表！
 				refreshTable(data.orderPage);
         	}else{
-        		outDiv("转其他站点失败，请稍后再试！");
+        		ioutDiv("转其他站点失败，请稍后再试！");
         	}
         },
         error : function() {  
-       		outDiv("服务器繁忙，请稍后再试！");
+       		ioutDiv("服务器繁忙，请稍后再试！");
        		//gotoLoginPage();
   		}    
     });
@@ -614,12 +614,12 @@ function applyReturn() {
 	var rtnReason = $("#rtnReason").val();
 	var rtnRemark = $("#rtnRemark").val();
 	if(rtnReason == "" || rtnReason == null){
-		outDiv("请选择退货原因");
+		ioutDiv("请选择退货原因");
 		return false;
 	}else{
 		if(rtnReason == "4"){//其他
 			if(rtnRemark == "" || rtnRemark == null){
-				outDiv("请填写备注");
+				ioutDiv("请填写备注");
 				$("#rtnRemark").focus();
 				return false;
 			}
@@ -640,7 +640,7 @@ function applyReturn() {
 			"arriveBetween" : $("#arriveBetween").val()
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据根据结果进行相应的处理
-			outDiv(data.msg);
+			ioutDiv(data.msg);
 			if(data.success){//分派成功，刷新列表！
 				refreshTable(data.orderPage);
 				//outDiv有延迟，所以页面刷新需要同步延迟
@@ -650,7 +650,7 @@ function applyReturn() {
 			}
 		},
 		error : function() {
-			outDiv("服务器繁忙，请稍后再试！");
+			ioutDiv("服务器繁忙，请稍后再试！");
 		}
 	});
 	//隐藏面板
@@ -706,7 +706,7 @@ function showExpressCompanyDiv(mailNumStr) {
 				loadExpressCompanys(dataList);
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试！");
+				ioutDiv("服务器繁忙，请稍后再试！");
 			}
 		});
 	}
@@ -738,11 +738,11 @@ function toOtherExpressCompanys() {
 	var companyId = $("#express_select").find("option:selected").val();
 	var mailNumNew = $("#mailNum").val();
 	if (companyId == "" || companyId == null) {
-		outDiv("请选择快递公司");
+		ioutDiv("请选择快递公司");
 		return false;
 	}
 	if (mailNumNew == "" || mailNumNew == null) {
-		outDiv("请填写运单号");
+		ioutDiv("请填写运单号");
 		$("#mailNum").focus();
 		return false;
 	}
@@ -762,7 +762,7 @@ function toOtherExpressCompanys() {
 			"arriveBetween": $("#arriveBetween").val()
 		},//数据，这里使用的是Json格式进行传输
 		success: function (data) {//返回数据根据结果进行相应的处理
-			outDiv(data.msg);
+			ioutDiv(data.msg);
 			if (data.success) {//分派成功，刷新列表！
 				//outDiv有延迟，所以页面刷新需要同步延迟
 				refreshTable(data.orderPage);
@@ -772,7 +772,7 @@ function toOtherExpressCompanys() {
 			}
 		},
 		error: function () {
-			outDiv("服务器繁忙，请稍后再试！");
+			ioutDiv("服务器繁忙，请稍后再试！");
 		}
 	});
 	//隐藏面板

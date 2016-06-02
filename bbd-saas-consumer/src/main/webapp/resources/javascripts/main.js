@@ -188,9 +188,8 @@ $(function () {
         }
     })
     // E 站点管理
+
     // S 密码
-
-
     $(".j-n-pwd").on("blur",function(){
         var pwdval=$(this).val();
         if(!pwdreg.test(pwdval)){
@@ -208,6 +207,22 @@ $(function () {
         }
     })
     // E 密码
+
+    // S iframe密码
+
+    $(".j-nf-pwd").on("blur",function(){
+        var pwdval2=$(this).val();
+        if(!pwdreg.test(pwdval2)){
+            ioutDiv("请输入6-12位数字和字母结合的密码");
+        }
+    })
+//确认密码
+    $(".j-cf-pwd").on("blur",function(){
+        if($(this).val()!="" && $(this).val() != $(".j-nf-pwd").val()){
+            ioutDiv("两次密码不一致");
+        }
+    })
+// E iframe密码
 
     // S 站点管理新建
     // 新建
@@ -266,7 +281,6 @@ function alert_mine(titile,content){
 
 // S 气泡 提示
 function outDiv(content){
-    $('.b-prompt-txt').css({top:$(parent.window).scrollTop()});
     $(".b-prompt").addClass("mov");
     $(".b-prompt i").html(content);
     var txtwid=$(".b-prompt .b-prompt-txt").outerWidth();
@@ -276,6 +290,20 @@ function outDiv(content){
     },2000)
 }
 // E 气泡 提示
+// S iframe气泡 提示
+var parentF=$('#psrE',window.parent.document);
+function ioutDiv(content){
+    parentF.find(".b-prompt").addClass("mov");
+    parentF.find(".b-prompt i").html(content);
+    var txtwid=parentF.find(".b-prompt .b-prompt-txt").outerWidth();
+    parentF.find(".b-prompt-txt").css({marginLeft:-txtwid/2})
+    setTimeout(function(){
+        parentF.find(".b-prompt").removeClass("mov")
+    },3000)
+}
+// E iframe气泡 提示
+
+
 
 
 // S 图片上传

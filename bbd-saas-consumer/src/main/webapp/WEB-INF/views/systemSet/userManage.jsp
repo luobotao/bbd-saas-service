@@ -43,7 +43,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 										</div>
 									</c:if>
 	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	        							<label>角色：</label>
+	        							<label>　角色：</label>
 										<select id="saasrole" name="saasrole" class="form-control form-con-new">
 											<c:if test="${userNow.role==UserRole.COMPANY}">
 												<option value ="-1" selected ="selected">全部</option>
@@ -197,10 +197,10 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 							</li>
 							<c:if test="${userNow.role==UserRole.COMPANY}">
 								<li id="passLi" >
-									<input type="password" id="loginPass" name="loginPass" class="form-control form-bod" placeholder="密码" />
+									<input type="password" id="loginPass" name="loginPass" class="form-control form-bod j-nf-pwd" placeholder="密码" />
 								</li>
 								<li id="passCLi" >
-									<input type="password" id="passwordC" name="passwordC" class="form-control form-bod" placeholder="确认密码" />
+									<input type="password" id="passwordC" name="passwordC" class="form-control form-bod j-cf-pwd" placeholder="确认密码" />
 								</li>
 							</c:if>
 						</ul>
@@ -339,7 +339,7 @@ function checkLoginName(loginName) {
 				success: function(response){
 					console.log(response);
 					if(response=="true"){
-						outDiv("手机号已存在，请重新输入11位手机号!")
+						ioutDiv("手机号已存在，请重新输入11位手机号!")
 					    ret = true;
 					}
 				},
@@ -427,17 +427,17 @@ function saveUserBtn(){
 	var realName = $("#realName").val();
 	realName=realName.replace(/\ +/g,"");
 	if(realName==""){
-		outDiv("请输入姓名");
+		ioutDiv("请输入姓名");
 		return false;
 	}
 	var loginName = $("#loginName").val();
 	loginName=loginName.replace(/\ +/g,"");
 	if(loginName==""){
-		outDiv("请输入手机号");
+		ioutDiv("请输入手机号");
 		return false;
 	}
 	if(checkMobile(loginName)==false){
-		outDiv("请输入正确的手机号");
+		ioutDiv("请输入正确的手机号");
 		return false;
 	}
 
@@ -446,20 +446,20 @@ function saveUserBtn(){
 	if(roleId=="<%=UserRole.SITEMASTER%>"){
 		var password = $.trim($('input[name="loginPass"]').val());
 		if(password==""){
-			outDiv("请输入密码");
+			ioutDiv("请输入密码");
 			return false;
 		}
 		if(!pwdreg.test(password)){
-			outDiv("请输入6-12位数字和字母结合的密码");
+			ioutDiv("请输入6-12位数字和字母结合的密码");
 			return false;
 		}
 		var passwordC = $.trim($('input[name="passwordC"]').val());
 		if(passwordC==""){
-			outDiv("请确认密码");
+			ioutDiv("请确认密码");
 			return false;
 		}
 		if(passwordC!=password){
-			outDiv("两次密码不一致");
+			ioutDiv("两次密码不一致");
 			return false;
 		}
 	}
@@ -502,7 +502,7 @@ function saveUserBtn(){
 			data: {},
 			success: function(response){
 				if(response=="true"){
-					outDiv("手机号已存在，请重新输入11位手机号!")
+					ioutDiv("手机号已存在，请重新输入11位手机号!")
 					ret = true;
 				}else{
 					$("#userForm").ajaxSubmit({
