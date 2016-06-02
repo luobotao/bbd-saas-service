@@ -597,14 +597,26 @@ public class HandleAbnormalController {
         return order;
 
     }
+
+    /**
+     *    向快递100接口 订阅
+     * @param salt
+     * @param resultv2
+     * @param companyId 其他快递公司的id
+     * @param mailNum  运单号
+     * @param from  运单寄出地址
+     * @param to      运单签收地址
+     * @param mailNumNew 新添的运单号
+     * @return
+     */
     public ResultResposeDTO goTo100Subscribe(String salt, String resultv2, String companyId, String mailNum,
             String from, String to, String mailNumNew) {
 
         logger.info("向100快递 ------订阅");
         String epree100Resultv2 = "";
         String epree100_salt = "";
-        String companyName = null;
-        String companyCode = null;
+        String companyName = null;//其他快递公司的名字
+        String companyCode = null;//其他快递公司的编码
 
         if (StringUtils.isNoneBlank(resultv2)) {
             epree100Resultv2 = resultv2;
@@ -613,6 +625,7 @@ public class HandleAbnormalController {
         if (StringUtils.isNoneBlank(epree100_salt)) {
             epree100Resultv2 = salt;
         }
+        //根据快递公司的id查询出其他ku
         if (StringUtils.isNoneBlank(companyId)) {
             ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
             if (null != expressCompany) {
