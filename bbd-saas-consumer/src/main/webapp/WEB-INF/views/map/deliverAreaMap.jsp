@@ -85,7 +85,7 @@
 			<!-- S detail -->
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9 j-full-div">
 				<!-- S 搜索区域 -->
-				<div class="search-area d-search-area j-detail-area">
+				<div class="search-area d-search-area">
 					<ul class="row pb20">
 						<li class="txt-info txt-info-l">
 							<em>公司名称：</em>
@@ -165,7 +165,7 @@
 									</c:if>
 								</select>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 full-screen">
 								<div class="b-map">
 									<div id="fenceMap" class="bod-rad capacity-map" style="height: 533px;"></div>
 									<a href="javascript:void(0)" onclick="fenceObj.theLocation()" class="pos-adr"></a>
@@ -1278,24 +1278,24 @@
 
 		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){
-			$(".j-detail-area").hide();
+			parentF.css({overflowY:"hidden"});
 			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2+2});
 			$(".pos-footer").hide();
-			$("#fenceMap,.b-map").css({width:winwid,height:winhei2-60-84,marginLeft:"-10px"});
+			$("#fenceMap,.b-map").css({width:winwid,height:winhei2-60,marginLeft:"-10px"});
 			$(".j-full-div").css({left:"-16%"});
 			$(".b-f-screen,.pos-adr").css({right:"25px"});
 			$(".draw-btn").css({marginLeft:"-10px"})
-			$("#draw-map").addClass("full-map");
+			$(".full-screen").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
-			$(".j-detail-area").show();
+			parentF.css({overflowY:"auto"});
 			$(".pos-footer").show();
 			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2+140});
 			$("#fenceMap,.b-map").css({width:initwid,height:inithei,margin:0});
 			$(".j-full-div").css({left:"0"});
 			$(".b-f-screen,.pos-adr").css({right:"15px"});
 			$(".draw-btn").css({marginLeft:"0"})
-			$("#draw-map").removeClass("full-map");
+			$(".full-screen").removeClass("full-map");
 			$(this).removeClass("b-back-full").addClass("b-forward-full");
 		}
 	})

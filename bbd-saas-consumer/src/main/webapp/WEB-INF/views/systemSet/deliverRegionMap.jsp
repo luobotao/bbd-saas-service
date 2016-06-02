@@ -42,7 +42,7 @@
 			</div>
 			<!-- E sidebar -->
 			<!-- S detail -->
-			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
+			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9  j-full-div">
 				<!-- S 搜索区域 -->
 				<div class="search-area d-search-area">
 					<ul class="row pb20">
@@ -104,7 +104,7 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-12">
+							<div class="col-md-12 full-screen">
 								<div class="b-map">
 									<div id="allmap" class="bod-rad" style="height: 533px;"></div>
 									<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
@@ -724,24 +724,33 @@
 		}
 	});
 
-
+	var winwid=window.screen.availWidth;
 	var winhei2=window.screen.availHeight;
+	var initwid=$(".b-map").width();
 	var inithei=$("#allmap").height();
 
 	$(".j-full-btn").on("click",function(){
+
+		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){
+			parentF.css({overflowY:"hidden"});
+			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2+2});
 			$(".pos-footer").hide();
-			$("#allmap,.b-map").css({height:winhei2-60-84,marginLeft:"-10px"});
-//			$(".b-f-screen,.pos-adr").css({right:"25px"});
+			$("#allmap,.b-map").css({width:winwid,height:winhei2-60,marginLeft:"-10px"});
+			$(".j-full-div").css({left:"-16%"});
+			$(".b-f-screen,.pos-adr").css({right:"25px"});
 			$(".draw-btn").css({marginLeft:"-10px"})
-			$("#draw-map").addClass("full-map");
+			$(".full-screen").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
+			parentF.css({overflowY:"auto"});
 			$(".pos-footer").show();
-			$("#allmap,.b-map").css({height:inithei,margin:0});
-//			$(".b-f-screen,.pos-adr").css({right:"15px"});
+			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2+140});
+			$("#allmap,.b-map").css({width:initwid,height:inithei,margin:0});
+			$(".j-full-div").css({left:"0"});
+			$(".b-f-screen,.pos-adr").css({right:"15px"});
 			$(".draw-btn").css({marginLeft:"0"})
-			$("#draw-map").removeClass("full-map");
+			$(".full-screen").removeClass("full-map");
 			$(this).removeClass("b-back-full").addClass("b-forward-full");
 		}
 	})
