@@ -576,6 +576,7 @@ function chooseOtherSite() {
 /************************申请退货***************开始***************************************/
 //显示申请退货div
 function showApplyReturnDiv(mailNumStr) {
+	$("#rtnRemark").val("");
 	mailNum = mailNumStr;
 	//加载退货原因
 	$.ajax({
