@@ -1516,10 +1516,10 @@ select.form-control::-ms-expand { display: none; }
 }
 .b-loading{
   position:absolute;
-  top:40%;
+  top:25%;
   left:58%;
   min-width: 300px;
-  margin:-90px 0 0 -150px;
+  margin:0 0 0 -150px;
 }
 .prompt-txt {
   display: block;

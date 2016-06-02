@@ -239,7 +239,6 @@
 		function saveSiteFunc(){
 			var radiusVal = $("#radius option:selected").val();
 			if(radiusVal==0){
-				console.log("请选择站点配送范围");
 				return false;
 			}else{
 				$.ajax({
@@ -249,10 +248,8 @@
 					dataType: "text",
 					data: {},
 					success: function(response){
-						console.log("保存最新站点配送范围成功");
 					},
 					error: function(){
-						console.log('服务器繁忙，请稍后再试！');
 						window.location.href="${ctx}/login";
 					}
 				});
@@ -314,7 +311,6 @@
 			}
 			bmapArr.push(barr);
 		}
-		//console.log(bmapArr);
 
 		//提交保存
 		$("#formBtn").click(function () {
@@ -322,17 +318,14 @@
 			bmap.overlays.forEach(function (e) {
 				var arrs = e.ro;
 				if(arrs.length>2){
-					console.log(arrs);
 					for (var i = 0; i < arrs.length; i++) {
 						jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
 						if (i < arrs.length - 1) {
 							jsonStr = jsonStr + ",";
 						}
-						console.log(jsonStr);
 					}
 					jsonStr.substring(0, jsonStr.length - 1);
 					jsonStr = jsonStr + ";";
-					console.log(jsonStr);
 				}
 			})
 			if ("" != jsonStr) {
@@ -347,15 +340,15 @@
 						"siteId":siteId
 					},
 					success: function(data){
-						console.log(data);
+						//console.log(data);
 						if(data == "success"){
 							alert("提交成功");
 						}else{
-							console.log("error:"+data);
+							//console.log("error:"+data);
 						}
 					},
 					error: function(){
-						console.log('服务器繁忙，请稍后再试！');
+						//console.log('服务器繁忙，请稍后再试！');
 						window.location.href="${ctx}/login";
 					}
 				});
@@ -432,8 +425,8 @@
 			loadMyOverlay: function(){
 				var map = this.map;
 				this.clearAll();
-				console.log("ctt")
-				console.log(this.myOverlay);
+				//console.log("ctt")
+				//console.log(this.myOverlay);
 				this.myOverlay.forEach(function(e){
 					myPolygon = new BMap.Polygon(e, this.styleOptions);
 					this.myPolygon = myPolygon;
@@ -447,7 +440,7 @@
 							bmap.delPolygon(e);
 						}
 					});
-					console.log(myPolygon);
+					//console.log(myPolygon);
 					bmap.overlays.push(myPolygon);
 					map.addOverlay(myPolygon);
 				})
@@ -462,7 +455,6 @@
 				}
 				this.overlaysCache = arr;
 				$("panelWrap").innerHTML = '<ul>'+ s +'</ul>';
-				//console.log("[arr]:"+arr);
 			},
 			delPoint: function(i){
 				if(this.overlaysCache.length <=3 ){
@@ -512,7 +504,6 @@
 			clearAll: function() {
 				var map = this.map;
 				var overlays = this.overlays;
-				console.log(overlays);
 				for(var i = 0; i < overlays.length; i++){
 					map.removeOverlay(overlays[i]);
 				}
@@ -522,8 +513,6 @@
 			},
 			// 用经纬度设置地图中心点
 			theLocation:function(){
-				console.log("xxxx");
-				console.log(this.map);
 				this.map.panTo(this.point);
 			}
 		};
@@ -535,7 +524,6 @@
 
 		showMap(${site.deliveryArea*1000});
 		bmap.myOverlay=bmapArr;
-		console.log(bmap.myOverlay);
 		bmap.init();
 
 		var winhei2=window.screen.availHeight;
@@ -562,7 +550,6 @@
 
 		//--------------------panel 3------------------------------------
 		$("#importBtn").click(function(){
-			console.log("import start");
 			$(".j-import-guid-pop").hide();
 			$(".spinner").show();
 			$("#importFileForm").ajaxSubmit({
@@ -572,14 +559,11 @@
 				dataType : 'json',
 				timeout: 0,
 				success: function(data){
-					console.log("import file success");
-					console.log(data);
 					updateDataList(data);
 					$(".import-guid-file").val("");
 					$(".spinner").hide();
 				},
 				error: function(JsonHttpRequest, textStatus, errorThrown){
-					console.log( "超时，服务器异常!");
 					$(".spinner").hide();
 					$(".table-responsive").addClass("guide-tab");
 					querySiteKey();
@@ -599,7 +583,6 @@
 			format: 'YYYY/MM/DD'
 		});
 		$("#querySiteBtn").click(function(){
-			console.log("query site start");
 			$(".table-responsive").addClass("guide-tab");
 			$("#page").val("0");
 			querySiteKey();
@@ -628,7 +611,6 @@
 		//加载带有查询条件的指定页的数据
 		function gotoPage(pageIndex) {
 			$("#page").val(pageIndex);
-			console.log("page change");
 			querySiteKey();
 		}
 		function querySiteKey(){
@@ -638,12 +620,9 @@
 				data : {},
 				dataType : 'json',
 				success: function(data){
-					console.log("query site success");
-					console.log(data);
 					updateDataList(data);
 				},
 				error: function(JsonHttpRequest, textStatus, errorThrown){
-					console.log( "服务器异常!");
 					window.location.href="${ctx}/login";
 				}
 			});
@@ -667,12 +646,10 @@
 					dataType: "json",
 					data: {},
 					success: function(data){
-						console.log("批量删除站点关键字成功");
 						updateDataList(data);
 						$("input[name=inputA]").prop("checked", false);
 					},
 					error: function(){
-						console.log('批量删除站点关键字失败');
 						window.location.href="${ctx}/login";
 					}
 				});
@@ -681,7 +658,6 @@
 
 
 		function delSiteKeywordWithTr(siteKeyId){
-			console.log("aabbcc");
 			if(confirm('确认删除？')){
 				$.ajax({
 					url: '${ctx}/site/deleteSitePoiKeywordWithAjax/'+siteKeyId,
@@ -690,11 +666,9 @@
 					dataType: "json",
 					data: {},
 					success: function(data){
-						console.log("删除站点关键字成功");
 						updateDataList(data);
 					},
 					error: function(){
-						console.log('删除站点关键字失败');
 						window.location.href="${ctx}/login";
 					}
 				});
