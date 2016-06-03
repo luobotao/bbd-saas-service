@@ -8,7 +8,6 @@ import com.bbd.saas.models.SmsInfo;
  * Created by luobotao on 2016/4/11.
  */
 public interface SmsInfoService {
-
     /**
      * 发送验证码
      * @param phone 手机号
@@ -17,6 +16,4 @@ public interface SmsInfoService {
      * @return 短信
      */
     SmsInfo saveVerify(String phone, String code, String type);
-
-
 }
