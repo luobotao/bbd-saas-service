@@ -7,6 +7,7 @@ import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.Balance;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.LastResultVO;
 import com.bbd.saas.vo.RestRequestDTO;
@@ -22,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -80,16 +78,34 @@ public class SubscribeBackController {
                                     if (expressList == null || expressList.isEmpty()) {
                                         expressList = Lists.newArrayList();
                                     }
-                                    Collections.reverse(data);
+                                   Collections.reverse(data);
+
+                                    List <Express> newExpressList =new ArrayList<Express>();
+                                    Map<String,Express> expressMap = new LinkedHashMap<String,Express>();
+
                                     //从把从快递100返回的结果填充到expressList中
                                     for (HashMap<String, String> newContext : data) {
                                         Express express = new Express();
                                         express.setRemark(newContext.get("context"));
-                                        express.setDateAdd(new Date());
+                                       /* express.setDateAdd(new Date());*/
+                                        express.setDateAdd(Dates.parseFullDate(newContext.get("time")));
                                         expressList.add(express);
+                                           
                                     }
+
+                                    for (Express  express : expressList) {
+                                         expressMap.put(express.getRemark(),express);
+                                    }
+
+                                    Set<Map.Entry<String, Express>> entryExpressMap = expressMap.entrySet();
+
+                                       for(Map.Entry<String, Express> entryExpress:entryExpressMap ){
+                                           Express express = entryExpress.getValue();
+                                           newExpressList.add(express);
+                                       }
+
                                     //填充order
-                                    order.setExpresses(expressList);
+                                    order.setExpresses(newExpressList);
 
                                     //根据lastResult中的，监控状态，订单状态，监控状态信息进行判断
                                     state = lastResult.getState();//订单状态
@@ -115,7 +131,7 @@ public class SubscribeBackController {
                                         }
                                     }
                                     order.setDateUpd(new Date());
-                                    orderService.save(order);
+                                   orderService.save(order);
                                 }
                             }
                         }
