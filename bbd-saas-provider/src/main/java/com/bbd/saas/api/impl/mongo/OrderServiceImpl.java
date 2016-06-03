@@ -97,6 +97,16 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	/**
+	 * 根据其他快递的运单号查询订单
+	 * @param newMailNum
+	 * @return
+     */
+	@Override
+	public Order findOneByNewMailNum(String newMailNum) {
+		return orderDao.findOneByNewMailNum(newMailNum);
+	}
+
+	/**
      * Description: 保存订单
      * @param order
      * @return

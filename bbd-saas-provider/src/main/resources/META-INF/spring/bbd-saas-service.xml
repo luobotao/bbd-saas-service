@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
     <import resource="classpath:META-INF/spring/bbd-saas-dao.xml" />
-    
+
 	<!-- start mongodb services   -->
     <!-- adminUser Service-->
     <bean id="adminUserService" class="com.bbd.saas.api.impl.mongo.AdminUserServiceImpl">
@@ -57,6 +57,12 @@
             <ref bean="toOtherSiteLogDao"/>
         </property>
     </bean>
+    <!-- ReturnReason Service-->
+    <bean id="returnReasonService" class="com.bbd.saas.api.impl.mongo.ReturnReasonServiceImpl">
+        <property name="returnReasonDao">
+            <ref bean="returnReasonDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->
@@ -95,5 +101,19 @@
             <ref bean="incomeDao"/>
         </property>
     </bean>
+
+    <bean id="expressCompanyService" class="com.bbd.saas.api.impl.mysql.ExpressCompanyServiceImpl">
+        <property name="expressCompanyDao">
+            <ref bean="expressCompanyDao"/>
+        </property>
+    </bean>
+
+
+    <bean id="balanceService" class="com.bbd.saas.api.impl.mysql.BalanceServiceImpl">
+        <property name="balanceDao">
+            <ref bean="balanceDao"/>
+        </property>
+    </bean>
+
     <!--    end mysql services   -->
 </beans>

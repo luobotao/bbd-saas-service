@@ -38,7 +38,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#"><img src="<c:url value="/resources/images/logo.png" />" alt="logo" /></a>
+			<a class="navbar-brand" target="_blank" href="http://www.bangbangda.cn/"><img src="<c:url value="/resources/images/logo.png" />" alt="logo" /></a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->

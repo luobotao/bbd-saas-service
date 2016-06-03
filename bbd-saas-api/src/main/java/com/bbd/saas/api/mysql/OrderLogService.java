@@ -11,16 +11,16 @@ import com.bbd.saas.vo.OrderMonitorVO;
 public interface OrderLogService {
 	/**
 	 * 插入一条记录
-	 * @param OrderLog
-	 * @return
-     */
+	 * @param OrderLog 订单物流日志
+	 * @return 插入条数
+	 */
 	int insert(OrderLog OrderLog);
 	/**
 	 * 统计每天不同状态的订单数
 	 * @param areaCode 站点编号
 	 * @param startDate 开始时间
 	 * @param endDate 结束时间
-	 * @return
+	 * @return 不同状态的订单数
 	 */
 	public OrderMonitorVO statisticOrderNum(String areaCode, String startDate, String endDate);
 	

@@ -30,6 +30,10 @@
     <bean id="toOtherSiteLogDao" class="com.bbd.saas.dao.mongo.ToOtherSiteLogDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- ReturnReason DAO-->
+    <bean id="returnReasonDao" class="com.bbd.saas.dao.mongo.ReturnReasonDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->
@@ -66,5 +70,17 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.IncomeDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+
+
+    <bean id="expressCompanyDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.ExpressCompanyDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+
+    <bean id="balanceDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.BalanceDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+
     <!--  end mysql daos  -->
 </beans>

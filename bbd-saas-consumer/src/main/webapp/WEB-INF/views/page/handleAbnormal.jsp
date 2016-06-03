@@ -3,8 +3,6 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.AbnormalStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="com.bbd.saas.vo.UserVO" %>
-<%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
  
@@ -64,7 +62,7 @@
 								<th>派送员姓名</th>
 								<th>派送员手机</th>
 								<th>状态</th>
-								<th width="20%">操作</th>
+								<th width="180px">操作</th>
   							</tr>
   						</thead>
   						<tbody id="dataList">
@@ -101,17 +99,22 @@
 									if(order.getOrderStatus() == OrderStatus.RETENTION){
 								%>
 									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
-									<td>
+									<td class="tl">
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
+										<br>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 									</td>
 								<%
 									}else{
 								%>
 									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
-									<td>
-										<%-- <a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a> --%>
+									<td class="tl">
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<br>
+										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 									</td>
 								<%
 									}
@@ -188,19 +191,14 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 				<h4 class="modal-title tc">申请退货</h4>
 			</div>
-			<div class="modal-body b-modal-body">
+			<div class="modal-body b-modal-body form-inline form-inline-n">
 				选择退货原因:
-				<select id="returnReasonType" name="returnReasonType" class="form-control form-bod">
-					<option value ="货物破损">货物破损</option>  
-					<option value ="超时配送">超时配送</option>  
-					<option value="客户端要求退换">客户端要求退换</option>  
-					<option value="其他">其他</option> 
+				<select id="rtnReason" name="rtnReason" class="form-control form-bod wp100 mt5">
 				</select>
-				<textarea id="returnReasonInfo" name="returnReasonInfo" class="form-control form-bod mt20" col="3" placeholder="请输入退货原因"></textarea>
+				<textarea id="rtnRemark" name="rtnRemark" class="form-control form-bod mt20 wp100 txtA" col="3" placeholder="备注"></textarea>
 				<div class="row mt20">
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideApplyReturnDiv()" class="sbtn sbtn2 g">取消</a></span>
 					<span class="col-md-6"><a href="javascript:void(0)" onclick="applyReturn()" class="sbtn sbtn2 l">确定</a></span>
-					
 				</div>
 			</div>
 		</div>
@@ -217,16 +215,23 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 				<h4 class="modal-title tc">转其他快递</h4>
 			</div>
-			<div class="modal-body b-modal-body">
-				快递公司:
-				<select id="express_select" class="form-control form-bod">
-					<option>请选择快递公司</option>
-				</select>
-				运单号：<textarea id="mailNum" name="mailNum"  class="form-control form-bod mt20" col="3" placeholder="请输入运单号"></textarea>
+			<div class="modal-body b-modal-body form-inline form-inline-n">
+				<ul class="txt-complex f16">
+					<li class="pb20">
+						<i>快递公司：</i>
+						<select id="express_select" name="companyname" class="form-control form-bod">
+							<option>请选择快递公司</option>
+						</select>
+					</li>
+					<li>
+						<i>　运单号：</i>
+						<input id="mailNum" name="mailNum"  class="form-control form-bod" type="text" placeholder="请输入运单号" />
+					</li>
+				</ul>
 				<div class="row mt20">
-					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideOtherExpressDiv()" class="sbtn sbtn2 g">取消</a></span>
-					<span class="col-md-6"><a href="javascript:void(0)" onclick="chooseOtherExpress()" class="sbtn sbtn2 l">确定</a></span>
-					
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="hideExpressCompanyDiv()" class="sbtn sbtn2 g">取消</a></span>
+					<span class="col-md-6"><a href="javascript:void(0)" onclick="toOtherExpressCompanys()" class="sbtn sbtn2 l">确定</a></span>
+
 				</div>
 			</div>
 		</div>
@@ -268,6 +273,8 @@ var courierList = null, siteList = null;
 //var staffId = null;
 var siteId = null, mailNum = null;
 
+ var expressCompanysList=null;
+
 $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
@@ -286,20 +293,14 @@ $(document).ready(function() {
 		},
 		format: 'YYYY/MM/DD'
 	});
-	
-	//退货原因，选择其他的原因弹出详情输入框
-	$("#returnReasonType").change(function(){
-		if(this.value == "其他"){
-			$("#returnReasonInfo").modal("show");
-		} else {
-			$("#returnReasonInfo").modal("hide");
-		}
-	});
-	
+
 	//初始化快递员列表
 	initCourierList();
 	//初始化站点列表
 	initSiteList();
+
+	//初始化快递公司
+	initExpressCompanys();
 });
 /************************分页条***************开始***************************************/
 //加载带有查询条件的指定页的数据
@@ -352,23 +353,25 @@ function getRowHtml(data){
 	row += "<td>" + data.user.loginName + "</td>";
 	 */
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if( data.userId == null || data.userId == ""){
-		row += "<td></td><td></td>";
-	}else{
-		row += "<td>" + data.userVO.realName + "</td>";
-		row += "<td>" + data.userVO.loginName + "</td>";
-	}
-	//状态
-	if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
-		row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
-		row += "<td><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
-		row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a></td>";
+	 if( data.userId == null || data.userId == ""){
+	 row += "<td></td><td></td>";
+	 }else{
+	 row += "<td>" + data.userVO.realName + "</td>";
+	 row += "<td>" + data.userVO.loginName + "</td>";
+	 }
+	 //状态
+	 if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
+		 row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";
+		 row += "<td class='tl' width='190px'><a href='javascript:void(0);' onclick='showCourierDiv(\"" + data.mailNum + "\")' class='orange'>重新分派</a>";
+		 row += "<a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他站点</a>";
+		row += "<br><a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange'>转其他快递</a>";
+		row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange ml16'>申请退货</a></td>";
 	}else{
 		row += "<td><%=AbnormalStatus.REJECTION.getMessage()%></td>";
-		row += "<td><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a></td>";
+		row += "<td class='tl' width='190px'><a href='javascript:void(0);' onclick='showOtherSiteDiv(\"" + data.mailNum + "\")' class='orange'>转其他站点</a>";
+		row += "<a href='javascript:void(0);' onclick='showExpressCompanyDiv(\"" + data.mailNum + "\")' class='orange ml16'>转其他快递</a>";
+		row += "<br><a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")' class='orange'>申请退货</a></td>";
 	}
-	/* row += "<a href='javascript:void(0);' onclick='showOtherExpressDiv(\"" + data.mailNum + "\")'>转其他快递</a>";
-	row += "<a href='javascript:void(0);' onclick='showApplyReturnDiv(\"" + data.mailNum + "\")'>申请退货</a></td>"; */
 	row += "</tr>";
 	return row;
 }
@@ -402,15 +405,10 @@ function gotoLoginPage() {
 		window.top.location.href="<c:url value="/login" />"
 	}
 } 
-// 重新分派
-  //  shP(".j-sel", ".j-sel-pop");
+
 //显示选择派件员div
 function showCourierDiv(mailNumStr) {
-
 	mailNum = mailNumStr;
-	//staffId = staffIdStr;
-	//console.log("v==mailNum=="+mailNum);
-	//console.log("courierList===="+courierList);
 	if(courierList != null){
 		loadCouriers(courierList);
 	}else{//重新查询所有派件员
@@ -428,14 +426,10 @@ function showCourierDiv(mailNumStr) {
 	    });
 	}
 	$(".j-sel-pop").modal("show");
-	//$("#chooseCourier_div").modal("show");
 }
  
 //把派件员添加到下拉框中
 function loadCouriers(courierList, staffId) {
-	/* if(staffId == null || staffId == "undefined"){
-		staffId = "";
-	} */
 	var courier_select = $("#courier_select");
 	// 清空select  
 	courier_select.empty(); 
@@ -450,9 +444,7 @@ function loadCouriers(courierList, staffId) {
 //隐藏选择派件员div
 function hideCourierDiv() {
 	mailNum = null;
-	//staffId = null;
 	$(".j-sel-pop").modal("hide");
-	//$("#chooseCourier_div").modal("hide");
 }
 
 //重新分派
@@ -477,17 +469,15 @@ function chooseCourier() {
         		//分派成功，刷新列表！
         		refreshTable(data.orderPage);
         	}else{
-        		alert("重新分派失败，请稍后再试！");  
+				ioutDiv("重新分派失败，请稍后再试！");
         	}
         },
         error : function() {  
-       		//alert("服务器繁忙，请稍后再试！");  
-       		gotoLoginPage();
-  		}    
+       		ioutDiv("服务器繁忙，请稍后再试！");
+  		}
     });
     //隐藏面板
     $(".j-sel-pop").modal("hide");
-    //$("#chooseCourier_div").modal("hide");
 }
 /**************************重新分派***************结束***********************************/
 
@@ -529,16 +519,16 @@ function showOtherSiteDiv(mailNumStr) {
 	  		}    
 	    });
 	}
-	//$(".j-site-pop").modal("show");
-	//alert(123);
 	$("#chooseOtherSite_div").modal("show");
 }
+
 //把站点添加到下拉框中
 function loadSites(siteList) {
 	var site_select = $("#site_select");
-	// 清空select  
-	site_select.empty(); 
+	// 清空select
+	site_select.empty();
 	if(siteList != null){
+		site_select.append("<option value=''>请选择</option>");
 		for(var i = 0; i < siteList.length; i++){
 			data = siteList[i];
 			site_select.append("<option value='"+data.id+"'>"+data.name+"</option>");
@@ -553,153 +543,129 @@ function hideOtherSiteDiv() {
 }
 //转其他站点
 function chooseOtherSite() {
+	var siteId = $("#site_select").val();
+	if (siteId == "" || siteId == null) {
+		ioutDiv("请选择站点");
+		return false;
+	}
 	//获取当前页
-    var pageIndex = getCurrPage(); 
-    $.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/toOtherSite",//路径  
-        data : {  
-            "mailNum" : mailNum, //
-            "siteId" : $("#site_select").val(),//站点编号
-            "pageIndex" : pageIndex,//更新列表
-            "status" : $("#status").val(), 
-            "arriveBetween" : $("#arriveBetween").val() 
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.operFlag == 1){
-        		//分派成功，刷新列表！
-        		refreshTable(data.orderPage);
-        	}else{
-        		alert("转其他站点失败，请稍后再试！");  
-        	}
-        },
-        error : function() {  
-       		//alert("服务器繁忙，请稍后再试！"); 
-       		gotoLoginPage(); 
-  		}    
-    });
-    //隐藏面板
-    $(".j-site-pop").modal("hide");
-	//$("#chooseOtherSite_div").modal("hide");
+	var pageIndex = getCurrPage();
+	$.ajax({
+		type : "GET",  //提交方式
+		url : "<%=path%>/handleAbnormal/toOtherSite",//路径
+		data : {
+			"mailNum" : mailNum, //
+			"siteId" : siteId,//站点编号
+			"pageIndex" : pageIndex,//更新列表
+			"status" : $("#status").val(),
+			"arriveBetween" : $("#arriveBetween").val()
+		},//数据，这里使用的是Json格式进行传输
+		success : function(data) {//返回数据根据结果进行相应的处理
+			if(data.operFlag == 1){
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
+			}else{
+				ioutDiv("转其他站点失败，请稍后再试！");
+			}
+		},
+		error : function() {
+			ioutDiv("服务器繁忙，请稍后再试！");
+			//gotoLoginPage();
+		}
+	});
+	//隐藏面板
+	$(".j-site-pop").modal("hide");
 }
 /**************************转其他站点***************结束***********************************/
 
 /*************************************下面的暂时不做*****************************************************/
 
-/************************转其他快递公司***************开始***************************************/	
-//初始化快递公司
-function initExpressCompany() {
-	//查询所有派件员
-	$.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/getAllExpressCompanyList",//路径  
-        data : {  
-            "areaCode" : "areaCode" //$("#mailNum").val()
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(dataList) {//返回数据根据结果进行相应的处理  
-        	
-		var express_select = $("#express_select");
-		// 清空select  
-		express_select.empty(); 
-		if(dataList != null){
-			for(var i = 0; i < dataList.length; i++){
-				data = dataList[i];
-				express_select.append("<option value='"+data.id+"'>"+data.realName+"</option>");
-			}
-		} 
-        },
-        error : function() {  
-       		//alert("快递公司列表加载异常，请重试！");  
-       		gotoLoginPage();
-  		}    
-    });
-}	
-
-//显示转其他快递公司div
-function showOtherExpressDiv(mailNum) {
-	$("#chooseOtherExpress_div").modal("show");
-	
-}
-//隐藏转其他快递公司div
-function hideOtherExpressDiv() {
-	$("#chooseOtherExpress_div").modal("hide");
-}
-//选择其他快递
-function chooseOtherExpress(mailNum) {
-	//转其他快递公司
-	$.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/toOtherExpress",//路径  
-        data : {  
-            "mailNum" : mailNum, //
-            "expressId" : $("#express_select").val() //$("#mailNum").val()
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.success){
-        		alert("已转到其他快递！");  
-        		//已转到其他快递，刷新列表！
-        		//获取当前页
-			    var pageIndex = getCurrPage(); 
-			    gotoPage(pageIndex);
-        		
-        	}else{
-        		alert("转到其他快递失败，请重新选择快递公司！");  
-        	}
-        },
-        error : function() {  
-       		//alert("转到其他快递发生异常，请重试！");  
-       		gotoLoginPage();
-  		}    
-    });
-    //隐藏面板
-	$("#chooseOtherExpress_div").modal("hide");
-}
-
-/************************转其他快递公司***************结束***************************************/
-
 /************************申请退货***************开始***************************************/
 //显示申请退货div
-function showApplyReturnDiv(mailNum) {
+function showApplyReturnDiv(mailNumStr) {
+	$("#rtnRemark").val("");
+	mailNum = mailNumStr;
+	//加载退货原因
+	$.ajax({
+		type : "GET",  //提交方式
+		url : "<%=path%>/handleAbnormal/getRtnReasonList",//路径
+		data : {},//数据，这里使用的是Json格式进行传输
+		success : function(dataList) {//返回数据根据结果进行相应的处理
+			var rtnReasonObj = $("#rtnReason");
+			// 清空select
+			rtnReasonObj.empty();
+			if(dataList != null){
+				rtnReasonObj.append("<option value=''>请选择</option>");
+				for(var i = 0; i < dataList.length; i++){
+					data = dataList[i];
+					rtnReasonObj.append("<option value='"+data.status+"'>"+data.message+"</option>");
+				}
+			}
+		},
+		error : function() {
+			//alert("服务器繁忙，请稍后再试！");
+			gotoLoginPage();
+		}
+	});
 	$("#apply_return_div").modal("show");
 }
+
 //隐藏申请退货div
 function hideApplyReturnDiv() {
+	mailNum = null;
 	$("#apply_return_div").modal("hide");
 }
 //确定退货
-function applyReturn(mailNum) {
+function applyReturn() {
+	//表单校验
+	var rtnReason = $("#rtnReason").val();
+	var rtnRemark = $("#rtnRemark").val();
+	if(rtnReason == "" || rtnReason == null){
+		ioutDiv("请选择退货原因");
+		return false;
+	}else{
+		if(rtnReason == "4"){//其他
+			if(rtnRemark == "" || rtnRemark == null){
+				ioutDiv("请输入备注");
+				$("#rtnRemark").focus();
+				return false;
+			}
+		}
+	}
+	//获取当前页
+	var pageIndex = getCurrPage();
 	//保存退货信息
 	$.ajax({
-		type : "GET",  //提交方式  
-        url : "<%=path%>/handleAbnormal/saveReturn",//路径  
-        data : {  
-            "mailNum" : mailNum, //
-            "returnReasonType" : $("#returnReasonType").val(), 
-            "returnReasonInfo" : $("#returnReasonInfo").val() 
-        },//数据，这里使用的是Json格式进行传输  
-        success : function(data) {//返回数据根据结果进行相应的处理  
-        	if(data.success){
-        		alert("退货成功！");  
-        		//退货成功，刷新列表！
-        		//获取当前页
-        		var pageIndex = getCurrPage();
-			    gotoPage(pageIndex);
-    		}else{
-        		alert("退货失败，请重试！");  
-        	}
-        },
-        error : function() {  
-       		//alert("退货发生异常，请重试！");  
-       		gotoLoginPage();
-  		}    
-    });
-    //隐藏面板
+		type : "POST",  //提交方式
+		url : "<%=path%>/handleAbnormal/doReturn?${_csrf.parameterName}=${_csrf.token}",//路径
+		data : {
+			"mailNum" : mailNum, //
+			"rtnReason" : rtnReason,
+			"rtnRemark" : rtnRemark,
+			"pageIndex" : pageIndex,//更新列表
+			"status" : $("#status").val(),
+			"arriveBetween" : $("#arriveBetween").val()
+		},//数据，这里使用的是Json格式进行传输
+		success : function(data) {//返回数据根据结果进行相应的处理
+			ioutDiv(data.msg);
+			if(data.success){//分派成功，刷新列表！
+				refreshTable(data.orderPage);
+				//outDiv有延迟，所以页面刷新需要同步延迟
+				/*setTimeout(function(){
+					refreshTable(data.orderPage);
+				},2000);*/
+			}
+		},
+		error : function() {
+			ioutDiv("服务器繁忙，请稍后再试！");
+		}
+	});
+	//隐藏面板
 	$("#apply_return_div").modal("hide");
 }
 //获取当前页
 function getCurrPage(){
 	//获取当前页
-	//var pageIndex = $(".pages .active span").html();
 	var pageIndex = $(".pagination .active a").html();
 	var currPage = 0;
 	if(pageIndex != null && pageIndex != ""){
@@ -709,6 +675,120 @@ function getCurrPage(){
 }
 
 /**********************申请退货**************************结束************************************/
+
+
+/**********************转为其他快递公司2**************************开始************************************/
+
+var from=null;
+var to=null;
+
+
+//初始化快递公司信息
+function initExpressCompanys() {
+	//查询所有其他快递公司
+	$.ajax({
+		type : "GET",  //提交方式
+		url : "<%=path%>/handleAbnormal/getExpressCompanys",//路径
+		data : {},//数据，这里使用的是Json格式进行传输
+		success : function(dataList) {//返回数据根据结果进行相应的处理
+			expressCompanysList = dataList;  //查询所有的快递公司数据
+		},
+		error : function() {
+			expressCompanysList = null;
+			gotoLoginPage();
+		}
+	});
+}
+//显示其他快递公司div
+function showExpressCompanyDiv(mailNumStr) {
+	$("#mailNum").val("");
+	mailNum = mailNumStr;
+	if(expressCompanysList != null){
+		loadExpressCompanys(expressCompanysList);
+	}else{//重新查询所有快递公司
+		$.ajax({
+			type : "GET",  //提交方式
+			url : "<%=path%>/handleAbnormal/getExpressCompanys",//路径
+			data : {},//数据，这里使用的是Json格式进行传输
+			success : function(dataList) {//返回数据根据结果进行相应的处理
+				loadExpressCompanys(dataList);
+			},
+			error : function() {
+				ioutDiv("服务器繁忙，请稍后再试！");
+			}
+		});
+	}
+	$("#chooseOtherExpress_div").modal("show");
+}
+//把其他快递公司信息添加到下拉框中
+function loadExpressCompanys(expressCompanysList) {
+	var express_select = $("#express_select");
+	// 清空select
+	express_select.empty();
+	if(expressCompanysList != null){
+		express_select.append("<option value=''>请选择</option>");
+		for(var i = 0; i < expressCompanysList.length; i++){
+			data = expressCompanysList[i];
+			express_select.append("<option value='"+data.id+"'>"+data.companyname+"</option>");
+		}
+	}
+}
+//隐藏转其他快递公司div
+function hideExpressCompanyDiv() {
+	mailNum = null;
+	//$(".j-site-pop").modal("hide");
+	$("#chooseOtherExpress_div").modal("hide");
+}
+
+
+//转其他快递公司
+function toOtherExpressCompanys() {
+	//表单校验id="mailNum"
+	var companyId = $("#express_select").find("option:selected").val();
+	var mailNumNew = $("#mailNum").val();
+	if (companyId == "" || companyId == null) {
+		ioutDiv("请选择快递公司");
+		return false;
+	}
+	if (mailNumNew == "" || mailNumNew == null) {
+		ioutDiv("请输入运单号");
+		$("#mailNum").focus();
+		return false;
+	}
+	//获取当前页
+	var pageIndex = getCurrPage();
+
+	//转其他快递公司
+	$.ajax({
+		type: "POST",  //提交方式
+		url: "<%=path%>/handleAbnormal/toOtherExpressCompanys",//路径
+		data: {
+			"mailNum": mailNum, //运单号
+			"companyId": companyId,
+			"mailNumNew": mailNumNew,//输入的运单号
+			"pageIndex": pageIndex,//更新列表
+			"status": $("#status").val(),
+			"arriveBetween": $("#arriveBetween").val()
+		},//数据，这里使用的是Json格式进行传输
+		success: function (data) {//返回数据根据结果进行相应的处理
+			ioutDiv(data.msg);
+			if (data.success) {//分派成功，刷新列表！
+				//outDiv有延迟，所以页面刷新需要同步延迟
+				refreshTable(data.orderPage);
+				/*setTimeout(function () {
+				 refreshTable(data.orderPage);
+				 }, 2000);*/
+			}
+		},
+		error: function () {
+			ioutDiv("服务器繁忙，请稍后再试！");
+		}
+	});
+	//隐藏面板
+	$("#chooseOtherExpress_div").modal("hide");
+}
+
+/**********************转为其他快递公司2**************************结束************************************/
 </script>
 </body>
 </html>

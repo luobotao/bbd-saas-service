@@ -8,6 +8,8 @@ import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.mongoModels.Site;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/bbd")
@@ -115,4 +119,20 @@ public class BbdExpressApiController {
 		}
 		return str;
 	}
+
+	@RequestMapping(value="/getDistance")
+	@ResponseBody
+	public String getDistance(String city, String start, String ends) throws IOException {
+		logger.info("getDistance with info, city:"+city+" start:"+start+" ends:"+ends);
+		Gson gson = new Gson();
+		MapPoint mapPoint  = gson.fromJson(start, MapPoint.class);
+		List<MapPoint> mapPointList = gson.fromJson(ends, new TypeToken<List<MapPoint>>(){}.getType());
+		long length = 0;
+		if(!"".equals(city)&&mapPoint!=null&&mapPointList!=null&&mapPointList.size()>0) {
+			length = geo.getDistance(city, mapPoint, mapPointList,false);
+			logger.info("getDistance with info [success] distance:"+length);
+		}
+		return JSON.json(length);
+	}
+
 }

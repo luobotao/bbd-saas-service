@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ page import="com.bbd.saas.vo.SiteVO" %>
 <%@ page import="java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -32,21 +33,7 @@
 			border-bottom: none;
 			z-index: 1;
 		}
-		.prompt-txt {
-			display: block;
-			min-width: 300px;
-			padding: 0 20px;
-			height: 50px;
-			line-height: 48px;
-			font-size: 20px;
-			color: #3d3838;
-			text-align: center;
-			background: #ffc800;
-			border: 1px solid #fc9e28;
-			left: 60%;
-			margin-left: 80px;
-			z-index: 1060;
-		}
+
 		.ckbox {
 			background: rgb(255, 255, 255);
 			cursor: pointer;
@@ -85,7 +72,7 @@
 			<!-- S detail -->
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9 j-full-div">
 				<!-- S 搜索区域 -->
-				<div class="search-area d-search-area j-detail-area">
+				<div class="search-area d-search-area">
 					<ul class="row pb20">
 						<li class="txt-info txt-info-l">
 							<em>公司名称：</em>
@@ -165,7 +152,7 @@
 									</c:if>
 								</select>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 full-screen">
 								<div class="b-map">
 									<div id="fenceMap" class="bod-rad capacity-map" style="height: 533px;"></div>
 									<a href="javascript:void(0)" onclick="fenceObj.theLocation()" class="pos-adr"></a>
@@ -295,27 +282,7 @@
 <!-- E footer -->
 <div class="b-loading">
 	<div class="spinner" style="display:none">
-		<div class="spinner-container container1">
-			<div class="circle1"></div>
-			<div class="circle2"></div>
-			<div class="circle3"></div>
-			<div class="circle4"></div>
-		</div>
-		<div class="spinner-container container2">
-			<div class="circle1"></div>
-			<div class="circle2"></div>
-			<div class="circle3"></div>
-			<div class="circle4"></div>
-		</div>
-		<div class="spinner-container container3">
-			<div class="circle1"></div>
-			<div class="circle2"></div>
-			<div class="circle3"></div>
-			<div class="circle4"></div>
-		</div>
-		<div class="">
-			<i class="prompt-txt" >正在导入，请稍候...</i>
-		</div>
+		<i class="prompt-txt" ><img src="${ctx}/resources/images/loading.gif" width="30" class="mr10 load-img" />正在导入，请稍候...</i>
 	</div>
 </div>
 
@@ -414,7 +381,7 @@
 		var siteId = $("#siteId").val();
 		var radius = $("#radius").val();
 		if (siteId == "") {//全部
-			outDiv("请选择一个站点");
+			ioutDiv("请选择一个站点");
 			return;
 		}
 		showRadiusChangeMap(siteId, radius);
@@ -469,7 +436,7 @@
 				}
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试");
+				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -579,7 +546,7 @@
 				showOneSiteArea(site, radius);
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试");
+				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -588,12 +555,12 @@
 	$("#saveSiteBtn").click(function(){
 		var siteId = $("#siteId").val();
 		if(siteId == "" || siteId == null){
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return false;
 		}
 		var radiusVal = $("#radius").val();
 		if(radiusVal==0){
-			outDiv("请选择站点配送范围");
+			ioutDiv("请选择站点配送范围");
 			return false;
 		}
 		$.ajax({
@@ -603,11 +570,11 @@
 			dataType: "text",
 			data: {},
 			success: function(response){
-				outDiv("保存成功");
+				ioutDiv("保存成功");
 				//window.location.href="${ctx}/deliverArea/map/1";
 			},
 			error: function(){
-				outDiv('服务器繁忙，请稍后再试');
+				ioutDiv('服务器繁忙，请稍后再试');
 			}
 		});
 	});
@@ -755,7 +722,7 @@
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
-				outDiv('不能再删除, 请保留3个以上的点.');
+				ioutDiv('不能再删除, 请保留3个以上的点.');
 				return;
 			}
 			this.overlaysCache.splice(i,1);
@@ -958,7 +925,7 @@
 				}
 			},
 			error : function() {
-				outDiv("服务器繁忙，请稍后再试");
+				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
 	}
@@ -966,7 +933,7 @@
 	$("#formBtn").click(function () {
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return;
 		}
 		var jsonStr = "";
@@ -995,20 +962,20 @@
 				},
 				success: function(data){
 					if(data == "success"){
-						outDiv("提交成功");
+						ioutDiv("提交成功");
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);
 					}else{
-						outDiv("error:"+data);
+						ioutDiv("error:"+data);
 					}
 				},
 				error: function(){
-					outDiv('服务器繁忙，请稍后再试');
+					ioutDiv('服务器繁忙，请稍后再试');
 				}
 			});
 
 		} else {
-			outDiv("请先绘制电子围栏");
+			ioutDiv("请先绘制电子围栏");
 		}
 	});
 
@@ -1035,7 +1002,7 @@
 	function openDraw(){
 		var siteId = $("#fenceSiteId").val();
 		if(siteId == null || siteId == ""){
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return;
 		}
 		fenceObj.drawingManager.open();
@@ -1063,8 +1030,7 @@
 		areaMap.reset();
 	}, 300);
 
-	var winhei2=window.screen.availHeight;
-	var inithei=$("#fenceMap").height();
+
 
 
 	/************************ 绘制电子围栏 ************* end **************************/
@@ -1075,13 +1041,14 @@
 	$(".import-file").on("change",function(){
 		var siteId = $("#keywordSiteId").val();
 		if(siteId == ""){//全部
-			outDiv("请先选择站点");
+			ioutDiv("请先选择站点");
 			return;
 		}
 		$(".j-import-pop").modal();
 
 
 	});
+
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');
@@ -1099,7 +1066,7 @@
 				$(".import-file").val("");
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
-				outDiv( "超时，服务器异常!");
+				ioutDiv( "超时，服务器异常!");
 				$(".spinner").modal('hide');
 				//清空file
 				$(".import-file").val("");
@@ -1148,7 +1115,7 @@
 		});
 		var delIds = id_array.join(',');
 		if(delIds==""){
-			outDiv("请选择要删除的站点关键词");
+			ioutDiv("请选择要删除的站点关键词");
 			return false;
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
@@ -1179,7 +1146,7 @@
 				loadTableHtml(pageTable);
 			},
 			error : function() {
-				//outDiv("加载分页数据异常");
+				//ioutDiv("加载分页数据异常");
 				if(window.top==window.self){//不存在父页面
 					window.location.href="<c:url value="/login" />"
 				}else{
@@ -1234,7 +1201,7 @@
 	}
 	function deleteKeyword(id){
 		if(id == null || id == ""){
-			outDiv("关键词无编号，无法删除")
+			ioutDiv("关键词无编号，无法删除")
 			return ;
 		}
 		if(confirm('确认删除？')){
@@ -1260,42 +1227,45 @@
 				if(result){//删除成功，刷新列表
 					loadTableHtml(dataObject.pageList);
 				}else{
-					outDiv("删除失败");
+					ioutDiv("删除失败");
 				}
 				$(".spinner").modal('hide');
 			},
 			error : function() {
 				$(".spinner").modal('hide');
-				outDiv("服务器繁忙，请稍候再试");
+				ioutDiv("服务器繁忙，请稍候再试");
 			}
 		});
 	}
 	//--------------------panel 2------------------------------------
 	// 地图全屏显示
+	parentE=$('#psrE',window.parent.document);
+	var winhei2=parentE.height();
+	var inithei=$("#fenceMap").height();
 	var winwid=window.screen.availWidth;
 	var initwid=$(".b-map").width();
 	$(".j-full-btn").on("click",function(){
 
 		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){
-			$(".j-detail-area").hide();
-			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2+2});
+			parentF.css({overflowY:"hidden"});
+			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2});
 			$(".pos-footer").hide();
-			$("#fenceMap,.b-map").css({width:winwid,height:winhei2-60-84,marginLeft:"-10px"});
+			$("#fenceMap,.b-map").css({width:winwid,height:winhei2,marginLeft:"-10px"});
 			$(".j-full-div").css({left:"-16%"});
 			$(".b-f-screen,.pos-adr").css({right:"25px"});
-			$(".draw-btn").css({marginLeft:"-10px"})
-			$("#draw-map").addClass("full-map");
+			$(".draw-btn").css({marginLeft:"-7px"})
+			$(".full-screen").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
-			$(".j-detail-area").show();
+			parentF.css({overflowY:"auto"});
 			$(".pos-footer").show();
 			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2+140});
 			$("#fenceMap,.b-map").css({width:initwid,height:inithei,margin:0});
 			$(".j-full-div").css({left:"0"});
 			$(".b-f-screen,.pos-adr").css({right:"15px"});
 			$(".draw-btn").css({marginLeft:"0"})
-			$("#draw-map").removeClass("full-map");
+			$(".full-screen").removeClass("full-map");
 			$(this).removeClass("b-back-full").addClass("b-forward-full");
 		}
 	})

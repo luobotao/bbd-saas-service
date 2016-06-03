@@ -111,6 +111,9 @@ a.orange {
 .mr15 {
   margin-right: 15px;
 }
+.mt5{
+  margin-top: 5px;
+}
 .mt10{
   margin-top: 10px;
 }
@@ -1516,9 +1519,22 @@ select.form-control::-ms-expand { display: none; }
 }
 .b-loading{
   position:absolute;
-  top:40%;
-  left:56%;
-  margin:-90px 0 0 -30px;
+  top:25%;
+  left:58%;
+  min-width: 300px;
+  margin:0 0 0 -150px;
+}
+.prompt-txt {
+  display: block;
+  min-width: 300px;
+  padding: 0 20px;
+  height: 50px;
+  line-height: 48px;
+  font-size: 20px;
+  color: #3d3838;
+  text-align: center;
+  background: #ffc800;
+  z-index: 1060;
 }
 /* 循环加载 结束*/
 /* S pop 样式修改 */
@@ -1894,6 +1910,9 @@ input.spe-input{
 }
 /* E 配送系统 */
 /* S 气泡提示 */
+.load-img{
+  margin-top:-4px;
+}
 .b-prompt {
   opacity: 0;
 }
@@ -1970,3 +1989,10 @@ input.spe-input{
 }
 /* E color */
 /* E sass 2.0 */
+
+/* S saas2.1 */
+.txtA{
+  min-height:100px;
+}
+
+/* E saas2.1 */

@@ -84,4 +84,6 @@ public class Constants {
     public static final String TYPE_AVERAGE = "4";
     //空
     public static final String STRING_BLANK = "";
+
+
 }
