@@ -78,6 +78,7 @@ public class SubscribeBackController {
                                     if (expressList == null || expressList.isEmpty()) {
                                         expressList = Lists.newArrayList();
                                     }
+                                       //进行数据反转
                                    Collections.reverse(data);
 
                                     List <Express> newExpressList =new ArrayList<Express>();
@@ -92,7 +93,7 @@ public class SubscribeBackController {
                                         expressList.add(express);
                                            
                                     }
-
+                                        //进行去重数据操作
                                     for (Express  express : expressList) {
                                          expressMap.put(express.getRemark(),express);
                                     }
@@ -131,6 +132,8 @@ public class SubscribeBackController {
                                         }
                                     }
                                     order.setDateUpd(new Date());
+
+                                    //保存数据
                                    orderService.save(order);
                                 }
                             }
