@@ -282,7 +282,7 @@
 <!-- E footer -->
 <div class="b-loading">
 	<div class="spinner" style="display:none">
-		<i class="prompt-txt" ><img src="${ctx}/resources/images/loading.gif" width="25" class="mr10 load-img" />正在导入，请稍候...</i>
+		<i class="prompt-txt" ><img src="${ctx}/resources/images/loading.gif" width="30" class="mr10 load-img" />正在导入，请稍候...</i>
 	</div>
 </div>
 

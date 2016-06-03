@@ -1534,7 +1534,6 @@ select.form-control::-ms-expand { display: none; }
   color: #3d3838;
   text-align: center;
   background: #ffc800;
-  border: 1px solid #fc9e28;
   z-index: 1060;
 }
 /* 循环加载 结束*/
@@ -1995,4 +1994,5 @@ input.spe-input{
 .txtA{
   min-height:100px;
 }
+
 /* E saas2.1 */
