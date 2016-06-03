@@ -9,9 +9,9 @@ public interface IncomeService {
 
     /**
      * 向司机返现
-     * @param driverId
-     * @param price
-     * @param trackNo
+     * @param driverId 司机Id
+     * @param price 价格
+     * @param trackNo 运单号
      */
     void driverIncome(int driverId,double price,String trackNo );
 

@@ -11,14 +11,14 @@ public interface ToOtherSiteLogService {
     /**
      * 保存转站日志
      * @param toOtherSiteLog 转站日志
-     * @return
+     * @return 保存结果
      */
     Key<ToOtherSiteLog> save(ToOtherSiteLog toOtherSiteLog);
 
     /**
-     * 转站运单数统计
+     * 根据转站站点和转站时间统计转站运单数
      * @param fromAreaCode 转站源站点
-     * @param between 时间范围
+     * @param between 转站时间范围
      * @return long 转站运单数
      */
     public long countByFromAreaCodeAndTime(String fromAreaCode, String between);

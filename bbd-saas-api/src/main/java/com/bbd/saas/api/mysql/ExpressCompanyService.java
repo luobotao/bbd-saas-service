@@ -16,8 +16,9 @@ public interface  ExpressCompanyService {
     List<ExpressCompany> getExpressCompany();
 
     /**
-     *
-     * @return
+     * 根据快递公司Id获取公司对象
+     * @param ecompanyId 快递公司Id
+     * @return 快递公司对象
      */
     ExpressCompany  getExpressCompanyById( Integer ecompanyId);
 }

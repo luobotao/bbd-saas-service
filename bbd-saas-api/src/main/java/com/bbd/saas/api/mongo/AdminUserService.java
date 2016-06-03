@@ -9,16 +9,16 @@ import com.bbd.saas.mongoModels.AdminUser;
 public interface AdminUserService {
     /**
      * 根据用户名查找是否存在此管理员
-     * @param userName
-     * @return
+     * @param userName 用户名称
+     * @return 管理员对象
      */
     AdminUser findAdminUserByUserName(String userName);
 
 
     /**
-     * 根据商户
-     * @param id
-     * @return
+     * 根据_id查询管理员
+     * @param id mongodb自动生成的_id
+     * @return 管理员对象
      */
     AdminUser findOne(String id);
 }
