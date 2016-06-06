@@ -4,6 +4,7 @@
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
+<%@ page import="com.bbd.saas.enums.ExpressStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -139,19 +140,19 @@
 											<div class="modal-content">
 												<div class="modal-header b-modal-header">
 													<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-													<h4 class="modal-title  tc" id="activeUserLabel">确认信息</h4>
+													<h4 class="modal-title  tc" id="activeUserLabel">确认</h4>
 												</div>
-												<div class="modal-body b-modal-body">
+												<div class="modal-body b-modal-body" id="popContent">
 													确认批量到站？<br>
 													该操作会把选中的订单设置为已到站。
 												</div>
 												<div class="modal-footer">
 													<div class="row mt20">
 														<span class="col-md-6">
-															<button type="button" class="ser-btn g wp100" data-dismiss="modal">取消</button>
+															<button type="button" class="ser-btn g wp100" data-dismiss="modal" onclick="cancelToSite()">取消</button>
 														</span>
 														<span class="col-md-6">
-															<button id="enableSelect" type="button" class="ser-btn wp100 l">确认</button>
+															<button id="enableSelect" type="button" class="ser-btn wp100 l" onclick="doToSite()">确认</button>
 														</span>
 													</div>
 												</div>
@@ -167,7 +168,7 @@
 					<div class="clearfix pad20">
 						<!-- S button -->
 						<div class="clearfix fl">
-							<a href="#" data-toggle="modal" data-target="#batchToSite" class="ser-btn l">批量到站</a>
+							<a href="#" data-toggle="modal" class="ser-btn l">批量到站</a>
 						</div>
 						<!-- E button -->
 						<!-- S page -->
@@ -335,6 +336,7 @@
 		}
 	}
 
+	var isBatchToSite = false; //单个运单到站
 	//检查运单号
 	function checkOrderByMailNum(mailNum){
 		if(mailNum!=""){
@@ -350,9 +352,11 @@
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
 						}else{
-							$("#mailNumP").html("");
-							$("#mailNumP").attr("style","display:none");
-							gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
+							if(response.expressStatus != null && response.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
+								$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
+								$("#batchToSite").modal("show");
+								isBatchToSite = false;//单个运单执行到站
+							}
 						}
 					}else{
 						$("#mailNumP").html("【异常扫描】不存在此运单号") ;
@@ -365,6 +369,22 @@
 				}
 			});
 		}
+	}
+	//取消到站操作
+	function cancelToSite(){
+		$("#batchToSite").modal("hide");
+	}
+	//做到站操作
+	function doToSite(){
+		if(isBatchToSite){//批量到站
+
+		}else{//单个运单到站
+			$("#mailNumP").html("");
+			$("#mailNumP").attr("style","display:none");
+			gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
+			$("#batchToSite").modal("hide");
+		}
+
 	}
 	//更新数据统计的数据
 	function updateOrderNumVO(){
@@ -428,6 +448,7 @@
 			});
 		}
 		if(ids.length>0){
+
 			var url = "<c:url value="/packageToSite/arriveBatch?${_csrf.parameterName}=${_csrf.token}" />";
 			$.ajax({
 				url: url,
