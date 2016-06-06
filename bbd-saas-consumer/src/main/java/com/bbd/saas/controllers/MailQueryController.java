@@ -76,10 +76,10 @@ public class MailQueryController {
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
 			if(orderPage != null && orderPage.getDatas() != null){
-				for(Order order : orderPage.getDatas()){
+				/*for(Order order : orderPage.getDatas()){
 					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
 					order.setParcelCode(parcelCodeTemp);//设置包裹号
-				}
+				}*/
 				//当前登录的用户信息
 				User currUser = adminService.get(UserSession.get(request));
 				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
@@ -161,8 +161,8 @@ public class MailQueryController {
 				User courier = null;
 				UserVO userVO = null;
 				for(Order order : dataList){
-					parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
-					order.setParcelCode(parcelCodeTemp);//设置包裹号
+					/*parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
+					order.setParcelCode(parcelCodeTemp);//设置包裹号*/
 					courier = userService.findOne(order.getUserId());
 					if(courier != null){
 						userVO = new UserVO();

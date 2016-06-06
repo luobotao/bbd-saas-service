@@ -70,16 +70,17 @@
   					<table class="table">
   						<thead>
   							<tr>
-  								<th>包裹号</th>
+  								<%--<th>包裹号</th>--%>
 								<th>运单号</th>
-								<th>订单号</th>
-								<th>来源</th>
+								<%--<th>订单号</th>
+								<th>来源</th>--%>
 								<th>收货人</th>
 								<th>收货人电话</th>
 								<th width="15%">收货人地址</th>
 								<th>司机取货时间</th>
 								<th>预计到站时间</th>
 								<th>到站时间</th>
+								<th>签收时间</th>
 								<th>派送员</th>
 								<th>派送员手机</th>
 								<th>状态</th>
@@ -99,9 +100,9 @@
 									for(Order order : orderPage.getDatas()){
 							%>
 								<tr>
-									<td><%=order.getParcelCode()%></td>
+									<%--<td><%=order.getParcelCode()%></td>--%>
 									<td><%=order.getMailNum()%></td>
-									<td><%=order.getOrderNo()%></td>
+									<%--<td><%=order.getOrderNo()%></td>
 									<%
 										if(order.getSrc() == null){//来源
 									%>
@@ -112,13 +113,26 @@
 											<td><%=order.getSrc().getMessage()%></td>
 									<%
 										}
-									%>
+									%>--%>
 									<td><%=order.getReciever().getName()%></td>
 									<td><%=order.getReciever().getPhone()%></td>
 									<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateDriverGeted())%></td>
 									<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
+									<%-- 签收时间  start --%>
+									<%
+										if(order.getOrderStatus() != null && order.getOrderStatus() == OrderStatus.SIGNED){
+									%>
+											<td><%=Dates.formatDateTime_New(order.getDateUpd())%></td>
+									<%
+										}else{
+									%>
+											<td></td>
+									<%
+										}
+									%>
+									<%-- 签收时间  end --%>
 									<%
 										if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
 									%>
@@ -286,20 +300,27 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
-	row +=  "<td>" + data.parcelCode + "</td>";
+	/*row +=  "<td>" + data.parcelCode + "</td>";*/
 	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
 		row += "<td>" + data.mailNum + "</td>";
 	}else{
 		row += "<td>" + data.mailNum.replace(mailNum, "<span class='font-bg-color'>" + mailNum + "</span>") + "</td>";
 	}
-	row += "<td>" + data.orderNo + "</td>";
-	row += "<td>" + getSrcName(data.src) + "</td>";
+	/*row += "<td>" + data.orderNo + "</td>";
+	row += "<td>" + getSrcName(data.src) + "</td>";*/
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.phone + "</td>";
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateDriverGeted) + "</td>";
 	row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
+	<%-- 签收时间  start --%>
+	if(data.orderStatus != null && data.orderStatus == "<%=OrderStatus.SIGNED %>"){
+		row += "<td>" + getDate1(data.dateUpd) + "</td>";
+	}else{
+		row += "<td></td>";
+	}
+	<%-- 签收时间  end --%>
 	//派件员==未分派，不需要显示派件员姓名和电话
 	if(data.userVO==null ||data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";

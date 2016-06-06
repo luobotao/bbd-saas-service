@@ -66,10 +66,10 @@ public class DataQueryController {
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
-			for(Order order : orderPage.getDatas()){
+			/*for(Order order : orderPage.getDatas()){
 				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
-			}
+			}*/
 			logger.info("=====数据查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
@@ -119,8 +119,8 @@ public class DataQueryController {
 				User courier = null;
 				UserVO userVO = null;
 				for(Order order : dataList){
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					order.setParcelCode(parcelCodeTemp);//设置包裹号
+					/*parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+					order.setParcelCode(parcelCodeTemp);//设置包裹号*/
 					courier = userService.findOne(order.getUserId());
 					if(courier != null){
 						userVO = new UserVO();
