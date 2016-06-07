@@ -334,7 +334,7 @@ function checkLoginName(loginName) {
 			data: {},
 			success: function(response){
 				if(response=="true"){
-					ioutDiv("手机号已存在，请重新输入11位手机号!")
+					ioutDiv("手机号已存在!")
 					ret = true;
 				}
 			},
@@ -472,7 +472,7 @@ function checkAndSave(url, loginName, userId){
 		data: {},
 		success: function(response){
 			if(response=="true"){
-				ioutDiv("手机号已存在，请重新输入11位手机号!")
+				ioutDiv("手机号已存在!")
 				ret = true;
 			}else{//保存用户
 				saveOrUpdateUser(url);

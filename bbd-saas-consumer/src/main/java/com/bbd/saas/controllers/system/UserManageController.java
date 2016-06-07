@@ -157,7 +157,7 @@ public class UserManageController {
 		if((oldUser != null && !oldUser.getId().equals("")) || postmanUser != null && postmanUser.getId() != null){
 			////loginName在user表中已存在
 			map.put("success", false);
-			map.put("msg", "手机号已存在，请重新输入11位手机号!");
+			map.put("msg", "手机号已存在!");
 			return map;
 		}else{
 			Date currDate = new Date();
@@ -271,7 +271,6 @@ public class UserManageController {
 	public Map<String, Object> editUser(HttpServletRequest request,@Valid UserForm userForm) throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//验证该loginName在user表中是否已存在
-		//User newUser = userService.findByLoginNameAndId(userForm.getLoginName(), userForm.getUserId());
 		User newUser = userService.findUserByLoginName(userForm.getLoginName());
 		if(newUser != null){
 			if(newUser.getId().toString().equals(userForm.getUserId())){//修改
@@ -279,14 +278,14 @@ public class UserManageController {
 				PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName(), newUser.getPostmanuserId());
 				if(postmanUser != null){//存在2个相同手机号的postmanUser对象
 					map.put("success", false);
-					map.put("msg", "手机号已存在，请重新输入11位手机号!");
+					map.put("msg", "手机号已存在!");
 					return map;
 				}else{
 					doUpdateUser(request, userForm, map);
 				}
 			}else{
 				map.put("success", false);
-				map.put("msg", "手机号已存在，请重新输入11位手机号!");
+				map.put("msg", "手机号已存在!");
 				return map;
 			}
 		}else{
@@ -310,6 +309,13 @@ public class UserManageController {
 		user.setDateUpdate(dateUpdate);
 		Key<User> userKey = userService.save(user);
 		if(userKey.getId() != null){
+			if(userForm.getRoleId().equals(UserRole.SITEMASTER.toString())){
+				//修改站点负责人和电话
+				Site site = user.getSite();
+				site.setResponser(user.getRealName());//负责人姓名
+				site.setUsername(user.getLoginName());//负责人电话
+				siteService.save(site);
+			}
 			//原有手机号
 			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getOldLoginName(), 0);
 			if (postmanUser != null) {
