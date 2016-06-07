@@ -58,6 +58,7 @@ public class Order implements Serializable {
     private Date dateDriverGeted;//司机取货时间
     private Date dateUpd;//
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
+    private TransportStatus transportStatus;//运输状态
     @Transient
     private String parcelCode;
     @Transient
@@ -145,17 +146,17 @@ public class Order implements Serializable {
     public void setReciever(Reciever reciever) {
         this.reciever = reciever;
     }
-    
-   
-	public String getUserId() {
-		return userId;
-	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 
-	public Srcs getSrc() {
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public Srcs getSrc() {
         return src;
     }
 
@@ -283,32 +284,32 @@ public class Order implements Serializable {
         this.dateMayArrive = dateMayArrive;
     }
 
-	public Date getDateArrived() {
-		return dateArrived;
-	}
+    public Date getDateArrived() {
+        return dateArrived;
+    }
 
-	public void setDateArrived(Date dateArrived) {
-		this.dateArrived = dateArrived;
-	}
+    public void setDateArrived(Date dateArrived) {
+        this.dateArrived = dateArrived;
+    }
 
     public Date getDateDriverGeted() {
-		return dateDriverGeted;
-	}
+        return dateDriverGeted;
+    }
 
-	public void setDateDriverGeted(Date dateDriverGeted) {
-		this.dateDriverGeted = dateDriverGeted;
-	}
+    public void setDateDriverGeted(Date dateDriverGeted) {
+        this.dateDriverGeted = dateDriverGeted;
+    }
 
-	public String getSrcMessage() {
+    public String getSrcMessage() {
         return src.getMessage();
     }
-	public UserVO getUserVO() {
-		return userVO;
-	}
+    public UserVO getUserVO() {
+        return userVO;
+    }
 
-	public void setUserVO(UserVO userVO) {
-		this.userVO = userVO;
-	}
+    public void setUserVO(UserVO userVO) {
+        this.userVO = userVO;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -343,30 +344,39 @@ public class Order implements Serializable {
     }
 
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
-		if(expressList == null){
-			return "";
-		}
-		ObjectMapper mapper = new ObjectMapper(); 
-		String json = mapper.writeValueAsString(expressList).replaceAll("\"", "\\\"");
-		json = json.replaceAll("\"", "`");
-		System.out.println(json);
-		//json = "{`name`:`lisi`}";
-        return json;  
-	}
-	public static void main(String[] args) {
-		Express express = new Express();
-		express.setDateAdd(new Date());
-		express.setLat("lat123.23");
-		express.setLon("lon124.36");
-		express.setRemark("remark备注");
-		List<Express> expressList = new ArrayList<Express>(); 
-		expressList.add(express);
-		try {
-			getExpressList(expressList);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        if(expressList == null){
+            return "";
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(expressList).replaceAll("\"", "\\\"");
+        json = json.replaceAll("\"", "`");
+        System.out.println(json);
+        //json = "{`name`:`lisi`}";
+        return json;
+    }
+
+    public TransportStatus getTransportStatus() {
+        return transportStatus;
+    }
+
+    public void setTransportStatus(TransportStatus transportStatus) {
+        this.transportStatus = transportStatus;
+    }
+
+    public static void main(String[] args) {
+        Express express = new Express();
+        express.setDateAdd(new Date());
+        express.setLat("lat123.23");
+        express.setLon("lon124.36");
+        express.setRemark("remark备注");
+        List<Express> expressList = new ArrayList<Express>();
+        expressList.add(express);
+        try {
+            getExpressList(expressList);
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }
