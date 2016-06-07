@@ -72,7 +72,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 	        						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	        							<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
 										<c:if test="${userNow.role==UserRole.SITEMASTER}">
-											<a href="javascript:void(0)" onclick="restUserModel();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
+											<a href="javascript:void(0)" onclick="showAddUserDiv();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
 										</c:if>
 
 	        						</div>
@@ -172,8 +172,9 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 						<h4 class="modal-title userclass tc"></h4>
 					</div>
-					<form role="form" action="" method="post" id="userForm" class="form-inline-n">
+
 					<div class="modal-body b-modal-body">
+						<form role="form" action="" method="post" id="userForm" class="form-inline-n">
 						<ul class="b-n-crt">
 							<li>
 								<select id="roleId" name="roleId" class="form-control form-bod" onchange="showPass();">
@@ -207,14 +208,17 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 						<div class="row mt20">
 							<span class="col-md-12"><a href="javascript:void(0)" id="saveuserid" onclick="saveUserBtn()" class="sbtn sbtn2 l">保存</a></span>
 						</div>
+
+						<%--<input type="hidden" class="form-control" id="sign" name="sign">--%>
+						<%--<input type="hidden" class="form-control" id="flaglogin" name="flaglogin">--%>
+						<%--<input type="hidden" class="form-control" id="flagstaffid" name="flagstaffid">--%>
+						<input type="hidden" class="form-control" id="userId" name="userId" value="">
+						<input type="hidden" class="form-control" id="oldLoginName" name="oldLoginName">
+						<%--<input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">--%>
+						<%--<input type="hidden" class="form-control" id="operate" name="operate">--%>
+						</form>
 					</div>
-					<input type="hidden" class="form-control" id="sign" name="sign">
-					<input type="hidden" class="form-control" id="flaglogin" name="flaglogin">
-					<input type="hidden" class="form-control" id="flagstaffid" name="flagstaffid">
-					<input type="hidden" class="form-control" id="loginNameTemp" name="loginNameTemp">
-					<input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">
-					<input type="hidden" class="form-control" id="operate" name="operate">
-					</form>
+
 				</div>
 			</div>
 		</div>
@@ -291,8 +295,9 @@ function gotoPage(pageIndex) {
 
 //封装一行的数据
 function getRowHtml(data){
+	console.log(data);
 	var row = "<tr>";
-	var temp = "";
+	var temp = data.idStr;
 	<c:if test="${userNow.role==UserRole.COMPANY}">
 		row +=  "<td>" + data.site.name + "</td>";
 	</c:if>
@@ -322,33 +327,31 @@ function getRowHtml(data){
 
 function checkLoginName(loginName) {
 	loginName=loginName.replace(/\ +/g,"");
-	var operate = document.getElementById("operate").value;
-	var oldloginName = document.getElementById("loginNameTemp").value;
+	/*var operate = document.getElementById("operate").value;*/
+	//var userId = $("#userId").val();
+	var oldLoginName = document.getElementById("oldLoginName").value;
 	var newloginName = loginName;
 	var url = '<c:url value="/userManage/checkLognName" />';
 	var ret = false;
 	if(loginName!=''){
-		if(operate=='create'){
-			$.ajax({
-				url: url+'?loginName='+loginName,
-				type: 'GET',
-				cache: false,
-				dataType: "text",
-				async: false,
-				data: {},
-				success: function(response){
-					console.log(response);
-					if(response=="true"){
-						ioutDiv("手机号已存在，请重新输入11位手机号!")
-					    ret = true;
-					}
-				},
-				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+		$.ajax({
+			url: url+'?loginName='+loginName,
+			type: 'GET',
+			cache: false,
+			dataType: "text",
+			async: false,
+			data: {},
+			success: function(response){
+				console.log(response);
+				if(response=="true"){
+					ioutDiv("手机号已存在，请重新输入11位手机号!")
+					ret = true;
 				}
-			});
-		}
-		
+			},
+			error: function(){
+				alert('服务器繁忙，请稍后再试！');
+			}
+		});
 	}
 }
 
@@ -468,65 +471,61 @@ function saveUserBtn(){
 
 	var url = "";
 	//operate这个隐藏域就是为了区别这个操作时修改还是新建
-	var getSign = document.getElementById("operate").value;
-	var flag = true;
+	/*var getSign = document.getElementById("operate").value;*/
+	var userId = $("#userId").val();
+	/*var flag = true;
 	var checkSign = false;
 	var loginNameSign = false;
 	var ataffidSign = false;
-	var returnmess = "";
-	if(getSign=='edit'){
-		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
-		$("#userForm").ajaxSubmit({
-			type: 'post',
-			url: url ,
-			success: function(data){
-				if(data=="true"){
-					$(".j-user-pop").modal("hide");
-					gotoPage(0);
-				}else{
-					alert( "保存用户失败");
-				}
-			},
-			error: function(JsonHttpRequest, textStatus, errorThrown){
-				alert( "服务器异常!");
-			}
-		});
-	}else{
+	var returnmess = "";*/
+	if(userId == ""){//新建
 		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
-		$.ajax({
-			url: "<c:url value="/userManage/checkLognName" />"+"?loginName="+loginName,
-			type: 'GET',
-			cache: false,
-			dataType: "text",
-			async: false,
-			data: {},
-			success: function(response){
-				if(response=="true"){
-					ioutDiv("手机号已存在，请重新输入11位手机号!")
-					ret = true;
-				}else{
-					$("#userForm").ajaxSubmit({
-						type: 'post',
-						url: url ,
-						success: function(data){
-							if(data=="true"){
-								$(".j-user-pop").modal("hide");
-								gotoPage(0);
-							}else{
-								alert( "保存用户失败");
-							}
-						},
-						error: function(JsonHttpRequest, textStatus, errorThrown){
-							alert( "服务器异常!");
-						}
-					});
-				}
-			},
-			error: function(){
-				alert('服务器繁忙，请稍后再试！');
-			}
-		});
+	}else{//修改
+		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
+
 	}
+	checkAndSave(url,loginName);
+}
+//检查手机号是否被注册，未被注册，则可以添加或者修改。
+function checkAndSave(url, loginName){
+	console.log(url);
+	$.ajax({
+		url: "<c:url value="/userManage/checkLognName" />"+"?loginName="+loginName,
+		type: 'GET',
+		cache: false,
+		dataType: "text",
+		async: false,
+		data: {},
+		success: function(response){
+			if(response=="true"){
+				ioutDiv("手机号已存在，请重新输入11位手机号!")
+				ret = true;
+			}else{//保存用户
+				saveOrUpdateUser(url);
+			}
+		},
+		error: function(){
+			ioutDiv('服务器繁忙，请稍后再试！');
+		}
+	});
+}
+//保存或者修改用户，url区别是保存还是修改
+function saveOrUpdateUser(url){
+	$("#userForm").ajaxSubmit({
+		type: 'post',
+		url: url ,
+		success: function(data){
+			if(data.success){
+				$(".j-user-pop").modal("hide");
+				gotoPage(0);
+			}else{
+				ioutDiv(data.msg);
+			}
+		},
+		error: function(){
+			ioutDiv( "服务器异常!");
+		}
+	});
 }
 
 function showPass() {
@@ -541,22 +540,24 @@ function showPass() {
 	</c:if>
 }
 function searchUser(id,loginName){
+	console.log("id=upd=="+id);
 	$('.userclass').html('修改');
 	$.ajax({
 		type : "GET",  
-        url : '<c:url value="/userManage/getOneUser" />', 
+        url : '<c:url value="/userManage/getOneUser" />',
         data : {  
             "id" : id,
             "loginName" : loginName
         },
         success : function(data) {
 			if(data != null){
-				$("#loginNameP").attr("style","display:none");
-				$("#staffidP").attr("style","display:none");
+				/*$("#loginNameP").attr("style","display:none");
+				$("#staffidP").attr("style","display:none");*/
 				document.getElementById("userForm").reset();
+				$("#userId").val(id);
 				$("#realName").val(data.realName);
 				$("#loginName").val(data.loginName);
-				$("#staffid").val(data.staffid);
+				/*$("#staffid").val(data.staffid);*/
 				$("#roleId").val(data.role);
 				if($("#roleId").val()=="<%=UserRole.SITEMASTER%>"){
 					<c:if test="${userNow.role==UserRole.COMPANY}">
@@ -570,16 +571,15 @@ function searchUser(id,loginName){
 					$("#passCLi").attr("style","display:none;");
 				}
 
-
-				$("#loginName").attr("readonly",true);
+				//$("#loginName").attr("readonly",true);
 				//document.getElementById("sign").value="edit";
-				document.getElementById("loginNameTemp").value=data.loginName;
-				document.getElementById("staffidTemp").value=data.staffid;
-				document.getElementById("operate").value = "edit";
+				document.getElementById("oldLoginName").value=data.loginName;
+				/*document.getElementById("staffidTemp").value=data.staffid;*/
+				/*document.getElementById("operate").value = "edit";*/
 			}    
         },
-        error : function() {  
-       		alert("异常！");
+        error : function() {
+			ioutDiv("异常！");
   		}
     });
 	
@@ -587,11 +587,11 @@ function searchUser(id,loginName){
 }
 
 
-function restUserModel(){
+function showAddUserDiv(){
 	$('.userclass').html('新建');
 	document.getElementById("userForm").reset();
-	$("#loginName").attr("readonly",false);
-	document.getElementById("operate").value = "create";
+	//$("#loginName").attr("readonly",false);
+	//document.getElementById("operate").value = "create";
 }
 </script>
 </body>

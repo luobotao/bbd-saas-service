@@ -97,11 +97,14 @@
         UPDATE `postmanuser`
         	<set>
 	        	<if test="staffid != null">
-	        	staffid = #{staffid,jdbcType=INTEGER},
+	        	staffid = #{staffid,jdbcType=VARCHAR},
 	        	</if>
 	        	<if test="nickname != null">
 	        	nickname = #{nickname,jdbcType=VARCHAR},
-	        	</if> 
+	        	</if>
+                <if test="phone != null">
+                    phone = #{staffid,jdbcType=VARCHAR},
+                </if>
 	        	<if test="headicon != null">
 	        	headicon = #{headicon,jdbcType=VARCHAR},
 	        	</if>
@@ -163,7 +166,7 @@
 	        	date_upd = #{dateUpd,jdbcType=TIMESTAMP},
 	        	</if>
         	</set>
-        	WHERE <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
+        	WHERE phone = #{phone,jdbcType=INTEGER}
     </update>
     
     <delete id="deleteById">

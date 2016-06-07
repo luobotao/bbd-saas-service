@@ -5,6 +5,7 @@ import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
@@ -66,10 +67,10 @@ public class DataQueryController {
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
-			for(Order order : orderPage.getDatas()){
+			/*for(Order order : orderPage.getDatas()){
 				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
-			}
+			}*/
 			logger.info("=====数据查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
@@ -119,8 +120,8 @@ public class DataQueryController {
 				User courier = null;
 				UserVO userVO = null;
 				for(Order order : dataList){
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					order.setParcelCode(parcelCodeTemp);//设置包裹号
+					/*parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+					order.setParcelCode(parcelCodeTemp);//设置包裹号*/
 					courier = userService.findOne(order.getUserId());
 					if(courier != null){
 						userVO = new UserVO();
@@ -195,11 +196,7 @@ public class DataQueryController {
 			if(orderList != null){
 				for(Order order : orderList){
 					row = new ArrayList<String>();
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					row.add(parcelCodeTemp);//设置包裹号
 					row.add(order.getMailNum());
-					row.add(order.getOrderNo());
-					row.add(order.getSrc().getMessage());
 					row.add(order.getReciever().getName());
 					row.add(order.getReciever().getPhone());
 					StringBuffer address = new StringBuffer();
@@ -211,6 +208,13 @@ public class DataQueryController {
 					row.add(Dates.formatDateTime_New(order.getDateDriverGeted()));
 					row.add(Dates.formatDate2(order.getDateMayArrive()));
 					row.add(Dates.formatDateTime_New(order.getDateArrived()));
+					//签收时间 start
+					if(order.getOrderStatus() != null && order.getOrderStatus() == OrderStatus.SIGNED){
+						row.add(Dates.formatDateTime_New(order.getDateUpd()));
+					}else{
+						row.add("");
+					}
+					//签收时间  end
 					setCourier(order.getUserId(), row);
 					if(order.getOrderStatus() == null){
 						row.add("未到站");
@@ -222,8 +226,8 @@ public class DataQueryController {
 			}
 			
 			//表头
-			String[] titles = { "包裹号", "运单号", "订单号", "来源", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
-			int[] colWidths = { 4000, 5000, 5000, 2000, 2000, 3500, 12000, 5500, 3500, 5500, 2000, 3500, 2000};
+			String[] titles = { "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" };
+			int[] colWidths = { 5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500, 2000, 3500, 2000};
 			ExportUtil exportUtil = new ExportUtil();
 			exportUtil.exportExcel("数据查询", dataList, titles, colWidths, response);
 		} catch (Exception e) {

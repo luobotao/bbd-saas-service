@@ -444,6 +444,7 @@
 
     function checkSiteWithUsername(loginName){
         var readonly = $("input[name='phone']").attr("readonly");
+        console.log("readonly==ck="+readonly);
         if(readonly=="readonly"){
             $("#phoneFlag").val(1);
             return true;
@@ -471,6 +472,7 @@
             });
         }
     }
+    //保存站点（新建）
     $("#saveSiteBtn").click(function () {
 
         var name = $.trim($("#name").val());
@@ -497,6 +499,7 @@
 
         var phone = $.trim($('input[name="phone"]').val());
         var phoneFlag = $("#phoneFlag").val();
+        console.log("phoneFlag===="+phoneFlag);
         if(phone==""){
             ioutDiv("请输入手机号");
             return false;
@@ -715,7 +718,7 @@ function createSite(){
                     $("#area").val(data.area);
                     $("#address").val(data.address);
                     $("#phone").val(data.username);
-                    $("input[name='phone']").attr("readonly","readonly")
+                    //$("input[name='phone']").attr("readonly","readonly")
                     defprov = $("#province").val();
                     defcity = $("#city").val();
                     defdist = $("#area").val();

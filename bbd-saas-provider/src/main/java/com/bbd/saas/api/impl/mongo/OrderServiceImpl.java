@@ -5,6 +5,7 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
@@ -13,6 +14,7 @@ import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
 import com.google.common.collect.Lists;
+import com.mongodb.BasicDBList;
 import org.apache.commons.lang.StringUtils;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
@@ -57,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
 	 * @param orderQueryVO
 	 * @return
 	 */
-	public PageModel<Order> findOrders( PageModel<Order> pageModel,OrderQueryVO orderQueryVO){
+	public PageModel<Order> findOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO){
 		if(orderQueryVO!=null){
 			if(StringUtils.isNotBlank(orderQueryVO.mailNum)){
 				return orderDao.findOrders(pageModel,orderQueryVO);
@@ -92,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
 	 * 2016年4月12日下午3:38:38
 	 */
 	@Override
-	public Order findOneByMailNum(String areaCode,String mailNum) {
+	public Order findOneByMailNum(String areaCode, String mailNum) {
 		return orderDao.findOneByMailNum(areaCode,mailNum);
 	}
 
@@ -137,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
 	 * @param orderStatusNew
      */
 	@Override
-	public void updateOrderOrderStatu(String mailNum,OrderStatus orderStatusOld, OrderStatus orderStatusNew){
+	public void updateOrderOrderStatu(String mailNum, OrderStatus orderStatusOld, OrderStatus orderStatusNew){
 		orderDao.updateOrderOrderStatu(mailNum,orderStatusOld,orderStatusNew);//修改订单表里的状态
 		orderParcelDao.updateOrderOrderStatu(mailNum,orderStatusOld,orderStatusNew);//修改包裹表里的订单的状态
 	}
@@ -181,5 +183,10 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public long getNoArriveHis(String areaCode) {
 		return orderDao.getNoArriveHis(areaCode);
+	}
+
+	@Override
+	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
+		return orderDao.selectCountByMailNumsAndExpressStatus(idList, expressStatus);
 	}
 }
