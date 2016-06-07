@@ -445,7 +445,7 @@
     function checkSiteWithUsername(loginName){
         var areaCode = $("#areaCode").val();
         if(loginName!=""){
-            var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />"+loginName
+            var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
             $.ajax({
                 url: linkUrl,
                 type: 'GET',
@@ -462,7 +462,7 @@
                     }
                 },
                 error: function(){
-                    alert('服务器繁忙，请稍后再试！');
+                    ioutDiv('服务器繁忙，请稍后再试！');
                 }
             });
         }
