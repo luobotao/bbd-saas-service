@@ -318,8 +318,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);  
 		},
         error : function() {  
-           //	alert("加载分页数据异常，请重试！"); 
-           gotoLoginPage(); 
+           gotoLoginPage();
       	}    
     });	
 }	
@@ -391,8 +390,7 @@ function initCourierList() {
         	courierList = dataList;
         },
         error : function() {  
-       		//alert("派件员列表加载异常，请重试！");
-       		courierList = null;  
+       		courierList = null;
        		gotoLoginPage();
        	}    
     });
@@ -420,7 +418,6 @@ function showCourierDiv(mailNumStr) {
 	        	loadCouriers(dataList);
 	        },
 	        error : function() {  
-	       		//alert("服务器繁忙，请稍后再试！");
 	       		gotoLoginPage();
 	  		}    
 	    });
@@ -512,7 +509,6 @@ function showOtherSiteDiv(mailNumStr) {
 	        	loadSites(dataList);
 	        },
 	        error : function() {  
-	       		//alert("服务器繁忙，请稍后再试！");
 	       		gotoLoginPage();
 	  		}    
 	    });
@@ -601,7 +597,6 @@ function showApplyReturnDiv(mailNumStr) {
 			}
 		},
 		error : function() {
-			//alert("服务器繁忙，请稍后再试！");
 			gotoLoginPage();
 		}
 	});

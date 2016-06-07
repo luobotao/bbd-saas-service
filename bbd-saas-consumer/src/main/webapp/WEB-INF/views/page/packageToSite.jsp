@@ -263,7 +263,7 @@
 				updateOrderNumVO();
 			},
 			error : function() {
-				alert("加载分页数据异常！");
+				ioutDiv("加载分页数据异常！");
 			}
 		});
 	}

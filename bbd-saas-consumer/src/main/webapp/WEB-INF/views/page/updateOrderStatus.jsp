@@ -248,7 +248,7 @@ function updateStatus() {
 		    }
 		},
 		error : function() {  
-			alert("服务器繁忙，请稍后再试！");  
+			ioutDiv("服务器繁忙，请稍后再试！");
 		}     
     });
 }  
@@ -283,7 +283,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);
 		},
         error : function() {  
-           	alert("加载分页数据异常！");  
+           	iioutDiv("加载分页数据异常！");
       	}    
     });	
 }	
@@ -389,8 +389,7 @@ function initCourier() {
         },
         error : function() {  
         	courierIsLoadSuccess = 0;
-       		//alert("派件员列表加载异常！");  
-  		}    
+  		}
     });
 }	
 

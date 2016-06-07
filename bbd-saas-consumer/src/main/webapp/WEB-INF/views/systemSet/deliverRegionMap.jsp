@@ -272,7 +272,7 @@
 	$("#saveSiteBtn").click(function(){
 		var radiusVal = $("#radius option:selected").val();
 		if(radiusVal==0){
-			alert("请选择站点配送范围");
+			ioutDiv("请选择站点配送范围");
 			return false;
 		}else{
 			$.ajax({
@@ -282,11 +282,11 @@
 				dataType: "text",
 				data: {},
 				success: function(response){
-					alert("保存成功");
+					ioutDiv("保存成功");
 					window.location.href="${ctx}/deliverRegion/map/1";
 				},
 				error: function(){
-					alert("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
+					ioutDiv("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
 					if(window.top==window.self){//不存在父页面
 						window.location.href="<c:url value="/login" />"
 					}else{
@@ -362,7 +362,7 @@
 		});
 		var delIds = id_array.join(',');
 		if(delIds==""){
-			alert("请选择要删除的站点关键词");
+			ioutDiv("请选择要删除的站点关键词");
 			return false;
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
@@ -427,13 +427,13 @@
 				},
 				success: function(data){
 					if(data == "success"){
-						alert("提交成功");
+						ioutDiv("提交成功");
 					}else{
 						console.log("error:"+data);
 					}
 				},
 				error: function(){
-					alert("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
+					ioutDiv("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
 					if(window.top==window.self){//不存在父页面
 						window.location.href="<c:url value="/login" />"
 					}else{
@@ -444,7 +444,7 @@
 			/*          $("#jsonStr").val(jsonStr);
 			 $('#allLaysForm').submit();*/
 		} else {
-			alert("请先绘制电子围栏");
+			ioutDiv("请先绘制电子围栏");
 		}
 	})
 
@@ -566,7 +566,7 @@
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
-				alert('不能再删除, 请保留3个以上的点.');
+				ioutDiv('不能再删除, 请保留3个以上的点.');
 				return;
 			}
 			this.overlaysCache.splice(i,1);

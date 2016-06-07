@@ -124,7 +124,7 @@
 				$j("#jsonStr").val(jsonStr);
 				$j('#allLaysForm').submit();
 			} else {
-				alert("请先绘制电子围栏");
+				ioutDiv("请先绘制电子围栏");
 			}
 		})
 	});
@@ -185,7 +185,7 @@
 				this.loadMyOverlay();
 			};
 			map.addEventListener("rightclick",function(e){
-				alert(e.point.lng + "," + e.point.lat);
+				ioutDiv(e.point.lng + "," + e.point.lat);
 			});
 		},
 		loadMyOverlay: function(){
@@ -215,7 +215,7 @@
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
-				alert('不能再删除, 请保留3个以上的点.');
+				ioutDiv('不能再删除, 请保留3个以上的点.');
 				return;
 			}
 			this.overlaysCache.splice(i,1);

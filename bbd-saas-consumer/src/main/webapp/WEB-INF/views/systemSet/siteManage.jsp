@@ -547,7 +547,7 @@
                     $("#closeButton").click();
                     gotoPage(0);
                 }else{
-                    alert( "保存站点失败");
+                    ioutDiv( "保存站点失败");
                 }
 
             },
@@ -573,7 +573,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -593,7 +593,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -611,7 +611,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -629,7 +629,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -647,7 +647,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });

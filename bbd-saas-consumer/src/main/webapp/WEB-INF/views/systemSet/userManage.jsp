@@ -287,7 +287,7 @@ function gotoPage(pageIndex) {
 			$("#pagin").html(pageStr);
 		},
 		error : function() {
-			alert("加载分页数据异常！");
+			ioutDiv("加载分页数据异常！");
 		}
 	});
 }
@@ -339,7 +339,7 @@ function checkLoginName(loginName) {
 				}
 			},
 			error: function(){
-				alert('服务器繁忙，请稍后再试！');
+				ioutDiv('服务器繁忙，请稍后再试！');
 			}
 		});
 	}
@@ -400,12 +400,12 @@ function delUser(loginName){
 	        },
 	        success : function(data) {
 				if(data == 'true'){
-					alert("删除成功");
+					ioutDiv("删除成功");
 					gotoPage(0);
 				} 
 	        },
 	        error : function() {  
-	       		alert("异常！");
+	       		ioutDiv("异常！");
 	  		}
 	    });
 	}
