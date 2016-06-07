@@ -27,7 +27,7 @@ public interface PostmanUserService {
      * @param phone 手机号
      * @return PostmanUser
      */
-    PostmanUser selectPostmanUserByPhone(String phone);
+    PostmanUser selectPostmanUserByPhone(String phone, Integer id);
 
     /**
      * 根据phone获取对应的postmanUser的id

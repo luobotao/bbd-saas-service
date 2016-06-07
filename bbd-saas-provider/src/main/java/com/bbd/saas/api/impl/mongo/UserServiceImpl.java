@@ -56,6 +56,11 @@ public class UserServiceImpl implements UserService {
         return userDao.findOne("loginName", loginName);
     }
 
+    @Override
+    public User findByLoginNameAndId(String loginName, String userId) {
+        return null;
+    }
+
     /**
      * 根据用户名查找是否存在此用户
      *

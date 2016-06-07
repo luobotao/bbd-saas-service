@@ -161,7 +161,7 @@
         <div class="modal-content">
         <c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
-            <input type="hidden" id="areaCode" name="areaCode"/>
+            <input type="hidden" id="areaCode" name="areaCode" value=""/>
             <div class="modal-header b-modal-header">
                 <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
@@ -443,12 +443,7 @@
     }
 
     function checkSiteWithUsername(loginName){
-        var readonly = $("input[name='phone']").attr("readonly");
-        console.log("readonly==ck="+readonly);
-        if(readonly=="readonly"){
-            $("#phoneFlag").val(1);
-            return true;
-        }
+        var areaCode = $("#areaCode").val();
         if(loginName!=""){
             var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />"+loginName
             $.ajax({
@@ -680,7 +675,6 @@
 function createSite(){
     $('#titleName').html("新建");
     document.getElementById("siteForm").reset();
-    $("input[name='phone']").removeAttr("readonly");
     $('#areaCode').val('');
     $('#areaCodeForModal').val('');
     var defprov = "北京";
@@ -718,7 +712,6 @@ function createSite(){
                     $("#area").val(data.area);
                     $("#address").val(data.address);
                     $("#phone").val(data.username);
-                    //$("input[name='phone']").attr("readonly","readonly")
                     defprov = $("#province").val();
                     defcity = $("#city").val();
                     defdist = $("#area").val();

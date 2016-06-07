@@ -21,7 +21,7 @@ public interface PostmanUserDao {
      * @param phone
      * @return PostmanUser
      */
-    PostmanUser selectPostmanUserByPhone(@Param("phone") String phone);
+    PostmanUser selectPostmanUserByPhone(@Param("phone") String phone, @Param("id")Integer id);
     /**
      * 根据phone获取对应的postmanUser的id
      * @param phone
