@@ -14,7 +14,6 @@ public class UserForm {
 	private String loginPass;
 	private String oldLoginName;
 	//private String staffid;
-
 	public String getUserId() {
 		return userId;
 	}
