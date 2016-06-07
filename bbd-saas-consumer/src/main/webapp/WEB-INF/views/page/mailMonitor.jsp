@@ -152,7 +152,6 @@ $(document).ready(function() {
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
-	console.log("areaCode===="+$("#areaCode").val());
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  

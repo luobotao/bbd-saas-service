@@ -109,7 +109,6 @@
 			dataType: "text",
 			data: {},
 			success: function(response){
-				console.log(response);
 				if(response=="false"){
 					outDiv("手机号已存在");
 					$("#usernameFlag").val(0);
@@ -142,7 +141,6 @@
 			dataType: "text",
 			data: {},
 			success: function(response){
-				console.log(response);
 				if(response=="false"){
 					outDiv("手机号已存在");
 					$("#usernameFlag").val(0);
@@ -157,7 +155,6 @@
 							dataType: "json",
 							data: {},
 							success: function (response) {
-								console.log(response);
 								if (response != "" && response != null && response.status == "1") {
 									alert_mine("成功", "发送成功");
 								} else {

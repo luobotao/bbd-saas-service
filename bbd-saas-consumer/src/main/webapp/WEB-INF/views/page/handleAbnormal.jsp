@@ -501,9 +501,7 @@ function initSiteList() {
 //显示转其他站点div
 function showOtherSiteDiv(mailNumStr) {
 	mailNum = mailNumStr;
-	//console.log("siteList==="+siteList+" mailNumStr==="+mailNumStr);
 	if(siteList != null){
-		//console.log("siteList != null== load div=");
 		loadSites(siteList);
 	}else{//重新查询所有派件员
 		$.ajax({

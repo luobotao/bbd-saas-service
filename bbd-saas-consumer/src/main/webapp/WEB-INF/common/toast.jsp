@@ -25,10 +25,8 @@ function showDiv(obj,divClass,text,width,left,top){
 	}
 	
 	var offset = $(obj).offset();
-	//console.log(offset);
 	$("#text").html(text);
-	//console.log((offset.left+left)+"======"+(offset.top-top));
-  	$("."+divClass).css({ 
+  	$("."+divClass).css({
   		width:width,
       	left:offset.left+left,
       	top:offset.top-top

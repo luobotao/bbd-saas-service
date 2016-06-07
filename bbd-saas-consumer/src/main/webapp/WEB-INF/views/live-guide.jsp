@@ -340,20 +340,17 @@
 						"siteId":siteId
 					},
 					success: function(data){
-						//console.log(data);
 						if(data == "success"){
 							alert("提交成功");
 						}else{
-							//console.log("error:"+data);
+							console.log("error:"+data);
 						}
 					},
 					error: function(){
-						//console.log('服务器繁忙，请稍后再试！');
 						window.location.href="${ctx}/login";
 					}
 				});
-				/*          $("#jsonStr").val(jsonStr);
-				 $('#allLaysForm').submit();*/
+
 			} else {
 				alert("请先绘制电子围栏");
 			}
@@ -425,8 +422,6 @@
 			loadMyOverlay: function(){
 				var map = this.map;
 				this.clearAll();
-				//console.log("ctt")
-				//console.log(this.myOverlay);
 				this.myOverlay.forEach(function(e){
 					myPolygon = new BMap.Polygon(e, this.styleOptions);
 					this.myPolygon = myPolygon;
@@ -440,7 +435,6 @@
 							bmap.delPolygon(e);
 						}
 					});
-					//console.log(myPolygon);
 					bmap.overlays.push(myPolygon);
 					map.addOverlay(myPolygon);
 				})

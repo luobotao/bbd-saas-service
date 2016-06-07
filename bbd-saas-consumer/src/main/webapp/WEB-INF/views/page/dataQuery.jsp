@@ -269,9 +269,7 @@ function gotoPage(pageIndex) {
             "mailNum" : $("#mailNum").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
-            //console.log("dataObject==="+dataObject);
             var tbody = $("#dataList");
-            
             var dataList = dataObject.datas;
 			if(dataList != null){
 				var datastr = "";
@@ -429,8 +427,7 @@ function exportData() {
 	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
-	//console.log("form ===" + $("#exptForm").action + " arrive==" + $("#arriveBetween").val());
-}	
+}
 	
 	
 	

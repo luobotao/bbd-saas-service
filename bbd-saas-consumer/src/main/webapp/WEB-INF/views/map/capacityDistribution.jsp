@@ -177,8 +177,6 @@
 	}
 	//展示站点和派件员--ajax获取json对象
 	function showJsonMap(centerSite, siteList, userList){
-		console.log("centerSite.lng=" + centerSite.lng +"  centerSite.lat="+centerSite.lat);
-		console.log("siteList=" + siteList +"  userList="+userList);
 		var center = new BMap.Point(centerSite.lng, centerSite.lat);
 		var radiusVal = 15;//显示大小级别--单个站点
 		if (siteId == ""){//显示大小级别-全部
@@ -219,7 +217,6 @@
 		}else{
 			num = parseFloat(numStr) - random;
 		}
-		//console.log("  numStr == "+ numStr + "   random===="+ random + " num ==="+num);
 		return num;
 	}
 	//展示配送范围

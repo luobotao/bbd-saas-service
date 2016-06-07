@@ -196,35 +196,37 @@
 		%>
 			var lon = "<%=express.getLon()%>";
 			var lat = "<%=express.getLat()%>";
-			if(lat!="" && lon!=""&&lon!="0.0"&&lat!="0.0"&&lon.indexOf("E")<=-1&&lat.indexOf("E")<=-1&&lon.indexOf("e")<=-1&&lat.indexOf("e")<=-1){
-				var remark = "<%=express.getRemark()%>";
-				console.log(remark);
-				var flag = false;
-				if(remark.startWith("订单分拣中")){
-					flag = true;
-					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/start.png", new BMap.Size(64,64)));
-				}else if(remark.startWith("订单已送达")){
-					flag = true;
-					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
-				}else if(remark.startWith("订单已由")){
-					flag = true;
-					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
-				}else if(remark.startWith("您的订单已送达")){
-					flag = true;
-					hasKdy=true;
-					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/end.png", new BMap.Size(64,64)));
-				}
-				if(flag){
-					console.log("lon:"+lon+",lat:"+lat);
-					points.push(new BMap.Point(lon, lat));
-				}
+			if(lat != "" && lat != "0.0" && lat.indexOf("E") <= -1 && lat.indexOf("e") <= -1){
+				lat = "${defaultLat}";
 			}
+			if(lon!="" && lon != "0.0" && lon.indexOf("E") <= -1 && lon.indexOf("e") <= -1){
+				lon =  "${defaultLng}";
+			}
+
+			var remark = "<%=express.getRemark()%>";
+			var flag = false;
+			if(remark.startWith("订单分拣中")){
+				flag = true;
+				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/start.png", new BMap.Size(64,64)));
+			}else if(remark.startWith("订单已送达")){
+				flag = true;
+				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
+			}else if(remark.startWith("订单已由")){
+				flag = true;
+				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
+			}else if(remark.startWith("您的订单已送达")){
+				flag = true;
+				hasKdy=true;
+				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/end.png", new BMap.Size(64,64)));
+			}
+			if(flag){
+				points.push(new BMap.Point(lon, lat));
+			}
+
 			<%
             }
         }
     %>
-	console.log(myIconArray);
-	console.log(points);
 	var pointsArray=new Array;
 	var pointsTotal=[];
 	var map; //百度地图对象
@@ -239,10 +241,7 @@
 	var carlength=0;
 	var courierlength=0;
 	function init() {
-		console.log("aabb");
-		console.log(points);
 		if(points==null||points.length==0){
-			console.log("wuliu status error");
 			return false;
 		}else{
 			followChk = document.getElementById("follow");
@@ -273,7 +272,6 @@
 			}
 			driving.setSearchCompleteCallback(function() {
 				var tmp = driving.getResults().getPlan(0).getRoute(0).getPath();
-				console.log("i am comming");
 				var first = tmp[0];
 				cnt++;
 				for (var i = 0;i < points.length-1 ; i++) {

@@ -330,7 +330,6 @@
 				dataType: "text",
 				data: {},
 				success: function(response){
-					console.log(response);
 					if(response=="false"){
 						$("#usernameFlag").val(0);
 						$("#usernameP").html("手机号已存在");

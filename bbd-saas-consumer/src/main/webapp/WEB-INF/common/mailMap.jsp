@@ -134,8 +134,7 @@ var dataDetail = new Array();
 	//load map data
 	function LoadMailAndMapData(mailNum, expressListJson) {
 		expressListJson = expressListJson.replace(/`/g, "\'");
-		//console.log(expressListJson);
-		//var expressList = eval('(' + expressListJson + ')'); 
+		//var expressList = eval('(' + expressListJson + ')');
 		var expressList = eval(expressListJson);
         $("#map_mailNum").html(mailNum);//运单号
         //	物流信息
@@ -155,7 +154,6 @@ var dataDetail = new Array();
         		lon = express.lon;
          		lat = express.lat;
 		        if(lat != null && lat != "" && lon != null && lon != ""){
-		        	console.log("lon==" + lon + " lat==="+lat);
 		            dataDetail.push(new Array(lon,lat));
 		        }
         	}
@@ -305,7 +303,6 @@ var dataDetail = new Array();
                          var pts = linesPoints[m];
                          var len = pts.length;
                          setTimeout(function(){
-                             console.log(m);
                              var carMk = new BMap.Marker(pts[0],{icon:myIcon});
                              map.addOverlay(carMk);
                              resetMkPoint(1,len,pts,carMk,m);

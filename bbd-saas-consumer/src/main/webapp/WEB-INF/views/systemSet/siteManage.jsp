@@ -453,7 +453,6 @@
                 dataType: "text",
                 data: {},
                 success: function(response){
-                    console.log(response);
                     if(response=="false"){
                         $("#phoneFlag").val(0);
                         ioutDiv("手机号已存在");
@@ -494,7 +493,6 @@
 
         var phone = $.trim($('input[name="phone"]').val());
         var phoneFlag = $("#phoneFlag").val();
-        console.log("phoneFlag===="+phoneFlag);
         if(phone==""){
             ioutDiv("请输入手机号");
             return false;

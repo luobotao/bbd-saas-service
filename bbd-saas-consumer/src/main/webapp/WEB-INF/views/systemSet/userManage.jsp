@@ -463,7 +463,6 @@ function saveUserBtn(){
 }
 //检查手机号是否被注册，未被注册，则可以添加或者修改。
 function checkAndSave(url, loginName, userId){
-	console.log(url);
 	$.ajax({
 		url: "<c:url value="/userManage/checkLognName" />"+"?loginName=" + loginName + "&userId=" + userId,
 		type: 'GET',
