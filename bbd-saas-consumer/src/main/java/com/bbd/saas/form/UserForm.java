@@ -12,7 +12,6 @@ public class UserForm {
 	@NotEmpty
 	private String loginName;
 	private String loginPass;
-	@NotEmpty
 	private String oldLoginName;
 	//private String staffid;
 
