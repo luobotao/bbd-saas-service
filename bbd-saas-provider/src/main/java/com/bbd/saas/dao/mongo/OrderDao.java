@@ -1,6 +1,7 @@
 package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
@@ -8,6 +9,7 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
@@ -407,5 +409,22 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(StringUtils.isNotBlank(newMailNum))
             query.filter("otherExprees.mailNum",newMailNum);
         return findOne(query);
+    }
+
+    /**
+     * 查询指定id集合的订单中物流状态不为expressStatus的订单的条数
+     * @param idList id集合
+     * @param expressStatus 物流状态
+     * @return 订单的条数
+     */
+    public long selectCountByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
+        Query<Order> query = createQuery();
+        if(idList != null && idList.size() > 0){
+            query.filter("mailNum in",idList);
+        }
+        if(expressStatus != null){
+            query.filter("expressStatus <>",expressStatus);
+        }
+        return count(query);
     }
 }

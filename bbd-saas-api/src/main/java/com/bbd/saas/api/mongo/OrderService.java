@@ -1,11 +1,13 @@
 package com.bbd.saas.api.mongo;
 
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
+import com.mongodb.BasicDBList;
 import org.mongodb.morphia.Key;
 
 import java.util.List;
@@ -113,5 +115,7 @@ public interface OrderService {
 	 * @return 订单数目
 	 */
 	public long getNoArriveHis(String areaCode);
+
+	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus);
 
 }
