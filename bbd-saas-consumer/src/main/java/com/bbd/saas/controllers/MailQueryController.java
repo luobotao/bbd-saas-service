@@ -293,8 +293,8 @@ public class MailQueryController {
 			}
 			
 			//表头
-			String[] titles = { "包裹号", "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
-			int[] colWidths = {  5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500, 2000, 3500, 2000};
+			String[] titles = { "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" };
+			int[] colWidths = {  5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500,  2000,  3500, 3000};
 			ExportUtil exportUtil = new ExportUtil();
 			exportUtil.exportExcel("运单查询", dataList, titles, colWidths, response);
 		} catch (Exception e) {

@@ -356,6 +356,9 @@
 								$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
 								$("#toSitePrompt").modal("show");
 								isBatchToSite = false;//单个运单执行到站
+							}else{
+								isBatchToSite = false;//单个运单执行到站
+								doToSite();
 							}
 						}
 					}else{
