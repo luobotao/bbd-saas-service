@@ -205,11 +205,11 @@
 				if(data==true){
 					window.location.href="<c:url value="/register/regitsterSiteView?siteid="/>${site.id}";
 				}else{
-					ioutDiv( "保存站点失败");
+					outDiv( "保存站点失败");
 				}
 			},
 			error: function(JsonHttpRequest, textStatus, errorThrown){
-				ioutDiv( "服务器异常!");
+				outDiv( "服务器异常!");
 			}
 		});
 	})

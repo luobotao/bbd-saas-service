@@ -340,7 +340,7 @@
 					}
 				},
 				error: function(){
-					ioutDiv('服务器繁忙，请稍后再试！');
+					outDiv('服务器繁忙，请稍后再试！');
 				}
 			});
 		}
@@ -349,7 +349,7 @@
 	$("#saveSiteBtn").click(function(){
 		var flag = $("#agreeCheck").is(':checked');
 		if(flag==false){
-			ioutDiv("请先同意《棒棒达快递注册协议》");
+			outDiv("请先同意《棒棒达快递注册协议》");
 			return false;
 		}
 		$("#companyName").val($("#companyId").find("option:selected").text());
@@ -425,7 +425,7 @@
 		if(flag){
 			$("#siteForm").submit();
 		}else{
-			ioutDiv("有非法内容，请检查内容合法性！");
+			outDiv("有非法内容，请检查内容合法性！");
 			return false;
 		}
 	})

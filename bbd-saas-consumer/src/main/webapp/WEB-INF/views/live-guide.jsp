@@ -340,7 +340,7 @@
 					},
 					success: function(data){
 						if(data == "success"){
-							ioutDiv("提交成功");
+							outDiv("提交成功");
 						}else{
 							console.log("error:"+data);
 						}
@@ -351,7 +351,7 @@
 				});
 
 			} else {
-				ioutDiv("请先绘制电子围栏");
+				outDiv("请先绘制电子围栏");
 			}
 		})
 
@@ -451,7 +451,7 @@
 			},
 			delPoint: function(i){
 				if(this.overlaysCache.length <=3 ){
-					ioutDiv('不能再删除, 请保留3个以上的点.');
+					outDiv('不能再删除, 请保留3个以上的点.');
 					return;
 				}
 				this.overlaysCache.splice(i,1);
@@ -628,7 +628,7 @@
 			});
 			var delIds = id_array.join(',');
 			if(delIds==""){
-				ioutDiv("请选择要删除的站点关键词");
+				outDiv("请选择要删除的站点关键词");
 				return false;
 			}
 			if(confirm("确认批量删除所选站点关键词？")){

@@ -283,7 +283,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);
 		},
         error : function() {  
-           	iioutDiv("加载分页数据异常！");
+           	ioutDiv("加载分页数据异常！");
       	}    
     });	
 }	
