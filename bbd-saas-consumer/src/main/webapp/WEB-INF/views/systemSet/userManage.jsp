@@ -44,7 +44,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 									</c:if>
 	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	        							<label>　角色：</label>
-										<select id="saasrole" name="saasrole" class="form-control form-con-new">
+										<select id="saasrole" name="saasrole" class="form-control form-con-new" readonly="readOnly">
 											<c:if test="${userNow.role==UserRole.COMPANY}">
 												<option value ="-1" selected ="selected">全部</option>
 												<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
@@ -247,6 +247,10 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 var pageStr = paginNav(<%=userPage.getPageNo()%>, <%=userPage.getTotalPages()%>, <%=userPage.getTotalCount()%>);
 $("#pagin").html(pageStr);
 
+//公司用户角色不可以修改
+<c:if test="${userNow.role==UserRole.COMPANY}">
+ 	$("#roleId").attr("disabled","disabled");
+</c:if>
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
@@ -482,6 +486,10 @@ function checkAndSave(url, loginName, userId){
 }
 //保存或者修改用户，url区别是保存还是修改
 function saveOrUpdateUser(url){
+	//公司用户移除角色不可以修改属性
+	<c:if test="${userNow.role==UserRole.COMPANY}">
+		$("#roleId").removeAttr("disabled");
+	</c:if>
 	$("#userForm").ajaxSubmit({
 		type: 'post',
 		url: url ,
