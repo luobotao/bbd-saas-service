@@ -301,6 +301,7 @@ function ioutDiv(content){
         parentF.find(".b-prompt").removeClass("mov")
     },3000)
 }
+parentF.find(".b-prompt").removeClass("mov")
 // E iframe气泡 提示
 
 
