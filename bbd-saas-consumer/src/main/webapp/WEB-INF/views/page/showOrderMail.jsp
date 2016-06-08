@@ -244,6 +244,9 @@
 			map.addControl(new BMap.NavigationControl());
 			map.addControl(new BMap.ScaleControl({anchor:BMAP_ANCHOR_BOTTOM_LEFT}));
 			map.addControl(new BMap.OverviewMapControl({isOpen: true}));
+			var myIcon = new BMap.Icon("/public/images/admin/start.png", new BMap.Size(64,64));
+			courier = new BMap.Marker(point,{icon:myIcon});
+			map.addOverlay(courier);
 			return false;
 		}else{
 			followChk = document.getElementById("follow");
