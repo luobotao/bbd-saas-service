@@ -169,7 +169,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 			<div class="modal-dialog b-modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header b-modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+						<button type="button" class="close" onclick="closeUpdDiv()" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 						<h4 class="modal-title userclass tc"></h4>
 					</div>
 
@@ -243,9 +243,13 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 <!--E 修改用户状态-->
         <!-- E pop -->
 <script type="text/javascript">
+//是否需要校验手机号，默认需要；但是当失去焦点点击关闭按钮时，不需要校验手机号
+var isCheckPhone = true;
+
 //显示分页条
 var pageStr = paginNav(<%=userPage.getPageNo()%>, <%=userPage.getTotalPages()%>, <%=userPage.getTotalCount()%>);
 $("#pagin").html(pageStr);
+
 
 //公司用户角色不可以修改
 <c:if test="${userNow.role==UserRole.COMPANY}">
@@ -319,32 +323,40 @@ function getRowHtml(data){
 }
 
 function checkLoginName(loginName) {
-	loginName=loginName.replace(/\ +/g,"");
-	var oldLoginName = document.getElementById("oldLoginName").value;
-	var url = "<c:url value="/userManage/checkLognName" />";
-	var ret = false;
-	var userId = $("#userId").val();
-	if(loginName!=''){
-		$.ajax({
-			url: url+"?loginName=" + loginName + "&userId=" + userId,
-			type: 'GET',
-			cache: false,
-			dataType: "text",
-			async: false,
-			data: {},
-			success: function(response){
-				if(response=="true"){
-					ioutDiv("手机号已存在!")
-					ret = true;
-				}
-			},
-			error: function(){
-				ioutDiv('服务器繁忙，请稍后再试！');
+	setTimeout(function(){
+		if(isCheckPhone){
+			loginName=loginName.replace(/\ +/g,"");
+			var oldLoginName = document.getElementById("oldLoginName").value;
+			var url = "<c:url value="/userManage/checkLognName" />";
+			var ret = false;
+			var userId = $("#userId").val();
+			if(loginName!=''){
+				$.ajax({
+					url: url+"?loginName=" + loginName + "&userId=" + userId,
+					type: 'GET',
+					cache: false,
+					dataType: "text",
+					async: false,
+					data: {},
+					success: function(response){
+						if(response=="true"){
+							ioutDiv("手机号已存在!")
+							ret = true;
+						}
+					},
+					error: function(){
+						ioutDiv('服务器繁忙，请稍后再试！');
+					}
+				});
 			}
-		});
-	}
+			isCheckPhone = true;
+		}
+	},500);
 }
 
+function closeUpdDiv(){
+	isCheckPhone = false;
+}
 
 function changeStatus(status,id,loginName){
 	$("#idForChange").val(id);

@@ -163,7 +163,7 @@
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
             <input type="hidden" id="areaCode" name="areaCode" value=""/>
             <div class="modal-header b-modal-header">
-                <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
+                <button type="button" onclick="closeEditDiv()" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
             </div>
             <div class="modal-body b-modal-body">
@@ -364,6 +364,8 @@
 <!--E 删除-->
 <!-- E pop -->
 <script type="text/javascript">
+    //是否需要校验手机号，默认需要；但是当失去焦点点击关闭按钮时，不需要校验手机号
+    var isCheckPhone = true;
 
     //显示分页条
     var pageStr = paginNav(<%=sitePage.getPageNo()%>, <%=sitePage.getTotalPages()%>, <%=sitePage.getTotalCount()%>);
@@ -443,28 +445,37 @@
     }
 
     function checkSiteWithUsername(loginName){
-        var areaCode = $("#areaCode").val();
-        if(loginName!=""){
-            var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
-            $.ajax({
-                url: linkUrl,
-                type: 'GET',
-                cache: false,
-                dataType: "text",
-                data: {},
-                success: function(response){
-                    if(response=="false"){
-                        $("#phoneFlag").val(0);
-                        ioutDiv("手机号已存在");
-                    }else{
-                        $("#phoneFlag").val(1);
-                    }
-                },
-                error: function(){
-                    ioutDiv('服务器繁忙，请稍后再试！');
+        setTimeout(function(){
+            if(isCheckPhone){
+                var areaCode = $("#areaCode").val();
+                if(loginName!=""){
+                    var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
+                    $.ajax({
+                        url: linkUrl,
+                        type: 'GET',
+                        cache: false,
+                        dataType: "text",
+                        data: {},
+                        success: function(response){
+                            if(response=="false"){
+                                $("#phoneFlag").val(0);
+                                ioutDiv("手机号已存在");
+                            }else{
+                                $("#phoneFlag").val(1);
+                            }
+                        },
+                        error: function(){
+                            ioutDiv('服务器繁忙，请稍后再试！');
+                        }
+                    });
                 }
-            });
-        }
+                isCheckPhone = true;
+            }
+        },500);
+    }
+
+    function closeEditDiv(){
+        isCheckPhone = false;
     }
     //保存站点（新建）
     $("#saveSiteBtn").click(function () {
