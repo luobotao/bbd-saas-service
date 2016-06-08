@@ -153,17 +153,23 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		Map<String,Object> map=new HashMap<String, Object>();
 		map.put("areaCode", areaCode);
 		map.put("phone", phone);
+		map.put("totalscore", 0);
 		//取得返回的结果集
 		List<Integer> results  = postmanUserDao.getIntegral(map);
 		int result = 0;
 		logger.info("[站点积分] 站点区域码："+areaCode+"，站长手机号："+phone);
 		if(results!=null&&results.size()>0) {
 			//第一条结果集 总数量
-			 result = results.get(0);
-			logger.info("[站点积分]站点区域码："+areaCode+"，站长手机号："+phone+", 积分值："+result);
-			System.out.println((result));
-			System.out.println("获取积分完成，积分为" + result);
-			//第二条订单列表
+			try {
+				result = results.get(0);
+				logger.info("[站点积分]站点区域码：" + areaCode + "，站长手机号：" + phone + ", 积分值：" + result);
+				System.out.println((result));
+				System.out.println("获取积分完成，积分为" + result);
+				//第二条订单列表
+			}catch (Exception e){
+				logger.info("[站点积分]站点区域码：" + areaCode + "，站长手机号：" + phone + ", 获取积分值失败，存储过程无返回，"+e.getMessage());
+				logger.info(e.getMessage());
+			}
 		}
 		return result;
 	}

@@ -146,6 +146,7 @@ public class BbdExpressApiController {
 
 		String[] addes = address.split(";");
 		StringBuffer sb = new StringBuffer();
+		sb.append("地址").append("\t").append("区域码").append("\t").append("区域名称").append("\t").append("距离（公里）").append("\t").append("站点积分").append("\t").append("最终积分").append("\n");
 		for (String str: addes) {
 			try {
 				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
@@ -166,16 +167,17 @@ public class BbdExpressApiController {
 							int integral = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
 							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
 							logger.info("积分："+integral);
+							int integralVal = 0;
 							//根据地址到站点的距离计算积分
 							if (length < 3000) {
-								integral = integral + 5;
+								integralVal = integral + 5;
 							} else if (length < 5000) {
-								integral = integral + 3;
+								integralVal = integral + 3;
 							} else {
-								integral = integral + 2;
+								integralVal = integral + 2;
 							}
 							//保存站点和积分，按照积分进行排序
-							sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(integral).append("\n");
+							sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(integral).append("\t").append(integralVal).append("\n");
 						}
 					}
 				}else{
