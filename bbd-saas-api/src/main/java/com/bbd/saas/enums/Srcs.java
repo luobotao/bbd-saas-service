@@ -18,6 +18,7 @@ public enum Srcs {
     HANWEI(7,"汉维"),
     DDKY(8,"叮当快药"),
     WEIXINXIAODIAN(9,"微信小店"),
+    ZHE800(10,"折800"),
     OTHERS(99,"其他");
 
     private int status;

@@ -1,15 +1,18 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.AdminUserService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.Sender;
 import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,8 @@ public class DataQueryController {
 	AdminService adminService;
 	@Autowired
 	OrderParcelService orderPacelService;
+	@Autowired
+	AdminUserService adminUserService;
 	
 	/**
 	 * Description: 跳转到数据查询页面
@@ -113,15 +118,13 @@ public class DataQueryController {
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = user.getSite().getAreaCode();
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-			//设置包裹号,派件员快递和电话
+			//设置派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();
-				String parcelCodeTemp = null;
 				User courier = null;
 				UserVO userVO = null;
 				for(Order order : dataList){
-					/*parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					order.setParcelCode(parcelCodeTemp);//设置包裹号*/
+					//设置派件员快递和电话
 					courier = userService.findOne(order.getUserId());
 					if(courier != null){
 						userVO = new UserVO();
@@ -154,6 +157,15 @@ public class DataQueryController {
 			User currUser = adminService.get(UserSession.get(request));
 			Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
 			model.addAttribute("order", order);
+			//物流信息的默认经纬度为商家经纬度
+			AdminUser adminUser = adminUserService.findOne(order.getAdminUserId().toString());
+			if(adminUser != null){
+				Sender sender = adminUser.getSender();
+				if(sender != null){
+					model.addAttribute("defaultLat", sender.getLat());
+					model.addAttribute("defaultLng", sender.getLon());
+				}
+			}
 		} catch (Exception e) {
 			logger.error("===查看物流信息===出错 :" + e.getMessage());
 		}

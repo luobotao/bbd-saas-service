@@ -3,21 +3,16 @@ package com.bbd.saas.enums;
 import com.bbd.saas.utils.Htmls;
 
 /**
- * 物流状态
+ * 快递物流状态
  * Created by luobotao on 2016/4/8.
  */
 public enum TransportStatus {
-    Suspense(0, "待发货"),
-    Separating(1, "分拣中"),
-    Packed(2, "已打包"),
-    DriverGeted(3, "司机已取货"),
+    Daixiadan(0, "待下单"),
+    Daisijijiedan(1, "待司机接单"),
+    Daisijiquhuo(2, "待司机取货"),
+    Zhengzaiunshu(3, "正在运输"),
     ArriveStation(4, "已到达站点"),
-    Delivering(5, "正在派送"),
-    Success(6, "已签收"),
-    Cancel(7, "已取消"),
-    Delay(8, "已滞留"),
-    Refuse(9, "已拒收"),
-    LOST(10, "已丢失");
+    Cancel(5, "已取消");
 
     private int status;
     private String message;

@@ -153,11 +153,11 @@ public class UserManageController {
 		//验证在同一个站点下staffid是否已存在
 		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
 		Map<String, Object> map = new HashMap<String, Object>();
-		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName());
+		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName(), 0);
 		if((oldUser != null && !oldUser.getId().equals("")) || postmanUser != null && postmanUser.getId() != null){
 			////loginName在user表中已存在
 			map.put("success", false);
-			map.put("msg", "手机号已存在，请重新输入11位手机号!");
+			map.put("msg", "手机号已存在!");
 			return map;
 		}else{
 			Date currDate = new Date();
@@ -272,62 +272,80 @@ public class UserManageController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//验证该loginName在user表中是否已存在
 		User newUser = userService.findUserByLoginName(userForm.getLoginName());
-		//查找在mysql的bbt数据库的postmanuser表中是否存在该userForm.getLoginName() 即手机号记录
-		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName());
-		if((newUser != null && !newUser.getId().equals("")) || postmanUser != null && postmanUser.getId() != null){
-			////loginName在user表中已存在
-			map.put("success", false);
-			map.put("msg", "手机号已存在，请重新输入11位手机号!");
-			return map;
-		}else{
-			User currentUser = adminService.get(UserSession.get(request));
-			User user = userService.findOne(userForm.getUserId());
-			Date dateUpdate = new Date();
-			user.setRealName(userForm.getRealName().replaceAll(" ", ""));
-			user.setPassWord(userForm.getLoginPass());
-			user.setLoginName(userForm.getLoginName());
-			if(!user.getId().equals(currentUser.getId())){
-				//如果修改的用户为站长且修改的用户就是当前登录用户的话，不执行olduser.setOperate(getuser);
-				user.setOperate(currentUser);
+		if(newUser != null){
+			if(newUser.getId().toString().equals(userForm.getUserId())){//修改
+				//查找在mysql的bbt数据库的postmanuser表中是否存在该userForm.getLoginName() 即手机号记录
+				PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName(), newUser.getPostmanuserId());
+				if(postmanUser != null){//存在2个相同手机号的postmanUser对象
+					map.put("success", false);
+					map.put("msg", "手机号已存在!");
+					return map;
+				}else{
+					doUpdateUser(request, userForm, map);
+				}
+			}else{
+				map.put("success", false);
+				map.put("msg", "手机号已存在!");
+				return map;
 			}
-			user.setRole(UserRole.obj2UserRole(userForm.getRoleId()));
-			user.setDateUpdate(dateUpdate);
-			Key<User> userKey = userService.save(user);
-			if(userKey.getId() != null){
-				//原有手机号
-				postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getOldLoginName());
-				if (postmanUser != null) {
-					postmanUser.setDateUpd(new Date());
-					postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
-					if(user.getRole() == UserRole.SITEMASTER){
-						postmanUser.setPostrole(4);
-					}else  if(user.getRole()== UserRole.SENDMEM){
-						postmanUser.setPostrole(0);
-					}
-					//修改手机号
-					postmanUser.setStaffid(userForm.getLoginName());
-					postmanUser.setPhone(userForm.getOldLoginName());
-					int i = userMysqlService.updateByPhone(postmanUser);
-					if(i > 0){
-						map.put("success", true);
-						map.put("msg", "修改用户成功");
-					}else{
-						map.put("success", false);
-						map.put("msg", "修改用户失败");
-					}
+		}else{
+			doUpdateUser(request, userForm, map);
+		}
+		return map;
+	}
+
+	private void doUpdateUser(HttpServletRequest request, UserForm userForm, Map<String, Object> map){
+		User currentUser = adminService.get(UserSession.get(request));
+		User user = userService.findOne(userForm.getUserId());
+		Date dateUpdate = new Date();
+		user.setRealName(userForm.getRealName().replaceAll(" ", ""));
+		user.setPassWord(userForm.getLoginPass());
+		user.setLoginName(userForm.getLoginName());
+		if(!user.getId().equals(currentUser.getId())){
+			//如果修改的用户为站长且修改的用户就是当前登录用户的话，不执行olduser.setOperate(getuser);
+			user.setOperate(currentUser);
+		}
+		user.setRole(UserRole.obj2UserRole(userForm.getRoleId()));
+		user.setDateUpdate(dateUpdate);
+		Key<User> userKey = userService.save(user);
+		if(userKey.getId() != null){
+			if(userForm.getRoleId().equals(UserRole.SITEMASTER.toString())){
+				//修改站点负责人和电话
+				Site site = user.getSite();
+				site.setResponser(user.getRealName());//负责人姓名
+				site.setUsername(user.getLoginName());//负责人电话
+				siteService.save(site);
+			}
+			//原有手机号
+			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getOldLoginName(), 0);
+			if (postmanUser != null) {
+				postmanUser.setDateUpd(new Date());
+				postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
+				if(user.getRole() == UserRole.SITEMASTER){
+					postmanUser.setPostrole(4);
+				}else  if(user.getRole()== UserRole.SENDMEM){
+					postmanUser.setPostrole(0);
+				}
+				//修改手机号
+				postmanUser.setStaffid(userForm.getLoginName());
+				postmanUser.setPhone(userForm.getOldLoginName());
+				int i = userMysqlService.updateByPhone(postmanUser);
+				if(i > 0){
+					map.put("success", true);
+					map.put("msg", "修改用户成功");
 				}else{
 					map.put("success", false);
 					map.put("msg", "修改用户失败");
 				}
-			}else {
+			}else{
 				map.put("success", false);
 				map.put("msg", "修改用户失败");
 			}
+		}else {
+			map.put("success", false);
+			map.put("msg", "修改用户失败");
 		}
-
-		return map;
 	}
-	
 	/**
 	 * ajax异步调用
      * 根据realname验证在user表中是否已存在 
@@ -516,22 +534,36 @@ public class UserManageController {
 	
 	/**
 	 * ajax异步调用
-     * 验证user表下是否已存在loginName记录、以及在mysql bbt 中的postmanuser表中是否存在
+     * 验证user表下是否已存在loginName记录、以及在mysql bbt 中的postmanuser表中是否存在，只要一张表中存在就返回true
      * @param loginName
      * @return "true"/"false"
      */
 	@ResponseBody
 	@RequestMapping(value="/checkLognName", method=RequestMethod.GET)
-	public String checkLognName(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
-		User user = userService.findUserByLoginName(loginName);
-		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(loginName);
-		logger.info("loginName"+loginName);
-		if((user!=null && !user.getId().equals("") || (postmanUser!=null && postmanUser.getId()!=null))){
-			return "true";
-			
-		}else{ 
+	public String checkLognName(String loginName, String userId) {
+		logger.info("检查手机号是否被注册====loginName："+loginName);
+		if(loginName == null){
 			return "false";
-			
+		}
+		User user = userService.findUserByLoginName(loginName);
+		if(user != null){
+			if(user.getId().toString().equals(userId)){//修改
+				PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(loginName, user.getPostmanuserId());
+				if(postmanUser != null){//存在
+					return "true";
+				}else{
+					return "false";
+				}
+			}else{
+				return "true";
+			}
+		}else{
+			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(loginName, 0);
+			if(postmanUser != null){
+				return "true";
+			}else{
+				return "false";
+			}
 		}
 	}
 	

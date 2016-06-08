@@ -61,20 +61,30 @@ public class SiteManageController {
 	@Autowired
 	SitePoiApi sitePoiApi;
 
+	/**
+	 * 检查手机号是否被注册
+	 * @param loginName 手机号
+	 * @param areaCode 站点code
+     * @return true:手机号尚未被注册，可以用； false : 手机号已被注册，不可以用。
+     */
 	@ResponseBody
 	@RequestMapping(value="/checkSiteWithLoginName", method=RequestMethod.GET)
-	public Boolean checkSiteWithUsername(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
+	public Boolean checkSiteWithUsername(@RequestParam(value = "loginName", required = true) String loginName, String areaCode) {
 		try{
 			User user = userService.findUserByLoginName(loginName);
-			if(user==null)
+			if(user == null){//新添加手机号
 				return true;
-			else
-				return false;
+			}else{
+				if(user.getSite().getAreaCode().equals(areaCode)){//修改，可以用
+					return true;
+				}else{
+					return false;
+				}
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
 		}
-
 	}
 //	@RequestMapping(value="/updateSite", method=RequestMethod.GET)
 //	public String updateSite(Model model, HttpServletRequest request) {
@@ -115,7 +125,7 @@ public class SiteManageController {
 			BeanUtils.copyProperties(siteForm,site);
 			user = userService.findUserByLoginName(site.getUsername());
 			user.setLoginName(newPhone);
-			postmanUser = userMysqlService.selectPostmanUserByPhone(site.getUsername());
+			postmanUser = userMysqlService.selectPostmanUserByPhone(site.getUsername(), 0);
 			if(postmanUser==null){
 				postmanUser = new PostmanUser();
 			}
@@ -142,7 +152,7 @@ public class SiteManageController {
 					site.setCompanyName(postcompany.getCompanyname());
 					site.setCompanycode(postcompany.getCompanycode());
 				}
-				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
+				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone(), 0);
 				if(postmanUser==null)
 					postmanUser = new PostmanUser();
 				site.setStatus(SiteStatus.WAIT);
@@ -292,7 +302,7 @@ public class SiteManageController {
 		try{
 			User user = userService.findUserByLoginName(phone);
 
-			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(phone);
+			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(phone, 0);
 
 			if(postmanUser==null)
 				postmanUser = new PostmanUser();

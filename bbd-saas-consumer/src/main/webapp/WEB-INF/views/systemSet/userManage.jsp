@@ -44,7 +44,7 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 									</c:if>
 	        						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 	        							<label>　角色：</label>
-										<select id="saasrole" name="saasrole" class="form-control form-con-new">
+										<select id="saasrole" name="saasrole" class="form-control form-con-new" readonly="readOnly">
 											<c:if test="${userNow.role==UserRole.COMPANY}">
 												<option value ="-1" selected ="selected">全部</option>
 												<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
@@ -209,13 +209,9 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 							<span class="col-md-12"><a href="javascript:void(0)" id="saveuserid" onclick="saveUserBtn()" class="sbtn sbtn2 l">保存</a></span>
 						</div>
 
-						<%--<input type="hidden" class="form-control" id="sign" name="sign">--%>
-						<%--<input type="hidden" class="form-control" id="flaglogin" name="flaglogin">--%>
-						<%--<input type="hidden" class="form-control" id="flagstaffid" name="flagstaffid">--%>
 						<input type="hidden" class="form-control" id="userId" name="userId" value="">
 						<input type="hidden" class="form-control" id="oldLoginName" name="oldLoginName">
-						<%--<input type="hidden" class="form-control" id="staffidTemp" name="staffidTemp">--%>
-						<%--<input type="hidden" class="form-control" id="operate" name="operate">--%>
+
 						</form>
 					</div>
 
@@ -251,6 +247,10 @@ PageModel<User> userPage = (PageModel<User>)request.getAttribute("userPage");
 var pageStr = paginNav(<%=userPage.getPageNo()%>, <%=userPage.getTotalPages()%>, <%=userPage.getTotalCount()%>);
 $("#pagin").html(pageStr);
 
+//公司用户角色不可以修改
+<c:if test="${userNow.role==UserRole.COMPANY}">
+ 	$("#roleId").attr("disabled","disabled");
+</c:if>
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
@@ -287,7 +287,7 @@ function gotoPage(pageIndex) {
 			$("#pagin").html(pageStr);
 		},
 		error : function() {
-			alert("加载分页数据异常！");
+			ioutDiv("加载分页数据异常！");
 		}
 	});
 }
@@ -295,7 +295,6 @@ function gotoPage(pageIndex) {
 
 //封装一行的数据
 function getRowHtml(data){
-	console.log(data);
 	var row = "<tr>";
 	var temp = data.idStr;
 	<c:if test="${userNow.role==UserRole.COMPANY}">
@@ -304,52 +303,43 @@ function getRowHtml(data){
 	row +=  "<td>" + data.roleMessage + "</td>";
 	row += "<td>" + data.realName + "</td>";
 	row += "<td>" + data.loginName + "</td>";
-	//row += "<td>" + data.staffid + "</td>";
 	if(data.userStatus!==null){
 		row += "<td>" + data.statusMessage + "</td>";
 	}else{
 		row += "<td>无</td>";
 	}
-	
-	//
 	row += "<td><button id='editUser' class='orange' name='editUser' data-toggle='modal' data-target='#myModal' href='javascript:void(0)' onclick=\"searchUser('"+temp+"','"+data.loginName+"')\">修改</button>";
-	
-	
-	if(data.userStatus=="<%=UserStatus.VALID%>"){ 
+	if(data.userStatus=="<%=UserStatus.VALID%>"){
 		row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#changeModal' onclick=\"changeStatus(3,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">停用</a>";
 	}else{
 		row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#changeModal' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
 	}
-
 	row += "</tr>";
 	return row;
 }
 
 function checkLoginName(loginName) {
 	loginName=loginName.replace(/\ +/g,"");
-	/*var operate = document.getElementById("operate").value;*/
-	//var userId = $("#userId").val();
 	var oldLoginName = document.getElementById("oldLoginName").value;
-	var newloginName = loginName;
-	var url = '<c:url value="/userManage/checkLognName" />';
+	var url = "<c:url value="/userManage/checkLognName" />";
 	var ret = false;
+	var userId = $("#userId").val();
 	if(loginName!=''){
 		$.ajax({
-			url: url+'?loginName='+loginName,
+			url: url+"?loginName=" + loginName + "&userId=" + userId,
 			type: 'GET',
 			cache: false,
 			dataType: "text",
 			async: false,
 			data: {},
 			success: function(response){
-				console.log(response);
 				if(response=="true"){
-					ioutDiv("手机号已存在，请重新输入11位手机号!")
+					ioutDiv("手机号已存在!")
 					ret = true;
 				}
 			},
 			error: function(){
-				alert('服务器繁忙，请稍后再试！');
+				ioutDiv('服务器繁忙，请稍后再试！');
 			}
 		});
 	}
@@ -397,14 +387,11 @@ $("#conFirmForChangeBtn").click(function(){
 });
 
 function delUser(loginName){
-	
 	var ret = false;
 	if(confirm('确定要执行此操作吗?')){ 
 		ret = true; 
 	} 
-	    
 	if(ret){
-		
 		$.ajax({
 			type : "GET",  
 	        url : '<c:url value="/userManage/delUser" />', 
@@ -413,17 +400,15 @@ function delUser(loginName){
 	        },
 	        success : function(data) {
 				if(data == 'true'){
-					alert("删除成功");
+					ioutDiv("删除成功");
 					gotoPage(0);
 				} 
 	        },
 	        error : function() {  
-	       		alert("异常！");
+	       		ioutDiv("异常！");
 	  		}
 	    });
 	}
-	
-	
 }
 
 function saveUserBtn(){
@@ -443,7 +428,6 @@ function saveUserBtn(){
 		ioutDiv("请输入正确的手机号");
 		return false;
 	}
-
 	<c:if test="${userNow.role==UserRole.COMPANY}">
 	var roleId = $("#roleId").val();
 	if(roleId=="<%=UserRole.SITEMASTER%>"){
@@ -467,30 +451,20 @@ function saveUserBtn(){
 		}
 	}
 	</c:if>
-
-
 	var url = "";
-	//operate这个隐藏域就是为了区别这个操作时修改还是新建
-	/*var getSign = document.getElementById("operate").value;*/
 	var userId = $("#userId").val();
-	/*var flag = true;
-	var checkSign = false;
-	var loginNameSign = false;
-	var ataffidSign = false;
-	var returnmess = "";*/
 	if(userId == ""){//新建
 		url = '<c:url value="/userManage/saveUser?${_csrf.parameterName}=${_csrf.token}" />';
 	}else{//修改
 		url = '<c:url value="/userManage/editUser?${_csrf.parameterName}=${_csrf.token}" />';
 
 	}
-	checkAndSave(url,loginName);
+	checkAndSave(url, loginName, userId);
 }
 //检查手机号是否被注册，未被注册，则可以添加或者修改。
-function checkAndSave(url, loginName){
-	console.log(url);
+function checkAndSave(url, loginName, userId){
 	$.ajax({
-		url: "<c:url value="/userManage/checkLognName" />"+"?loginName="+loginName,
+		url: "<c:url value="/userManage/checkLognName" />"+"?loginName=" + loginName + "&userId=" + userId,
 		type: 'GET',
 		cache: false,
 		dataType: "text",
@@ -498,7 +472,7 @@ function checkAndSave(url, loginName){
 		data: {},
 		success: function(response){
 			if(response=="true"){
-				ioutDiv("手机号已存在，请重新输入11位手机号!")
+				ioutDiv("手机号已存在!")
 				ret = true;
 			}else{//保存用户
 				saveOrUpdateUser(url);
@@ -511,6 +485,10 @@ function checkAndSave(url, loginName){
 }
 //保存或者修改用户，url区别是保存还是修改
 function saveOrUpdateUser(url){
+	//公司用户移除角色不可以修改属性
+	<c:if test="${userNow.role==UserRole.COMPANY}">
+		$("#roleId").removeAttr("disabled");
+	</c:if>
 	$("#userForm").ajaxSubmit({
 		type: 'post',
 		url: url ,
@@ -540,7 +518,6 @@ function showPass() {
 	</c:if>
 }
 function searchUser(id,loginName){
-	console.log("id=upd=="+id);
 	$('.userclass').html('修改');
 	$.ajax({
 		type : "GET",  
@@ -551,13 +528,10 @@ function searchUser(id,loginName){
         },
         success : function(data) {
 			if(data != null){
-				/*$("#loginNameP").attr("style","display:none");
-				$("#staffidP").attr("style","display:none");*/
 				document.getElementById("userForm").reset();
 				$("#userId").val(id);
 				$("#realName").val(data.realName);
 				$("#loginName").val(data.loginName);
-				/*$("#staffid").val(data.staffid);*/
 				$("#roleId").val(data.role);
 				if($("#roleId").val()=="<%=UserRole.SITEMASTER%>"){
 					<c:if test="${userNow.role==UserRole.COMPANY}">
@@ -570,28 +544,20 @@ function searchUser(id,loginName){
 					$("#passLi").attr("style","display:none;");
 					$("#passCLi").attr("style","display:none;");
 				}
-
-				//$("#loginName").attr("readonly",true);
-				//document.getElementById("sign").value="edit";
 				document.getElementById("oldLoginName").value=data.loginName;
-				/*document.getElementById("staffidTemp").value=data.staffid;*/
-				/*document.getElementById("operate").value = "edit";*/
 			}    
         },
         error : function() {
 			ioutDiv("异常！");
   		}
     });
-	
-	
 }
-
 
 function showAddUserDiv(){
 	$('.userclass').html('新建');
 	document.getElementById("userForm").reset();
-	//$("#loginName").attr("readonly",false);
-	//document.getElementById("operate").value = "create";
+	$("#oldLoginName").val("");
+	$("#userId").val("");
 }
 </script>
 </body>

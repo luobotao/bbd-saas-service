@@ -49,8 +49,8 @@ public class PostmanUserServiceImpl implements PostmanUserService {
      * @param phone
      * @return PostmanUser
      */
-	public PostmanUser selectPostmanUserByPhone(String phone){
-		return postmanUserDao.selectPostmanUserByPhone(phone);
+	public PostmanUser selectPostmanUserByPhone(String phone, Integer id){
+		return postmanUserDao.selectPostmanUserByPhone(phone, id);
 	}
 	/**
      * 根据phone获取对应的postmanUser的id

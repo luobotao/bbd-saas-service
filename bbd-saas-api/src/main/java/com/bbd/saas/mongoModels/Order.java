@@ -58,6 +58,7 @@ public class Order implements Serializable {
     private Date dateDriverGeted;//司机取货时间
     private Date dateUpd;//
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
+    private TransportStatus transportStatus;//运输状态
     @Transient
     private String parcelCode;
     @Transient
@@ -353,7 +354,16 @@ public class Order implements Serializable {
 		//json = "{`name`:`lisi`}";
         return json;  
 	}
-	public static void main(String[] args) {
+
+    public TransportStatus getTransportStatus() {
+        return transportStatus;
+    }
+
+    public void setTransportStatus(TransportStatus transportStatus) {
+        this.transportStatus = transportStatus;
+    }
+
+    public static void main(String[] args) {
 		Express express = new Express();
 		express.setDateAdd(new Date());
 		express.setLat("lat123.23");

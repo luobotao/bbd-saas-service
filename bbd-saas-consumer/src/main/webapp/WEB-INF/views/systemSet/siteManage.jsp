@@ -161,7 +161,7 @@
         <div class="modal-content">
         <c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
-            <input type="hidden" id="areaCode" name="areaCode"/>
+            <input type="hidden" id="areaCode" name="areaCode" value=""/>
             <div class="modal-header b-modal-header">
                 <button type="button" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
                 <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
@@ -443,14 +443,9 @@
     }
 
     function checkSiteWithUsername(loginName){
-        var readonly = $("input[name='phone']").attr("readonly");
-        console.log("readonly==ck="+readonly);
-        if(readonly=="readonly"){
-            $("#phoneFlag").val(1);
-            return true;
-        }
+        var areaCode = $("#areaCode").val();
         if(loginName!=""){
-            var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />"+loginName
+            var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
             $.ajax({
                 url: linkUrl,
                 type: 'GET',
@@ -458,7 +453,6 @@
                 dataType: "text",
                 data: {},
                 success: function(response){
-                    console.log(response);
                     if(response=="false"){
                         $("#phoneFlag").val(0);
                         ioutDiv("手机号已存在");
@@ -467,7 +461,7 @@
                     }
                 },
                 error: function(){
-                    alert('服务器繁忙，请稍后再试！');
+                    ioutDiv('服务器繁忙，请稍后再试！');
                 }
             });
         }
@@ -499,7 +493,6 @@
 
         var phone = $.trim($('input[name="phone"]').val());
         var phoneFlag = $("#phoneFlag").val();
-        console.log("phoneFlag===="+phoneFlag);
         if(phone==""){
             ioutDiv("请输入手机号");
             return false;
@@ -508,61 +501,81 @@
                 ioutDiv("请输入正确的手机");
                 return false;
             }else{
-                if(phoneFlag==0){
-                    ioutDiv("手机号已存在");
-                    return false;
+                var areaCode = $("#areaCode").val();
+                if(phone!=""){
+                    var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + phone + "&areaCode=" + areaCode;
+                    $.ajax({
+                        url: linkUrl,
+                        type: 'GET',
+                        cache: false,
+                        dataType: "text",
+                        data: {},
+                        success: function(response){
+                            if(response=="false"){
+                                $("#phoneFlag").val(0);
+                                ioutDiv("手机号已存在");
+                            }else{
+                                $("#phoneFlag").val(1);
+                                var password = $("#password").val();
+                                if(password==""){
+                                    ioutDiv("请输入新密码");
+                                    return false;
+                                }
+
+                                if(!pwdreg.test(password)){
+                                    ioutDiv("请输入6-12位数字和字母结合的密码");
+                                    return false;
+                                }
+
+                                var passwordConfirm = $("#passwordConfirm").val();
+                                if(passwordConfirm==""){
+                                    ioutDiv("请输入确认密码");
+                                    return false;
+                                }
+                                if(passwordConfirm!=password){
+                                    ioutDiv("两次密码不一致");
+                                    return false;
+                                }
+
+                                var email = $("#email").val();
+                                if(email==""){
+                                    ioutDiv("请输入邮箱");
+                                    return false;
+                                } else{
+                                    var emailFlag = checkemail(email);
+                                    if(emailFlag==false){
+                                        ioutDiv("邮箱格式不正确");
+                                        return false;
+                                    }
+                                }
+
+                                $("#siteForm").ajaxSubmit({
+                                    success: function(data){
+                                        if(data==true){
+                                            $(".j-siteM-pop").modal("hide");
+                                            $("#closeButton").click();
+                                            gotoPage(0);
+                                        }else{
+                                            ioutDiv( "保存站点失败");
+                                        }
+
+                                    },
+                                    error: function(JsonHttpRequest, textStatus, errorThrown){
+                                        $("#closeButton").click();
+                                        gotoPage(0);
+                                    }
+                                });
+                            }
+                        },
+                        error: function(){
+                            ioutDiv('服务器繁忙，请稍后再试！');
+                        }
+                    });
                 }
-            }
-        }
-        var password = $("#password").val();
-        if(password==""){
-            ioutDiv("请输入新密码");
-            return false;
-        }
 
-        if(!pwdreg.test(password)){
-            ioutDiv("请输入6-12位数字和字母结合的密码");
-            return false;
-        }
-
-        var passwordConfirm = $("#passwordConfirm").val();
-        if(passwordConfirm==""){
-            ioutDiv("请输入确认密码");
-            return false;
-        }
-        if(passwordConfirm!=password){
-            ioutDiv("两次密码不一致");
-            return false;
-        }
-
-        var email = $("#email").val();
-        if(email==""){
-            ioutDiv("请输入邮箱");
-            return false;
-        } else{
-            var emailFlag = checkemail(email);
-            if(emailFlag==false){
-                ioutDiv("邮箱格式不正确");
-                return false;
             }
         }
 
-        $("#siteForm").ajaxSubmit({
-            success: function(data){
-                if(data==true){
-                    $(".j-siteM-pop").modal("hide");
-                    $("#closeButton").click();
-                    gotoPage(0);
-                }else{
-                    alert( "保存站点失败");
-                }
-
-            },
-            error: function(JsonHttpRequest, textStatus, errorThrown){
-                $("#closeButton").click();
-                gotoPage(0);
-            }
-        });
 
     })
 
@@ -580,7 +593,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -600,7 +613,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -618,7 +631,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -636,7 +649,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -654,7 +667,7 @@
                 }
             },
             error: function () {
-                alert("异常！");
+                ioutDiv("异常！");
             }
         });
     });
@@ -680,7 +693,6 @@
 function createSite(){
     $('#titleName').html("新建");
     document.getElementById("siteForm").reset();
-    $("input[name='phone']").removeAttr("readonly");
     $('#areaCode').val('');
     $('#areaCodeForModal').val('');
     var defprov = "北京";
@@ -718,7 +730,6 @@ function createSite(){
                     $("#area").val(data.area);
                     $("#address").val(data.address);
                     $("#phone").val(data.username);
-                    //$("input[name='phone']").attr("readonly","readonly")
                     defprov = $("#province").val();
                     defcity = $("#city").val();
                     defdist = $("#area").val();
