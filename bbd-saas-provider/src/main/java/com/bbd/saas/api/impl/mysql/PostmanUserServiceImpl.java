@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -137,5 +138,25 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 			userVOList.add(userVO);
 		}
 		return userVOList;
+	}
+
+	/**
+	 * 获取积分
+	 * @param areaCode
+	 * @param phone
+     * @return
+     */
+	public int getIntegral(String areaCode,String phone){
+		Map<String,Object> map=new HashMap<String, Object>();
+		map.put("areaCode", areaCode);
+		map.put("phone", phone);
+		//取得返回的结果集
+		List<Integer> results  = postmanUserDao.getIntegral(map);
+		//第一条结果集 总数量
+		int result = results.get(0);
+		System.out.println((result));
+		System.out.println("获取积分完成，积分为"+result);
+		//第二条订单列表
+		return result;
 	}
 }

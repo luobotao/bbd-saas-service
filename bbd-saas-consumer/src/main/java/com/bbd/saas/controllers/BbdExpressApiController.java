@@ -6,8 +6,10 @@ import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.mongoModels.Site;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
@@ -33,6 +35,8 @@ public class BbdExpressApiController {
 	SitePoiApi sitePoiApi;
 	@Autowired
 	Geo geo;
+	@Autowired
+	private PostmanUserService userMysqlService;
 	/**
 	 * description: 推送站点信息接口
 	 * 2016年4月14日下午4:05:01
@@ -135,4 +139,53 @@ public class BbdExpressApiController {
 		return JSON.json(length);
 	}
 
+	@RequestMapping(value="/postAllAreaCodeWithIntegral",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
+	@ResponseBody
+	public String postAllAreaCodeWithIntegral(@RequestParam String address) throws UnsupportedEncodingException {
+		//args :company address
+
+		String[] addes = address.split(";");
+		StringBuffer sb = new StringBuffer();
+		for (String str: addes) {
+			try {
+				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
+				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
+
+				String city="北京";
+				MapPoint mapPoint = geo.getGeoInfo(str);//起点地址
+				if (areaCodeList != null && areaCodeList.size() > 0) {
+					//通过积分获取优选区域码
+					for (String siteId: areaCodeList) {
+						Site site = siteService.findSite(siteId);
+						if(site!=null) {
+							//获取当前位置到站点的距离，
+							List mapPointList = Lists.newArrayList();
+							mapPointList.add(new MapPoint(Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())));
+							long length = geo.getDistance(city, mapPoint, mapPointList, false);
+							//获取站点的日均积分
+							int integral = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
+							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
+							logger.info("积分："+integral);
+							//根据地址到站点的距离计算积分
+							if (length < 3000) {
+								integral = integral + 5;
+							} else if (length < 5000) {
+								integral = integral + 3;
+							} else {
+								integral = integral + 2;
+							}
+							//保存站点和积分，按照积分进行排序
+							sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(integral).append("\n");
+						}
+					}
+				}else{
+					sb.append(str).append("\t").append("").append("\t").append("").append("\n");
+				}
+			}catch(Exception e){
+				sb.append(str).append("\t").append("").append("\t").append("").append("\n");
+			}
+		}
+		String str = sb.toString();
+		return str;
+	}
 }

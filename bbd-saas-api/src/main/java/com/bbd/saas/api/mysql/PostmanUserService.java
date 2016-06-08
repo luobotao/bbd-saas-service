@@ -78,4 +78,5 @@ public interface PostmanUserService {
      */
     public List<UserVO> findLatAndLngByIds(List<Integer> ids);
 
+    public int getIntegral(String areaCode, String phone);
 }

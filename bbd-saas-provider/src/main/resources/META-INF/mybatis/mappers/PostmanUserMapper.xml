@@ -204,4 +204,13 @@
         </foreach>
         and sta = 1
     </select>
+
+
+    <resultMap type="Integer" id="totalscore">
+        <result column="totalscore"  jdbcType="INTEGER" javaType="Integer"/>
+    </resultMap>
+
+    <select id="getIntegral" statementType="CALLABLE" parameterType="Map"  resultType="INTEGER" resultMap="totalscore">
+        {call sp_postman_station_score(#{areaCode,mode=IN,jdbcType=VARCHAR},#{phone,mode=IN,jdbcType=VARCHAR},#{totalscore,mode=OUT,jdbcType=INTEGER})}
+    </select>
 </mapper>
