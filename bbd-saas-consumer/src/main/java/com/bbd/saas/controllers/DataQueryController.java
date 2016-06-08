@@ -1,18 +1,23 @@
 package com.bbd.saas.controllers;
 
+import com.bbd.poi.api.Geo;
+import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.AdminUserService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.Sender;
+import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +52,10 @@ public class DataQueryController {
 	OrderParcelService orderPacelService;
 	@Autowired
 	AdminUserService adminUserService;
+	@Autowired
+	PostcompanyService postCompanyService;
+	@Autowired
+	Geo geo;
 	
 	/**
 	 * Description: 跳转到数据查询页面
@@ -85,7 +94,7 @@ public class DataQueryController {
 		}
 		return "page/dataQuery";
 	}
-	
+
 	/**
 	 * Description: 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
@@ -162,8 +171,27 @@ public class DataQueryController {
 			if(adminUser != null){
 				Sender sender = adminUser.getSender();
 				if(sender != null){
-					model.addAttribute("defaultLat", sender.getLat());
-					model.addAttribute("defaultLng", sender.getLon());
+					if(sender.getLat() == null || sender.getLon() == null){//商家没有经纬度，则设置为公司经纬度
+						String companyAddress = "";
+						if (currUser.getCompanyId() != null ){
+							Postcompany company = postCompanyService.selectPostmancompanyById(Integer.parseInt(currUser.getCompanyId()));
+							if(company != null){
+								StringBuffer  addressBS = new StringBuffer();
+								addressBS.append(StringUtil.initStr(company.getProvince(),""));
+								addressBS.append(StringUtil.initStr(company.getCity(),""));
+								addressBS.append(StringUtil.initStr(company.getArea(),""));
+								addressBS.append(StringUtil.initStr(company.getAddress(),""));
+								companyAddress = addressBS.toString();
+							}
+						}
+						//设置地图默认的中心点
+						SiteVO centerSite = getDefaultPoint(companyAddress);
+						model.addAttribute("defaultLat", centerSite.getLat());
+						model.addAttribute("defaultLng", centerSite.getLng());
+					}else{
+						model.addAttribute("defaultLat", sender.getLat());
+						model.addAttribute("defaultLng", sender.getLon());
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -171,7 +199,38 @@ public class DataQueryController {
 		}
 		return "page/showOrderMail";
 	}
-	
+	//地图默认中心位置--公司公司经纬度
+	private SiteVO getDefaultPoint(String address){
+		SiteVO centerSite = new SiteVO();
+		if(address == null || "".equals(address)){
+			centerSite.setName("");
+			centerSite.setLat("39.915");
+			centerSite.setLng("116.404");
+			centerSite.setDeliveryArea("50000");
+			return centerSite;
+		}
+		try {
+			MapPoint mapPoint = geo.getGeoInfo(address);
+			if (mapPoint != null) {
+				logger.info("[address]:" + address + " [search geo result] 经度:" + mapPoint.getLng() + ",纬度："+ mapPoint.getLat());
+				centerSite.setName("");
+				centerSite.setLat(mapPoint.getLat()+"");
+				centerSite.setLng(mapPoint.getLng()+"");
+				centerSite.setDeliveryArea("50000");
+			}else{//默认中心位置为北京
+				logger.info("[address]:" + address + " [search geo result] null,无法获取经纬度");
+				centerSite.setName("");
+				centerSite.setLat("39.915");
+				centerSite.setLng("116.404");
+				centerSite.setDeliveryArea("50000");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info("[address]:" + address + " [search geo result] exception,异常");
+		}
+		return centerSite;
+		//map.put("centerSite", centerSite);
+	}
 	/**
 	 * Description: 导出数据
 	 * @param status 状态
