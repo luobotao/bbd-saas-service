@@ -501,61 +501,81 @@
                 ioutDiv("请输入正确的手机");
                 return false;
             }else{
-                if(phoneFlag==0){
-                    ioutDiv("手机号已存在");
-                    return false;
+                var areaCode = $("#areaCode").val();
+                if(phone!=""){
+                    var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + phone + "&areaCode=" + areaCode;
+                    $.ajax({
+                        url: linkUrl,
+                        type: 'GET',
+                        cache: false,
+                        dataType: "text",
+                        data: {},
+                        success: function(response){
+                            if(response=="false"){
+                                $("#phoneFlag").val(0);
+                                ioutDiv("手机号已存在");
+                            }else{
+                                $("#phoneFlag").val(1);
+                                var password = $("#password").val();
+                                if(password==""){
+                                    ioutDiv("请输入新密码");
+                                    return false;
+                                }
+
+                                if(!pwdreg.test(password)){
+                                    ioutDiv("请输入6-12位数字和字母结合的密码");
+                                    return false;
+                                }
+
+                                var passwordConfirm = $("#passwordConfirm").val();
+                                if(passwordConfirm==""){
+                                    ioutDiv("请输入确认密码");
+                                    return false;
+                                }
+                                if(passwordConfirm!=password){
+                                    ioutDiv("两次密码不一致");
+                                    return false;
+                                }
+
+                                var email = $("#email").val();
+                                if(email==""){
+                                    ioutDiv("请输入邮箱");
+                                    return false;
+                                } else{
+                                    var emailFlag = checkemail(email);
+                                    if(emailFlag==false){
+                                        ioutDiv("邮箱格式不正确");
+                                        return false;
+                                    }
+                                }
+
+                                $("#siteForm").ajaxSubmit({
+                                    success: function(data){
+                                        if(data==true){
+                                            $(".j-siteM-pop").modal("hide");
+                                            $("#closeButton").click();
+                                            gotoPage(0);
+                                        }else{
+                                            ioutDiv( "保存站点失败");
+                                        }
+
+                                    },
+                                    error: function(JsonHttpRequest, textStatus, errorThrown){
+                                        $("#closeButton").click();
+                                        gotoPage(0);
+                                    }
+                                });
+                            }
+                        },
+                        error: function(){
+                            ioutDiv('服务器繁忙，请稍后再试！');
+                        }
+                    });
                 }
-            }
-        }
-        var password = $("#password").val();
-        if(password==""){
-            ioutDiv("请输入新密码");
-            return false;
-        }
 
-        if(!pwdreg.test(password)){
-            ioutDiv("请输入6-12位数字和字母结合的密码");
-            return false;
-        }
-
-        var passwordConfirm = $("#passwordConfirm").val();
-        if(passwordConfirm==""){
-            ioutDiv("请输入确认密码");
-            return false;
-        }
-        if(passwordConfirm!=password){
-            ioutDiv("两次密码不一致");
-            return false;
-        }
-
-        var email = $("#email").val();
-        if(email==""){
-            ioutDiv("请输入邮箱");
-            return false;
-        } else{
-            var emailFlag = checkemail(email);
-            if(emailFlag==false){
-                ioutDiv("邮箱格式不正确");
-                return false;
             }
         }
 
-        $("#siteForm").ajaxSubmit({
-            success: function(data){
-                if(data==true){
-                    $(".j-siteM-pop").modal("hide");
-                    $("#closeButton").click();
-                    gotoPage(0);
-                }else{
-                    ioutDiv( "保存站点失败");
-                }
-
-            },
-            error: function(JsonHttpRequest, textStatus, errorThrown){
-                $("#closeButton").click();
-                gotoPage(0);
-            }
-        });
 
     })
 
