@@ -200,7 +200,7 @@
 				&&lon != "" && lon != "0.0" && lon.indexOf("E") == -1 && lon.indexOf("e") == -1){
 				var remark = "<%=express.getRemark()%>";
 				var flag = false;
-				if(remark.startWith("订单分拣中")){
+				if(remark.startWith("订单已打印")){
 					flag = true;
 					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/start.png", new BMap.Size(64,64)));
 				}else if(remark.startWith("订单已送达")){
