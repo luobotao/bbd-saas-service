@@ -146,7 +146,7 @@ public class BbdExpressApiController {
 
 		String[] addes = address.split(";");
 		StringBuffer sb = new StringBuffer();
-		sb.append("地址").append("\t").append("区域码").append("\t").append("区域名称").append("\t").append("距离（公里）").append("\t").append("站点积分").append("\t").append("最终积分").append("\n");
+		sb.append("地址").append("\t").append("区域码").append("\t").append("区域名称").append("\t").append("距离（米）").append("\t").append("站点积分").append("\t").append("最终积分").append("\n");
 		for (String str: addes) {
 			try {
 				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
