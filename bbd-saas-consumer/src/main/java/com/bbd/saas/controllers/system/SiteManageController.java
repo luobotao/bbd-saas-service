@@ -75,7 +75,7 @@ public class SiteManageController {
 			if(user == null){//新添加手机号
 				return true;
 			}else{
-				if(user.getSite().getAreaCode().equals(areaCode)){//修改，可以用
+				if(user.getSite()!=null && user.getSite().getAreaCode().equals(areaCode)){//修改，可以用
 					return true;
 				}else{
 					return false;
