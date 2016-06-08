@@ -5,6 +5,8 @@ import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import java.util.Map;
 @Service("userMysqlService")
 @Transactional
 public class PostmanUserServiceImpl implements PostmanUserService {
+	public static final Logger logger = LoggerFactory.getLogger(PostmanUserServiceImpl.class);
 	@Resource
 	private PostmanUserDao postmanUserDao;
 
@@ -152,11 +155,16 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		map.put("phone", phone);
 		//取得返回的结果集
 		List<Integer> results  = postmanUserDao.getIntegral(map);
-		//第一条结果集 总数量
-		int result = results.get(0);
-		System.out.println((result));
-		System.out.println("获取积分完成，积分为"+result);
-		//第二条订单列表
+		int result = 0;
+		logger.info("[站点积分] 站点区域码："+areaCode+"，站长手机号："+phone);
+		if(results!=null&&results.size()>0) {
+			//第一条结果集 总数量
+			 result = results.get(0);
+			logger.info("[站点积分]站点区域码："+areaCode+"，站长手机号："+phone+", 积分值："+result);
+			System.out.println((result));
+			System.out.println("获取积分完成，积分为" + result);
+			//第二条订单列表
+		}
 		return result;
 	}
 }
