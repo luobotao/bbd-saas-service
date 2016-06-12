@@ -3,7 +3,6 @@ package com.bbd.saas.interceptor;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by luobotao on 2016/4/8.
  */
 public class LoginInterceptor extends HandlerInterceptorAdapter {
-    private static final String[] IGNORE_URI = {"/login","/500","/404","/resources","site","register","bbd/","main.jsp","sendVerifyCode","subscribe/"};
+    private static final String[] IGNORE_URI = {"/login","/500","/404","/resources","/site/","register","bbd/","main.jsp","sendVerifyCode","subscribe/"};
 
     @Autowired
     AdminService adminService;
@@ -34,10 +33,14 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         if (!flag) {
             if(StringUtils.isNotEmpty(UserSession.get(request))){
                 User user = adminService.get(UserSession.get(request));
-                if (user != null) return true;
+                if (user != null){
+                    return true;
+                }else{
+                    response.sendRedirect(request.getContextPath()+"/login");
+                }
+            }else{
+                response.sendRedirect(request.getContextPath()+"/login");
             }
-
-            response.sendRedirect(request.getContextPath()+"/login");
         }
         return flag;
     }

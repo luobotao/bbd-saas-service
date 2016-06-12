@@ -196,36 +196,31 @@
 		%>
 			var lon = "<%=express.getLon()%>";
 			var lat = "<%=express.getLat()%>";
-			if(lat != "" && lat != "0.0" && lat.indexOf("E") <= -1 && lat.indexOf("e") <= -1){
-				lat = "${defaultLat}";
+			if(lat != "" && lat != "0.0" && lat.indexOf("E") == -1 && lat.indexOf("e") == -1
+				&&lon != "" && lon != "0.0" && lon.indexOf("E") == -1 && lon.indexOf("e") == -1){
+				var remark = "<%=express.getRemark()%>";
+				var flag = false;
+				if(remark.startWith("订单已打印")){
+					flag = true;
+					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/start.png", new BMap.Size(64,64)));
+				}else if(remark.startWith("订单已送达")){
+					flag = true;
+					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
+				}else if(remark.startWith("订单已由")){
+					flag = true;
+					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
+				}else if(remark.startWith("您的订单已送达")){
+					flag = true;
+					hasKdy=true;
+					myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/end.png", new BMap.Size(64,64)));
+				}
+				if(flag){
+					points.push(new BMap.Point(lon, lat));
+				}
 			}
-			if(lon!="" && lon != "0.0" && lon.indexOf("E") <= -1 && lon.indexOf("e") <= -1){
-				lon =  "${defaultLng}";
-			}
-
-			var remark = "<%=express.getRemark()%>";
-			var flag = false;
-			if(remark.startWith("订单分拣中")){
-				flag = true;
-				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/start.png", new BMap.Size(64,64)));
-			}else if(remark.startWith("订单已送达")){
-				flag = true;
-				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
-			}else if(remark.startWith("订单已由")){
-				flag = true;
-				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/b_pos.png", new BMap.Size(64,64)));
-			}else if(remark.startWith("您的订单已送达")){
-				flag = true;
-				hasKdy=true;
-				myIconArray.push(new BMap.Icon("${ctx}/resources/images/admin/end.png", new BMap.Size(64,64)));
-			}
-			if(flag){
-				points.push(new BMap.Point(lon, lat));
-			}
-
 			<%
-            }
-        }
+            }//for
+        }//if order != null
     %>
 	var pointsArray=new Array;
 	var pointsTotal=[];
@@ -242,6 +237,16 @@
 	var courierlength=0;
 	function init() {
 		if(points==null||points.length==0){
+			map = new BMap.Map("container");
+			var center = new BMap.Point("${defaultLng}", "${defaultLat}");
+			map.centerAndZoom(center, 15);
+			map.enableScrollWheelZoom();
+			map.addControl(new BMap.NavigationControl());
+			map.addControl(new BMap.ScaleControl({anchor:BMAP_ANCHOR_BOTTOM_LEFT}));
+			map.addControl(new BMap.OverviewMapControl({isOpen: true}));
+			var myIcon = new BMap.Icon("/public/images/admin/start.png", new BMap.Size(64,64));
+			courier = new BMap.Marker(point,{icon:myIcon});
+			map.addOverlay(courier);
 			return false;
 		}else{
 			followChk = document.getElementById("follow");
