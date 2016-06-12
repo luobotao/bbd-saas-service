@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -149,22 +150,20 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	 * @param phone
      * @return
      */
-	public int getIntegral(String areaCode,String phone){
+	@Transactional(propagation= Propagation.NEVER)
+	public Map<String, Object> getIntegral(String areaCode,String phone){
 		Map<String,Object> map=new HashMap<String, Object>();
 		map.put("areaCode", areaCode);
 		map.put("phone", phone);
-		map.put("totalscore", 0);
 		//取得返回的结果集
-		List<Integer> results  = postmanUserDao.getIntegral(map);
-		int result = 0;
+		List<Map<String, Object>> results  = postmanUserDao.getIntegral(map);
 		logger.info("[站点积分] 站点区域码："+areaCode+"，站长手机号："+phone);
+		Map<String, Object> result = new HashMap<>();
 		if(results!=null&&results.size()>0) {
 			//第一条结果集 总数量
 			try {
 				result = results.get(0);
-				logger.info("[站点积分]站点区域码：" + areaCode + "，站长手机号：" + phone + ", 积分值：" + result);
-				System.out.println((result));
-				System.out.println("获取积分完成，积分为" + result);
+				logger.info("[站点积分]站点区域码：" + areaCode + "，站长手机号：" + phone + "，积分信息："+result.toString());
 				//第二条订单列表
 			}catch (Exception e){
 				logger.info("[站点积分]站点区域码：" + areaCode + "，站长手机号：" + phone + ", 获取积分值失败，存储过程无返回，"+e.getMessage());

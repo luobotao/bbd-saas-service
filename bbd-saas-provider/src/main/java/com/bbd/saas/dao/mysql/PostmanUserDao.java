@@ -77,5 +77,5 @@ public interface PostmanUserDao {
      */
     public List<Map<String, Object>> selectLatAndLngByIds(@Param("ids") List<Integer> ids);
 
-    public List<Integer> getIntegral(Map<String, Object> map);
+    public List<Map<String, Object>> getIntegral(Map<String, Object> map);
 }

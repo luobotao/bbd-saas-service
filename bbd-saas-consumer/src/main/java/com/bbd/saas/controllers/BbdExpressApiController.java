@@ -8,6 +8,7 @@ import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.utils.Numbers;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -146,7 +147,7 @@ public class BbdExpressApiController {
 
 		String[] addes = address.split(";");
 		StringBuffer sb = new StringBuffer();
-		sb.append("地址").append("\t").append("区域码").append("\t").append("区域名称").append("\t").append("距离（米）").append("\t").append("站点积分").append("\t").append("最终积分").append("\n");
+		sb.append("地址").append("\t").append("区域码").append("\t").append("区域名称").append("\t").append("距离（米）").append("\t").append("入驻时间积分").append("\t").append("7日妥投率积分").append("\t").append("7日平均派件时长积分").append("\t").append("站点人数积分").append("\t").append("站点积分").append("\t").append("最终积分").append("\n");
 		for (String str: addes) {
 			try {
 				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
@@ -164,9 +165,10 @@ public class BbdExpressApiController {
 							mapPointList.add(new MapPoint(Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())));
 							long length = geo.getDistance(city, mapPoint, mapPointList, false);
 							//获取站点的日均积分
-							int integral = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
+							Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
 							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
-							logger.info("积分："+integral);
+							logger.info("积分："+result.toString());
+							int integral = (int) result.get("totalscore");
 							int integralVal = 0;
 							//根据地址到站点的距离计算积分
 							if (length < 3000) {
@@ -177,7 +179,7 @@ public class BbdExpressApiController {
 								integralVal = integral + 2;
 							}
 							//保存站点和积分，按照积分进行排序
-							sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(integral).append("\t").append(integralVal).append("\n");
+							sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(result.get("timscore")).append("\t").append(result.get("perscore")).append("\t").append(result.get("deliveryscore")).append("\t").append(result.get("userscore")).append("\t").append(integral).append("\t").append(integralVal).append("\n");
 						}
 					}
 				}else{

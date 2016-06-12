@@ -4,6 +4,7 @@ import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.vo.UserVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 公司Service
@@ -78,5 +79,5 @@ public interface PostmanUserService {
      */
     public List<UserVO> findLatAndLngByIds(List<Integer> ids);
 
-    public int getIntegral(String areaCode, String phone);
+    public Map<String, Object> getIntegral(String areaCode, String phone);
 }

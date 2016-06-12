@@ -208,12 +208,15 @@
         and sta = 1
     </select>
 
-
-    <resultMap type="Integer" id="totalscore">
-        <result column="totalscore"  jdbcType="INTEGER" javaType="Integer"/>
+    <resultMap type="java.util.HashMap" id="statResultMap" >
+        <result column="userscore" property="userscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="timescore" property="timescore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="deliveryscore" property="deliveryscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="perscore" property="perscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="totalscore" property="totalscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
     </resultMap>
 
-    <select id="getIntegral" statementType="CALLABLE" parameterType="Map"  resultType="INTEGER" resultMap="totalscore">
-        {call sp_postman_station_score(#{areaCode,mode=IN,jdbcType=VARCHAR},#{phone,mode=IN,jdbcType=VARCHAR},#{totalscore,mode=OUT,jdbcType=INTEGER})}
+    <select id="getIntegral" statementType="CALLABLE" parameterType="Map" resultMap="statResultMap">
+        {call sp_postman_station_score(#{areaCode,mode=IN,jdbcType=VARCHAR},#{phone,mode=IN,jdbcType=VARCHAR})}
     </select>
 </mapper>
