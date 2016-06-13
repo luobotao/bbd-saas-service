@@ -3,7 +3,7 @@ package com.bbd.saas.enums;
 import com.bbd.saas.utils.Htmls;
 
 /**
- * 物流状态
+ * 快递物流状态
  * Created by luobotao on 2016/4/8.
  */
 public enum TransportStatus {
@@ -13,7 +13,6 @@ public enum TransportStatus {
     Zhengzaiunshu(3, "正在运输"),
     ArriveStation(4, "已到达站点"),
     Cancel(5, "已取消");
-
 
     private int status;
     private String message;

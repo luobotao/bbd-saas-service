@@ -272,7 +272,7 @@
 	$("#saveSiteBtn").click(function(){
 		var radiusVal = $("#radius option:selected").val();
 		if(radiusVal==0){
-			alert("请选择站点配送范围");
+			ioutDiv("请选择站点配送范围");
 			return false;
 		}else{
 			$.ajax({
@@ -282,11 +282,11 @@
 				dataType: "text",
 				data: {},
 				success: function(response){
-					alert("保存成功");
+					ioutDiv("保存成功");
 					window.location.href="${ctx}/deliverRegion/map/1";
 				},
 				error: function(){
-					alert("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
+					ioutDiv("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
 					if(window.top==window.self){//不存在父页面
 						window.location.href="<c:url value="/login" />"
 					}else{
@@ -362,7 +362,7 @@
 		});
 		var delIds = id_array.join(',');
 		if(delIds==""){
-			alert("请选择要删除的站点关键词");
+			ioutDiv("请选择要删除的站点关键词");
 			return false;
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
@@ -398,25 +398,20 @@
 		}
 		bmapArr.push(barr);
 	}
-	//console.log(bmapArr);
-
 	//提交保存
 	$("#formBtn").click(function () {
 		var jsonStr = "";
 		bmap.overlays.forEach(function (e) {
 			var arrs = e.ro;
 			if(arrs.length>2){
-				//console.log(arrs);
 				for (var i = 0; i < arrs.length; i++) {
 					jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
 					if (i < arrs.length - 1) {
 						jsonStr = jsonStr + ",";
 					}
-					//console.log(jsonStr);
 				}
 				jsonStr.substring(0, jsonStr.length - 1);
 				jsonStr = jsonStr + ";";
-				//console.log(jsonStr);
 			}
 		})
 		if ("" != jsonStr) {
@@ -431,15 +426,14 @@
 					"siteId":siteId
 				},
 				success: function(data){
-					//console.log(data);
 					if(data == "success"){
-						alert("提交成功");
+						ioutDiv("提交成功");
 					}else{
 						console.log("error:"+data);
 					}
 				},
 				error: function(){
-					alert("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
+					ioutDiv("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
 					if(window.top==window.self){//不存在父页面
 						window.location.href="<c:url value="/login" />"
 					}else{
@@ -450,7 +444,7 @@
 			/*          $("#jsonStr").val(jsonStr);
 			 $('#allLaysForm').submit();*/
 		} else {
-			alert("请先绘制电子围栏");
+			ioutDiv("请先绘制电子围栏");
 		}
 	})
 
@@ -459,7 +453,6 @@
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-40, -50)    //设置文本偏移量
 		}
-		//console.log("name===" + name);
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
 			color : "#fff",//"#fff"
@@ -527,7 +520,6 @@
 			if (this.myOverlay) {
 				this.loadMyOverlay();
 			};
-			//console.log("siteName===${site.name}");
 			//添加label
 			var label = newLabel(this.point, "${site.name}");
 			this.map.addOverlay(label);
@@ -544,8 +536,6 @@
 		loadMyOverlay: function(){
 			var map = this.map;
 			this.clearAll();
-			//console.log("ctt")
-			//console.log(this.myOverlay);
 			this.myOverlay.forEach(function(e){
 				myPolygon = new BMap.Polygon(e, this.styleOptions);
 				this.myPolygon = myPolygon;
@@ -559,7 +549,6 @@
 						bmap.delPolygon(e);
 					}
 				});
-				//console.log(myPolygon);
 				bmap.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
 			})
@@ -574,11 +563,10 @@
 			}
 			this.overlaysCache = arr;
 			$("panelWrap").innerHTML = '<ul>'+ s +'</ul>';
-			//console.log("[arr]:"+arr);
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
-				alert('不能再删除, 请保留3个以上的点.');
+				ioutDiv('不能再删除, 请保留3个以上的点.');
 				return;
 			}
 			this.overlaysCache.splice(i,1);
@@ -636,7 +624,6 @@
 		 */
 		getOverLay: function(){
 			var box = this.myPolygon ? this.myPolygon : this.overlays[this.overlays.length - 1];
-			//console.log(box.ro);
 		},
 		getCount: function(){
 			var n = 0;
@@ -646,12 +633,9 @@
 			if (this.overlays) {
 				n = n + this.overlays.length;
 			};
-			//console.log(n);
 		},
 		// 用经纬度设置地图中心点
 		theLocation:function(){
-			//console.log("xxxx");
-			//console.log(this.map);
 			this.map.panTo(this.point);
 		}
 	};
@@ -660,7 +644,6 @@
 	var isPanelShow = false;
 	$("showPanelBtn").onclick = showPanel;
 	function showPanel(){
-		//console.log(isPanelShow);
 		if (isPanelShow == false) {
 			isPanelShow = true;
 			$("showPanelBtn").style.right = "230px";
@@ -693,10 +676,8 @@
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
 	showMap(${site.deliveryArea*1000});
 	bmap.myOverlay=bmapArr;
-	//console.log(bmap.myOverlay);
 	bmap.init();
 	$('.b-tab a').click(function (e) {
-		//console.log($(this));
 		e.preventDefault();
 		$(this).tab('show');
 		$(this).parents("li").addClass("tab-cur").siblings().removeClass("tab-cur");

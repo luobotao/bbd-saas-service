@@ -56,6 +56,11 @@ public class UserServiceImpl implements UserService {
         return userDao.findOne("loginName", loginName);
     }
 
+    @Override
+    public User findByLoginNameAndId(String loginName, String userId) {
+        return null;
+    }
+
     /**
      * 根据用户名查找是否存在此用户
      *
@@ -221,9 +226,15 @@ public class UserServiceImpl implements UserService {
         query.companyId = companyId;
         List<User> userList = userDao.selectUserListByQuerys(query);
         Map<Long, String> map = new HashMap<Long, String>();
+        String siteName = null;
         if(userList != null && userList.size() > 0){
             for (User user : userList){
-                map.put((long) user.getPostmanuserId(), defaultString(user.getSite().getName(), ""));
+                if(user.getSite() != null){
+                    siteName = user.getSite().getName();
+                }else{
+                    siteName = null;
+                }
+                map.put((long) user.getPostmanuserId(), defaultString(siteName, ""));
             }
         }
         return map;

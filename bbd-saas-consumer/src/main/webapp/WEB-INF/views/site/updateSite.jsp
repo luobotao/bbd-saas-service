@@ -134,7 +134,6 @@
 				dataType: "text",
 				data: {},
 				success: function(response){
-					console.log(response);
 					if(response=="false"){
 						$("#usernameFlag").val(0);
 						$("#usernameP").html("手机号已存在");
@@ -145,7 +144,7 @@
 					}
 				},
 				error: function(){
-					alert('服务器繁忙，请稍后再试！');
+					ioutDiv('服务器繁忙，请稍后再试！');
 				}
 			});
 		}
@@ -154,7 +153,7 @@
 	$("#saveSiteBtn").click(function(){
 		var flag = $("#agreeCheck").is(':checked');
 		if(flag==false){
-			alert("请先同意《棒棒达快递注册协议》");
+			ioutDiv("请先同意《棒棒达快递注册协议》");
 			return false;
 		}
 		$("#companyName").val($("#companyId").find("option:selected").text());
@@ -230,7 +229,7 @@
 		if(flag){
 			$("#siteForm").submit();
 		}else{
-			alert("有非法内容，请检查内容合法性！");
+			ioutDiv("有非法内容，请检查内容合法性！");
 			return false;
 		}
 	})

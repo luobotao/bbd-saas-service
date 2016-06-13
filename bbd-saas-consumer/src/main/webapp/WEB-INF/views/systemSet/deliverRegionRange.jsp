@@ -103,7 +103,6 @@
 		}
 		bmapArr.push(barr);
 	}
-	console.log(bmapArr);
 
 	var $j = jQuery.noConflict();
 	$j(document).ready(function() {
@@ -120,14 +119,12 @@
 				}
 				jsonStr.substring(0, jsonStr.length - 1);
 				jsonStr = jsonStr + ";";
-				console.log(jsonStr);
 			})
 			if ("" != jsonStr) {
-				console.log("aaabbb");
 				$j("#jsonStr").val(jsonStr);
 				$j('#allLaysForm').submit();
 			} else {
-				alert("请先绘制电子围栏");
+				ioutDiv("请先绘制电子围栏");
 			}
 		})
 	});
@@ -188,7 +185,7 @@
 				this.loadMyOverlay();
 			};
 			map.addEventListener("rightclick",function(e){
-				alert(e.point.lng + "," + e.point.lat);
+				ioutDiv(e.point.lng + "," + e.point.lat);
 			});
 		},
 		loadMyOverlay: function(){
@@ -215,11 +212,10 @@
 			 }
 			 this.overlaysCache = arr;
 			 $("panelWrap").innerHTML = '<ul>'+ s +'</ul>';
-			 //console.log("[arr]:"+arr);
 		},
 		delPoint: function(i){
 			if(this.overlaysCache.length <=3 ){
-				alert('不能再删除, 请保留3个以上的点.');
+				ioutDiv('不能再删除, 请保留3个以上的点.');
 				return;
 			}
 			this.overlaysCache.splice(i,1);
@@ -260,7 +256,6 @@
 		 */
 		getOverLay: function(){
 			var box = this.myPolygon ? this.myPolygon : this.overlays[this.overlays.length - 1];
-			console.log(box.ro);
 		},
 		getCount: function(){
 			var n = 0;
@@ -270,7 +265,6 @@
 			if (this.overlays) {
 				n = n + this.overlays.length;
 			};
-			console.log(n);
 		}
 	};
 	//显示结果面板动作
@@ -302,7 +296,6 @@
 		new BMap.Point(116.582087,40.731351)
 	]];*/
 	bmap.myOverlay=bmapArr;
-	console.log(bmap.myOverlay);
 	bmap.init();
 
 	function openDraw(){

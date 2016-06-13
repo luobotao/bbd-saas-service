@@ -90,18 +90,24 @@
 	<select id="selectPostmanUserByPhone" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
-        FROM `postmanuser` where <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
+        FROM `postmanuser` where phone = #{phone}
+        <if test="id != null and id != 0">
+            and id != #{id}
+        </if>
     </select>
     
     <update id="updateByPhone" parameterType="com.bbd.saas.models.PostmanUser">
         UPDATE `postmanuser`
         	<set>
 	        	<if test="staffid != null">
-	        	staffid = #{staffid,jdbcType=INTEGER},
+	        	staffid = #{staffid,jdbcType=VARCHAR},
 	        	</if>
 	        	<if test="nickname != null">
 	        	nickname = #{nickname,jdbcType=VARCHAR},
-	        	</if> 
+	        	</if>
+                <if test="phone != null">
+                    phone = #{staffid,jdbcType=VARCHAR},
+                </if>
 	        	<if test="headicon != null">
 	        	headicon = #{headicon,jdbcType=VARCHAR},
 	        	</if>
@@ -163,7 +169,7 @@
 	        	date_upd = #{dateUpd,jdbcType=TIMESTAMP},
 	        	</if>
         	</set>
-        	WHERE <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
+        	WHERE phone = #{phone,jdbcType=INTEGER}
     </update>
     
     <delete id="deleteById">
@@ -200,5 +206,17 @@
             #{item}
         </foreach>
         and sta = 1
+    </select>
+
+    <resultMap type="java.util.HashMap" id="statResultMap" >
+        <result column="userscore" property="userscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="timescore" property="timescore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="deliveryscore" property="deliveryscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="perscore" property="perscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+        <result column="totalscore" property="totalscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getIntegral" statementType="CALLABLE" parameterType="Map" resultMap="statResultMap">
+        {call sp_postman_station_score(#{areaCode,mode=IN,jdbcType=VARCHAR},#{phone,mode=IN,jdbcType=VARCHAR})}
     </select>
 </mapper>

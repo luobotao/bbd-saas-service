@@ -36,6 +36,14 @@ public interface UserService {
     User findUserByLoginName(String loginName);
 
     /**
+     * 查询用户名为loginName, _id不为userId的用户
+     * @param loginName 用户名即为手机号
+     * @param userId _id
+     * @return 用户对象
+     */
+    User findByLoginNameAndId(String loginName, String userId);
+
+    /**
      * 根据user对象删除站点用户
      * @param user 用户
      */

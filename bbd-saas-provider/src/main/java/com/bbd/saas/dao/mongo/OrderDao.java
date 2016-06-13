@@ -1,6 +1,7 @@
 package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
@@ -8,6 +9,7 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
@@ -44,7 +46,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param orderQueryVO
      * @return
      */
-    public PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO) {
+    public PageModel<Order> findOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery().order("-dateUpd");
         if(orderQueryVO!=null){
             query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
@@ -142,7 +144,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.or(query.criteria("orderStatus").equal(orderStatusOld),query.criteria("orderStatus").equal(null));
         }
         UpdateOperations<Order> ops = createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date());
-        if(orderStatusOld==OrderStatus.NOTARR){//若是做到站操作，需要更新下到站时间
+        if(orderStatusOld== OrderStatus.NOTARR){//若是做到站操作，需要更新下到站时间
             ops.set("dateArrived",new Date());
         }
         return update(query,ops);
@@ -226,13 +228,13 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             	//到站的运单，根据时间查询；未到站，时间为空
                 if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
                 	//按照时间查询--已到站的记录
-                	Query<Order> timeQuery = createQuery(); 
+                	Query<Order> timeQuery = createQuery();
                     DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                     Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
                     Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
                     Criteria timeC = timeQuery.and(startC, endC);
                     //时间为空query--未到站的记录
-                    Query<Order> timeNullQuery = createQuery(); 
+                    Query<Order> timeNullQuery = createQuery();
                     Criteria timeNullC = timeNullQuery.or(timeNullQuery.criteria("dateArrived").equal(""), timeNullQuery.criteria("orderStatus").equal(null));
                     query.or(timeC, timeNullC);
                 }
@@ -407,5 +409,22 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(StringUtils.isNotBlank(newMailNum))
             query.filter("otherExprees.mailNum",newMailNum);
         return findOne(query);
+    }
+
+    /**
+     * 查询指定id集合的订单中物流状态不为expressStatus的订单的条数
+     * @param idList id集合
+     * @param expressStatus 物流状态
+     * @return 订单的条数
+     */
+    public long selectCountByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
+        Query<Order> query = createQuery();
+        if(idList != null && idList.size() > 0){
+            query.filter("mailNum in",idList);
+        }
+        if(expressStatus != null){
+            query.filter("expressStatus <>",expressStatus);
+        }
+        return count(query);
     }
 }

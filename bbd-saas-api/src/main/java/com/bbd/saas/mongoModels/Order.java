@@ -344,16 +344,17 @@ public class Order implements Serializable {
     }
 
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
-        if(expressList == null){
-            return "";
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(expressList).replaceAll("\"", "\\\"");
-        json = json.replaceAll("\"", "`");
-        System.out.println(json);
-        //json = "{`name`:`lisi`}";
-        return json;
-    }
+
+		if(expressList == null){
+			return "";
+		}
+		ObjectMapper mapper = new ObjectMapper(); 
+		String json = mapper.writeValueAsString(expressList).replaceAll("\"", "\\\"");
+		json = json.replaceAll("\"", "`");
+		System.out.println(json);
+		//json = "{`name`:`lisi`}";
+        return json;  
+	}
 
     public TransportStatus getTransportStatus() {
         return transportStatus;
@@ -361,22 +362,6 @@ public class Order implements Serializable {
 
     public void setTransportStatus(TransportStatus transportStatus) {
         this.transportStatus = transportStatus;
-    }
-
-    public static void main(String[] args) {
-        Express express = new Express();
-        express.setDateAdd(new Date());
-        express.setLat("lat123.23");
-        express.setLon("lon124.36");
-        express.setRemark("remark备注");
-        List<Express> expressList = new ArrayList<Express>();
-        expressList.add(express);
-        try {
-            getExpressList(expressList);
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
 }

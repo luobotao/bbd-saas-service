@@ -48,6 +48,9 @@ public class User implements Serializable {
     private String staffid;//员工id
     private int postmanuserId;//postmanuser的主键id
     private String companyId;      //所属公司ID
+    private Integer balanceId;      //资金账号ID
+    @Transient
+    private String idStr;//id.toString();
 
     public ObjectId getId() {
         return id;
@@ -178,21 +181,21 @@ public class User implements Serializable {
         this.statusMessage = statusMessage;
     }
 
-	public String getStaffid() {
-		return staffid;
-	}
+    public String getStaffid() {
+        return staffid;
+    }
 
-	public void setStaffid(String staffid) {
-		this.staffid = staffid;
-	}
+    public void setStaffid(String staffid) {
+        this.staffid = staffid;
+    }
 
-	public int getPostmanuserId() {
-		return postmanuserId;
-	}
+    public int getPostmanuserId() {
+        return postmanuserId;
+    }
 
-	public void setPostmanuserId(int postmanuserId) {
-		this.postmanuserId = postmanuserId;
-	}
+    public void setPostmanuserId(int postmanuserId) {
+        this.postmanuserId = postmanuserId;
+    }
 
     public String getCompanyId() {
         return companyId;
@@ -208,5 +211,21 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getIdStr() {
+        return idStr;
+    }
+
+    public void setIdStr(String idStr) {
+        this.idStr = idStr;
+    }
+
+    public Integer getBalanceId() {
+        return balanceId;
+    }
+
+    public void setBalanceId(Integer balanceId) {
+        this.balanceId = balanceId;
     }
 }

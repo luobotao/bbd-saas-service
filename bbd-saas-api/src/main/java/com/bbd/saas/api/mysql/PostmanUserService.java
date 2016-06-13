@@ -4,6 +4,7 @@ import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.vo.UserVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 公司Service
@@ -27,7 +28,7 @@ public interface PostmanUserService {
      * @param phone 手机号
      * @return PostmanUser
      */
-    PostmanUser selectPostmanUserByPhone(String phone);
+    PostmanUser selectPostmanUserByPhone(String phone, Integer id);
 
     /**
      * 根据phone获取对应的postmanUser的id
@@ -78,4 +79,5 @@ public interface PostmanUserService {
      */
     public List<UserVO> findLatAndLngByIds(List<Integer> ids);
 
+    public Map<String, Object> getIntegral(String areaCode, String phone);
 }

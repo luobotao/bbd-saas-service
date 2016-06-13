@@ -188,4 +188,24 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         }
         return  query;
     }
+
+    /**
+     * 查询用户名为loginName, _id不为userId的用户
+     * @param loginName 用户名即为手机号
+     * @param userId _id
+     * @return 用户对象
+     */
+    public User selectByLoginNameAndId(String loginName, String userId) {
+        Query<User> query = createQuery();
+        //_id
+        if(StringUtils.isBlank(userId)){
+            query.filter("userId <>", userId);
+        }
+        //用户名
+        if(StringUtils.isBlank(loginName)){
+            query.filter("loginName", loginName);
+        }
+        return findOne(query);
+    }
+
 }

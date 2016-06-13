@@ -21,7 +21,7 @@ public interface PostmanUserDao {
      * @param phone
      * @return PostmanUser
      */
-    PostmanUser selectPostmanUserByPhone(@Param("phone") String phone);
+    PostmanUser selectPostmanUserByPhone(@Param("phone") String phone, @Param("id")Integer id);
     /**
      * 根据phone获取对应的postmanUser的id
      * @param phone
@@ -37,7 +37,7 @@ public interface PostmanUserDao {
     
     /**
      * 更新postmanUser
-     * @param postmanUser
+     * @param postmanUser phone =oldPhone; staffid = newPhone
      * @return 
      */
     int updateByPhone(PostmanUser postmanUser);
@@ -54,14 +54,14 @@ public interface PostmanUserDao {
      * @param sta、id
      * @return 
      */
-    int updateById(@Param("sta") Integer sta,@Param("id") Integer id);
+    int updateById(@Param("sta") Integer sta, @Param("id") Integer id);
     
     /**
      * 更新postmanUser
      * @param nickname、id
      * @return 
      */
-    int updatePostmanUserById(@Param("nickname") String nickname,@Param("id") Integer id);
+    int updatePostmanUserById(@Param("nickname") String nickname, @Param("id") Integer id);
 
     /**
      * 根据公司Id查询所有派件员的经纬度
@@ -77,4 +77,5 @@ public interface PostmanUserDao {
      */
     public List<Map<String, Object>> selectLatAndLngByIds(@Param("ids") List<Integer> ids);
 
+    public List<Map<String, Object>> getIntegral(Map<String, Object> map);
 }

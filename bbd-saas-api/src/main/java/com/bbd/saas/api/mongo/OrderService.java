@@ -1,11 +1,13 @@
 package com.bbd.saas.api.mongo;
 
+import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
+import com.mongodb.BasicDBList;
 import org.mongodb.morphia.Key;
 
 import java.util.List;
@@ -30,7 +32,7 @@ public interface OrderService {
 	 * 根据其他快递的运单号查询订单
 	 * @param newMailNum
 	 * @return
-     */
+	 */
 	Order findOneByNewMailNum(String newMailNum);
 
 	/**
@@ -39,7 +41,7 @@ public interface OrderService {
 	 * @param orderQueryVO 查询条件
 	 * @return 分页对象（分页信息和数据）
 	 */
-    PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO);
+	PageModel<Order> findOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO);
 
 	/**
 	 * 按照查询条件分页检索订单
@@ -49,7 +51,7 @@ public interface OrderService {
 	 * @author: liyanlei
 	 * 2016年4月15日下午1:30:21
 	 */
-    PageModel<Order> findPageOrders(Integer pageIndex, OrderQueryVO orderQueryVO);
+	PageModel<Order> findPageOrders(Integer pageIndex, OrderQueryVO orderQueryVO);
 
 	/**
 	 * 按照查询条件检索订单-不分页
@@ -58,14 +60,14 @@ public interface OrderService {
 	 * @author: liyanlei
 	 * 2016年4月15日下午4:28:49
 	 */
-    List<Order> findOrders(OrderQueryVO orderQueryVO);
+	List<Order> findOrders(OrderQueryVO orderQueryVO);
 
 	/**
 	 * 保存或者更新订单
 	 * @param order 订单对象
 	 * @return 保存返回结果
 	 */
-    Key<Order> save(Order order);
+	Key<Order> save(Order order);
 
 	/**
 	 * 根据站点编码获取该站点订单数据
@@ -91,7 +93,7 @@ public interface OrderService {
 	 * @author: liyanlei
 	 * 2016年4月16日下午1:23:37
 	 */
-    int updateOrder(OrderUpdateVO orderUpdateVO, OrderQueryVO orderQueryVO);
+	int updateOrder(OrderUpdateVO orderUpdateVO, OrderQueryVO orderQueryVO);
 
 	/**
 	 * 根据站点编码和到站时间获取该站点已分派的订单数 -- 暂时没有用到（接口实现还有问题）
@@ -113,5 +115,7 @@ public interface OrderService {
 	 * @return 订单数目
 	 */
 	public long getNoArriveHis(String areaCode);
+
+	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus);
 
 }

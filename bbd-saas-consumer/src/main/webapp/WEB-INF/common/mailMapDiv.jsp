@@ -137,8 +137,7 @@
 	//load map data
 	function LoadMailAndMapData(mailNum, expressListJson) {
 		expressListJson = expressListJson.replace(/`/g, "\'");
-		//console.log(expressListJson);
-		//var expressList = eval('(' + expressListJson + ')'); 
+		//var expressList = eval('(' + expressListJson + ')');
 		var expressList = eval(expressListJson);
         $("#map_mailNum").html(mailNum);//运单号
         //	物流信息
@@ -251,7 +250,6 @@
 	             b.push(points[i]);
 	         }
 	     }
-	     //console.log("results===="+results + "planObj==="+planObj );
 	     // 绘制驾车步行线路
 	     if(planObj != null && planObj.getNumRoutes() != null){
 		     for (var i = 0; i < planObj.getNumRoutes(); i ++){
@@ -307,7 +305,6 @@
                          var pts = linesPoints[m];
                          var len = pts.length;
                          setTimeout(function(){
-                             console.log(m);
                              var carMk = new BMap.Marker(pts[0],{icon:myIcon});
                              map.addOverlay(carMk);
                              resetMkPoint(1,len,pts,carMk,m);

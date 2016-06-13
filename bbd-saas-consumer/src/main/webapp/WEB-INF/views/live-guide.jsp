@@ -193,7 +193,6 @@
 		//点击保存
 		mcount = 0;
 		$('.next-step').click(function () {
-			//alert(lilen)
 			$('.pre-step').show();
 			mcount += 1
 			// 3的倍数
@@ -340,22 +339,19 @@
 						"siteId":siteId
 					},
 					success: function(data){
-						//console.log(data);
 						if(data == "success"){
-							alert("提交成功");
+							outDiv("提交成功");
 						}else{
-							//console.log("error:"+data);
+							console.log("error:"+data);
 						}
 					},
 					error: function(){
-						//console.log('服务器繁忙，请稍后再试！');
 						window.location.href="${ctx}/login";
 					}
 				});
-				/*          $("#jsonStr").val(jsonStr);
-				 $('#allLaysForm').submit();*/
+
 			} else {
-				alert("请先绘制电子围栏");
+				outDiv("请先绘制电子围栏");
 			}
 		})
 
@@ -425,8 +421,6 @@
 			loadMyOverlay: function(){
 				var map = this.map;
 				this.clearAll();
-				//console.log("ctt")
-				//console.log(this.myOverlay);
 				this.myOverlay.forEach(function(e){
 					myPolygon = new BMap.Polygon(e, this.styleOptions);
 					this.myPolygon = myPolygon;
@@ -440,7 +434,6 @@
 							bmap.delPolygon(e);
 						}
 					});
-					//console.log(myPolygon);
 					bmap.overlays.push(myPolygon);
 					map.addOverlay(myPolygon);
 				})
@@ -458,7 +451,7 @@
 			},
 			delPoint: function(i){
 				if(this.overlaysCache.length <=3 ){
-					alert('不能再删除, 请保留3个以上的点.');
+					outDiv('不能再删除, 请保留3个以上的点.');
 					return;
 				}
 				this.overlaysCache.splice(i,1);
@@ -635,7 +628,7 @@
 			});
 			var delIds = id_array.join(',');
 			if(delIds==""){
-				alert("请选择要删除的站点关键词");
+				outDiv("请选择要删除的站点关键词");
 				return false;
 			}
 			if(confirm("确认批量删除所选站点关键词？")){

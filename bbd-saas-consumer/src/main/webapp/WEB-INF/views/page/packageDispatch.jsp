@@ -249,8 +249,7 @@ function dispatch() {
 		},//数据，这里使用的是Json格式进行传输  
 		dataType: "json",
 		success : function(data) {//返回数据根据结果进行相应的处理  
-			console.log("data.operFlag===="+data.operFlag);
-		   	if (data.operFlag == 1) { 
+		   	if (data.operFlag == 1) {
 		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派成功！");
 		    	//刷新列表
 		    	refreshTable(data.orderPage);
@@ -265,7 +264,6 @@ function dispatch() {
 		    }
 		},
 		error : function() {  
-			//alert("服务器繁忙，请稍后再试！");  
 			gotoLoginPage();
 		}     
     });
@@ -297,8 +295,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);
 		},
         error : function() {  
-           //	alert("加载分页数据异常！"); 
-           gotoLoginPage(); 
+           gotoLoginPage();
       	}    
     });	
 }	
@@ -309,7 +306,6 @@ function refreshTable(dataObject){
 	tbody.html("");
     //var datastr = "";
     var dataList = dataObject.datas;
-    console.log(dataList+"   len==="+dataList.length);
 	if(dataList != null){
 		for(var i = 0; i < dataList.length; i++){
 			tbody.append(getRowHtml(dataList[i])); 
@@ -369,7 +365,6 @@ function initCourier() {
         },
         error : function() {  
         	courierIsLoadSuccess = 0;
-       		//alert("派件员列表加载异常！");  
        		gotoLoginPage();
   		}    
     });

@@ -1,14 +1,23 @@
 package com.bbd.saas.controllers;
 
+import com.bbd.poi.api.Geo;
+import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.AdminUserService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.models.Postcompany;
+import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.Sender;
+import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +50,12 @@ public class DataQueryController {
 	AdminService adminService;
 	@Autowired
 	OrderParcelService orderPacelService;
+	@Autowired
+	AdminUserService adminUserService;
+	@Autowired
+	PostcompanyService postCompanyService;
+	@Autowired
+	Geo geo;
 	
 	/**
 	 * Description: 跳转到数据查询页面
@@ -66,10 +81,10 @@ public class DataQueryController {
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
-			for(Order order : orderPage.getDatas()){
+			/*for(Order order : orderPage.getDatas()){
 				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
-			}
+			}*/
 			logger.info("=====数据查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
@@ -79,7 +94,7 @@ public class DataQueryController {
 		}
 		return "page/dataQuery";
 	}
-	
+
 	/**
 	 * Description: 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
@@ -112,15 +127,13 @@ public class DataQueryController {
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = user.getSite().getAreaCode();
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-			//设置包裹号,派件员快递和电话
+			//设置派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();
-				String parcelCodeTemp = null;
 				User courier = null;
 				UserVO userVO = null;
 				for(Order order : dataList){
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					order.setParcelCode(parcelCodeTemp);//设置包裹号
+					//设置派件员快递和电话
 					courier = userService.findOne(order.getUserId());
 					if(courier != null){
 						userVO = new UserVO();
@@ -153,12 +166,71 @@ public class DataQueryController {
 			User currUser = adminService.get(UserSession.get(request));
 			Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
 			model.addAttribute("order", order);
+			//物流信息的默认经纬度为商家经纬度
+			AdminUser adminUser = adminUserService.findOne(order.getAdminUserId().toString());
+			if(adminUser != null){
+				Sender sender = adminUser.getSender();
+				if(sender != null){
+					if(sender.getLat() == null || sender.getLon() == null){//商家没有经纬度，则设置为公司经纬度
+						String companyAddress = "";
+						if (currUser.getCompanyId() != null ){
+							Postcompany company = postCompanyService.selectPostmancompanyById(Integer.parseInt(currUser.getCompanyId()));
+							if(company != null){
+								StringBuffer  addressBS = new StringBuffer();
+								addressBS.append(StringUtil.initStr(company.getProvince(),""));
+								addressBS.append(StringUtil.initStr(company.getCity(),""));
+								addressBS.append(StringUtil.initStr(company.getArea(),""));
+								addressBS.append(StringUtil.initStr(company.getAddress(),""));
+								companyAddress = addressBS.toString();
+							}
+						}
+						//设置地图默认的中心点
+						SiteVO centerSite = getDefaultPoint(companyAddress);
+						model.addAttribute("defaultLat", centerSite.getLat());
+						model.addAttribute("defaultLng", centerSite.getLng());
+					}else{
+						model.addAttribute("defaultLat", sender.getLat());
+						model.addAttribute("defaultLng", sender.getLon());
+					}
+				}
+			}
 		} catch (Exception e) {
 			logger.error("===查看物流信息===出错 :" + e.getMessage());
 		}
 		return "page/showOrderMail";
 	}
-	
+	//地图默认中心位置--公司公司经纬度
+	private SiteVO getDefaultPoint(String address){
+		SiteVO centerSite = new SiteVO();
+		if(address == null || "".equals(address)){
+			centerSite.setName("");
+			centerSite.setLat("39.915");
+			centerSite.setLng("116.404");
+			centerSite.setDeliveryArea("50000");
+			return centerSite;
+		}
+		try {
+			MapPoint mapPoint = geo.getGeoInfo(address);
+			if (mapPoint != null) {
+				logger.info("[address]:" + address + " [search geo result] 经度:" + mapPoint.getLng() + ",纬度："+ mapPoint.getLat());
+				centerSite.setName("");
+				centerSite.setLat(mapPoint.getLat()+"");
+				centerSite.setLng(mapPoint.getLng()+"");
+				centerSite.setDeliveryArea("50000");
+			}else{//默认中心位置为北京
+				logger.info("[address]:" + address + " [search geo result] null,无法获取经纬度");
+				centerSite.setName("");
+				centerSite.setLat("39.915");
+				centerSite.setLng("116.404");
+				centerSite.setDeliveryArea("50000");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info("[address]:" + address + " [search geo result] exception,异常");
+		}
+		return centerSite;
+		//map.put("centerSite", centerSite);
+	}
 	/**
 	 * Description: 导出数据
 	 * @param status 状态
@@ -185,7 +257,7 @@ public class DataQueryController {
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = user.getSite().getAreaCode();
 			//查询数据
-			List<Order> orderList = orderService.findOrders(orderQueryVO);	
+			List<Order> orderList = orderService.findOrders(orderQueryVO);
 			//导出==数据写到Excel中并写入response下载
 			//表格数据
 			List<List<String>> dataList = new ArrayList<List<String>>();
@@ -195,11 +267,7 @@ public class DataQueryController {
 			if(orderList != null){
 				for(Order order : orderList){
 					row = new ArrayList<String>();
-					parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
-					row.add(parcelCodeTemp);//设置包裹号
 					row.add(order.getMailNum());
-					row.add(order.getOrderNo());
-					row.add(order.getSrc().getMessage());
 					row.add(order.getReciever().getName());
 					row.add(order.getReciever().getPhone());
 					StringBuffer address = new StringBuffer();
@@ -211,6 +279,13 @@ public class DataQueryController {
 					row.add(Dates.formatDateTime_New(order.getDateDriverGeted()));
 					row.add(Dates.formatDate2(order.getDateMayArrive()));
 					row.add(Dates.formatDateTime_New(order.getDateArrived()));
+					//签收时间 start
+					if(order.getOrderStatus() != null && order.getOrderStatus() == OrderStatus.SIGNED){
+						row.add(Dates.formatDateTime_New(order.getDateUpd()));
+					}else{
+						row.add("");
+					}
+					//签收时间  end
 					setCourier(order.getUserId(), row);
 					if(order.getOrderStatus() == null){
 						row.add("未到站");
@@ -222,8 +297,8 @@ public class DataQueryController {
 			}
 			
 			//表头
-			String[] titles = { "包裹号", "运单号", "订单号", "来源", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "派送员", "派送员手机", "状态" };
-			int[] colWidths = { 4000, 5000, 5000, 2000, 2000, 3500, 12000, 5500, 3500, 5500, 2000, 3500, 2000};
+			String[] titles = { "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" };
+			int[] colWidths = { 5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500, 2000, 3500, 3000};
 			ExportUtil exportUtil = new ExportUtil();
 			exportUtil.exportExcel("数据查询", dataList, titles, colWidths, response);
 		} catch (Exception e) {

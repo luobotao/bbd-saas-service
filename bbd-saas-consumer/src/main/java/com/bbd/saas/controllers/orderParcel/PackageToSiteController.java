@@ -130,6 +130,23 @@ public class PackageToSiteController {
 		}
 		return orderPage;
 	}
+	/**
+	 * 批量到站
+	 * @param ids
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/isAllDriverGeted", method = RequestMethod.POST)
+	public boolean isAllDriverGeted(HttpServletRequest request,String ids) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		BasicDBList idList = (BasicDBList) JSON.parse(ids);
+		long num = orderService.getCounByMailNumsAndExpressStatus(idList, ExpressStatus.DriverGeted);
+		if(num == 0){
+			return true;
+		}else {
+			return false;
+		}
+	}
 
 	/**
 	 * 批量到站

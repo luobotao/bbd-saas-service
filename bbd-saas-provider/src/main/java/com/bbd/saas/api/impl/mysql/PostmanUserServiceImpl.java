@@ -5,12 +5,16 @@ import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +25,7 @@ import java.util.Map;
 @Service("userMysqlService")
 @Transactional
 public class PostmanUserServiceImpl implements PostmanUserService {
+	public static final Logger logger = LoggerFactory.getLogger(PostmanUserServiceImpl.class);
 	@Resource
 	private PostmanUserDao postmanUserDao;
 
@@ -48,8 +53,8 @@ public class PostmanUserServiceImpl implements PostmanUserService {
      * @param phone
      * @return PostmanUser
      */
-	public PostmanUser selectPostmanUserByPhone(String phone){
-		return postmanUserDao.selectPostmanUserByPhone(phone);
+	public PostmanUser selectPostmanUserByPhone(String phone, Integer id){
+		return postmanUserDao.selectPostmanUserByPhone(phone, id);
 	}
 	/**
      * 根据phone获取对应的postmanUser的id
@@ -137,5 +142,34 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 			userVOList.add(userVO);
 		}
 		return userVOList;
+	}
+
+	/**
+	 * 获取积分
+	 * @param areaCode
+	 * @param phone
+     * @return
+     */
+	@Transactional(propagation= Propagation.NEVER)
+	public Map<String, Object> getIntegral(String areaCode,String phone){
+		Map<String,Object> map=new HashMap<String, Object>();
+		map.put("areaCode", areaCode);
+		map.put("phone", phone);
+		//取得返回的结果集
+		List<Map<String, Object>> results  = postmanUserDao.getIntegral(map);
+		logger.info("[站点积分] 站点区域码："+areaCode+"，站长手机号："+phone);
+		Map<String, Object> result = new HashMap<>();
+		if(results!=null&&results.size()>0) {
+			//第一条结果集 总数量
+			try {
+				result = results.get(0);
+				logger.info("[站点积分]站点区域码：" + areaCode + "，站长手机号：" + phone + "，积分信息："+result.toString());
+				//第二条订单列表
+			}catch (Exception e){
+				logger.info("[站点积分]站点区域码：" + areaCode + "，站长手机号：" + phone + ", 获取积分值失败，存储过程无返回，"+e.getMessage());
+				logger.info(e.getMessage());
+			}
+		}
+		return result;
 	}
 }

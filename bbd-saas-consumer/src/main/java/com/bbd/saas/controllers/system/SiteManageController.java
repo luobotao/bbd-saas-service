@@ -5,7 +5,6 @@ import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
-import com.bbd.saas.api.mysql.OpenUserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
@@ -14,18 +13,12 @@ import com.bbd.saas.enums.SiteTurnDownReasson;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.SiteForm;
-import com.bbd.saas.form.UserForm;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.OSSUtils;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.SignUtil;
-import com.bbd.saas.vo.UserQueryVO;
-import com.bbd.saas.vo.UserVO;
-import flexjson.JSONDeserializer;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -36,15 +29,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.*;
-import java.net.URLDecoder;
-import java.util.*;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 系统设置 -- 站点管理
@@ -67,20 +61,30 @@ public class SiteManageController {
 	@Autowired
 	SitePoiApi sitePoiApi;
 
+	/**
+	 * 检查手机号是否被注册
+	 * @param loginName 手机号
+	 * @param areaCode 站点code
+     * @return true:手机号尚未被注册，可以用； false : 手机号已被注册，不可以用。
+     */
 	@ResponseBody
 	@RequestMapping(value="/checkSiteWithLoginName", method=RequestMethod.GET)
-	public Boolean checkSiteWithUsername(Model model,@RequestParam(value = "loginName", required = true) String loginName) {
+	public Boolean checkSiteWithUsername(@RequestParam(value = "loginName", required = true) String loginName, String areaCode) {
 		try{
 			User user = userService.findUserByLoginName(loginName);
-			if(user==null)
+			if(user == null){//新添加手机号
 				return true;
-			else
-				return false;
+			}else{
+				if(user.getSite()!=null && user.getSite().getAreaCode().equals(areaCode)){//修改，可以用
+					return true;
+				}else{
+					return false;
+				}
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
 		}
-
 	}
 //	@RequestMapping(value="/updateSite", method=RequestMethod.GET)
 //	public String updateSite(Model model, HttpServletRequest request) {
@@ -100,14 +104,12 @@ public class SiteManageController {
 	 * 公司用户新建站点
 	 * @param siteForm
 	 * @param result
-	 * @param model
-	 * @param redirectAttrs
 	 * @return
      * @throws IOException
      */
 	@ResponseBody
 	@RequestMapping(value="/saveSite",method=RequestMethod.POST)
-	public boolean saveSite(HttpServletRequest request,@Valid SiteForm siteForm, BindingResult result, Model model, RedirectAttributes redirectAttrs) throws IOException {
+	public boolean saveSite(HttpServletRequest request, @Valid SiteForm siteForm, BindingResult result) throws IOException {
 		User userNow = adminService.get(UserSession.get(request));
 		if(result.hasErrors()){
 			return false;
@@ -115,14 +117,19 @@ public class SiteManageController {
 		Site site = new Site();
 		User user = new User();
 		PostmanUser postmanUser = new PostmanUser();
+		String newPhone = siteForm.getPhone();
+		String oldPhone = "";
 		if(StringUtils.isNotBlank(siteForm.getAreaCode())){//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
+			oldPhone = site.getUsername();
 			BeanUtils.copyProperties(siteForm,site);
 			user = userService.findUserByLoginName(site.getUsername());
-			postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
-			if(postmanUser==null)
+			user.setLoginName(newPhone);
+			postmanUser = userMysqlService.selectPostmanUserByPhone(site.getUsername(), 0);
+			if(postmanUser==null){
 				postmanUser = new PostmanUser();
-
+			}
+			site.setUsername(newPhone);
 			Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
 			if(postcompany!=null){
 				site.setCompanyId(userNow.getCompanyId());
@@ -137,6 +144,7 @@ public class SiteManageController {
 				if(siteTemp!=null){//更新操作
 					site = siteTemp;
 				}
+				oldPhone = site.getUsername();//newPhone == oldPhone
 				BeanUtils.copyProperties(siteForm,site);
 				Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(siteForm.getCompanyId(),0)) ;//当前登录公司用户的公司ID
 				if(postcompany!=null){
@@ -144,7 +152,7 @@ public class SiteManageController {
 					site.setCompanyName(postcompany.getCompanyname());
 					site.setCompanycode(postcompany.getCompanycode());
 				}
-				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone());
+				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone(), 0);
 				if(postmanUser==null)
 					postmanUser = new PostmanUser();
 				site.setStatus(SiteStatus.WAIT);
@@ -224,6 +232,8 @@ public class SiteManageController {
 		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
 		postmanUser.setDateUpd(new Date());
 		if(StringUtils.isNotBlank(siteForm.getAreaCode()) || postmanUser.getId()!=null){//修改
+			postmanUser.setStaffid(newPhone);
+			postmanUser.setPhone(oldPhone);
 			userMysqlService.updateByPhone(postmanUser);
 		}else{//新增
 			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
@@ -292,7 +302,7 @@ public class SiteManageController {
 		try{
 			User user = userService.findUserByLoginName(phone);
 
-			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(phone);
+			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(phone, 0);
 
 			if(postmanUser==null)
 				postmanUser = new PostmanUser();
@@ -393,7 +403,7 @@ public class SiteManageController {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER,UserStatus.VALID);//所有有效站长
+		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER, UserStatus.VALID);//所有有效站长
 		for(User user:userList){//将站点下的所有站长置为无效
 			userService.updateUserStatu(user.getLoginName(), UserStatus.INVALID);
 			userMysqlService.updateById(UserStatus.INVALID.getStatus(),user.getPostmanuserId());

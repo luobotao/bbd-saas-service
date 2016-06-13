@@ -3,6 +3,7 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
+<%@ page import="com.bbd.saas.enums.ExpressStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -87,16 +88,17 @@
   					<table class="table">
   						<thead>
   							<tr>
-  								<th>包裹号</th>
+  								<%--<th>包裹号</th>--%>
 								<th>运单号</th>
-								<th>订单号</th>
-								<th>来源</th>
+								<%--<th>订单号</th>
+								<th>来源</th>--%>
 								<th>收货人</th>
 								<th>收货人电话</th>
 								<th width="15%">收货人地址</th>
 								<th>司机取货时间</th>
 								<th>预计到站时间</th>
 								<th>到站时间</th>
+								<th>签收时间</th>
 								<th>派送员</th>
 								<th>派送员手机</th>
 								<th>状态</th>
@@ -116,9 +118,9 @@
 									for(Order order : orderPage.getDatas()){
 							%>
 								<tr>
-									<td><%=order.getParcelCode()%></td>
+									<%--<td><%=order.getParcelCode()%></td>--%>
 									<td><%=order.getMailNum()%></td>
-									<td><%=order.getOrderNo()%></td>
+									<%--<td><%=order.getOrderNo()%></td>
 									<%
 										if(order.getSrc() == null){//来源
 									%>
@@ -129,13 +131,26 @@
 											<td><%=order.getSrc().getMessage()%></td>
 									<%
 										}
-									%>
+									%>--%>
 									<td><%=order.getReciever().getName()%></td>
 									<td><%=order.getReciever().getPhone()%></td>
 									<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateDriverGeted())%></td>
 									<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 									<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
+									<%-- 签收时间  start --%>
+									<%
+										if(order.getOrderStatus() != null && order.getOrderStatus() == OrderStatus.SIGNED){
+									%>
+										<td><%=Dates.formatDateTime_New(order.getDateUpd())%></td>
+									<%
+										}else{
+									%>
+										<td></td>
+									<%
+										}
+									%>
+									<%-- 签收时间  end --%>
 									<%
 										if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
 									%>
@@ -287,7 +302,6 @@ function gotoPage(pageIndex) {
 			$("#pagin").html(pageStr);
 		},
         error : function() {  
-           	//alert("加载分页数据异常！");  
            	if(window.top==window.self){//不存在父页面
 				window.location.href="<c:url value="/login" />"
 			}else{
@@ -302,20 +316,27 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
-	row +=  "<td>" + data.parcelCode + "</td>";
+	/*row +=  "<td>" + data.parcelCode + "</td>";*/
 	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
 		row += "<td>" + data.mailNum + "</td>";
 	}else{
 		row += "<td>" + data.mailNum.replace(mailNum, "<span class='font-bg-color'>" + mailNum + "</span>") + "</td>";
 	}
-	row += "<td>" + data.orderNo + "</td>";
-	row += "<td>" + getSrcName(data.src) + "</td>";
+	/*row += "<td>" + data.orderNo + "</td>";
+	row += "<td>" + getSrcName(data.src) + "</td>";*/
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.phone + "</td>";
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateDriverGeted) + "</td>";
 	row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
+	<%-- 签收时间  start --%>
+	if(data.orderStatus != null && data.orderStatus == "<%=OrderStatus.SIGNED %>"){
+		row += "<td>" + getDate1(data.dateUpd) + "</td>";
+	}else{
+		row += "<td></td>";
+	}
+	<%-- 签收时间  end --%>
 	//派件员==未分派，不需要显示派件员姓名和电话
 	if(data.userId == null || data.userId == ""){
 		row += "<td></td><td></td>";
@@ -328,52 +349,6 @@ function getRowHtml(data){
 	row += "<td><a href='<%=path%>/mailQuery/getOrderMail?areaCode=" + data.areaCode + "&mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
-}
-
-//转义状态
-function getSrcName(src) {
-	if(src == null){
-		return "";
-	}
-    x = "";
-	switch (src) {
-	case "BBT":
-		x = "棒棒达";
-		break;
-	case "JD":
-		x =  "京东";
-		break;
-	case "TAOBAO":
-		x =  "淘宝";
-		break;
-	case "TIANMAO":
-		x =  "天猫";
-		break;
-	case "YIHAODIAN":
-		x =  "1号店";
-		break;
-	case "BAIDUWAIMAI":
-		x =  "百度外卖";
-		break;
-	case "PINHAOHUO":
-		x =  "拼好货";
-		break;
-	case "HANWEI":
-		x =  "汉维";
-		break;
-	case "DDKY":
-		x =  "叮当快药";
-		break;
-	case "WEIXINXIAODIAN":
-		x =  "微信小店";
-		break;
-	case "OTHERS":
-		x =  "其他";
-		break;
-	default :
-		x = src;
-	}
-	return x;
 }
 
 //转义状态
