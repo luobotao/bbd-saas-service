@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * returnReason
  * 退货原因（类型）表
- * Created by liyanlei on 2016/6/1.
+ * Created by luobotao on 2016/6/13.
  */
 @Entity("trade")
 @Indexes(
