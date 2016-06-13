@@ -328,7 +328,6 @@ function checkLoginName(loginName) {
 			loginName=loginName.replace(/\ +/g,"");
 			var oldLoginName = document.getElementById("oldLoginName").value;
 			var url = "<c:url value="/userManage/checkLognName" />";
-			var ret = false;
 			var userId = $("#userId").val();
 			if(loginName!=''){
 				$.ajax({
@@ -341,7 +340,6 @@ function checkLoginName(loginName) {
 					success: function(response){
 						if(response=="true"){
 							ioutDiv("手机号已存在!")
-							ret = true;
 						}
 					},
 					error: function(){
@@ -485,7 +483,6 @@ function checkAndSave(url, loginName, userId){
 		success: function(response){
 			if(response=="true"){
 				ioutDiv("手机号已存在!")
-				ret = true;
 			}else{//保存用户
 				saveOrUpdateUser(url);
 			}
@@ -505,10 +502,12 @@ function saveOrUpdateUser(url){
 		type: 'post',
 		url: url ,
 		success: function(data){
+			console.log(data);
 			if(data.success){
 				$(".j-user-pop").modal("hide");
 				gotoPage(0);
 			}else{
+				console.log("保存成功："+data.msg);
 				ioutDiv(data.msg);
 			}
 		},
