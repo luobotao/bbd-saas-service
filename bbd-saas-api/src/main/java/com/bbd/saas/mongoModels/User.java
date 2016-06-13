@@ -48,6 +48,7 @@ public class User implements Serializable {
     private String staffid;//员工id
     private int postmanuserId;//postmanuser的主键id
     private String companyId;      //所属公司ID
+    private Integer balanceId;      //资金账号ID
     @Transient
     private String idStr;//id.toString();
 
@@ -218,5 +219,13 @@ public class User implements Serializable {
 
     public void setIdStr(String idStr) {
         this.idStr = idStr;
+    }
+
+    public Integer getBalanceId() {
+        return balanceId;
+    }
+
+    public void setBalanceId(Integer balanceId) {
+        this.balanceId = balanceId;
     }
 }
