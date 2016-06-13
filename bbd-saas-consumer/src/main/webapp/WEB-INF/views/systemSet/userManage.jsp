@@ -492,6 +492,8 @@
 			}
 		});
 	}
+
+
 	//保存或者修改用户，url区别是保存还是修改
 	function saveOrUpdateUser(url){
 		//公司用户移除角色不可以修改属性
