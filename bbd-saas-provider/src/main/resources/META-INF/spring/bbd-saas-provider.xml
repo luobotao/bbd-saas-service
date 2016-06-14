@@ -24,6 +24,8 @@
     <dubbo:service interface="com.bbd.saas.api.mongo.OrderParcelService" ref="orderPacelService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" ref="toOtherSiteLogService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.ReturnReasonService" ref="returnReasonService" />
+    <dubbo:service interface="com.bbd.saas.api.mongo.TradeService" ref="tradeService" />
+
 
     <!--start mysql services -->
     <dubbo:service interface="com.bbd.saas.api.mysql.PostcompanyService" ref="postcompanyService" />

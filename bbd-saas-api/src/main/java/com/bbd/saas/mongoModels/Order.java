@@ -346,6 +346,22 @@ public class Order implements Serializable {
         this.rtnRemark = rtnRemark;
     }
 
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
+    }
+
+    public ObjectId getuId() {
+        return uId;
+    }
+
+    public void setuId(ObjectId uId) {
+        this.uId = uId;
+    }
+
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
 		if(expressList == null){
 			return "";

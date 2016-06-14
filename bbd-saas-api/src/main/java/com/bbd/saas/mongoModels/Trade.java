@@ -34,6 +34,11 @@ public class Trade implements Serializable {
     private Date dateCatched;      //接单时间
     private Date dateGeted;      //取件时间
 
+    @Transient
+    private User embrace;//揽件员
+
+
+
     public ObjectId getId() {
         return id;
     }
@@ -137,4 +142,13 @@ public class Trade implements Serializable {
     public void setDateGeted(Date dateGeted) {
         this.dateGeted = dateGeted;
     }
+
+    public User getEmbrace() {
+        return embrace;
+    }
+
+    public void setEmbrace(User embrace) {
+        this.embrace = embrace;
+    }
+
 }

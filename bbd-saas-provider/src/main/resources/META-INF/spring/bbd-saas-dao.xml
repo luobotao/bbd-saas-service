@@ -34,6 +34,10 @@
     <bean id="returnReasonDao" class="com.bbd.saas.dao.mongo.ReturnReasonDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- orderParcel DAO-->
+    <bean id="tradeDao" class="com.bbd.saas.dao.mongo.TradeDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->
