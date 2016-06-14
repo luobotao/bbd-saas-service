@@ -1,6 +1,4 @@
 package com.bbd.saas.api.impl.mongo;
-
-
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.TradeDao;
@@ -12,7 +10,6 @@ import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-
 import java.util.*;
 
 /**

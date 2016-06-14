@@ -100,7 +100,6 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         return update(query,ops);
     }
 
-
     /**
      * 根据商户订单id删除
      * @param tradeId 商户订单id

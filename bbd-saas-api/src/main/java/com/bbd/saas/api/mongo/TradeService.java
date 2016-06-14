@@ -5,7 +5,6 @@ import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.mongodb.morphia.Key;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

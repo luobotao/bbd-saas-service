@@ -88,6 +88,7 @@ public class Numbers {
 			return result.intValue()+1;
 		}
 	}
+
 	public static void main(String[] args) {
 		System.out.println(divToPageNum(30, 10));
 	}
