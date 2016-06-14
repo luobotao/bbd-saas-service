@@ -16,5 +16,5 @@ public class TradeQueryVO implements Serializable {
 	public String tradeNoLike;//商户订单号包含tradeNoLike
 	public String dateAddBetween;//下单时间
 	public Set tradeNoSet;//商户订单号
-	public TradeStatus tradeStatus;//商户订单状态
+	public Integer tradeStatus;//商户订单状态
 }

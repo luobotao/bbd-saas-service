@@ -5,7 +5,6 @@ import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.Query;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +58,7 @@ public interface TradeService {
      * @param tradeId 商户订单名id
      * @param tradeStatus 订单状态
      */
-    void updateTradeStatusByTradeId(String tradeId, String tradeStatus);
+    void updateTradeStatusByTradeId(String tradeId, TradeStatus tradeStatus);
 
     /**
      * 根据商户订单id删除

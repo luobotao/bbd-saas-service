@@ -53,8 +53,8 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(tradeQueryVO.tradeNoSet != null && tradeQueryVO.tradeNoSet.size() > 0){//订单号集合
             query.filter("tradeNo in", tradeQueryVO.tradeNoSet);
         }
-        if(tradeQueryVO.tradeStatus != null){//商户订单状态
-            query.filter("tradeStatus", tradeQueryVO.tradeStatus);
+        if(tradeQueryVO.tradeStatus != null && tradeQueryVO.tradeStatus != -1){//商户订单状态
+            query.filter("tradeStatus", TradeStatus.status2Obj(tradeQueryVO.tradeStatus));
         }
         return  query;
     }
@@ -93,10 +93,10 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
      * @param tradeId 商户订单名id
      * @param tradeStatus 订单状态
      */
-    public UpdateResults updateTradeStatusByTradeId(String tradeId, String tradeStatus) {
+    public UpdateResults updateTradeStatusByTradeId(String tradeId, TradeStatus tradeStatus) {
         Query<Trade> query = createQuery();
         query.filter("_id", new ObjectId(tradeId));
-        UpdateOperations<Trade> ops = createUpdateOperations().set("tradeStatus",tradeStatus).set("dateUpd",new Date());
+        UpdateOperations<Trade> ops = createUpdateOperations().set("tradeStatus", tradeStatus).set("dateUpd",new Date());
         return update(query,ops);
     }
 
@@ -113,7 +113,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
     public long selectCountByUidAndStatus(String uId, TradeStatus tradeStatus){
         Query<Trade> query = createQuery();
         if(StringUtils.isNotBlank(uId)){//用户ID
-            query.filter("uId", uId);
+            query.filter("uId", new ObjectId(uId));
         }
         if(tradeStatus != null){//商户订单状态
             query.filter("tradeStatus", tradeStatus);

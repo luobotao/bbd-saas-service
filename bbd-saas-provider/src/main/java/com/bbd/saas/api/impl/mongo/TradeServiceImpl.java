@@ -3,7 +3,6 @@ package com.bbd.saas.api.impl.mongo;
 
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.dao.mongo.OrderDao;
-import com.bbd.saas.dao.mongo.SiteDao;
 import com.bbd.saas.dao.mongo.TradeDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.TradeStatus;
@@ -139,7 +138,7 @@ public class TradeServiceImpl implements TradeService {
      * @param tradeStatus 订单状态
      */
     @Override
-    public void updateTradeStatusByTradeId(String tradeId, String tradeStatus) {
+    public void updateTradeStatusByTradeId(String tradeId, TradeStatus tradeStatus) {
         tradeDao.updateTradeStatusByTradeId(tradeId, tradeStatus);
     }
 
