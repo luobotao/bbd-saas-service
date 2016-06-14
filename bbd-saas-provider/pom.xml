@@ -31,6 +31,22 @@
             <artifactId>spring-morphia-plugin</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- bbd poi-->
+        <dependency>
+            <groupId>com.bbd</groupId>
+            <artifactId>bbd-poi-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>logback-core</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!--dubbo-->
         <dependency>
             <groupId>com.alibaba</groupId>
