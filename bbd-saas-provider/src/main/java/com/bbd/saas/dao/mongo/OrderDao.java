@@ -3,6 +3,7 @@ package com.bbd.saas.dao.mongo;
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.PrintStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
@@ -426,5 +427,27 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.filter("expressStatus <>",expressStatus);
         }
         return count(query);
+    }
+
+    public Order findByOrderNo(String orderNo) {
+        Query<Order> query = createQuery();
+        query.filter("orderNo",orderNo);
+        return findOne(query);
+    }
+
+    public UpdateResults updateOrderWithAreaCode(String orderNo, String areaCode, String areaRemark, PrintStatus printStatus) {
+        Query<Order> query = createQuery();
+        query.filter("orderNo",orderNo);
+        UpdateOperations<Order> ops = createUpdateOperations().set("areaCode",areaCode).set("areaRemark",areaRemark).set("printStatus",printStatus);
+        ops.set("dateUpd",new Date());
+        return update(query,ops);
+    }
+
+    public UpdateResults updateOrderWithMailNum(Order order) {
+        Query<Order> query = createQuery();
+        query.filter("orderNo",order.getOrderNo());
+        UpdateOperations<Order> ops = createUpdateOperations().set("mailNum",order.getMailNum());
+        ops.set("dateUpd",new Date());
+        return update(query,ops);
     }
 }

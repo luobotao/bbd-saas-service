@@ -36,6 +36,13 @@ public interface OrderService {
 	Order findOneByNewMailNum(String newMailNum);
 
 	/**
+	 * 根据订单号查询订单
+	 * @param orderNO
+	 * @return
+	 */
+	Order findByOrderNo(String orderNO);
+
+	/**
 	 * 带查询条件去检索订单
 	 * @param pageModel 分页对象
 	 * @param orderQueryVO 查询条件
@@ -118,4 +125,12 @@ public interface OrderService {
 
 	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus);
 
+	/**
+	 * 订单导入完成，生成区域码和运单号
+	 * @param order
+	 * @return
+     */
+	public Order afterImportDealWithOrder(Order order);
+	public Order reduceMailNumWithOrder(Order order);
+	public Order reduceAreaCodeWithOrder(Order order);
 }
