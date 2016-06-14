@@ -48,7 +48,7 @@ public class User implements Serializable {
     private String staffid;//员工id
     private int postmanuserId;//postmanuser的主键id
     private String companyId;      //所属公司ID
-    private Integer balanceId;      //资金账号ID
+    private Integer balanceId;      //资金账号ID(针对商户有用)
     @Transient
     private String idStr;//id.toString();
 

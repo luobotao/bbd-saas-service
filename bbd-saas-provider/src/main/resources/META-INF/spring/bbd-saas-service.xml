@@ -63,6 +63,12 @@
             <ref bean="returnReasonDao"/>
         </property>
     </bean>
+    <!-- trade Service-->
+    <bean id="tradeService" class="com.bbd.saas.api.impl.mongo.TradeServiceImpl">
+        <property name="tradeDao">
+            <ref bean="tradeDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->

@@ -116,14 +116,24 @@ public interface OrderService {
 	 * @return 订单集合
 	 */
 	public List<Order> getTodayUpdateOrdersBySite(String areaCode);
-	/**
-	 * 根据站点编码获取该站点历史未到站订单数目 -- 暂时没有用到
-	 * @param areaCode 站点编号
-	 * @return 订单数目
-	 */
-	public long getNoArriveHis(String areaCode);
 
 	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus);
+
+	/**
+	 * 分页查询运单号/手机号/姓名/地址四个字段中包含关键字（keyword）的运单
+	 * @param pageIndex 当前页
+	 * @param keyword 搜索关键字
+	 * @return 分页对象（分页信息和数据）
+	 */
+	public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, String uId, String keyword);
+
+	/**
+	 * 根据商品订单号查询该订单下包含的运单数目
+	 * @param tradeNo //商户订单号(我们自己生成的支付订单号)
+	 * @return 订单下包含的运单数目
+     */
+	public long findCountByTradeNo(String tradeNo);
+
 
 	/**
 	 * 订单导入完成，生成区域码和运单号

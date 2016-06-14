@@ -144,7 +144,6 @@ public class OrderServiceImpl implements OrderService {
 		return orderDao.save(order);
 	}
 
-
 	/**
 	 * 根据站点编码获取该站点订单数据
 	 * @param areaCode
@@ -205,13 +204,20 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public long getNoArriveHis(String areaCode) {
-		return orderDao.getNoArriveHis(areaCode);
+	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
+		return orderDao.selectCountByMailNumsAndExpressStatus(idList, expressStatus);
 	}
 
 	@Override
-	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
-		return orderDao.selectCountByMailNumsAndExpressStatus(idList, expressStatus);
+	public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, String uId, String keyword) {
+		PageModel<Order> pageModel = new PageModel<Order>();
+		pageModel.setPageNo(pageIndex);
+		return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
+	}
+
+	@Override
+	public long findCountByTradeNo(String tradeNo) {
+		return orderDao.findCountByTradeNo(tradeNo);
 	}
 
 	@Override

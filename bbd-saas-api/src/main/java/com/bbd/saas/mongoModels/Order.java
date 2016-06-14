@@ -36,7 +36,7 @@ public class Order implements Serializable {
     private Sender sender;
     @Embedded
     private Reciever reciever;
-    private String userId;
+    private String userId;//派单时的小件员ID
     private Srcs src;
     private OrderStatus orderStatus;
     private ExpressStatus expressStatus;
@@ -59,6 +59,9 @@ public class Order implements Serializable {
     private Date dateUpd;//
     private SynsFlag synsFlag;//与易普同步状态0未同步 1已同步 2同步失败
     private TransportStatus transportStatus;//运输状态
+    private String tradeNo;//商户订单号(我们自己生成的支付订单号)
+    private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
+
     @Transient
     private String parcelCode;
     @Transient
@@ -341,6 +344,22 @@ public class Order implements Serializable {
 
     public void setRtnRemark(String rtnRemark) {
         this.rtnRemark = rtnRemark;
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
+    }
+
+    public ObjectId getuId() {
+        return uId;
+    }
+
+    public void setuId(ObjectId uId) {
+        this.uId = uId;
     }
 
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{

@@ -3,13 +3,14 @@ package com.bbd.saas.enums;
 import com.bbd.saas.utils.Htmls;
 
 /**
- * 包裹到站状态
+ * 用户角色
  * Created by liyanlei on 2016/4/11.
  */
 public enum UserRole {
 	SITEMASTER(0, "站长"),
     SENDMEM(1, "派件员"),
-    COMPANY(2, "公司管理员");
+    COMPANY(2, "公司管理员"),
+    MERCHANT(3,"商户");
     private int status;
     private String message;
     private UserRole(int status, String message) {
