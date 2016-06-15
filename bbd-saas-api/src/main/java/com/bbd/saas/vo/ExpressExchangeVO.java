@@ -1,5 +1,6 @@
 package com.bbd.saas.vo;
 
+import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
@@ -22,11 +23,10 @@ public class ExpressExchangeVO implements Serializable{
 	public String typ;                                  //操作类型
 	public String pushInfo;                             //推送内容，json字符串
 	public String requestStr;                           //请求串
-	public String responseStr;                          //返回结果串
-	public String status;                               //操作状态
+	public ExpressExchangeStatus status;                               //操作状态	//waiting pushing finish
 	public String memo;                                 //备注
-	public String pushCount;                            //推送次数
-	public String timeInterval;                         //间隔时间
-	public String dateAdd;                              //添加时间
-	public String dateUpd;                              //更新时间
+	public int pushCount;                            //推送次数
+	public int timeInterval;                         //间隔时间
+	public Date dateAdd;                              //添加时间
+	public Date dateUpd;                              //更新时间
 }
