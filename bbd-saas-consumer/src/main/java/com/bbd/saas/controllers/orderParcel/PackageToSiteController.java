@@ -4,13 +4,16 @@ import com.bbd.drivers.api.mongo.OrderTrackService;
 import com.bbd.drivers.enums.TransStatus;
 import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.ParcelStatus;
+import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
@@ -51,7 +54,8 @@ public class PackageToSiteController {
 	AdminService adminService;
 	@Autowired
 	IncomeService incomeService;
-
+	@Autowired
+	ExpressExchangeService expressExchangeService;
 
 	/**
 	 * 根据运单号检查是否存在此订单
@@ -173,7 +177,7 @@ public class PackageToSiteController {
 	 * @param order
 	 * @param user
 	 */
-	public void orderToSite(Order order,User user) {
+	public void orderToSite(Order order,User user ) {
 		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
 		order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
 		Express express = new Express();
@@ -189,6 +193,16 @@ public class PackageToSiteController {
 		order.setExpresses(expressList);
 		order.setDateUpd(new Date());
 		orderService.save(order);
+
+
+		ExpressExchange expressExchange=new ExpressExchange();
+		expressExchange.setOperator(user.getRealName());
+		expressExchange.setStatus(ExpressExchangeStatus.waiting);
+		expressExchange.setPhone(user.getLoginName());
+		expressExchange.setOrder(order);
+		expressExchange.setDateAdd(new Date());
+		expressExchangeService.save(expressExchange);
+
 		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
 		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态

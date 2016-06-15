@@ -78,6 +78,12 @@
             <ref bean="tradeDao"/>
         </property>
     </bean>
+    <!-- expressExchangeService Service-->
+    <bean id="expressExchangeService" class="com.bbd.saas.api.impl.mongo.ExpressExchangeServiceImpl">
+        <property name="expressExchangeDao">
+            <ref bean="expressExchangeDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->

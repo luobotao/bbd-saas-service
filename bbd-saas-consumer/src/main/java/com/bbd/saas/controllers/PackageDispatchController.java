@@ -1,13 +1,16 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
@@ -47,7 +50,8 @@ public class PackageDispatchController {
 	AdminService adminService;
 	@Autowired
 	PostDeliveryService postDeliveryService;
-	
+	@Autowired
+	ExpressExchangeService expressExchangeService;
 	/**
 	 * Description: 跳转到包裹分派页面
 	 * @param pageIndex 当前页
@@ -129,6 +133,15 @@ public class PackageDispatchController {
 			User user = adminService.get(UserSession.get(request));
 			//查询运单信息
 			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
+
+			ExpressExchange expressExchange=new ExpressExchange();
+			expressExchange.setOperator(user.getRealName());
+			expressExchange.setStatus(ExpressExchangeStatus.waiting);
+			expressExchange.setPhone(user.getLoginName());
+			expressExchange.setOrder(order);
+			expressExchange.setDateAdd(new Date());
+			expressExchangeService.save(expressExchange);
+
 			if(order == null){//运单不存在,与站点无关
 				map.put("operFlag", 0);//0:运单号不存在
 			}else{//运单存在
