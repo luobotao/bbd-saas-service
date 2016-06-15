@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.client.MongoCollection;
 import org.apache.commons.lang.StringUtils;
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateResults;
@@ -209,7 +210,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, String uId, String keyword) {
+	public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, ObjectId uId, String keyword) {
 		PageModel<Order> pageModel = new PageModel<Order>();
 		pageModel.setPageNo(pageIndex);
 		return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);

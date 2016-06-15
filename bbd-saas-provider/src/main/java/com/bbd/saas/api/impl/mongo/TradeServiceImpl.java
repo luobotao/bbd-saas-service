@@ -59,6 +59,18 @@ public class TradeServiceImpl implements TradeService {
 
     }
 
+    @Override
+    public Trade findOneByTradeNo(String tradeNo) {
+        //订单信息
+        Trade trade = tradeDao.findOne("tradeNo", tradeNo);
+        if (trade == null){
+            trade = new Trade();
+        }
+        //运单数量（预计或者实取）
+        trade.setTotalMail(orderDao.findCountByTradeNo(tradeNo));
+        return trade;
+    }
+
     /**
      * 根据查询条件和订单状态获取商户订单列表信息
      * @param pageIndex 当前页
@@ -82,11 +94,16 @@ public class TradeServiceImpl implements TradeService {
         tradeQueryVO.tradeNoSet = tradeNoSet;
         tradeQueryVO.tradeNoLike = null;
         PageModel<Trade> tradePageModel = tradeDao.findTradePage(pageIndex, tradeQueryVO);
-        //设置揽件人
+        //设置快件数量和揽件人、状态
         List<Trade> tradeList = tradePageModel.getDatas();
         if (tradeList != null && tradeList.size() > 0){
             for (Trade trade : tradeList){
+                //快件数据量
+                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
+                //揽件人
                 trade.setEmbrace(userDao.findOne("_id", trade.getEmbraceId()));
+                //状态
+                trade.setStatusMsg(trade.getTradeStatus().getMessage());
             }
         }
         return tradePageModel;
@@ -162,7 +179,7 @@ public class TradeServiceImpl implements TradeService {
      * @return {WAITPAY:待支付；WAITCATCH：待接单；WAITGET:待取件； GETED:已取件；CANCELED:已取消}
      */
     @Override
-    public Map<String, Long> findDiffStatusCountByUid(String uId) {
+    public Map<String, Long> findDiffStatusCountByUid(ObjectId uId) {
         Map<String, Long> map = new HashMap<String, Long>();
         //WAITPAY:待支付
         map.put("WAITPAY", tradeDao.selectCountByUidAndStatus(uId, TradeStatus.WAITPAY));
@@ -181,7 +198,7 @@ public class TradeServiceImpl implements TradeService {
      * @return 订单数量
      */
     @Override
-    public long findCountByUidAndStatus(String uId, TradeStatus tradeStatus) {
+    public long findCountByUidAndStatus(ObjectId uId, TradeStatus tradeStatus) {
         return tradeDao.selectCountByUidAndStatus(uId, tradeStatus);
     }
 }
