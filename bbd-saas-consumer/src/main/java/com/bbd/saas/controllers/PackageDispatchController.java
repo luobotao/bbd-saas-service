@@ -135,7 +135,7 @@ public class PackageDispatchController {
 			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
 
 			ExpressExchange expressExchange=new ExpressExchange();
-			expressExchange.setOperator(user.getRealName());
+			expressExchange.setOperator(user.getLoginName());
 			expressExchange.setStatus(ExpressExchangeStatus.waiting);
 			expressExchange.setPhone(user.getLoginName());
 			expressExchange.setOrder(order);
