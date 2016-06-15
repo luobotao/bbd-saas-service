@@ -1,7 +1,6 @@
 package com.bbd.saas.api.impl.mongo;
 
 
-import com.bbd.poi.api.SitePoiApi;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.dao.mongo.OrderDao;
@@ -23,15 +22,12 @@ import com.bbd.saas.vo.Reciever;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
-import com.mongodb.client.MongoCollection;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
-import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
@@ -46,9 +42,9 @@ public class OrderServiceImpl implements OrderService {
     private OrderNumDao orderNumDao;
     private OrderParcelDao orderParcelDao;
     private UserDao userDao;
-	@Autowired
-	private SitePoiApi sitePoiApi;
-	@Autowired
+	//@Autowired
+	//private SitePoiApi sitePoiApi;
+	//@Autowired
 	private SiteService siteService;
 
     public UserDao getUserDao() {
@@ -72,6 +68,22 @@ public class OrderServiceImpl implements OrderService {
     public void setOrderDao(OrderDao orderDao) {
         this.orderDao = orderDao;
     }
+
+	public OrderNumDao getOrderNumDao() {
+		return orderNumDao;
+	}
+
+	public void setOrderNumDao(OrderNumDao orderNumDao) {
+		this.orderNumDao = orderNumDao;
+	}
+
+	public SiteService getSiteService() {
+		return siteService;
+	}
+
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
+	}
 
 	/**
 	 * 带查询条件去检索订单
@@ -247,7 +259,8 @@ public class OrderServiceImpl implements OrderService {
 				Reciever reciever = order.getReciever();
 				String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
 				address = StringUtil.filterString(address);
-				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
+				//List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
+				List<String> areaCodeList = null;
 				logger.info(address);
 				logger.info(areaCodeList.size()+"");
 				if(areaCodeList!=null && areaCodeList.size()>0){

@@ -163,6 +163,7 @@ public class UserManageController {
 			Date currDate = new Date();
 			postmanUser = getPostManUser(currUser, userForm, currDate);
 			//保存成功，把数据同步到mysql中的postmanUser表中
+			postmanUser.setSiteid(currUser.getSite().getId().toString());
 			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
 			if(postmanuserId > 0){//保存成功
 				User user = getUserByUserForm(currUser, userForm, currDate);

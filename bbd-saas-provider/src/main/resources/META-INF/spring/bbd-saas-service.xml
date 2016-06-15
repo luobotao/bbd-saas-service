@@ -20,11 +20,20 @@
         <property name="orderDao">
             <ref bean="orderDao"/>
         </property>
+        <property name="orderNumDao">
+            <ref bean="orderNumDao"/>
+        </property>
         <property name="orderParcelDao">
             <ref bean="orderParcelDao"/>
         </property>
         <property name="userDao">
             <ref bean="userDao"/>
+        </property>
+        <!--<property name="sitePoiApi">
+            <ref bean="sitePoiApi"/>
+        </property>-->
+        <property name="siteService">
+            <ref bean="siteService"/>
         </property>
     </bean>
     <!-- order Service-->

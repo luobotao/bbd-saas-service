@@ -26,6 +26,7 @@
         <result column="postrole" property="postrole" jdbcType="INTEGER"/>
         <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
         <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+        <result column="siteid" property="siteid" jdbcType="VARCHAR"/>
     </resultMap>
     
     <sql id="baseColumnList">
@@ -52,7 +53,8 @@
         poststatus,
         postrole,
         date_new,
-        date_upd
+        date_upd,
+        siteid
     </sql>
     
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.PostmanUser">
@@ -83,7 +85,8 @@
         #{poststatus,jdbcType=INTEGER},
         #{postrole,jdbcType=INTEGER},  
         #{dateNew,jdbcType=TIMESTAMP},
-        #{dateUpd,jdbcType=TIMESTAMP}
+        #{dateUpd,jdbcType=TIMESTAMP},
+        #{siteid,jdbcType=VARCHAR}
         )
     </insert>
     

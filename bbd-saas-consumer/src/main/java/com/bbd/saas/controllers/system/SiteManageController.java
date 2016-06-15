@@ -236,6 +236,7 @@ public class SiteManageController {
 			postmanUser.setPhone(oldPhone);
 			userMysqlService.updateByPhone(postmanUser);
 		}else{//新增
+			postmanUser.setSiteid(user.getSite().getId().toString());
 			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
 			user.setPostmanuserId(postmanuserId);
 		}
@@ -334,6 +335,7 @@ public class SiteManageController {
 			if(postmanUser.getId()!=null){//修改
 				userMysqlService.updateByPhone(postmanUser);
 			}else{//新增
+				postmanUser.setSiteid(user.getSite().getId().toString());
 				int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
 				user.setPostmanuserId(postmanuserId);
 			}
