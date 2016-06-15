@@ -26,7 +26,7 @@ public class ExpressExchange implements Serializable {
     public String pushInfo;                             //推送内容，json字符串
     public String requestStr;                           //请求串
     public List<String> responseStr;                    //返回结果串
-    public ExpressExchangeStatus status;                //操作状态
+    public ExpressExchangeStatus status;                //操作状态      （初始必填）
     public List<String> memo;                           //备注
     public int pushCount;                               //推送次数
     public int timeInterval;                            //间隔时间
@@ -105,11 +105,19 @@ public class ExpressExchange implements Serializable {
         this.status = status;
     }
 
-    public String getMemo() {
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public List<String> getMemo() {
         return memo;
     }
 
-    public void setMemo(String memo) {
+    public void setMemo(List<String> memo) {
         this.memo = memo;
     }
 
