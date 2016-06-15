@@ -20,11 +20,20 @@
         <property name="orderDao">
             <ref bean="orderDao"/>
         </property>
+        <property name="orderNumDao">
+            <ref bean="orderNumDao"/>
+        </property>
         <property name="orderParcelDao">
             <ref bean="orderParcelDao"/>
         </property>
         <property name="userDao">
             <ref bean="userDao"/>
+        </property>
+        <!--<property name="sitePoiApi">
+            <ref bean="sitePoiApi"/>
+        </property>-->
+        <property name="siteService">
+            <ref bean="siteService"/>
         </property>
     </bean>
     <!-- order Service-->
@@ -61,6 +70,12 @@
     <bean id="returnReasonService" class="com.bbd.saas.api.impl.mongo.ReturnReasonServiceImpl">
         <property name="returnReasonDao">
             <ref bean="returnReasonDao"/>
+        </property>
+    </bean>
+    <!-- trade Service-->
+    <bean id="tradeService" class="com.bbd.saas.api.impl.mongo.TradeServiceImpl">
+        <property name="tradeDao">
+            <ref bean="tradeDao"/>
         </property>
     </bean>
     <!--   end mongodb services    -->

@@ -14,6 +14,10 @@
     <bean id="orderDao" class="com.bbd.saas.dao.mongo.OrderDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- orderNum DAO-->
+    <bean id="orderNumDao" class="com.bbd.saas.dao.mongo.OrderNumDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
     <!-- user DAO-->
     <bean id="userDao" class="com.bbd.saas.dao.mongo.UserDao">
         <constructor-arg ref="datastore"/>
@@ -32,6 +36,10 @@
     </bean>
     <!-- ReturnReason DAO-->
     <bean id="returnReasonDao" class="com.bbd.saas.dao.mongo.ReturnReasonDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
+    <!-- orderParcel DAO-->
+    <bean id="tradeDao" class="com.bbd.saas.dao.mongo.TradeDao">
         <constructor-arg ref="datastore"/>
     </bean>
 	<!--  end mongodb daos  -->

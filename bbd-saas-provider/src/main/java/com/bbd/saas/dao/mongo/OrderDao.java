@@ -3,6 +3,7 @@ package com.bbd.saas.dao.mongo;
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.PrintStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
@@ -118,18 +119,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         orderNumVO.setArrived(count(queryArrive));//已到站
         return orderNumVO;
     }
-    /**
-     * 根据站点编码获取该站点历史未到站订单数目
-     * @param areaCode
-     * @return
-     */
-    public long getNoArriveHis(String areaCode) {
-        OrderNumVO orderNumVO = new OrderNumVO();
-        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
-        return count(query);//历史未到站
-    }
+
     /**
      * 更新订单状态
      * 此处需要再加上包裹下的订单的状态更新
@@ -427,4 +417,111 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         return count(query);
     }
+
+    public Order findByOrderNo(String orderNo) {
+        Query<Order> query = createQuery();
+        query.filter("orderNo",orderNo);
+        return findOne(query);
+    }
+
+    public UpdateResults updateOrderWithAreaCode(String orderNo, String areaCode, String areaRemark, PrintStatus printStatus) {
+        Query<Order> query = createQuery();
+        query.filter("orderNo",orderNo);
+        UpdateOperations<Order> ops = createUpdateOperations().set("areaCode",areaCode).set("areaRemark",areaRemark).set("printStatus",printStatus);
+        ops.set("dateUpd",new Date());
+        return update(query,ops);
+    }
+
+    public UpdateResults updateOrderWithMailNum(Order order) {
+        Query<Order> query = createQuery();
+        query.filter("orderNo",order.getOrderNo());
+        UpdateOperations<Order> ops = createUpdateOperations().set("mailNum",order.getMailNum());
+        ops.set("dateUpd",new Date());
+        return update(query,ops);
+    }
+    /**
+     * 分页查询运单号/手机号/姓名/地址四个字段中包含关键字（keyword）的运单
+     * @param pageModel 分页对象（当前页和每页条数）
+     * @param tradeNo //商户订单号
+     * @param uId //用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
+     * @param keyword 查询关键词，对运单号/手机号/姓名/地址四个字段进行查询
+     * @return 分页对象（当前页、每页条数、数据）
+     */
+    public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, ObjectId uId, String keyword) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        //商户订单号(我们自己生成的支付订单号)
+        if(StringUtils.isNotBlank(tradeNo)){
+            query.filter("tradeNo", tradeNo);
+        }
+        //用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
+        if(uId != null){
+            query.filter("uId", uId);
+        }
+        if(StringUtils.isNotBlank(keyword)){
+            query.or(query.criteria("mailNum").containsIgnoreCase(keyword),
+                    query.criteria("reciever.phone").containsIgnoreCase(keyword),
+                    query.criteria("reciever.name").containsIgnoreCase(keyword),
+                    query.criteria("reciever.province").containsIgnoreCase(keyword),
+                    query.criteria("reciever.city").containsIgnoreCase(keyword),
+                    query.criteria("reciever.area").containsIgnoreCase(keyword),
+                    query.criteria("reciever.address").containsIgnoreCase(keyword));
+        }
+
+        //设置排序
+        query.order("-dateUpd");
+        //分页信息
+        query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
+        //查询数据
+        List<Order> orderList = find(query).asList();
+        pageModel.setDatas(orderList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
+    }
+    /**
+     * 根据商品订单号查询该订单下包含的运单数目
+     * @param tradeNo //商户订单号(我们自己生成的支付订单号)
+     * @return 订单下包含的运单数目
+     */
+    public long findCountByTradeNo(String tradeNo) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        //商户订单号(我们自己生成的支付订单号)
+        if(StringUtils.isNotBlank(tradeNo)){
+            query.filter("tradeNo", tradeNo);
+        }
+        return count(query);
+    }
+
+    /**
+     * 分页查询手机号/姓名/地址三个字段中包含关键字（keyword）的运单
+     * @param uId //用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
+     * @param tradeNo //商户订单号 ||运单号
+     * @param keyword 查询关键词，对手机号/姓名/地址三个字段进行查询
+     * @return 运单列表数据
+     */
+    public List<Order> findOrderList(ObjectId uId, String tradeNo, String keyword) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        //用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
+        if(uId != null){
+            query.filter("uId", uId);
+        }
+        //商户订单号或者运单号
+        if(StringUtils.isNotBlank(tradeNo)){
+            query.or(query.criteria("tradeNo").containsIgnoreCase(tradeNo),
+                    query.criteria("mailNum").containsIgnoreCase(tradeNo));
+        }
+        if(StringUtils.isNotBlank(keyword)){
+            query.or(query.criteria("reciever.phone").containsIgnoreCase(keyword),
+                    query.criteria("reciever.name").containsIgnoreCase(keyword),
+                    query.criteria("reciever.province").containsIgnoreCase(keyword),
+                    query.criteria("reciever.city").containsIgnoreCase(keyword),
+                    query.criteria("reciever.area").containsIgnoreCase(keyword),
+                    query.criteria("reciever.address").containsIgnoreCase(keyword));
+        }
+        //查询数据
+        return find(query).asList();
+    }
+
 }

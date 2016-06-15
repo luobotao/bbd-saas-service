@@ -34,6 +34,15 @@ public class Trade implements Serializable {
     private Date dateCatched;      //接单时间
     private Date dateGeted;      //取件时间
 
+    @Transient
+    private User embrace;//揽件员
+    @Transient
+    private long totalMail;//快件数量
+    @Transient
+    private String statusMsg;//商户订单状态 -- tradeStatus.message
+
+
+
     public ObjectId getId() {
         return id;
     }
@@ -136,5 +145,29 @@ public class Trade implements Serializable {
 
     public void setDateGeted(Date dateGeted) {
         this.dateGeted = dateGeted;
+    }
+
+    public User getEmbrace() {
+        return embrace;
+    }
+
+    public void setEmbrace(User embrace) {
+        this.embrace = embrace;
+    }
+
+    public long getTotalMail() {
+        return totalMail;
+    }
+
+    public void setTotalMail(long totalMail) {
+        this.totalMail = totalMail;
+    }
+
+    public String getStatusMsg() {
+        return statusMsg;
+    }
+
+    public void setStatusMsg(String statusMsg) {
+        this.statusMsg = statusMsg;
     }
 }

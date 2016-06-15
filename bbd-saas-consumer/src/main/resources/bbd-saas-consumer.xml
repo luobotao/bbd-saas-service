@@ -11,7 +11,7 @@
 	<dubbo:consumer check="false" timeout="30000"></dubbo:consumer>
 
     <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
-   <!-- <dubbo:registry address="zookeeper://10.173.0.222:2181"/>-->
+    <!-- <dubbo:registry address="zookeeper://10.173.0.222:2181"/>-->
     <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
 
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.mongo.AdminUserService"/>
@@ -23,7 +23,7 @@
     <dubbo:reference id="siteService" interface="com.bbd.saas.api.mongo.SiteService" />
     <!--orderPacel Service-->
     <dubbo:reference id="orderParcelService" interface="com.bbd.saas.api.mongo.OrderParcelService"/>
-    <!--orderPacel Service-->
+    <!--sitePoiApi Service-->
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
     <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />
     <dubbo:reference id="geo" interface="com.bbd.poi.api.Geo" />
@@ -33,6 +33,8 @@
     <dubbo:reference id="orderTrackService" interface="com.bbd.drivers.api.mongo.OrderTrackService" />
     <!--ReturnReason Service-->
     <dubbo:reference id="returnReasonService" interface="com.bbd.saas.api.mongo.ReturnReasonService" />
+    <!--orderPacel Service-->
+    <dubbo:reference id="tradeService" interface="com.bbd.saas.api.mongo.TradeService"/>
 
     <!--start mysql services-->
     <!--<dubbo:reference id="orderMysqlService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>-->

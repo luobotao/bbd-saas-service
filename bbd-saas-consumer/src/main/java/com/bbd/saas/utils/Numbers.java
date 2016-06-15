@@ -88,6 +88,7 @@ public class Numbers {
 			return result.intValue()+1;
 		}
 	}
+
 	public static void main(String[] args) {
 		System.out.println(divToPageNum(30, 10));
 	}
@@ -105,8 +106,8 @@ public class Numbers {
 	}
 	/**
 	 * 数字为空时替换成指定数字
-	 * @param oldString
-	 * @param newString
+	 * @param num
+	 * @param defaultNum
 	 * @return
 	 */
 	public static final Integer defaultIfNull(Integer num,Integer defaultNum){

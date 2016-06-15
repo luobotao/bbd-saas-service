@@ -34,6 +34,7 @@ public class PostmanUser implements Serializable {
 
 	private Date dateNew;
 	private Date dateUpd;
+	private String siteid;
 
 	public Integer getId() {
 		return id;
@@ -226,5 +227,12 @@ public class PostmanUser implements Serializable {
 	public void setSpreadticket(String spreadticket) {
 		this.spreadticket = spreadticket;
 	}
-	
+
+	public String getSiteid() {
+		return siteid;
+	}
+
+	public void setSiteid(String siteid) {
+		this.siteid = siteid;
+	}
 }
