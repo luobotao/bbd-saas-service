@@ -447,7 +447,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param keyword 查询关键词，对运单号/手机号/姓名/地址四个字段进行查询
      * @return 分页对象（当前页、每页条数、数据）
      */
-    public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, String uId, String keyword) {
+    public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, ObjectId uId, String keyword) {
         //创建查询条件
         Query<Order> query = createQuery();
         //商户订单号(我们自己生成的支付订单号)
@@ -455,8 +455,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.filter("tradeNo", tradeNo);
         }
         //用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
-        if(StringUtils.isNotBlank(uId)){
-            query.filter("uId", new ObjectId(uId));
+        if(uId != null){
+            query.filter("uId", uId);
         }
         if(StringUtils.isNotBlank(keyword)){
             query.or(query.criteria("mailNum").containsIgnoreCase(keyword),
@@ -500,12 +500,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param keyword 查询关键词，对手机号/姓名/地址三个字段进行查询
      * @return 运单列表数据
      */
-    public List<Order> findOrderList(String uId, String tradeNo, String keyword) {
+    public List<Order> findOrderList(ObjectId uId, String tradeNo, String keyword) {
         //创建查询条件
         Query<Order> query = createQuery();
         //用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
-        if(StringUtils.isNotBlank(uId)){
-            query.filter("uId", new ObjectId(uId));
+        if(uId != null){
+            query.filter("uId", uId);
         }
         //商户订单号或者运单号
         if(StringUtils.isNotBlank(tradeNo)){

@@ -4,6 +4,7 @@ import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.TradeQueryVO;
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,12 @@ public interface TradeService {
      * @return  商户订单
      */
     Trade findOne(String tradeId);
+    /**
+     * 根据tradeNo查询
+     * @param tradeNo  商户订单号
+     * @return  商户订单
+     */
+    Trade findOneByTradeNo(String tradeNo);
 
     /**
      * 根据查询条件和站点状态获取商户订单列表信息
@@ -73,13 +80,13 @@ public interface TradeService {
 
     /**
      * 根据用户Id获得该用户不同状态的订单的数量
-     * @return {paying:待支付；receiving：待接单；pickuping:待取件； pickuped:已取件；canceled:已取消}
+     * @return {WAITPAY:待支付；WAITCATCH：待接单；WAITGET:待取件； GETED:已取件；CANCELED:已取消}
      */
-    public Map<String, Long> findDiffStatusCountByUid(String uId);
+    public Map<String, Long> findDiffStatusCountByUid(ObjectId uId);
     /**
      * 根据用户Id、订单状态获取订单的数量
      * @return 订单数量
      */
-    public long findCountByUidAndStatus(String uId, TradeStatus tradeStatus);
+    public long findCountByUidAndStatus(ObjectId uId, TradeStatus tradeStatus);
 
 }
