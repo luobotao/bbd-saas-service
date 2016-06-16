@@ -77,6 +77,12 @@
         <property name="tradeDao">
             <ref bean="tradeDao"/>
         </property>
+        <property name="orderDao">
+            <ref bean="orderDao"/>
+        </property>
+        <property name="userDao">
+            <ref bean="userDao"/>
+        </property>
     </bean>
     <!-- expressExchangeService Service-->
     <bean id="expressExchangeService" class="com.bbd.saas.api.impl.mongo.ExpressExchangeServiceImpl">
