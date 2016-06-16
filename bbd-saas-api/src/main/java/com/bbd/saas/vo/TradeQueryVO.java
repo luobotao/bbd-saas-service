@@ -1,7 +1,6 @@
 package com.bbd.saas.vo;
 
 
-import com.bbd.saas.enums.TradeStatus;
 import org.bson.types.ObjectId;
 
 import java.io.Serializable;
@@ -15,7 +14,8 @@ public class TradeQueryVO implements Serializable {
 	public ObjectId uId;//用户ID
 	public String tradeNo;//商户订单号
 	public String tradeNoLike;//商户订单号包含tradeNoLike
-	public String dateAddBetween;//下单时间
+	public String dateAddStart; //下单时间范围 -- 开始
+	public String dateAddEnd; //下单时间范围 -- 结束
 	public Set tradeNoSet;//商户订单号
 	public Integer tradeStatus;//商户订单状态
 

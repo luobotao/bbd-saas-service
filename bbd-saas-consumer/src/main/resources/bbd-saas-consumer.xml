@@ -33,7 +33,7 @@
     <dubbo:reference id="orderTrackService" interface="com.bbd.drivers.api.mongo.OrderTrackService" />
     <!--ReturnReason Service-->
     <dubbo:reference id="returnReasonService" interface="com.bbd.saas.api.mongo.ReturnReasonService" />
-    <!--orderPacel Service-->
+    <!--trade Service-->
     <dubbo:reference id="tradeService" interface="com.bbd.saas.api.mongo.TradeService"/>
     <!--expressExchangeService Service-->
     <dubbo:reference id="expressExchangeService" interface="com.bbd.saas.api.mongo.ExpressExchangeService"/>

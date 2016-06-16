@@ -2,9 +2,7 @@ package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.TradeStatus;
-import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.Trade;
-import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.apache.commons.lang3.StringUtils;
@@ -45,10 +43,11 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(StringUtils.isNotBlank(tradeQueryVO.tradeNoLike)){//商户订单号模糊查询
             query.and(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.tradeNoLike));
         }
-        if(StringUtils.isNotBlank(tradeQueryVO.dateAddBetween)){//下单时间
-            DateBetween dateBetween = new DateBetween(tradeQueryVO.dateAddBetween);
-            query.filter("dateAdd >=", dateBetween.getStart());
-            query.filter("dateAdd <=", dateBetween.getEnd());
+        if(StringUtils.isNotBlank(tradeQueryVO.dateAddStart)){//下单时间
+            query.filter("dateAdd >=", tradeQueryVO.dateAddStart);
+        }
+        if(StringUtils.isNotBlank(tradeQueryVO.dateAddEnd)){//下单时间
+            query.filter("dateAdd <=", tradeQueryVO.dateAddEnd);
         }
         if(tradeQueryVO.tradeNoSet != null && tradeQueryVO.tradeNoSet.size() > 0){//订单号集合
             query.filter("tradeNo in", tradeQueryVO.tradeNoSet);
