@@ -9,10 +9,7 @@ import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.ExpressExchangeStatus;
-import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.ParcelStatus;
+import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
@@ -194,15 +191,17 @@ public class PackageToSiteController {
 		order.setDateUpd(new Date());
 		orderService.save(order);
 
-
-		ExpressExchange expressExchange=new ExpressExchange();
-		expressExchange.setOperator(user.getLoginName());
-		expressExchange.setStatus(ExpressExchangeStatus.waiting);
-		expressExchange.setPhone(user.getLoginName());
-		expressExchange.setOrder(order);
-		expressExchange.setDateAdd(new Date());
-		expressExchangeService.save(expressExchange);
-
+        if(null!=order){
+		if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
+			ExpressExchange expressExchange=new ExpressExchange();
+			expressExchange.setOperator(user.getRealName());
+			expressExchange.setStatus(ExpressExchangeStatus.waiting);
+			expressExchange.setPhone(user.getLoginName());
+			expressExchange.setOrder(order);
+			expressExchange.setDateAdd(new Date());
+			expressExchangeService.save(expressExchange);
+		}
+		}
 		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
 		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
