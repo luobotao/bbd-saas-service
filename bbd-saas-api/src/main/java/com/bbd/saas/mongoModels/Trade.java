@@ -6,6 +6,7 @@ import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * returnReason
@@ -33,6 +34,8 @@ public class Trade implements Serializable {
     private Date datePay;      //支付时间
     private Date dateCatched;      //接单时间
     private Date dateGeted;      //取件时间
+
+    private List<OrderSnap> orderSnaps; //订单快照，此交易单下的订单快照
 
     @Transient
     private User embrace;//揽件员
@@ -169,5 +172,13 @@ public class Trade implements Serializable {
 
     public void setStatusMsg(String statusMsg) {
         this.statusMsg = statusMsg;
+    }
+
+    public List<OrderSnap> getOrderSnaps() {
+        return orderSnaps;
+    }
+
+    public void setOrderSnaps(List<OrderSnap> orderSnaps) {
+        this.orderSnaps = orderSnaps;
     }
 }
