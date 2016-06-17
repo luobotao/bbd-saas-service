@@ -125,14 +125,6 @@ public class OrderSnap implements Serializable {
         this.orderPay = orderPay;
     }
 
-    public Date getDateMayArrive() {
-        return dateMayArrive;
-    }
-
-    public void setDateMayArrive(Date dateMayArrive) {
-        this.dateMayArrive = dateMayArrive;
-    }
-
     public SynsFlag getSynsFlag() {
         return synsFlag;
     }
