@@ -178,7 +178,7 @@ public class SiteServiceImpl implements SiteService {
         bbtAddressDao.updateMaxstationcodeByCode(maxstationcode, code);
     }
 
-    private String[] dealOrderWithProvince(String[] strs, String province) {
+    public String[] dealOrderWithProvince(String[] strs, String province) {
         List<BbtAddress> addresses = bbtAddressDao.getBbtAddressWithProvince(province);
         if (addresses != null && addresses.size() > 0) {
             for (BbtAddress erpAddress : addresses) {

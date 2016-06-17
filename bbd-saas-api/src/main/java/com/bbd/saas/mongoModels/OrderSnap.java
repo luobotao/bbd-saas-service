@@ -27,7 +27,7 @@ public class OrderSnap implements Serializable {
     private ObjectId id;
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
     private String orderNo;
-
+    private String mailNum;//运单号
     @Embedded
     private Sender sender;
     @Embedded
@@ -37,14 +37,12 @@ public class OrderSnap implements Serializable {
     private Date orderCreate;//订单创建时间
     private Date orderPay;     //订单支付时间
 
-    private Date dateMayArrive;//预计到站时间
     private SynsFlag synsFlag;//与Order同步状态0未同步 1已同步 2同步失败
-
+    private String errorRemark;//
     private Date dateAdd;
     private Date dateUpd;//
 
-    private String errorRemark;//
-    private String mailNum;//运单号
+
 
     public ObjectId getId() {
         return id;
