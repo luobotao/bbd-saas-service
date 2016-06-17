@@ -27,10 +27,7 @@ public class OrderSnap implements Serializable {
     private ObjectId id;
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
     private String orderNo;
-    private String mailNum;//运单号
-    private String areaName;
-    private String areaCode;//站点编码
-    private String areaRemark;//站点地址
+
     @Embedded
     private Sender sender;
     @Embedded
@@ -45,6 +42,9 @@ public class OrderSnap implements Serializable {
 
     private Date dateAdd;
     private Date dateUpd;//
+
+    private String errorRemark;//
+    private String mailNum;//运单号
 
     public ObjectId getId() {
         return id;
@@ -78,29 +78,6 @@ public class OrderSnap implements Serializable {
         this.mailNum = mailNum;
     }
 
-    public String getAreaName() {
-        return areaName;
-    }
-
-    public void setAreaName(String areaName) {
-        this.areaName = areaName;
-    }
-
-    public String getAreaCode() {
-        return areaCode;
-    }
-
-    public void setAreaCode(String areaCode) {
-        this.areaCode = areaCode;
-    }
-
-    public String getAreaRemark() {
-        return areaRemark;
-    }
-
-    public void setAreaRemark(String areaRemark) {
-        this.areaRemark = areaRemark;
-    }
 
     public Sender getSender() {
         return sender;
@@ -180,5 +157,13 @@ public class OrderSnap implements Serializable {
 
     public void setDateUpd(Date dateUpd) {
         this.dateUpd = dateUpd;
+    }
+
+    public String getErrorRemark() {
+        return errorRemark;
+    }
+
+    public void setErrorRemark(String errorRemark) {
+        this.errorRemark = errorRemark;
     }
 }
