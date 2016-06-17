@@ -1,14 +1,14 @@
 package com.bbd.saas.mongoModels;
 
-import com.bbd.saas.enums.*;
-import com.bbd.saas.vo.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.enums.SynsFlag;
+import com.bbd.saas.vo.Goods;
+import com.bbd.saas.vo.Reciever;
+import com.bbd.saas.vo.Sender;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +27,7 @@ public class OrderSnap implements Serializable {
     private ObjectId id;
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
     private String orderNo;
+    private String mailNum;//运单号
     private String areaName;
     private String areaCode;//站点编码
     private String areaRemark;//站点地址
@@ -67,6 +68,14 @@ public class OrderSnap implements Serializable {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public String getMailNum() {
+        return mailNum;
+    }
+
+    public void setMailNum(String mailNum) {
+        this.mailNum = mailNum;
     }
 
     public String getAreaName() {
