@@ -66,8 +66,12 @@ public class TradeServiceImpl implements TradeService {
         if (trade == null){
             trade = new Trade();
         }
-        //运单数量（预计或者实取）
-        trade.setTotalMail(orderDao.findCountByTradeNo(tradeNo));
+        //快件数量（预计或者实取）
+        if(trade.getTradeStatus() == TradeStatus.WAITPAY){//待支付，订单还没有进入order表
+            trade.setTotalMail(trade.getOrderSnaps().size());
+        } else { //从order表中查询，因为有移动端移除的情况 -- 接口实现待修改
+            trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
+        }
         return trade;
     }
 
@@ -130,7 +134,9 @@ public class TradeServiceImpl implements TradeService {
                     trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
                 }
                 //揽件人
-                trade.setEmbrace(userDao.findOne("_id", trade.getEmbraceId()));
+                if(trade.getEmbraceId() != null){
+                    trade.setEmbrace(userDao.findOne("_id", trade.getEmbraceId()));
+                }
                 //状态
                 trade.setStatusMsg(trade.getTradeStatus().getMessage());
             }

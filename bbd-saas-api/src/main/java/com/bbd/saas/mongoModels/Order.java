@@ -67,6 +67,8 @@ public class Order implements Serializable {
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message
     @Transient
+    private String orderStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message
+    @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
 
