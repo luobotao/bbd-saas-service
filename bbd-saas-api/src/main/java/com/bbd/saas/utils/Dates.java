@@ -97,6 +97,16 @@ public class Dates {
             return null;
         }
     }
+    public static Date strToDate(String str) {
+        return strToDate(str, ENGLISH_DATE_FORMAT);
+    }
+    public static Date strToDate(String str, SimpleDateFormat format) {
+        try {
+            return format.parse(str);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 
     public static Date parseDate(String source, String format) {
         if (StringUtils.isBlank(source) || StringUtils.isBlank(format)) {
