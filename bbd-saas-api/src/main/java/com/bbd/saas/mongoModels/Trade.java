@@ -167,7 +167,7 @@ public class Trade implements Serializable {
     }
 
     public String getStatusMsg() {
-        return statusMsg;
+        return this.tradeStatus != null ? this.tradeStatus.getMessage() : "";
     }
 
     public void setStatusMsg(String statusMsg) {
