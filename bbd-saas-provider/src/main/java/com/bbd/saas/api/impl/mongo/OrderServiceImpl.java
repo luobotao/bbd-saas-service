@@ -310,7 +310,7 @@ public class OrderServiceImpl implements OrderService {
 		OrderNum one = orderNumDao.findOrderNum();
 		long num = Long.parseLong(one.num);
 		one.num = (num + 1) + "";
-		orderNumDao.updateOrderNum(one.num,"");
+		orderNumDao.updateOrderNum("num",one.num);
 		return num;
 	}
 }
