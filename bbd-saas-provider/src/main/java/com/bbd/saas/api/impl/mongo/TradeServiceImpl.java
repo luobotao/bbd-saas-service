@@ -63,14 +63,13 @@ public class TradeServiceImpl implements TradeService {
     public Trade findOneByTradeNo(String tradeNo) {
         //订单信息
         Trade trade = tradeDao.findOne("tradeNo", tradeNo);
-        if (trade == null){
-            trade = new Trade();
-        }
-        //快件数量（预计或者实取）
-        if(trade.getTradeStatus() == TradeStatus.WAITPAY){//待支付，订单还没有进入order表
-            trade.setTotalMail(trade.getOrderSnaps().size());
-        } else { //从order表中查询，因为有移动端移除的情况 -- 接口实现待修改
-            trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
+        if (trade != null){
+            //快件数量（预计或者实取）
+            if(trade.getTradeStatus() == TradeStatus.WAITPAY){//待支付，订单还没有进入order表
+                trade.setTotalMail(trade.getOrderSnaps().size());
+            } else { //从order表中查询，因为有移动端移除的情况 -- 接口实现待修改
+                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
+            }
         }
         return trade;
     }
