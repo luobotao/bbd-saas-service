@@ -364,6 +364,14 @@ public class Order implements Serializable {
         this.uId = uId;
     }
 
+    public String getOrderStatusMsg() {
+        return orderStatusMsg;
+    }
+
+    public void setOrderStatusMsg(String orderStatusMsg) {
+        this.orderStatusMsg = orderStatusMsg;
+    }
+
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
 		if(expressList == null){
 			return "";

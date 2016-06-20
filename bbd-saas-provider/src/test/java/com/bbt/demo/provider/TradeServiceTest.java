@@ -8,6 +8,7 @@ import com.bbd.saas.mongoModels.OrderSnap;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.vo.Goods;
 import com.bbd.saas.vo.Reciever;
+import com.bbd.saas.vo.Sender;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,11 +72,11 @@ public class TradeServiceTest {
 		}
 		trade.setDateAdd(new Date());
 		trade.setDateUpd(new Date());
-		trade.setOrderSnaps(getOrderSnapList(format));
+		trade.setOrderSnaps(getOrderSnapList(format, trade.getTradeNo()));
 		return trade;
 	}
 
-	private List<OrderSnap > getOrderSnapList(SimpleDateFormat format){
+	private List<OrderSnap > getOrderSnapList(SimpleDateFormat format, String tradeNo){
 		List<OrderSnap > orderSnapList = new ArrayList<OrderSnap>();
 		//商品
 		String[] pro = new String[]{"红富士","花生","红薯","桃子","梨"};
@@ -120,16 +121,24 @@ public class TradeServiceTest {
 			reciever.setAddress(address[rand]);
 			orderSnap.setReciever(reciever);
 			orderSnapList.add(orderSnap);
-			saveOrderBySnap(orderSnap);
+			saveOrderBySnap(orderSnap, tradeNo);
 		}
 		return orderSnapList;
 	}
-	private  void saveOrderBySnap(OrderSnap orderSnap){
+	private  void saveOrderBySnap(OrderSnap orderSnap, String tradeNo){
 		Order order = new Order();
-		order.setuId(orderSnap.getuId());
+		order.setTradeNo(tradeNo);
+		order.setuId(new ObjectId("573c5f421e06c8275c08183c"));
 		order.setOrderNo(orderSnap.getOrderNo());
 		order.setMailNum(orderSnap.getMailNum());
-		order.setSender(orderSnap.getSender());
+		Sender sender = new Sender();
+		sender.setName("安迪");
+		sender.setPhone("13255555555");
+		sender.setProvince("北京");
+		sender.setCity("北京市");
+		sender.setArea("朝阳区");
+		sender.setAddress("欢乐颂小区");
+		order.setSender(sender);
 		order.setReciever(orderSnap.getReciever());
 		order.setSrc(orderSnap.getSrc());
 		order.setGoods(orderSnap.getGoods());
