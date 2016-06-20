@@ -4,6 +4,7 @@ import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.PrintStatus;
+import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
@@ -524,4 +525,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return find(query).asList();
     }
 
+    public Order findByOrderNoAndSrc(String orderNO, Srcs srcs) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        query.filter("orderNo", orderNO);
+        query.filter("src", srcs);
+        return findOne(query);
+    }
 }

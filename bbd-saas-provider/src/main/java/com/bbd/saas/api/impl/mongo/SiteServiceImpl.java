@@ -178,6 +178,48 @@ public class SiteServiceImpl implements SiteService {
         bbtAddressDao.updateMaxstationcodeByCode(maxstationcode, code);
     }
 
+    /**
+     * 根据地址处理数据，省市区
+     *
+     * @param str
+     * @param province
+     * @return
+     */
+    public String[] dealStrWithAddress(String[] str, String province) {
+        province = province.replaceAll("省", "");
+        province = province.replaceAll("市", "");
+        //province = dealProvince(province);
+        int tempNum = 0;
+        while (true) {
+            str = dealOrderWithProvince(str, province);
+            //如果区的数值不存在，则继续搜索
+            if (StringUtils.isBlank(str[2])) {
+                //替换省市的信息继续搜索
+                if (!StringUtils.isBlank(str[1])) {
+                    province = province.replace(str[1].split("-")[1], "").trim();
+                } else if (!StringUtils.isBlank(str[0])) {
+                    province = province.replace(str[0].split("-")[1], "").trim();
+                }
+            } else {
+                break;
+            }
+            tempNum++;
+            if (tempNum >= 3) {
+                break;
+            }
+        }
+        //针对异常数据进行置空处理
+        for (int i = 0; i < str.length; i++) {
+            if (StringUtils.isBlank(str[i])) {
+                str = null;
+                break;
+            } else {
+                str[i] = str[i].split("-")[1];
+            }
+        }
+        return str;
+    }
+
     public String[] dealOrderWithProvince(String[] strs, String province) {
         List<BbtAddress> addresses = bbtAddressDao.getBbtAddressWithProvince(province);
         if (addresses != null && addresses.size() > 0) {

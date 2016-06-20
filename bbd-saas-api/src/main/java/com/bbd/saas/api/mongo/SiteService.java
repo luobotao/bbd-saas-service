@@ -24,7 +24,7 @@ public interface SiteService {
      * @param strs 详细地址信息
      * @return areaCode
      */
-    String[] dealOrderWithProvince(String[] strs, String province);
+    String[] dealStrWithAddress(String[] strs, String province);
     /**
      * 保存站点
      * @param site 站点

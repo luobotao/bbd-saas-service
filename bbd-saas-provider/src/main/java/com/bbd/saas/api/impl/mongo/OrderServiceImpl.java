@@ -9,6 +9,7 @@ import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderNum;
 import com.bbd.saas.mongoModels.OrderParcel;
@@ -143,6 +144,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Order findByOrderNo(String orderNo) {
 		return orderDao.findByOrderNo(orderNo);
+	}
+
+	@Override
+	public Order findByOrderNoAndSrc(String orderNO, Srcs srcs) {
+		return orderDao.findByOrderNoAndSrc(orderNO,srcs);
 	}
 
 	/**
