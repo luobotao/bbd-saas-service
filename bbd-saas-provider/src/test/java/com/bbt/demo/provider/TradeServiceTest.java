@@ -3,6 +3,7 @@ package com.bbt.demo.provider;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.enums.TradeStatus;
+import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderSnap;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.vo.Goods;
@@ -119,8 +120,25 @@ public class TradeServiceTest {
 			reciever.setAddress(address[rand]);
 			orderSnap.setReciever(reciever);
 			orderSnapList.add(orderSnap);
+			saveOrderBySnap(orderSnap);
 		}
 		return orderSnapList;
 	}
-
+	private  void saveOrderBySnap(OrderSnap orderSnap){
+		Order order = new Order();
+		order.setuId(orderSnap.getuId());
+		order.setOrderNo(orderSnap.getOrderNo());
+		order.setMailNum(orderSnap.getMailNum());
+		order.setSender(orderSnap.getSender());
+		order.setReciever(orderSnap.getReciever());
+		order.setSrc(orderSnap.getSrc());
+		order.setGoods(orderSnap.getGoods());
+		order.setOrderCreate(orderSnap.getOrderCreate());
+		order.setOrderPay(orderSnap.getOrderPay());
+		order.setSynsFlag(orderSnap.getSynsFlag());
+		order.setErrorRemark(orderSnap.getErrorRemark());
+		order.setDateAdd(orderSnap.getDateAdd());
+		order.setDateUpd(orderSnap.getDateUpd());
+		orderService.save(order);
+	}
 }
