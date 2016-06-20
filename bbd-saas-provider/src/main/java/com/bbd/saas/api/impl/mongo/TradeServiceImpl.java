@@ -119,7 +119,7 @@ public class TradeServiceImpl implements TradeService {
      * @return 分页对象（分页信息和当前页的数据）
      */
     @Override
-    public PageModel<Trade> findTradePage(Integer pageIndex, TradeQueryVO tradeQueryVO, String rcvKeyword){
+    public PageModel<Trade> findTradePage(Integer pageIndex, TradeQueryVO tradeQueryVO){
         //查询订单号或者运单号包含tradeQueryVO.tradeNoLike && 运单的收件人手机号、姓名、地址中包含rcvKeyword的订单
         PageModel<Trade> tradePageModel = tradeDao.findTradePage(pageIndex, tradeQueryVO);
         //设置快件数量和揽件人、状态

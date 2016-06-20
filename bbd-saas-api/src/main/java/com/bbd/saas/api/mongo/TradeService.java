@@ -33,10 +33,9 @@ public interface TradeService {
      * 根据查询条件和站点状态获取商户订单列表信息
      * @param pageIndex 当前页
      * @param tradeQueryVO 查询条件
-     * @param rcvKeyword 收件人查询关键词
      * @return 分页对象（分页信息和当前页的数据）
      */
-    public PageModel<Trade> findTradePage(Integer pageIndex, TradeQueryVO tradeQueryVO, String rcvKeyword);
+    public PageModel<Trade> findTradePage(Integer pageIndex, TradeQueryVO tradeQueryVO);
 
     /**
      * 根据指定条件查询商户订单列表

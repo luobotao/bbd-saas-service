@@ -6,9 +6,11 @@ import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderSnap;
 import com.bbd.saas.mongoModels.Trade;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Goods;
 import com.bbd.saas.vo.Reciever;
 import com.bbd.saas.vo.Sender;
+import com.bbd.saas.vo.TradeQueryVO;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +33,7 @@ public class TradeServiceTest {
 	@Autowired
 	private OrderService orderService;
 
+	private ObjectId uId = new ObjectId("573c5f421e06c8275c08183c");
 	//junit.framework.TestCase时用
 	public void setUp() throws Exception{
         System.out.println("set up");
@@ -91,7 +94,7 @@ public class TradeServiceTest {
 		//收件人详细地址
 		String[] address = new String[]{"双井","胜利东街","五路居","北京站","汽车客运站"};
 		int rand = 0;
-		for(int i = 0; i<20; i++){
+		for(int i = 0; i<3; i++){
 			OrderSnap orderSnap = new OrderSnap();
 			orderSnap.setMailNum("BBD" + format.format(new Date()) + i);
 			orderSnap.setOrderNo("O" + format.format(new Date()) + i);
@@ -149,4 +152,20 @@ public class TradeServiceTest {
 		order.setDateUpd(orderSnap.getDateUpd());
 		orderService.save(order);
 	}
+
+	@Test
+	public void testFindPages() throws Exception{
+		//设置查询条件
+		TradeQueryVO tradeQueryVO = new TradeQueryVO();
+		tradeQueryVO.uId = uId;
+		tradeQueryVO.tradeStatus = -1;
+		tradeQueryVO.noLike = null;
+		tradeQueryVO.rcvKeyword = "奎文";
+		/*tradeQueryVO.dateAddStart = "2016-06-19";
+		tradeQueryVO.dateAddEnd = "2016-06-21";*/
+		//若此方法超时，则把设置快件数量、揽件员、订单状态提到controller中
+		PageModel<Trade> tradePage = tradeService.findTradePage(0, tradeQueryVO);
+		Assert.isTrue(true);//无用
+	}
+
 }
