@@ -91,7 +91,7 @@ public class TradeServiceTest {
 		//收件人详细地址
 		String[] address = new String[]{"双井","胜利东街","五路居","北京站","汽车客运站"};
 		int rand = 0;
-		for(int i = 0; i<20; i++){
+		for(int i = 0; i<3; i++){
 			OrderSnap orderSnap = new OrderSnap();
 			orderSnap.setMailNum("BBD" + format.format(new Date()) + i);
 			orderSnap.setOrderNo("O" + format.format(new Date()) + i);
