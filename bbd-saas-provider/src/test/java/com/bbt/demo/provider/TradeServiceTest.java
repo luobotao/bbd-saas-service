@@ -144,7 +144,6 @@ public class TradeServiceTest {
 		order.setGoods(orderSnap.getGoods());
 		order.setOrderCreate(orderSnap.getOrderCreate());
 		order.setOrderPay(orderSnap.getOrderPay());
-		order.setSynsFlag(orderSnap.getSynsFlag());
 		order.setErrorRemark(orderSnap.getErrorRemark());
 		order.setDateAdd(orderSnap.getDateAdd());
 		order.setDateUpd(orderSnap.getDateUpd());
