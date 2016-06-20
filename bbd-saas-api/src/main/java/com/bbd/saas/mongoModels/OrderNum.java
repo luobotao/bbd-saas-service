@@ -17,4 +17,6 @@ public class OrderNum {
     public String num;
     //运单号累计
     public String trackNum;
+    //支付号累计
+    public String tradeNum;
 }
