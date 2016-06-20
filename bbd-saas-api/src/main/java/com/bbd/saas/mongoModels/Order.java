@@ -306,7 +306,7 @@ public class Order implements Serializable {
 	}
 
 	public String getSrcMessage() {
-        return src.getMessage();
+        return src != null ? src.getMessage() : "";
     }
 	public UserVO getUserVO() {
 		return userVO;
@@ -365,7 +365,7 @@ public class Order implements Serializable {
     }
 
     public String getOrderStatusMsg() {
-        return orderStatusMsg;
+        return this.orderStatus != null ? this.orderStatus.getMessage() : "";
     }
 
     public void setOrderStatusMsg(String orderStatusMsg) {
