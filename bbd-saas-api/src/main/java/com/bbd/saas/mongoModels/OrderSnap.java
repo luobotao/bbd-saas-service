@@ -37,7 +37,7 @@ public class OrderSnap implements Serializable {
     private Date orderCreate;//订单创建时间
     private Date orderPay;     //订单支付时间
 
-    private SynsFlag synsFlag;//与Order同步状态0未同步 1已同步 2同步失败
+    private String status;//状态 待下单 已下单待支付 已支付
     private String errorRemark;//
     private Date dateAdd;
     private Date dateUpd;//
@@ -125,12 +125,12 @@ public class OrderSnap implements Serializable {
         this.orderPay = orderPay;
     }
 
-    public SynsFlag getSynsFlag() {
-        return synsFlag;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSynsFlag(SynsFlag synsFlag) {
-        this.synsFlag = synsFlag;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Date getDateAdd() {
