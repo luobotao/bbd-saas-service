@@ -39,7 +39,13 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
             query.filter("uId", tradeQueryVO.uId);
         }
         if(tradeQueryVO.tradeStatus != null && tradeQueryVO.tradeStatus != -1){//商户订单状态
-            query.filter("tradeStatus", TradeStatus.status2Obj(tradeQueryVO.tradeStatus));
+            if(tradeQueryVO.tradeStatus == TradeStatus.CANCELED.getStatus()){
+                query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
+                        query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
+
+            }else {
+                query.filter("tradeStatus", TradeStatus.status2Obj(tradeQueryVO.tradeStatus));
+            }
         }
         if(StringUtils.isNotBlank(tradeQueryVO.tradeNo)){//商户订单号
             query.filter("tradeNo", tradeQueryVO.tradeNo);

@@ -96,7 +96,7 @@ public class TradeServiceTest {
 		int rand = 0;
 		for(int i = 0; i<1; i++){
 			OrderSnap orderSnap = new OrderSnap();
-			orderSnap.setMailNum("BBD" + format.format(new Date()) + i);
+			orderSnap.setMailNum("BBD" + tradeNo + i);
 			orderSnap.setOrderNo("O" + format.format(new Date()) + i);
 
 			List<Goods> goodsList = new ArrayList<Goods>();
@@ -161,8 +161,8 @@ public class TradeServiceTest {
 		tradeQueryVO.tradeStatus = -1;
 		tradeQueryVO.noLike = null;
 		tradeQueryVO.rcvKeyword = "奎文";
-		/*tradeQueryVO.dateAddStart = "2016-06-19";
-		tradeQueryVO.dateAddEnd = "2016-06-21";*/
+		tradeQueryVO.dateAddStart = "2016-06-21";
+		tradeQueryVO.dateAddEnd = "2016-06-21";
 		//若此方法超时，则把设置快件数量、揽件员、订单状态提到controller中
 		PageModel<Trade> tradePage = tradeService.findTradePage(0, tradeQueryVO);
 		Assert.isTrue(true);//无用
