@@ -63,7 +63,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
             query.filter("dateAdd >=", Dates.strToDate(tradeQueryVO.dateAddStart));
         }
         if(StringUtils.isNotBlank(tradeQueryVO.dateAddEnd)){//下单时间
-            query.filter("dateAdd <=", Dates.strToDate(tradeQueryVO.dateAddEnd));
+            query.filter("dateAdd <", Dates.addOneDay(tradeQueryVO.dateAddEnd));
         }
         if(tradeQueryVO.tradeNoSet != null && tradeQueryVO.tradeNoSet.size() > 0){//订单号集合
             query.filter("tradeNo in", tradeQueryVO.tradeNoSet);

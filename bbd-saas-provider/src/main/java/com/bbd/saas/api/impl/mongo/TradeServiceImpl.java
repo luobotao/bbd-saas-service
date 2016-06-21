@@ -115,7 +115,6 @@ public class TradeServiceImpl implements TradeService {
      * 根据查询条件和订单状态获取商户订单列表信息
      * @param pageIndex 当前页
      * @param tradeQueryVO 查询条件
-     * @param rcvKeyword 收件人查询关键词
      * @return 分页对象（分页信息和当前页的数据）
      */
     @Override

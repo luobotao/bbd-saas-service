@@ -100,6 +100,13 @@ public class Dates {
     public static Date strToDate(String str) {
         return strToDate(str, ENGLISH_DATE_FORMAT);
     }
+    public static Date addOneDay(String str) {
+        Date date = strToDate(str, ENGLISH_DATE_FORMAT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(calendar.DATE, 1);//把日期往后增加一天.整数往后推,负数往前移动
+        return calendar.getTime();   //这个时间就是日期往后推一天的结果
+    }
     public static Date strToDate(String str, SimpleDateFormat format) {
         try {
             return format.parse(str);
