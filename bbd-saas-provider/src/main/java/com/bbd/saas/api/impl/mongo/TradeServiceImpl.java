@@ -1,10 +1,12 @@
 package com.bbd.saas.api.impl.mongo;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.dao.mongo.OrderDao;
+import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.TradeDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.OrderNum;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.TradeQueryVO;
@@ -20,6 +22,15 @@ public class TradeServiceImpl implements TradeService {
     private TradeDao tradeDao;
     private OrderDao orderDao;
     private UserDao userDao;
+    private OrderNumDao orderNumDao;
+
+    public OrderNumDao getOrderNumDao() {
+        return orderNumDao;
+    }
+
+    public void setOrderNumDao(OrderNumDao orderNumDao) {
+        this.orderNumDao = orderNumDao;
+    }
 
     public TradeDao getTradeDao() {
         return tradeDao;
@@ -233,5 +244,18 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public long findCountByUidAndStatus(ObjectId uId, TradeStatus tradeStatus) {
         return tradeDao.selectCountByUidAndStatus(uId, tradeStatus);
+    }
+    /**
+     * 获取递增的9位数字，用于记录支付订单号
+     *
+     * @return
+     */
+    @Override
+    public String reduceTradeNo() {
+        OrderNum one = orderNumDao.findOrderNum();
+        long tradeNum = Long.parseLong(one.tradeNum);
+        one.tradeNum = (tradeNum + 1) + "";
+        orderNumDao.updateOrderNum("tradeNum",one.tradeNum);
+        return one.tradeNum;
     }
 }
