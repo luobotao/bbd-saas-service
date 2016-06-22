@@ -2,6 +2,12 @@
 body {
   font-family: simhei;
 }
+#psrE{
+  overflow-y:hidden;
+}
+.fbg footer{
+  display:none;
+}
 * {
   margin: 0;
   padding: 0;
