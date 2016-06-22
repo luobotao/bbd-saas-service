@@ -30,6 +30,7 @@ public class OrderNumDao extends BaseDAO<OrderNum, ObjectId> {
 
     public OrderNum findOrderNum() {
         Query<OrderNum> query = createQuery();
+        query.filter("num <>", " ");
         OrderNum orderNum =  findOne(query);
         return orderNum;
     }

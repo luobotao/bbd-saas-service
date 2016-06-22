@@ -37,7 +37,7 @@ public enum Srcs {
     public static String Srcs2HTML(Integer id) {
         StringBuilder sb = new StringBuilder();
         Srcs[] srcs = Srcs.values();
-        sb.append(Htmls.generateOption(-1, "请选择"));
+        sb.append(Htmls.generateOption(-1, "默认全部"));
         for (Srcs s : srcs) {
             if (id==s.status) {
                 sb.append(Htmls.generateSelectedOption(s.status,s.message));
