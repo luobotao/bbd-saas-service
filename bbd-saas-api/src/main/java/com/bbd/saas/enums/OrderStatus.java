@@ -15,7 +15,9 @@ public enum OrderStatus {
     SIGNED(5, "已签收"),
     TO_OTHER_EXPRESS(6, "已转其他快递"),
     APPLY_RETURN(7, "申请退货"),
-    RETURNED(8, "退货完成");
+    RETURNED(8, "退货完成"),
+    NOEMBRACE(9, "待揽件"),
+    EMBRACED(10, "已揽件");
     private int status;
     private String message;
     private OrderStatus(int status, String message) {
