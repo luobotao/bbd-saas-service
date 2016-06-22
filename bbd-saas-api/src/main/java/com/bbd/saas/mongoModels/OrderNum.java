@@ -1,14 +1,17 @@
 package com.bbd.saas.mongoModels;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.*;
+
+import java.io.Serializable;
 
 /**
  * User
  *
  * @date 16-2-3
  */
-public class OrderNum {
+@Entity("orderNum")
+public class OrderNum implements Serializable {
 
     @Id
     public ObjectId id;

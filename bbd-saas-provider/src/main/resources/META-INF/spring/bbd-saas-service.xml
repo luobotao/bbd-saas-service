@@ -83,6 +83,9 @@
         <property name="userDao">
             <ref bean="userDao"/>
         </property>
+        <property name="orderNumDao">
+            <ref bean="orderNumDao"/>
+        </property>
     </bean>
     <!-- expressExchangeService Service-->
     <bean id="expressExchangeService" class="com.bbd.saas.api.impl.mongo.ExpressExchangeServiceImpl">
