@@ -491,6 +491,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(StringUtils.isNotBlank(tradeNo)){
             query.filter("tradeNo", tradeNo);
         }
+        query.filter("isRemoved", 0);
         return count(query);
     }
 
