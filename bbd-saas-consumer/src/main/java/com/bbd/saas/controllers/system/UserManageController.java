@@ -199,6 +199,7 @@ public class UserManageController {
 	private void insertToBalance(int postmanuserId, String phone){
 		Balance balance=balanceService.findBalanceByUid(postmanuserId);
 		if(balance==null){
+			balance = new Balance();
 			balance.setuId(postmanuserId);
 			balance.setPhone(phone);
 			balance.setCanuse(0);
