@@ -100,8 +100,8 @@
 								for(User user : userPage.getDatas()){
 							%>
 							<tr>
-								<c:if test="${userNow.role==UserRole.COMPANY}"><td><%=user.getSite().getName()%></td></c:if>
-								<td><%=user.getRole().getMessage()%></td>
+								<c:if test="${userNow.role==UserRole.COMPANY}"><td><%=user.getSite()==null?"":user.getSite().getName()%></td></c:if>
+								<td><%=user.getRole()==null?"":user.getRole().getMessage()%></td>
 								<td><%=user.getRealName()%></td>
 								<td><%=user.getLoginName()%></td>
 
@@ -302,7 +302,12 @@
 		var row = "<tr>";
 		var temp = data.idStr;
 		<c:if test="${userNow.role==UserRole.COMPANY}">
-		row +=  "<td>" + data.site.name + "</td>";
+		if(data.site!=null){
+
+			row +=  "<td>" + data.site.name + "</td>";
+		}else{
+			row +=  "<td></td>";
+		}
 		</c:if>
 		row +=  "<td>" + data.roleMessage + "</td>";
 		row += "<td>" + data.realName + "</td>";

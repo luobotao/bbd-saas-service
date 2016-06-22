@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * returnReason
- * 退货原因（类型）表
+ * 小件员揽件表
  * Created by luobotao on 2016/6/13.
  */
 @Entity("trade")

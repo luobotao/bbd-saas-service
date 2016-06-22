@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bbd.saas.dao.mysql.BalanceDao">
 
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.Balance">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="uId" property="uId" jdbcType="INTEGER"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="balance" property="balance" jdbcType="INTEGER"/>
+        <result column="canuse" property="canuse" jdbcType="INTEGER"/>
+        <result column="withdraw" property="withdraw" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="date_new" property="dateNew" jdbcType="TIMESTAMP"/>
+        <result column="date_upd" property="dateUpd" jdbcType="TIMESTAMP"/>
+    </resultMap>
 
     <sql id="baseColumnList">
           id,
@@ -32,4 +43,10 @@
         #{dateUpd}
         )
     </insert>
+
+
+    <select id="findBalanceByUid" resultMap="baseResultMap">
+        SELECT <include refid="baseColumnList"/>
+        FROM `balance` where <![CDATA[ uId = #{uId}]]>
+    </select>
 </mapper>
