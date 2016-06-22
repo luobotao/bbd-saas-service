@@ -132,7 +132,10 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(uId != null){//用户ID
             query.filter("uId", uId);
         }
-        if(tradeStatus != null){//商户订单状态
+        if(tradeStatus != null && tradeStatus == TradeStatus.CANCELED){//商户订单状态
+            query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
+                    query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
+        }else {
             query.filter("tradeStatus", tradeStatus);
         }
         return count(query);
