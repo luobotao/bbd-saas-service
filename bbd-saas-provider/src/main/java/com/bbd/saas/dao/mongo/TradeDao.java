@@ -2,9 +2,8 @@ package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.TradeStatus;
-import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.Trade;
-import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.apache.commons.lang3.StringUtils;
@@ -39,22 +38,41 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(tradeQueryVO.uId != null){//用户ID
             query.filter("uId", tradeQueryVO.uId);
         }
+        if(tradeQueryVO.tradeStatus != null && tradeQueryVO.tradeStatus != -1){//商户订单状态
+            if(tradeQueryVO.tradeStatus == TradeStatus.CANCELED.getStatus()){
+                query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
+                        query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
+
+            }else {
+                query.filter("tradeStatus", TradeStatus.status2Obj(tradeQueryVO.tradeStatus));
+            }
+        }
         if(StringUtils.isNotBlank(tradeQueryVO.tradeNo)){//商户订单号
             query.filter("tradeNo", tradeQueryVO.tradeNo);
         }
         if(StringUtils.isNotBlank(tradeQueryVO.tradeNoLike)){//商户订单号模糊查询
             query.and(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.tradeNoLike));
         }
-        if(StringUtils.isNotBlank(tradeQueryVO.dateAddBetween)){//下单时间
-            DateBetween dateBetween = new DateBetween(tradeQueryVO.dateAddBetween);
-            query.filter("dateAdd >=", dateBetween.getStart());
-            query.filter("dateAdd <=", dateBetween.getEnd());
+        if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//商户订单号模糊查询
+            query.or(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.noLike),
+                    query.criteria("orderSnaps.mailNum").containsIgnoreCase(tradeQueryVO.noLike));
+        }
+        if(StringUtils.isNotBlank(tradeQueryVO.rcvKeyword)){
+            query.or(query.criteria("orderSnaps.reciever.phone").containsIgnoreCase(tradeQueryVO.rcvKeyword),
+                    query.criteria("orderSnaps.reciever.name").containsIgnoreCase(tradeQueryVO.rcvKeyword),
+                    query.criteria("orderSnaps.reciever.province").containsIgnoreCase(tradeQueryVO.rcvKeyword),
+                    query.criteria("orderSnaps.reciever.city").containsIgnoreCase(tradeQueryVO.rcvKeyword),
+                    query.criteria("orderSnaps.reciever.area").containsIgnoreCase(tradeQueryVO.rcvKeyword),
+                    query.criteria("orderSnaps.reciever.address").containsIgnoreCase(tradeQueryVO.rcvKeyword));
+        }
+        if(StringUtils.isNotBlank(tradeQueryVO.dateAddStart)){//下单时间
+            query.filter("dateAdd >=", Dates.strToDate(tradeQueryVO.dateAddStart));
+        }
+        if(StringUtils.isNotBlank(tradeQueryVO.dateAddEnd)){//下单时间
+            query.filter("dateAdd <", Dates.addOneDay(tradeQueryVO.dateAddEnd));
         }
         if(tradeQueryVO.tradeNoSet != null && tradeQueryVO.tradeNoSet.size() > 0){//订单号集合
             query.filter("tradeNo in", tradeQueryVO.tradeNoSet);
-        }
-        if(tradeQueryVO.tradeStatus != null && tradeQueryVO.tradeStatus != -1){//商户订单状态
-            query.filter("tradeStatus", TradeStatus.status2Obj(tradeQueryVO.tradeStatus));
         }
         return  query;
     }
@@ -114,7 +132,10 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(uId != null){//用户ID
             query.filter("uId", uId);
         }
-        if(tradeStatus != null){//商户订单状态
+        if(tradeStatus != null && tradeStatus == TradeStatus.CANCELED){//商户订单状态
+            query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
+                    query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
+        }else {
             query.filter("tradeStatus", tradeStatus);
         }
         return count(query);

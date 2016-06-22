@@ -12,4 +12,10 @@ public interface BalanceDao {
      */
    int insert(Balance balance);
 
+    /**
+     * 根据用户ID获取该用户的资金信息
+     * @param uid
+     * @return
+     */
+    Balance findBalanceByUid(int uid);
 }

@@ -117,7 +117,7 @@ public class UserManageController {
 
 		for(User user : userPage.getDatas()){
 			user.setIdStr(user.getId().toString());
-			user.setRoleMessage(user.getRole().getMessage());
+			user.setRoleMessage(user.getRole()==null?"":user.getRole().getMessage());
 			if(user.getUserStatus()!=null && !user.getUserStatus().getMessage().equals("")){
 				user.setStatusMessage(user.getUserStatus().getMessage());
 			}
@@ -150,23 +150,30 @@ public class UserManageController {
 		User currUser = adminService.get(UserSession.get(request));
 		//验证该loginName在user表中是否已存在
 		User oldUser = userService.findUserByLoginName(userForm.getLoginName());
-		//验证在同一个站点下staffid是否已存在
 		//查找在mysql的bbt数据库的postmanuser表中是否存在改userForm.getLoginName() 即手机号记录
 		Map<String, Object> map = new HashMap<String, Object>();
-		PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName(), 0);
-		if((oldUser != null && !oldUser.getId().equals("")) || postmanUser != null && postmanUser.getId() != null){
-			////loginName在user表中已存在
+		if(oldUser != null){
 			map.put("success", false);
 			map.put("msg", "手机号已存在!");
 			return map;
 		}else{
-			Date currDate = new Date();
-			postmanUser = getPostManUser(currUser, userForm, currDate);
-			//保存成功，把数据同步到mysql中的postmanUser表中
-			postmanUser.setSiteid(currUser.getSite().getId().toString());
-			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
+			int postmanuserId = 0;
+			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName(), 0);
+			if(postmanUser==null){
+				postmanUser = getPostManUser(currUser, userForm);//拼装一些默认值
+				//保存成功，把数据同步到mysql中的postmanUser表中
+				postmanUser.setSiteid(currUser.getSite().getId().toString());
+				postmanuserId = userMysqlService.insertUser(postmanUser).getId();//插入数据
+			}else{
+				postmanUser.setPoststatus(1);//默认为1
+				postmanUser.setPostrole(0);//快递员
+				postmanUser.setSiteid(currUser.getSite().getId().toString());
+				userMysqlService.updateByPhone(postmanUser);
+				postmanuserId = postmanUser.getId();
+			}
+
 			if(postmanuserId > 0){//保存成功
-				User user = getUserByUserForm(currUser, userForm, currDate);
+				User user = getUserByUserForm(currUser, userForm);
 				user.setPostmanuserId(postmanuserId);
 				Key<User> userKey = userService.save(user);
 				if(userKey != null && userKey.getId() != null){
@@ -190,25 +197,27 @@ public class UserManageController {
 	 * @param phone 派件员手机号
      */
 	private void insertToBalance(int postmanuserId, String phone){
-		Balance balance=new Balance();
-		balance.setuId(postmanuserId);
-		balance.setPhone(phone);
-		balance.setCanuse(0);
-		balance.setBalance(0);
-		balance.setWithdraw(0);
-		balance.setRemark("");
-		balance.setDateUpd(new Date());
-		balance.setDateNew(new Date());
-		balanceService.insertBalance(balance);
+		Balance balance=balanceService.findBalanceByUid(postmanuserId);
+		if(balance==null){
+			balance = new Balance();
+			balance.setuId(postmanuserId);
+			balance.setPhone(phone);
+			balance.setCanuse(0);
+			balance.setBalance(0);
+			balance.setWithdraw(0);
+			balance.setRemark("");
+			balance.setDateUpd(new Date());
+			balance.setDateNew(new Date());
+			balanceService.insertBalance(balance);
+		}
 	}
 	/**
 	 * 根据表单信息生成一个用户对象 -- 插入的mongodb中
 	 * @param currUser 当前登录用户
 	 * @param userForm 表单
-	 * @param currDate 当前时间
      * @return 用户对象（站长，派件员）
      */
-	private User getUserByUserForm(User currUser, UserForm userForm, Date currDate){
+	private User getUserByUserForm(User currUser, UserForm userForm){
 		User user = new User();
 		user.setCompanyId(currUser.getCompanyId());
 		user.setRealName(userForm.getRealName().replaceAll(" ", ""));
@@ -219,8 +228,8 @@ public class UserManageController {
 		//staffid就是该用户的手机号
 		user.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
 		user.setRole(UserRole.obj2UserRole(userForm.getRoleId()));
-		user.setDateAdd(currDate);
-		user.setDateUpdate(currDate);
+		user.setDateAdd(new Date());
+		user.setDateUpdate(new Date());
 		user.setUserStatus(UserStatus.status2Obj(1));
 		return user;
 	}
@@ -229,10 +238,9 @@ public class UserManageController {
 	 * 根据表单信息生成一个派件员对象 -- 插入到mysql中
 	 * @param currUser 当前登录用户
 	 * @param userForm 用户表单
-	 * @param currDate 当前时间
      * @return 派件员对象
      */
-	private PostmanUser getPostManUser(User currUser, UserForm userForm, Date currDate){
+	private PostmanUser getPostManUser(User currUser, UserForm userForm){
 		PostmanUser postmanUser = new PostmanUser();
 		postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
 		postmanUser.setHeadicon("");
@@ -255,8 +263,8 @@ public class UserManageController {
 		postmanUser.setPhone(userForm.getLoginName().replaceAll(" ", ""));
 		//staffid就是该用户的手机号
 		postmanUser.setStaffid(userForm.getLoginName().replaceAll(" ", ""));
-		postmanUser.setDateNew(currDate);
-		postmanUser.setDateUpd(currDate);
+		postmanUser.setDateNew(new Date());
+		postmanUser.setDateUpd(new Date());
 		postmanUser.setPoststatus(1);//默认为1
 		//快递员
 		postmanUser.setPostrole(0);
@@ -606,7 +614,7 @@ public class UserManageController {
 		}else if(loginName!=null && !loginName.equals("")){
 			user = userService.findUserByLoginName(loginName);
 		}
-		user.setRoleStatus(user.getRole().getStatus());
+		user.setRoleStatus(user.getRole()==null?1:user.getRole().getStatus());
 		return user;
 	}
 	

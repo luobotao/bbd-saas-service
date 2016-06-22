@@ -39,16 +39,17 @@ public class User implements Serializable {
     private Date dateAdd;//创建时间
     private Date dateUpdate;//修改时间
     private Date dateLogin;//最后一次登录时间
+    private String staffid;//员工id
+    private int postmanuserId;//postmanuser的主键id
+    private String companyId;      //所属公司ID
+    private Integer balanceId;      //资金账号ID(针对商户有用)
+    private String pwdFlag;      //0修改过密码 1未修改过密码
     @Transient
     private String roleMessage;//存放角色信息
     @Transient
     private int roleStatus;//存放0或1
     @Transient
     private String statusMessage;//存放有效或无效
-    private String staffid;//员工id
-    private int postmanuserId;//postmanuser的主键id
-    private String companyId;      //所属公司ID
-    private Integer balanceId;      //资金账号ID(针对商户有用)
     @Transient
     private String idStr;//id.toString();
 
@@ -227,5 +228,13 @@ public class User implements Serializable {
 
     public void setBalanceId(Integer balanceId) {
         this.balanceId = balanceId;
+    }
+
+    public String getPwdFlag() {
+        return pwdFlag;
+    }
+
+    public void setPwdFlag(String pwdFlag) {
+        this.pwdFlag = pwdFlag;
     }
 }

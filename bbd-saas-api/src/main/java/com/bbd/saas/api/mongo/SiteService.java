@@ -20,6 +20,12 @@ public interface SiteService {
      */
     String dealOrderWithGetAreaCode(String address);
     /**
+     * 根据详细地址信息生成省市区数组
+     * @param strs 详细地址信息
+     * @return areaCode
+     */
+    String[] dealStrWithAddress(String[] strs, String province);
+    /**
      * 保存站点
      * @param site 站点
      * @return 保存结果

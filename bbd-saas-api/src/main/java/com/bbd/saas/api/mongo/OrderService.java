@@ -2,6 +2,7 @@ package com.bbd.saas.api.mongo;
 
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
@@ -42,6 +43,12 @@ public interface OrderService {
 	 * @return
 	 */
 	Order findByOrderNo(String orderNO);
+	/**
+	 * 根据订单号查询订单
+	 * @param orderNO
+	 * @return
+	 */
+	Order findByOrderNoAndSrc(String orderNO,Srcs srcs);
 
 	/**
 	 * 带查询条件去检索订单

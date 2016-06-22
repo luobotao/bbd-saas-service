@@ -171,6 +171,9 @@
 	        	<if test="dateUpd != null">
 	        	date_upd = #{dateUpd,jdbcType=TIMESTAMP},
 	        	</if>
+	        	<if test="siteid != null">
+                    siteid = #{siteid,jdbcType=VARCHAR},
+	        	</if>
         	</set>
         	WHERE phone = #{phone,jdbcType=INTEGER}
     </update>

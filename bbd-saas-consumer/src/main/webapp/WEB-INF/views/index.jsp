@@ -95,10 +95,15 @@
 <!-- E content -->
 <!-- S detail -->
 <div class="b-branch-hei">
-	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" scrolling="no" width="100%" height="100%" onLoad="iFrameHeight();"></iframe>
+	<iframe id="iframe1" class="i-hei" name="iframe1" src="" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%"></iframe>
 
 </div><!-- /.content-wrapper -->
 <!-- E detail -->
+<!-- S footer -->
+<footer class="pos-footer tc">
+	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
+</footer>
+<!-- E footer -->
 <!--S 修改密码-->
 <div class="j-pwd-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog b-modal-dialog middleS" role="document">

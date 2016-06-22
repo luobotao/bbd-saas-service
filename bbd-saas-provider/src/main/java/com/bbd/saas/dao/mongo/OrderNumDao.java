@@ -30,19 +30,15 @@ public class OrderNumDao extends BaseDAO<OrderNum, ObjectId> {
 
     public OrderNum findOrderNum() {
         Query<OrderNum> query = createQuery();
+        query.filter("num <>", " ");
         OrderNum orderNum =  findOne(query);
         return orderNum;
     }
 
-    public UpdateResults updateOrderNum(String num, String trackNum) {
+    public UpdateResults updateOrderNum(String type, String num) {
         Query<OrderNum> query = createQuery();
         UpdateOperations<OrderNum> ops = createUpdateOperations();
-        if(!"".equals(num)){
-            ops.set("num",num);
-        }
-        if(!"".equals(trackNum)){
-            ops.set("trackNum",trackNum);
-        }
+        ops.set(type,num);
         return update(query,ops);
     }
 }
