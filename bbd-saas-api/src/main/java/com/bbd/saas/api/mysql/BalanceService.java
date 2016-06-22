@@ -1,7 +1,6 @@
 package com.bbd.saas.api.mysql;
 
 import com.bbd.saas.models.Balance;
-import com.bbd.saas.models.Postcompany;
 
 /**
  * Created by huozhijie on 2016/6/2.
@@ -13,4 +12,11 @@ public interface BalanceService {
      * @param balance
      */
     void insertBalance(Balance balance);
+
+    /**
+     * 根据用户ID获取该用户的资金信息
+     * @param uid
+     * @return
+     */
+    Balance findBalanceByUid(int uid);
 }
