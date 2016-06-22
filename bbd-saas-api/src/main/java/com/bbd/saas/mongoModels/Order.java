@@ -61,7 +61,8 @@ public class Order implements Serializable {
     private TransportStatus transportStatus;//运输状态
     private String tradeNo;//商户订单号(我们自己生成的支付订单号)
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
-
+    private int isRemoved;//是否被移除？ 0：未被移除； 1：被移除
+    private String removeReason;//移除原因
     @Transient
     private String parcelCode;
     @Transient
@@ -370,6 +371,22 @@ public class Order implements Serializable {
 
     public void setOrderStatusMsg(String orderStatusMsg) {
         this.orderStatusMsg = orderStatusMsg;
+    }
+
+    public int getIsRemoved() {
+        return isRemoved;
+    }
+
+    public void setIsRemoved(int isRemoved) {
+        this.isRemoved = isRemoved;
+    }
+
+    public String getRemoveReason() {
+        return removeReason;
+    }
+
+    public void setRemoveReason(String removeReason) {
+        this.removeReason = removeReason;
     }
 
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
