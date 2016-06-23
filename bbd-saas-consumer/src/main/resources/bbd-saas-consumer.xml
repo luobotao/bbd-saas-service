@@ -35,6 +35,9 @@
     <dubbo:reference id="returnReasonService" interface="com.bbd.saas.api.mongo.ReturnReasonService" />
     <!--trade Service-->
     <dubbo:reference id="tradeService" interface="com.bbd.saas.api.mongo.TradeService"/>
+    <!--Constant Service-->
+    <dubbo:reference id="constantService" interface="com.bbd.saas.api.mongo.ConstantService"/>
+
     <!--expressExchangeService Service-->
     <dubbo:reference id="expressExchangeService" interface="com.bbd.saas.api.mongo.ExpressExchangeService"/>
     <!--start mysql services-->

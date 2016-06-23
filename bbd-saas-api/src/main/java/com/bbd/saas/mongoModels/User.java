@@ -44,6 +44,7 @@ public class User implements Serializable {
     private String companyId;      //所属公司ID
     private Integer balanceId;      //资金账号ID(针对商户有用)
     private String pwdFlag;      //0修改过密码 1未修改过密码
+    private int dispatchPermsn; //是否有到站分派权限。0：无; 1: 有。
     @Transient
     private String roleMessage;//存放角色信息
     @Transient
@@ -236,5 +237,13 @@ public class User implements Serializable {
 
     public void setPwdFlag(String pwdFlag) {
         this.pwdFlag = pwdFlag;
+    }
+
+    public int getDispatchPermsn() {
+        return dispatchPermsn;
+    }
+
+    public void setDispatchPermsn(int dispatchPermsn) {
+        this.dispatchPermsn = dispatchPermsn;
     }
 }
