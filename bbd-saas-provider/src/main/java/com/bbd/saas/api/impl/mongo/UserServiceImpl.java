@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserVO> findUserListBySite(Site site) {
-        List<User> userList = userDao.findUserListBySite(site, UserRole.SENDMEM,UserStatus.VALID);
+        List<User> userList = userDao.findUserListBySite(site, null,UserStatus.VALID);
         List<UserVO> userVoList = new ArrayList<UserVO>();
         if (userList != null && userList.size() > 0) {
             for (User user : userList) {

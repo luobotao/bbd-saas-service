@@ -88,7 +88,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
             Query<Trade> query = getQuery(tradeQueryVO);
             //设置排序
             //query.order("-dateUpd");
-            List<Trade> tradeList = find(query.offset(pageIndex * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+            List<Trade> tradeList = find(query.offset(pageIndex * pageModel.getPageSize()).order("-dateUpd").limit(pageModel.getPageSize())).asList();
             pageModel.setDatas(tradeList);
             pageModel.setTotalCount(count(query));
         }
