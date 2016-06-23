@@ -15,10 +15,7 @@ import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.Sender;
-import com.bbd.saas.vo.SiteVO;
-import com.bbd.saas.vo.UserVO;
+import com.bbd.saas.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,13 +289,24 @@ public class DataQueryController {
 					}else{
 						row.add(order.getOrderStatus().getMessage());
 					}
+					//异常单子展示异常信息
+					if(order.getOrderStatus()==OrderStatus.RETENTION || order.getOrderStatus()==OrderStatus.REJECTION){
+						List<Express> expresses = order.getExpresses();
+						if(expresses!=null && expresses.size()>0){
+							Express express= expresses.get(expresses.size()-1);
+							String reson = express.getRemark()==null?"":express.getRemark().replaceAll("订单已被滞留，滞留原因：","").replaceAll("订单已被拒收，拒收原因:","");
+							row.add(reson);
+						}
+
+					}
+
 					dataList.add(row);
 				}
 			}
 			
 			//表头
-			String[] titles = { "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" };
-			int[] colWidths = { 5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500, 2000, 3500, 3000};
+			String[] titles = { "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态","异常原因" };
+			int[] colWidths = { 5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500, 2000, 3500, 3000,4000};
 			ExportUtil exportUtil = new ExportUtil();
 			exportUtil.exportExcel("数据查询", dataList, titles, colWidths, response);
 		} catch (Exception e) {
