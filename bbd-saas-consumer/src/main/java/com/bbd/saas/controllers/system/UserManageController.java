@@ -1,11 +1,13 @@
 package com.bbd.saas.controllers.system;
 
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.api.mongo.ConstantService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.BalanceService;
 import com.bbd.saas.api.mysql.OpenUserService;
 import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
@@ -64,6 +66,8 @@ public class UserManageController {
 
 	@Autowired
 	SiteService siteService;
+	@Autowired
+	ConstantService constantService;
 
 	/**
      * 获取用户列表信息
@@ -199,6 +203,7 @@ public class UserManageController {
 	private void insertToBalance(int postmanuserId, String phone){
 		Balance balance=balanceService.findBalanceByUid(postmanuserId);
 		if(balance==null){
+			balance = new Balance();
 			balance.setuId(postmanuserId);
 			balance.setPhone(phone);
 			balance.setCanuse(0);
@@ -399,14 +404,13 @@ public class UserManageController {
 	/**
 	 * ajax异步调用
      * 根据user的主键id或者loginName修改user的状态     
-     * @param id、loginName、status
+     * @param loginName、status
      * @return "true"/"false"
      */
 	@ResponseBody
 	@RequestMapping(value="/changestatus", method=RequestMethod.GET)
-	public String changestatus(Model model,@RequestParam(value = "id", required = true) String id,
-			@RequestParam(value = "status", required = true) String status,
-			@RequestParam(value = "loginName", required = true) String loginName,HttpServletResponse response) {
+	public String changestatus(@RequestParam(value = "status", required = true) String status,
+			@RequestParam(value = "loginName", required = true) String loginName) {
 		if(loginName!=null && !loginName.equals("")){
 			User user = userService.findUserByLoginName(loginName);
 			if(user!=null && !user.getId().equals("")){
@@ -419,13 +423,9 @@ public class UserManageController {
 			}else{
 				return "false";
 			}
-
-			
 		}else{
 			return "false";
 		}
-
-		
 	}
 	
 	
@@ -607,7 +607,6 @@ public class UserManageController {
 	public User getOneUser(Model model, @RequestParam(value = "id", required = true) String id,
 						   @RequestParam(value = "loginName", required = true) String loginName) {
 		User user = null;
-
 		if(StringUtils.isNotBlank(id)){
 			user = userService.findOne(id);
 		}else if(loginName!=null && !loginName.equals("")){
@@ -615,6 +614,73 @@ public class UserManageController {
 		}
 		user.setRoleStatus(user.getRole()==null?1:user.getRole().getStatus());
 		return user;
+	}
+
+	/**
+	 * 开通/关闭到站分派权限
+	 * @param loginName 用户名
+	 * @param dispatchPermsn 是否有到站分派权限。0：无; 1: 有。
+     * @return 结果
+     */
+	@ResponseBody
+	@RequestMapping(value="/updateDispatchPermsn", method=RequestMethod.POST)
+	public Map<String, Object> updateDispatchPermsn(String loginName, Integer dispatchPermsn) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(loginName != null && !"".equals(loginName)){
+			User user = userService.findUserByLoginName(loginName);
+			if(user != null){
+				if(user.getSite() == null || user.getSite().getStatus()!= SiteStatus.APPROVE){//站点无效 且为站长用户
+					map.put("success", false);
+					map.put("msg", "站点状态无效,请核实");
+					return map;
+				}
+				doUpdDispatchPermsn(map, user, dispatchPermsn);
+			}else{
+				map.put("success", false);
+				map.put("msg", "用户不存在");
+			}
+		}else{
+			map.put("success", false);
+			map.put("msg", "用户名不能为空");
+		}
+		return map;
+	}
+
+	/**
+	 * 做修改到站分派权限的操作
+	 * @param map 存放返回的结果
+	 * @param user 用户
+	 * @param dispatchPermsn  是否有到站分派权限。0：无; 1: 有。
+     */
+	private void doUpdDispatchPermsn(Map<String, Object> map, User user, Integer dispatchPermsn){
+		if(dispatchPermsn == 1){//开通
+			//查询本站点的开通到站分派权限的派件员数量是否达到最大值（配置在mongodb常量表中constant）
+			long  realCount = userService.findCountBySiteAndDisptcherPermsn(user.getSite(), dispatchPermsn);
+			String maxCount = constantService.findValueByName(Constants.DISPATCH_PERMISSION_COUNT);
+			if(realCount < Long.parseLong(maxCount)){
+				String pwd = null;
+				if(user.getPassWord() == null){
+					pwd = Constants.DISPATCH_PERMISSION_DEFAULT_PWD;
+				}
+				int i = userService.updateDispatchPermsn(user.getLoginName(), dispatchPermsn, pwd);
+				if(i > 0){//修改成功
+					map.put("success", true);
+					map.put("msg", "开通操作成功");
+				}else{
+					map.put("success", false);
+					map.put("msg", "开通操作失败");
+				}
+			}
+		}else{//关闭
+			int i = userService.updateDispatchPermsn(user.getLoginName(), dispatchPermsn, null);
+			if(i > 0){//修改成功
+				map.put("success", true);
+				map.put("msg", "关闭操作成功");
+			}else{
+				map.put("success", false);
+				map.put("msg", "关闭操作失败");
+			}
+		}
 	}
 	
 }

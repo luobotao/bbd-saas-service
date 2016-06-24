@@ -250,27 +250,28 @@ $(function () {
     }else{
         $(".y-scroll").css({maxHeight:"300px"})
     }
+    $(".i-hei").css({height:winhei-146});
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
 //iframe 自适应高度
-function iFrameHeight() {
-
-    var ifm = document.getElementById("iframe1");
-
-    var subWeb = document.frames ? document.frames["iframe1"].document : ifm.contentDocument;
-
-    //console.log("ht===000="+ifm.height);
-    if (ifm != null && subWeb != null) {
-        /*if(ifm.height){
-            console.log("ht===000="+ifm.height);
-        }*/
-        ifm.height = subWeb.body.scrollHeight;
-        if(ifm.height < 1580){
-            ifm.height = subWeb.body.scrollHeight + 150;
-        }
-    }
-    //console.log("ht===="+ifm.height);
-}
+//function iFrameHeight() {
+//
+//    var ifm = document.getElementById("iframe1");
+//
+//    var subWeb = document.frames ? document.frames["iframe1"].document : ifm.contentDocument;
+//
+//    //console.log("ht===000="+ifm.height);
+//    if (ifm != null && subWeb != null) {
+//        /*if(ifm.height){
+//            console.log("ht===000="+ifm.height);
+//        }*/
+//        ifm.height = subWeb.body.scrollHeight;
+//        if(ifm.height < 1580){
+//            ifm.height = subWeb.body.scrollHeight + 150;
+//        }
+//    }
+//    //console.log("ht===="+ifm.height);
+//}
 // S 自己的alert 提示
 function alert_mine(titile,content){
     $(".j-alert-pop").modal();

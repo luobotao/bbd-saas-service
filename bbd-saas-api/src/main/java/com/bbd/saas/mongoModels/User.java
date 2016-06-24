@@ -49,7 +49,7 @@ public class User implements Serializable {
     public String sessionKey;           //平台授权sessionkey
     public String secret;               //平台加密月
     public String printCode;            //打印机编码
-
+    private int dispatchPermsn; //是否有到站分派权限。0：无; 1: 有。
     @Transient
     private String roleMessage;//存放角色信息
     @Transient
@@ -274,5 +274,12 @@ public class User implements Serializable {
 
     public void setSecret(String secret) {
         this.secret = secret;
+    }
+    public int getDispatchPermsn() {
+        return dispatchPermsn;
+    }
+
+    public void setDispatchPermsn(int dispatchPermsn) {
+        this.dispatchPermsn = dispatchPermsn;
     }
 }

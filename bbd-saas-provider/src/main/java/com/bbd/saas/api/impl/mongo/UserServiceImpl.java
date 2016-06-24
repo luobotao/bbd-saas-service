@@ -14,6 +14,7 @@ import com.bbd.saas.vo.UserQueryVO2;
 import com.bbd.saas.vo.UserVO;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.UpdateResults;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserVO> findUserListBySite(Site site) {
-        List<User> userList = userDao.findUserListBySite(site, UserRole.SENDMEM,UserStatus.VALID);
+        List<User> userList = userDao.findUserListBySite(site, null,UserStatus.VALID);
         List<UserVO> userVoList = new ArrayList<UserVO>();
         if (userList != null && userList.size() > 0) {
             for (User user : userList) {
@@ -180,6 +181,15 @@ public class UserServiceImpl implements UserService {
         userDao.updateUserStatu(loginName, userStatus);
     }
 
+    @Override
+    public int updateDispatchPermsn(String loginName, Integer dispatchPermsn, String pwd) {
+        UpdateResults results = userDao.updateDispatchPermsn(loginName, dispatchPermsn, pwd);
+        int i = 0;
+        if(results != null && results.getWriteResult() != null){
+            i = results.getWriteResult().getN();
+        }
+        return i;
+    }
 
     /**
      * 根据用户名（手机号）去更新此用户的公司ID
@@ -236,5 +246,10 @@ public class UserServiceImpl implements UserService {
         }else {
             return str;
         }
+    }
+
+    @Override
+    public long findCountBySiteAndDisptcherPermsn(Site site, int dispatchPermsn) {
+        return userDao.selectCountBySiteAndDisptcherPermsn(site, dispatchPermsn);
     }
 }
