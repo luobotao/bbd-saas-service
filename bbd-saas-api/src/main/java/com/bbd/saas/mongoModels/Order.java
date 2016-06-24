@@ -63,6 +63,7 @@ public class Order implements Serializable {
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
     private int isRemoved;//是否被移除？ 0：未被移除； 1：被移除
     private String removeReason;//移除原因
+    private OrderSetStatus orderSetStatus;//运单集包状态
     @Transient
     private String parcelCode;
     @Transient
@@ -410,4 +411,11 @@ public class Order implements Serializable {
         this.transportStatus = transportStatus;
     }
 
+    public OrderSetStatus getOrderSetStatus() {
+        return orderSetStatus;
+    }
+
+    public void setOrderSetStatus(OrderSetStatus orderSetStatus) {
+        this.orderSetStatus = orderSetStatus;
+    }
 }
