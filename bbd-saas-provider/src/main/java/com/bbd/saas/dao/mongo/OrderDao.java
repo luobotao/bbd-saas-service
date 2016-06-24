@@ -533,4 +533,15 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("src", srcs);
         return findOne(query);
     }
+
+    public List<Order> findAllByTradeNo(String tradeNo) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        //商户订单号(我们自己生成的支付订单号)
+        if(StringUtils.isNotBlank(tradeNo)){
+            query.filter("tradeNo", tradeNo);
+        }
+        query.filter("isRemoved", 0);
+        return find(query).asList();
+    }
 }

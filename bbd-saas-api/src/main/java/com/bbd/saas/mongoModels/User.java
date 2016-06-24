@@ -44,6 +44,12 @@ public class User implements Serializable {
     private String companyId;      //所属公司ID
     private Integer balanceId;      //资金账号ID(针对商户有用)
     private String pwdFlag;      //0修改过密码 1未修改过密码
+
+    public String appKey;               //平台授权key
+    public String sessionKey;           //平台授权sessionkey
+    public String secret;               //平台加密月
+    public String printCode;            //打印机编码
+
     @Transient
     private String roleMessage;//存放角色信息
     @Transient
@@ -236,5 +242,37 @@ public class User implements Serializable {
 
     public void setPwdFlag(String pwdFlag) {
         this.pwdFlag = pwdFlag;
+    }
+
+    public String getAppKey() {
+        return appKey;
+    }
+
+    public void setAppKey(String appKey) {
+        this.appKey = appKey;
+    }
+
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+
+    public String getPrintCode() {
+        return printCode;
+    }
+
+    public void setPrintCode(String printCode) {
+        this.printCode = printCode;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 }
