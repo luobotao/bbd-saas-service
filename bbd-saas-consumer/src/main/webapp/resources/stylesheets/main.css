@@ -2000,5 +2000,10 @@ input.spe-input{
 .txtA{
   min-height:100px;
 }
-
 /* E saas2.1 */
+
+/* S 揽件入库 */
+.p-store{
+  background-position:0 -222px;
+}
+/* E 揽件入库 */
