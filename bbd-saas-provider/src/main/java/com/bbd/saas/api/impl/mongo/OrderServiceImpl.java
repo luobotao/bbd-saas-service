@@ -296,6 +296,11 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
+	@Override
+	public List<Order> findAllByTradeNo(String tradeNo) {
+		return orderDao.findAllByTradeNo(tradeNo);
+	}
+
 	private Order updateOrderWithAreaCode(Order order) {
 		orderDao.updateOrderWithAreaCode(order.getOrderNo(),order.getAreaCode(),order.getAreaRemark(),order.getPrintStatus());//修改订单表里的状态
 		return order;

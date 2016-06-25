@@ -13,7 +13,8 @@ public enum TradeStatus {
     WAITGET(2, "待取件"),
     GETED(3, "已取件"),
     CANCELED(4, "已取消"),
-    RETURNED(5, "已退款");
+    RETURNED(5, "已退款"),
+    FINISH(6, "已完成");
     private int status;
     private String message;
     private TradeStatus(int status, String message) {

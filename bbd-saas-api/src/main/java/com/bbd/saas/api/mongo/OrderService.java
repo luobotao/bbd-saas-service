@@ -153,4 +153,6 @@ public interface OrderService {
 	public Order afterImportDealWithOrder(Order order);
 	public Order reduceMailNumWithOrder(Order order);
 	public Order reduceAreaCodeWithOrder(Order order);
+
+	public List<Order> findAllByTradeNo(String tradeNo);
 }

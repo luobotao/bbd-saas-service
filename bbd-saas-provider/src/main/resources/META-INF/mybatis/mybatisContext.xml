@@ -15,7 +15,6 @@
         <property name="dataSource" ref="ds_0"/>
         <property name="mapperLocations" value="classpath*:META-INF/mybatis/mappers/*.xml"/>
     </bean>
-
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.bbd.saas"/>
     </bean>
