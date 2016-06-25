@@ -1,10 +1,7 @@
 package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.PrintStatus;
-import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.PageModel;
@@ -517,6 +514,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return findOne(query);
     }
 
+
     public List<Order> findAllByTradeNo(String tradeNo) {
         //创建查询条件
         Query<Order> query = createQuery();
@@ -527,4 +525,83 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("isRemoved", 0);
         return find(query).asList();
     }
+
+    /**
+     * 揽件入库的根据条件查询
+     * @param pageModel
+     * @param orderQueryVO
+     * @return
+     */
+    public  PageModel<Order>  findPageOrdersForHoldToStore(PageModel<Order> pageModel,OrderQueryVO orderQueryVO){
+
+        //设置查询条件
+        Query<Order> query = getQueryForHoldToStore(orderQueryVO);
+        //设置排序
+        query.order("-dateUpd");
+        //分页信息
+        query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
+        //查询数据
+        List<Order> orderList = find(query).asList();
+        pageModel.setDatas(orderList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
+    }
+
+
+    private Query<Order> getQueryForHoldToStore(OrderQueryVO orderQueryVO) {
+        Query<Order> query = createQuery();
+
+        if (orderQueryVO != null) {
+            //站点查询
+            if (StringUtils.isNotBlank(orderQueryVO.areaCode)) {
+                query.filter("areaCode", orderQueryVO.areaCode);
+            }
+
+            //揽件员
+            if (StringUtils.isNotBlank(orderQueryVO.userId)) {
+                query.filter("userId", orderQueryVO.userId);
+            }
+            //到站时间，只有已到站的订单才会有到站时间
+            if (StringUtils.isNotBlank(orderQueryVO.arriveBetween)) {
+                DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                query.filter("dateArrived >=", dateBetween.getStart());
+                query.filter("dateArrived <=", dateBetween.getEnd());
+            }
+            if (orderQueryVO.orderSetStatus != null) {
+                switch (orderQueryVO.orderSetStatus) {
+                    case 1:
+                        OrderSetStatus.WAITTOIN.getStatus();
+                        break;
+                    case 2:
+                        OrderSetStatus.WAITSET.getStatus();
+                        break;
+                    case 3:
+                        OrderSetStatus.WAITDRIVERGETED.getStatus();
+                        break;
+                    case 4:
+                        OrderSetStatus.DRIVERGETED.getStatus();
+                        break;
+                    case 5:
+                        OrderSetStatus.ARRIVEDISPATCH.getStatus();
+                        break;
+                    case 6:
+                        OrderSetStatus.WAITDISPATCHSET.getStatus();
+                        break;
+                    case 7:
+                        OrderSetStatus.WAITDRIVERTOSEND.getStatus();
+                        break;
+                    case 8:
+                        OrderSetStatus.DRIVERSENDING.getStatus();
+                        break;
+                    case 9:
+                        OrderSetStatus.ARRIVED.getStatus();
+                        break;
+                    default:
+                        OrderSetStatus.NOEMBRACE.getStatus();
+                }
+            }
+        }
+        return query;
+    }
+
 }
