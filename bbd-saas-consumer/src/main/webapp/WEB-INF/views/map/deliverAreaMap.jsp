@@ -104,8 +104,38 @@
 								设置配送范围后，将优先匹配站点附近的订单。
 							</div>
 							<form  method="POST" id="siteRadiusForm">
-								<div class="col-md-3 pb20">
-									<label>站点：　</label>
+								<div class="col-md-12 pb20" id="areaAddr">
+									<label>省：　</label>
+									<select name="prov" class="prov form-control form-con-new">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+									<label>　市：</label>
+									<select  class="city form-control form-con-new" disabled="disabled">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+									<label>　区：</label>
+									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+
+								</div>
+								<div class="col-md-12 pb20">
+									<label>站点：</label>
 									<select id="siteId" class="form-control form-con-new">
 										<option value="">请选择</option>
 										<c:if test="${not empty siteList}">
@@ -114,10 +144,8 @@
 											</c:forEach>
 										</c:if>
 									</select>
-								</div>
-								<div class="col-md-4 pb20">
 									<label class="f16">
-										站点周围：<c:set var="count" value="20"/>
+										　站点周围：<c:set var="count" value="20"/>
 										<select id="radius" name="radius"  class="form-control form-con-new f16">
 											<option value="0">请选择</option>
 											<c:forEach var = "temp" begin="1" step="1" end="${count}">
@@ -126,6 +154,7 @@
 										</select>  公里
 									</label>
 								</div>
+
 								<div class="col-md-12">
 									<div class="b-map">
 										<div id="areaMap" style="height: 533px;"></div>
@@ -141,8 +170,35 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-3 pb20">
-								<label>站点：　</label>
+							<div class="col-md-12 pb20" id="fenceAddr">
+								<label>省：　</label>
+								<select name="prov" class="prov form-control form-con-new">
+									<option value="">请选择</option>
+									<c:if test="${not empty siteList}">
+										<c:forEach var="site" items="${siteList}">
+											<option value="${site.id}">${site.name}</option>
+										</c:forEach>
+									</c:if>
+								</select>
+								<label>　市：</label>
+								<select  class="city form-control form-con-new" disabled="disabled">
+									<option value="">请选择</option>
+									<c:if test="${not empty siteList}">
+										<c:forEach var="site" items="${siteList}">
+											<option value="${site.id}">${site.name}</option>
+										</c:forEach>
+									</c:if>
+								</select>
+								<label>　区：</label>
+								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+									<option value="">请选择</option>
+									<c:if test="${not empty siteList}">
+										<c:forEach var="site" items="${siteList}">
+											<option value="${site.id}">${site.name}</option>
+										</c:forEach>
+									</c:if>
+								</select>
+								<label>　站点：　</label>
 								<select id="fenceSiteId" class="form-control form-con-new">
 									<option value="">请选择</option>
 									<c:if test="${not empty siteList}">
@@ -323,9 +379,43 @@
 	var defaultCenter = new BMap.Point(${centerPoint.lng}, ${centerPoint.lat});
 	var defaultZoom = 11;
 	/************************ 配送区域 ************* start **************************/
+	//省市区
+	/*var defprov = "";
+	var defcity = "北京";
+	var defdist = "朝阳区";*/
+
+	$("#areaAddr").citySelect({
+		prov: null,
+		city: null,
+		dist: null,
+		required: false,
+		nodata: ""
+	});
+
 	// 百度地图API功能
 	var areaMap = new BMap.Map("areaMap", {enableMapClick:false,minZoom:5});
 
+	//配送区域==省改变
+	$('#areaAddr .prov').change(function(){
+		//设置地图中心点，并调整地图视野
+		areaMap.centerAndZoom(this.value);
+		//站点列表和站点地图更新
+		showSiteChangeMap(null, "siteId");
+	}) ;
+	//配送区域==市改变
+	$('#areaAddr .city').change(function(){
+		//设置地图中心点，并调整地图视野
+		areaMap.centerAndZoom(this.value);
+		//站点列表和站点地图更新
+		showSiteChangeMap(null, "siteId");
+	}) ;
+	//配送区域==区改变
+	$('#areaAddr .dist').change(function(){
+		//设置地图中心点，并调整地图视野
+		areaMap.centerAndZoom($('#areaAddr .city').val()+this.value);
+		//站点列表和站点地图更新
+		showSiteChangeMap(null, "siteId");
+	}) ;
 	/*================初始化加载配送区域=======================start===============*/
 	function initDeliveryMap(){
 		areaMap.enableScrollWheelZoom(true);
@@ -386,32 +476,36 @@
 		}
 		showRadiusChangeMap(siteId, radius);
 	})
-	//展示配送范围--更改站点
-	function showSiteChangeMap(siteId){
+	//展示配送范围 -- 更改站点
+	function showSiteChangeMap(siteId, selectId){
 		$.ajax({
 			type : "GET",  //提交方式
 			url : "${ctx}/deliverArea/getSiteById",//路径
 			data : {
-				"siteId" : siteId
+				"pro" : $("#areaAddr .prov").val(),
+				"city" :  $("#areaAddr .city").val(),
+				"area" :  $("#areaAddr .dist").val(),
+				"siteId" : siteId,
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据
 				//清除所有覆盖物
 				areaMap.clearOverlays();
-				if (siteId == ""){//全部
+				if (siteId == null || siteId == ""){//省|市|区
 					/*$("#areaTool").hide();
 					 $("#areaTool_bg").hide();*/
 					//更新配送区域
 					$("#radius").val(0);
-					var centerSite = dataObject.centerSite;
+					//var centerSite = dataObject.centerSite;
 					var siteList = dataObject.siteList;
-
+					//更新站点列表数据
+					loadSiteData(selectId, siteList);
 					//显示站点和配送区域
 					if (siteList != null) {
-						var center = getPointBySite(centerSite);
 						//设置地图中心点和放大级别
+						/*var center = getPointBySite(centerSite);
 						areaMap.centerAndZoom(center, defaultZoom);
 						var circle = new BMap.Circle(center, radius * 1000);
-						areaMap.addOverlay(circle);
+						areaMap.addOverlay(circle);*/
 						//显示站点和配送区域
 						for (var i = 0;i < siteList.length ; i++) {
 							showOneSiteArea(siteList[i]);
@@ -439,6 +533,18 @@
 				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
+	}
+	function loadSiteData(selectId, siteList){
+		var obj = $("#" + selectId);
+		//清空数据
+		obj.empty();
+		//为Select追加一个Option(下拉项)
+		obj.append("<option value=''>请选择</option>");
+		if(siteList != null){
+			siteList.forEach(function(site){
+				obj.append("<option value='" + site.id + "'>" + site.name + "</option>");
+			});
+		}
 	}
 	//根据半径获得地图放大级别
 	function getMapZoom(radius){
@@ -596,9 +702,7 @@
 			fenceArray.push(barr);
 		}
 	}
-	function addAllEFenceData(){
 
-	}
 	var fenceObj = {
 		status: false,
 		map: '',
@@ -866,10 +970,42 @@
 
 	}
 
-	//配送范围-- 绘制电子地图-- 隐藏绘制-保存按钮 -- 默认全部，需要隐藏
-	/*$(".draw-btn").hide();
-	 $(".bg-alpha").hide();*/
+	//绘制电子地图 === 初始化省市区下拉框
+	$("#fenceAddr").citySelect({
+		prov: null,
+		city: null,
+		dist: null,
+		required: false,
+		nodata: ""
+	});
 
+	// 百度地图API功能
+	var areaMap = new BMap.Map("areaMap", {enableMapClick:false,minZoom:5});
+
+	//配送区域==省改变
+	$('#areaAddr .prov').change(function(){
+		//设置地图中心点，并调整地图视野
+		areaMap.centerAndZoom(this.value);
+		//站点列表和站点地图更新
+		showSiteChangeMap(null, "siteId");
+	}) ;
+	//配送区域==市改变
+	$('#areaAddr .city').change(function(){
+		//设置地图中心点，并调整地图视野
+		areaMap.centerAndZoom(this.value);
+		//站点列表和站点地图更新
+		showSiteChangeMap(null, "siteId");
+	}) ;
+	//配送区域==区改变
+	$('#areaAddr .dist').change(function(){
+		//设置地图中心点，并调整地图视野
+		areaMap.centerAndZoom($('#areaAddr .city').val()+this.value);
+		//站点列表和站点地图更新
+		showSiteChangeMap(null, "siteId");
+	}) ;
+
+
+	//配送范围-- 绘制电子地图-- 隐藏绘制-保存按钮 -- 默认全部，需要隐藏
 	//绘制电子围栏 -- 更改站点
 	$("#fenceSiteId").change(function(){
 		var siteId = $("#fenceSiteId").val();

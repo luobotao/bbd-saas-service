@@ -278,13 +278,10 @@ public class SiteServiceImpl implements SiteService {
 	}
     @Override
     public List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status) {
-        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-        statusList.add(status);
-        List<Site> siteList = this.siteDao.selectByCompanyId(companyId, statusList);
+        List<Site> siteList = this.siteDao.selectByCompanyId(companyId, status);
         List<SiteVO> siteVoList = null;
         if(siteList != null && siteList.size() > 0){
             siteVoList = new ArrayList<SiteVO>();
-            SiteVO siteVo = null;
             for(Site site : siteList){
                 siteVoList.add(siteToSiteVO(site));
             }
@@ -308,4 +305,18 @@ public class SiteServiceImpl implements SiteService {
 		return siteVo;
 	}
 
+    @Override
+    public List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
+        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+        statusList.add(status);
+        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status);
+        List<SiteVO> siteVoList = null;
+        if(siteList != null && siteList.size() > 0){
+            siteVoList = new ArrayList<SiteVO>();
+            for(Site site : siteList){
+                siteVoList.add(siteToSiteVO(site));
+            }
+        }
+        return siteVoList;
+    }
 }

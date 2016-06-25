@@ -117,6 +117,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         }
         return  find(query).asList();
     }
+
     /**
      * 根据公司ID获取该公司下的所有站点
      * @param companyId
@@ -126,6 +127,35 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         Query<Site> query = createQuery().order("areaCode");
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
+        }
+        if(status != null){
+            query.filter("status", status);
+        }
+        return  find(query).asList();
+    }
+
+    /**
+     * 根据公司ID、地区获取该公司下的指定状态的站点集合
+     * @param companyId 公司Id
+     * @param pro 省
+     * @param city 市
+     * @param area 区
+     * @param status 站点状态
+     * @return 站点集合
+     */
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
+        Query<Site> query = createQuery().order("areaCode");
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(StringUtils.isNotBlank(prov)){
+            query.filter("province", prov);
+        }
+        if(StringUtils.isNotBlank(city)){
+            query.filter("city", city);
+        }
+        if(StringUtils.isNotBlank(area)){
+            query.filter("area", area);
         }
         if(status != null){
             query.filter("status", status);

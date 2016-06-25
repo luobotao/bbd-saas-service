@@ -12,6 +12,8 @@ public class Constants {
     public static final String BBD_SAAS_VERIFY_CODE = "BBD_SAAS_VERIFY_CODE_";//verifycode id Key in redis
     public static final String BBD_SAAS_VERIFY_CODE_TIME = "BBD_SAAS_VERIFY_CODE_TIME_";//60秒发送间隔
 
+    public static final String BBD_SAAS_COMPANY_ID = "BBD_SAAS_COMPANY_ID_";//companyid Key in redis session
+
     public final static String COMMA = ",";
 
     public final static String WEEK = "week";
