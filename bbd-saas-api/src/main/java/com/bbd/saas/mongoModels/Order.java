@@ -64,8 +64,8 @@ public class Order implements Serializable {
     private int isRemoved;//是否被移除？ 0：未被移除； 1：被移除
     private String removeReason;//移除原因
     private OrderSetStatus orderSetStatus;//运单集包状态
-    @Transient
-    private String parcelCode;
+    private String parcelCode;//包裹号码默认为空
+
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -428,4 +428,6 @@ public class Order implements Serializable {
     public void setOrderSetStatus(OrderSetStatus orderSetStatus) {
         this.orderSetStatus = orderSetStatus;
     }
+
+    
 }

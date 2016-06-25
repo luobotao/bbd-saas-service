@@ -154,5 +154,14 @@ public interface OrderService {
 	public Order reduceMailNumWithOrder(Order order);
 	public Order reduceAreaCodeWithOrder(Order order);
 
+
 	public List<Order> findAllByTradeNo(String tradeNo);
+	/**
+	 *根据相关条件查询出所有揽件入库的订单
+	 * @param pageIndex
+	 * @param orderQueryVO
+	 * @return
+	 */
+	public  PageModel<Order> 	findPageOrdersForHoldToStore(Integer pageIndex,OrderQueryVO orderQueryVO);
+
 }

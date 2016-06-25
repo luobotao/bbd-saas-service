@@ -41,6 +41,8 @@ public class OrderParcel implements Serializable {
     private String station_address;
     //订单列表
     private List<Order> orderList;
+    //包裹类型 0：配件包裹（默认） 1：集包
+    private String parceltyp;
 
     private Date dateAdd;
     private Date dateUpd;
@@ -147,5 +149,13 @@ public class OrderParcel implements Serializable {
 
     public void setTrackNo(String trackNo) {
         this.trackNo = trackNo;
+    }
+
+    public String getParceltyp() {
+        return parceltyp;
+    }
+
+    public void setParceltyp(String parceltyp) {
+        this.parceltyp = parceltyp;
     }
 }

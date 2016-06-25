@@ -296,10 +296,12 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
+
 	@Override
 	public List<Order> findAllByTradeNo(String tradeNo) {
 		return orderDao.findAllByTradeNo(tradeNo);
 	}
+
 
 	private Order updateOrderWithAreaCode(Order order) {
 		orderDao.updateOrderWithAreaCode(order.getOrderNo(),order.getAreaCode(),order.getAreaRemark(),order.getPrintStatus());//修改订单表里的状态
@@ -317,5 +319,26 @@ public class OrderServiceImpl implements OrderService {
 		one.num = (num + 1) + "";
 		orderNumDao.updateOrderNum("num",one.num);
 		return num;
+	}
+
+
+
+
+	/**
+	 * 根据相关条件查询出所有揽件入库的订单
+	 * @param  pageIndex
+	 * @param orderQueryVO
+	 * @return
+	 */
+	@Override
+	public  PageModel<Order> 	findPageOrdersForHoldToStore(Integer pageIndex,OrderQueryVO orderQueryVO){
+		if(orderQueryVO == null){
+			return null;
+		}
+		PageModel<Order> pageModel = new PageModel<Order>();
+		pageModel.setPageNo(pageIndex);
+
+		return orderDao.findPageOrdersForHoldToStore(pageModel,orderQueryVO);
+
 	}
 }
