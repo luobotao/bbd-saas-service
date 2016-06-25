@@ -96,9 +96,9 @@
 								<th>收货人</th>
 								<th>收货人电话</th>
 								<th width="10%">地址</th>
-								<th>打单时间</th>
 								<th>预计到站时间</th>
 								<th>状态</th>
+								<th>操作</th>
 							</tr>
 							</thead>
 							<tbody id="dataList">
@@ -115,18 +115,29 @@
 								<td><%=order.getReciever().getName()%></td>
 								<td><%=order.getReciever().getPhone()%></td>
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-								<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>
+								<%--<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>--%>
 								<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 								<%
 									if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
 								%>
 								<td class="orange"><%=ArriveStatus.NOTARR.getMessage()%></td>
+								<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>
 								<%
 								}else{
 								%>
-								<td class="c-green"><%=ArriveStatus.ARRIVED.getMessage()%></td>
+									<td class="c-green"><%=ArriveStatus.ARRIVED.getMessage()%></td>
+								<%--操作--%>
+								<%
+									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH || order.getOrderStatus() == OrderStatus.DISPATCHED){
+								%>
+										<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange">设为超区件</a></td>
+								<%
+									}else{
+								%>
+										<td></td>
 								<%
 									}
+								}
 								%>
 							</tr>
 							<%
@@ -169,6 +180,9 @@
 						<!-- S button -->
 						<div class="clearfix fl">
 							<a href="#" onclick="batchBtn()" data-toggle="modal" class="ser-btn l">批量到站</a>
+							<c:if test="${areaCode != null && areaCode == '122110-001'}">
+								<a href="javascript:void(0)" onclick="batchSuperAreaBtn()" data-toggle="modal" class="ser-btn l">批量设为超区件</a>
+							</c:if>
 						</div>
 						<!-- E button -->
 						<!-- S page -->
@@ -189,6 +203,37 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+
+<!--S 设为超区件-->
+<div class="j-pl-pop modal fade" id="superAreaDiv" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal_wrapper">
+		<div class="modal-dialog b-modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header b-modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title  tc" id="superAreaConform">确认</h4>
+				</div>
+				<div class="modal-body b-modal-body">
+					<em class="f16" id="superAreaBody">确认将该订单设置为超区件？</em>
+				</div>
+				<div class="modal-footer tc">
+					<%--<div class="row mt20">--%>
+						<span class="col-md-6">
+							<button type="button" class="ser-btn g wp80" data-dismiss="modal" class="close">取消</button>
+						</span>
+						<span class="col-md-6">
+							<button  type="button" class="ser-btn l wp80" onclick="doSuperArea()">确认</button>
+						</span>
+					<%--</div>--%>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 设为超区件-->
+
+
+
 
 
 <script type="text/javascript">
@@ -280,12 +325,18 @@
 		row += "<td>" + data.reciever.name + "</td>";
 		row += "<td>" + data.reciever.phone + "</td>";
 		row += "<td class='tl'>" + data.reciever.province +" "+ data.reciever.city +" "+ data.reciever.area +" "+ data.reciever.address + "</td>";
-		row += "<td>" + getDate1(data.datePrint) + "</td>";
+		//row += "<td>" + getDate1(data.datePrint) + "</td>";
 		row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
-		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){
+		if(data.orderStatus=="<%=OrderStatus.NOTARR%>"){
 			row += "<td class='orange'>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
+			row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
 		}else{
 			row += "<td class='c-green'>" + "<%=ArriveStatus.ARRIVED.getMessage()%>" + "</td>";
+			if(data.orderStatus=="<%=OrderStatus.NOTDISPATCH%>" || data.orderStatus=="<%=OrderStatus.DISPATCHED%>"){
+				row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
+			}else {
+				row += "<td></td>";
+			}
 		}
 		row += "</tr>";
 		return row;
@@ -436,6 +487,7 @@
 	}
 
 	var ids = [];
+
 	//批量到站button
 	function batchBtn(){
 		var checkids = $('input[name="id"]:checked');
@@ -498,6 +550,109 @@
 			ioutDiv('请选择运单！');
 		}
 	}
+
+	var superAreaIsBatch = false;
+	//设为超区件 -- 显示超区件提示
+	function showSuperAreaDiv(mailNumStr) {
+		mailNum = mailNumStr;
+		$("#superAreaBody").html("确认将该订单设置为超区件？");
+		superAreaIsBatch = false;
+	}
+	//做单个设置超区===确认按钮
+	function doOneSuperArea() {
+		$.ajax({
+			type : "POST",  //提交方式
+			url : "<c:url value="/packageToSite/doSuperArea?${_csrf.parameterName}=${_csrf.token}" />",//路径
+			data : {
+				mailNum : mailNum
+			},//数据，这里使用的是Json格式进行传输
+			success : function(data) {//返回数据根据结果进行相应的处理
+				if(data){//
+					ioutDiv("操作成功！");
+					var pageIndex = parseInt($(".pagination .active").text())-1;
+					gotoPage(pageIndex);
+				}else{
+					ioutDiv("操作失败！");
+				}
+			},
+			error : function() {
+				ioutDiv("服务器繁忙，请稍后再试！");
+			}
+		});
+		$("#superAreaDiv").modal("hide");
+	}
+
+
+	//批量超区button === 显示提示信息
+	function batchSuperAreaBtn(){
+		var checkids = $('input[name="id"]:checked');
+		ids = [];
+		if(checkids.length) {
+			$.each(checkids, function(i, n){
+				if(!$(n).closest('tr').find('.status .label').hasClass('label-success')) {
+					ids.push($(n).val());
+				}
+			});
+		}
+		if(ids.length>0){
+			var url = "<c:url value="/packageToSite/isAllSuperArea?${_csrf.parameterName}=${_csrf.token}" />";
+			$.ajax({
+				url: url,
+				type: 'POST',
+				cache: false,
+				dataType: "json",
+				data: {
+					"ids" : JSON.stringify(ids)
+				},
+				success: function(data){
+					if(data){//没有出现物流状态为异常的订单
+						$("#superAreaBody").html("确认将选中的订单设置为超区件？");
+						$("#superAreaDiv").modal("show");
+						superAreaIsBatch = true;//批量超区
+					}else{
+						ioutDiv("只有订单状态为未到站、未分派、已分派的订单才可以设置为超区件");
+					}
+				},
+				error: function(){
+					ioutDiv('服务器繁忙，请稍后再试！');
+				}
+			});
+		}else{
+			ioutDiv('请选择运单！');
+		}
+	}
+	//做设置超区===确认按钮
+	function doSuperArea(){
+		if(superAreaIsBatch){//批量
+			doBatchSuperArea();
+		}else{//单个
+			doOneSuperArea();
+		}
+	}
+	//做批量设置超区===确认按钮
+	function doBatchSuperArea(){
+		if(ids.length>0){
+			var url = "<c:url value="/packageToSite/doBatchSuperArea?${_csrf.parameterName}=${_csrf.token}" />";
+			$.ajax({
+				url: url,
+				type: 'POST',
+				cache: false,
+				dataType: "json",
+				data: {
+					"mailNums" : JSON.stringify(ids)
+				},
+				success: function(json){
+					location.reload();
+				},
+				error: function(){
+					ioutDiv('服务器繁忙，请稍后再试！');
+				}
+			});
+		}else{
+			ioutDiv('请选择运单！');
+		}
+	}
+
 </script>
 </body>
 </html>

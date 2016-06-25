@@ -284,8 +284,9 @@ public class SiteController {
 	}
 
 	//电子围栏
+	@ResponseBody
 	@RequestMapping(value="putAllOverLay", method=RequestMethod.POST)
-	public  @ResponseBody String putAllOverLay(@RequestParam String siteId, @RequestParam String jsonStr){
+	public Result putAllOverLay(@RequestParam String siteId, @RequestParam String jsonStr){
 		//处理电子围栏数据
 		String[] pointArr = jsonStr.split(";");
 		List<List<MapPoint>> points = new ArrayList<List<MapPoint>>();
@@ -302,8 +303,8 @@ public class SiteController {
 		/*User user = adminService.get(UserSession.get(request));
 		String siteId = user.getSite().getId().toString();*/
 		Result result = sitePoiApi.updateSiteEfence(siteId,points);
-		logger.info(result.code+":"+result.toString());
-		return "success";
+		logger.info("保存电子围栏结果：" + result.code + "，"+result.toString());
+		return result;
 	}
 
 	//--------------------------站点配送区域引导--------------------------------------------------

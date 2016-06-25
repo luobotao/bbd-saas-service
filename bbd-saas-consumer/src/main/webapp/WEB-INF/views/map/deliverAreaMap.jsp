@@ -482,7 +482,7 @@
 			type : "GET",  //提交方式
 			url : "${ctx}/deliverArea/getSiteById",//路径
 			data : {
-				"pro" : $("#areaAddr .prov").val(),
+				"prov" : $("#areaAddr .prov").val(),
 				"city" :  $("#areaAddr .city").val(),
 				"area" :  $("#areaAddr .dist").val(),
 				"siteId" : siteId,
@@ -491,29 +491,19 @@
 				//清除所有覆盖物
 				areaMap.clearOverlays();
 				if (siteId == null || siteId == ""){//省|市|区
-					/*$("#areaTool").hide();
-					 $("#areaTool_bg").hide();*/
 					//更新配送区域
 					$("#radius").val(0);
-					//var centerSite = dataObject.centerSite;
 					var siteList = dataObject.siteList;
-					//更新站点列表数据
+					//更新站点下拉列表数据
 					loadSiteData(selectId, siteList);
 					//显示站点和配送区域
 					if (siteList != null) {
-						//设置地图中心点和放大级别
-						/*var center = getPointBySite(centerSite);
-						areaMap.centerAndZoom(center, defaultZoom);
-						var circle = new BMap.Circle(center, radius * 1000);
-						areaMap.addOverlay(circle);*/
 						//显示站点和配送区域
 						for (var i = 0;i < siteList.length ; i++) {
 							showOneSiteArea(siteList[i]);
 						}
 					}
 				} else {
-					/*$("#areaTool").show();
-					 $("#areaTool_bg").show();*/
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -768,13 +758,12 @@
 
 		},
 		loadOneSite: function(name, lng, lat){//加载站点标注
+			var point = getPointBySite2(lng, lat);
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
-			var marker = new BMap.Marker(new BMap.Point(lng, lat),{icon:myIcon});  // 创建标注
-			//marker.disableMassClear();//右键删除电子围栏的时候，不能被删除
-			//marker.enableMassClear;
+			var marker = new BMap.Marker(point, {icon:myIcon});  // 创建标注
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			/*var label = newLabel(new BMap.Point(lng, lat), name);
-			this.map.addOverlay(label);               // 将label添加到地图中*/
+			var label = newLabel(point, name);
+			this.map.addOverlay(label);               // 将label添加到地图中
 		},
 		loadAllSiteAndEFence: function(){//加载站点标注
 			//加载所有站点
@@ -784,6 +773,7 @@
 			%>
 			//加载站点
 			this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
+			console.log("<%=site.getName()%>       <%=site.getLng()%>     <%=site.getLat()%>");
 			//加载电子围栏
 			var efenceObj = new EFenceObj("<%=site.getName()%>", "<%=site.geteFence()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
 			efenceObj.loadDataAndShow(false);
@@ -979,29 +969,26 @@
 		nodata: ""
 	});
 
-	// 百度地图API功能
-	var areaMap = new BMap.Map("areaMap", {enableMapClick:false,minZoom:5});
-
-	//配送区域==省改变
-	$('#areaAddr .prov').change(function(){
+	//绘制电子地图 == 省改变
+	$('#fenceAddr .prov').change(function(){
 		//设置地图中心点，并调整地图视野
-		areaMap.centerAndZoom(this.value);
+		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新
-		showSiteChangeMap(null, "siteId");
+		eFenceMapChangeSite(null, "fenceSiteId");
 	}) ;
-	//配送区域==市改变
-	$('#areaAddr .city').change(function(){
+	//绘制电子地图 == 市改变
+	$('#fenceAddr .city').change(function(){
 		//设置地图中心点，并调整地图视野
-		areaMap.centerAndZoom(this.value);
+		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新
-		showSiteChangeMap(null, "siteId");
+		eFenceMapChangeSite(null, "fenceSiteId");
 	}) ;
-	//配送区域==区改变
-	$('#areaAddr .dist').change(function(){
+	//绘制电子地图 == 区改变
+	$('#fenceAddr .dist').change(function(){
 		//设置地图中心点，并调整地图视野
-		areaMap.centerAndZoom($('#areaAddr .city').val()+this.value);
+		fenceObj.map.centerAndZoom($('#areaAddr .city').val()+this.value);
 		//站点列表和站点地图更新
-		showSiteChangeMap(null, "siteId");
+		eFenceMapChangeSite(null, "fenceSiteId");
 	}) ;
 
 
@@ -1011,41 +998,35 @@
 		var siteId = $("#fenceSiteId").val();
 		eFenceMapChangeSite(siteId);
 	});
-	function eFenceMapChangeSite(siteId){
+	function eFenceMapChangeSite(siteId, selectId){
 		$.ajax({
 			type : "GET",  //提交方式
 			url : "${ctx}/deliverArea/getFence",//路径
 			data : {
+				"prov" : $("#fenceAddr .prov").val(),
+				"city" :  $("#fenceAddr .city").val(),
+				"area" :  $("#fenceAddr .dist").val(),
 				"siteId" : siteId
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据
 				//清除所有覆盖物
 				fenceObj.clearAll();
-				if (siteId == ""){//全部
-					var site = dataObject.centerSite;
+				if (siteId == null ||siteId == ""){//全部
 					var siteList = dataObject.siteList;
-					var center = getPointBySite(site);
-					var zoom = getMapZoom(site.deliveryArea);
-					//设置地图中心点和放大级别
-					fenceObj.map.centerAndZoom(center, zoom);
+					//更新站点下拉列表数据
+					loadSiteData(selectId, siteList);
 					//显示站点和围栏
 					if (siteList != null){
-						//fenceArray = [];
 						siteList.forEach(function(site){
 							//加载
 							fenceObj.loadOneSite(site.name, site.lng, site.lat);
 							//加载电子围栏
 							var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
 							efenceObj.loadDataAndShow(false);
-							/*addOneEFenceData(site.eFence);*/
 						});
 					}
-					/*fenceObj.myOverlay = fenceArray;
-					 fenceObj.loadMyOverlay();*/
-				} else {
+				} else {//显示单个站点
 					//显示绘制-保存按钮
-					/*$("#eFenceTool").show();
-					 $("#eFenceTool_bg").show();*/
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
@@ -1053,11 +1034,9 @@
 					fenceObj.map.centerAndZoom(center, zoom);
 					//显示站点和围栏
 					fenceObj.loadOneSite(site.name, site.lng, site.lat);
-
 					//加载电子围栏f
 					var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
 					efenceObj.loadDataAndShow(true);
-
 				}
 			},
 			error : function() {
@@ -1097,12 +1076,12 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					if(data == "success"){
-						ioutDiv("提交成功");
+					if(data == 0){
+						ioutDiv(data.msg);
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);
 					}else{
-						ioutDiv("error:"+data);
+						ioutDiv("error:" + data.msg);
 					}
 				},
 				error: function(){

@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang3.StringUtils;
+import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +55,43 @@ public class PackageToSiteController {
 	IncomeService incomeService;
 	@Autowired
 	ExpressExchangeService expressExchangeService;
+
+	/**
+	 * description: 跳转到包裹到站页面
+	 * 2016年4月1日下午6:13:46
+	 * @author: liyanlei
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="", method=RequestMethod.GET)
+	public String index(Model model,HttpServletRequest request) {
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.add(Calendar.DATE, -1);
+		String start = Dates.formatSimpleDate(cal.getTime());
+		cal.add(Calendar.DATE, 2);
+		String end = Dates.formatSimpleDate(cal.getTime());
+		String between =start+" - "+end;
+		User user = adminService.get(UserSession.get(request));
+		OrderNumVO orderNumVO = orderService.getOrderNumVO(user.getSite().getAreaCode());
+
+		PageModel<Order> orderPage = getOrderPage(request,0, -1,between,"","");
+
+		model.addAttribute("orderPage", orderPage);
+		model.addAttribute("between", between);
+		//未到站订单数
+		model.addAttribute("non_arrival_num", orderNumVO.getNoArrive());
+		model.addAttribute("history_non_arrival_num", orderNumVO.getNoArriveHis());
+		model.addAttribute("arrived_num", orderNumVO.getArrived());
+		model.addAttribute("areaCode", user == null? "" : user.getSite() == null ? "" : user.getSite().getAreaCode());
+		return "page/packageToSite";
+	}
+
 
 	/**
 	 * 根据运单号检查是否存在此订单
@@ -245,39 +284,100 @@ public class PackageToSiteController {
 		}
 	}
 
+
 	/**
-	 * description: 跳转到包裹到站页面
-	 * 2016年4月1日下午6:13:46
-	 * @author: liyanlei
-	 * @param model
+	 * 设置单个运单超区
+	 * @param mailNum 运单号
+	 * @return true :成功； false：失败。
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/doSuperArea", method = RequestMethod.POST)
+	public boolean doSuperArea(HttpServletRequest request,String mailNum) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		return doOneSuperArea(user, mailNum);
+	}
+	private boolean doOneSuperArea(User user, String mailNum){
+		Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
+		if(order!=null){
+			order.setOrderStatus(OrderStatus.RETENTION);//滞留
+			addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因是：超出配送范围。");
+		}
+		Key<Order> result = orderService.save(order);
+		if(result != null){
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 增加订单物流信息
+	 * @param expressStatus 物流状态
+	 * @param order 订单
+	 * @param user 当前用户
+	 * @param remark 物流信息
+	 */
+	private void addOrderExpress(ExpressStatus expressStatus,Order order, User user, String remark){
+		//更新物流状态
+		order.setExpressStatus(expressStatus);
+		//更新物流信息
+		List<Express> expressList = order.getExpresses();
+		if(expressList == null){
+			expressList = new ArrayList<Express>();
+		}
+		Express express = new Express();
+		express.setDateAdd(new Date());
+		express.setRemark(remark);
+		express.setLat(user.getSite().getLat());
+		express.setLon(user.getSite().getLng());
+		boolean expressIsNotAdd = true;//防止多次添加
+		//检查是否添加过了
+		for (Express express1 : expressList) {
+			if (express.getRemark().equals(express1.getRemark())) {
+				expressIsNotAdd = false;
+				break;
+			}
+		}
+		if (expressIsNotAdd) {//防止多次添加
+			expressList.add(express);
+			order.setExpresses(expressList);
+		}
+	}
+
+	/**
+	 * 选中的订单是否都符合批量超区
+	 * @param ids
 	 * @return
 	 */
-	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Model model,HttpServletRequest request) {
-
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		cal.add(Calendar.DATE, -1);
-		String start = Dates.formatSimpleDate(cal.getTime());
-		cal.add(Calendar.DATE, 2);
-		String end = Dates.formatSimpleDate(cal.getTime());
-		String between =start+" - "+end;
-		User user = adminService.get(UserSession.get(request));
-		OrderNumVO orderNumVO = orderService.getOrderNumVO(user.getSite().getAreaCode());
-
-		PageModel<Order> orderPage = getOrderPage(request,0, -1,between,"","");
-
-		model.addAttribute("orderPage", orderPage);
-		model.addAttribute("between", between);
-		//未到站订单数
-		model.addAttribute("non_arrival_num", orderNumVO.getNoArrive());
-		model.addAttribute("history_non_arrival_num", orderNumVO.getNoArriveHis());
-		model.addAttribute("arrived_num", orderNumVO.getArrived());
-		return "page/packageToSite";
+	@ResponseBody
+	@RequestMapping(value = "/isAllSuperArea", method = RequestMethod.POST)
+	public boolean isAllSuperArea(HttpServletRequest request,String ids) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		BasicDBList idList = (BasicDBList) JSON.parse(ids);
+		long num = orderService.getCounByMailNumsAndExpressStatus(idList, ExpressStatus.DriverGeted);
+		if(num == 0){
+			return true;
+		}else {
+			return false;
+		}
+	}
+	/**
+	 * 设置批量超区件
+	 * @param mailNums
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/doBatchSuperArea", method = RequestMethod.POST)
+	public boolean doBatchSuperArea(HttpServletRequest request,String mailNums) {
+		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		BasicDBList mailNumList = (BasicDBList) JSON.parse(mailNums);
+		boolean r = true;
+		for (Object mailNum : mailNumList){
+			if(r){
+				r = doOneSuperArea(user, mailNum.toString());
+			}else{
+				doOneSuperArea(user, mailNum.toString());
+			}
+		}
+		return false;
 	}
 
 }

@@ -12,7 +12,6 @@ import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.UserRole;
-import com.bbd.saas.mongoModels.AdminUser;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.DateBetween;
@@ -135,7 +134,6 @@ public class IndexController {
     @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.GET)
     public Object sendVerifyCode(@RequestParam(value = "phone", required = true) String phone) {
         Map<String, Object> result = new ConcurrentReaderHashMap();
-
         if (StringUtils.isBlank(phone) || !StringUtil.checkPhone(phone)) {//手机号码不正确
             result.put("status", ErrorCode.getErrorCode("global.phoneError"));
             result.put("msg", ErrorCode.getErrorMsg("global.phoneError"));
@@ -156,6 +154,7 @@ public class IndexController {
         smsInfoService.saveVerify(phone, code, "1");//写入短信表 1注册
         result.put("status", "1");
         result.put("msg", "发送成功");
+        logger.info("手机号："+ phone + ",验证码 ：" + code);
         return result;
     }
 

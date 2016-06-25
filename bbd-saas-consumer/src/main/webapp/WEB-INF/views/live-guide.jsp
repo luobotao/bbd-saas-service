@@ -339,11 +339,12 @@
 						"siteId":siteId
 					},
 					success: function(data){
-						if(data == "success"){
-							outDiv("提交成功");
+						/*if(data == 0){
+							outDiv(data.msg);
 						}else{
 							console.log("error:"+data);
-						}
+						}*/
+						outDiv(data.msg);
 					},
 					error: function(){
 						window.location.href="${ctx}/login";
