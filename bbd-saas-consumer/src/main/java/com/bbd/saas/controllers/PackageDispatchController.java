@@ -313,7 +313,7 @@ public class PackageDispatchController {
 	}
 	
 	/**
-	 * Description: 获取本站点下的所有状态为有效的派件员
+	 * Description: 获取本站点下的所有状态为有效的派件员和站长
 	 * @param request
 	 * @return
 	 * @author: liyanlei

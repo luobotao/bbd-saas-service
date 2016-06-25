@@ -12,6 +12,8 @@ public class Constants {
     public static final String BBD_SAAS_VERIFY_CODE = "BBD_SAAS_VERIFY_CODE_";//verifycode id Key in redis
     public static final String BBD_SAAS_VERIFY_CODE_TIME = "BBD_SAAS_VERIFY_CODE_TIME_";//60秒发送间隔
 
+    public static final String BBD_SAAS_COMPANY_ID = "BBD_SAAS_COMPANY_ID_";//companyid Key in redis session
+
     public final static String COMMA = ",";
 
     public final static String WEEK = "week";
@@ -84,6 +86,10 @@ public class Constants {
     public static final String TYPE_AVERAGE = "4";
     //空
     public static final String STRING_BLANK = "";
+    //每个站点设置的到站分派权限的派件员的最大数目
+    public static String DISPATCH_PERMISSION_COUNT = "dispatchPermsnCount";
+    //设置到站分派权限的派件员默认密码
+    public static String DISPATCH_PERMISSION_DEFAULT_PWD = "123abc";
 
 
 }

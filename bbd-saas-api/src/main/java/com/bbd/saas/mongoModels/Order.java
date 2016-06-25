@@ -67,9 +67,11 @@ public class Order implements Serializable {
     @Transient
     private String parcelCode;
     @Transient
-    private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message
+    private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
-    private String orderStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message
+    private String printStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message -- 打印状态
+    @Transient
+    private String orderStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message -- 运单状态
     @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
@@ -388,6 +390,14 @@ public class Order implements Serializable {
 
     public void setRemoveReason(String removeReason) {
         this.removeReason = removeReason;
+    }
+
+    public String getPrintStatusMsg() {
+        return this.printStatus == null ? "" : this.printStatus.getMessage();
+    }
+
+    public void setPrintStatusMsg(String printStatusMsg) {
+        this.printStatusMsg = printStatusMsg;
     }
 
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
