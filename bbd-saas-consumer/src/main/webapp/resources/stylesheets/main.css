@@ -682,7 +682,7 @@ footer {
 /* S 系统配送首页*/
 .b-con {
   min-height: 836px;
-  padding-top: 130px;
+  padding: 130px 0;
   background-image: -ms-linear-gradient(top, #46c6ee, #e8f4ff);
   background-image: -moz-linear-gradient(top, #46c6ee, #e8f4ff);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#46c6ee), to(#e8f4ff));
@@ -847,16 +847,19 @@ footer {
   padding: 20px 20px;
   margin-bottom: 0;
   font-weight:bold;
+  text-align:center;
 }
 .arrive-status .b-order {
   font-size: 44px;
-  float: left;
-  margin: -10px 20px 0 0;
+  display:inline-block;
+  margin: 0 20px 0 0;
 }
 .arrive-status dd {
+  display:inline-block;
+  width:100px;
   text-align: left;
-  margin-bottom: -4px;
   color: #ffd1ca;
+  line-height:20px;
 }
 .b-board-card {
   margin-bottom: 20px;
