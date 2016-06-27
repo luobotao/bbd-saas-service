@@ -3,7 +3,7 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.enums.DispatchStatus" %>
-<%@ page import="java.util.List" %>
+<%@ page import="com.bbd.saas.constants.Constants" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -65,9 +65,12 @@
   			<div class="tab-bod mt20">
   				<!-- S table -->
   				<div class="table-responsive">
-  					<table class="table">
+  					<table id="orderTable" class="table">
   						<thead>
   							<tr>
+								<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+									<th width="4%"><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
+								</c:if>
 								<th>运单号</th>
 								<th>收货人</th>
 								<th width="20%">收货人地址</th>
@@ -91,6 +94,9 @@
 								for(Order order : orderPage.getDatas()){
 						%>
 							<tr>
+								<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+									<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
+								</c:if>
 								<td><%=order.getMailNum()%></td>
 								<td><%=order.getReciever().getName()%></td>
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
@@ -127,9 +133,20 @@
   					</table>
   				</div>
   				<!-- E table -->
-  				<!-- S tableBot -->
-	  			<div class="clearfix pad20" id="pagin"></div>
-				<!-- E tableBot -->
+					<!-- S tableBot -->
+					<div class="clearfix pad20">
+						<!-- S button -->
+						<div class="clearfix fl">
+							<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+								<a href="javascript:void(0)" onclick="batchSuperAreaBtnWithNoCheck()" data-toggle="modal" class="ser-btn l">批量设为超区件</a>
+							</c:if>
+						</div>
+						<!-- E button -->
+						<!-- S page -->
+						<div id="pagin"></div>
+						<!-- E page -->
+					</div>
+					<!-- E tableBot -->
   				</div>
 			</div>
 			<!-- E detail -->
@@ -200,6 +217,16 @@ $(document).ready(function() {
 		},
 		format: 'YYYY/MM/DD'
 	});
+	//选择框样式
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
+	$("#selectAll").on('ifUnchecked', function() {
+		$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
+	}).on('ifChecked', function() {
+		$("input[type='checkbox']", "#orderTable").iCheck("check");
+	});
+
 	//初始化派件员下拉框（快递员）
 	initCourier();  
 	//扫描运单号  focus事件
@@ -207,15 +234,7 @@ $(document).ready(function() {
 		if($("#courierId").val() == null || $("#courierId").val() == ""){
 	  		$("#mailNum_check").text("请选择派件员！");
 	  	}
-	});/* .blur(function(){//扫描运单号--把快递分派给派件员
-		//未选择派件员 
-		if($("#courierId").val() == null || $("#courierId").val() == ""){
-	  		$("#mailNum_check").text("请选择派件员！");
-	  		return ;
-	  	}	
-	  	//已选择派件员，把快递分派给派件员	 
-	  	dispatch();
-	}); */
+	});
 	//扫描运单号--把快递分派给派件员--边输入边改变
 	$("#mailNum").on('input',function(e){ 
 		
@@ -319,10 +338,22 @@ function refreshTable(dataObject){
 	//更新分页条
 	var pageStr = paginNav(dataObject.pageNo, dataObject.totalPages, dataObject.totalCount);
 	$("#pagin").html(pageStr);
+	//样式
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
+	$("#selectAll").on('ifUnchecked', function() {
+		$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
+	}).on('ifChecked', function() {
+		$("input[type='checkbox']", "#orderTable").iCheck("check");
+	});
 }
 //封装一行的数据
 function getRowHtml(data){
 	var row = "<tr>";
+	<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+		row +=  "<td><input type='checkbox' value='" + data.mailNum + "' name='id'></td>";
+	</c:if>
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
@@ -335,7 +366,7 @@ function getRowHtml(data){
 		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
-	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>"){
+	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
 		row += "<td><em class='orange'><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>";
 	}else{
 		row += "<td><em class='c-green'><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>";

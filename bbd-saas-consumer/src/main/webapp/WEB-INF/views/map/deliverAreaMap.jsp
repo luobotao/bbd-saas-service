@@ -759,11 +759,12 @@
 		},
 		loadOneSite: function(name, lng, lat){//加载站点标注
 			var point = getPointBySite2(lng, lat);
+			console.log(point);
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 			var marker = new BMap.Marker(point, {icon:myIcon});  // 创建标注
 			this.map.addOverlay(marker);               // 将标注添加到地图中
-			var label = newLabel(point, name);
-			this.map.addOverlay(label);               // 将label添加到地图中
+			/*var label = newLabel(point, name); // 需求不显示站点名称，在电子围栏中展示站点名称
+			this.map.addOverlay(label);               // 将label添加到地图中*/
 		},
 		loadAllSiteAndEFence: function(){//加载站点标注
 			//加载所有站点
@@ -773,7 +774,7 @@
 			%>
 			//加载站点
 			this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
-			console.log("<%=site.getName()%>       <%=site.getLng()%>     <%=site.getLat()%>");
+			//console.log("<%=site.getName()%>       <%=site.getLng()%>     <%=site.getLat()%>");
 			//加载电子围栏
 			var efenceObj = new EFenceObj("<%=site.getName()%>", "<%=site.geteFence()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
 			efenceObj.loadDataAndShow(false);
@@ -1076,7 +1077,8 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					if(data == 0){
+					console.log(data);
+					if(data.code == 0){
 						ioutDiv(data.msg);
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);

@@ -339,7 +339,7 @@
 						"siteId":siteId
 					},
 					success: function(data){
-						/*if(data == 0){
+						/*if(data.code == 0){
 							outDiv(data.msg);
 						}else{
 							console.log("error:"+data);

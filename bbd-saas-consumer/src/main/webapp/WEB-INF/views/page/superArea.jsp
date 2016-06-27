@@ -103,6 +103,25 @@
 			ioutDiv('请选择运单！');
 		}
 	}
+	//批量超区button === 显示提示信息 == 运单分派（不需要检查运单状态）
+	function batchSuperAreaBtnWithNoCheck(){
+		var checkids = $('input[name="id"]:checked');
+		ids = [];
+		if(checkids.length) {
+			$.each(checkids, function(i, n){
+				if(!$(n).closest('tr').find('.status .label').hasClass('label-success')) {
+					ids.push($(n).val());
+				}
+			});
+		}
+		if(ids.length>0){
+			$("#superAreaBody").html("确认将选中的订单设置为超区件？");
+			$("#superAreaDiv").modal("show");
+			superAreaIsBatch = true;//批量超区
+		}else{
+			ioutDiv('请选择运单！');
+		}
+	}
 	//做设置超区===确认按钮
 	function doSuperArea(){
 		if(superAreaIsBatch){//批量

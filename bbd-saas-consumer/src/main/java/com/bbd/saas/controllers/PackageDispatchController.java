@@ -77,6 +77,9 @@ public class PackageDispatchController {
 			logger.info("=====运单分派====" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
+			//当前登录的用户信息
+			User user = adminService.get(UserSession.get(request));
+			model.addAttribute("areaCode", user == null? "" : user.getSite() == null ? "" : user.getSite().getAreaCode());
 		} catch (Exception e) {
 			logger.error("===跳转到包裹分派页面===出错:" + e.getMessage());
 		}
