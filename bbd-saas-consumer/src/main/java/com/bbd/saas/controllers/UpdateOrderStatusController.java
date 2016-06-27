@@ -62,7 +62,7 @@ public class UpdateOrderStatusController {
 		//设置默认查询条件
 		status = Numbers.defaultIfNull(status, -1);//全部
 		//到站时间前天、昨天和今天
-		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -10));
+		arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(Dates.addDays(new Date(),1), -10));
 		//查询数据
 		PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, courierId, request);
 		logger.info("=====运单分派====" + orderPage);
@@ -82,9 +82,9 @@ public class UpdateOrderStatusController {
 		User user = adminService.get(UserSession.get(request));
 		//设置查询条件
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.dispatchStatus = status;
+		orderQueryVO.orderStatus = status;
 		orderQueryVO.arriveBetween = arriveBetween;
-		orderQueryVO.userId = courierId;
+		//orderQueryVO.userId = courierId;
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);

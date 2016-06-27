@@ -386,15 +386,15 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     /**
-     * 查询指定id集合的订单中物流状态不为expressStatus的订单的条数
-     * @param idList id集合
+     * 查询指定mailNum集合的订单中物流状态不为expressStatus的订单的条数
+     * @param mailNumList mailNum集合
      * @param expressStatus 物流状态
      * @return 订单的条数
      */
-    public long selectCountByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
+    public long selectCountByMailNumsAndExpressStatus(BasicDBList mailNumList, ExpressStatus expressStatus) {
         Query<Order> query = createQuery();
-        if(idList != null && idList.size() > 0){
-            query.filter("mailNum in",idList);
+        if(mailNumList != null && mailNumList.size() > 0){
+            query.filter("mailNum in", mailNumList);
         }
         if(expressStatus != null){
             query.filter("expressStatus <>",expressStatus);
@@ -526,5 +526,22 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         query.filter("isRemoved", 0);
         return find(query).asList();
+    }
+
+    /**
+     * 查询指定mailNum集合的订单中物流状态不为expressStatus的订单的条数
+     * @param mailNumList mailNum集合
+     * @param orderStatusList 订单状态集合
+     * @return 订单的条数
+     */
+    public long selectCountByMailNumsAndExpressStatus(BasicDBList mailNumList, List<OrderStatus> orderStatusList) {
+        Query<Order> query = createQuery();
+        if(mailNumList != null && mailNumList.size() > 0){
+            query.filter("mailNum in",mailNumList);
+        }
+        if(orderStatusList != null){
+            query.filter("orderStatus nin", orderStatusList);
+        }
+        return count(query);
     }
 }

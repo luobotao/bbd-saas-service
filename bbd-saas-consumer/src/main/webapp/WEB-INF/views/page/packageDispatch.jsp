@@ -3,10 +3,6 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.enums.DispatchStatus" %>
-<%@ page import="com.bbd.saas.vo.UserVO" %>
-<%@ page import="com.bbd.saas.vo.Reciever" %>
-<%@ page import="com.bbd.saas.mongoModels.User" %>
-<%@ page import="com.bbd.saas.mongoModels.Site" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -79,6 +75,7 @@
 								<th>派送员姓名</th>
 								<th>派送员手机</th>
 								<th>状态</th>
+								<th>操作</th>
 							</tr>
   						</thead>
   						<tbody id="dataList">
@@ -120,6 +117,7 @@
 								<%
 									}
 								%>
+								<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a></td>
 							</tr>
 						<%
 							}//for
@@ -175,6 +173,8 @@
 	</div>
 </div>
 <!-- 运单分派面板-结束 -->
+
+<jsp:include page="superArea.jsp" flush="true" />
 
 <script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 
@@ -335,11 +335,12 @@ function getRowHtml(data){
 		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
-	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
+	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>"){
 		row += "<td><em class='orange'><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>";
 	}else{
 		row += "<td><em class='c-green'><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>";
 	}
+	row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
 	row += "</tr>";
 	return row;
 }

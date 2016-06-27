@@ -3,13 +3,13 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
+<%@ page import="com.bbd.saas.constants.Constants" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
 	<jsp:include page="../main.jsp" flush="true" />
-
 </head>
 <body class="fbg">
 <!-- S content -->
@@ -118,7 +118,7 @@
 								<%--<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>--%>
 								<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 								<%
-									if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
+									if(order.getOrderStatus()==OrderStatus.NOTARR){
 								%>
 								<td class="orange"><%=ArriveStatus.NOTARR.getMessage()%></td>
 								<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>
@@ -130,7 +130,7 @@
 								<%
 									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH || order.getOrderStatus() == OrderStatus.DISPATCHED){
 								%>
-										<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange">设为超区件</a></td>
+										<td><a data-toggle='modal' data-target='#superAreaDiv' href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange">设为超区件</a></td>
 								<%
 									}else{
 								%>
@@ -180,7 +180,7 @@
 						<!-- S button -->
 						<div class="clearfix fl">
 							<a href="#" onclick="batchBtn()" data-toggle="modal" class="ser-btn l">批量到站</a>
-							<c:if test="${areaCode != null && areaCode == '122110-001'}">
+							<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
 								<a href="javascript:void(0)" onclick="batchSuperAreaBtn()" data-toggle="modal" class="ser-btn l">批量设为超区件</a>
 							</c:if>
 						</div>
@@ -203,6 +203,9 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<jsp:include page="superArea.jsp" flush="true" />
+
+<%--
 
 <!--S 设为超区件-->
 <div class="j-pl-pop modal fade" id="superAreaDiv" tabindex="-1" role="dialog" aria-hidden="true">
@@ -217,14 +220,14 @@
 					<em class="f16" id="superAreaBody">确认将该订单设置为超区件？</em>
 				</div>
 				<div class="modal-footer tc">
-					<%--<div class="row mt20">--%>
+					&lt;%&ndash;<div class="row mt20">&ndash;%&gt;
 						<span class="col-md-6">
 							<button type="button" class="ser-btn g wp80" data-dismiss="modal" class="close">取消</button>
 						</span>
 						<span class="col-md-6">
 							<button  type="button" class="ser-btn l wp80" onclick="doSuperArea()">确认</button>
 						</span>
-					<%--</div>--%>
+					&lt;%&ndash;</div>&ndash;%&gt;
 				</div>
 			</div>
 		</div>
@@ -232,9 +235,7 @@
 </div>
 <!--E 设为超区件-->
 
-
-
-
+--%>
 
 <script type="text/javascript">
 	//var flag = true;
@@ -550,6 +551,7 @@
 			ioutDiv('请选择运单！');
 		}
 	}
+/*
 
 	var superAreaIsBatch = false;
 	//设为超区件 -- 显示超区件提示
@@ -605,12 +607,12 @@
 					"ids" : JSON.stringify(ids)
 				},
 				success: function(data){
-					if(data){//没有出现物流状态为异常的订单
+					if(data){//没有出现状态为异常的订单
 						$("#superAreaBody").html("确认将选中的订单设置为超区件？");
 						$("#superAreaDiv").modal("show");
 						superAreaIsBatch = true;//批量超区
 					}else{
-						ioutDiv("只有订单状态为未到站、未分派、已分派的订单才可以设置为超区件");
+						ioutDiv("只有订单状态为未到站、未分派、已分派的订单才可以设置为超区件,选中的订单中有不符合条件的订单。");
 					}
 				},
 				error: function(){
@@ -652,6 +654,7 @@
 			ioutDiv('请选择运单！');
 		}
 	}
+*/
 
 </script>
 </body>

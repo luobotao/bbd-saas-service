@@ -352,7 +352,11 @@ public class PackageToSiteController {
 	public boolean isAllSuperArea(HttpServletRequest request,String ids) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		BasicDBList idList = (BasicDBList) JSON.parse(ids);
-		long num = orderService.getCounByMailNumsAndExpressStatus(idList, ExpressStatus.DriverGeted);
+		List<OrderStatus> orderStatusList = new ArrayList<OrderStatus>();
+		orderStatusList.add(OrderStatus.NOTARR);
+		orderStatusList.add(OrderStatus.NOTDISPATCH);
+		orderStatusList.add(OrderStatus.DISPATCHED);
+		long num = orderService.getCounByMailNumsAndOrderStatusList(idList, orderStatusList);
 		if(num == 0){
 			return true;
 		}else {

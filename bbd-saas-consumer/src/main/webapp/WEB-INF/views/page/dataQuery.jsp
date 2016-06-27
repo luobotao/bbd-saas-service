@@ -146,7 +146,7 @@
 									<%
 										}
 										//样式
-										if(order.getOrderStatus() == null || order.getOrderStatus() == OrderStatus.NOTARR){//未到站--
+										if(order.getOrderStatus() == OrderStatus.NOTARR){//未到站--
 									%>
 											<td><em class="l-blue">未到站</em></td>
 									<%
@@ -380,9 +380,6 @@ function getSrcName(src) {
 
 //转义状态
 function getStatus(status) {
-	if(status == null){
-		return "<em class='l-blue'>未到站</em>";
-	}
 	x = "<em class='l-blue'>未到站</em>";
 	switch (status)
 	{
@@ -427,9 +424,6 @@ function exportData() {
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
 }
-	
-	
-	
 </script>
 </body>
 </html>
