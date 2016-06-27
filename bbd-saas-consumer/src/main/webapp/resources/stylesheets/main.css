@@ -523,7 +523,23 @@ footer {
 }
 .banner-txt{
     position:relative;
-    background:url(../images/banner_txt.png) no-repeat left 98px;
+    background:url(../images/banner_txt.png) no-repeat left 63px;
+}
+.l-txt i,.l-txt em{
+  display:inline-block;
+  position:absolute;
+}
+.l-txt i{
+  font-size:24px;
+  color:#3d3838;
+  line-height:1.1;
+  left:58px;
+  top:321px;
+
+}
+.l-txt em{
+  left:408px;
+  top:284px;
 }
 .banner-cloud{
     position:absolute;
