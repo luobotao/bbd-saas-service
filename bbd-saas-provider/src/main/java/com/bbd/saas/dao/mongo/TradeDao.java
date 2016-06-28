@@ -30,8 +30,7 @@ import java.util.List;
 public class TradeDao extends BaseDAO<Trade, ObjectId> {
     public static final Logger logger = LoggerFactory.getLogger(TradeDao.class);
 
-    PropertiesLoader propertiesLoader = new PropertiesLoader("config.properties");
-    private String bbdTradePushCount = propertiesLoader.getProperty("bbd.trade.push.count");
+
 
     TradeDao(LinkedHashMap<String, Datastore> datastores) {
         super(datastores);
@@ -146,7 +145,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
     }
 
 
-    public List<Trade> findTradeListByPushJob() {
+    public List<Trade> findTradeListByPushJob(int bbdTradePushCount) {
         Query<Trade> query = createQuery();
         //待接单
         query.filter("tradeStatus", TradeStatus.WAITCATCH);

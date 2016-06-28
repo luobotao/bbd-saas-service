@@ -5,7 +5,6 @@
  */
 package com.bbd.saas.utils;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -146,7 +145,7 @@ public class PropertiesLoader {
 			} catch (IOException ex) {
 				logger.info("Could not load properties from path:" + location + ", " + ex.getMessage());
 			} finally {
-				IOUtils.closeQuietly(is);
+				//IOUtils.closeQuietly(is);
 			}
 		}
 		return props;

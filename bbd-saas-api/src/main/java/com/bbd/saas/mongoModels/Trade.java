@@ -43,7 +43,6 @@ public class Trade implements Serializable {
     private Date dateGeted;      //取件时间
 
     private List<OrderSnap> orderSnaps; //订单快照，此交易单下的订单快照
-    private List<TradePush> tradePushss; //商户订单号推送的揽件员集合
     @Transient
     private User embrace;//揽件员
     @Transient
@@ -237,11 +236,5 @@ public class Trade implements Serializable {
         this.pushCount = pushCount;
     }
 
-    public List<TradePush> getTradePushss() {
-        return tradePushss;
-    }
 
-    public void setTradePushss(List<TradePush> tradePushss) {
-        this.tradePushss = tradePushss;
-    }
 }

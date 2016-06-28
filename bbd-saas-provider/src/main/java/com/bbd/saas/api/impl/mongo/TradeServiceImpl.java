@@ -1,17 +1,24 @@
 package com.bbd.saas.api.impl.mongo;
 import com.bbd.saas.api.mongo.TradeService;
-import com.bbd.saas.dao.mongo.OrderDao;
-import com.bbd.saas.dao.mongo.OrderNumDao;
-import com.bbd.saas.dao.mongo.TradeDao;
-import com.bbd.saas.dao.mongo.UserDao;
+import com.bbd.saas.dao.mongo.*;
 import com.bbd.saas.enums.TradeStatus;
+import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderNum;
 import com.bbd.saas.mongoModels.Trade;
+import com.bbd.saas.mongoModels.TradePush;
+import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.PropertiesLoader;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -19,10 +26,19 @@ import java.util.*;
  * trade接口(包裹)
  */
 public class TradeServiceImpl implements TradeService {
+    public static final Logger logger = LoggerFactory.getLogger(TradeServiceImpl.class);
+
     private TradeDao tradeDao;
+    private TradePushDao tradePushDao;
     private OrderDao orderDao;
     private UserDao userDao;
     private OrderNumDao orderNumDao;
+
+    PropertiesLoader propertiesLoader = new PropertiesLoader("config.properties");
+    private int bbdTradePushCount = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.count"),2);
+    private int bbdTradePushRangeInit = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.range.init"),2);
+    private int bbdTradePushRangeStep = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.range.step"),1);
+    private int bbdTradePushRangeThreshold = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.range.threshold"),5);
 
     public OrderNumDao getOrderNumDao() {
         return orderNumDao;
@@ -54,6 +70,14 @@ public class TradeServiceImpl implements TradeService {
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    public TradePushDao getTradePushDao() {
+        return tradePushDao;
+    }
+
+    public void setTradePushDao(TradePushDao tradePushDao) {
+        this.tradePushDao = tradePushDao;
     }
 
     /**
@@ -265,10 +289,130 @@ public class TradeServiceImpl implements TradeService {
      */
     @Override
     public List<Trade> findTradeListByPushJob() {
-        return tradeDao.findTradeListByPushJob();
+        return tradeDao.findTradeListByPushJob(bbdTradePushCount);
     }
     @Override
     public List<Trade> findTradesByEmbraceId(String embraceId){
         return tradeDao.findTradesByEmbraceId(embraceId);
     }
+
+    @Override
+    public void doJobWithAllPushTrade() {
+        try {
+            //获取到所有需要推送的Trade信息
+            List<Trade> tradeList = findTradeListByPushJob();
+            if(tradeList!=null&&tradeList.size()>0){
+                for (Trade trade : tradeList) {
+                    //设置推送范围
+                    if(trade.getPushRange()==null||trade.getPushRange()<=0){
+                        trade.setPushRange(bbdTradePushRangeInit);
+                    }
+                    //设置默认推送次数
+                    if(trade.getPushCount()==null||trade.getPushCount()<=0){
+                        trade.setPushCount(0);
+                    }
+                    doJobWithPushTrade(trade);
+                    //获取范围的阀值和步进值
+                    //进行推送操作之后，变更推送的次数为+1
+                    if(trade.getPushRange()<=bbdTradePushRangeThreshold){
+                        trade.setPushRange(trade.getPushRange()+bbdTradePushRangeStep);
+                    }else{
+                        trade.setPushCount(trade.getPushCount()+1);
+                    }
+                    trade.setDateUpd(new Date());
+                    tradeDao.save(trade);
+                }
+            }else{
+                logger.info("暂无订单需要推送给揽件员");
+            }
+            logger.info("一波订单推送揽件员完成");
+        } catch (Exception e) {
+            logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 订单推送逻辑
+     * @param trade
+     */
+    public void doJobWithPushTrade(Trade trade) {
+        //获取该运单范围内的所有的揽件员信息,已根据距离排好序
+        List<PostmanUser> postmanUserList = getPostmanUserList(trade);
+        int flag = 1;//已推送
+        //循环遍历揽件员
+        for (PostmanUser postmanUser: postmanUserList) {
+            //判断揽件员是否已推送，如没有则直接进行推送操作，已推送则跳过
+            TradePush tradePush = tradePushDao.findTradePushWithPostmanUserId(trade.getTradeNo(),postmanUser.getId());
+            if(tradePush==null||(tradePush!=null&&tradePush.getFlag()==0)){
+                //进行推送操作
+                //调用存储过程，记录push指令
+
+                //将此揽件员信息记录到tradePush中
+                if(tradePush==null) {
+                    tradePush = new TradePush();
+                    tradePush.setTradeNo(trade.getTradeNo());
+                    tradePush.setPostmanId(postmanUser.getId());
+                    tradePush.setTime(0);
+                    tradePush.setFlag(1);
+                    tradePush.setDateAdd(new Date());
+                }else{
+                    tradePush.setTime(tradePush.getTime()+1);
+                }
+                tradePush.setDateUpd(new Date());
+                tradePushDao.save(tradePush);
+                //如果推送成功，flag = 2;推送不成功，则flag一直为1
+                flag = 2;
+                break;
+            }
+        }
+        //如果flag 为1，表明未对任何一个快递员进行推送操作 或者没有存在可以推送的快递员
+        //相当于推送一轮完成，此时将pushCount+1，推送范围增加
+        if(flag == 1){
+            //若pushCount == 1,则更tradePush下 tradeNo的所有flag 为0
+            if(trade.getPushCount()<bbdTradePushCount){
+                //更改tradePush下的所有tradeNo相关的flag为0
+                List<TradePush> tradePushList = tradePushDao.getAllTradePushWithTradeNo(trade.getTradeNo());
+                for (TradePush tradePush: tradePushList) {
+                    tradePush.setFlag(0);
+                    tradePush.setDateUpd(new Date());
+                    tradePushDao.save(tradePush);
+                }
+            }else{
+                //若pushCount >= 2,则对trade进行兜底处理，变更tradeStatus，不再进行推送
+                trade.setTradeStatus(TradeStatus.LASTOPER);
+                trade.setDateUpd(new Date());
+                tradeDao.save(trade);
+            }
+        }
+    }
+
+    /**
+     * 获取订单配送范围内的所有快递员
+     * @param trade
+     * @return
+     */
+    private List<PostmanUser> getPostmanUserList(Trade trade) {
+        String poststatus = "1";    //开启接单的用户
+        long meter = trade.getPushRange();
+        double x = Numbers.parseDouble(trade.getSender().getLat(),0.0);
+        double y = Numbers.parseDouble(trade.getSender().getLon(),0.0);
+        MathContext mc = new MathContext(2, RoundingMode.HALF_DOWN);
+        double i = new BigDecimal(meter).divide(new BigDecimal(111000), mc).doubleValue();
+        double minlat=x-i;
+        double maxlat=x+i;
+        double minlong=y-i;
+        double maxlong=y+i;
+
+        //postrole 0 代表小件员 4 代表站长 poststatus 1 代表司机处于接单状态
+        String sql="SELECT u.* ,SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) AS d FROM postmanuser"
+                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND (u.postrole = '0' or u.postrole='4') AND u.poststatus="+poststatus+""
+                +"  AND SQRT(POWER("+x+" - lat, 2) + POWER("+y+" - lon, 2)) < "+i
+                + " order by d asc";
+
+
+        List<PostmanUser> pulist=new ArrayList<PostmanUser>();
+
+        return pulist;
+    }
+
 }

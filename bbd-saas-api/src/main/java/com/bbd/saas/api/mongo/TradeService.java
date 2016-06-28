@@ -91,5 +91,8 @@ public interface TradeService {
     public String reduceTradeNo();
 
     List<Trade> findTradeListByPushJob();
+
     public List<Trade> findTradesByEmbraceId(String embraceId);
+
+    void doJobWithAllPushTrade();
 }
