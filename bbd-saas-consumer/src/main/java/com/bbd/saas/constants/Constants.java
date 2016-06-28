@@ -92,6 +92,10 @@ public class Constants {
     public static String DISPATCH_PERMISSION_DEFAULT_PWD = "123abc";
     //地址匹配不到站点的areaCode
     public static String NO_SITE_AREACODE = "122110-001";
+    //派件员有到站分派权限
+    public static int HAVE_DISPATCH_PERMISSION = 1;
+    //派件员无到站分派权限
+    public static int NO_DISPATCH_PERMISSION = 0;
 
 
 }

@@ -986,8 +986,9 @@
 	}) ;
 	//绘制电子地图 == 区改变
 	$('#fenceAddr .dist').change(function(){
+		console.log($('#areaAddr .city').val()+this.value);
 		//设置地图中心点，并调整地图视野
-		fenceObj.map.centerAndZoom($('#areaAddr .city').val()+this.value);
+		fenceObj.map.centerAndZoom($('#areaAddr .city').val() + "市" + this.value);
 		//站点列表和站点地图更新
 		eFenceMapChangeSite(null, "fenceSiteId");
 	}) ;
