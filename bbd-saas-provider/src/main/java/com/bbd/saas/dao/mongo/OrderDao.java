@@ -135,8 +135,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = createQuery();
         query.filter("mailNum",mailNum);
         if(orderStatusOld!=null){//旧状态不为空，则需要加入旧状态的判断
-            //query.or(query.criteria("orderStatus").equal(orderStatusOld),query.criteria("orderStatus").equal(null));
-            query.filter("orderStatus",orderStatusOld);
+            query.or(query.criteria("orderStatus").equal(orderStatusOld),query.criteria("orderStatus").equal(null));
+            //query.filter("orderStatus",orderStatusOld);
         }
         UpdateOperations<Order> ops = createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date());
         if(orderStatusOld== OrderStatus.NOTARR){//若是做到站操作，需要更新下到站时间
