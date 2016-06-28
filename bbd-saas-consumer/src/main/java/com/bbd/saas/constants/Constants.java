@@ -92,10 +92,12 @@ public class Constants {
     public static String DISPATCH_PERMISSION_DEFAULT_PWD = "123456";
     //地址匹配不到站点的areaCode
     public static String NO_SITE_AREACODE = "9999-999";
-    //派件员有到站分派权限
+    //派件员有到站分派权限 -- mongodb库User表
     public static int HAVE_DISPATCH_PERMISSION = 1;
     //派件员无到站分派权限
     public static int NO_DISPATCH_PERMISSION = 0;
+    //派件员有到站分派权限 -- MYSQL库
+    public static int POSTMAN_HAVE_DISPATCH_PERMISSION = 4;
 
 
 }

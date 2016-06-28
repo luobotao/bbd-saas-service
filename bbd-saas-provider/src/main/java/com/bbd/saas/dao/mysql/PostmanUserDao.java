@@ -55,6 +55,14 @@ public interface PostmanUserDao {
      * @return 
      */
     int updateById(@Param("sta") Integer sta, @Param("id") Integer id);
+
+    /**
+     * 更新派件员的角色（权限）
+     * @param phone 派件员手机号
+     * @param postrole postrole
+     * @return 更新条数
+     */
+    int updateRoleByPhone(@Param("phone") String phone, @Param("postrole") Integer postrole);
     
     /**
      * 更新postmanUser
