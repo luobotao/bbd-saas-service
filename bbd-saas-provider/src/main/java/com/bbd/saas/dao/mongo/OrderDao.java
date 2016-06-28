@@ -4,7 +4,9 @@ import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.OrderHoldToStoreNumVO;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
@@ -526,16 +528,17 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return find(query).asList();
     }
 
+
     /**
      * 揽件入库的根据条件查询
      * @param pageModel
      * @param orderQueryVO
      * @return
      */
-    public  PageModel<Order>  findPageOrdersForHoldToStore(PageModel<Order> pageModel,OrderQueryVO orderQueryVO){
+    public  PageModel<Order>  findPageOrdersForHoldToStore(PageModel<Order> pageModel,List<String> tradeNoList,OrderQueryVO orderQueryVO){
 
         //设置查询条件
-        Query<Order> query = getQueryForHoldToStore(orderQueryVO);
+        Query<Order> query = getQueryForHoldToStore( tradeNoList,orderQueryVO);
         //设置排序
         query.order("-dateUpd");
         //分页信息
@@ -548,7 +551,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
 
-    private Query<Order> getQueryForHoldToStore(OrderQueryVO orderQueryVO) {
+    private Query<Order> getQueryForHoldToStore(List<String> tradeNoList,OrderQueryVO orderQueryVO) {
         Query<Order> query = createQuery();
 
         if (orderQueryVO != null) {
@@ -556,52 +559,53 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if (StringUtils.isNotBlank(orderQueryVO.areaCode)) {
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
-
             //揽件员
-            if (StringUtils.isNotBlank(orderQueryVO.userId)) {
-                query.filter("userId", orderQueryVO.userId);
+            if(tradeNoList != null && tradeNoList.size() > 0){
+                query.filter("tradeNo in",tradeNoList);
             }
+            /*
+            if (StringUtils.isNotBlank(orderQueryVO.tradeNo) ) {
+                    query.filter("tradeNo", orderQueryVO.tradeNo);
+            }*/
             //到站时间，只有已到站的订单才会有到站时间
-            if (StringUtils.isNotBlank(orderQueryVO.arriveBetween)) {
-                DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
-                query.filter("dateArrived >=", dateBetween.getStart());
-                query.filter("dateArrived <=", dateBetween.getEnd());
+            if (StringUtils.isNotBlank(orderQueryVO.dateArrived)) {
+                query.filter("dateArrived",  Dates.parseDate(orderQueryVO.dateArrived));
+
             }
-            if (orderQueryVO.orderSetStatus != null) {
-                switch (orderQueryVO.orderSetStatus) {
-                    case 1:
-                        OrderSetStatus.WAITTOIN.getStatus();
-                        break;
-                    case 2:
-                        OrderSetStatus.WAITSET.getStatus();
-                        break;
-                    case 3:
-                        OrderSetStatus.WAITDRIVERGETED.getStatus();
-                        break;
-                    case 4:
-                        OrderSetStatus.DRIVERGETED.getStatus();
-                        break;
-                    case 5:
-                        OrderSetStatus.ARRIVEDISPATCH.getStatus();
-                        break;
-                    case 6:
-                        OrderSetStatus.WAITDISPATCHSET.getStatus();
-                        break;
-                    case 7:
-                        OrderSetStatus.WAITDRIVERTOSEND.getStatus();
-                        break;
-                    case 8:
-                        OrderSetStatus.DRIVERSENDING.getStatus();
-                        break;
-                    case 9:
-                        OrderSetStatus.ARRIVED.getStatus();
-                        break;
-                    default:
-                        OrderSetStatus.NOEMBRACE.getStatus();
-                }
+            if (orderQueryVO.orderSetStatus != null && orderQueryVO.orderSetStatus !=-1 ) {
+                query.filter("orderSetStatus",  OrderSetStatus.status2Obj(orderQueryVO.orderSetStatus));
             }
         }
         return query;
     }
+
+
+     public   OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode){
+         OrderHoldToStoreNumVO orderHoldToStoreNumVO = new OrderHoldToStoreNumVO();
+
+         Query<Order> query = createQuery().filter("areaCode",areaCode);
+      /*   query.filter("dateArrived <=",new Date()).filter("dateArrived >",new Date());*/
+         query.filter("orderSetStatus", OrderSetStatus.NOEMBRACE);
+         orderHoldToStoreNumVO.setSuccessOrderNum(count(query));//今日成功接单数
+
+
+         Query<Order> queryTodayNoToStore = createQuery().filter("areaCode",areaCode);
+        /* queryTodayNoToStore.filter("dateArrived <=",new Date()).filter("dateArrived >",new Date());*/
+         queryTodayNoToStore.filter("orderSetStatus", OrderSetStatus.WAITTOIN);
+         orderHoldToStoreNumVO.setTodayNoToStoreNum(count(queryTodayNoToStore));//今日未入库订单数
+
+         Query<Order> queryTodayToStore = createQuery().filter("areaCode",areaCode);
+        /* queryTodayToStore.filter("dateArrived <=",new Date()).filter("dateArrived >",new Date());*/
+         queryTodayToStore.filter("orderSetStatus", OrderSetStatus.WAITSET);
+         orderHoldToStoreNumVO.setTodayToStoreNum(count(queryTodayToStore));//// 今日已入库订单数
+
+
+         Query<Order> HistoryToStore = createQuery().filter("areaCode",areaCode);
+         HistoryToStore.filter("orderSetStatus", OrderSetStatus.NOEMBRACE);
+         orderHoldToStoreNumVO.setHistoryToStoreNum(count(queryTodayToStore));// 历史未入库订单数
+
+         return orderHoldToStoreNumVO;
+      }
+
 
 }

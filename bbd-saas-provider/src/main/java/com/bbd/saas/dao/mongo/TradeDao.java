@@ -141,5 +141,14 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         return count(query);
     }
 
-
+    /**
+     * 根据embraceId查询出Trade
+     * @param embraceId
+     * @return
+     */
+    public List<Trade> findTradesByEmbraceId(String embraceId) {
+        Query<Trade> query = createQuery();
+        query.filter("embraceId", embraceId);
+        return find(query).asList();
+    }
 }

@@ -89,4 +89,6 @@ public interface TradeService {
     public long findCountByUidAndStatus(ObjectId uId, TradeStatus tradeStatus);
 
     public String reduceTradeNo();
+
+    public List<Trade> findTradesByEmbraceId(String embraceId);
 }

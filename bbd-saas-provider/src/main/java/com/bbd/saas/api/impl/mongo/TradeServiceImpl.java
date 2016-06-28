@@ -258,4 +258,8 @@ public class TradeServiceImpl implements TradeService {
         orderNumDao.updateOrderNum("tradeNum",one.tradeNum);
         return one.tradeNum;
     }
+    @Override
+    public List<Trade> findTradesByEmbraceId(String embraceId){
+        return tradeDao.findTradesByEmbraceId(embraceId);
+    }
 }
