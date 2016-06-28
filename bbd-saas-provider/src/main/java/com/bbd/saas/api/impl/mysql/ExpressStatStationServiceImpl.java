@@ -34,7 +34,17 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 	}
 
 	@Override
+	public List<ExpressStatStation> findByCompanyIdAndTime(String companyId, String startDate, String endDate) {
+		return expressStatStationDao.selectByCompanyIdAndTime(Integer.parseInt(companyId), startDate, endDate);
+	}
+
+	@Override
 	public List<ExpressStatStation> findByAreaCodeAndTime(String areaCode, String startDate, String endDate) {
 		return expressStatStationDao.selectByAreaCodeAndTime(areaCode, startDate, endDate);
+	}
+
+	@Override
+	public List<ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String startDate, String endDate) {
+		return expressStatStationDao.selectByAreaCodeListAndTime(areaCodeList, startDate, endDate);
 	}
 }

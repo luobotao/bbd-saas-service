@@ -21,6 +21,11 @@
     	id, tim, areacode, sitename, nostationcnt, successcnt, dailycnt, refusecnt,
         stationcnt, deliverycnt, changestationcnt, changeexpresscnt, companyId
     </sql>
+    <sql id="statisticColumns">
+        areacode, sitename, count(nostationcnt) nostationcnt, count(successcnt) successcnt, count(dailycnt)dailycnt,
+        count(refusecnt) refusecnt, count(stationcnt) stationcnt, count(deliverycnt) deliverycnt,
+        count(changestationcnt) changestationcnt, count(changeexpresscnt) changeexpresscnt
+    </sql>
     <!-- 插入一条记录  开始  --> 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.OrderLog" >
         INSERT INTO `table_express_stat_station`(
@@ -33,9 +38,29 @@
         )
     </insert>
     <!-- 插入一条记录  结束  -->
-    <!-- 根据站点和时间统计不同状态的订单数目  开始   -->
-    <select id="selectByAreaCodeAndTime" resultMap="baseResultMap">
-        SELECT <include refid="baseColumnList"/> FROM `table_express_stat_station`
+    <!-- 根据公司Id和时间进行统计查询  开始   -->
+    <select id="selectByCompanyIdAndTime" resultMap="baseResultMap">
+        SELECT <include refid="statisticColumns"/>
+        from table_express_stat_station
+        <where>
+            <if test="companyId != null and companyId != 0" >
+                companyId = #{companyId}
+            </if>
+            <if test="startDate != null and startDate != ''" >
+                <![CDATA[
+                    AND operTime >= CONCAT(#{startDate},' 00:00:00')
+                    AND operTime <= CONCAT(#{endDate},' 23:59:59')
+                ]]>
+            </if>
+        </where>
+        GROUP BY areacode, sitename
+    </select>
+    <!-- 根据公司Id和时间进行统计查询  结束   -->
+
+    <!-- 根据站点和时间统计不同状态的订单数目   开始   -->
+    <select id="selectPageByAreaCodeAndTime" resultMap="baseResultMap">
+        SELECT <include refid="statisticColumns"/>
+        from table_express_stat_station
         <where>
             <if test="areaCode != null and areaCode != ''" >
                 areaCode = #{areaCode}
@@ -47,6 +72,32 @@
                 ]]>
             </if>
         </where>
+        GROUP BY areacode, sitename
+    </select>
+    <!-- 根据站点和时间统计不同状态的订单数目    结束   -->
+
+
+    <!-- 根据站点和时间统计不同状态的订单数目  结束   -->
+    <select id="selectByAreaCodeListAndTime" resultMap="baseResultMap">
+        SELECT <include refid="statisticColumns"/>
+        from table_express_stat_station
+        <where>
+            <if test="areaCodeList != null" >
+                areacode in
+                <foreach collection="areaCodeList" item="areaCode" index="index"
+                         open="(" close=")" separator=",">
+                    #{areaCode}
+                </foreach>
+            </if>
+            <if test="startDate != null and startDate != ''" >
+                <![CDATA[
+                    AND operTime >= CONCAT(#{startDate},' 00:00:00')
+                    AND operTime <= CONCAT(#{endDate},' 23:59:59')
+                ]]>
+            </if>
+        </where>
+        GROUP BY areacode, sitename
     </select>
     <!-- 根据站点和时间统计不同状态的订单数目  结束   -->
+
 </mapper>

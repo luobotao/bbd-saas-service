@@ -18,6 +18,16 @@ public interface ExpressStatStationDao {
      */
 	int insert(ExpressStatStation orderLog);
 	/**
+	 * 根据公司Id和时间进行统计查询
+	 * @param companyId 公司Id
+	 * @param startDate 开始时间
+	 * @param endDate 结束时间
+	 * @return
+	 */
+	public List<ExpressStatStation> selectByCompanyIdAndTime(@Param("companyId") Integer companyId,
+				@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+	/**
 	 * 根据站点编号和时间进行查询
 	 * @param areaCode 站点编号
 	 * @param startDate 开始时间
@@ -25,5 +35,17 @@ public interface ExpressStatStationDao {
 	 * @return
 	 */
 	public List<ExpressStatStation> selectByAreaCodeAndTime(@Param("areaCode") String areaCode, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
+	/**
+	 *
+	 * 根据站点编号集合和时间进行查询
+	 * @param areaCodeList 站点编号集合
+	 * @param startDate 开始时间
+	 * @param endDate 结束时间
+	 * @return
+	 */
+	public List<ExpressStatStation> selectByAreaCodeListAndTime(@Param("areaCodeList") List<String> areaCodeList,
+			@Param("startDate") String startDate, @Param("endDate") String endDate);
+
 
 }
