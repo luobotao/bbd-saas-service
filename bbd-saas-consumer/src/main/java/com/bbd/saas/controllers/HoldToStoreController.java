@@ -2,12 +2,14 @@ package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
@@ -24,15 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /** 揽件入库
  * Created by huozhijie on 2016/6/25.
@@ -55,7 +52,8 @@ public class HoldToStoreController {
 
     @Autowired
     TradeService tradeService;
-
+    @Autowired
+    SiteService  siteService;
 
     public static final Logger logger = LoggerFactory.getLogger(HoldToStoreController.class);
 
@@ -133,5 +131,26 @@ public class HoldToStoreController {
         return orderHoldPageModel;
     }
 
+    /**
+     * 根据运单号检查是否存在此订单
+     * @param request
+     * @param mailNum
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/checkHoldToStoreByMailNum", method=RequestMethod.GET)
+    public Map<String,Object> checkHoldToStoreByMailNum(HttpServletRequest request, @RequestParam(value = "mailNum", required = true) String mailNum) {
+        User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+        Order  order =orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum);
+        String areaCode = user.getSite().getAreaCode();
+        Site site = siteService.findSiteByAreaCode(areaCode);
+        Map <String ,Object> result=new HashMap<String ,Object>();
+        result.put("areaCode",areaCode);
+        result.put("site",site);
+        result.put("order",order);
+        result.put("mailNum",mailNum);
+        return  result;
+
+    }
 
 }
