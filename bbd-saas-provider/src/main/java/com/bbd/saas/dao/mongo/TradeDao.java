@@ -5,6 +5,7 @@ import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.PropertiesLoader;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -28,6 +29,9 @@ import java.util.List;
 @Repository
 public class TradeDao extends BaseDAO<Trade, ObjectId> {
     public static final Logger logger = LoggerFactory.getLogger(TradeDao.class);
+
+    PropertiesLoader propertiesLoader = new PropertiesLoader("config.properties");
+    private String bbdTradePushCount = propertiesLoader.getProperty("bbd.trade.push.count");
 
     TradeDao(LinkedHashMap<String, Datastore> datastores) {
         super(datastores);
@@ -142,4 +146,13 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
     }
 
 
+    public List<Trade> findTradeListByPushJob() {
+        Query<Trade> query = createQuery();
+        //待接单
+        query.filter("tradeStatus", TradeStatus.WAITCATCH);
+        query.filter("pushCount <=", bbdTradePushCount);
+        query.or(query.criteria("postmanId").doesNotExist(),
+                query.criteria("postmanId").containsIgnoreCase(""));
+        return  find(query).asList();
+    }
 }

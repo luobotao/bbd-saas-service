@@ -258,4 +258,13 @@ public class TradeServiceImpl implements TradeService {
         orderNumDao.updateOrderNum("tradeNum",one.tradeNum);
         return one.tradeNum;
     }
+
+    /**
+     * 获取需要推送给快递员的运单集合
+     * @return
+     */
+    @Override
+    public List<Trade> findTradeListByPushJob() {
+        return tradeDao.findTradeListByPushJob();
+    }
 }

@@ -21,5 +21,4 @@ public class TradeQueryVO implements Serializable {
 	public String rcvKeyword; //订单的运单中收件人手机号、姓名、地址中包含rcvKeyword的订单
 	public Set tradeNoSet;//商户订单号
 
-
 }
