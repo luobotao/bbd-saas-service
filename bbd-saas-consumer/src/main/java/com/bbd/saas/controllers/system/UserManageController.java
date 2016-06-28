@@ -659,7 +659,7 @@ public class UserManageController {
 			String maxCount = constantService.findValueByName(Constants.DISPATCH_PERMISSION_COUNT);
 			if(realCount < Long.parseLong(maxCount)){
 				String pwd = null;
-				if("".equals(user.getPassWord())){
+				if(StringUtils.isEmpty(user.getPassWord())){
 					pwd = Constants.DISPATCH_PERMISSION_DEFAULT_PWD;
 				}
 				int i = userService.updateDispatchPermsn(user.getLoginName(), dispatchPermsn, pwd);
@@ -676,6 +676,9 @@ public class UserManageController {
 					map.put("success", false);
 					map.put("msg", "开通操作失败");
 				}
+			}else{
+				map.put("success", false);
+				map.put("msg", "每个站点最多只能有" + maxCount + "个派件员拥有到站分派权限");
 			}
 		}else{//关闭
 			int i = userService.updateDispatchPermsn(user.getLoginName(), dispatchPermsn, null);

@@ -230,16 +230,16 @@ public class PackageToSiteController {
 		order.setDateUpd(new Date());
 		orderService.save(order);
 
-        if(null!=order){
-		if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
-			ExpressExchange expressExchange=new ExpressExchange();
-			expressExchange.setOperator(user.getRealName());
-			expressExchange.setStatus(ExpressExchangeStatus.waiting);
-			expressExchange.setPhone(user.getLoginName());
-			expressExchange.setOrder(order);
-			expressExchange.setDateAdd(new Date());
-			expressExchangeService.save(expressExchange);
-		}
+        if(order != null){
+			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
+				ExpressExchange expressExchange=new ExpressExchange();
+				expressExchange.setOperator(user.getRealName());
+				expressExchange.setStatus(ExpressExchangeStatus.waiting);
+				expressExchange.setPhone(user.getLoginName());
+				expressExchange.setOrder(order);
+				expressExchange.setDateAdd(new Date());
+				expressExchangeService.save(expressExchange);
+			}
 		}
 		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
 		if (orderParcel != null) {
