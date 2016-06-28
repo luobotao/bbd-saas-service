@@ -153,6 +153,16 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         query.filter("pushCount <=", bbdTradePushCount);
         query.or(query.criteria("postmanId").doesNotExist(),
                 query.criteria("postmanId").containsIgnoreCase(""));
-        return  find(query).asList();
+        return find(query).asList();
+    }
+    /**
+     * 根据embraceId查询出Trade
+     * @param embraceId
+     * @return
+     */
+    public List<Trade> findTradesByEmbraceId(String embraceId) {
+        Query<Trade> query = createQuery();
+        query.filter("embraceId", embraceId);
+        return find(query).asList();
     }
 }

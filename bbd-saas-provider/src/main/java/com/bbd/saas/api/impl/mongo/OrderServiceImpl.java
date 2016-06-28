@@ -3,23 +3,20 @@ package com.bbd.saas.api.impl.mongo;
 
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.api.mongo.TradeService;
+import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.enums.OrderSetStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.OrderNum;
-import com.bbd.saas.mongoModels.OrderParcel;
-import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
-import com.bbd.saas.vo.Reciever;
+import com.bbd.saas.vo.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
@@ -29,7 +26,9 @@ import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +46,11 @@ public class OrderServiceImpl implements OrderService {
 	//private SitePoiApi sitePoiApi;
 	//@Autowired
 	private SiteService siteService;
+	@Autowired
+	private TradeService tradeService;
+	@Autowired
+	private UserService userService;
+
 
     public UserDao getUserDao() {
 		return userDao;
@@ -331,14 +335,57 @@ public class OrderServiceImpl implements OrderService {
 	 * @return
 	 */
 	@Override
-	public  PageModel<Order> 	findPageOrdersForHoldToStore(Integer pageIndex,OrderQueryVO orderQueryVO){
+	public  PageModel<OrderHoldToStoreVo> 	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO){
+
 		if(orderQueryVO == null){
 			return null;
 		}
-		PageModel<Order> pageModel = new PageModel<Order>();
-		pageModel.setPageNo(pageIndex);
+		PageModel<Order> pageOrders = new PageModel<Order>();
+		pageOrders.setPageNo(pageIndex);
+		pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders,tradeNoList, orderQueryVO);
+		List<Order>  datas = pageOrders.getDatas();
+		List <OrderHoldToStoreVo> orderHoldToStoreList=new ArrayList<>();
 
-		return orderDao.findPageOrdersForHoldToStore(pageModel,orderQueryVO);
+		for(Order  order: datas ){
+			OrderHoldToStoreVo orderHoldToStoreVo=new OrderHoldToStoreVo();
+			String address=order.getReciever().getProvince()+"-"+order.getReciever().getCity()+"-"+order.getReciever().getArea()+"-"+order.getReciever().getAddress();
+			String mailNum = order.getMailNum();
+			String name = order.getReciever().getName();
+			String phone = order.getReciever().getPhone();
+			String tradeNo = order.getTradeNo();
+			OrderSetStatus orderSetStatus = order.getOrderSetStatus();
 
+			Trade oneByTradeNo = tradeService.findOneByTradeNo(tradeNo);
+			ObjectId embraceId = oneByTradeNo.getEmbraceId();
+
+			User user = userService.findOne(embraceId.toString());
+			String realName = user.getRealName();
+			String loginName = user.getLoginName();
+
+			orderHoldToStoreVo.setMailNum(mailNum);
+			orderHoldToStoreVo.setRecieverName(name);
+			orderHoldToStoreVo.setRecieverPhone(phone);
+			orderHoldToStoreVo.setRecieverAddress(address);
+			orderHoldToStoreVo.setUserName(realName);
+			orderHoldToStoreVo.setPhone(loginName);
+			orderHoldToStoreVo.setOrderSetStatus(orderSetStatus);
+			orderHoldToStoreList.add(orderHoldToStoreVo);
+		}
+		PageModel<OrderHoldToStoreVo> pageModel = new PageModel<OrderHoldToStoreVo>();
+		pageModel.setPageNo(pageOrders.getPageNo());
+		pageModel.setTotalCount(pageOrders.getTotalCount());
+		pageModel.setDatas(orderHoldToStoreList);
+		return  pageModel;
+
+	}
+
+	/**
+	 * 根据站点编码获取该站点 揽件的订单数量
+	 * @param areaCode
+	 * @return
+	 */
+	@Override
+	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode) {
+		return orderDao.getOrderHoldToStoreNum(areaCode);
 	}
 }

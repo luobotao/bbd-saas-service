@@ -24,4 +24,5 @@ public class OrderQueryVO implements Serializable{
 	public List<String> areaCodeList;//公司Id
 	public Integer orderSetStatus;//运单集包状态
 	public String tradeNo;//商户订单号(我们自己生成的支付订单号)
+	public String dateArrived;//到达时间
 }

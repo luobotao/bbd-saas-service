@@ -5,9 +5,7 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
+import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -162,6 +160,7 @@ public interface OrderService {
 	 * @param orderQueryVO
 	 * @return
 	 */
-	public  PageModel<Order> 	findPageOrdersForHoldToStore(Integer pageIndex,OrderQueryVO orderQueryVO);
+	public  PageModel<OrderHoldToStoreVo>  	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO);
 
+	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode);
 }
