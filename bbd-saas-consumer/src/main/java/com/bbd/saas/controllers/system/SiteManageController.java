@@ -124,6 +124,14 @@ public class SiteManageController {
 			oldPhone = site.getUsername();
 			BeanUtils.copyProperties(siteForm,site);
 			user = userService.findUserByLoginName(site.getUsername());
+			if(user==null){//原始站长被删除了
+				List<User> userList = userService.findUsersBySite(site,UserRole.SITEMASTER,null);
+				if(userList!=null && userList.size()>0){
+					user = userList.get(0);
+				}else {
+					return false;
+				}
+			}
 			user.setLoginName(newPhone);
 			postmanUser = userMysqlService.selectPostmanUserByPhone(site.getUsername(), 0);
 			if(postmanUser==null){
