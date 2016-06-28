@@ -91,7 +91,7 @@ public class Constants {
     //设置到站分派权限的派件员默认密码
     public static String DISPATCH_PERMISSION_DEFAULT_PWD = "123456";
     //地址匹配不到站点的areaCode
-    public static String NO_SITE_AREACODE = "9999";
+    public static String NO_SITE_AREACODE = "9999-999";
     //派件员有到站分派权限
     public static int HAVE_DISPATCH_PERMISSION = 1;
     //派件员无到站分派权限
