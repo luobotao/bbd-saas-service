@@ -44,7 +44,7 @@ public class Site implements Serializable {
     private String deliveryArea;//配送範圍
     private Date dateAdd;      //创建时间
     private Date dateUpd;      //更新时间
-
+    private  String type;   //1 为分拨站点，0 为普通站点
     @Transient
     private String statusMessage;//JS展示状态
     @Transient
@@ -265,5 +265,13 @@ public class Site implements Serializable {
 
     public void setTurnDownMessage(String turnDownMessage) {
         this.turnDownMessage = turnDownMessage;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

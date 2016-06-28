@@ -6,6 +6,8 @@
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderSetStatus" %>
+<%@ page import="com.bbd.saas.mongoModels.User" %>
+<%@ page import="com.bbd.saas.constants.UserSession" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -282,7 +284,7 @@
 			success : function(dataObject) {//返回数据根据结果进行相应的处理
 				var tbody = $("#dataList");
 				// 清空表格数据
-				tbody.html("");
+				//tbody.html("");
 				var dataList = dataObject.datas;
 
 				if(dataList != null){
@@ -384,47 +386,59 @@
 		if(!e) e = window.event;//火狐中是 window.event
 		if((e.keyCode || e.which) == 13){
 			if($("#mailNum").val()!=null && $("#mailNum").val()!=""){
-				$("#parcelCode").val("");
-				checkOrderByMailNum($("#mailNum").val());
-			}
-			if($("#parcelCode").val()!=null && $("#parcelCode").val()!=""){
-				checkOrderParcelByParcelCode($("#parcelCode").val());
+				checkOrderByMailNum1($("#mailNum").val());
 			}
 		}
 	}
 
 	var isBatchToSite = false; //单个运单到站
 	//检查运单号
-	function checkOrderByMailNum(mailNum){
-		if(mailNum!=""){
+	function checkOrderByMailNum1(mailNum){
+		if(mailNum!=""&& mailNum!=undefined&&mailNum!=null){
+			console.log("mailNum======" + mailNum);
 			$.ajax({
-				url: '<%=request.getContextPath()%>/packageToSite/checkOrderByMailNum?mailNum='+mailNum,
+				url: "<%=request.getContextPath()%>/holdToStoreController/checkHoldToStoreByMailNum?mailNum="+mailNum ,
 				type: 'GET',
 				cache: false,
-				dataType: "json",
-				data: {},
 				success: function(response){
-					if(response!=null &&  response!=""){
-						if(response.orderStatus!="NOTARR" && response.orderStatus!=null){
+					alert(response);
+                      $("#mailNum").val(response.mailNum);
+					alert(response.order.orderSetStatus);
+					if(response.order!=null &&  response.order!=""){
+						console.log("aa");
+						if((response.order.orderSetStatus!='NOEMBRACE'|| response.order.orderSetStatus!='WAITTOIN' )&& response.order.orderSetStatus!=null){
+							console.log("ee");
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
 						}else{
-							if(response.expressStatus != null && response.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
-								$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
+							if(response.areaCode==response.order.areaCode){
+								console.log("bb");
+								$("#popContent").html("扫描成功，完成⼊库。此订单属于您的站点，可直接进⾏【运单分派】操作");
 								$("#toSitePrompt").modal("show");
 								isBatchToSite = false;//单个运单执行到站
-							}else{
-								isBatchToSite = false;//单个运单执行到站
 								doToSite();
+							}else if(response.areaCode!=response.order.areaCode){
+								if(response.site.type=="1"){//为分拨站点
+									console.log("cc");
+									$("#popContent").html("扫描成功，完成⼊库。请到App中进⾏【分拣】操作");
+									$("#toSitePrompt").modal("show");
+								}else{
+									console.log("dd");
+									//不为分拨站点
+									$("#popContent").html("扫描成功，完成⼊库。请到App中进⾏【揽件集包】操作");
+									$("#toSitePrompt").modal("show");
+								}
 							}
 						}
 					}else{
+
 						$("#mailNumP").html("【异常扫描】不存在此运单号") ;
 						$("#mailNumP").attr("style","color:red");
 					}
 				},
 				error: function(){
-					$("#mailNumP").html("【异常扫描】不存在此运单号") ;
+					console.log("error======");
+					$("#mailNumP").html("【异常扫描】不存----在此运单号") ;
 					$("#mailNumP").attr("style","color:red");
 				}
 			});
@@ -441,11 +455,59 @@
 		}else{//单个运单到站
 			$("#mailNumP").html("");
 			$("#mailNumP").attr("style","display:none");
-			gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
+			gotoPage1(0,$("#parcelCode").val(),$("#mailNum").val());
 			$("#toSitePrompt").modal("hide");
 		}
 
 	}
+
+	//加载带有查询条件的指定页的数据
+	function gotoPage1(pageIndex,parcelCode,mailNum) {
+		var between = $("#between").val();
+		var arriveStatus = $('#arriveStatus option:selected').val();
+		$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
+		$.ajax({
+			type : "GET",  //提交方式
+			url : "<%=request.getContextPath()%>/packageToSite/getOrderPage",//路径
+			data : {
+				"pageIndex" : pageIndex,
+				"arriveStatus" : arriveStatus,
+				"between" : between,
+				"parcelCode" : parcelCode,
+				"mailNum" : mailNum
+			},//数据，这里使用的是Json格式进行传输
+			success : function(dataObject) {//返回数据根据结果进行相应的处理
+				var tbody = $("#dataList");
+				// 清空表格数据
+				tbody.html("");
+
+				var dataList = dataObject.datas;
+				if(dataList != null){
+					var datastr = "";
+					for(var i = 0; i < dataList.length; i++){
+						datastr += getRowHtml(dataList[i]);
+					}
+					tbody.html(datastr);
+				}
+				//更新分页条
+				var pageStr = paginNav(pageIndex,  dataObject.totalPages, dataObject.totalCount);
+				$("#pagin").html(pageStr);
+				$("input[type='checkbox']").iCheck({
+					checkboxClass : 'icheckbox_square-blue'
+				});
+				$("#selectAll").on('ifUnchecked', function() {
+					$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
+				}).on('ifChecked', function() {
+					$("input[type='checkbox']", "#orderTable").iCheck("check");
+				});
+				updateOrderNumVO();
+			},
+			error : function() {
+				ioutDiv("加载分页数据异常！");
+			}
+		});
+	}
+
 	//更新数据统计的数据
 	function updateOrderNumVO(){
 		$.ajax({
