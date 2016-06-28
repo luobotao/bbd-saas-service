@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.ExpressStatStationDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.ExpressStatStation">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="tim" property="tim" jdbcType="VARCHAR"/>
+        <result column="areacode" property="areacode" jdbcType="VARCHAR"/>
+        <result column="sitename" property="sitename" jdbcType="VARCHAR"/>
+        <result column="nostationcnt" property="nostationcnt" jdbcType="INTEGER"/>
+        <result column="successcnt" property="successcnt" jdbcType="INTEGER"/>
+        <result column="dailycnt" property="dailycnt" jdbcType="INTEGER"/>
+        <result column="refusecnt" property="refusecnt" jdbcType="INTEGER"/>
+        <result column="stationcnt" property="stationcnt" jdbcType="INTEGER"/>
+        <result column="deliverycnt" property="deliverycnt" jdbcType="INTEGER"/>
+        <result column="changestationcnt" property="changestationcnt" jdbcType="INTEGER"/>
+        <result column="changeexpresscnt" property="changeexpresscnt" jdbcType="INTEGER"/>
+        <result column="companyId" property="companyId" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	id, tim, areacode, sitename, nostationcnt, successcnt, dailycnt, refusecnt,
+        stationcnt, deliverycnt, changestationcnt, changeexpresscnt, companyId
+    </sql>
+    <!-- 插入一条记录  开始  --> 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.OrderLog" >
+        INSERT INTO `table_express_stat_station`(
+            <include refid="baseColumnList"/>
+        )
+        VALUES (
+            #{id}, #{tim}, #{areacode}, #{sitename}, #{nostationcnt}, #{successcnt},
+            #{dailycnt}, #{refusecnt},#{stationcnt}, #{deliverycnt},
+            #{changestationcnt}, #{changeexpresscnt}, #{companyId}
+        )
+    </insert>
+    <!-- 插入一条记录  结束  -->
+    <!-- 根据站点和时间统计不同状态的订单数目  开始   -->
+    <select id="selectByAreaCodeAndTime" resultMap="baseResultMap">
+        SELECT <include refid="baseColumnList"/> FROM `table_express_stat_station`
+        <where>
+            <if test="areaCode != null and areaCode != ''" >
+                areaCode = #{areaCode}
+            </if>
+            <if test="startDate != null and startDate != ''" >
+                <![CDATA[
+                    AND operTime >= CONCAT(#{startDate},' 00:00:00')
+                    AND operTime <= CONCAT(#{endDate},' 23:59:59')
+                ]]>
+            </if>
+        </where>
+    </select>
+    <!-- 根据站点和时间统计不同状态的订单数目  结束   -->
+</mapper>

@@ -659,7 +659,7 @@ public class UserManageController {
 			String maxCount = constantService.findValueByName(Constants.DISPATCH_PERMISSION_COUNT);
 			if(realCount < Long.parseLong(maxCount)){
 				String pwd = null;
-				if(user.getPassWord() == null){
+				if("".equals(user.getPassWord())){
 					pwd = Constants.DISPATCH_PERMISSION_DEFAULT_PWD;
 				}
 				int i = userService.updateDispatchPermsn(user.getLoginName(), dispatchPermsn, pwd);

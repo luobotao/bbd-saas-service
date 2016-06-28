@@ -86,6 +86,10 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.IncomeDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+    <bean id="expressStatStationDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.ExpressStatStationDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
 
 
     <bean id="expressCompanyDao" class="org.mybatis.spring.mapper.MapperFactoryBean">

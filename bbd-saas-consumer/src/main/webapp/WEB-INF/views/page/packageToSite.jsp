@@ -366,7 +366,7 @@
 				data: {},
 				success: function(response){
 					if(response!=null &&  response!=""){
-						if(response.orderStatus!="NOTARR" && response.orderStatus!=null){
+						if(response.orderStatus != "<%=OrderStatus.NOTARR%>" && response.orderStatus!=null){
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
 						}else{

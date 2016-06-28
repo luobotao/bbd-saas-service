@@ -31,10 +31,10 @@ import java.util.List;
  * 运单监控
  */
 @Controller
-@RequestMapping("/mailMonitor")
-public class MailMonitorController {
+@RequestMapping("/statistic")
+public class StatisticController {
 
-	public static final Logger logger = LoggerFactory.getLogger(MailMonitorController.class);
+	public static final Logger logger = LoggerFactory.getLogger(StatisticController.class);
 
 	@Autowired
 	OrderService orderService;

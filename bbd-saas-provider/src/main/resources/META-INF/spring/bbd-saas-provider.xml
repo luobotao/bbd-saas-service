@@ -42,9 +42,9 @@
     <dubbo:service interface="com.bbd.saas.api.mysql.PostDeliveryService" ref="postDeliveryService" />
 	<dubbo:service interface="com.bbd.saas.api.mysql.OpenUserService" ref="openUserMysqlService" />
 	<dubbo:service interface="com.bbd.saas.api.mysql.OrderLogService" ref="orderLogService" />
-
     <dubbo:service interface="com.bbd.saas.api.mysql.SmsInfoService" ref="smsInfoService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.IncomeService" ref="incomeService" />
+    <dubbo:service interface="com.bbd.saas.api.mysql.ExpressStatStationService" ref="expressStatStationService" />
 
     <!--转为其他快递    获取所有的快递公司-->
     <dubbo:service interface="com.bbd.saas.api.mysql.ExpressCompanyService" ref="expressCompanyService" />

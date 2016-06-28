@@ -13,7 +13,6 @@
 <%
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
-	//System.out.println("========状态==========="+OrderStatus.Srcs2HTML(-1));
 %>
 <body class="fbg">
 <!-- S content -->
@@ -96,7 +95,7 @@
 										<td><%=order.getUserVO().getLoginName()%></td>
 								<%
 									}
-									if(order.getOrderStatus() == OrderStatus.RETENTION){
+									if(order.getOrderStatus() == OrderStatus.RETENTION || order.getOrderStatus() == null){
 								%>
 									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
 									<td class="tl">
