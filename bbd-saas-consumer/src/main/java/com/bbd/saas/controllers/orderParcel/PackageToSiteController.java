@@ -300,6 +300,7 @@ public class PackageToSiteController {
 		Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
 		if(order!=null){
 			order.setOrderStatus(OrderStatus.RETENTION);//滞留
+			order.setDateArrived(new Date());
 			addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因是：超出配送范围。");
 		}
 		Key<Order> result = orderService.save(order);
