@@ -58,7 +58,7 @@ public class HoldToStoreController {
     public static final Logger logger = LoggerFactory.getLogger(HoldToStoreController.class);
 
     @RequestMapping(value="", method= RequestMethod.GET)
-    public String index(Integer pageIndex, Integer status , String embraceId, final HttpServletRequest request, Model model) {
+    public String index(Integer pageIndex, Integer status , String embraceId, final HttpServletRequest request, Model model,boolean flag) {
         //当前登录的用户信息
         User user = adminService.get(UserSession.get(request));
         if(user!=null){
@@ -84,7 +84,7 @@ public class HoldToStoreController {
             status = Numbers.defaultIfNull(status, -1);//全部
 
             //查询数据
-            PageModel<OrderHoldToStoreVo> orderHoldPageModel= getList(pageIndex, status,  embraceId, request,model);
+            PageModel<OrderHoldToStoreVo> orderHoldPageModel= getList(pageIndex, status,  embraceId, request,flag,model );
             logger.info("=====揽件入库页面====" + orderHoldPageModel);
             model.addAttribute("orderHoldPageModel", orderHoldPageModel);
             model.addAttribute("userList",userList);
@@ -98,11 +98,15 @@ public class HoldToStoreController {
     //分页Ajax更新
     @ResponseBody
     @RequestMapping(value="/getList", method=RequestMethod.GET)
-    public   PageModel<OrderHoldToStoreVo>  getList(Integer pageIndex , Integer orderSetStatus , String embraceId, final HttpServletRequest request, Model model) {
+    public   PageModel<OrderHoldToStoreVo>  getList(Integer pageIndex , Integer orderSetStatus , String embraceId, final HttpServletRequest request,boolean flag, Model model) {
         //查询数据
         PageModel<OrderHoldToStoreVo> orderHoldPageModel=null;
             //今天到站时间
-         /* String todayDate =   Dates.formatSimpleDate(new Date()) ;*/
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        String start = Dates.formatSimpleDate(cal.getTime());
+        String end = Dates.formatSimpleDate(cal.getTime());
+        String between =start+" - "+end;
             //参数为空时，默认值设置
             pageIndex = Numbers.defaultIfNull(pageIndex, 0);
             orderSetStatus = Numbers.defaultIfNull(orderSetStatus, -1);
@@ -113,7 +117,8 @@ public class HoldToStoreController {
             OrderQueryVO orderQueryVO = new OrderQueryVO();
               /*  orderQueryVO.dateArrived = todayDate;*/
                 orderQueryVO.orderSetStatus=orderSetStatus;
-        List<String> tradeNoList=null;
+                orderQueryVO.between=between;
+                  List<String> tradeNoList=null;
             if(StringUtils.isNotBlank(embraceId)&& !("0".equals(embraceId))){
                 List<Trade> tradeList = tradeService.findTradesByEmbraceId(embraceId);
                   tradeNoList=new ArrayList<>();
@@ -126,7 +131,7 @@ public class HoldToStoreController {
 
 
 
-            orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex,tradeNoList,orderQueryVO);
+            orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex,tradeNoList,orderQueryVO,flag);
 
         return orderHoldPageModel;
     }

@@ -8,7 +8,7 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum OrderSetStatus {
 
-    NOEMBRACE(0, "待揽件"),
+    /*NOEMBRACE(0, "待揽件"),*/
     WAITTOIN(1, "待入库"),
     WAITSET(2, "待揽件集包"),
     WAITDRIVERGETED(3, "待司机取货送往分拨中心"),

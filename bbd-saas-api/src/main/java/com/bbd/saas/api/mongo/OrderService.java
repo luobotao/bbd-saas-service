@@ -160,7 +160,7 @@ public interface OrderService {
 	 * @param orderQueryVO
 	 * @return
 	 */
-	public  PageModel<OrderHoldToStoreVo>  	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO);
+	public  PageModel<OrderHoldToStoreVo>  	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO,boolean flag);
 
 	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode);
 }

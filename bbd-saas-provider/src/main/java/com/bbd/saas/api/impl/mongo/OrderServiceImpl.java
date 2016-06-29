@@ -335,14 +335,14 @@ public class OrderServiceImpl implements OrderService {
 	 * @return
 	 */
 	@Override
-	public  PageModel<OrderHoldToStoreVo> 	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO){
+	public  PageModel<OrderHoldToStoreVo> 	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO,boolean flag){
 
 		if(orderQueryVO == null){
 			return null;
 		}
 		PageModel<Order> pageOrders = new PageModel<Order>();
 		pageOrders.setPageNo(pageIndex);
-		pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders,tradeNoList, orderQueryVO);
+		pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders,tradeNoList, orderQueryVO,flag);
 		List<Order>  datas = pageOrders.getDatas();
 		List <OrderHoldToStoreVo> orderHoldToStoreList=new ArrayList<>();
 
