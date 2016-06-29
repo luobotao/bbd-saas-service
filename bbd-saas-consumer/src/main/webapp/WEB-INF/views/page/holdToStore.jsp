@@ -84,12 +84,12 @@
 								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>查询</a>
 							</div>
 						</div>
-						<div class="row pb20">
-							<%--<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>扫描包裹号：</label>
+						<div class="row pb20" >
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4" style="display:none;">
+								<label></label>
 								<input id="parcelCode" name="parcelCode" class="form-control" type="text" onkeypress="enterPress(event)" />
 								<p class="help-block" id="parcelCodeP" style="display:none;"></p>
-							</div>--%>
+							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
 								<label>扫描运单号：　</label>
 								<input id="mailNum" name="mailNum" class="form-control" type="text" onkeypress="enterPress(event)"/>
