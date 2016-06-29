@@ -16,6 +16,7 @@ import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.OrderCommon;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
@@ -301,7 +302,7 @@ public class PackageToSiteController {
 		if(order!=null){
 			order.setOrderStatus(OrderStatus.RETENTION);//滞留
 			order.setDateArrived(new Date());
-			addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因是：超出配送范围。");
+			OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因是：超出配送范围。");
 		}
 		Key<Order> result = orderService.save(order);
 		if(result != null){
@@ -309,39 +310,7 @@ public class PackageToSiteController {
 		}
 		return false;
 	}
-	/**
-	 * 增加订单物流信息
-	 * @param expressStatus 物流状态
-	 * @param order 订单
-	 * @param user 当前用户
-	 * @param remark 物流信息
-	 */
-	private void addOrderExpress(ExpressStatus expressStatus,Order order, User user, String remark){
-		//更新物流状态
-		order.setExpressStatus(expressStatus);
-		//更新物流信息
-		List<Express> expressList = order.getExpresses();
-		if(expressList == null){
-			expressList = new ArrayList<Express>();
-		}
-		Express express = new Express();
-		express.setDateAdd(new Date());
-		express.setRemark(remark);
-		express.setLat(user.getSite().getLat());
-		express.setLon(user.getSite().getLng());
-		boolean expressIsNotAdd = true;//防止多次添加
-		//检查是否添加过了
-		for (Express express1 : expressList) {
-			if (express.getRemark().equals(express1.getRemark())) {
-				expressIsNotAdd = false;
-				break;
-			}
-		}
-		if (expressIsNotAdd) {//防止多次添加
-			expressList.add(express);
-			order.setExpresses(expressList);
-		}
-	}
+
 
 	/**
 	 * 选中的订单是否都符合批量超区

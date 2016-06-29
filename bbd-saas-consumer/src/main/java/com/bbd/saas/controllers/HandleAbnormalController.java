@@ -315,7 +315,7 @@ public class HandleAbnormalController {
                 //更新物流信息
                 //订单已由【A站点】出库，正在转送到【B站点】进行配送
                 String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
-                addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
+                OrderCommon.addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
                 //更新预计到站时间
                 order.setDateMayArrive(Dates.addDays(new Date(), 1));
                 order.setDateArrived(null);
@@ -345,39 +345,7 @@ public class HandleAbnormalController {
 
     }
 
-    /**
-     * 增加订单物流信息
-     * @param expressStatus 物流状态
-     * @param order 订单
-     * @param user 当前用户
-     * @param remark 物流信息
-     */
-    private void addOrderExpress(ExpressStatus expressStatus,Order order, User user, String remark){
-        //更新物流状态
-        order.setExpressStatus(expressStatus);
-        //更新物流信息
-        List<Express> expressList = order.getExpresses();
-        if(expressList == null){
-            expressList = new ArrayList<Express>();
-        }
-        Express express = new Express();
-        express.setDateAdd(new Date());
-        express.setRemark(remark);
-        express.setLat(user.getSite().getLat());
-        express.setLon(user.getSite().getLng());
-        boolean expressIsNotAdd = true;//防止多次添加
-        //检查是否添加过了
-        for (Express express1 : expressList) {
-            if (express.getRemark().equals(express1.getRemark())) {
-                expressIsNotAdd = false;
-                break;
-            }
-        }
-        if (expressIsNotAdd) {//防止多次添加
-            expressList.add(express);
-            order.setExpresses(expressList);
-        }
-    }
+
     /**************************转其他站点***************结束***********************************/
     /**************************申请退货***************开始***********************************/
 
@@ -438,7 +406,7 @@ public class HandleAbnormalController {
                         expRemark.append(rtnRemark);
                     }
                 }
-                addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
+                OrderCommon.addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
                 //更新运单
                 Key<Order> r = orderService.save(order);
                 if(r != null){
@@ -588,7 +556,7 @@ public class HandleAbnormalController {
                 order.setOtherExprees(otherExpressList);
                 order.setDateUpd(new Date());
                 //更新expresses字段
-                addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
+                OrderCommon.addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
             }
         }
         return order;
