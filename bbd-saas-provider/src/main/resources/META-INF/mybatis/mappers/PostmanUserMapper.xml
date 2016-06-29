@@ -98,7 +98,7 @@
             and id != #{id}
         </if>
     </select>
-    
+
     <update id="updateByPhone" parameterType="com.bbd.saas.models.PostmanUser">
         UPDATE `postmanuser`
         	<set>
