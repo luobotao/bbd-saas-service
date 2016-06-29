@@ -22,12 +22,17 @@
         stationcnt, deliverycnt, changestationcnt, changeexpresscnt, companyId
     </sql>
     <sql id="statisticColumns">
-        areacode, sitename, count(nostationcnt) nostationcnt, count(successcnt) successcnt, count(dailycnt)dailycnt,
-        count(refusecnt) refusecnt, count(stationcnt) stationcnt, count(deliverycnt) deliverycnt,
-        count(changestationcnt) changestationcnt, count(changeexpresscnt) changeexpresscnt
+        areacode, sitename, sum(nostationcnt) nostationcnt, sum(successcnt) successcnt, sum(dailycnt)dailycnt,
+        sum(refusecnt) refusecnt, sum(stationcnt) stationcnt, sum(deliverycnt) deliverycnt,
+        sum(changestationcnt) changestationcnt, sum(changeexpresscnt) changeexpresscnt
+    </sql>
+    <sql id="companyStatisticColumns">
+        companyId, sum(nostationcnt) nostationcnt, sum(successcnt) successcnt, sum(dailycnt)dailycnt,
+        sum(refusecnt) refusecnt, sum(stationcnt) stationcnt, sum(deliverycnt) deliverycnt,
+        sum(changestationcnt) changestationcnt, sum(changeexpresscnt) changeexpresscnt
     </sql>
     <!-- 插入一条记录  开始  --> 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.OrderLog" >
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.ExpressStatStation" >
         INSERT INTO `table_express_stat_station`(
             <include refid="baseColumnList"/>
         )
@@ -39,7 +44,7 @@
     </insert>
     <!-- 插入一条记录  结束  -->
     <!-- 根据公司Id和时间进行统计查询  开始   -->
-    <select id="selectByCompanyIdAndTime" resultMap="baseResultMap">
+    <select id="selectByCompanyIdAndTimeBetween" resultMap="baseResultMap">
         SELECT <include refid="statisticColumns"/>
         from table_express_stat_station
         <where>
@@ -48,8 +53,8 @@
             </if>
             <if test="startDate != null and startDate != ''" >
                 <![CDATA[
-                    AND operTime >= CONCAT(#{startDate},' 00:00:00')
-                    AND operTime <= CONCAT(#{endDate},' 23:59:59')
+                    AND tim >= CONCAT(#{startDate},' 00:00:00')
+                    AND tim <= CONCAT(#{endDate},' 23:59:59')
                 ]]>
             </if>
         </where>
@@ -58,7 +63,7 @@
     <!-- 根据公司Id和时间进行统计查询  结束   -->
 
     <!-- 根据站点和时间统计不同状态的订单数目   开始   -->
-    <select id="selectPageByAreaCodeAndTime" resultMap="baseResultMap">
+    <select id="selectPageByAreaCodeAndTimeBetween" resultMap="baseResultMap">
         SELECT <include refid="statisticColumns"/>
         from table_express_stat_station
         <where>
@@ -67,8 +72,8 @@
             </if>
             <if test="startDate != null and startDate != ''" >
                 <![CDATA[
-                    AND operTime >= CONCAT(#{startDate},' 00:00:00')
-                    AND operTime <= CONCAT(#{endDate},' 23:59:59')
+                    AND tim >= CONCAT(#{startDate},' 00:00:00')
+                    AND tim <= CONCAT(#{endDate},' 23:59:59')
                 ]]>
             </if>
         </where>
@@ -78,7 +83,7 @@
 
 
     <!-- 根据站点和时间统计不同状态的订单数目  结束   -->
-    <select id="selectByAreaCodeListAndTime" resultMap="baseResultMap">
+    <select id="selectByAreaCodeListAndTimeBetween" resultMap="baseResultMap">
         SELECT <include refid="statisticColumns"/>
         from table_express_stat_station
         <where>
@@ -91,13 +96,79 @@
             </if>
             <if test="startDate != null and startDate != ''" >
                 <![CDATA[
-                    AND operTime >= CONCAT(#{startDate},' 00:00:00')
-                    AND operTime <= CONCAT(#{endDate},' 23:59:59')
+                    AND tim >= CONCAT(#{startDate},' 00:00:00')
+                    AND tim <= CONCAT(#{endDate},' 23:59:59')
                 ]]>
             </if>
         </where>
         GROUP BY areacode, sitename
     </select>
     <!-- 根据站点和时间统计不同状态的订单数目  结束   -->
+
+
+    <!-- 根据公司Id和时间进行分页统计查询  结束   -->
+    <select id="selectPageByCompanyIdAndTime" resultMap="baseResultMap">
+        SELECT <include refid="baseColumnList"/>
+        from table_express_stat_station
+        <where>
+            <if test="companyId != null and companyId != 0" >
+                companyId = #{companyId}
+            </if>
+            <if test="tim != null and tim != ''" >
+                AND tim = #{tim}
+            </if>
+        </where>
+        ORDER BY areacode ASC
+        <if test="step > 0" >
+            limit #{skip} , #{step}
+        </if>
+    </select>
+    <!-- 根据公司Id和时间进行分页统计查询  结束   -->
+
+    <!-- 根据公司Id和时间查询统计数据总数目  结束   -->
+    <select id="selectCountByCompanyIdAndTime" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        from table_express_stat_station
+        <where>
+            <if test="companyId != null and companyId != 0" >
+                companyId = #{companyId}
+            </if>
+            <if test="tim != null and tim != ''" >
+                AND tim = #{tim}
+            </if>
+        </where>
+    </select>
+    <!-- 根据公司Id和时间查询统计数据总数目  结束   -->
+
+    <!-- 根据公司Id和时间查询统计数据总数目  结束   -->
+    <select id="selectByAreaCodeAndTime" resultMap="baseResultMap">
+        SELECT <include refid="baseColumnList"/>
+        from table_express_stat_station
+        <where>
+            <if test="areaCode != null and areaCode != ''" >
+                areaCode = #{areaCode}
+            </if>
+            <if test="tim != null and tim != ''" >
+                AND tim = #{tim}
+            </if>
+        </where>
+    </select>
+    <!-- 根据公司Id和时间查询统计数据总数目  结束   -->
+
+    <!-- 根据公司Id和时间查询各个站点的汇总信息 结束   -->
+    <select id="selectSummaryByCompanyIdAndTime" resultMap="baseResultMap">
+        SELECT <include refid="companyStatisticColumns"/>
+        from table_express_stat_station
+        <where>
+            <if test="companyId != null and companyId != 0" >
+                companyId = #{companyId}
+            </if>
+            <if test="tim != null and tim != ''" >
+                AND tim = #{tim}
+            </if>
+        </where>
+        GROUP BY companyId
+    </select>
+    <!-- 根据公司Id和时间查询各个站点的汇总信息  结束   -->
 
 </mapper>

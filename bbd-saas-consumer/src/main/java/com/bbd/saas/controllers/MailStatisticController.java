@@ -3,10 +3,11 @@ package com.bbd.saas.controllers;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.ExpressStatStationService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.models.ExpressStatStation;
-import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.SiteVO;
@@ -44,7 +45,7 @@ public class MailStatisticController {
 	 * Description: 跳转到统计汇总页面
 	 * @param pageIndex 页数
 	 * @param areaCode 站点编号
-	 * @param timeBetween 时间范围
+	 * @param time 时间范围
 	 * @param request 请求
 	 * @param model
 	 * @return 返回页面
@@ -52,20 +53,21 @@ public class MailStatisticController {
 	 * 2016年5月6日下午4:27:46
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, String areaCode, String timeBetween, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String areaCode, String time, final HttpServletRequest request, Model model) {
 		try {
-			//设置默认查询条件
-			timeBetween = StringUtil.initStr(timeBetween, Dates.getBetweenTime(new Date(), -2));
+			//设置默认查询条件 -- 当天
+			time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD2));
 			//查询数据
-			PageModel<ExpressStatStation> orderMonitorVOPage = getList(pageIndex, areaCode, timeBetween, request);
+			PageModel<ExpressStatStation> pageModel = getList(pageIndex, areaCode, time, request);
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
 			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
-			logger.info("=====统计汇总页面列表===" + orderMonitorVOPage);
-			model.addAttribute("orderMonitorVOPage", orderMonitorVOPage);
-			model.addAttribute("timeBetween", timeBetween);
+			logger.info("=====统计汇总页面列表===" + pageModel);
+			model.addAttribute("pageModel", pageModel);
+			model.addAttribute("time", time);
 			model.addAttribute("siteList", siteVOList);
+			model.addAttribute("role", currUser.getRole());
 			return "page/mailStatistic";
 		} catch (Exception e) {
 			logger.error("===跳转到统计汇总页面==出错 :" + e.getMessage());
@@ -77,13 +79,13 @@ public class MailStatisticController {
 	 * 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
 	 * @param areaCode 站点编号
-	 * @param timeBetween 时间范围
+	 * @param time 时间(一天的时间)
 	 * @param request 请求
 	 * @return 分页列表数据
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<ExpressStatStation> getList(Integer pageIndex, String areaCode, String timeBetween, final HttpServletRequest request) {
+	public PageModel<ExpressStatStation> getList(Integer pageIndex, String areaCode, String time, final HttpServletRequest request) {
 		//查询数据
 		PageModel<ExpressStatStation> pageModel = new PageModel<ExpressStatStation>();
 		try {
@@ -92,32 +94,26 @@ public class MailStatisticController {
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 			pageModel.setPageNo(pageIndex);
-			//设置默认查询条件
-			timeBetween = StringUtil.initStr(timeBetween, Dates.getBetweenTime(new Date(), -2));
-			DateBetween dateBetween = new DateBetween();
-			List<String> dateList = dateBetween.splitDate(timeBetween);
-			//设置默认查询条件
-			//areaCode = StringUtil.initStr(areaCode, "141725-001");
-			if(areaCode != null && !"".equals(areaCode)){//只查询一个站点
-				//列表数据
-				List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, dateList.get(0), dateList.get(1));
-				pageModel.setTotalCount(dataList.size());
-				pageModel.setDatas(dataList);
-			}else {//查询本公司下的所有站点 （全部）
-
-				PageModel<Site> sitePageModel = new PageModel<Site>();
-				sitePageModel.setPageNo(pageIndex);
-				PageModel<Site> sitePage = siteService.getSitePage(sitePageModel,currUser.getCompanyId(), SiteStatus.APPROVE);
-				pageModel.setTotalCount(sitePage.getTotalCount());//总条数
-				List<Site> siteList = sitePage.getDatas();//数据
-				if(siteList != null && siteList.size() > 0){
+			//设置默认查询条件 -- 当天
+			time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD2));
+			if(currUser.getRole() == UserRole.COMPANY){//公司角色
+				//设置默认查询条件
+				//areaCode = StringUtil.initStr(areaCode, "141725-001");
+				if(areaCode != null && !"".equals(areaCode)){//只查询一个站点
 					//列表数据
-					List<String> areaCodeList = new ArrayList<String>();
-					pageModel.setTotalCount(sitePage.getTotalCount());
-					for(Site site : siteList){
-						areaCodeList.add(site.getAreaCode());
-					}
-					pageModel.setDatas(expressStatStationService.findByAreaCodeListAndTime(areaCodeList, dateList.get(0), dateList.get(1)));
+					List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+					pageModel.setTotalCount(dataList == null ? 0 : dataList.size());
+					pageModel.setDatas(dataList);
+				}else {//查询本公司下的所有站点 （全部）
+					pageModel = expressStatStationService.findPageByCompanyIdAndTime(currUser.getCompanyId(), time, pageModel);
+				}
+			}else if(currUser.getRole() == UserRole.SITEMASTER){//z站长
+				if(currUser.getSite() != null){
+					areaCode = currUser.getSite().getAreaCode();
+					//列表数据
+					List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+					pageModel.setTotalCount(dataList == null ? 0 : dataList.size());
+					pageModel.setDatas(dataList);
 				}
 			}
 		} catch (Exception e) {
@@ -129,7 +125,7 @@ public class MailStatisticController {
 	/**
 	 * Description: 导出数据
 	 * @param areaCode 站点编号
-	 * @param timeBetween 时间查询范围
+	 * @param time 时间查询范围
 	 * @param request
 	 * @param response
 	 * @return
@@ -137,20 +133,28 @@ public class MailStatisticController {
 	 * 2016年5月10日下午4:30:41
 	 */
 	@RequestMapping(value="/exportToExcel", method=RequestMethod.GET)
-	public void exportData(String areaCode, String timeBetween,
+	public void exportData(String areaCode, String time,
 						   final HttpServletRequest request, final HttpServletResponse response) {
 		List<ExpressStatStation> dataList = null;
-		DateBetween dateBetween = new DateBetween();
-		List<String> dateList = dateBetween.splitDate(timeBetween);
+		//设置默认查询条件 -- 当天
+		time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD2));
 		try {
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
 
-			if (areaCode != null && !"".equals(areaCode)) {//只查询一个站点
-				dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, dateList.get(0), dateList.get(1));
-			} else {//查询本公司下的所有站点 （全部）
-				//当前登录的用户信息
-				User currUser = adminService.get(UserSession.get(request));
-				//当前公司下的所有站点
-				dataList = expressStatStationService.findByCompanyIdAndTime(currUser.getCompanyId(), dateList.get(0), dateList.get(1));
+			if(currUser.getRole() == UserRole.COMPANY){//公司角色
+				if (areaCode != null && !"".equals(areaCode)) {//只查询一个站点
+					dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+				} else {//查询本公司下的所有站点 （全部）
+					//当前公司下的所有站点
+					dataList = expressStatStationService.findByCompanyIdAndTime(currUser.getCompanyId(), time);
+				}
+			}else if(currUser.getRole() == UserRole.SITEMASTER){//站长角色
+				if(currUser.getSite() != null){
+					areaCode = currUser.getSite().getAreaCode();
+					//列表数据
+					dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+				}
 			}
 			//导出==数据写到Excel中并写入response下载
 			List<List<String>> rowList = objectToTable(dataList);
@@ -184,6 +188,5 @@ public class MailStatisticController {
 		}
 		return  rowList;
 	}
-
 
 }
