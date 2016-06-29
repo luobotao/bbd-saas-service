@@ -124,7 +124,7 @@ public interface SiteService {
     /**
      * 查询指定公司的不同地区的特定站点状态的站点集合
      * @param companyId 公司Id
-     * @param pro 省
+     * @param prov 省
      * @param city 市
      * @param area 区
      * @param status 站点状态

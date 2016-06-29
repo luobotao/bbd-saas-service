@@ -4,6 +4,7 @@ import com.bbd.saas.models.ExpressStatStation;
 import com.bbd.saas.utils.PageModel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Description: 订单统计操作接口
@@ -77,4 +78,19 @@ public interface ExpressStatStationService {
 	 */
 	public ExpressStatStation findSummaryByCompanyIdAndTime(String companyId, String tim);
 
+	/**
+	 * 根据站点编号集合和时间进行查询
+	 * @param areaCodeList 站点编号集合
+	 * @param time 时间
+     * @return 统计数据集合
+     */
+	public Map<String, ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String time);
+
+	/**
+	 * 根据公司Id和时间进行统计查询 -- 用于导出
+	 * @param companyId 公司id
+	 * @param tim 时间
+	 * @return 统计数据集合
+	 */
+	public Map<String, ExpressStatStation> findMapByCompanyIdAndTime(String companyId, String tim);
 }

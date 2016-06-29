@@ -80,4 +80,20 @@ public interface ExpressStatStationDao {
 	 */
 	public ExpressStatStation selectSummaryByCompanyIdAndTime(@Param("companyId") Integer companyId, @Param("tim") String tim);
 
+	/**
+	 * 根据站点编号集合和时间进行查询
+	 * @param areaCodeList 站点编号集合
+	 * @param time 时间
+	 * @return 统计数据集合
+	 */
+	public List<ExpressStatStation> selectByAreaCodeListAndTime(List<String> areaCodeList,String time);
+
+	/**
+	 * 根据公司Id和时间进行统计查询 -- 用于导出
+	 * @param companyId 公司id
+	 * @param tim 时间
+	 * @return 统计数据集合
+	 */
+	public List<ExpressStatStation> selectByCompanyIdAndTime(String companyId, String tim);
+
 }
