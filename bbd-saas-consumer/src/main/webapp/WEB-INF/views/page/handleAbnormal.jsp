@@ -590,8 +590,8 @@ function showApplyReturnDiv(mailNumStr) {
 			if(dataList != null){
 				rtnReasonObj.append("<option value=''>请选择</option>");
 				for(var i = 0; i < dataList.length; i++){
-					data = dataList[i];
-					rtnReasonObj.append("<option value='"+data.status+"'>"+data.message+"</option>");
+					var dataTemp = dataList[i];
+					rtnReasonObj.append("<option value='"+dataTemp.status+"'>"+dataTemp.message+"</option>");
 				}
 			}
 		},

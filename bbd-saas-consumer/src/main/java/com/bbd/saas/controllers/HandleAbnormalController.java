@@ -241,8 +241,11 @@ public class HandleAbnormalController {
             for (Order order : dataList) {
                 courier = userService.findOne(order.getUserId());
                 UserVO userVO = new UserVO();
-                userVO.setLoginName(courier.getLoginName());
-                userVO.setRealName(courier.getRealName());
+                if(courier!=null){
+                    userVO.setLoginName(courier.getLoginName());
+                    userVO.setRealName(courier.getRealName());
+                }
+
                 order.setUserVO(userVO);
             }
         }
@@ -309,7 +312,7 @@ public class HandleAbnormalController {
                 remark.append(site.getArea());
                 remark.append(site.getAddress());
                 order.setAreaRemark(remark.toString());//站点的具体地址
-                order.setOrderStatus(null);//状态--为空
+                order.setOrderStatus(OrderStatus.NOTARR);//状态--为未到站
                 order.setUserId("");//未分派
                 order.setDateUpd(new Date());//更新时间
                 //更新物流信息
