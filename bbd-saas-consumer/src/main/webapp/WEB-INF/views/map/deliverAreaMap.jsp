@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@ page import="com.bbd.saas.vo.SiteVO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -156,10 +157,10 @@
 								<label>省：　</label>
 								<select name="prov" class="prov form-control form-con-new">
 								</select>
-								<label>　市：</label>
+								<label id="cityLable" hidden>　市：</label>
 								<select  class="city form-control form-con-new" disabled="disabled">
 								</select>
-								<label id="distLable">　区：</label>
+								<label id="distLable" hidden>　区：</label>
 								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
 								</select>
 								<label>　站点：　</label>
@@ -343,10 +344,6 @@
 	var defaultCenter = new BMap.Point(${centerPoint.lng}, ${centerPoint.lat});
 	var defaultZoom = 11;
 	/************************ 配送区域 ************* start **************************/
-	//省市区
-	/*var defprov = "";
-	var defcity = "北京";
-	var defdist = "朝阳区";*/
 
 	$("#areaAddr").citySelect({
 		prov: null,
@@ -927,15 +924,15 @@
 
 	//绘制电子地图 === 初始化省市区下拉框
 	$("#fenceAddr").citySelect({
-		prov: "${company.province}",
-		city: "${company.city}",
-		dist: "${company.area}",
+		prov: "",
+		city: "",
+		dist: "",
 		nodata: "none"
 	});
 
 	//绘制电子地图 == 省改变
 	$('#fenceAddr .prov').change(function(){
-
+		$('#cityLable').show();
 		$('#distLable').hide();
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
@@ -1054,7 +1051,7 @@
 					}
 				},
 				error: function(){
-					ioutDiv('服务器繁忙，请稍后再试');
+					ioutDiv('抱歉，电子围栏暂不支持交叉绘制');
 				}
 			});
 
@@ -1329,12 +1326,11 @@
 	var winwid=window.screen.availWidth;
 	var initwid=$(".b-map").width();
 	$(".j-full-btn").on("click",function(){
-
 		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){
-			parentF.css({overflowY:"hidden"});
+			parentD.find(".i-hei").attr("scrolling","no");
 			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2});
-			$(".pos-footer").hide();
+			parentD.find(".pos-footer").hide();
 			$("#fenceMap,.b-map").css({width:winwid,height:winhei2,marginLeft:"-10px"});
 			$(".j-full-div").css({left:"-16%"});
 			$(".b-f-screen,.pos-adr").css({right:"25px"});
@@ -1342,9 +1338,9 @@
 			$(".full-screen").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
-			parentF.css({overflowY:"auto"});
-			$(".pos-footer").show();
-			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2+140});
+			parentD.find(".i-hei").attr("scrolling","auto");
+			parentD.find(".pos-footer").show();
+			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2-146});
 			$("#fenceMap,.b-map").css({width:initwid,height:inithei,margin:0});
 			$(".j-full-div").css({left:"0"});
 			$(".b-f-screen,.pos-adr").css({right:"15px"});
