@@ -8,6 +8,7 @@ import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mysql.IncomeService;
+import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.ExpressExchange;
@@ -47,7 +48,7 @@ public class PackageToSiteController {
 	@Autowired
 	OrderService orderService;
 	@Autowired
-	OrderParcelService orderPacelService;
+	OrderParcelService orderParcelService;
 	@Autowired
 	OrderTrackService orderTrackService;
 	@Autowired
@@ -56,7 +57,8 @@ public class PackageToSiteController {
 	IncomeService incomeService;
 	@Autowired
 	ExpressExchangeService expressExchangeService;
-
+	@Autowired
+	PostDeliveryService postDeliveryService;
 	/**
 	 * description: 跳转到包裹到站页面
 	 * 2016年4月1日下午6:13:46
@@ -128,7 +130,7 @@ public class PackageToSiteController {
 	@RequestMapping(value="/checkOrderParcelByParcelCode", method=RequestMethod.GET)
 	public boolean checkOrderParcelByParcelCode(HttpServletRequest request,@RequestParam(value = "parcelCode", required = true) String parcelCode) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-		OrderParcel orderParcel =  orderPacelService.findOrderParcelByParcelCode(user.getSite().getAreaCode(),parcelCode);
+		OrderParcel orderParcel =  orderParcelService.findOrderParcelByParcelCode(user.getSite().getAreaCode(),parcelCode);
 		if(orderParcel==null)
 			return false;
 		else
@@ -166,7 +168,7 @@ public class PackageToSiteController {
 		pageModel.setPageNo(pageIndex);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
 		for(Order order : orderPage.getDatas()){
-			String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
+			String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
 			order.setParcelCode(parcelCodeTemp);//设置包裹号
 		}
 		return orderPage;
@@ -241,48 +243,9 @@ public class PackageToSiteController {
 				expressExchange.setDateAdd(new Date());
 				expressExchangeService.save(expressExchange);
 			}
+			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
 		}
-		OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
-		if (orderParcel != null) {
-			Boolean flag = true;//是否可以更新包裹的状态
-			for (Order orderTemp : orderParcel.getOrderList()) {
-				if (orderTemp.getOrderStatus() == null || orderTemp.getOrderStatus() == OrderStatus.NOTARR) {
-					flag = false;
-				}
-			}
-			if (flag) {//更新包裹状态，做包裹到站操作
-				orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
-				orderParcel.setDateUpd(new Date());
-				orderPacelService.saveOrderParcel(orderParcel);
-				/**修改orderTrack里的状态*/
-				try {
-					String trackNo = orderParcel.getTrackNo();
-					if (StringUtils.isNotBlank(trackNo)) {
-						OrderTrack orderTrack = orderTrackService.findOneByTrackNo(trackNo);
-						if (orderTrack != null) {
-							List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
-							Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
-							for (OrderParcel orderParcel1 : orderParcelList) {
-								if (orderParcel1.getStatus() != ParcelStatus.ArriveStation) {
-									flagForUpdateTrackNo = false;//不可更新
-								}
-							}
-							if (flagForUpdateTrackNo) {//可以更新orderTrack下的状态
-								orderTrack.dateUpd = new Date();
-								orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
-								orderTrack.transStatus = TransStatus.YWC;
-								orderTrack.preSchedule="已送达";
-								orderTrackService.updateOrderTrack(trackNo, orderTrack);
-								incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
-							}
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 
-			}
-		}
 	}
 
 
@@ -303,6 +266,10 @@ public class PackageToSiteController {
 			order.setOrderStatus(OrderStatus.RETENTION);//滞留
 			order.setDateArrived(new Date());
 			OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因是：超出配送范围。");
+			//更新mysql
+			//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
+			postDeliveryService.updatePostDeliveryStatus(mailNum, "3");
+			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
 		}
 		Key<Order> result = orderService.save(order);
 		if(result != null){
@@ -354,4 +321,51 @@ public class PackageToSiteController {
 		return false;
 	}
 
+	/**
+	 * 检查是否需要更新包裹状态
+	 * @param orderId
+     */
+	private void orderParcleStatusChange(String orderId){
+		OrderParcel orderParcel = orderParcelService.findOrderParcelByOrderId(orderId);
+		if (orderParcel != null) {
+			Boolean flag = true;//是否可以更新包裹的状态
+			for (Order orderTemp : orderParcel.getOrderList()) {
+				if (orderTemp.getOrderStatus() == null || orderTemp.getOrderStatus() == OrderStatus.NOTARR) {
+					flag = false;
+				}
+			}
+			if (flag) {//更新包裹状态，做包裹到站操作
+				orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
+				orderParcel.setDateUpd(new Date());
+				orderParcelService.saveOrderParcel(orderParcel);
+				/**修改orderTrack里的状态*/
+				try {
+					String trackNo = orderParcel.getTrackNo();
+					if (StringUtils.isNotBlank(trackNo)) {
+						OrderTrack orderTrack = orderTrackService.findOneByTrackNo(trackNo);
+						if (orderTrack != null) {
+							List<OrderParcel> orderParcelList = orderParcelService.findOrderParcelListByTrackCode(trackNo);
+							Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
+							for (OrderParcel orderParcel1 : orderParcelList) {
+								if (orderParcel1.getStatus() != ParcelStatus.ArriveStation) {
+									flagForUpdateTrackNo = false;//不可更新
+								}
+							}
+							if (flagForUpdateTrackNo) {//可以更新orderTrack下的状态
+								orderTrack.dateUpd = new Date();
+								orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
+								orderTrack.transStatus = TransStatus.YWC;
+								orderTrack.preSchedule="已送达";
+								orderTrackService.updateOrderTrack(trackNo, orderTrack);
+								incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		}
+	}
 }

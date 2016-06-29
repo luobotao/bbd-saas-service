@@ -154,7 +154,7 @@
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
 							<div class="col-md-12 pb20" id="fenceAddr">
-								<label>省：　</label>
+								<label>省：</label>
 								<select name="prov" class="prov form-control form-con-new">
 								</select>
 								<label id="cityLable" hidden>　市：</label>
@@ -163,7 +163,7 @@
 								<label id="distLable" hidden>　区：</label>
 								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
 								</select>
-								<label>　站点：　</label>
+								<label>　站点：</label>
 								<select id="fenceSiteId" class="form-control form-con-new">
 									<option value="">请选择</option>
 									<c:if test="${not empty siteList}">
