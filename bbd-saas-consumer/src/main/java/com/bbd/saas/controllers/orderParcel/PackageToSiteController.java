@@ -328,7 +328,7 @@ public class PackageToSiteController {
 			Boolean flag = true;//是否可以更新包裹的状态
 			for (Order orderTemp : orderParcel.getOrderList()) {
 				Order orderReal = orderService.findOneByMailNum(orderTemp.getAreaCode(),orderTemp.getMailNum());
-				if (orderReal.getOrderStatus() == null || orderReal.getOrderStatus() == OrderStatus.NOTARR) {
+				if (orderReal==null || orderReal.getOrderStatus() == null || orderReal.getOrderStatus() == OrderStatus.NOTARR) {
 					flag = false;
 				}
 			}

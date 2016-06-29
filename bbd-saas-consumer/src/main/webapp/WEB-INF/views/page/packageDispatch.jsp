@@ -306,8 +306,8 @@ function gotoPage(pageIndex) {
         url : "<%=path%>/packageDispatch/getList",//路径  
         data : {  
             "pageIndex" : pageIndex,
-            "status" : status, 
-            "arriveBetween" : arriveBetween, 
+            "status" : $("#status").val(),
+            "arriveBetween" : $("#arriveBetween").val(),
             "courierId" : $("#courierId").val()
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
