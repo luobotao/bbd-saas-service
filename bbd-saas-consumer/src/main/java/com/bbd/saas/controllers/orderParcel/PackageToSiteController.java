@@ -265,18 +265,14 @@ public class PackageToSiteController {
 		if(order!=null){
 			order.setOrderStatus(OrderStatus.RETENTION);//滞留
 			order.setDateArrived(new Date());
-			OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因是：超出配送范围。");
+			OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因：超出配送范围。");
 			//更新mysql
 			//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
-
-			postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因是：超出配送范围。","滞留原因是：超出配送范围");
+			orderService.save(order);
+			postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因：超出配送范围。","滞留原因：超出配送范围");
 			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
 		}
-		Key<Order> result = orderService.save(order);
-		if(result != null){
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 
@@ -331,7 +327,8 @@ public class PackageToSiteController {
 		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
 			for (Order orderTemp : orderParcel.getOrderList()) {
-				if (orderTemp.getOrderStatus() == null || orderTemp.getOrderStatus() == OrderStatus.NOTARR) {
+				Order orderReal = orderService.findOneByMailNum(orderTemp.getAreaCode(),orderTemp.getMailNum());
+				if (orderReal.getOrderStatus() == null || orderReal.getOrderStatus() == OrderStatus.NOTARR) {
 					flag = false;
 				}
 			}
