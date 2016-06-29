@@ -268,7 +268,8 @@ public class PackageToSiteController {
 			OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因是：超出配送范围。");
 			//更新mysql
 			//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
-			postDeliveryService.updatePostDeliveryStatus(mailNum, "3");
+
+			postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因是：超出配送范围。","超出配送范围");
 			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
 		}
 		Key<Order> result = orderService.save(order);

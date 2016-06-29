@@ -153,7 +153,7 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-12 pb20" id="fenceAddr">
+							<div class="col-md-12 pb10" id="fenceAddr">
 								<label>省：　</label>
 								<select name="prov" class="prov form-control form-con-new">
 								</select>
@@ -1047,7 +1047,7 @@
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);
 					}else{
-						ioutDiv("error:" + data.msg);
+						ioutDiv('抱歉，电子围栏暂不支持交叉绘制');
 					}
 				},
 				error: function(){

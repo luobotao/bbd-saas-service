@@ -146,8 +146,14 @@
     <!-- 通过运单号更新订单状态 -->
     <update id="updatePostDeliveryStatus" >
         UPDATE `postdelivery` SET
-         sta = #{sta}
-        WHERE mail_num = #{mailNum}
+         sta = #{sta},
+		<if test="remark != null ">
+			remark = #{remark},
+		</if>
+		<if test="resultMsg != null ">
+			resultmsg = #{resultMsg},
+		</if>
+		WHERE mail_num = #{mailNum}
     </update>
 
     <!-- 查询指定运单号的记录的条数  结束   --> 
