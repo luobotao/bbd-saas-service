@@ -146,13 +146,14 @@
     <!-- 通过运单号更新订单状态 -->
     <update id="updatePostDeliveryStatus" >
         UPDATE `postdelivery` SET
-         sta = #{sta},
+
 		<if test="remark != null ">
 			remark = #{remark},
 		</if>
 		<if test="resultMsg != null ">
 			resultmsg = #{resultMsg},
 		</if>
+		sta = #{sta}
 		WHERE mail_num = #{mailNum}
     </update>
 
