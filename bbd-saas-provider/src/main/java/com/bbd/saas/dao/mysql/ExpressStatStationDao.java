@@ -27,6 +27,7 @@ public interface ExpressStatStationDao {
 	public List<ExpressStatStation> selectByCompanyIdAndTimeBetween(@Param("companyId") Integer companyId,
 				@Param("startDate") String startDate, @Param("endDate") String endDate);
 
+
 	/**
 	 * 根据站点编号和时间段进行查询 == 暂时没有用到
 	 * @param areaCode 站点编号
