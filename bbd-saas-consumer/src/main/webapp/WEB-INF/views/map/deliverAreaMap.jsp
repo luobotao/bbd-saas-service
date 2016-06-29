@@ -170,43 +170,51 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-12 pb20" id="fenceAddr">
-								<label>省：　</label>
-								<select name="prov" class="prov form-control form-con-new">
-									<option value="">请选择</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
-								<label>　市：</label>
-								<select  class="city form-control form-con-new" disabled="disabled">
-									<option value="">请选择</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
-								<label>　区：</label>
-								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
-									<option value="">请选择</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
-								<label>　站点：　</label>
-								<select id="fenceSiteId" class="form-control form-con-new">
-									<option value="">请选择</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
+							<div class="col-md-12" id="fenceAddr">
+								<div class="col-md-3 pb10">
+									<label>省：　</label>
+									<select name="prov" class="prov form-control form-con-new">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+								</div>
+								<div class="col-md-3 pb10">
+									<label>　市：</label>
+									<select  class="city form-control form-con-new" disabled="disabled">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+								</div>
+								<div class="col-md-3 pb10">
+									<label>　区：</label>
+									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+								</div>
+								<div class="col-md-3 pb10">
+									<label>　站点：　</label>
+									<select id="fenceSiteId" class="form-control form-con-new">
+										<option value="">请选择</option>
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+								</div>
 							</div>
 							<div class="col-md-12 full-screen">
 								<div class="b-map">
@@ -1381,12 +1389,11 @@
 	var winwid=window.screen.availWidth;
 	var initwid=$(".b-map").width();
 	$(".j-full-btn").on("click",function(){
-
 		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){
-			parentF.css({overflowY:"hidden"});
+			parentD.find(".i-hei").attr("scrolling","no");
 			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2});
-			$(".pos-footer").hide();
+			parentD.find(".pos-footer").hide();
 			$("#fenceMap,.b-map").css({width:winwid,height:winhei2,marginLeft:"-10px"});
 			$(".j-full-div").css({left:"-16%"});
 			$(".b-f-screen,.pos-adr").css({right:"25px"});
@@ -1394,9 +1401,9 @@
 			$(".full-screen").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
-			parentF.css({overflowY:"auto"});
-			$(".pos-footer").show();
-			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2+140});
+			parentD.find(".i-hei").attr("scrolling","auto");
+			parentD.find(".pos-footer").show();
+			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2-146});
 			$("#fenceMap,.b-map").css({width:initwid,height:inithei,margin:0});
 			$(".j-full-div").css({left:"0"});
 			$(".b-f-screen,.pos-adr").css({right:"15px"});
