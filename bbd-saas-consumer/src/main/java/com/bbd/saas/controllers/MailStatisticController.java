@@ -110,6 +110,7 @@ public class MailStatisticController {
 					PageModel<Site> sitePageModel = new PageModel<Site>();
 					sitePageModel.setPageNo(pageIndex);
 					sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), null);
+					pageModel.setTotalCount(sitePageModel.getTotalCount());
 					List<Site> siteList = sitePageModel.getDatas();
 					if(siteList != null && siteList.size() > 0){
 						List<String> areaCodeList = new ArrayList<String>();
@@ -127,9 +128,17 @@ public class MailStatisticController {
 							}
 							dataList.add(ess);
 						}
+						if((pageModel.getPageNo() + 1) == pageModel.getTotalPages()){//最后一页 -- 需要显示汇总行
+							ExpressStatStation summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
+							if(summary == null){
+								summary = new ExpressStatStation(currUser.getCompanyId(), null, null);
+							}
+							summary.setSitename("总计");
+							dataList.add(summary);
+						}
 						pageModel.setDatas(dataList);
 					}
-					pageModel.setTotalCount(sitePageModel.getTotalCount());
+
 				}
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//z站长
 				if(currUser.getSite() != null){
@@ -186,9 +195,8 @@ public class MailStatisticController {
 					//当前公司下的所有站点
 					List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
 					if(siteVOList != null && siteVOList.size() > 0){
-						List<String> areaCodeList = new ArrayList<String>();
-						for(SiteVO site : siteVOList){
-							areaCodeList.add(site.getAreaCode());
+						if(dataList == null){
+							dataList = new ArrayList<ExpressStatStation>();
 						}
 						Map<String, ExpressStatStation> essMap = expressStatStationService.findMapByCompanyIdAndTime(currUser.getCompanyId(), time);
 						ExpressStatStation ess = null;
@@ -200,6 +208,12 @@ public class MailStatisticController {
 							}
 							dataList.add(ess);
 						}
+						ExpressStatStation summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
+						if(summary == null){
+							summary = new ExpressStatStation(currUser.getCompanyId(), null, null);
+						}
+						summary.setSitename("总计");
+						dataList.add(summary);
 					}
 					//表头 "未到站订单数",  3000,
 					titles = new String[]{"站点",  "未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};

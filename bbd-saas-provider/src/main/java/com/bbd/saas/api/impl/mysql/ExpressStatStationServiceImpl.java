@@ -93,26 +93,21 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 	@Override
 	public Map<String, ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String time) {
 		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByAreaCodeListAndTime(areaCodeList, time);
-		if(expressStatStationList != null){
-			return null;
-		}
+		return getEssMap(expressStatStationList);
+	}
+
+	private Map<String, ExpressStatStation> getEssMap(List<ExpressStatStation> expressStatStationList){
 		Map<String, ExpressStatStation> essMap = new HashMap<String, ExpressStatStation>();
-		for (ExpressStatStation ess : expressStatStationList){
-			essMap.put(ess.getAreacode(), ess);
+		if(expressStatStationList != null){
+			for (ExpressStatStation ess : expressStatStationList){
+				essMap.put(ess.getAreacode(), ess);
+			}
 		}
 		return essMap;
 	}
-
 	@Override
 	public Map<String, ExpressStatStation> findMapByCompanyIdAndTime(String companyId, String tim) {
 		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByCompanyIdAndTime(companyId, tim);
-		if(expressStatStationList != null){
-			return null;
-		}
-		Map<String, ExpressStatStation> essMap = new HashMap<String, ExpressStatStation>();
-		for (ExpressStatStation ess : expressStatStationList){
-			essMap.put(ess.getAreacode(), ess);
-		}
-		return essMap;
+		return getEssMap(expressStatStationList);
 	}
 }
