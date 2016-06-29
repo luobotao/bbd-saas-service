@@ -5,7 +5,6 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.ExpressStatStationService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.models.ExpressStatStation;
 import com.bbd.saas.mongoModels.User;
@@ -56,13 +55,13 @@ public class MailStatisticController {
 	public String index(Integer pageIndex, String areaCode, String time, final HttpServletRequest request, Model model) {
 		try {
 			//设置默认查询条件 -- 当天
-			time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD2));
+			time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD2));
 			//查询数据
 			PageModel<ExpressStatStation> pageModel = getList(pageIndex, areaCode, time, request);
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
 			logger.info("=====统计汇总页面列表===" + pageModel);
 			model.addAttribute("pageModel", pageModel);
 			model.addAttribute("time", time);
@@ -95,7 +94,7 @@ public class MailStatisticController {
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 			pageModel.setPageNo(pageIndex);
 			//设置默认查询条件 -- 当天
-			time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD2));
+			time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD2));
 			if(currUser.getRole() == UserRole.COMPANY){//公司角色
 				//设置默认查询条件
 				//areaCode = StringUtil.initStr(areaCode, "141725-001");
@@ -137,7 +136,7 @@ public class MailStatisticController {
 						   final HttpServletRequest request, final HttpServletResponse response) {
 		List<ExpressStatStation> dataList = null;
 		//设置默认查询条件 -- 当天
-		time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD2));
+		time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD2));
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));

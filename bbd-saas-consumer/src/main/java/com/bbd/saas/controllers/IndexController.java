@@ -123,6 +123,8 @@ public class IndexController {
                 List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());
                 String siteStr = dealSitePoints(sitePoints);
                 model.addAttribute("sitePoints", siteStr);
+            }else {
+                model.addAttribute("site", user.getSite());
             }
         }catch (Exception e){
             e.printStackTrace();
