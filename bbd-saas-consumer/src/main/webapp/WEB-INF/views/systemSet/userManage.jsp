@@ -628,6 +628,7 @@
 
 	function showAddUserDiv(){
 		$('.userclass').html('新建');
+		haveDispatchPermsn=false;
 		document.getElementById("userForm").reset();
 		$("#oldLoginName").val("");
 		$("#userId").val("");
@@ -664,7 +665,7 @@
 				if(data.success){
 					gotoPage(0);
 				} else{
-					alert_mine("错误", data.msg);
+					alert_mine("提示", data.msg);
 				}
 			},
 			error : function() {

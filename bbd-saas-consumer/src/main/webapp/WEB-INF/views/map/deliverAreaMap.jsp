@@ -104,33 +104,15 @@
 								设置配送范围后，将优先匹配站点附近的订单。
 							</div>
 							<form  method="POST" id="siteRadiusForm">
-								<div class="col-md-12 pb20" id="areaAddr">
+								<div class="col-md-12 pb20" id="areaAddr" hidden>
 									<label>省：　</label>
 									<select name="prov" class="prov form-control form-con-new">
-										<option value="">请选择</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.id}">${site.name}</option>
-											</c:forEach>
-										</c:if>
 									</select>
 									<label>　市：</label>
 									<select  class="city form-control form-con-new" disabled="disabled">
-										<option value="">请选择</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.id}">${site.name}</option>
-											</c:forEach>
-										</c:if>
 									</select>
 									<label>　区：</label>
 									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
-										<option value="">请选择</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.id}">${site.name}</option>
-											</c:forEach>
-										</c:if>
 									</select>
 
 								</div>
@@ -173,30 +155,12 @@
 							<div class="col-md-12 pb20" id="fenceAddr">
 								<label>省：　</label>
 								<select name="prov" class="prov form-control form-con-new">
-									<option value="">请选择</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
 								</select>
 								<label>　市：</label>
 								<select  class="city form-control form-con-new" disabled="disabled">
-									<option value="">请选择</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
 								</select>
-								<label>　区：</label>
+								<label id="distLable">　区：</label>
 								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
-									<option value="">请选择</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
 								</select>
 								<label>　站点：　</label>
 								<select id="fenceSiteId" class="form-control form-con-new">
@@ -963,15 +927,16 @@
 
 	//绘制电子地图 === 初始化省市区下拉框
 	$("#fenceAddr").citySelect({
-		prov: null,
-		city: null,
-		dist: null,
-		required: false,
-		nodata: ""
+		prov: "${company.province}",
+		city: "${company.city}",
+		dist: "${company.area}",
+		nodata: "none"
 	});
 
 	//绘制电子地图 == 省改变
 	$('#fenceAddr .prov').change(function(){
+
+		$('#distLable').hide();
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新
@@ -979,6 +944,7 @@
 	}) ;
 	//绘制电子地图 == 市改变
 	$('#fenceAddr .city').change(function(){
+		$('#distLable').show();
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新

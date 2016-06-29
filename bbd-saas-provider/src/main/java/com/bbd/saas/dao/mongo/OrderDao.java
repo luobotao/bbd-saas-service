@@ -65,7 +65,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 }else{//未到站
                     query.filter("orderStatus", OrderStatus.NOTARR);
-                    query.filter("expressStatus", ExpressStatus.DriverGeted);
                     if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateMayArrive >=",dateBetween.getStart());
@@ -105,7 +104,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.filter("orderStatus", OrderStatus.NOTARR);
-        query.filter("expressStatus", ExpressStatus.DriverGeted);
         orderNumVO.setNoArriveHis(count(query));//历史未到站
 
         Calendar cal = Calendar.getInstance();
@@ -178,7 +176,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     query.filter("orderStatus <>", null).filter("orderStatus <>", OrderStatus.NOTARR);
                 }else{//未到站
                     query.filter("orderStatus", OrderStatus.NOTARR);
-                    query.filter("expressStatus", ExpressStatus.DriverGeted);
                 }
             }
             //预计到站时间
@@ -236,16 +233,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     Criteria timeC = timeQuery.and(startC, endC);
                     //时间为空query--未到站的记录(未到站的运单，到站时间为空)
                     Query<Order> timeNullQuery = createQuery();
-                    Criteria notArriveC = timeNullQuery.and(timeNullQuery.criteria("orderStatus").equal(OrderStatus.NOTARR),
-                            timeNullQuery.criteria("expressStatus").equal(ExpressStatus.DriverGeted));
-                    //Criteria timeNullC = timeNullQuery.or(timeNullQuery.criteria("dateArrived").equal(""), timeNullQuery.criteria("dateArrived").equal(null));
-                    //Criteria notArriveOrTimeNullC = timeNullQuery.or(notArriveC, timeNullC);
+                    Criteria notArriveC =timeNullQuery.criteria("orderStatus").equal(OrderStatus.NOTARR);
                     query.or(timeC, notArriveC);
                 }
             }else{//数据查询页面查询订单某一状态的记录
             	if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0
                     query.filter("orderStatus", OrderStatus.NOTARR);
-                    query.filter("expressStatus", ExpressStatus.DriverGeted);
                 }else{//已到站
                     query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
                     //到站时间，只有已到站的订单才会有到站时间
