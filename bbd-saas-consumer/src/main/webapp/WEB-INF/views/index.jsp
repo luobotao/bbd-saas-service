@@ -62,7 +62,7 @@
 						<li id="error" class="lv1"><a href="<c:url value="/handleAbnormal" />" target="iframe1" ><i class="b-icon p-error"></i>异常件处理</a></li>
 						<li class="lv1"><a href="#"><i class="b-icon p-query"></i>数据查询</a></li>
 						<ul class="menu dn">
-							<li id="query"><a href="<c:url value="/dataQuery" />" target="iframe1" ><i class=" p-query"></i>运单查询</a></li>
+							<li id="query"><a href="<c:url value="/dataQuery" />" target="iframe1" >运单查询</a></li>
 							<li id="mailStatistic"><a href="<c:url value="/mailStatistic" />" target="iframe1">统计汇总</a></li>
 						</ul>
 
