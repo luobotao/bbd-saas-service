@@ -174,13 +174,14 @@ public class MailStatisticController {
 			User currUser = adminService.get(UserSession.get(request));
 			String[] titles = null;
 			int[] colWidths = null;
-
+            boolean isShowSite = false;
 			if(currUser.getRole() == UserRole.COMPANY){//公司角色
 				if (areaCode != null && !"".equals(areaCode)) {//只查询一个站点
 					//表头 "未到站订单数",  3000,
 					titles = new String[]{"未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
 					colWidths = new int[] {3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
 					dataList = findOneSiteData(currUser, areaCode, time);
+					isShowSite = false;
 				} else {//查询本公司下的所有站点 （全部）
 					//当前公司下的所有站点
 					List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
@@ -203,6 +204,7 @@ public class MailStatisticController {
 					//表头 "未到站订单数",  3000,
 					titles = new String[]{"站点",  "未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
 					colWidths = new int[] {13000,  3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
+					isShowSite = true;
 				}
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//站长角色
 				if(currUser.getSite() != null){
@@ -213,9 +215,10 @@ public class MailStatisticController {
 				//表头 "未到站订单数",  3000,
 				titles = new String[]{"未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
 				colWidths = new int[] {3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
+				isShowSite = false;
 			}
 			//导出==数据写到Excel中并写入response下载
-			List<List<String>> rowList = objectToTable(dataList);
+			List<List<String>> rowList = objectToTable(dataList, isShowSite);
 			ExportUtil exportUtil = new ExportUtil();
 			exportUtil.exportExcel("统计汇总", rowList, titles, colWidths, response);
 		} catch (Exception e) {
@@ -223,14 +226,16 @@ public class MailStatisticController {
 		}
 	}
 
-	private List<List<String>> objectToTable(List<ExpressStatStation> dataList){
+	private List<List<String>> objectToTable(List<ExpressStatStation> dataList, boolean isShowSite){
 		if(dataList == null){
 			return null;
 		}
 		List<List<String>> rowList = new ArrayList<List<String>>();
 		for(ExpressStatStation expressStatStation : dataList){
 			List<String> row = new ArrayList<String>();
-			row.add(expressStatStation.getSitename());
+			if(isShowSite){
+				row.add(expressStatStation.getSitename());
+			}
 			row.add(expressStatStation.getNostationcnt()+"");
 			row.add(expressStatStation.getStationcnt()+"");
 			row.add(expressStatStation.getDeliverycnt()+"");

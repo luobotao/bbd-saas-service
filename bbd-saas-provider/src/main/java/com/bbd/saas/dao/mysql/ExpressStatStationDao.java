@@ -86,7 +86,7 @@ public interface ExpressStatStationDao {
 	 * @param time 时间
 	 * @return 统计数据集合
 	 */
-	public List<ExpressStatStation> selectByAreaCodeListAndTime(List<String> areaCodeList,String time);
+	public List<ExpressStatStation> selectByAreaCodeListAndTime(@Param("areaCodeList") List<String> areaCodeList,@Param("tim") String time);
 
 	/**
 	 * 根据公司Id和时间进行统计查询 -- 用于导出
@@ -94,6 +94,6 @@ public interface ExpressStatStationDao {
 	 * @param tim 时间
 	 * @return 统计数据集合
 	 */
-	public List<ExpressStatStation> selectByCompanyIdAndTime(String companyId, String tim);
+	public List<ExpressStatStation> selectByCompanyIdAndTime(@Param("companyId") String companyId, @Param("tim") String tim);
 
 }
