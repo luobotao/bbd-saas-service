@@ -14,10 +14,7 @@ import com.bbd.saas.models.PostDelivery;
 import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.Sender;
@@ -220,8 +217,6 @@ public class PackageDispatchController {
 	 */
 	@SuppressWarnings("deprecation")
 	private void setOrderExpress(Order order, User user){
-		//更新物流状态
-		order.setExpressStatus(ExpressStatus.Delivering);
 		//更新物流信息
 		List<Express> expressList = order.getExpresses();
 		if(expressList == null){
@@ -242,18 +237,7 @@ public class PackageDispatchController {
             	express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
             }
         }
-		boolean expressIsNotAdd = true;//防止多次添加
-		//检查是否添加过了
-		for (Express express1 : expressList) {
-		    if (express.getRemark().equals(express1.getRemark())) {
-		    	expressIsNotAdd = false;
-		        break;
-		    }
-		}
-		if (expressIsNotAdd) {//防止多次添加
-			expressList.add(express);
-		    order.setExpresses(expressList);
-		}
+		OrderCommon.addOrderExpress(ExpressStatus.Delivering, order, user, express.getRemark());
 	}
 	/**
 	 * Description: 运单号不存在，则添加一条记录；存在，则更新派件员postManId和staffId
