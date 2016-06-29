@@ -130,4 +130,22 @@ public class ExpressStatStation implements Serializable {
 	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
 	}
+
+	public ExpressStatStation() {
+	}
+
+	public ExpressStatStation(String companyId, String  areacode, String time) {
+		this.areacode = areacode;
+		this.tim = time;
+		this.nostationcnt = 0;//未到站数量
+		this.successcnt = 0;//签收数量
+		this.dailycnt = 0;//滞留数量
+		this.refusecnt = 0;//拒收数量
+		this.stationcnt = 0;//到站数量
+		this.deliverycnt = 0;//派件数量
+		this.changestationcnt = 0;//转其他站点数量
+		this.changeexpresscnt = 0;//转其他快递数量
+		this.companyId = Integer.parseInt(companyId);//公司Id
+
+	}
 }

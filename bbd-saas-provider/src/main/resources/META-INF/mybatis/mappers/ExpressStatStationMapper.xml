@@ -171,4 +171,39 @@
     </select>
     <!-- 根据公司Id和时间查询各个站点的汇总信息  结束   -->
 
+    <!-- 根据站点编号集合和时间进行查询  结束   -->
+    <select id="selectByAreaCodeListAndTime" resultMap="baseResultMap">
+        SELECT <include refid="baseColumnList"/>
+        from table_express_stat_station
+        <where>
+            <if test="areaCodeList != null" >
+                areacode in
+                <foreach collection="areaCodeList" item="areaCode" index="index"
+                         open="(" close=")" separator=",">
+                    #{areaCode}
+                </foreach>
+            </if>
+            <if test="tim != null and tim != ''" >
+                AND tim = #{tim}
+            </if>
+        </where>
+    </select>
+    <!-- 根据站点编号集合和时间进行查询  结束   -->
+
+
+    <!-- 根据公司Id和时间进行统计查询  开始   -->
+    <select id="selectByCompanyIdAndTime" resultMap="baseResultMap">
+        SELECT <include refid="baseColumnList"/>
+        from table_express_stat_station
+        <where>
+            <if test="companyId != null and companyId != 0" >
+                companyId = #{companyId}
+            </if>
+            <if test="tim != null and tim != ''" >
+                AND tim = #{tim}
+            </if>
+        </where>
+    </select>
+    <!-- 根据公司Id和时间进行统计查询  结束   -->
+
 </mapper>

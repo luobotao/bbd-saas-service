@@ -7,6 +7,7 @@ import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.models.ExpressStatStation;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.SiteVO;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 统计汇总
@@ -100,18 +102,43 @@ public class MailStatisticController {
 				//areaCode = StringUtil.initStr(areaCode, "141725-001");
 				if(areaCode != null && !"".equals(areaCode)){//只查询一个站点
 					//列表数据
-					List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
-					pageModel.setTotalCount(dataList == null ? 0 : dataList.size());
+					List<ExpressStatStation> dataList = findOneSiteData(currUser,areaCode, time);
+					pageModel.setTotalCount(1);
 					pageModel.setDatas(dataList);
 				}else {//查询本公司下的所有站点 （全部）
-					pageModel = expressStatStationService.findPageByCompanyIdAndTime(currUser.getCompanyId(), time, pageModel);
+					//查询登录用户的公司下的所有站点
+					PageModel<Site> sitePageModel = new PageModel<Site>();
+					sitePageModel.setPageNo(pageIndex);
+					sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), null);
+					List<Site> siteList = sitePageModel.getDatas();
+					if(siteList != null && siteList.size() > 0){
+						List<String> areaCodeList = new ArrayList<String>();
+						for(Site site : siteList){
+							areaCodeList.add(site.getAreaCode());
+						}
+						Map<String, ExpressStatStation> essMap = expressStatStationService.findByAreaCodeListAndTime(areaCodeList, time);
+						List<ExpressStatStation> dataList = new ArrayList<ExpressStatStation>();
+						ExpressStatStation ess = null;
+						for(Site site : siteList){
+							ess = essMap.get(site.getAreaCode());
+							if(ess == null){
+								ess = new ExpressStatStation();
+								ess.setAreacode(site.getAreaCode());
+								ess.setSitename(site.getName());
+								ess.setTim(time);
+							}
+							dataList.add(ess);
+						}
+						pageModel.setDatas(dataList);
+					}
+					pageModel.setTotalCount(sitePageModel.getTotalCount());
 				}
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//z站长
 				if(currUser.getSite() != null){
 					areaCode = currUser.getSite().getAreaCode();
 					//列表数据
-					List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
-					pageModel.setTotalCount(dataList == null ? 0 : dataList.size());
+					List<ExpressStatStation> dataList = findOneSiteData(currUser, areaCode, time);
+					pageModel.setTotalCount(1);
 					pageModel.setDatas(dataList);
 				}
 			}
@@ -120,7 +147,14 @@ public class MailStatisticController {
 		}
 		return pageModel;
 	}
-
+	private List<ExpressStatStation> findOneSiteData(User user, String areaCode, String time){
+		List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+		if(dataList == null || dataList.size() == 0){
+			dataList = new ArrayList<ExpressStatStation>();
+			dataList.add(new ExpressStatStation(user.getCompanyId(), areaCode, time));
+		}
+		return dataList;
+	}
 	/**
 	 * Description: 导出数据
 	 * @param areaCode 站点编号
@@ -143,16 +177,34 @@ public class MailStatisticController {
 
 			if(currUser.getRole() == UserRole.COMPANY){//公司角色
 				if (areaCode != null && !"".equals(areaCode)) {//只查询一个站点
-					dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+					dataList = findOneSiteData(currUser, areaCode, time);
 				} else {//查询本公司下的所有站点 （全部）
 					//当前公司下的所有站点
-					dataList = expressStatStationService.findByCompanyIdAndTime(currUser.getCompanyId(), time);
+					List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
+					if(siteVOList != null && siteVOList.size() > 0){
+						List<String> areaCodeList = new ArrayList<String>();
+						for(SiteVO site : siteVOList){
+							areaCodeList.add(site.getAreaCode());
+						}
+						Map<String, ExpressStatStation> essMap = expressStatStationService.findMapByCompanyIdAndTime(currUser.getCompanyId(), time);
+						ExpressStatStation ess = null;
+						for(SiteVO site : siteVOList){
+							ess = essMap.get(site.getAreaCode());
+							if(ess == null){
+								ess = new ExpressStatStation();
+								ess.setAreacode(site.getAreaCode());
+								ess.setSitename(site.getName());
+								ess.setTim(time);
+							}
+							dataList.add(ess);
+						}
+					}
 				}
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//站长角色
 				if(currUser.getSite() != null){
 					areaCode = currUser.getSite().getAreaCode();
 					//列表数据
-					dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+					dataList = findOneSiteData(currUser, areaCode, time);
 				}
 			}
 			//导出==数据写到Excel中并写入response下载

@@ -61,7 +61,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, SiteStatus status) {
         SiteQueryVO queryVO = new SiteQueryVO();
         queryVO.companyId = companyId;
-        queryVO.status = status;
+        if(status != null){
+            queryVO.status = status;
+        }
         Query<Site> query = getQuerys(queryVO);
         query.order("areaCode");
         return queryPageData(pageModel, query);

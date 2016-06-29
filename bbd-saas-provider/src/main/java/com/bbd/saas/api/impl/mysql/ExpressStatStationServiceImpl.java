@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Description: 快递员派送运单信息Service实现
@@ -86,5 +88,31 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 	@Override
 	public ExpressStatStation findSummaryByCompanyIdAndTime(String companyId, String tim) {
 		return expressStatStationDao.selectSummaryByCompanyIdAndTime(Integer.parseInt(companyId), tim);
+	}
+
+	@Override
+	public Map<String, ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String time) {
+		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByAreaCodeListAndTime(areaCodeList, time);
+		if(expressStatStationList != null){
+			return null;
+		}
+		Map<String, ExpressStatStation> essMap = new HashMap<String, ExpressStatStation>();
+		for (ExpressStatStation ess : expressStatStationList){
+			essMap.put(ess.getAreacode(), ess);
+		}
+		return essMap;
+	}
+
+	@Override
+	public Map<String, ExpressStatStation> findMapByCompanyIdAndTime(String companyId, String tim) {
+		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByCompanyIdAndTime(companyId, tim);
+		if(expressStatStationList != null){
+			return null;
+		}
+		Map<String, ExpressStatStation> essMap = new HashMap<String, ExpressStatStation>();
+		for (ExpressStatStation ess : expressStatStationList){
+			essMap.put(ess.getAreacode(), ess);
+		}
+		return essMap;
 	}
 }
