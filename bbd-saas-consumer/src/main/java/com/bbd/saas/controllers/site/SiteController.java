@@ -302,9 +302,16 @@ public class SiteController {
 		}
 		/*User user = adminService.get(UserSession.get(request));
 		String siteId = user.getSite().getId().toString();*/
-		Result result = sitePoiApi.updateSiteEfence(siteId,points);
-		logger.info("保存电子围栏结果：" + result.code + "，"+result.toString());
+		Result result = new Result();
+		try{
+			result = sitePoiApi.updateSiteEfence(siteId,points);
+			logger.info("保存电子围栏结果：" + result.code + "，"+result.toString());
+		}catch (Exception e){
+			result.code=-1;
+			logger.info("保存电子围栏异常：" + e.toString());
+		}
 		return result;
+
 	}
 
 	//--------------------------站点配送区域引导--------------------------------------------------
