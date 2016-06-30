@@ -153,53 +153,6 @@
 
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
-<<<<<<< HEAD
-							<div class="col-md-12" id="fenceAddr">
-								<div class="col-md-3 pb10">
-									<label>省：　</label>
-									<select name="prov" class="prov form-control form-con-new">
-										<option value="">请选择</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.id}">${site.name}</option>
-											</c:forEach>
-										</c:if>
-									</select>
-								</div>
-								<div class="col-md-3 pb10">
-									<label>　市：</label>
-									<select  class="city form-control form-con-new" disabled="disabled">
-										<option value="">请选择</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.id}">${site.name}</option>
-											</c:forEach>
-										</c:if>
-									</select>
-								</div>
-								<div class="col-md-3 pb10">
-									<label>　区：</label>
-									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
-										<option value="">请选择</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.id}">${site.name}</option>
-											</c:forEach>
-										</c:if>
-									</select>
-								</div>
-								<div class="col-md-3 pb10">
-									<label>　站点：　</label>
-									<select id="fenceSiteId" class="form-control form-con-new">
-										<option value="">请选择</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.id}">${site.name}</option>
-											</c:forEach>
-										</c:if>
-									</select>
-								</div>
-=======
 							<div class="col-md-12 pb10" id="fenceAddr">
 								<label>省：　</label>
 								<select name="prov" class="prov form-control form-con-new">
@@ -219,7 +172,6 @@
 										</c:forEach>
 									</c:if>
 								</select>
->>>>>>> bbd-saas-2.3
 							</div>
 							<div class="col-md-12 full-screen">
 								<div class="b-map">

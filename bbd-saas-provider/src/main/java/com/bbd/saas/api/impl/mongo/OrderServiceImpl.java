@@ -325,7 +325,6 @@ public class OrderServiceImpl implements OrderService {
 		return num;
 	}
 
-<<<<<<< HEAD
 
 
 
@@ -388,10 +387,9 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode) {
 		return orderDao.getOrderHoldToStoreNum(areaCode);
-=======
+	}
 	@Override
 	public long getCounByMailNumsAndOrderStatusList(BasicDBList mailNumList, List<OrderStatus> orderStatusList) {
 		return orderDao.selectCountByMailNumsAndExpressStatus(mailNumList, orderStatusList);
->>>>>>> bbd-saas-2.3
 	}
 }
