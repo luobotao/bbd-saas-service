@@ -3,22 +3,24 @@ package com.bbd.saas.enums;
 import com.bbd.saas.utils.Htmls;
 
 /**
- * 订单状态
- * Created by luobotao on 2016/4/7.
+ * 揽件集包状态
+ * Created by luobotao on 2016/6/24.
  */
-public enum OrderStatus {
-    NOTARR(0, "未到站"),
-    NOTDISPATCH(1, "未分派"),
-    DISPATCHED(2, "已分派"),
-    RETENTION(3, "滞留"),
-    REJECTION(4, "拒收"),
-    SIGNED(5, "已签收"),
-    TO_OTHER_EXPRESS(6, "已转其他快递"),
-    APPLY_RETURN(7, "申请退货"),
-    RETURNED(8, "退货完成");
+public enum OrderSetStatus {
+
+    NOEMBRACE(0, "待揽件"),
+    WAITTOIN(1, "待入库"),
+    WAITSET(2, "待揽件集包"),
+    WAITDRIVERGETED(3, "待司机取货送往分拨中心"),
+    DRIVERGETED(4, "正在运输到分拨中心"),
+    ARRIVEDISPATCH(5, "已到达分拨中心"),
+    WAITDISPATCHSET(6, "待分拣集包"),
+    WAITDRIVERTOSEND(7, "待司机取货送往配送点"),
+    DRIVERSENDING(8, "正在运输到配送点"),
+    ARRIVED(9, "已到达配送点");
     private int status;
     private String message;
-    private OrderStatus(int status, String message) {
+    private OrderSetStatus(int status, String message) {
         this.status = status;
         this.message = message;
     }
@@ -30,9 +32,9 @@ public enum OrderStatus {
     }
     public static String Srcs2HTML(Integer id) {
         StringBuilder sb = new StringBuilder();
-        OrderStatus[] orderEnum = OrderStatus.values();
+        OrderSetStatus[] orderEnum = OrderSetStatus.values();
         sb.append(Htmls.generateOption(-1, "默认全部"));
-        for (OrderStatus ps : orderEnum) {
+        for (OrderSetStatus ps : orderEnum) {
             if (id == ps.status) {
                 sb.append(Htmls.generateSelectedOption(ps.status,ps.message));
             } else {
@@ -41,9 +43,9 @@ public enum OrderStatus {
         }
         return sb.toString();
     }
-    public static OrderStatus status2Obj(int value) {
-        OrderStatus[] status = OrderStatus.values();
-        for (OrderStatus ps : status) {
+    public static OrderSetStatus status2Obj(int value) {
+        OrderSetStatus[] status = OrderSetStatus.values();
+        for (OrderSetStatus ps : status) {
             if (value == ps.status) {
                 return ps;
             }

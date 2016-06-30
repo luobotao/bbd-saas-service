@@ -175,8 +175,8 @@
                     <li class="filter" id="city_4">
                         <i>站点地址：</i>
                         <em class="wp25">
-                             <select class="form-control form-bod w150 prov" name="prov"></select>
-                        </em>
+                        <select class="form-control form-bod w150 prov" name="prov"></select>
+                    </em>
                         <em class="wp25">
                             <select class="form-control form-bod w150 city" disabled="disabled"></select>
                         </em>

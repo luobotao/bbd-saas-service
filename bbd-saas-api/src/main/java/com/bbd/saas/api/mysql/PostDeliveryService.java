@@ -46,6 +46,14 @@ public interface PostDeliveryService {
 	 * @author liyanlei
 	 * 2016年4月23日上午11:18:12
 	 */
-	int deleteByMailNum(String mailNum); 
-	
+	int deleteByMailNum(String mailNum);
+
+	/**
+	 * 修改运单的状态
+	 * @param mailNum
+	 * @param sta //（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
+	 * @param remark
+	 * @param resultMsg
+	 */
+	void updatePostDeliveryStatus(String mailNum, String sta,String remark,String resultMsg);
 }

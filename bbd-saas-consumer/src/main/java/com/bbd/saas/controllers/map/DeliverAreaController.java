@@ -7,6 +7,7 @@ import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.Services.AdminService;
+import com.bbd.saas.Services.RedisService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
@@ -56,6 +57,8 @@ public class DeliverAreaController {
 	Geo geo;
 	@Autowired
 	PostcompanyService postCompanyService;
+	@Autowired
+	RedisService redisService;
 	/**
 	 * description: 跳转到系统设置-配送区域-绘制电子地图页面
 	 * 2016年4月5日下午4:05:01
@@ -75,28 +78,7 @@ public class DeliverAreaController {
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
 				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
-				String companyAddress = "";
-				Postcompany company = new Postcompany();
-				if (currUser.getCompanyId() != null ){
-					company = postCompanyService.selectPostmancompanyById(Integer.parseInt(currUser.getCompanyId()));
-					if(company != null){
-						StringBuffer  addressBS = new StringBuffer();
-						addressBS.append(StringUtil.initStr(company.getProvince(),""));
-						addressBS.append(StringUtil.initStr(company.getCity(),""));
-						addressBS.append(StringUtil.initStr(company.getArea(),""));
-						addressBS.append(StringUtil.initStr(company.getAddress(),""));
-						companyAddress = addressBS.toString();
-						setCompanyDefaultInfo(company);
-					}else{
-						setCompanyDefaultInfo(company);
-					}
-				}else{
-					setCompanyDefaultInfo(company);
-				}
-				model.addAttribute("company", company);
-
-				SiteVO centerPoint = getDefaultPoint(companyAddress);
-				model.addAttribute("centerPoint", centerPoint);
+				getCompanyAndMapCenter(currUser.getCompanyId(), model);
 				/******************配送范围*****************end****************/
 				/******************绘制电子围栏*****************start****************/
 				//设置电子围栏
@@ -160,7 +142,30 @@ public class DeliverAreaController {
 		}
 
 	}
-	private void setCompanyDefaultInfo(Postcompany company){
+	private void getCompanyAndMapCenter(String companyId, Model model){
+		String companyAddress = "";
+		Postcompany company = new Postcompany();
+		if (companyId != null ){
+			company = postCompanyService.selectPostmancompanyById(Integer.parseInt(companyId));
+			if(company != null){
+				StringBuffer  addressBS = new StringBuffer();
+				addressBS.append(StringUtil.initStr(company.getProvince(),""));
+				addressBS.append(StringUtil.initStr(company.getCity(),""));
+				addressBS.append(StringUtil.initStr(company.getArea(),""));
+				addressBS.append(StringUtil.initStr(company.getAddress(),""));
+				companyAddress = addressBS.toString();
+				getDefaultCompany(company);
+			}else{
+				getDefaultCompany(company);
+			}
+		}else{
+			getDefaultCompany(company);
+		}
+		model.addAttribute("company", company);
+		SiteVO centerPoint = getDefaultCenterPoint(companyAddress);
+		model.addAttribute("centerPoint", centerPoint);
+	}
+	private void getDefaultCompany(Postcompany company){
 		company.setCompanycode(StringUtil.initStr(company.getCompanycode(), "BBD"));
 		company.setCompanyname(StringUtil.initStr(company.getCompanyname(), "北京棒棒达快递有限公司"));
 		company.setProvince(StringUtil.initStr(company.getProvince(), "北京"));
@@ -169,7 +174,7 @@ public class DeliverAreaController {
 		company.setAddress(StringUtil.initStr(company.getAddress(), "双井"));
 	}
 	//地图默认中心位置--公司公司经纬度
-	private SiteVO getDefaultPoint(String address){
+	private SiteVO getDefaultCenterPoint(String address){
 		SiteVO centerSite = new SiteVO();
 		if(address == null || "".equals(address)){
 			centerSite.setName("");
@@ -228,7 +233,7 @@ public class DeliverAreaController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getSiteById", method=RequestMethod.GET)
-	public Map<String, Object> getSiteById(String siteId, final HttpServletRequest request) {
+	public Map<String, Object> getSiteById(String prov, String city, String area, String siteId, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(siteId != null && !"".equals(siteId)){//只查询一个站点
@@ -247,22 +252,8 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
-				//设置地图默认的中心点
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
+				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE);
 				map.put("siteList", siteVOList);
-			}else{
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
 			}
 		}
 		return map;
@@ -276,7 +267,7 @@ public class DeliverAreaController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getFence", method=RequestMethod.GET)
-	public Map<String, Object> getFenceBySiteId(String siteId, final HttpServletRequest request) {
+	public Map<String, Object> getFenceBySiteId(String prov, String city, String area, String siteId, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(siteId != null && !"".equals(siteId)){//只查询一个站点
@@ -291,7 +282,6 @@ public class DeliverAreaController {
 			List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteId);
 			String eFence = dealSitePoints(sitePoints);
 			siteVO.seteFence(eFence);
-			//logger.info("siteStr======="+siteStr);
 			map.put("site", siteVO);
 		}else {//查询本公司下的所有站点 （全部）
 			String userId = UserSession.get(request);
@@ -299,31 +289,17 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE);
 				//设置电子围栏
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){
 						List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteVO.getId());
 						String efenceStr = dealSitePoints(sitePoints);
 						siteVO.seteFence(efenceStr);
-						//logger.info("siteName===" + siteVO.getName() + "    efenceStr==="+efenceStr);
 					}
 				}
-				//设置地图默认的中心点
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
 				map.put("siteList", siteVOList);
-			}else{
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
+
 			}
 		}
 		return map;

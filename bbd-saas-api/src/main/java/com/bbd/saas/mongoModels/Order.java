@@ -63,12 +63,15 @@ public class Order implements Serializable {
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
     private int isRemoved;//是否被移除？ 0：未被移除； 1：被移除
     private String removeReason;//移除原因
+    private OrderSetStatus orderSetStatus;//运单集包状态
     @Transient
     private String parcelCode;
     @Transient
-    private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message
+    private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
-    private String orderStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message
+    private String printStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message -- 打印状态
+    @Transient
+    private String orderStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message -- 运单状态
     @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
@@ -389,6 +392,14 @@ public class Order implements Serializable {
         this.removeReason = removeReason;
     }
 
+    public String getPrintStatusMsg() {
+        return this.printStatus == null ? "" : this.printStatus.getMessage();
+    }
+
+    public void setPrintStatusMsg(String printStatusMsg) {
+        this.printStatusMsg = printStatusMsg;
+    }
+
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
 
 		if(expressList == null){
@@ -410,4 +421,11 @@ public class Order implements Serializable {
         this.transportStatus = transportStatus;
     }
 
+    public OrderSetStatus getOrderSetStatus() {
+        return orderSetStatus;
+    }
+
+    public void setOrderSetStatus(OrderSetStatus orderSetStatus) {
+        this.orderSetStatus = orderSetStatus;
+    }
 }

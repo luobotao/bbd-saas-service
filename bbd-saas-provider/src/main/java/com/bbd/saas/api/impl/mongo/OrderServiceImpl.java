@@ -223,8 +223,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
-		return orderDao.selectCountByMailNumsAndExpressStatus(idList, expressStatus);
+	public long getCounByMailNumsAndExpressStatus(BasicDBList mailNumList, ExpressStatus expressStatus) {
+		return orderDao.selectCountByMailNumsAndExpressStatus(mailNumList, expressStatus);
 	}
 
 	@Override
@@ -296,6 +296,11 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
+	@Override
+	public List<Order> findAllByTradeNo(String tradeNo) {
+		return orderDao.findAllByTradeNo(tradeNo);
+	}
+
 	private Order updateOrderWithAreaCode(Order order) {
 		orderDao.updateOrderWithAreaCode(order.getOrderNo(),order.getAreaCode(),order.getAreaRemark(),order.getPrintStatus());//修改订单表里的状态
 		return order;
@@ -312,5 +317,10 @@ public class OrderServiceImpl implements OrderService {
 		one.num = (num + 1) + "";
 		orderNumDao.updateOrderNum("num",one.num);
 		return num;
+	}
+
+	@Override
+	public long getCounByMailNumsAndOrderStatusList(BasicDBList mailNumList, List<OrderStatus> orderStatusList) {
+		return orderDao.selectCountByMailNumsAndExpressStatus(mailNumList, orderStatusList);
 	}
 }

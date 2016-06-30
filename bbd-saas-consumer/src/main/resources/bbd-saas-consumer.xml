@@ -35,6 +35,9 @@
     <dubbo:reference id="returnReasonService" interface="com.bbd.saas.api.mongo.ReturnReasonService" />
     <!--trade Service-->
     <dubbo:reference id="tradeService" interface="com.bbd.saas.api.mongo.TradeService"/>
+    <!--Constant Service-->
+    <dubbo:reference id="constantService" interface="com.bbd.saas.api.mongo.ConstantService"/>
+
     <!--expressExchangeService Service-->
     <dubbo:reference id="expressExchangeService" interface="com.bbd.saas.api.mongo.ExpressExchangeService"/>
     <!--start mysql services-->
@@ -46,6 +49,7 @@
     <dubbo:reference id="smsInfoService" interface="com.bbd.saas.api.mysql.SmsInfoService"/>
     <dubbo:reference id="orderLogService" interface="com.bbd.saas.api.mysql.OrderLogService"/>
     <dubbo:reference id="incomeService" interface="com.bbd.saas.api.mysql.IncomeService"/>
+    <dubbo:reference id="expressStatStationService" interface="com.bbd.saas.api.mysql.ExpressStatStationService"/>
 
      <!--转为其他快递    获取所有的快递公司-->
     <dubbo:reference id="expressCompanyService" interface="com.bbd.saas.api.mysql.ExpressCompanyService"/>

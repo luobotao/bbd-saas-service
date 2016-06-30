@@ -1,6 +1,7 @@
 package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.TradeStatus;
+import com.bbd.saas.vo.Sender;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
@@ -29,6 +30,10 @@ public class Trade implements Serializable {
     private Integer amountReal;//订单金额(实际) 单位分
     private Integer amountReturn;//实际退款金额 单位分(应该退的金额可以计算出来,此为实际退款金额)
     private TradeStatus tradeStatus;//商户订单状态
+    private String rechange;    //0 已转 1未转
+    private Sender sender;
+    private Integer ordercnt;//运单数量
+    private Integer postmanId;//揽件员Id(MySQL)
     private Date dateAdd;      //下单时间
     private Date dateUpd;      //更新时间
     private Date datePay;      //支付时间
@@ -180,5 +185,37 @@ public class Trade implements Serializable {
 
     public void setOrderSnaps(List<OrderSnap> orderSnaps) {
         this.orderSnaps = orderSnaps;
+    }
+
+    public String getRechange() {
+        return rechange;
+    }
+
+    public void setRechange(String rechange) {
+        this.rechange = rechange;
+    }
+
+    public Sender getSender() {
+        return sender;
+    }
+
+    public void setSender(Sender sender) {
+        this.sender = sender;
+    }
+
+    public Integer getOrdercnt() {
+        return ordercnt;
+    }
+
+    public void setOrdercnt(Integer ordercnt) {
+        this.ordercnt = ordercnt;
+    }
+
+    public Integer getPostmanId() {
+        return postmanId;
+    }
+
+    public void setPostmanId(Integer postmanId) {
+        this.postmanId = postmanId;
     }
 }

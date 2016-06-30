@@ -79,14 +79,13 @@ public class SiteServiceImpl implements SiteService {
     }
     /**
      * 根据站点状态与关键词进行站点分页查询
-     *
      * @param pageModel
-     * @param status
+     * @param statusList 状态集合
      * @return
      */
     @Override
-    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, SiteStatus status) {
-        return siteDao.findSites(pageModel, companyId, status);
+    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<SiteStatus> statusList) {
+        return siteDao.findSites(pageModel, companyId, statusList);
     }
 
     /**
@@ -278,13 +277,10 @@ public class SiteServiceImpl implements SiteService {
 	}
     @Override
     public List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status) {
-        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-        statusList.add(status);
-        List<Site> siteList = this.siteDao.selectByCompanyId(companyId, statusList);
+        List<Site> siteList = this.siteDao.selectByCompanyId(companyId, status);
         List<SiteVO> siteVoList = null;
         if(siteList != null && siteList.size() > 0){
             siteVoList = new ArrayList<SiteVO>();
-            SiteVO siteVo = null;
             for(Site site : siteList){
                 siteVoList.add(siteToSiteVO(site));
             }
@@ -308,4 +304,18 @@ public class SiteServiceImpl implements SiteService {
 		return siteVo;
 	}
 
+    @Override
+    public List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
+        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+        statusList.add(status);
+        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status);
+        List<SiteVO> siteVoList = null;
+        if(siteList != null && siteList.size() > 0){
+            siteVoList = new ArrayList<SiteVO>();
+            for(Site site : siteList){
+                siteVoList.add(siteToSiteVO(site));
+            }
+        }
+        return siteVoList;
+    }
 }

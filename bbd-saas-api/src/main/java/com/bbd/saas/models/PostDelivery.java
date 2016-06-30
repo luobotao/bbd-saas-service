@@ -46,7 +46,7 @@ public class PostDelivery implements Serializable {
 	private String resultmsg;
 	private String typ;//订单类型 1-签单返回 2-退货 3-换货 4-普通件 5-加急件
 	private String flg;//是否展示在今天未完成
-	private String sta;//（[0:全部，服务器查询逻辑],1：未完成【需要签收】，2：未完成【需要支付签收】，3：已签收，4：已支付签收，5：已拒绝【未退单到站点】，6：已滞留，7，已拒绝【已退单到站点】
+	private String sta;//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
 	private String islooked;//是否查看过
 	private String iscommont;//是否评论过
 	private Date dateNew;

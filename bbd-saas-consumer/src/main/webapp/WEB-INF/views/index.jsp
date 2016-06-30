@@ -52,39 +52,54 @@
 			<!-- S sidebar -->
 			<div class="col-xs-12 col-sm-12 bbd-md-3">
 				<ul class="b-sidebar">
+				<%
+					User user = (User) request.getAttribute("user");
+					if (user != null) {
+						if (UserRole.SITEMASTER.equals(user.getRole())) {
+				%>
+						<li id="arrive" class="lv1"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
+						<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
+						<li id="error" class="lv1"><a href="<c:url value="/handleAbnormal" />" target="iframe1" ><i class="b-icon p-error"></i>异常件处理</a></li>
+						<li class="lv1"><a href="#"><i class="b-icon p-query"></i>数据查询</a></li>
+						<ul class="menu dn">
+							<li id="query"><a href="<c:url value="/dataQuery" />" target="iframe1" >运单查询</a></li>
+							<li id="mailStatistic"><a href="<c:url value="/mailStatistic" />" target="iframe1">统计汇总</a></li>
+						</ul>
+
+						<li id="set" class="lv1"><a href="<c:url value="/deliverRegion/map/1" />" target="iframe1"><i class="b-icon p-dis"></i>配送区域</a></li>
+						<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
+						<ul class="menu dn">
+							<li id="user"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
+						</ul>
 					<%
-						User user = (User) request.getAttribute("user");
-						if (user!=null && UserRole.COMPANY.equals(user.getRole())) {
+						} else if(UserRole.SENDMEM.equals(user.getRole())){
 					%>
-					<li class="lv1"><a href="#"><i class="b-icon p-query"></i>数据查询</a></li>
-					<ul class="menu dn">
-						<li id="mailQuery"><a href="<c:url value="/mailQuery" />" target="iframe1">运单查询</a></li>
-						<%--<li><a href="<c:url value="/mailMonitor" />" target="iframe1">运单监控</a></li>--%>
-					</ul>
-					<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-capacity"></i>运力分布</a></li>
-					<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-dis"></i>配送区域</a></li>
-					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
-					<ul class="menu dn">
-						<li id="siteManage"><a href="<c:url value="/system/siteManage" />" target="iframe1">站点管理</a></li>
-						<li id="userForComp"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
-					</ul>
+						<li id="arrive" class="lv1"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
+						<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
 					<%
-					} else {
+						} else if(UserRole.COMPANY.equals(user.getRole())){
+					%>
+						<li class="lv1"><a href="#"><i class="b-icon p-query"></i>数据查询</a></li>
+						<ul class="menu dn">
+							<li id="mailQuery"><a href="<c:url value="/mailQuery" />" target="iframe1">运单查询</a></li>
+							<li id="mailStatistic"><a href="<c:url value="/mailStatistic" />" target="iframe1">统计汇总</a></li>
+						</ul>
+						<li id="capacityDistribution" class="lv1"><a href="<c:url value="/capacityDistribution" />" target="iframe1" ><i class="b-icon p-capacity"></i>运力分布</a></li>
+						<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-dis"></i>配送区域</a></li>
+						<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
+						<ul class="menu dn">
+							<li id="siteManage"><a href="<c:url value="/system/siteManage" />" target="iframe1">站点管理</a></li>
+							<li id="userForComp"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
+						</ul>
+					<%
+						}else{
 					%>
 					<li id="arrive" class="lv1"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
 					<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
-					<li id="error" class="lv1"><a href="<c:url value="/handleAbnormal" />" target="iframe1" ><i class="b-icon p-error"></i>异常件处理</a></li>
-					<li id="query" class="lv1"><a href="<c:url value="/dataQuery" />" target="iframe1" ><i class="b-icon p-query"></i>数据查询</a></li>
-					<li id="set" class="lv1"><a href="<c:url value="/deliverRegion/map/1" />" target="iframe1"><i class="b-icon p-dis"></i>配送区域</a></li>
-					<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
-					<ul class="menu dn">
-						<li id="user"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
-					</ul>
-					<%
+				<%
 						}
-					%>
-
-
+					}
+				%>
 				</ul>
 			</div>
 			<!-- E sidebar -->

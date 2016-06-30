@@ -55,23 +55,24 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
-            if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus!=-1){
-                if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站，则全为已到站
-                    query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
+            if(orderQueryVO.arriveStatus != null && orderQueryVO.arriveStatus != -1){
+                if(orderQueryVO.arriveStatus==1){//已到站 即只要不是未到站,则全为已到站
+                    query.filter("orderStatus <>", null).filter("orderStatus <>", OrderStatus.NOTARR);
                     if(StringUtils.isNotBlank(orderQueryVO.between)){//到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
                     }
                 }else{//未到站
-                    query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+                    query.filter("orderStatus", OrderStatus.NOTARR);
                     if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateMayArrive >=",dateBetween.getStart());
                         query.filter("dateMayArrive <=",dateBetween.getEnd());
                     }
                 }
-            }else{
+            }else{//全部（已到站||未到站）
+                query.filter("orderStatus <>", null);
                 if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                     DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                     query.filter("dateMayArrive >=",dateBetween.getStart());
@@ -102,7 +103,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         OrderNumVO orderNumVO = new OrderNumVO();
         Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+        query.filter("orderStatus", OrderStatus.NOTARR);
         orderNumVO.setNoArriveHis(count(query));//历史未到站
 
         Calendar cal = Calendar.getInstance();
@@ -116,7 +117,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("dateMayArrive <=",cal.getTime());
         orderNumVO.setNoArrive(count(query));//今天未到站
         cal.add(Calendar.DAY_OF_YEAR,-1);
-        queryArrive.filter("dateArrived <=",new Date()).filter("dateArrived >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
+        queryArrive.filter("dateArrived <=",new Date()).filter("dateArrived >",cal.getTime()).filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
         orderNumVO.setArrived(count(queryArrive));//已到站
         return orderNumVO;
     }
@@ -133,6 +134,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("mailNum",mailNum);
         if(orderStatusOld!=null){//旧状态不为空，则需要加入旧状态的判断
             query.or(query.criteria("orderStatus").equal(orderStatusOld),query.criteria("orderStatus").equal(null));
+            //query.filter("orderStatus",orderStatusOld);
         }
         UpdateOperations<Order> ops = createUpdateOperations().set("orderStatus",orderStatusNew).set("dateUpd",new Date());
         if(orderStatusOld== OrderStatus.NOTARR){//若是做到站操作，需要更新下到站时间
@@ -156,6 +158,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     	Query<Order> query = createQuery();
         query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
 
+
         if(orderQueryVO != null){
             //公司查询 -- 一个公司下的所有站点的areaCode集合
             if(orderQueryVO.areaCodeList != null && orderQueryVO.areaCodeList.size() > 0){
@@ -166,11 +169,13 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
             //到站状态
-            if(orderQueryVO.arriveStatus != null && orderQueryVO.arriveStatus != -1){
-                if(orderQueryVO.arriveStatus == 1){//已到站 即只要不是未到站，则全为已到站
-                    query.filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
-                }else{
-                    query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
+            if(orderQueryVO.arriveStatus != null){
+                if(orderQueryVO.arriveStatus == -1){//全部（未到站||已到站）
+                    query.filter("orderStatus <>", null);
+                }else if(orderQueryVO.arriveStatus == 1){//已到站 即只要不是未到站，则全为已到站
+                    query.filter("orderStatus <>", null).filter("orderStatus <>", OrderStatus.NOTARR);
+                }else{//未到站
+                    query.filter("orderStatus", OrderStatus.NOTARR);
                 }
             }
             //预计到站时间
@@ -190,7 +195,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             //包裹分派状态
             if(orderQueryVO.dispatchStatus != null){
             	if(orderQueryVO.dispatchStatus == -1){//全部（1-未分派，2-已分派）
-                	query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(1)), query.criteria("orderStatus").equal(OrderStatus.status2Obj(2)));
+                	query.or(query.criteria("orderStatus").equal(OrderStatus.NOTDISPATCH), query.criteria("orderStatus").equal(OrderStatus.DISPATCHED));
                 }else{
                 	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.dispatchStatus));
                 }
@@ -202,7 +207,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         	//异常状态
             if(orderQueryVO.abnormalStatus != null){
             	if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
-                	query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(3)), query.criteria("orderStatus").equal(OrderStatus.status2Obj(4)));
+                	query.or(query.criteria("orderStatus").equal(OrderStatus.RETENTION), query.criteria("orderStatus").equal(OrderStatus.REJECTION));
                 }else{
                 	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
                 }
@@ -216,7 +221,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     query.filter("dateArrived <=",dateBetween.getEnd());
                 }
             }else if(orderQueryVO.orderStatus == -1){//数据查询页面===查询全部，就相当于不需要按状态字段查询,并且包含到站时间为空（未到站）的记录
-            	//到站的运单，根据时间查询；未到站，时间为空
+                //未到站||已到站
+                query.filter("orderStatus <>", null);
+                //到站的运单，根据时间查询；未到站，时间为空
                 if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
                 	//按照时间查询--已到站的记录
                 	Query<Order> timeQuery = createQuery();
@@ -224,32 +231,28 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
                     Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
                     Criteria timeC = timeQuery.and(startC, endC);
-                    //时间为空query--未到站的记录
+                    //时间为空query--未到站的记录(未到站的运单，到站时间为空)
                     Query<Order> timeNullQuery = createQuery();
-                    Criteria timeNullC = timeNullQuery.or(timeNullQuery.criteria("dateArrived").equal(""), timeNullQuery.criteria("orderStatus").equal(null));
-                    query.or(timeC, timeNullC);
+                    Criteria notArriveC =timeNullQuery.criteria("orderStatus").equal(OrderStatus.NOTARR);
+                    query.or(timeC, notArriveC);
                 }
             }else{//数据查询页面查询订单某一状态的记录
-            	if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0或者OrderStatus=null
-            		query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
-            	}else{//已到站
-            		query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
-            		//到站时间，只有已到站的订单才会有到站时间
+            	if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0
+                    query.filter("orderStatus", OrderStatus.NOTARR);
+                }else{//已到站
+                    query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+                    //到站时间，只有已到站的订单才会有到站时间
                     if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
                     }
-            	}
+                }
             }
         }
     	return query;
     }
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
-        /*//公司查询 -- 一个公司下的所有站点的areaCode集合
-        if(orderQueryVO.areaCodeList == null || orderQueryVO.areaCodeList.size() == 0){
-            return null;
-        }*/
         //设置查询条件
     	Query<Order> query = getQuery(orderQueryVO);
     	//设置排序
@@ -309,33 +312,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     	return ops;
     }
 
-    /**
-     * 根据站点编码和时间获取该站点订单统计数据--运单监控数据
-     * @param areaCode
-     * @return
-     */
-    public OrderNumVO getOrderMonitorVO(String areaCode, String between) {
-        OrderNumVO orderNumVO = new OrderNumVO();
-        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        query.or(query.criteria("orderStatus").equal(OrderStatus.status2Obj(0)),query.criteria("orderStatus").equal(null));
-        orderNumVO.setNoArriveHis(count(query));//历史未到站
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        query.filter("dateMayArrive >=",cal.getTime());
-        cal.add(Calendar.DAY_OF_YEAR,1);
-        query.filter("dateMayArrive <=",cal.getTime());
-        orderNumVO.setNoArrive(count(query));//今天未到站
-        cal.add(Calendar.DAY_OF_YEAR,-1);
-        queryArrive.filter("dateArrived <=",new Date()).filter("dateArrived >",cal.getTime()).filter("orderStatus <>", OrderStatus.status2Obj(0)).filter("orderStatus <>", null);
-        orderNumVO.setArrived(count(queryArrive));//已到站
-        return orderNumVO;
-    }
     /**
      * 根据站点编码和时间获取该站点已分派的订单数
      * @param areaCode 站点编号
@@ -403,15 +379,15 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     /**
-     * 查询指定id集合的订单中物流状态不为expressStatus的订单的条数
-     * @param idList id集合
+     * 查询指定mailNum集合的订单中物流状态不为expressStatus的订单的条数
+     * @param mailNumList mailNum集合
      * @param expressStatus 物流状态
      * @return 订单的条数
      */
-    public long selectCountByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
+    public long selectCountByMailNumsAndExpressStatus(BasicDBList mailNumList, ExpressStatus expressStatus) {
         Query<Order> query = createQuery();
-        if(idList != null && idList.size() > 0){
-            query.filter("mailNum in",idList);
+        if(mailNumList != null && mailNumList.size() > 0){
+            query.filter("mailNum in", mailNumList);
         }
         if(expressStatus != null){
             query.filter("expressStatus <>",expressStatus);
@@ -532,5 +508,33 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("orderNo", orderNO);
         query.filter("src", srcs);
         return findOne(query);
+    }
+
+    public List<Order> findAllByTradeNo(String tradeNo) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        //商户订单号(我们自己生成的支付订单号)
+        if(StringUtils.isNotBlank(tradeNo)){
+            query.filter("tradeNo", tradeNo);
+        }
+        query.filter("isRemoved", 0);
+        return find(query).asList();
+    }
+
+    /**
+     * 查询指定mailNum集合的订单中物流状态不为expressStatus的订单的条数
+     * @param mailNumList mailNum集合
+     * @param orderStatusList 订单状态集合
+     * @return 订单的条数
+     */
+    public long selectCountByMailNumsAndExpressStatus(BasicDBList mailNumList, List<OrderStatus> orderStatusList) {
+        Query<Order> query = createQuery();
+        if(mailNumList != null && mailNumList.size() > 0){
+            query.filter("mailNum in",mailNumList);
+        }
+        if(orderStatusList != null){
+            query.filter("orderStatus nin", orderStatusList);
+        }
+        return count(query);
     }
 }

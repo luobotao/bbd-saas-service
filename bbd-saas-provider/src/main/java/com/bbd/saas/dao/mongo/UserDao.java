@@ -126,6 +126,21 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         return update(query,ops);
     }
     /**
+     * 更新派件员--到站分派的权限;开通时，密码为空，设置初始化密码
+     * @param loginName 登录名称
+     * @param dispatchPermsn 权限 0：关闭到站分派的权限；1：开通到站分派的权限
+     */
+    public UpdateResults updateDispatchPermsn(String loginName, Integer dispatchPermsn, String pwd) {
+        Query<User> query = createQuery();
+        query.filter("loginName",loginName);
+        UpdateOperations<User> ops = createUpdateOperations().set("dispatchPermsn",dispatchPermsn).set("dateUpdate",new Date());
+        if(StringUtils.isNotBlank(pwd)){
+            ops = ops.set("passWord", pwd);
+        }
+        UpdateResults result = update(query, ops);
+        return result;
+    }
+    /**
      * 根据用户名（手机号）去更新此用户的公司ID
      * @param companyId
      * @param loginName
@@ -206,6 +221,18 @@ public class UserDao extends BaseDAO<User, ObjectId> {
             query.filter("loginName", loginName);
         }
         return findOne(query);
+    }
+    /**
+     * 根据站点和到站分派权限，查询符合条件的数目
+     * @param site 站点
+     * @param dispatchPermsn 到站分派权限
+     * @return 符合查询条件的数目
+     */
+    public long selectCountBySiteAndDisptcherPermsn(Site site, int dispatchPermsn){
+        Query<User> query = createQuery();
+        query.filter("site", site);
+        query.filter("dispatchPermsn", dispatchPermsn);
+        return count(query);
     }
 
 }
