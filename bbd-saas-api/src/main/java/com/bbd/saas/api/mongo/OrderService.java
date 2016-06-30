@@ -1,6 +1,7 @@
 package com.bbd.saas.api.mongo;
 
 import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.enums.OrderSetStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
@@ -160,7 +161,9 @@ public interface OrderService {
 	 * @param orderQueryVO
 	 * @return
 	 */
-	public  PageModel<OrderHoldToStoreVo>  	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO,boolean flag);
+	public  PageModel<OrderHoldToStoreVo>  	findPageOrdersForHoldToStore(Integer pageIndex, List<String> tradeNoList , List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO );
 
 	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode);
+
+	public Order findOneByMailNum(String mailNum);
 }

@@ -555,10 +555,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param orderQueryVO
      * @return
      */
-    public PageModel<Order> findPageOrdersForHoldToStore(PageModel<Order> pageModel, List<String> tradeNoList, OrderQueryVO orderQueryVO, boolean flag) {
+    public PageModel<Order> findPageOrdersForHoldToStore(PageModel<Order> pageModel, List<String> tradeNoList ,List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO ) {
 
         //设置查询条件
-        Query<Order> query = getQueryForHoldToStore(tradeNoList, orderQueryVO,flag);
+        Query<Order> query = getQueryForHoldToStore(tradeNoList , orderSetStatusList,orderQueryVO );
         //设置排序
         query.order("-dateUpd");
         //分页信息
@@ -571,7 +571,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
 
-    private Query<Order> getQueryForHoldToStore(List<String> tradeNoList, OrderQueryVO orderQueryVO, boolean flag) {
+    private Query<Order> getQueryForHoldToStore(List<String> tradeNoList ,List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO ) {
         Query<Order> query = createQuery();
 
         if (orderQueryVO != null) {
@@ -591,13 +591,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 query.filter("dateArrived <=", dateBetween.getEnd());
             }
 
-            if (orderQueryVO.orderSetStatus != null && orderQueryVO.orderSetStatus != -1) {
-                if (flag == true) {
-                    query.filter("orderSetStatus <>", OrderSetStatus.status2Obj(orderQueryVO.orderSetStatus));
-                } else {
-                    query.filter("orderSetStatus", OrderSetStatus.status2Obj(orderQueryVO.orderSetStatus));
-                }
+            if (orderSetStatusList != null && orderSetStatusList.size() > 0) {
+                query.filter("orderSetStatus in", orderSetStatusList);
             }
+
         }
         return query;
     }
@@ -615,30 +612,59 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = createQuery().filter("areaCode", areaCode);
         query.filter("dateArrived >=", dateBetween.getStart());
         query.filter("dateArrived <=", dateBetween.getEnd());
+        query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
         orderHoldToStoreNumVO.setSuccessOrderNum(count(query));//今日成功接单数
 
 
         Query<Order> queryTodayNoToStore = createQuery().filter("areaCode", areaCode);
         queryTodayNoToStore.filter("dateArrived >=", dateBetween.getStart());
         queryTodayNoToStore.filter("dateArrived <=", dateBetween.getEnd());
-         /*queryTodayNoToStore.filter("orderSetStatus", OrderSetStatus.NOEMBRACE);*/
-        queryTodayNoToStore.filter("orderSetStatus", OrderSetStatus.WAITTOIN);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.WAITSET);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDRIVERGETED);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.DRIVERGETED);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.ARRIVEDISPATCH);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDISPATCHSET);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDRIVERTOSEND);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.DRIVERSENDING);
+        queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.ARRIVED);
         orderHoldToStoreNumVO.setTodayNoToStoreNum(count(queryTodayNoToStore));//今日未入库订单数
 
         Query<Order> queryTodayToStore = createQuery().filter("areaCode", areaCode);
         queryTodayToStore.filter("dateArrived >=", dateBetween.getStart());
         queryTodayToStore.filter("dateArrived <=", dateBetween.getEnd());
-         /*queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);*/
+        queryTodayToStore.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
+        queryTodayToStore.filter("orderSetStatus <>", OrderSetStatus.SCANED);
         queryTodayToStore.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
         orderHoldToStoreNumVO.setTodayToStoreNum(count(queryTodayToStore));//// 今日已入库订单数
 
 
         Query<Order> historyToStore = createQuery().filter("areaCode", areaCode);
-        historyToStore.filter("orderSetStatus", OrderSetStatus.WAITTOIN);
+        historyToStore.filter("dateArrived <=", dateBetween.getEnd());
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.WAITSET);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDRIVERGETED);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.DRIVERGETED);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.ARRIVEDISPATCH);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDISPATCHSET);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDRIVERTOSEND);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.DRIVERSENDING);
+        historyToStore.filter("orderSetStatus <>", OrderSetStatus.ARRIVED);
         orderHoldToStoreNumVO.setHistoryToStoreNum(count(historyToStore));// 历史未入库订单数
 
         return orderHoldToStoreNumVO;
     }
 
+    /**
+     * 根据运单号查询
+     * @param mailNum
+     * @return
+     */
+    public Order findOneByMailNum(String mailNum) {
+        Query<Order> query = createQuery();
+        if (StringUtils.isNotBlank(mailNum))
+            query.filter("mailNum", mailNum);
+        return findOne(query);
+    }
 
 }

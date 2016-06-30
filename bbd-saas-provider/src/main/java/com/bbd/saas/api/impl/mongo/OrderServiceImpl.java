@@ -23,6 +23,7 @@ import com.mongodb.BasicDBList;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -335,14 +336,14 @@ public class OrderServiceImpl implements OrderService {
 	 * @return
 	 */
 	@Override
-	public  PageModel<OrderHoldToStoreVo> 	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO,boolean flag){
+	public  PageModel<OrderHoldToStoreVo> 	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList ,List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO ){
 
 		if(orderQueryVO == null){
 			return null;
 		}
 		PageModel<Order> pageOrders = new PageModel<Order>();
 		pageOrders.setPageNo(pageIndex);
-		pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders,tradeNoList, orderQueryVO,flag);
+		pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders,tradeNoList , orderSetStatusList, orderQueryVO );
 		List<Order>  datas = pageOrders.getDatas();
 		List <OrderHoldToStoreVo> orderHoldToStoreList=new ArrayList<>();
 
@@ -387,5 +388,14 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode) {
 		return orderDao.getOrderHoldToStoreNum(areaCode);
+	}
+
+	/**
+	 * 根据运单号查询
+	 * @param mailNum
+	 * @return
+	 */
+	public Order findOneByMailNum(String mailNum) {
+		return orderDao.findOneByMailNum(mailNum);
 	}
 }
