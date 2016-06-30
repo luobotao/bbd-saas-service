@@ -79,14 +79,13 @@ public class SiteServiceImpl implements SiteService {
     }
     /**
      * 根据站点状态与关键词进行站点分页查询
-     *
      * @param pageModel
-     * @param status
+     * @param statusList 状态集合
      * @return
      */
     @Override
-    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, SiteStatus status) {
-        return siteDao.findSites(pageModel, companyId, status);
+    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<SiteStatus> statusList) {
+        return siteDao.findSites(pageModel, companyId, statusList);
     }
 
     /**

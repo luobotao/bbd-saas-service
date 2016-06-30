@@ -134,7 +134,7 @@ public class ExpressStatStation implements Serializable {
 	public ExpressStatStation() {
 	}
 
-	public ExpressStatStation(String companyId, String  areacode, String time) {
+	public ExpressStatStation(String companyId, String  areacode, String sitename, String time) {
 		this.areacode = areacode;
 		this.tim = time;
 		this.nostationcnt = 0;//未到站数量

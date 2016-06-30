@@ -5,6 +5,7 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.ExpressStatStationService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.models.ExpressStatStation;
 import com.bbd.saas.mongoModels.Site;
@@ -63,7 +64,10 @@ public class MailStatisticController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			statusList.add(SiteStatus.INVALID);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
 			logger.info("=====统计汇总页面列表===" + pageModel);
 			model.addAttribute("pageModel", pageModel);
 			model.addAttribute("time", time);
@@ -102,7 +106,7 @@ public class MailStatisticController {
 				//areaCode = StringUtil.initStr(areaCode, "141725-001");
 				if(areaCode != null && !"".equals(areaCode)){//只查询一个站点
 					//列表数据
-					List<ExpressStatStation> dataList = findOneSiteData(currUser,areaCode, time);
+					List<ExpressStatStation> dataList = findOneSiteData(areaCode, time);
 					pageModel.setTotalCount(1);
 					pageModel.setDatas(dataList);
 				}else {//查询本公司下的所有站点 （全部）
@@ -123,7 +127,7 @@ public class MailStatisticController {
 						for(Site site : siteList){
 							ess = essMap.get(site.getAreaCode());
 							if(ess == null){
-								ess = new ExpressStatStation(currUser.getCompanyId(), site.getAreaCode(), time);
+								ess = new ExpressStatStation(site.getCompanyId(), site.getAreaCode(), site.getName(),time);
 								ess.setSitename(site.getName());
 							}
 							dataList.add(ess);
@@ -131,7 +135,7 @@ public class MailStatisticController {
 						if((pageModel.getPageNo() + 1) == pageModel.getTotalPages()){//最后一页 -- 需要显示汇总行
 							ExpressStatStation summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
 							if(summary == null){
-								summary = new ExpressStatStation(currUser.getCompanyId(), null, null);
+								summary = new ExpressStatStation(currUser.getCompanyId(), null, null, null);
 							}
 							summary.setSitename("总计");
 							dataList.add(summary);
@@ -144,7 +148,7 @@ public class MailStatisticController {
 				if(currUser.getSite() != null){
 					areaCode = currUser.getSite().getAreaCode();
 					//列表数据
-					List<ExpressStatStation> dataList = findOneSiteData(currUser, areaCode, time);
+					List<ExpressStatStation> dataList = findOneSiteData(areaCode, time);
 					pageModel.setTotalCount(1);
 					pageModel.setDatas(dataList);
 				}
@@ -154,11 +158,12 @@ public class MailStatisticController {
 		}
 		return pageModel;
 	}
-	private List<ExpressStatStation> findOneSiteData(User user, String areaCode, String time){
+	private List<ExpressStatStation> findOneSiteData(String areaCode, String time){
 		List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+		Site site = siteService.findSiteByAreaCode(areaCode);
 		if(dataList == null || dataList.size() == 0){
 			dataList = new ArrayList<ExpressStatStation>();
-			dataList.add(new ExpressStatStation(user.getCompanyId(), areaCode, time));
+			dataList.add(new ExpressStatStation(site.getCompanyId(), areaCode, site.getName(), time));
 		}
 		return dataList;
 	}
@@ -189,7 +194,7 @@ public class MailStatisticController {
 					//表头 "未到站订单数",  3000,
 					titles = new String[]{"未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
 					colWidths = new int[] {3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
-					dataList = findOneSiteData(currUser, areaCode, time);
+					dataList = findOneSiteData(areaCode, time);
 					isShowSite = false;
 				} else {//查询本公司下的所有站点 （全部）
 					//当前公司下的所有站点
@@ -203,14 +208,14 @@ public class MailStatisticController {
 						for(SiteVO site : siteVOList){
 							ess = essMap.get(site.getAreaCode());
 							if(ess == null){
-								ess = new ExpressStatStation(currUser.getCompanyId(), site.getAreaCode(), time);
+								ess = new ExpressStatStation(currUser.getCompanyId(), site.getAreaCode(), site.getName(), time);
 								ess.setSitename(site.getName());
 							}
 							dataList.add(ess);
 						}
 						ExpressStatStation summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
 						if(summary == null){
-							summary = new ExpressStatStation(currUser.getCompanyId(), null, null);
+							summary = new ExpressStatStation(currUser.getCompanyId(), null, null, null);
 						}
 						summary.setSitename("总计");
 						dataList.add(summary);
@@ -225,7 +230,7 @@ public class MailStatisticController {
 					areaCode = currUser.getSite().getAreaCode();
 				}
 				//列表数据
-				dataList = findOneSiteData(currUser, areaCode, time);
+				dataList = findOneSiteData(areaCode, time);
 				//表头 "未到站订单数",  3000,
 				titles = new String[]{"未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
 				colWidths = new int[] {3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
