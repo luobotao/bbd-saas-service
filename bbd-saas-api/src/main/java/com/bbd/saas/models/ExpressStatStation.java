@@ -136,6 +136,7 @@ public class ExpressStatStation implements Serializable {
 
 	public ExpressStatStation(String companyId, String  areacode, String sitename, String time) {
 		this.areacode = areacode;
+		this.sitename = sitename;
 		this.tim = time;
 		this.nostationcnt = 0;//未到站数量
 		this.successcnt = 0;//签收数量
