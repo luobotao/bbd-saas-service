@@ -191,11 +191,7 @@ public class MailStatisticController {
             boolean isShowSite = false;
 			if(currUser.getRole() == UserRole.COMPANY){//公司角色
 				if (areaCode != null && !"".equals(areaCode)) {//只查询一个站点
-					//表头 "未到站订单数",  3000,
-					titles = new String[]{"未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
-					colWidths = new int[] {3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
 					dataList = findOneSiteData(areaCode, time);
-					isShowSite = false;
 				} else {//查询本公司下的所有站点 （全部）
 					//当前公司下的所有站点
 					List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
@@ -220,11 +216,11 @@ public class MailStatisticController {
 						summary.setSitename("总计");
 						dataList.add(summary);
 					}
-					//表头 "未到站订单数",  3000,
-					titles = new String[]{"站点",  "未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
-					colWidths = new int[] {13000,  3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
-					isShowSite = true;
 				}
+				//表头 "未到站订单数",  3000,
+				titles = new String[]{"站点",  "未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
+				colWidths = new int[] {13000,  3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
+				isShowSite = true;
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//站长角色
 				if(currUser.getSite() != null){
 					areaCode = currUser.getSite().getAreaCode();
