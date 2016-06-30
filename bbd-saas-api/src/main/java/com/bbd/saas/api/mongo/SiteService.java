@@ -79,7 +79,7 @@ public interface SiteService {
      * @param statusList 站点状态集合
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,List<SiteStatus> statusList);
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<SiteStatus> statusList);
 
     /**
      * 删除站点

@@ -111,9 +111,13 @@ public class MailStatisticController {
 					pageModel.setDatas(dataList);
 				}else {//查询本公司下的所有站点 （全部）
 					//查询登录用户的公司下的所有站点
+					List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+					statusList.add(SiteStatus.APPROVE);
+					statusList.add(SiteStatus.INVALID);
+					//查询登录用户的公司下的所有站点
 					PageModel<Site> sitePageModel = new PageModel<Site>();
 					sitePageModel.setPageNo(pageIndex);
-					sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), null);
+					sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), statusList);
 					pageModel.setTotalCount(sitePageModel.getTotalCount());
 					List<Site> siteList = sitePageModel.getDatas();
 					if(siteList != null && siteList.size() > 0){
@@ -194,7 +198,11 @@ public class MailStatisticController {
 					dataList = findOneSiteData(areaCode, time);
 				} else {//查询本公司下的所有站点 （全部）
 					//当前公司下的所有站点
-					List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), null);
+					//查询登录用户的公司下的所有站点
+					List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+					statusList.add(SiteStatus.APPROVE);
+					statusList.add(SiteStatus.INVALID);
+					List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
 					if(siteVOList != null && siteVOList.size() > 0){
 						if(dataList == null){
 							dataList = new ArrayList<ExpressStatStation>();
