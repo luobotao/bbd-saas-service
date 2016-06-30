@@ -110,7 +110,7 @@ User user = (User)request.getAttribute("user");
 						</a>
 					</li>
 					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<a href="<c:url value="/?typ=error" />">
+						<a href="<c:url value="/?typ=tostore" />">
 							<div class="b-status-card">
 								<span><img src="<c:url value="/resources/images/storage.png" />" alt="揽件入库" /></span>
 								<h3>揽件入库</h3>
