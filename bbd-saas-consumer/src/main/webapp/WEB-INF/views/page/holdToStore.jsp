@@ -233,7 +233,10 @@
                                                             </button>
 														</span>
 														<span class="col-md-6">
-                                                            <button  type="button" class="ser-btn wp100 l" <%--value="1" id="sure"--%> onclick="toStore()">确认</button>
+                                                            <button type="button"
+                                                                    class="ser-btn wp100 l"
+                                                                    onclick="toStore()">确认
+                                                            </button>
 
 														</span>
                                                 </div>
@@ -248,12 +251,6 @@
                     <!-- E table -->
                     <!-- S tableBot -->
                     <div class="clearfix pad20">
-                        <%--<!-- S button -->
-                        <div class="clearfix fl">
-                            <a href="#" onclick="batchBtn()" data-toggle="modal" class="ser-btn l">批量到站</a>
-                        </div>--%>
-                        <!-- E button -->
-                        <!-- S page -->
                         <div id="pagin"></div>
                         <!-- E page -->
                     </div>
@@ -266,12 +263,6 @@
     </div>
 </div>
 <!-- E content -->
-<!-- S footer -->
-<%--<footer class="pos-footer tc">
-    <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达 北京棒棒达科技有限公司</em>
-</footer>--%>
-<!-- E footer -->
-
 </body>
 <script type="text/javascript">
 
@@ -314,7 +305,7 @@
                 //更新分页条
                 var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
                 $("#pagin").html(pageStr);
-                  //更新统计数量
+                //更新统计数量
                 updateOrderHoldToStoreNumVO();
             },
             error: function () {
@@ -384,14 +375,14 @@
     }
     //历史未入库
     function historyNoToStore() {
-        var orderSetStatusVal =  "<%=OrderSetStatus.SCANED.getStatus()%>" + "," + "<%=OrderSetStatus.WAITTOIN.getStatus()%>";
+        var orderSetStatusVal = "<%=OrderSetStatus.SCANED.getStatus()%>" + "," + "<%=OrderSetStatus.WAITTOIN.getStatus()%>";
         gotoPage(0, orderSetStatusVal);
         $('#orderSetStatus').val("-1");
 
     }
     //今日成功接单数
     function todaySuccessOrder() {
-        var orderSetStatusVal =  "<%=OrderSetStatus.SCANED.getStatus()%>" + "," + "<%=OrderSetStatus.WAITTOIN.getStatus()%>"
+        var orderSetStatusVal = "<%=OrderSetStatus.SCANED.getStatus()%>" + "," + "<%=OrderSetStatus.WAITTOIN.getStatus()%>"
                 + "," + "<%=OrderSetStatus.WAITSET.getStatus()%>" + "," + "<%=OrderSetStatus.WAITDRIVERGETED.getStatus()%>"
                 + "," + "<%=OrderSetStatus.DRIVERGETED.getStatus()%>" + "," + "<%=OrderSetStatus.ARRIVEDISPATCH.getStatus()%>"
                 + "," + "<%=OrderSetStatus.WAITDISPATCHSET.getStatus()%>" + "," + "<%=OrderSetStatus.WAITDRIVERTOSEND.getStatus()%>"
@@ -417,19 +408,9 @@
         $('#orderSetStatus').val("-1");
 
     }
+    //确定按钮
     function toStore() {
-        /*var nosure= $("#nosure").val();
-        var sure= $("#sure").val();
-         if(nosure==1){
-             alert(nosure);
-             return false;
-         }
-        if(sure==0){
-            alert(sure);
-            return true;
-        }
-        return true;
-*/
+
         $("#mailNumP").html("");
         $("#mailNumP").attr("style", "display:none");
         $("#toSitePrompt").modal("hide");
@@ -443,8 +424,8 @@
             }
         }
     }
-    var isBatchToSite = false; //单个运单到站
-    //检查运单号
+
+    //检查运单号 ,并进行到站，入库操作
     function checkOrderByMailNum1(mailNum) {
 
         if (mailNum != "") {
@@ -464,6 +445,7 @@
                         $("#toSitePrompt").modal("show");
                         $("#mailNumP").attr("style", "");
                     }
+                    //刷新页面
                     gotoPage(0);
                 },
                 error: function () {
@@ -480,15 +462,15 @@
     }
 
     //更新数据统计的数据
-    function updateOrderHoldToStoreNumVO(){
+    function updateOrderHoldToStoreNumVO() {
         $.ajax({
             url: '<%=request.getContextPath()%>/holdToStoreController/updateOrderHoldToStoreNumVO',
             type: 'GET',
             cache: false,
             dataType: "json",
             data: {},
-            success: function(response){
-                if(response!=null &&  response!="") {
+            success: function (response) {
+                if (response != null && response != "") {
 
                     $("#successOrderNum").html(response.successOrderNum);
                     $("#todayNoToStoreNum").html(response.todayNoToStoreNum);
@@ -496,172 +478,11 @@
                     $("#todayToStoreNum").html(response.todayToStoreNum);
                 }
             },
-            error: function(){
+            error: function () {
             }
         });
     }
-    //做到站操作
-    /* function doToSite() {
-     if (isBatchToSite) {//批量到站
-     doBatchToSite()();
-     } else {//单个运单到站
-     $("#mailNumP").html("");
-     $("#mailNumP").attr("style", "display:none");
-     gotoPage1(0,$("#parcelCode").val(),$("#mailNum").val());
-     $("#toSitePrompt").modal("hide");
-     }
 
-     }*/
-
-    //加载带有查询条件的指定页的数据
-    /* function gotoPage1(pageIndex, parcelCode, mailNum) {
-     var between = $("#between").val();
-     var arriveStatus = $('#arriveStatus option:selected').val();
-     $("input[type='checkbox']", "#orderTable").iCheck("uncheck");
-     $.ajax({
-     type: "GET",  //提交方式
-     url: "<%=request.getContextPath()%>/packageToSite/getOrderPage",//路径
-     data: {
-     "pageIndex": pageIndex,
-     "arriveStatus": arriveStatus,
-     "between": between,
-     "parcelCode": parcelCode,
-     "mailNum": mailNum
-     },//数据，这里使用的是Json格式进行传输
-     success: function (dataObject) {//返回数据根据结果进行相应的处理
-     // alert(mailNum);
-     $.ajax({
-     type: "GET",  //提交方式
-     url: "<%=request.getContextPath()%>/holdToStoreController/changeOrderSetStatusByMailNum",//路径
-     data: {
-     "mailNum": mailNum
-     },//数据，这里使用的是Json格式进行传输
-     success: function (dataObject) {//返回数据根据结果进行相应的处理
-     /!*gotoPage(0);*!/
-     console.log("cc");
-     $("#mailNumP").html("扫描成功，完成⼊库。请到App中进⾏【分拣】操作");
-     $("#mailNumP").attr("style", "color:red");
-     },
-     error: function () {
-     ioutDiv("修改状态失败！");
-     }
-     });
-     },
-     error: function () {
-     ioutDiv("加载分页数据异常！");
-     }
-     });
-     }*/
-
-    //更新数据统计的数据
-    /* function updateOrderNumVO() {
-     $.ajax({
-     url: '<%=request.getContextPath()%>/packageToSite/updateOrderNumVO',
-     type: 'GET',
-     cache: false,
-     dataType: "json",
-     data: {},
-     success: function (response) {
-     if (response != null && response != "") {
-     $("#non_arrival_num").html(response.noArrive);
-     $("#history_non_arrival_num").html(response.noArriveHis);
-     $("#arrived_num").html(response.arrived);
-     }
-     },
-     error: function () {
-     }
-     });
-     }*/
-    //检查包裹号
-    /*function checkOrderParcelByParcelCode(parcelCode) {
-     if (parcelCode != "") {
-     $.ajax({
-     url: '<%=request.getContextPath()%>/packageToSite/checkOrderParcelByParcelCode?parcelCode=' + parcelCode,
-     type: 'GET',
-     cache: false,
-     dataType: "text",
-     data: {},
-     success: function (response) {
-     if (response == "false") {
-     $("#parcelCodeP").html("【异常扫描】包裹号不存在");
-     $("#parcelCodeP").attr("style", "color:red");
-     } else {
-     $("#parcelCodeP").html("扫描成功，请扫描运单号");
-     $("#parcelCodeP").attr("style", "color:red");
-     gotoPage(0, $("#parcelCode").val(), $("#mailNum").val());
-     }
-     },
-     error: function () {
-     $("#parcelCodeP").html("【异常扫描】不存在此包裹号");
-     $("#parcelCodeP").attr("style", "color:red");
-     }
-     });
-     }
-     }*/
-
-    /* var ids = [];
-     //批量到站button
-     function batchBtn() {
-     var checkids = $('input[name="id"]:checked');
-     ids = [];
-     if (checkids.length) {
-     $.each(checkids, function (i, n) {
-     if (!$(n).closest('tr').find('.status .label').hasClass('label-success')) {
-     ids.push($(n).val());
-     }
-     });
-     }
-     if (ids.length > 0) {
-     var url = "<c:url value="/packageToSite/isAllDriverGeted?${_csrf.parameterName}=${_csrf.token}" />";
-     $.ajax({
-     url: url,
-     type: 'POST',
-     cache: false,
-     dataType: "json",
-     data: {
-     "ids": JSON.stringify(ids)
-     },
-     success: function (data) {
-     if (data) {//没有出现物流状态为异常的订单
-     $("#popContent").html("确认批量到站？<br>该操作会把选中的订单设置为已到站。");
-     $("#toSitePrompt").modal("show");
-     isBatchToSite = true;//批量到站
-     } else {
-     $("#popContent").html("确认批量到站？<br>运单未进行分拣、司机取货等操作，该操作会把选中的订单设置为已到站。");
-     $("#toSitePrompt").modal("show");
-     isBatchToSite = true;//批量到站
-     }
-     },
-     error: function () {
-     ioutDiv('服务器繁忙，请稍后再试！');
-     }
-     });
-     } else {
-     ioutDiv('请选择运单！');
-     }
-     }*/
-    /*function doBatchToSite() {
-     if (ids.length > 0) {
-     var url = "<c:url value="/packageToSite/arriveBatch?${_csrf.parameterName}=${_csrf.token}" />";
-     $.ajax({
-     url: url,
-     type: 'POST',
-     cache: false,
-     dataType: "json",
-     data: {
-     "ids": JSON.stringify(ids)
-     },
-     success: function (json) {
-     location.reload();
-     },
-     error: function () {
-     ioutDiv('服务器繁忙，请稍后再试！');
-     }
-     });
-     } else {
-     ioutDiv('请选择运单！');
-     }
-     }*/
 </script>
 </body>
 </html>

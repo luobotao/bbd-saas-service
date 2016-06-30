@@ -32,7 +32,7 @@ import java.util.*;
  */
 
 /**
- * 跳转到揽件入库页面
+ * 揽件入库
  */
 @Controller
 @RequestMapping("/holdToStoreController")
@@ -62,6 +62,16 @@ public class HoldToStoreController {
 
     public static final Logger logger = LoggerFactory.getLogger(HoldToStoreController.class);
 
+    /**
+     * 跳转到揽件入库页面
+     *
+     * @param pageIndex //开始页
+     * @param status    //状态
+     * @param embraceId //拦件员id
+     * @param request//
+     * @param model//
+     * @return
+     */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(Integer pageIndex, @RequestParam(value = "status", defaultValue = "-1") String status, String embraceId, final HttpServletRequest request, Model model) {
         //当前登录的用户信息
@@ -69,13 +79,13 @@ public class HoldToStoreController {
         if (user != null) {
             //获取当前登录人的站点编码
             String areaCode = user.getSite().getAreaCode();
-
+            //查询 今日成功揽件数量，今日入库，未入库，历史未入库数量
             OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(areaCode);
             long historyToStoreNum = orderHoldToStoreNum.getHistoryToStoreNum();
             long todayNoToStoreNum = orderHoldToStoreNum.getTodayNoToStoreNum();
             long successOrderNum = orderHoldToStoreNum.getSuccessOrderNum();
             long todayToStoreNum = orderHoldToStoreNum.getTodayToStoreNum();
-
+            //放在model 中传到页面
             model.addAttribute("historyToStoreNum", historyToStoreNum);
             model.addAttribute("todayNoToStoreNum", todayNoToStoreNum);
             model.addAttribute("successOrderNum", successOrderNum);
@@ -83,12 +93,9 @@ public class HoldToStoreController {
 
 
             //获取站长下的所有揽件员
-            List<User> userList = userService.findUsersBySite(user.getSite(), UserRole.SENDMEM, UserStatus.VALID);//所有小件员
-            try {
-            /*Integer orderSetStatus =  Integer.parseInt(status);
-            //设置默认查询条件
-            orderSetStatus = Numbers.defaultIfNull(orderSetStatus, -1);//全部*/
+            List<User> userList = userService.findUsersBySite(user.getSite(), UserRole.SENDMEM, UserStatus.VALID);
 
+            try {
                 //查询数据
                 PageModel<OrderHoldToStoreVo> orderHoldPageModel = getList(pageIndex, status, embraceId, request, model);
                 logger.info("=====揽件入库页面====" + orderHoldPageModel);
@@ -101,22 +108,34 @@ public class HoldToStoreController {
         return "page/holdToStore";
     }
 
-    //分页Ajax更新
+    /**
+     * 根据状态，揽件员id 查询
+     *
+     * @param pageIndex//初始页
+     * @param orderSetStatus//状态
+     * @param embraceId//揽件员id
+     * @param request
+     * @param model
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/getList", method = RequestMethod.GET)
     public PageModel<OrderHoldToStoreVo> getList(Integer pageIndex, String orderSetStatus, String embraceId, final HttpServletRequest request, Model model) {
 
-        //今天到站时间
+        //今天的时间
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         String start = Dates.formatSimpleDate(cal.getTime());
         String end = Dates.formatSimpleDate(cal.getTime());
         String between = start + " - " + end;
+
+        //前台传来状态的集合
         List<OrderSetStatus> orderSetStatusList = new ArrayList<OrderSetStatus>();
+
+        //把前台传来的状态，按逗号分隔并保存到orderSetStatusList 中
         if (!"-1".equals(orderSetStatus)) {
             if (orderSetStatus.contains(",")) {
                 String orderSetStatusVal[] = orderSetStatus.split(",");
-
                 for (int i = 0; i < orderSetStatusVal.length; i++) {
                     orderSetStatusList.add(OrderSetStatus.status2Obj(Integer.parseInt(orderSetStatusVal[i])));
                 }
@@ -124,26 +143,28 @@ public class HoldToStoreController {
                 orderSetStatusList.add(OrderSetStatus.status2Obj(Integer.parseInt(orderSetStatus)));
             }
         }
-        //参数为空时，默认值设置
+
+        //首页进行默认值设置
         pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-       /* orderSetStatusInt = Numbers.defaultIfNull(orderSetStatusInt, -1);*/
+
         //当前登录的用户信息
         User user = adminService.get(UserSession.get(request));
         String areaCode = user.getSite().getAreaCode();
+
         //设置查询条件
         OrderQueryVO orderQueryVO = new OrderQueryVO();
-              /*  orderQueryVO.dateArrived = todayDate;*/
         orderQueryVO.between = between;
+        orderQueryVO.areaCode = areaCode;
+
+        //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
         List<String> tradeNoList = new ArrayList<>();
-        ;
         if (StringUtils.isNotBlank(embraceId) && !("0".equals(embraceId))) {
             List<Trade> tradeList = tradeService.findTradesByEmbraceId(embraceId);
             for (Trade trade : tradeList) {
                 tradeNoList.add(trade.getTradeNo());
             }
         }
-
-        orderQueryVO.areaCode = areaCode;
+        //把以上条件依次传人到service 层中进行查询
         PageModel<OrderHoldToStoreVo> orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex, tradeNoList, orderSetStatusList, orderQueryVO);
 
         return orderHoldPageModel;
@@ -151,6 +172,8 @@ public class HoldToStoreController {
 
     /**
      * 根据运单号检查是否存在此订单
+     * 根据相关条件做，到站，入库操作
+     *
      * @param request
      * @param mailNum
      * @return
@@ -159,10 +182,10 @@ public class HoldToStoreController {
     @RequestMapping(value = "/checkHoldToStoreByMailNum", method = RequestMethod.GET)
     public Map<String, Object> checkHoldToStoreByMailNum(HttpServletRequest request, @RequestParam(value = "mailNum", required = true) String mailNum) {
         User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<String, Object>();//封装返回参数
         String msg = "";
-        Order order = orderService.findOneByMailNum(mailNum);
-        Site site = siteService.findSiteByAreaCode(order.getAreaCode());
+        Order order = orderService.findOneByMailNum(mailNum);//根据运单号查询
+        Site site = siteService.findSiteByAreaCode(order.getAreaCode());//查询此订单中的站点对象
 
         boolean status = true;
         if (order == null) {//运单是否存在
@@ -200,6 +223,7 @@ public class HoldToStoreController {
 
     /**
      * 单个订单到站方法
+     *
      * @param order
      * @param user
      */
@@ -274,28 +298,18 @@ public class HoldToStoreController {
         }
     }
 
-    //入库
-    private void doToStore(HttpServletRequest request, String mailNum) {
-        User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-        Order order = orderService.findOneByMailNum(mailNum);
-        if (order != null) {
-            order.setOrderSetStatus(OrderSetStatus.WAITSET);
-            orderService.save(order);
-        }
-    }
 
     /**
-     * 根据运单号改变状态
+     * 入库
+     *
      * @param request
-     * @param mailNum
-     * @return
+     * @param mailNum //运单号
      */
-    @ResponseBody
-    @RequestMapping(value = "/changeOrderSetStatusByMailNum", method = RequestMethod.GET)
-    public void changeOrderSetStatusByMailNum(HttpServletRequest request, @RequestParam(value = "mailNum", required = true) String mailNum) {
+    private void doToStore(HttpServletRequest request, String mailNum) {
         User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-        Order order = orderService.findOneByMailNum(mailNum);
+        Order order = orderService.findOneByMailNum(mailNum);//根据运单号查询
         if (order != null) {
+            //入库
             order.setOrderSetStatus(OrderSetStatus.WAITSET);
             orderService.save(order);
         }
@@ -303,11 +317,12 @@ public class HoldToStoreController {
 
     /**
      * 重新计算揽件的数据统计
+     *
      * @param request
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/updateOrderHoldToStoreNumVO", method=RequestMethod.GET)
+    @RequestMapping(value = "/updateOrderHoldToStoreNumVO", method = RequestMethod.GET)
     public OrderHoldToStoreNumVO updateOrderHoldToStoreNumVO(HttpServletRequest request) {
         return orderService.getOrderHoldToStoreNum(adminService.get(UserSession.get(request)).getSite().getAreaCode());
     }
