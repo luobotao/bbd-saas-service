@@ -13,7 +13,6 @@
 <%
 	String proPath = request.getContextPath();
 	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+proPath;
-	//System.out.println("========状态==========="+OrderStatus.Srcs2HTML(-1));
 %>
 <body class="fbg">
 <!-- S content -->
@@ -96,7 +95,7 @@
 										<td><%=order.getUserVO().getLoginName()%></td>
 								<%
 									}
-									if(order.getOrderStatus() == OrderStatus.RETENTION){
+									if(order.getOrderStatus() == OrderStatus.RETENTION || order.getOrderStatus() == null){
 								%>
 									<td><%=AbnormalStatus.RETENTION.getMessage()%></td>
 									<td class="tl">
@@ -591,8 +590,8 @@ function showApplyReturnDiv(mailNumStr) {
 			if(dataList != null){
 				rtnReasonObj.append("<option value=''>请选择</option>");
 				for(var i = 0; i < dataList.length; i++){
-					data = dataList[i];
-					rtnReasonObj.append("<option value='"+data.status+"'>"+data.message+"</option>");
+					var dataTemp = dataList[i];
+					rtnReasonObj.append("<option value='"+dataTemp.status+"'>"+dataTemp.message+"</option>");
 				}
 			}
 		},

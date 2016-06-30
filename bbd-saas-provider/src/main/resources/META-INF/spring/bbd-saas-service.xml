@@ -154,5 +154,10 @@
         </property>
     </bean>
 
+    <bean id="expressStatStationService" class="com.bbd.saas.api.impl.mysql.ExpressStatStationServiceImpl">
+        <property name="expressStatStationDao">
+            <ref bean="expressStatStationDao"/>
+        </property>
+    </bean>
     <!--    end mysql services   -->
 </beans>

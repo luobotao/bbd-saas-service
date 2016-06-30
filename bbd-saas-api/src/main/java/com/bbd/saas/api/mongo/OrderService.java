@@ -123,7 +123,13 @@ public interface OrderService {
 	 */
 	public List<Order> getTodayUpdateOrdersBySite(String areaCode);
 
-	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus);
+	/**
+	 * 查询指定mailNum集合的订单中物流状态不为expressStatus的订单的条数
+	 * @param mailNumList mailNum集合
+	 * @param expressStatus 物流状态
+	 * @return 订单的条数
+	 */
+	public long getCounByMailNumsAndExpressStatus(BasicDBList mailNumList, ExpressStatus expressStatus);
 
 	/**
 	 * 分页查询运单号/手机号/姓名/地址四个字段中包含关键字（keyword）的运单
@@ -154,6 +160,7 @@ public interface OrderService {
 
 
 	public List<Order> findAllByTradeNo(String tradeNo);
+<<<<<<< HEAD
 	/**
 	 *根据相关条件查询出所有揽件入库的订单
 	 * @param pageIndex
@@ -163,4 +170,15 @@ public interface OrderService {
 	public  PageModel<OrderHoldToStoreVo>  	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO,boolean flag);
 
 	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode);
+=======
+
+	/**
+	 * 查询指定mailNum集合的订单中物流状态不为expressStatus的订单的条数
+	 * @param mailNumList mailNum集合
+	 * @param orderStatusList 订单状态集合
+	 * @return 订单的条数
+	 */
+	public long getCounByMailNumsAndOrderStatusList(BasicDBList mailNumList, List<OrderStatus> orderStatusList);
+
+>>>>>>> bbd-saas-2.3
 }

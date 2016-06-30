@@ -427,9 +427,6 @@ function exportData() {
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
 }
-	
-	
-	
 </script>
 </body>
 </html>

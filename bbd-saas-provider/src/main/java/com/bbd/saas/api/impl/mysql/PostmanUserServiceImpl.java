@@ -172,4 +172,9 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		}
 		return result;
 	}
+
+	@Override
+	public int updateRoleByPhone(String phone, Integer postrole) {
+		return postmanUserDao.updateRoleByPhone(phone, postrole);
+	}
 }

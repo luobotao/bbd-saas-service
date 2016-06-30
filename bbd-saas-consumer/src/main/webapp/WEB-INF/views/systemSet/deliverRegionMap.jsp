@@ -426,19 +426,14 @@
 					"siteId":siteId
 				},
 				success: function(data){
-					if(data == "success"){
+					if(data!=null && data.code == 0){
 						ioutDiv("提交成功");
 					}else{
-						console.log("error:"+data);
+						ioutDiv("抱歉，电子围栏暂不支持交叉绘制");
 					}
 				},
 				error: function(){
-					ioutDiv("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
-					if(window.top==window.self){//不存在父页面
-						window.location.href="<c:url value="/login" />"
-					}else{
-						window.top.location.href="<c:url value="/login" />"
-					}
+					ioutDiv("抱歉，电子围栏暂不支持交叉绘制");
 				}
 			});
 			/*          $("#jsonStr").val(jsonStr);
