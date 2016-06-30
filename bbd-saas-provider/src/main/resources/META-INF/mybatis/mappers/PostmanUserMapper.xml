@@ -225,4 +225,8 @@
     <select id="getIntegral" statementType="CALLABLE" parameterType="Map" resultMap="statResultMap">
         {call sp_postman_station_score(#{areaCode,mode=IN,jdbcType=VARCHAR},#{phone,mode=IN,jdbcType=VARCHAR})}
     </select>
+
+    <update id="updateRoleByPhone" >
+        update postmanuser set postrole = #{postrole}  where  phone = #{phone}
+    </update>
 </mapper>

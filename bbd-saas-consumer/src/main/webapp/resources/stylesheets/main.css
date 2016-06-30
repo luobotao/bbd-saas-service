@@ -102,6 +102,9 @@ a.orange {
 .pb20 {
   padding-bottom: 20px;
 }
+.pb10 {
+  padding-bottom: 10px;
+}
 .ml6 {
   margin-left: 6px;
 }
@@ -980,7 +983,7 @@ footer {
   border-radius: 4px 4px 0 0;
 }
 .tab-area .b-tab-con {
-  padding: 40px 15px 15px;
+  padding: 10px 15px 15px;
   border: 1px solid #dbdaec;
 }
 .tab-area .b-map {
@@ -2011,6 +2014,15 @@ input.spe-input{
 }
 .l-green{
   color:#17c7c5;
+}
+.orange-a{
+  color:#fdb50a;
+}
+.blue-d{
+  color:#0688ed;
+}
+.green-f{
+  color:#138c7f;
 }
 /* E color */
 /* E sass 2.0 */

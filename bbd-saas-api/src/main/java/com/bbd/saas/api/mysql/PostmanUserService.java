@@ -80,4 +80,12 @@ public interface PostmanUserService {
     public List<UserVO> findLatAndLngByIds(List<Integer> ids);
 
     public Map<String, Object> getIntegral(String areaCode, String phone);
+
+    /**
+     * 更新派件员的角色（权限）
+     * @param phone 派件员手机号
+     * @param postrole postrole
+     * @return 更新条数
+     */
+    int updateRoleByPhone(String phone, Integer postrole);
 }

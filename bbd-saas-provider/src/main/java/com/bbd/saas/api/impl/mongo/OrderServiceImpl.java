@@ -228,8 +228,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public long getCounByMailNumsAndExpressStatus(BasicDBList idList, ExpressStatus expressStatus) {
-		return orderDao.selectCountByMailNumsAndExpressStatus(idList, expressStatus);
+	public long getCounByMailNumsAndExpressStatus(BasicDBList mailNumList, ExpressStatus expressStatus) {
+		return orderDao.selectCountByMailNumsAndExpressStatus(mailNumList, expressStatus);
 	}
 
 	@Override
@@ -390,6 +390,7 @@ public class OrderServiceImpl implements OrderService {
 		return orderDao.getOrderHoldToStoreNum(areaCode);
 	}
 
+
 	/**
 	 * 根据运单号查询
 	 * @param mailNum
@@ -397,5 +398,10 @@ public class OrderServiceImpl implements OrderService {
 	 */
 	public Order findOneByMailNum(String mailNum) {
 		return orderDao.findOneByMailNum(mailNum);
+	}
+	@Override
+	public long getCounByMailNumsAndOrderStatusList(BasicDBList mailNumList, List<OrderStatus> orderStatusList) {
+		return orderDao.selectCountByMailNumsAndExpressStatus(mailNumList, orderStatusList);
+
 	}
 }

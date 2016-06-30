@@ -423,7 +423,7 @@
 			type : "GET",
 			url : '<c:url value="/userManage/changestatus" />',
 			data : {
-				"id" : id,
+				//"id" : id,
 				"status" : status,
 				"loginName" : loginName
 			},
@@ -482,29 +482,23 @@
 			ioutDiv("请输入正确的手机号");
 			return false;
 		}
+		//校验密码 == 公司账号
 		<c:if test="${userNow.role==UserRole.COMPANY}">
-		var roleId = $("#roleId").val();
-		if(roleId=="<%=UserRole.SITEMASTER%>"){
-			var password = $.trim($('input[name="loginPass"]').val());
-			if(password==""){
-				ioutDiv("请输入密码");
-				return false;
+			var roleId = $("#roleId").val();
+			if(roleId=="<%=UserRole.SITEMASTER%>"){
+				var b = checkPwd();
+				if(!b){
+					return false;
+				}
 			}
-			if(!pwdreg.test(password)){
-				ioutDiv("请输入6-12位数字和字母结合的密码");
-				return false;
-			}
-			var passwordC = $.trim($('input[name="passwordC"]').val());
-			if(passwordC==""){
-				ioutDiv("请确认密码");
-				return false;
-			}
-			if(passwordC!=password){
-				ioutDiv("两次密码不一致");
+		</c:if>
+		//校验密码 == 站长账号
+		if(haveDispatchPermsn){//有到站分派权限的需要校验密码
+			var b = checkPwd();
+			if(!b){
 				return false;
 			}
 		}
-		</c:if>
 		var url = "";
 		var userId = $("#userId").val();
 		if(userId == ""){//新建
@@ -514,6 +508,25 @@
 
 		}
 		checkAndSave(url, loginName, userId);
+	}
+	function checkPwd(){
+		var password = $.trim($('input[name="loginPass"]').val());
+		var passwordC = $.trim($('input[name="passwordC"]').val());
+		if(password==""){
+			ioutDiv("请输入密码");
+			return false;
+		}else if(!pwdreg.test(password)){
+			ioutDiv("请输入6-12位数字和字母结合的密码");
+			return false;
+		}else if(passwordC==""){
+			ioutDiv("请确认密码");
+			return false;
+		}else if(passwordC!=password){
+			ioutDiv("两次密码不一致");
+			return false;
+		}else{
+			return true;
+		}
 	}
 	//检查手机号是否被注册，未被注册，则可以添加或者修改。
 	function checkAndSave(url, loginName, userId){
@@ -572,6 +585,7 @@
 		}
 		</c:if>
 	}
+	var haveDispatchPermsn = false;
 	function searchUser(id,loginName){
 		$('.userclass').html('修改');
 		$.ajax({
@@ -590,27 +604,31 @@
 					$("#roleId").val(data.role);
 					if(data.role == "<%=UserRole.SITEMASTER%>"
 						||(data.role == "<%=UserRole.SENDMEM%>" && data.dispatchPermsn == 1)){
-						<%--<c:if test="${userNow.role==UserRole.COMPANY}">--%>
 						$("#passLi").attr("style","");
 						$("#passCLi").attr("style","");
 						$("#loginPass").val(data.passWord);
 						$("#passwordC").val(data.passWord);
-						<%--</c:if>--%>
+						haveDispatchPermsn = true;
 					}else{
 						$("#passLi").attr("style","display:none;");
 						$("#passCLi").attr("style","display:none;");
+						haveDispatchPermsn = false;
 					}
 					document.getElementById("oldLoginName").value=data.loginName;
+				}else{
+					haveDispatchPermsn = false;
 				}
 			},
 			error : function() {
 				ioutDiv("异常！");
+				haveDispatchPermsn = false;
 			}
 		});
 	}
 
 	function showAddUserDiv(){
 		$('.userclass').html('新建');
+		haveDispatchPermsn=false;
 		document.getElementById("userForm").reset();
 		$("#oldLoginName").val("");
 		$("#userId").val("");
@@ -647,7 +665,7 @@
 				if(data.success){
 					gotoPage(0);
 				} else{
-					alert_mine("错误", data.msg);
+					alert_mine("提示", data.msg);
 				}
 			},
 			error : function() {

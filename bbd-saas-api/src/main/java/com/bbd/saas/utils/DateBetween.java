@@ -1,8 +1,7 @@
 package com.bbd.saas.utils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +11,9 @@ public class DateBetween {
 
 	private Date start = new Date();
 	private Date end = new Date();
+	public DateBetween() {
 
+	}
 
 	public DateBetween(String between) {
 		Matcher matcher = pattern.matcher(between);
@@ -57,5 +58,14 @@ public class DateBetween {
 		sb.append(Dates.formatDate(start)).append("-")
 		.append(Dates.formatDate(end));
 		return sb.toString();
+	}
+	public  List<String> splitDate(String between){
+		List<String> list = new ArrayList<String>();
+		Matcher matcher = pattern.matcher(between);
+		if (matcher.matches()) {
+			list.add(matcher.group(1));
+			list.add(matcher.group(2));
+		}
+		return list;
 	}
 }

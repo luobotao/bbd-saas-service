@@ -3,13 +3,13 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
+<%@ page import="com.bbd.saas.constants.Constants" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
 	<jsp:include page="../main.jsp" flush="true" />
-
 </head>
 <body class="fbg">
 <!-- S content -->
@@ -93,9 +93,9 @@
 								<th>收货人</th>
 								<th>收货人电话</th>
 								<th width="10%">地址</th>
-								<th>打单时间</th>
 								<th>预计到站时间</th>
 								<th>状态</th>
+								<th>操作</th>
 							</tr>
 							</thead>
 							<tbody id="dataList">
@@ -112,18 +112,29 @@
 								<td><%=order.getReciever().getName()%></td>
 								<td><%=order.getReciever().getPhone()%></td>
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
-								<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>
+								<%--<td><%=Dates.formatDateTime_New(order.getDatePrint())%></td>--%>
 								<td><%=Dates.formatDate2(order.getDateMayArrive())%></td>
 								<%
 									if(order.getOrderStatus()==OrderStatus.NOTARR || order.getOrderStatus()==null){
 								%>
 								<td class="orange"><%=ArriveStatus.NOTARR.getMessage()%></td>
+								<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>
 								<%
 								}else{
 								%>
-								<td class="c-green"><%=ArriveStatus.ARRIVED.getMessage()%></td>
+									<td class="c-green"><%=ArriveStatus.ARRIVED.getMessage()%></td>
+								<%--操作--%>
+								<%
+									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH || order.getOrderStatus() == OrderStatus.DISPATCHED){
+								%>
+										<td><a data-toggle='modal' data-target='#superAreaDiv' href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange">设为超区件</a></td>
+								<%
+									}else{
+								%>
+										<td></td>
 								<%
 									}
+								}
 								%>
 							</tr>
 							<%
@@ -166,6 +177,9 @@
 						<!-- S button -->
 						<div class="clearfix fl">
 							<a href="#" onclick="batchBtn()" data-toggle="modal" class="ser-btn l">批量到站</a>
+							<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+								<a href="javascript:void(0)" onclick="batchSuperAreaBtn()" data-toggle="modal" class="ser-btn l">批量设为超区件</a>
+							</c:if>
 						</div>
 						<!-- E button -->
 						<!-- S page -->
@@ -186,7 +200,7 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
-
+<jsp:include page="superArea.jsp" flush="true" />
 
 <script type="text/javascript">
 	//var flag = true;
@@ -215,8 +229,6 @@
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
-
-
 
 	//加载带有查询条件的指定页的数据
 	function gotoPage(pageIndex,parcelCode,mailNum) {
@@ -277,12 +289,18 @@
 		row += "<td>" + data.reciever.name + "</td>";
 		row += "<td>" + data.reciever.phone + "</td>";
 		row += "<td class='tl'>" + data.reciever.province +" "+ data.reciever.city +" "+ data.reciever.area +" "+ data.reciever.address + "</td>";
-		row += "<td>" + getDate1(data.datePrint) + "</td>";
+		//row += "<td>" + getDate1(data.datePrint) + "</td>";
 		row += "<td>" + getDate2(data.dateMayArrive) + "</td>";
-		if(data.orderStatus=="<%=OrderStatus.NOTARR%>" || data.orderStatus==null){
+		if(data.orderStatus == null || data.orderStatus=="<%=OrderStatus.NOTARR%>"){
 			row += "<td class='orange'>" + "<%=ArriveStatus.NOTARR.getMessage()%>" + "</td>";
+			row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
 		}else{
 			row += "<td class='c-green'>" + "<%=ArriveStatus.ARRIVED.getMessage()%>" + "</td>";
+			if(data.orderStatus=="<%=OrderStatus.NOTDISPATCH%>" || data.orderStatus=="<%=OrderStatus.DISPATCHED%>"){
+				row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
+			}else {
+				row += "<td></td>";
+			}
 		}
 		row += "</tr>";
 		return row;
@@ -345,7 +363,7 @@
 				data: {},
 				success: function(response){
 					if(response!=null &&  response!=""){
-						if(response.orderStatus!="NOTARR" && response.orderStatus!=null){
+						if(response.orderStatus != "<%=OrderStatus.NOTARR%>" && response.orderStatus!=null){
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
 						}else{
@@ -433,6 +451,7 @@
 	}
 
 	var ids = [];
+
 	//批量到站button
 	function batchBtn(){
 		var checkids = $('input[name="id"]:checked');
@@ -495,6 +514,7 @@
 			ioutDiv('请选择运单！');
 		}
 	}
+
 </script>
 </body>
 </html>

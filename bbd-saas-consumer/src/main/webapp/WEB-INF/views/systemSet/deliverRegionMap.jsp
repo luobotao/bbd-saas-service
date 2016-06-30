@@ -426,19 +426,14 @@
 					"siteId":siteId
 				},
 				success: function(data){
-					if(data == "success"){
+					if(data!=null && data.code == 0){
 						ioutDiv("提交成功");
 					}else{
-						console.log("error:"+data);
+						ioutDiv("抱歉，电子围栏暂不支持交叉绘制");
 					}
 				},
 				error: function(){
-					ioutDiv("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
-					if(window.top==window.self){//不存在父页面
-						window.location.href="<c:url value="/login" />"
-					}else{
-						window.top.location.href="<c:url value="/login" />"
-					}
+					ioutDiv("抱歉，电子围栏暂不支持交叉绘制");
 				}
 			});
 			/*          $("#jsonStr").val(jsonStr);
@@ -698,9 +693,9 @@
 
 		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){
-			parentF.css({overflowY:"hidden"});
+			parentD.find(".i-hei").attr("scrolling","no");
 			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2});
-			$(".pos-footer").hide();
+			parentD.find(".pos-footer").hide();
 			$("#allmap,.b-map").css({width:winwid,height:winhei2,marginLeft:"-10px"});
 			$(".j-full-div").css({left:"-16%"});
 			$(".b-f-screen,.pos-adr").css({right:"25px"});
@@ -708,9 +703,9 @@
 			$(".full-screen").addClass("full-map");
 			$(this).addClass("b-back-full").removeClass("b-forward-full");
 		}else{
-			parentF.css({overflowY:"auto"});
-			$(".pos-footer").show();
-			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2+140});
+			parentD.find(".i-hei").attr("scrolling","auto");
+			parentD.find(".pos-footer").show();
+			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2-146});
 			$("#allmap,.b-map").css({width:initwid,height:inithei,margin:0});
 			$(".j-full-div").css({left:"0"});
 			$(".b-f-screen,.pos-adr").css({right:"15px"});

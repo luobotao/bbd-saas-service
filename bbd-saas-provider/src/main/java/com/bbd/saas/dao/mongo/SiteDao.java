@@ -55,14 +55,16 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     /**
      * 带查询条件去检索订单
      * @param pageModel
-     * @param status
+     * @param statusList
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, SiteStatus status) {
+    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId,  List<SiteStatus> statusList) {
         SiteQueryVO queryVO = new SiteQueryVO();
         queryVO.companyId = companyId;
-        queryVO.status = status;
         Query<Site> query = getQuerys(queryVO);
+        if(statusList != null){
+            query.filter("status in", statusList);
+        }
         query.order("areaCode");
         return queryPageData(pageModel, query);
     }
@@ -137,7 +139,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     /**
      * 根据公司ID、地区获取该公司下的指定状态的站点集合
      * @param companyId 公司Id
-     * @param pro 省
+     * @param prov 省
      * @param city 市
      * @param area 区
      * @param status 站点状态
