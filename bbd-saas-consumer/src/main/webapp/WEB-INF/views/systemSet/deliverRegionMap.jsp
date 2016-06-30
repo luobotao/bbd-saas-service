@@ -426,10 +426,15 @@
 					"siteId":siteId
 				},
 				success: function(data){
-					if(data!=null && data.code == 0){
+					/*if(data!=null && data.code == 0){
 						ioutDiv("提交成功");
 					}else{
 						ioutDiv("抱歉，电子围栏暂不支持交叉绘制");
+					}*/
+					if(data != null){
+						ioutDiv(data.msg);
+					}else {
+						ioutDiv("操作失败");
 					}
 				},
 				error: function(){
