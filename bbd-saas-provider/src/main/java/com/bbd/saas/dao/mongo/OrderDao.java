@@ -540,11 +540,13 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
 
+
     /**
      * 揽件入库的根据条件查询
-     *
      * @param pageModel
-     * @param orderQueryVO
+     * @param tradeNoList 商户端编号集合
+     * @param orderSetStatusList 状态集合
+     * @param orderQueryVO 封装的查询条件
      * @return
      */
     public PageModel<Order> findPageOrdersForHoldToStore(PageModel<Order> pageModel, List<String> tradeNoList ,List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO ) {
@@ -562,27 +564,33 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return pageModel;
     }
 
-
+    /**
+     * 揽件入库 封装查询条件
+     * @param tradeNoList  商户端编号
+     * @param orderSetStatusList 状态
+     * @param orderQueryVO  订单的查询条件
+     * @return
+     */
     private Query<Order> getQueryForHoldToStore(List<String> tradeNoList ,List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO ) {
         Query<Order> query = createQuery();
 
         if (orderQueryVO != null) {
-            //站点查询
+            // //揽件入库  站点查询
             if (StringUtils.isNotBlank(orderQueryVO.areaCode)) {
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
-            //揽件员
+            //揽件入库 根据揽件员的id 查询出的tradeNo 查询
             if (tradeNoList != null && tradeNoList.size() > 0) {
                 query.filter("tradeNo in", tradeNoList);
             }
 
-            //到站时间，只有已到站的订单才会有到站时间
-            if (StringUtils.isNotBlank(orderQueryVO.between)) {//到站时间
+            //揽件入库 的时间查询
+            if (StringUtils.isNotBlank(orderQueryVO.between)) {
                 DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                 query.filter("dateArrived >=", dateBetween.getStart());
                 query.filter("dateArrived <=", dateBetween.getEnd());
             }
-
+          //揽件入库 的状态查询
             if (orderSetStatusList != null && orderSetStatusList.size() > 0) {
                 query.filter("orderSetStatus in", orderSetStatusList);
             }
@@ -591,7 +599,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return query;
     }
 
-
+    /** 揽件入库操作
+     * 根据站点编码，日期，状态查询 出今日成功接单数，今日未入库，今日已入库，历史未入订单数
+     * @param areaCode 站点编码
+     * @return
+     */
     public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode) {
         OrderHoldToStoreNumVO orderHoldToStoreNumVO = new OrderHoldToStoreNumVO();
         Calendar cal = Calendar.getInstance();
@@ -601,13 +613,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         String between = start + " - " + end;
         DateBetween dateBetween = new DateBetween(between);
 
+        //今日成功接单数
         Query<Order> query = createQuery().filter("areaCode", areaCode);
         query.filter("dateArrived >=", dateBetween.getStart());
         query.filter("dateArrived <=", dateBetween.getEnd());
         query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
-        orderHoldToStoreNumVO.setSuccessOrderNum(count(query));//今日成功接单数
+        orderHoldToStoreNumVO.setSuccessOrderNum(count(query));
 
-
+        //今日未入库订单数
         Query<Order> queryTodayNoToStore = createQuery().filter("areaCode", areaCode);
         queryTodayNoToStore.filter("dateArrived >=", dateBetween.getStart());
         queryTodayNoToStore.filter("dateArrived <=", dateBetween.getEnd());
@@ -620,17 +633,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDRIVERTOSEND);
         queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.DRIVERSENDING);
         queryTodayNoToStore.filter("orderSetStatus <>", OrderSetStatus.ARRIVED);
-        orderHoldToStoreNumVO.setTodayNoToStoreNum(count(queryTodayNoToStore));//今日未入库订单数
+        orderHoldToStoreNumVO.setTodayNoToStoreNum(count(queryTodayNoToStore));
 
+        // 今日已入库订单数
         Query<Order> queryTodayToStore = createQuery().filter("areaCode", areaCode);
         queryTodayToStore.filter("dateArrived >=", dateBetween.getStart());
         queryTodayToStore.filter("dateArrived <=", dateBetween.getEnd());
         queryTodayToStore.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
         queryTodayToStore.filter("orderSetStatus <>", OrderSetStatus.SCANED);
         queryTodayToStore.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
-        orderHoldToStoreNumVO.setTodayToStoreNum(count(queryTodayToStore));//// 今日已入库订单数
+        orderHoldToStoreNumVO.setTodayToStoreNum(count(queryTodayToStore));
 
-
+         // 历史未入库订单数
         Query<Order> historyToStore = createQuery().filter("areaCode", areaCode);
         historyToStore.filter("dateArrived <=", dateBetween.getEnd());
         historyToStore.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
@@ -642,7 +656,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         historyToStore.filter("orderSetStatus <>", OrderSetStatus.WAITDRIVERTOSEND);
         historyToStore.filter("orderSetStatus <>", OrderSetStatus.DRIVERSENDING);
         historyToStore.filter("orderSetStatus <>", OrderSetStatus.ARRIVED);
-        orderHoldToStoreNumVO.setHistoryToStoreNum(count(historyToStore));// 历史未入库订单数
+        orderHoldToStoreNumVO.setHistoryToStoreNum(count(historyToStore));
 
         return orderHoldToStoreNumVO;
     }

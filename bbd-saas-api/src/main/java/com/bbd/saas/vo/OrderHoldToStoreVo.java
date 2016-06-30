@@ -4,7 +4,7 @@ import com.bbd.saas.enums.OrderSetStatus;
 
 import java.io.Serializable;
 
-/**
+/**  揽件入库 封装一条揽件入库信息的Vo
  * Created by huozhijie on 2016/6/25.
  */
 public class OrderHoldToStoreVo implements Serializable {

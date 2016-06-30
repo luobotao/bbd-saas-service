@@ -2,7 +2,8 @@ package com.bbd.saas.vo;
 
 import java.io.Serializable;
 
-/**
+/**揽件入库
+ * 封装今日成功接单数，今日未入库，今日已入库，历史未入订单数 的Vo
  * Created by huozhijie on 2016/6/28.
  */
 public class OrderHoldToStoreNumVO implements Serializable {
