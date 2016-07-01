@@ -427,7 +427,7 @@ public class TradeServiceImpl implements TradeService {
      */
     private List<PostmanUser> getPostmanUserList(Trade trade) {
         String poststatus = "1";    //开启接单的用户
-        long meter = trade.getPushRange();
+        long meter = trade.getPushRange()*1000;
         double x = Numbers.parseDouble(trade.getSender().getLat(),0.0);
         double y = Numbers.parseDouble(trade.getSender().getLon(),0.0);
         MathContext mc = new MathContext(2, RoundingMode.HALF_DOWN);
@@ -439,7 +439,7 @@ public class TradeServiceImpl implements TradeService {
 
         //postrole 0 代表小件员 4 代表站长 poststatus 1 代表司机处于接单状态
         String sql="SELECT u.*  FROM postmanuser"
-                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND (u.postrole = '0' or u.postrole='4') AND u.poststatus="+poststatus+""
+                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND (u.postrole = '0' or u.postrole='4' or u.postrole='99') AND u.poststatus="+poststatus+""
                 +"  AND SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) < "+i
                 + " order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc";
 
