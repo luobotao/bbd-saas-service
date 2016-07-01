@@ -110,43 +110,7 @@ public class MailStatisticController {
 					pageModel.setTotalCount(1);
 					pageModel.setDatas(dataList);
 				}else {//查询本公司下的所有站点 （全部）
-					//查询登录用户的公司下的所有站点
-					List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-					statusList.add(SiteStatus.APPROVE);
-					statusList.add(SiteStatus.INVALID);
-					//查询登录用户的公司下的所有站点
-					PageModel<Site> sitePageModel = new PageModel<Site>();
-					sitePageModel.setPageNo(pageIndex);
-					sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), statusList);
-					pageModel.setTotalCount(sitePageModel.getTotalCount());
-					List<Site> siteList = sitePageModel.getDatas();
-					if(siteList != null && siteList.size() > 0){
-						List<String> areaCodeList = new ArrayList<String>();
-						for(Site site : siteList){
-							areaCodeList.add(site.getAreaCode());
-						}
-						Map<String, ExpressStatStation> essMap = expressStatStationService.findByAreaCodeListAndTime(areaCodeList, time);
-						List<ExpressStatStation> dataList = new ArrayList<ExpressStatStation>();
-						ExpressStatStation ess = null;
-						for(Site site : siteList){
-							ess = essMap.get(site.getAreaCode());
-							if(ess == null){
-								ess = new ExpressStatStation(site.getCompanyId(), site.getAreaCode(), site.getName(),time);
-								ess.setSitename(site.getName());
-							}
-							dataList.add(ess);
-						}
-						if((pageModel.getPageNo() + 1) == pageModel.getTotalPages()){//最后一页 -- 需要显示汇总行
-							ExpressStatStation summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
-							if(summary == null){
-								summary = new ExpressStatStation(currUser.getCompanyId(), null, null, null);
-							}
-							summary.setSitename("总计");
-							dataList.add(summary);
-						}
-						pageModel.setDatas(dataList);
-					}
-
+					pageModel = expressStatStationService.findPageByCompanyIdAndTime(pageIndex, currUser.getCompanyId(), time);
 				}
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//z站长
 				if(currUser.getSite() != null){

@@ -158,6 +158,9 @@
         <property name="expressStatStationDao">
             <ref bean="expressStatStationDao"/>
         </property>
+        <property name="siteDao">
+            <ref bean="siteDao"/>
+        </property>
     </bean>
     <!--    end mysql services   -->
 </beans>
