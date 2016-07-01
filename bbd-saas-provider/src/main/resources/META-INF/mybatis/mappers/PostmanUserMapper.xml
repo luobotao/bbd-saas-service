@@ -232,4 +232,14 @@
     <update id="updateRoleByPhone" >
         update postmanuser set postrole = #{postrole}  where  phone = #{phone}
     </update>
+
+
+    <parameterMap type="map" id="pushBbdTradeMap">
+        <parameter property="id" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="typ" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="trade" jdbcType="VARCHAR" mode="IN"/>
+    </parameterMap>
+    <update id="pushBbdTrade" parameterMap="pushBbdTradeMap" statementType="CALLABLE">
+        {call sp_postman_bbdpush_trade(?,?,?)}
+    </update>
 </mapper>

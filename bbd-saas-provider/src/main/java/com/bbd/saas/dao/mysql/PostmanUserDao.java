@@ -88,4 +88,6 @@ public interface PostmanUserDao {
     public List<Map<String, Object>> getIntegral(Map<String, Object> map);
 
     List<PostmanUser> findPostmanUsers(String sql);
+
+    void pushBbdTrade(Map<String, Object> map);
 }

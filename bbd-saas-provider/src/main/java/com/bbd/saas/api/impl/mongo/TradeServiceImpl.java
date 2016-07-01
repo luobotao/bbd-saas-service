@@ -357,7 +357,11 @@ public class TradeServiceImpl implements TradeService {
                 //进行推送操作
                 //调用存储过程，记录push指令
                 //支付后客户端推送存储  call  `sp_postman_bbdpush_trade`(p_uid INT, p_typ VARCHAR (1),p_trade VARCHAR(32))
-
+                Map<String, Object> map = new HashMap<String,Object>();
+                map.put("id",postmanUser.getId());
+                map.put("typ","1");
+                map.put("trade",trade.getTradeNo());
+                postmanUserDao.pushBbdTrade(map);
                 //将此揽件员信息记录到tradePush中
                 if(tradePush==null) {
                     tradePush = new TradePush();

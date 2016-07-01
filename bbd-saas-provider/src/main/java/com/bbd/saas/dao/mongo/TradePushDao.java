@@ -47,4 +47,5 @@ public class TradePushDao extends BaseDAO<TradePush, ObjectId> {
         query.filter("postmanId", postmanUserId);
         return findOne(query);
     }
+
 }
