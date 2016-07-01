@@ -89,6 +89,9 @@
         <property name="orderNumDao">
             <ref bean="orderNumDao"/>
         </property>
+        <property name="postmanUserDao">
+            <ref bean="postmanUserDao"/>
+        </property>
     </bean>
     <!-- Constant Service-->
     <bean id="constantService" class="com.bbd.saas.api.impl.mongo.ConstantServiceImpl">

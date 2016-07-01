@@ -1,6 +1,7 @@
 package com.bbd.saas.api.impl.mongo;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.dao.mongo.*;
+import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.Order;
@@ -33,6 +34,7 @@ public class TradeServiceImpl implements TradeService {
     private OrderDao orderDao;
     private UserDao userDao;
     private OrderNumDao orderNumDao;
+    private PostmanUserDao postmanUserDao;
 
     PropertiesLoader propertiesLoader = new PropertiesLoader("config.properties");
     private int bbdTradePushCount = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.count"),2);
@@ -78,6 +80,14 @@ public class TradeServiceImpl implements TradeService {
 
     public void setTradePushDao(TradePushDao tradePushDao) {
         this.tradePushDao = tradePushDao;
+    }
+
+    public PostmanUserDao getPostmanUserDao() {
+        return postmanUserDao;
+    }
+
+    public void setPostmanUserDao(PostmanUserDao postmanUserDao) {
+        this.postmanUserDao = postmanUserDao;
     }
 
     /**
@@ -346,6 +356,7 @@ public class TradeServiceImpl implements TradeService {
             if(tradePush==null||(tradePush!=null&&tradePush.getFlag()==0)){
                 //进行推送操作
                 //调用存储过程，记录push指令
+                //支付后客户端推送存储  call  `sp_postman_bbdpush_trade`(p_uid INT, p_typ VARCHAR (1),p_trade VARCHAR(32))
 
                 //将此揽件员信息记录到tradePush中
                 if(tradePush==null) {
@@ -404,14 +415,14 @@ public class TradeServiceImpl implements TradeService {
         double maxlong=y+i;
 
         //postrole 0 代表小件员 4 代表站长 poststatus 1 代表司机处于接单状态
-        String sql="SELECT u.* ,SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) AS d FROM postmanuser"
+        String sql="SELECT u.*  FROM postmanuser"
                 + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND (u.postrole = '0' or u.postrole='4') AND u.poststatus="+poststatus+""
-                +"  AND SQRT(POWER("+x+" - lat, 2) + POWER("+y+" - lon, 2)) < "+i
-                + " order by d asc";
+                +"  AND SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) < "+i
+                + " order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc";
 
 
         List<PostmanUser> pulist=new ArrayList<PostmanUser>();
-
+        pulist = postmanUserDao.findPostmanUsers(sql);
         return pulist;
     }
 

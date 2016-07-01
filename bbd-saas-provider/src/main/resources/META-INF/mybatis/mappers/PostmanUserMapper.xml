@@ -225,4 +225,9 @@
     <select id="getIntegral" statementType="CALLABLE" parameterType="Map" resultMap="statResultMap">
         {call sp_postman_station_score(#{areaCode,mode=IN,jdbcType=VARCHAR},#{phone,mode=IN,jdbcType=VARCHAR})}
     </select>
+
+    <select id="findPostmanUsers" parameterType="String" resultMap="baseResultMap">
+        ${value}
+    </select>
+
 </mapper>

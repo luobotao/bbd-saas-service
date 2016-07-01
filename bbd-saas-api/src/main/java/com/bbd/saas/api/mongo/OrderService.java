@@ -4,6 +4,7 @@ import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
@@ -163,4 +164,8 @@ public interface OrderService {
 	public  PageModel<OrderHoldToStoreVo>  	findPageOrdersForHoldToStore(Integer pageIndex,List<String> tradeNoList, OrderQueryVO orderQueryVO);
 
 	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode);
+
+	public List<String> reduceMailNum(String quantity);
+
+	public Site getSiteListWithAddress(String address);
 }

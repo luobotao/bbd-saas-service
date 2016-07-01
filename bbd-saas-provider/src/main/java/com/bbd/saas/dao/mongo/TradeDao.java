@@ -149,9 +149,9 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         Query<Trade> query = createQuery();
         //待接单
         query.filter("tradeStatus", TradeStatus.WAITCATCH);
-        query.filter("pushCount <=", bbdTradePushCount);
+        /*query.filter("pushCount <=", bbdTradePushCount);
         query.or(query.criteria("postmanId").doesNotExist(),
-                query.criteria("postmanId").containsIgnoreCase(""));
+                query.criteria("postmanId").containsIgnoreCase(""));*/
         return find(query).asList();
     }
     /**

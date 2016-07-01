@@ -1,6 +1,7 @@
 package com.bbd.saas.api.impl.mongo;
 
 
+import com.bbd.poi.api.SitePoiApi;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.TradeService;
@@ -50,6 +51,8 @@ public class OrderServiceImpl implements OrderService {
 	private TradeService tradeService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	SitePoiApi sitePoiApi;
 
 
     public UserDao getUserDao() {
@@ -325,9 +328,6 @@ public class OrderServiceImpl implements OrderService {
 		return num;
 	}
 
-
-
-
 	/**
 	 * 根据相关条件查询出所有揽件入库的订单
 	 * @param  pageIndex
@@ -387,5 +387,38 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode) {
 		return orderDao.getOrderHoldToStoreNum(areaCode);
+	}
+
+	@Override
+	public List<String> reduceMailNum(String quantity) {
+		OrderNum one = orderNumDao.findOrderNum();
+		long startNum = Long.parseLong(one.num);
+		long quantityLon = Long.parseLong(quantity);
+		one.num = (startNum + quantityLon) + "";
+		orderNumDao.updateOrderNum("num",one.num);
+		List<String> mailNumList = Lists.newArrayList();
+		for (long i = 0; i < quantityLon; i++){
+			startNum = startNum+1;
+			mailNumList.add(String.valueOf(startNum));
+		}
+		return mailNumList;
+	}
+
+	@Override
+	public Site getSiteListWithAddress(String address) {
+		try {
+			List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
+			logger.info("[address]:" + address + " [search poi result] :" + areaCodeList.size() + "");
+			if (areaCodeList != null && areaCodeList.size() > 0) {
+				//通过积分获取优选区域码，暂时用第一个
+				String siteId = areaCodeList.get(0);
+				Site site = siteService.findSite(siteId);
+				return site;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		return null;
 	}
 }

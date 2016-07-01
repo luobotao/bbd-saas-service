@@ -78,4 +78,6 @@ public interface PostmanUserDao {
     public List<Map<String, Object>> selectLatAndLngByIds(@Param("ids") List<Integer> ids);
 
     public List<Map<String, Object>> getIntegral(Map<String, Object> map);
+
+    List<PostmanUser> findPostmanUsers(String sql);
 }
