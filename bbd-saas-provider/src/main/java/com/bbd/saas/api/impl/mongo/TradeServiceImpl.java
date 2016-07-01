@@ -11,7 +11,10 @@ import com.bbd.saas.mongoModels.TradePush;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.PropertiesLoader;
+import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.TradeQueryVO;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
@@ -165,6 +168,22 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public PageModel<Trade> findTradePage(Integer pageIndex, TradeQueryVO tradeQueryVO){
         //查询订单号或者运单号包含tradeQueryVO.tradeNoLike && 运单的收件人手机号、姓名、地址中包含rcvKeyword的订单
+        if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//订单或者运单的搜索
+            //针对已经打单成功的数据,此时并未更新trade表里的orderSnaps里的运单号
+            //先去order表里检索mailNum为nolIke的order,将tradeNo值取出来
+            OrderQueryVO orderQueryVO = new OrderQueryVO();
+            orderQueryVO.mailNum = tradeQueryVO.noLike;
+            List<Order> orders = orderDao.findOrders(orderQueryVO);
+            tradeQueryVO.tradeNoList = Lists.newArrayList();
+            tradeQueryVO.tradeNoList.add(tradeQueryVO.noLike);
+            for(Order order : orders){
+               String tradeNo = order.getTradeNo();
+                if(StringUtils.isNotBlank(tradeNo)){
+                    tradeQueryVO.tradeNoList.add(tradeNo);
+                }
+            }
+        }
+
         PageModel<Trade> tradePageModel = tradeDao.findTradePage(pageIndex, tradeQueryVO);
         //设置快件数量和揽件人、状态
         List<Trade> tradeList = tradePageModel.getDatas();

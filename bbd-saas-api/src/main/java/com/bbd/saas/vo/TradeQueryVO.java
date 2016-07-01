@@ -4,6 +4,7 @@ package com.bbd.saas.vo;
 import org.bson.types.ObjectId;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,5 +21,6 @@ public class TradeQueryVO implements Serializable {
 	public String dateAddEnd; //下单时间范围 -- 结束
 	public String rcvKeyword; //订单的运单中收件人手机号、姓名、地址中包含rcvKeyword的订单
 	public Set tradeNoSet;//商户订单号
+	public List<String> tradeNoList;//商户订单号的集合
 
 }
