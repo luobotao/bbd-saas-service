@@ -79,12 +79,13 @@ public interface ExpressStatStationService {
 	public ExpressStatStation findSummaryByCompanyIdAndTime(String companyId, String tim);
 
 	/**
-	 * 根据站点编号集合和时间进行查询
-	 * @param areaCodeList 站点编号集合
-	 * @param time 时间
-     * @return 统计数据集合
+	 * 根据公司Id和时间进行查询 == 根据站点进行分页
+	 * @param pageIndex
+	 * @param companyId
+	 * @param time
+     * @return
      */
-	public Map<String, ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String time);
+	public PageModel<ExpressStatStation> findPageByCompanyIdAndTime(Integer pageIndex, String companyId, String time);
 
 	/**
 	 * 根据公司Id和时间进行统计查询 -- 用于导出
