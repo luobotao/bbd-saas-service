@@ -220,12 +220,8 @@ public interface OrderService {
      */
     public long getCounByMailNumsAndOrderStatusList(BasicDBList mailNumList, List<OrderStatus> orderStatusList);
 
-<<<<<<< HEAD
-	public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode);
 
 	public List<String> reduceMailNum(String quantity);
 
-	public Site getSiteListWithAddress(String address);
-=======
->>>>>>> ae76248fcfe961a266c6bf8995cbc9ecf4d0758b
+	public Site getSiteWithAddress(String address);
 }

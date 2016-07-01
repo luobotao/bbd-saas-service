@@ -94,6 +94,30 @@ public class OrderServiceImpl implements OrderService {
         this.siteService = siteService;
     }
 
+    public SitePoiApi getSitePoiApi() {
+        return sitePoiApi;
+    }
+
+    public void setSitePoiApi(SitePoiApi sitePoiApi) {
+        this.sitePoiApi = sitePoiApi;
+    }
+
+    public TradeService getTradeService() {
+        return tradeService;
+    }
+
+    public void setTradeService(TradeService tradeService) {
+        this.tradeService = tradeService;
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
     /**
      * 带查询条件去检索订单
      *
@@ -203,7 +227,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Site getSiteListWithAddress(String address) {
+	public Site getSiteWithAddress(String address) {
 		try {
 			List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
 			logger.info("[address]:" + address + " [search poi result] :" + areaCodeList.size() + "");

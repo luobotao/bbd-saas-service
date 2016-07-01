@@ -29,9 +29,6 @@
         <property name="userDao">
             <ref bean="userDao"/>
         </property>
-        <!--<property name="sitePoiApi">
-            <ref bean="sitePoiApi"/>
-        </property>-->
         <property name="siteService">
             <ref bean="siteService"/>
         </property>

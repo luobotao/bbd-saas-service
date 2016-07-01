@@ -51,6 +51,4 @@
 
     <dubbo:service interface="com.bbd.saas.api.mysql.BalanceService" ref="balanceService" />
 
-
-
 </beans>
