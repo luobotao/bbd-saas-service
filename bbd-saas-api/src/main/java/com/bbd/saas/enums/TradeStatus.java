@@ -15,7 +15,7 @@ public enum TradeStatus {
     CANCELED(4, "已取消"),
     RETURNED(5, "已退款"),
     FINISH(6, "已完成"),
-    LASTOPER(7, "兜底");
+    LASTOPER(7, "待接单");
     private int status;
     private String message;
     private TradeStatus(int status, String message) {
