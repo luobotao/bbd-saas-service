@@ -82,8 +82,7 @@ User user = (User)request.getAttribute("user");
 		<div class="container">
 			<ul class="row">
 				<% 
-					if(user.getRole()==UserRole.SITEMASTER){
-											
+					if(user.getRole() == UserRole.SITEMASTER){
 				%>
 					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
 					<a href="<c:url value="/?typ=arrive" />">
@@ -111,7 +110,7 @@ User user = (User)request.getAttribute("user");
 						</a>
 					</li>
 					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<a href="<c:url value="/?typ=error" />">
+						<a href="<c:url value="/?typ=tostore" />">
 							<div class="b-status-card">
 								<span><img src="<c:url value="/resources/images/storage.png" />" alt="揽件入库" /></span>
 								<h3>揽件入库</h3>
@@ -142,12 +141,29 @@ User user = (User)request.getAttribute("user");
 							</div>
 						</a>
 					</li>
-				
+				<%
+					}else if(user.getRole() == UserRole.SENDMEM){
+				%>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=arrive" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/arrive.png" />" alt="包裹到站" /></span>
+								<h3>包裹到站</h3>
+							</div>
+						</a>
+
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=asign" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/asign.png" />" alt="运单分派" /></span>
+								<h3>运单分派</h3>
+							</div>
+						</a>
+					</li>
 				<% 
-					}
-					else{
-						
-				%>				
+					}else{
+				%>
 					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
 					<a href="<c:url value="/?typ=mailQuery" />">
 						<div class="b-status-card">

@@ -253,21 +253,7 @@ public class DeliverAreaController {
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
 				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE);
-				//设置地图默认的中心点
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
 				map.put("siteList", siteVOList);
-			}else{
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
 			}
 		}
 		return map;
@@ -281,7 +267,7 @@ public class DeliverAreaController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getFence", method=RequestMethod.GET)
-	public Map<String, Object> getFenceBySiteId(String siteId, final HttpServletRequest request) {
+	public Map<String, Object> getFenceBySiteId(String prov, String city, String area, String siteId, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(siteId != null && !"".equals(siteId)){//只查询一个站点
@@ -296,7 +282,6 @@ public class DeliverAreaController {
 			List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteId);
 			String eFence = dealSitePoints(sitePoints);
 			siteVO.seteFence(eFence);
-			//logger.info("siteStr======="+siteStr);
 			map.put("site", siteVO);
 		}else {//查询本公司下的所有站点 （全部）
 			String userId = UserSession.get(request);
@@ -304,31 +289,17 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE);
 				//设置电子围栏
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){
 						List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteVO.getId());
 						String efenceStr = dealSitePoints(sitePoints);
 						siteVO.seteFence(efenceStr);
-						//logger.info("siteName===" + siteVO.getName() + "    efenceStr==="+efenceStr);
 					}
 				}
-				//设置地图默认的中心点
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
 				map.put("siteList", siteVOList);
-			}else{
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				centerSite.setDeliveryArea("5000");
-				map.put("centerSite", centerSite);
+
 			}
 		}
 		return map;

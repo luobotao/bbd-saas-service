@@ -75,11 +75,17 @@ public class TradeServiceTest {
 		}
 		trade.setDateAdd(new Date());
 		trade.setDateUpd(new Date());
-		trade.setOrderSnaps(getOrderSnapList(format, trade.getTradeNo()));
+		List<OrderSnap> orderSnapList = getOrderSnapList(format, trade.getTradeNo());
+		trade.setOrderSnaps(orderSnapList);
+		trade.setSender(getSender());
+		trade.setOrdercnt(orderSnapList.size());
+		if(status == TradeStatus.GETED){
+			trade.setPostmanId(9318);
+		}
 		return trade;
 	}
 
-	private List<OrderSnap > getOrderSnapList(SimpleDateFormat format, String tradeNo){
+	private List<OrderSnap> getOrderSnapList(SimpleDateFormat format, String tradeNo){
 		List<OrderSnap > orderSnapList = new ArrayList<OrderSnap>();
 		//商品
 		String[] pro = new String[]{"红富士","花生","红薯","桃子","梨"};
@@ -94,7 +100,7 @@ public class TradeServiceTest {
 		//收件人详细地址
 		String[] address = new String[]{"双井","胜利东街","五路居","北京站","汽车客运站"};
 		int rand = 0;
-		for(int i = 0; i<1; i++){
+		for(int i = 0; i<8; i++){
 			OrderSnap orderSnap = new OrderSnap();
 			orderSnap.setMailNum("BBD" + tradeNo + i);
 			orderSnap.setOrderNo("O" + format.format(new Date()) + i);
@@ -134,14 +140,7 @@ public class TradeServiceTest {
 		order.setuId(new ObjectId("573c5f421e06c8275c08183c"));
 		order.setOrderNo(orderSnap.getOrderNo());
 		order.setMailNum(orderSnap.getMailNum());
-		Sender sender = new Sender();
-		sender.setName("安迪");
-		sender.setPhone("13255555555");
-		sender.setProvince("北京");
-		sender.setCity("北京市");
-		sender.setArea("朝阳区");
-		sender.setAddress("欢乐颂小区");
-		order.setSender(sender);
+		order.setSender(getSender());
 		order.setReciever(orderSnap.getReciever());
 		order.setSrc(orderSnap.getSrc());
 		order.setGoods(orderSnap.getGoods());
@@ -151,6 +150,18 @@ public class TradeServiceTest {
 		order.setDateAdd(orderSnap.getDateAdd());
 		order.setDateUpd(orderSnap.getDateUpd());
 		orderService.save(order);
+	}
+	private Sender getSender(){
+		Sender sender = new Sender();
+		sender.setName("安迪");
+		sender.setPhone("13255555555");
+		sender.setProvince("北京");
+		sender.setCity("北京市");
+		sender.setArea("朝阳区");
+		sender.setAddress("欢乐颂小区");
+		sender.setLat("39.26358");
+		sender.setLon("116.8954");
+		return sender;
 	}
 
 	@Test

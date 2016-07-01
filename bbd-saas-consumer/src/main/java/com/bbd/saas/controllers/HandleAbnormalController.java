@@ -9,6 +9,7 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.ExpressCompany;
+import com.bbd.saas.models.PostDelivery;
 import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
@@ -201,7 +202,7 @@ public class HandleAbnormalController {
                 Key<Order> r = orderService.save(order);
                 if (r != null) {
                     //更新mysql
-                    postDeliveryService.updatePostAndStatusAndCompany(mailNum, courier.getPostmanuserId(), courier.getStaffid(), "1", null);
+                    saveOneOrUpdatePost(order,  courier);
                     map.put("operFlag", 1);//1:分派成功
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
@@ -215,6 +216,65 @@ public class HandleAbnormalController {
         return map;
     }
 
+    /**
+     * Description: 运单号不存在，则添加一条记录；存在，则更新派件员postManId和staffId
+     * @param order
+     * @param user
+     * @author: liyanlei
+     * 2016年4月21日上午10:37:30
+     */
+    public  void saveOneOrUpdatePost(Order order, User user){
+        int row = postDeliveryService.findCountByMailNum(order.getMailNum());
+        if(row == 0){ //保存--插入mysql数据库
+            PostDelivery postDelivery = new PostDelivery();
+            postDelivery.setCompany_code(user.getSite().getCompanycode());
+            postDelivery.setDateNew(new Date());
+            postDelivery.setDateUpd(new Date());
+            postDelivery.setMail_num(order.getMailNum());
+            postDelivery.setOut_trade_no(order.getOrderNo());
+            postDelivery.setPostman_id(user.getPostmanuserId());
+            postDelivery.setReceiver_address(order.getReciever().getAddress());
+            postDelivery.setReceiver_city(order.getReciever().getCity());
+            postDelivery.setReceiver_company_name("");
+            postDelivery.setReceiver_district("");
+            postDelivery.setReceiver_name(order.getReciever().getName());
+            postDelivery.setReceiver_phone(order.getReciever().getPhone());
+            postDelivery.setReceiver_province(order.getReciever().getProvince());
+            postDelivery.setSender_company_name(order.getSrc().getMessage());
+            Sender sender = order.getSender();
+            if(sender!=null){
+                postDelivery.setSender_address(order.getSender().getAddress());
+                postDelivery.setSender_city(order.getSender().getCity());
+                postDelivery.setSender_name(order.getSender().getName());
+                postDelivery.setSender_phone(order.getSender().getPhone());
+                postDelivery.setSender_province(order.getSender().getProvince());
+            }else{
+                postDelivery.setSender_address("");
+                postDelivery.setSender_city("");
+                postDelivery.setSender_name("");
+                postDelivery.setSender_phone("");
+                postDelivery.setSender_province("");
+            }
+
+            postDelivery.setStaffid(user.getStaffid());
+            postDelivery.setGoods_fee(0);
+            postDelivery.setGoods_number(order.getGoods()==null?0:order.getGoods().size());
+            postDelivery.setPay_status("1");
+            postDelivery.setPay_mode("4");
+            postDelivery.setFlg("1");
+            postDelivery.setSta("1");
+            postDelivery.setTyp("4");
+            postDelivery.setNeed_pay("0");
+            postDelivery.setIslooked("0");
+            postDelivery.setIscommont("0");
+            postDeliveryService.insert(postDelivery);
+            logger.info("运单分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());
+        }else{//已保存过了，更新快递员信息
+            postDeliveryService.updatePostAndStatusAndCompany(order.getMailNum(), user.getPostmanuserId(), user.getStaffid(), "1", null);
+            logger.info("运单重新分派成功，已更新到mysql的bbt数据库的postdelivery表，mailNum==="+order.getMailNum()+" staffId=="+user.getStaffid()+" postManId=="+user.getPostmanuserId());
+        }
+
+    }
     /**
      * Description: 查询列表数据--刷新列表
      *
@@ -241,8 +301,11 @@ public class HandleAbnormalController {
             for (Order order : dataList) {
                 courier = userService.findOne(order.getUserId());
                 UserVO userVO = new UserVO();
-                userVO.setLoginName(courier.getLoginName());
-                userVO.setRealName(courier.getRealName());
+                if(courier!=null){
+                    userVO.setLoginName(courier.getLoginName());
+                    userVO.setRealName(courier.getRealName());
+                }
+
                 order.setUserVO(userVO);
             }
         }
@@ -309,13 +372,13 @@ public class HandleAbnormalController {
                 remark.append(site.getArea());
                 remark.append(site.getAddress());
                 order.setAreaRemark(remark.toString());//站点的具体地址
-                order.setOrderStatus(null);//状态--为空
+                order.setOrderStatus(OrderStatus.NOTARR);//状态--为未到站
                 order.setUserId("");//未分派
                 order.setDateUpd(new Date());//更新时间
                 //更新物流信息
                 //订单已由【A站点】出库，正在转送到【B站点】进行配送
                 String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
-                addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
+                OrderCommon.addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
                 //更新预计到站时间
                 order.setDateMayArrive(Dates.addDays(new Date(), 1));
                 order.setDateArrived(null);
@@ -345,39 +408,7 @@ public class HandleAbnormalController {
 
     }
 
-    /**
-     * 增加订单物流信息
-     * @param expressStatus 物流状态
-     * @param order 订单
-     * @param user 当前用户
-     * @param remark 物流信息
-     */
-    private void addOrderExpress(ExpressStatus expressStatus,Order order, User user, String remark){
-        //更新物流状态
-        order.setExpressStatus(expressStatus);
-        //更新物流信息
-        List<Express> expressList = order.getExpresses();
-        if(expressList == null){
-            expressList = new ArrayList<Express>();
-        }
-        Express express = new Express();
-        express.setDateAdd(new Date());
-        express.setRemark(remark);
-        express.setLat(user.getSite().getLat());
-        express.setLon(user.getSite().getLng());
-        boolean expressIsNotAdd = true;//防止多次添加
-        //检查是否添加过了
-        for (Express express1 : expressList) {
-            if (express.getRemark().equals(express1.getRemark())) {
-                expressIsNotAdd = false;
-                break;
-            }
-        }
-        if (expressIsNotAdd) {//防止多次添加
-            expressList.add(express);
-            order.setExpresses(expressList);
-        }
-    }
+
     /**************************转其他站点***************结束***********************************/
     /**************************申请退货***************开始***********************************/
 
@@ -438,7 +469,7 @@ public class HandleAbnormalController {
                         expRemark.append(rtnRemark);
                     }
                 }
-                addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
+                OrderCommon.addOrderExpress(ExpressStatus.APPLY_RETURN, order, currUser, expRemark.toString());
                 //更新运单
                 Key<Order> r = orderService.save(order);
                 if(r != null){
@@ -588,7 +619,7 @@ public class HandleAbnormalController {
                 order.setOtherExprees(otherExpressList);
                 order.setDateUpd(new Date());
                 //更新expresses字段
-                addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
+                OrderCommon.addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
             }
         }
         return order;

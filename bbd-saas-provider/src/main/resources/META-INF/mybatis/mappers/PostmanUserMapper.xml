@@ -229,5 +229,7 @@
     <select id="findPostmanUsers" parameterType="String" resultMap="baseResultMap">
         ${value}
     </select>
-
+    <update id="updateRoleByPhone" >
+        update postmanuser set postrole = #{postrole}  where  phone = #{phone}
+    </update>
 </mapper>

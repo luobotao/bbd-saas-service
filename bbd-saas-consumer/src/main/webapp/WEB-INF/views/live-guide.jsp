@@ -327,6 +327,7 @@
 					jsonStr = jsonStr + ";";
 				}
 			})
+			console.log(jsonStr);
 			if ("" != jsonStr) {
 				var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
 				var siteId =  $("#siteId").val();
@@ -339,11 +340,18 @@
 						"siteId":siteId
 					},
 					success: function(data){
-						if(data == "success"){
-							outDiv("提交成功");
+
+						/*if(data.code == 0){
+							outDiv(data.msg);
 						}else{
 							console.log("error:"+data);
+						}*/
+						if(data != null){
+							outDiv(data.msg);
+						}else {
+							outDiv("操作失败");
 						}
+
 					},
 					error: function(){
 						window.location.href="${ctx}/login";
