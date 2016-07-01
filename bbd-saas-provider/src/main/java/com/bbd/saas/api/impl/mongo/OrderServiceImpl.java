@@ -328,10 +328,7 @@ public class OrderServiceImpl implements OrderService {
                 Reciever reciever = order.getReciever();
                 String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
                 address = StringUtil.filterString(address);
-                //List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
-                List<String> areaCodeList = null;
-                logger.info(address);
-                logger.info(areaCodeList.size() + "");
+                List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
                 if (areaCodeList != null && areaCodeList.size() > 0) {
                     //通过积分获取优选区域码，暂时用第一个
                     String siteId = areaCodeList.get(0);
