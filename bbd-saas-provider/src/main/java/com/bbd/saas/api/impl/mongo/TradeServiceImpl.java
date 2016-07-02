@@ -387,11 +387,11 @@ public class TradeServiceImpl implements TradeService {
                     tradePush.setTradeNo(trade.getTradeNo());
                     tradePush.setPostmanId(postmanUser.getId());
                     tradePush.setTime(0);
-                    tradePush.setFlag(1);
                     tradePush.setDateAdd(new Date());
                 }else{
                     tradePush.setTime(tradePush.getTime()+1);
                 }
+                tradePush.setFlag(1);
                 tradePush.setDateUpd(new Date());
                 tradePushDao.save(tradePush);
                 //如果推送成功，flag = 2;推送不成功，则flag一直为1

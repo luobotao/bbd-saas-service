@@ -150,6 +150,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Override
+    public Order findOne(String id) {
+        return orderDao.get(new ObjectId(id));
+    }
+
     /**
      * Description: 根据运单号查询订单信息
      *
