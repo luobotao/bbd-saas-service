@@ -166,11 +166,21 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
     /**
      * 根据embraceId查询出Trade
      * @param embraceId
+     * @param type 1历史未入库
      * @return
      */
-    public List<Trade> findTradesByEmbraceId(String embraceId) {
+    public List<Trade> findTradesByEmbraceId(ObjectId embraceId,String type) {
         Query<Trade> query = createQuery();
         query.filter("embraceId", embraceId);
+        if(StringUtils.isBlank(type)||"1".equals(type)||"-1".equals(type)){//历史未入库
+
+        }else{
+            Date start =  Dates.getBeginOfDay(new Date());
+            Date end =  Dates.getEndOfDay(new Date());
+            //今日订单
+            query.filter("dateUpd >=",start);
+            query.filter("dateUpd <=",end);
+        }
         return find(query).asList();
     }
 }
