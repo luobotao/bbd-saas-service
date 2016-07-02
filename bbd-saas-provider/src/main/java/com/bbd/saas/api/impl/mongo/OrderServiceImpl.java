@@ -348,6 +348,10 @@ public class OrderServiceImpl implements OrderService {
                         order.setAreaRemark("no match areacode");
                         logger.info("订单:" + order.getOrderNo() + "，匹配的站点区域码失败");
                     }
+                }else {
+                    order.setAreaCode("9999-999");
+                    order.setAreaRemark("no match areacode");
+                    logger.info("订单:" + order.getOrderNo() + "，匹配的站点区域码失败");
                 }
             } catch (Exception e) {
                 order.setAreaCode("9999-999");

@@ -344,10 +344,10 @@ public class TradeServiceImpl implements TradeService {
                     }
                     doJobWithPushTrade(trade);
                 }
+                logger.info("一波订单推送揽件员完成");
             }else{
                 logger.info("暂无订单需要推送给揽件员");
             }
-            logger.info("一波订单推送揽件员完成");
         } catch (Exception e) {
             logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
         }
