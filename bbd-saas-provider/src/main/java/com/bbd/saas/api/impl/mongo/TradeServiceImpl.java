@@ -321,8 +321,8 @@ public class TradeServiceImpl implements TradeService {
         return tradeDao.findTradeListByPushJob(bbdTradePushCount);
     }
     @Override
-    public List<Trade> findTradesByEmbraceId(String embraceId){
-        return tradeDao.findTradesByEmbraceId(embraceId);
+    public List<Trade> findTradesByEmbraceId(ObjectId embraceId,String type){
+        return tradeDao.findTradesByEmbraceId(embraceId,type);
     }
 
     @Override

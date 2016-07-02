@@ -265,27 +265,24 @@
 <!-- E content -->
 </body>
 <script type="text/javascript">
-
+    var type="-1";
     //显示分页条
     var pageStr = paginNav(<%=orderHoldPageModels.getPageNo()%>, <%=orderHoldPageModels.getTotalPages()%>, <%=orderHoldPageModels.getTotalCount()%>);
     $("#pagin").html(pageStr);
 
 
     //加载带有查询条件的指定页的数据
-    function gotoPage(pageIndex, orderSetStatusVal) {
+    function gotoPage(pageIndex) {
         var flag = false;
         var embraceId = $("#embrace option:selected").val();
         var orderSetStatus = $('#orderSetStatus option:selected').val();
-        if (orderSetStatusVal != null) {
-            orderSetStatus = orderSetStatusVal;
-        }
-
         $.ajax({
             type: "GET",  //提交方式
             url: "<c:url value="/holdToStoreController/getList" />",//路径
             data: {
                 "pageIndex": pageIndex,
                 "orderSetStatus": orderSetStatus,
+                "type": type,
                 "embraceId": embraceId
             },//数据，这里使用的是Json格式进行传输
             success: function (dataObject) {//返回数据根据结果进行相应的处理
@@ -369,42 +366,35 @@
 
     //查询按钮事件
     function searchOrder() {
-        var statusId = $("#status").val();
+        type="-1";
         var embraceId = $("#embraceId").val();
         gotoPage(0);
     }
     //历史未入库
     function historyNoToStore() {
-        var orderSetStatusVal = "<%=OrderSetStatus.SCANED.getStatus()%>" + "," + "<%=OrderSetStatus.WAITTOIN.getStatus()%>";
-        gotoPage(0, orderSetStatusVal);
+        type = "1";
+        gotoPage(0);
         $('#orderSetStatus').val("-1");
 
     }
     //今日成功接单数
     function todaySuccessOrder() {
-        var orderSetStatusVal = "<%=OrderSetStatus.SCANED.getStatus()%>" + "," + "<%=OrderSetStatus.WAITTOIN.getStatus()%>"
-                + "," + "<%=OrderSetStatus.WAITSET.getStatus()%>" + "," + "<%=OrderSetStatus.WAITDRIVERGETED.getStatus()%>"
-                + "," + "<%=OrderSetStatus.DRIVERGETED.getStatus()%>" + "," + "<%=OrderSetStatus.ARRIVEDISPATCH.getStatus()%>"
-                + "," + "<%=OrderSetStatus.WAITDISPATCHSET.getStatus()%>" + "," + "<%=OrderSetStatus.WAITDRIVERTOSEND.getStatus()%>"
-                + "," + "<%=OrderSetStatus.DRIVERSENDING.getStatus()%>" + "," + "<%=OrderSetStatus.ARRIVED.getStatus()%>";
-        gotoPage(0, orderSetStatusVal);
+        type = "0";
+        gotoPage(0);
         $('#orderSetStatus').val("-1");
 
     }
     //今日已入库
     function todayToStore() {
-        var orderSetStatusVal = "<%=OrderSetStatus.WAITSET.getStatus()%>" + "," + "<%=OrderSetStatus.WAITDRIVERGETED.getStatus()%>"
-                + "," + "<%=OrderSetStatus.DRIVERGETED.getStatus()%>" + "," + "<%=OrderSetStatus.ARRIVEDISPATCH.getStatus()%>"
-                + "," + "<%=OrderSetStatus.WAITDISPATCHSET.getStatus()%>" + "," + "<%=OrderSetStatus.WAITDRIVERTOSEND.getStatus()%>"
-                + "," + "<%=OrderSetStatus.DRIVERSENDING.getStatus()%>" + "," + "<%=OrderSetStatus.ARRIVED.getStatus()%>";
-        gotoPage(0, orderSetStatusVal);
+        type = "2";
+        gotoPage(0);
         $('#orderSetStatus').val("-1");
 
     }
     //今日未入库
     function todayNoToStore() {
-        var orderSetStatusVal = "<%=OrderSetStatus.WAITTOIN.getStatus()%>" + "," + "<%=OrderSetStatus.SCANED.getStatus()%>";
-        gotoPage(0, orderSetStatusVal);
+        type = "3";
+        gotoPage(0);
         $('#orderSetStatus').val("-1");
 
     }

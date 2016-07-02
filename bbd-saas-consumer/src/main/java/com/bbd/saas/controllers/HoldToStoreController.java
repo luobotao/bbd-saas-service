@@ -16,6 +16,7 @@ import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,25 @@ public class HoldToStoreController {
     public static final Logger logger = LoggerFactory.getLogger(HoldToStoreController.class);
 
     /**
+     * 根据用户获取该用户下的所有tradeNo
+     * @param user
+     * @param type 1历史未入库
+     * @return
+     */
+    private List<String> getTradeNoListByUser(User user,String type){
+        //获取站长下的所有揽件员
+        List<User> userList = userService.findUsersBySite(user.getSite(), null, UserStatus.VALID);
+        //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
+        List<String> tradeNoList = Lists.newArrayList();
+        for(User userTemp : userList){
+            List<Trade> tradeList = tradeService.findTradesByEmbraceId(userTemp.getId(),type);
+            for (Trade trade : tradeList) {
+                tradeNoList.add(trade.getTradeNo());
+            }
+        }
+        return tradeNoList;
+    }
+    /**
      * 跳转到揽件入库页面
      *
      * @param pageIndex //开始页
@@ -77,10 +97,11 @@ public class HoldToStoreController {
         //当前登录的用户信息
         User user = adminService.get(UserSession.get(request));
         if (user != null) {
-            //获取当前登录人的站点编码
-            String areaCode = user.getSite().getAreaCode();
+            //获取站长下的所有揽件员
+            List<User> userList = userService.findUsersBySite(user.getSite(), null, UserStatus.VALID);
+            List<String> tradeNoList = getTradeNoListByUser(user,null);
             //查询 今日成功揽件数量，今日入库，未入库，历史未入库数量
-            OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(areaCode);
+            OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(tradeNoList);
             long historyToStoreNum = orderHoldToStoreNum.getHistoryToStoreNum();
             long todayNoToStoreNum = orderHoldToStoreNum.getTodayNoToStoreNum();
             long successOrderNum = orderHoldToStoreNum.getSuccessOrderNum();
@@ -91,13 +112,9 @@ public class HoldToStoreController {
             model.addAttribute("successOrderNum", successOrderNum);
             model.addAttribute("todayToStoreNum", todayToStoreNum);
 
-
-            //获取站长下的所有揽件员
-            List<User> userList = userService.findUsersBySite(user.getSite(), UserRole.SENDMEM, UserStatus.VALID);
-
             try {
                 //查询数据
-                PageModel<OrderHoldToStoreVo> orderHoldPageModel = getList(pageIndex, status, embraceId, request, model);
+                PageModel<OrderHoldToStoreVo> orderHoldPageModel = getList(pageIndex, status, embraceId,null, request, model);
                 logger.info("=====揽件入库页面====" + orderHoldPageModel);
                 model.addAttribute("orderHoldPageModel", orderHoldPageModel);
                 model.addAttribute("userList", userList);
@@ -120,49 +137,48 @@ public class HoldToStoreController {
      */
     @ResponseBody
     @RequestMapping(value = "/getList", method = RequestMethod.GET)
-    public PageModel<OrderHoldToStoreVo> getList(Integer pageIndex, String orderSetStatus, String embraceId, final HttpServletRequest request, Model model) {
-
-        //今天的时间
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        String start = Dates.formatSimpleDate(cal.getTime());
-        String end = Dates.formatSimpleDate(cal.getTime());
-        String between = start + " - " + end;
+    public PageModel<OrderHoldToStoreVo> getList(Integer pageIndex, String orderSetStatus, String embraceId, String type,final HttpServletRequest request, Model model) {
 
         //前台传来状态的集合
         List<OrderSetStatus> orderSetStatusList = new ArrayList<OrderSetStatus>();
 
         //把前台传来的状态，按逗号分隔并保存到orderSetStatusList 中
-        if (!"-1".equals(orderSetStatus)) {
-            if (orderSetStatus.contains(",")) {
-                String orderSetStatusVal[] = orderSetStatus.split(",");
-                for (int i = 0; i < orderSetStatusVal.length; i++) {
-                    orderSetStatusList.add(OrderSetStatus.status2Obj(Integer.parseInt(orderSetStatusVal[i])));
-                }
-            } else {
-                orderSetStatusList.add(OrderSetStatus.status2Obj(Integer.parseInt(orderSetStatus)));
+        if ("0".equals(type)) {//今日成功接单数
+            for (OrderSetStatus orderSetStatusTemp: OrderSetStatus.values()) {
+                orderSetStatusList.add(orderSetStatusTemp);
             }
         }
-
+        if ("1".equals(type)||"3".equals(type)) {//历史未入库
+            orderSetStatusList.add(OrderSetStatus.NOEMBRACE);
+            orderSetStatusList.add(OrderSetStatus.SCANED);
+            orderSetStatusList.add(OrderSetStatus.WAITTOIN);
+        }
+        if ("2".equals(type)) {//今日已入库
+            orderSetStatusList.add(OrderSetStatus.WAITSET);
+            orderSetStatusList.add(OrderSetStatus.WAITDRIVERGETED);
+            orderSetStatusList.add(OrderSetStatus.DRIVERGETED);
+            orderSetStatusList.add(OrderSetStatus.ARRIVEDISPATCH);
+            orderSetStatusList.add(OrderSetStatus.WAITDISPATCHSET);
+            orderSetStatusList.add(OrderSetStatus.WAITDRIVERTOSEND);
+            orderSetStatusList.add(OrderSetStatus.DRIVERSENDING);
+            orderSetStatusList.add(OrderSetStatus.ARRIVED);
+        }
         //首页进行默认值设置
         pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 
-        //当前登录的用户信息
-        User user = adminService.get(UserSession.get(request));
-        String areaCode = user.getSite().getAreaCode();
-
         //设置查询条件
         OrderQueryVO orderQueryVO = new OrderQueryVO();
-        orderQueryVO.between = between;
-        orderQueryVO.areaCode = areaCode;
 
         //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
         List<String> tradeNoList = new ArrayList<>();
         if (StringUtils.isNotBlank(embraceId) && !("0".equals(embraceId))) {
-            List<Trade> tradeList = tradeService.findTradesByEmbraceId(embraceId);
+            List<Trade> tradeList = tradeService.findTradesByEmbraceId(new ObjectId(embraceId),type);
             for (Trade trade : tradeList) {
                 tradeNoList.add(trade.getTradeNo());
             }
+        }else{
+            User user = adminService.get(UserSession.get(request));
+            tradeNoList = getTradeNoListByUser(user,type);
         }
         //把以上条件依次传人到service 层中进行查询
         PageModel<OrderHoldToStoreVo> orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex, tradeNoList, orderSetStatusList, orderQueryVO);
@@ -207,7 +223,7 @@ public class HoldToStoreController {
             status = true;
             msg = "扫描成功，完成⼊库。请到App中进⾏【分拣】操作";
 
-        } else if ("0".equals(site.getType())) {//不是分拨站点
+        } else if (StringUtils.isBlank(site.getType())||"0".equals(site.getType())) {//不是分拨站点
             //入库
             doToStore(request, mailNum);
             status = true;
@@ -306,11 +322,11 @@ public class HoldToStoreController {
      * @param mailNum //运单号
      */
     private void doToStore(HttpServletRequest request, String mailNum) {
-        User user = adminService.get(UserSession.get(request));//当前登录的用户信息
         Order order = orderService.findOneByMailNum(mailNum);//根据运单号查询
         if (order != null) {
             //入库
             order.setOrderSetStatus(OrderSetStatus.WAITSET);
+            order.setDateUpd(new Date());
             orderService.save(order);
         }
     }
@@ -324,7 +340,7 @@ public class HoldToStoreController {
     @ResponseBody
     @RequestMapping(value = "/updateOrderHoldToStoreNumVO", method = RequestMethod.GET)
     public OrderHoldToStoreNumVO updateOrderHoldToStoreNumVO(HttpServletRequest request) {
-        return orderService.getOrderHoldToStoreNum(adminService.get(UserSession.get(request)).getSite().getAreaCode());
+        return orderService.getOrderHoldToStoreNum(getTradeNoListByUser(adminService.get(UserSession.get(request)),null));
     }
 
 }

@@ -92,7 +92,7 @@ public interface TradeService {
 
     List<Trade> findTradeListByPushJob();
 
-    public List<Trade> findTradesByEmbraceId(String embraceId);
+    public List<Trade> findTradesByEmbraceId(ObjectId embraceId,String type);
 
     void doJobWithAllPushTrade();
 }

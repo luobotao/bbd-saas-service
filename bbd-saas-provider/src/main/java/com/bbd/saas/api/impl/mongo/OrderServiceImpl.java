@@ -394,6 +394,15 @@ public class OrderServiceImpl implements OrderService {
         if (orderQueryVO == null) {
             return null;
         }
+        if(tradeNoList==null || tradeNoList.isEmpty()){
+            //设置分页操作
+            PageModel<OrderHoldToStoreVo> pageModel = new PageModel<OrderHoldToStoreVo>();
+            pageModel.setPageNo(0);
+            pageModel.setTotalCount(1);
+            pageModel.setDatas(Lists.newArrayList());
+            return pageModel;
+        }
+
         //根据站点查询出订单的 收货人相关信息
         PageModel<Order> pageOrders = new PageModel<Order>();
         pageOrders.setPageNo(pageIndex);
@@ -444,14 +453,13 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 揽件入库
-     * 根据站点编码获取该站点 揽件的订单数量
+     * 根据站点下的用户列表获取该站点 揽件的订单数量
      *
-     * @param areaCode //站点编码
+     * @param tradeNoList 站点下的所有用户的tradeNo
      * @return
      */
-    @Override
-    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode) {
-        return orderDao.getOrderHoldToStoreNum(areaCode);
+    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(List<String> tradeNoList){
+        return orderDao.getOrderHoldToStoreNum(tradeNoList);
     }
 
 

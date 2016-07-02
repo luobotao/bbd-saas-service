@@ -6,6 +6,7 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
@@ -195,12 +196,12 @@ public interface OrderService {
 
     /**
      * 揽件入库
-     * 根据站点编码获取该站点 揽件的订单数量
+     * 根据站点下的用户列表获取该站点 揽件的订单数量
      *
-     * @param areaCode //站点编码
+     * @param tradeNoList 站点下的所有用户的tradeNo
      * @return
      */
-    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(String areaCode);
+    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(List<String> tradeNoList);
 
     /**
      * 揽件入库
