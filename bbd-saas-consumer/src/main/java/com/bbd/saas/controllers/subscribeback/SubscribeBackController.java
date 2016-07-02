@@ -1,12 +1,18 @@
 package com.bbd.saas.controllers.subscribeback;
 
 import com.alibaba.dubbo.common.json.JSON;
+import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.BalanceService;
+import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.models.Balance;
+import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.LastResultVO;
@@ -39,7 +45,10 @@ public class SubscribeBackController {
     OrderService orderService;
     @Autowired
     BalanceService balanceService;
-
+    @Autowired
+    UserService userService;
+    @Autowired
+    ExpressExchangeService expressExchangeService;
     /**
      * @param param json格式的body，快递100 传来的的json 数据
      * @param sign  字符串，签名=MD5(param+salt)
@@ -132,7 +141,16 @@ public class SubscribeBackController {
                                         }
                                     }
                                     order.setDateUpd(new Date());
-
+                                    if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
+                                        User user = userService.findUserByLoginName("18699999999");
+                                        ExpressExchange expressExchange=new ExpressExchange();
+                                        expressExchange.setOperator(user.getRealName());
+                                        expressExchange.setStatus(ExpressExchangeStatus.waiting);
+                                        expressExchange.setPhone(user.getLoginName());
+                                        expressExchange.setOrder(order);
+                                        expressExchange.setDateAdd(new Date());
+                                        expressExchangeService.save(expressExchange);
+                                    }
                                     //保存数据
                                    orderService.save(order);
                                 }

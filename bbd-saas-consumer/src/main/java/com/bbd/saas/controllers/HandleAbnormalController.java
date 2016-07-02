@@ -8,6 +8,7 @@ import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.models.ExpressCompany;
 import com.bbd.saas.models.PostDelivery;
 import com.bbd.saas.mongoModels.*;
@@ -16,6 +17,7 @@ import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.*;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Controller
@@ -544,7 +548,7 @@ public class HandleAbnormalController {
                 toSB.append(reciever.getArea());
                 toSB.append(reciever.getAddress());
             }
-            ResultResposeDTO resposeDTO = goTo100Subscribe("", "", companyId, mailNum,
+            ResultResposeDTO resposeDTO = goTo100Subscribe( companyId,
                     fromSB.toString(), toSB.toString(), mailNumNew);
             if(resposeDTO != null){
                 String message=   resposeDTO.getMessage();
@@ -628,36 +632,24 @@ public class HandleAbnormalController {
 
     /**
      *    向快递100接口 订阅
-     * @param salt 签名用随机字符串（可选）
-     * @param resultv2  添加此字段表示开通行政区域解析功能
      * @param companyId 其他快递公司的id
-     * @param mailNum  运单号
      * @param from  运单寄出地址
      * @param to      运单签收地址
      * @param mailNumNew 新添的运单号
      * @return
      */
-    public ResultResposeDTO goTo100Subscribe(String salt, String resultv2, String companyId, String mailNum,
+    public ResultResposeDTO goTo100Subscribe(String companyId,
             String from, String to, String mailNumNew) {
 
         logger.info("向100快递 ------订阅");
         String epree100Resultv2 = "";
-        String epree100_salt = "";
-        String companyName = null;//其他快递公司的名字
         String companyCode = null;//其他快递公司的编码
 
-        if (StringUtils.isNoneBlank(resultv2)) {
-            epree100Resultv2 = resultv2;
-        }
 
-        if (StringUtils.isNoneBlank(epree100_salt)) {
-            epree100Resultv2 = salt;
-        }
         //根据快递公司的id查询出其他快递公司,为companyNmame,companyCode 赋值
         if (StringUtils.isNoneBlank(companyId)) {
             ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
             if (null != expressCompany) {
-                companyName = expressCompany.getCompanyname();
                 companyCode = expressCompany.getCompanycode();
             }
         }
@@ -722,6 +714,120 @@ public class HandleAbnormalController {
         return resultResposeDTO;
     }
 
+    /**
+     * 批量转其他快递
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/batchToOtherCompany", method = RequestMethod.POST)
+    public Map<String, Object> batchToOtherCompany(@RequestParam("file") MultipartFile file,String companyId, HttpServletRequest request) {
+        Map<String, Object> result = new HashMap<>();//反馈导入信息
+        //订单来源
+        logger.info("批量转其他快递开始："+companyId);
+        String filename = file.getOriginalFilename();
+        if (filename == null || "".equals(filename)) {
+            return null;
+        }
+        List<Map<String, Object>> dataList = Lists.newArrayList();
 
+        try {
+            //根据订单来源导入订单数据
+            InputStream input = file.getInputStream();
+            if (filename.endsWith(".xlsx")) {
+                {
+                    // 解析文件
+                    Workbook workBook = null;
+                    workBook = WorkbookFactory.create(input);
+                    Sheet sheet = workBook.getSheetAt(0);
+                    int lastRowNumber = sheet.getLastRowNum();
+                    Row rowTitle = sheet.getRow(0);
+                    if (rowTitle == null) {
+                        result.put("code", -3);
+                        result.put("msg", "文件类型和模板不匹配，请检查后再次导入");
+                    }
+                    // 从第1行开始（不算标题）
+                    for (int i = 0; i <= lastRowNumber; i++) {
+                        Row row = sheet.getRow(i);
+                        if (row == null) {
+                            break;
+                        }
+                        String orderNo = ExcelUtil.getCellValue(row.getCell(0));
+                        String mailNumNew = ExcelUtil.getCellValue(row.getCell(1));
+                        Order order = orderService.findByOrderNo(orderNo);
+                        if(order!=null && order.getReciever()!=null && order.getSender()!=null){
+                            String from = order.getSender().getProvince()+order.getSender().getCity()+order.getSender().getArea()+order.getSender().getAddress();
+                            String to = order.getReciever().getProvince()+order.getReciever().getCity()+order.getReciever().getArea()+order.getReciever().getAddress();
+                            Map<String, Object> map = new HashMap<>();
+                            ResultResposeDTO resposeDTO = goTo100Subscribe( companyId,from, to, mailNumNew);
+                            if(resposeDTO != null){
+                                String message=   resposeDTO.getMessage();
+                                if(message.contains("重复订阅")) {//失败
+                                    map.put("success", false);
+                                    map.put("msg", "重复订阅");
+                                    map.put("orderNo", orderNo);
+                                }else{//成功
+                                    //更新运单
+                                    //更新状态
+                                    order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
+                                    //更新getOtherExprees字段
+                                    List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
+                                    if (otherExpressList == null || otherExpressList.isEmpty()) {
+                                        otherExpressList = Lists.newArrayList();
+                                    }
+                                    OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
+                                    if (StringUtils.isNotBlank(mailNumNew)) {
+                                        otherExpreeVO.setMailNum(mailNumNew);
+                                    }
+                                    ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
+                                    String companyName = expressCompany.getCompanyname();
+                                    otherExpreeVO.setCompanyname(companyName);
+                                    StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发【") ;
+                                    expRemark.append(companyName);
+                                    expRemark.append("】，快递单号：");
+                                    expRemark.append(mailNumNew);
+                                    otherExpreeVO.setContext(expRemark.toString());
+                                    otherExpreeVO.setCompanycode(expressCompany.getCompanycode());
+                                    otherExpreeVO.setDateUpd(new Date());
+                                    otherExpressList.add(otherExpreeVO);
+                                    order.setOtherExprees(otherExpressList);
+                                    order.setDateUpd(new Date());
+                                    User currUser = userService.findUserByLoginName("18699999999");
+                                    //更新expresses字段
+                                    OrderCommon.addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
+                                    Key<Order> r = orderService.save(order);
+                                    if(r != null){
+                                        map.put("success", true);//成功
+                                        map.put("msg", "转运信息添加成功");//0
+                                        map.put("orderNo", orderNo);
+                                    }else{
+                                        map.put("success", false);//失败
+                                        map.put("msg", "转运信息添加失败，请稍候再试");
+                                        map.put("orderNo", orderNo);
+                                    }
+                                }
+                            }else{
+                                map.put("success", false);//0:运单号不存在
+                                map.put("msg", "转运信息添加失败，请稍候再试");//0
+                                map.put("orderNo", orderNo);
+                            }
+                            dataList.add(map);
+                        }
+                    }
+                }
+                result.put("code", 0);
+                result.put("msg", "导入成功");
+                result.put("dataList", dataList);
+            } else {
+                result.put("code", -2);
+                result.put("msg", "不支持的格式文件格式");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("code", -1);
+            result.put("msg", "系统异常，请稍后再试");
+        }
+        return result;
+    }
 
 }
