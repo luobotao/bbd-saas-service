@@ -24,6 +24,7 @@
 				<value>/bbd</value>
 				<value>/login</value>
 				<value>/subscribe/subscribeback</value>
+				<value>/handleAbnormal/batchToOtherCompany</value>
 				<value>/handleAbnormal</value>
 				<value>register</value>
 				<value>main</value>

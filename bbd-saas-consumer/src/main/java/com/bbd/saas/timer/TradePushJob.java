@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * 运单push逻辑
  */
-//@Component("tradePushJob")
+@Component("tradePushJob")
 public class TradePushJob {
     public static final Logger logger = LoggerFactory.getLogger(TradePushJob.class);
     @Autowired
@@ -35,7 +35,7 @@ public class TradePushJob {
 
 
     //每个20秒跑一次
-//    @Scheduled(cron = "*/20 * * * * ?")
+    @Scheduled(cron = "*/20 * * * * ?")
     public void doJobWithPushAllTrade() {
         logger.info("运单数据推送给揽件员");
         tradeService.doJobWithAllPushTrade();

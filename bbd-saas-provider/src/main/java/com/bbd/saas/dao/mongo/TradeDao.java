@@ -5,7 +5,6 @@ import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.PropertiesLoader;
 import com.bbd.saas.vo.TradeQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -42,10 +41,12 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
             query.filter("uId", tradeQueryVO.uId);
         }
         if(tradeQueryVO.tradeStatus != null && tradeQueryVO.tradeStatus != -1){//商户订单状态
-            if(tradeQueryVO.tradeStatus == TradeStatus.CANCELED.getStatus()){
+            if(tradeQueryVO.tradeStatus == TradeStatus.WAITCATCH.getStatus()){//待接单
+                query.or(query.criteria("tradeStatus").equal(TradeStatus.WAITCATCH),
+                        query.criteria("tradeStatus").equal(TradeStatus.LASTOPER));
+            }else if(tradeQueryVO.tradeStatus == TradeStatus.CANCELED.getStatus()){//取消
                 query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
                         query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
-
             }else {
                 query.filter("tradeStatus", TradeStatus.status2Obj(tradeQueryVO.tradeStatus));
             }
@@ -138,11 +139,16 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(uId != null){//用户ID
             query.filter("uId", uId);
         }
-        if(tradeStatus != null && tradeStatus == TradeStatus.CANCELED){//商户订单状态
-            query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
-                    query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
-        }else {
-            query.filter("tradeStatus", tradeStatus);
+        if(tradeStatus != null){//商户订单状态
+            if(tradeStatus == TradeStatus.WAITCATCH){//待接单
+                query.or(query.criteria("tradeStatus").equal(TradeStatus.WAITCATCH),
+                        query.criteria("tradeStatus").equal(TradeStatus.LASTOPER));
+            }else if(tradeStatus == TradeStatus.CANCELED){//取消
+                query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
+                        query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
+            }else{
+                query.filter("tradeStatus", tradeStatus);
+            }
         }
         return count(query);
     }
