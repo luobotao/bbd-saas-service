@@ -27,6 +27,7 @@ import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderParcelDao orderParcelDao;
     private UserDao userDao;
 
-	//@Autowired
+	@Autowired
 	private SitePoiApi sitePoiApi;
     //@Autowired
     private SiteService siteService;

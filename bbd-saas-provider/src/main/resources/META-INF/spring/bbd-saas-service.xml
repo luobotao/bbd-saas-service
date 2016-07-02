@@ -32,6 +32,12 @@
         <property name="siteService">
             <ref bean="siteService"/>
         </property>
+        <property name="tradeService">
+            <ref bean="tradeService"/>
+        </property>
+        <property name="userService">
+            <ref bean="userService"/>
+        </property>
 
     </bean>
     <!-- order Service-->
