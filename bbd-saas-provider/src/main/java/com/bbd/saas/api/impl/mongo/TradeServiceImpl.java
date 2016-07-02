@@ -343,8 +343,6 @@ public class TradeServiceImpl implements TradeService {
                         tradeDao.save(trade);
                     }
                     doJobWithPushTrade(trade);
-
-
                 }
             }else{
                 logger.info("暂无订单需要推送给揽件员");
