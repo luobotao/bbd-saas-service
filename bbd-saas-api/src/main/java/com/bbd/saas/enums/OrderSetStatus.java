@@ -8,7 +8,7 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum OrderSetStatus {
 
-    NOEMBRACE(0, "待扫描"),
+    NOEMBRACE(0, "待取件"),
     SCANED(1, "已扫描"),
     WAITTOIN(2, "已取件,待入库"),
     WAITSET(3, "已入库"),

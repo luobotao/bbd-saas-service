@@ -44,6 +44,7 @@ public class OrderParcel implements Serializable {
     //包裹类型 0：配件包裹（默认） 1：集包
     private String parceltyp;
 
+    private String srcAreaCode; //源区域码
     private Date dateAdd;
     private Date dateUpd;
 
@@ -157,5 +158,13 @@ public class OrderParcel implements Serializable {
 
     public void setParceltyp(String parceltyp) {
         this.parceltyp = parceltyp;
+    }
+
+    public String getSrcAreaCode() {
+        return srcAreaCode;
+    }
+
+    public void setSrcAreaCode(String srcAreaCode) {
+        this.srcAreaCode = srcAreaCode;
     }
 }

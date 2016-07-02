@@ -24,7 +24,7 @@ public class Trade implements Serializable {
     @Id
     private ObjectId id;
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取
-    private ObjectId embraceId;//揽件员Id
+    private ObjectId embraceId;//f揽件员Id
     private String tradeNo;//商户订单号
     private Integer amountMay;//订单金额(估计) 单位分
     private Integer amountReal;//订单金额(实际) 单位分

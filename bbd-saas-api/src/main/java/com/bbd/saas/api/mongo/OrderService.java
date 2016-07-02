@@ -20,7 +20,7 @@ import java.util.List;
  * 订单接口
  */
 public interface OrderService {
-
+    Order findOne(String id);
     /**
      * 根据站点和运单号查询单个订单信息
      *

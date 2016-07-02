@@ -27,6 +27,7 @@ import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderParcelDao orderParcelDao;
     private UserDao userDao;
 
-	//@Autowired
+	@Autowired
 	private SitePoiApi sitePoiApi;
     //@Autowired
     private SiteService siteService;
@@ -149,6 +150,11 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.findOrders(pageModel, orderQueryVO);
     }
 
+
+    @Override
+    public Order findOne(String id) {
+        return orderDao.get(new ObjectId(id));
+    }
 
     /**
      * Description: 根据运单号查询订单信息
