@@ -64,7 +64,7 @@
                     <div class="search-area">
                         <div class="row pb20">
                             <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                                <label>状态：　　　</label>
+                                <label>状态：</label>
                                 <select id="orderSetStatus" name="orderSetStatus" class="form-control form-con-new">
                                     <%=OrderSetStatus.Srcs2HTML(-1)%>
                                 </select>
