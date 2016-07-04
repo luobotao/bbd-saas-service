@@ -220,7 +220,7 @@ public class HoldToStoreController {
             //入库
             doToStore(request, mailNum);
             status = true;
-            msg = "扫描成功，完成⼊库。此订单属于您的站点，可直接进⾏【运单分派】操作";
+            msg = "扫描成功,完成入库。此订单属于您的站点,可直接进行【运单分派】操作";
         } else if ("1".equals(site.getType())) {//分拨站点
             //入库
             doToStore(request, mailNum);
