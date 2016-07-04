@@ -33,25 +33,25 @@
             <div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
                 <!-- S 状态 -->
                 <ul class="row">
-                    <li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <li class="b-board-card col-xs-12 col-sm-6 col-md-3 col-lg-3">
                         <dl class="arrive-status  c1" onclick="todaySuccessOrder();" style="cursor: pointer">
                             <dt class="b-order" id="successOrderNum">${successOrderNum}</dt>
                             <dd>今日成功接单数</dd>
                         </dl>
                     </li>
-                    <li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <li class="b-board-card col-xs-12 col-sm-6 col-md-3 col-lg-3">
                         <dl class="arrive-status c2" onclick="todayNoToStore();" style="cursor: pointer">
                             <dt class="b-order" id="todayNoToStoreNum">${todayNoToStoreNum}</dt>
                             <dd>今日未入库订单数</dd>
                         </dl>
                     </li>
-                    <li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <li class="b-board-card col-xs-12 col-sm-6 col-md-3 col-lg-3">
                         <dl class="arrive-status c3" onclick="historyNoToStore();" style="cursor: pointer">
                             <dt class="b-order" id="historyToStoreNum">${historyToStoreNum}</dt>
                             <dd>历史未入库订单数</dd>
                         </dl>
                     </li>
-                    <li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <li class="b-board-card col-xs-12 col-sm-6 col-md-3 col-lg-3">
                         <dl class="arrive-status c3" onclick="todayToStore();" style="cursor: pointer">
                             <dt class="b-order" id="todayToStoreNum">${todayToStoreNum}</dt>
                             <dd>今日已入库订单数</dd>
