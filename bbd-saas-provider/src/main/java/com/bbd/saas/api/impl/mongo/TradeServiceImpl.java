@@ -334,27 +334,20 @@ public class TradeServiceImpl implements TradeService {
                 for (Trade trade : tradeList) {
                     //设置推送范围
                     if(trade.getPushRange()==null||trade.getPushRange()<=0){
+                        //设置默认推送次数
+                        if(trade.getPushCount()==null||trade.getPushCount()<=0){
+                            trade.setPushCount(0);
+                        }
                         trade.setPushRange(bbdTradePushRangeInit);
-                    }
-                    //设置默认推送次数
-                    if(trade.getPushCount()==null||trade.getPushCount()<=0){
-                        trade.setPushCount(0);
+                        trade.setDateUpd(new Date());
+                        tradeDao.save(trade);
                     }
                     doJobWithPushTrade(trade);
-                    //获取范围的阀值和步进值
-                    //进行推送操作之后，变更推送的次数为+1
-                    if(trade.getPushRange()<=bbdTradePushRangeThreshold){
-                        trade.setPushRange(trade.getPushRange()+bbdTradePushRangeStep);
-                    }else{
-                        trade.setPushCount(trade.getPushCount()+1);
-                    }
-                    trade.setDateUpd(new Date());
-                    tradeDao.save(trade);
                 }
+                logger.info("一波订单推送揽件员完成");
             }else{
                 logger.info("暂无订单需要推送给揽件员");
             }
-            logger.info("一波订单推送揽件员完成");
         } catch (Exception e) {
             logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
         }
@@ -393,6 +386,7 @@ public class TradeServiceImpl implements TradeService {
                 }
                 tradePush.setFlag(1);
                 tradePush.setDateUpd(new Date());
+                logger.info("运单："+trade.getTradeNo()+"推送给小件员："+postmanUser.getId()+"成功");
                 tradePushDao.save(tradePush);
                 //如果推送成功，flag = 2;推送不成功，则flag一直为1
                 flag = 2;
@@ -402,21 +396,29 @@ public class TradeServiceImpl implements TradeService {
         //如果flag 为1，表明未对任何一个快递员进行推送操作 或者没有存在可以推送的快递员
         //相当于推送一轮完成，此时将pushCount+1，推送范围增加
         if(flag == 1){
-            //若pushCount == 1,则更tradePush下 tradeNo的所有flag 为0
-            if(trade.getPushCount()<bbdTradePushCount){
-                //更改tradePush下的所有tradeNo相关的flag为0
-                List<TradePush> tradePushList = tradePushDao.getAllTradePushWithTradeNo(trade.getTradeNo());
-                for (TradePush tradePush: tradePushList) {
-                    tradePush.setFlag(0);
-                    tradePush.setDateUpd(new Date());
-                    tradePushDao.save(tradePush);
-                }
+            //进行推送操作之后，变更推送的次数为+1
+            if(trade.getPushRange()<=bbdTradePushRangeThreshold){
+                trade.setPushRange(trade.getPushRange()+bbdTradePushRangeStep);
             }else{
-                //若pushCount >= 2,则对trade进行兜底处理，变更tradeStatus，不再进行推送
-                trade.setTradeStatus(TradeStatus.LASTOPER);
-                trade.setDateUpd(new Date());
-                tradeDao.save(trade);
+                trade.setPushCount(trade.getPushCount()+1);
+                //若pushCount == 1,则更tradePush下 tradeNo的所有flag 为0
+                if(trade.getPushCount()<bbdTradePushCount){
+                    trade.setPushRange(bbdTradePushRangeInit);
+                    //更改tradePush下的所有tradeNo相关的flag为0
+                    List<TradePush> tradePushList = tradePushDao.getAllTradePushWithTradeNo(trade.getTradeNo());
+                    for (TradePush tradePush: tradePushList) {
+                        tradePush.setFlag(0);
+                        tradePush.setDateUpd(new Date());
+                        tradePushDao.save(tradePush);
+                    }
+                }else{
+                    //若pushCount >= 2,则对trade进行兜底处理，变更tradeStatus，不再进行推送
+                    trade.setTradeStatus(TradeStatus.LASTOPER);
+                }
             }
+            logger.info("运单："+trade.getTradeNo()+"推送完成，推送范围："+trade.getPushRange()+",推送次数："+trade.getPushCount());
+            trade.setDateUpd(new Date());
+            tradeDao.save(trade);
         }
     }
 
