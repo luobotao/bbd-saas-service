@@ -228,11 +228,6 @@
                                             <div class="modal-footer">
                                                 <div class="row mt20">
 														<span class="col-md-6">
-															<button type="button" class="ser-btn g wp100"
-                                                                    data-dismiss="modal" onclick="cancelToSite()">取消
-                                                            </button>
-														</span>
-														<span class="col-md-6">
                                                             <button type="button"
                                                                     class="ser-btn wp100 l"
                                                                     onclick="toStore()">确认
