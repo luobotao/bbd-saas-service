@@ -44,6 +44,7 @@ public class TradeServiceImpl implements TradeService {
     private int bbdTradePushRangeInit = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.range.init"),2);
     private int bbdTradePushRangeStep = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.range.step"),1);
     private int bbdTradePushRangeThreshold = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.range.threshold"),5);
+    private int bbdTradePushPerNum = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.bbdTradePushPerNum"),20);
 
     public OrderNumDao getOrderNumDao() {
         return orderNumDao;
@@ -361,6 +362,7 @@ public class TradeServiceImpl implements TradeService {
         //获取该运单范围内的所有的揽件员信息,已根据距离排好序
         List<PostmanUser> postmanUserList = getPostmanUserList(trade);
         int flag = 1;//已推送
+        int i=0;
         //循环遍历揽件员
         for (PostmanUser postmanUser: postmanUserList) {
             //判断揽件员是否已推送，如没有则直接进行推送操作，已推送则跳过
@@ -390,7 +392,11 @@ public class TradeServiceImpl implements TradeService {
                 tradePushDao.save(tradePush);
                 //如果推送成功，flag = 2;推送不成功，则flag一直为1
                 flag = 2;
-                break;
+                i++;
+                if(i>=bbdTradePushPerNum){
+                    break;
+                }
+
             }
         }
         //如果flag 为1，表明未对任何一个快递员进行推送操作 或者没有存在可以推送的快递员
