@@ -66,7 +66,7 @@
                             <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
                                 <label>状态：</label>
                                 <select id="orderSetStatus" name="orderSetStatus" class="form-control form-con-new">
-                                    <%=OrderSetStatus.Srcs2HTML(-1)%>
+                                    <%=OrderSetStatus.Srcs2HTMLExcNOEMBRACE(-1)%>
                                 </select>
                             </div>
                             <div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
@@ -145,11 +145,6 @@
                                 <td class="orange-a"><%=OrderSetStatus.NOEMBRACE.getMessage()%>
                                 </td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.SCANED) {
-                                %>
-                                <td class="blue-d"><%=OrderSetStatus.SCANED.getMessage()%>
-                                </td>
-                                <%
                                 } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITTOIN) {
                                 %>
                                 <td class="orange"><%=OrderSetStatus.WAITTOIN.getMessage()%>
@@ -226,14 +221,14 @@
                                                 该操作会把选中的订单设置为已到站。
                                             </div>
                                             <div class="modal-footer">
-                                                <div class="row mt20">
-														<span class="col-md-6">
-                                                            <button type="button"
-                                                                    class="ser-btn wp100 l"
-                                                                    onclick="toStore()">确认
-                                                            </button>
+                                                <div class="row mt20 tc">
 
-														</span>
+                                                    <button type="button"
+                                                            class="ser-btn w150 l"
+                                                            onclick="toStore()">确认
+                                                    </button>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -320,9 +315,7 @@
             if (data.orderSetStatus == "<%=OrderSetStatus.NOEMBRACE%>") {
                 row += "<td  class='orange-a'>" + "<%=OrderSetStatus.NOEMBRACE.getMessage()%>" + "</td>";
             }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.SCANED%>") {
-                row += "<td class='blue-d'>" + "<%=OrderSetStatus.SCANED.getMessage()%>" + "</td>";
-            }
+
             else if (data.orderSetStatus == "<%=OrderSetStatus.WAITTOIN%>") {
                 row += "<td class='orange'>" + "<%=OrderSetStatus.WAITTOIN.getMessage()%>" + "</td>";
             }

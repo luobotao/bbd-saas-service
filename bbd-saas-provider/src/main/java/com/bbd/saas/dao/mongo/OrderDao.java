@@ -585,7 +585,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 query.filter("tradeNo in", tradeNoList);
             }
 
-          //揽件入库 的状态查询
+            //揽件入库 的状态查询
+            query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
             if (orderSetStatusList != null && orderSetStatusList.size() > 0) {
                 query.filter("orderSetStatus in", orderSetStatusList);
             }
@@ -605,11 +606,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         OrderHoldToStoreNumVO orderHoldToStoreNumVO = new OrderHoldToStoreNumVO();
         Query<Order> query = createQuery().filter("tradeNo in", tradeNoList);
         // 历史未入库订单数
-        query.or(
-                query.criteria("orderSetStatus").equal(OrderSetStatus.NOEMBRACE),
-                query.criteria("orderSetStatus").equal(OrderSetStatus.SCANED),
-                query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN)
-        );
+        query.filter("orderSetStatus", OrderSetStatus.WAITTOIN);
         orderHoldToStoreNumVO.setHistoryToStoreNum(count(query));
 
         Date start =  Dates.getBeginOfDay(new Date());
@@ -620,13 +617,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         orderHoldToStoreNumVO.setTodayNoToStoreNum(count(query));
 
         //今日成功接单数
-        query = createQuery().filter("tradeNo in", tradeNoList);
+        query = createQuery().filter("tradeNo in", tradeNoList).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
         query.filter("dateUpd >=",start);
         query.filter("dateUpd <=",end);
         orderHoldToStoreNumVO.setSuccessOrderNum(count(query));
         // 今日已入库订单数
-        query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
-        query.filter("orderSetStatus <>", OrderSetStatus.SCANED);
         query.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
         orderHoldToStoreNumVO.setTodayToStoreNum(count(query));
         return orderHoldToStoreNumVO;

@@ -9,7 +9,6 @@ import com.bbd.saas.utils.Htmls;
 public enum OrderSetStatus {
 
     NOEMBRACE(0, "待取件"),
-    SCANED(1, "已扫描"),
     WAITTOIN(2, "已取件,待入库"),
     WAITSET(3, "已入库"),
     WAITDRIVERGETED(4, "待司机取货送往分拨中心"),
@@ -46,6 +45,30 @@ public enum OrderSetStatus {
             } else {
                 sb.append(Htmls.generateOption(ps.status, ps.message));
             }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 去掉待 取件的状态
+     * @param id
+     * @return
+     */
+    public static String Srcs2HTMLExcNOEMBRACE(Integer id) {
+        StringBuilder sb = new StringBuilder();
+        OrderSetStatus[] orderEnum = OrderSetStatus.values();
+        sb.append(Htmls.generateOption(-1, "默认全部"));
+        for (OrderSetStatus ps : orderEnum) {
+            if(ps == OrderSetStatus.NOEMBRACE){
+                continue;
+            }else{
+                if (id == ps.status) {
+                    sb.append(Htmls.generateSelectedOption(ps.status, ps.message));
+                } else {
+                    sb.append(Htmls.generateOption(ps.status, ps.message));
+                }
+            }
+
         }
         return sb.toString();
     }
