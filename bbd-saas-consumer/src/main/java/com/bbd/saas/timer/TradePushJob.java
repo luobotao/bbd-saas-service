@@ -35,7 +35,7 @@ public class TradePushJob {
 
 
     //每个20秒跑一次
-    @Scheduled(cron = "*/20 * * * * ?")
+//    @Scheduled(cron = "*/20 * * * * ?")
     public void doJobWithPushAllTrade() {
         logger.info("运单数据推送给揽件员");
         tradeService.doJobWithAllPushTrade();
