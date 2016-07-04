@@ -140,29 +140,33 @@ public class HoldToStoreController {
     public PageModel<OrderHoldToStoreVo> getList(Integer pageIndex, String orderSetStatus, String embraceId, String type,final HttpServletRequest request, Model model) {
 
         //前台传来状态的集合
-        List<OrderSetStatus> orderSetStatusList = new ArrayList<OrderSetStatus>();
+        List<OrderSetStatus> orderSetStatusList = Lists.newArrayList();
 
-        //把前台传来的状态，按逗号分隔并保存到orderSetStatusList 中
-        if ("0".equals(type)) {//今日成功接单数
-            for (OrderSetStatus orderSetStatusTemp: OrderSetStatus.values()) {
-                orderSetStatusList.add(orderSetStatusTemp);
+        if(StringUtils.isNotBlank(orderSetStatus) && !"-1".equals(orderSetStatus)){
+            orderSetStatusList.add(OrderSetStatus.status2Obj(Numbers.parseInt(orderSetStatus,0)));
+        }else{
+            if ("0".equals(type)) {//今日成功接单数
+                for (OrderSetStatus orderSetStatusTemp: OrderSetStatus.values()) {
+                    orderSetStatusList.add(orderSetStatusTemp);
+                }
+            }
+            if ("1".equals(type)||"3".equals(type)) {//历史未入库
+                orderSetStatusList.add(OrderSetStatus.NOEMBRACE);
+                orderSetStatusList.add(OrderSetStatus.SCANED);
+                orderSetStatusList.add(OrderSetStatus.WAITTOIN);
+            }
+            if ("2".equals(type)) {//今日已入库
+                orderSetStatusList.add(OrderSetStatus.WAITSET);
+                orderSetStatusList.add(OrderSetStatus.WAITDRIVERGETED);
+                orderSetStatusList.add(OrderSetStatus.DRIVERGETED);
+                orderSetStatusList.add(OrderSetStatus.ARRIVEDISPATCH);
+                orderSetStatusList.add(OrderSetStatus.WAITDISPATCHSET);
+                orderSetStatusList.add(OrderSetStatus.WAITDRIVERTOSEND);
+                orderSetStatusList.add(OrderSetStatus.DRIVERSENDING);
+                orderSetStatusList.add(OrderSetStatus.ARRIVED);
             }
         }
-        if ("1".equals(type)||"3".equals(type)) {//历史未入库
-            orderSetStatusList.add(OrderSetStatus.NOEMBRACE);
-            orderSetStatusList.add(OrderSetStatus.SCANED);
-            orderSetStatusList.add(OrderSetStatus.WAITTOIN);
-        }
-        if ("2".equals(type)) {//今日已入库
-            orderSetStatusList.add(OrderSetStatus.WAITSET);
-            orderSetStatusList.add(OrderSetStatus.WAITDRIVERGETED);
-            orderSetStatusList.add(OrderSetStatus.DRIVERGETED);
-            orderSetStatusList.add(OrderSetStatus.ARRIVEDISPATCH);
-            orderSetStatusList.add(OrderSetStatus.WAITDISPATCHSET);
-            orderSetStatusList.add(OrderSetStatus.WAITDRIVERTOSEND);
-            orderSetStatusList.add(OrderSetStatus.DRIVERSENDING);
-            orderSetStatusList.add(OrderSetStatus.ARRIVED);
-        }
+
         //首页进行默认值设置
         pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 

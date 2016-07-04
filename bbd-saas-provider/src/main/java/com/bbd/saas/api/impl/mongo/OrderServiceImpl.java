@@ -46,11 +46,11 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private SitePoiApi sitePoiApi;
-    //@Autowired
+    @Autowired
     private SiteService siteService;
-    //@Autowired
+    @Autowired
     private TradeService tradeService;
-    //@Autowired
+    @Autowired
     private UserService userService;
 
     public UserDao getUserDao() {
