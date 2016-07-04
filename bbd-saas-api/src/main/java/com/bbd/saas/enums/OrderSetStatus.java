@@ -18,7 +18,8 @@ public enum OrderSetStatus {
     WAITDISPATCHSET(7, "待分拣集包"),
     WAITDRIVERTOSEND(8, "待司机取货送往配送点"),
     DRIVERSENDING(9, "正在运输到配送点"),
-    ARRIVED(10, "已到达配送点");
+    ARRIVED(10, "已到达配送点"),
+    REMOVED(11, "已移除");
     private int status;
     private String message;
 
