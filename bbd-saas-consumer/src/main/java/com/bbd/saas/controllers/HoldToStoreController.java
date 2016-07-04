@@ -326,6 +326,9 @@ public class HoldToStoreController {
     private void doToStore(HttpServletRequest request, String mailNum) {
         Order order = orderService.findOneByMailNum(mailNum);//根据运单号查询
         if (order != null) {
+            User curUser = adminService.get(UserSession.get(request));
+            if(curUser!=null && curUser.getSite()!=null)
+                order.setTradeStationId(curUser.getSite().getId().toHexString());
             //入库
             order.setOrderSetStatus(OrderSetStatus.WAITSET);
             order.setDateUpd(new Date());
