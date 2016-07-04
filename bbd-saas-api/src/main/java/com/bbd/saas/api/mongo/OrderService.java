@@ -6,7 +6,6 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
@@ -152,13 +151,13 @@ public interface OrderService {
     /**
      * 分页查询运单号/手机号/姓名/地址四个字段中包含关键字（keyword）的运单
      *
-     * @param pageIndex 当前页
+     * @param pageModel 分页对象
      * @param tradeNo   订单号
      * @param uId       发件人
      * @param keyword   搜索关键字
      * @return 分页对象（分页信息和数据）
      */
-    public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, ObjectId uId, String keyword);
+    public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, ObjectId uId, String keyword);
 
     /**
      * 根据商品订单号查询该订单下包含的运单数目
