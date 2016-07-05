@@ -154,4 +154,9 @@ public interface UserService {
      * @return 符合查询条件的数目
      */
     public long findCountBySiteAndDisptcherPermsn(Site site, int dispatchPermsn);
+
+    /*
+     * 查找指定的用户
+     */
+    public User findByAppkeyAndSessionkey(String appKey, String sessionKey);
 }

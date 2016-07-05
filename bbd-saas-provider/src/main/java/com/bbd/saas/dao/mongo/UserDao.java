@@ -235,4 +235,10 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         return count(query);
     }
 
+    public User findByAppkeyAndSessionkey(String appKey, String sessionKey) {
+        Query<User> query = createQuery();
+        query.filter("appKey", appKey);
+        query.filter("sessionKey", sessionKey);
+        return findOne(query);
+    }
 }
