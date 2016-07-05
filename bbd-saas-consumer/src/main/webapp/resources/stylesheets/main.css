@@ -505,14 +505,16 @@ a.orange {
 /* E 导航条 */
 /* S footer */
 footer {
-  padding: 30px 0;
+  padding: 33px 0;
 }
 .pos-footer {
   position: absolute;
-  width: 100%;
-  bottom: 30px;
-  padding: 0;
+  width: 84%;
+  bottom: 0;
+  left:16%;
+  background:#fff;
   z-index: 6;
+  margin-left: -18px;
 }
 .b-copy {
   font-size: 12px;
@@ -750,13 +752,7 @@ footer {
 }
 .b-branch,
 .fbg {
-  background: #f0f0f7;
-  background-image: -ms-linear-gradient(left, #ececf4, #fff);
-  background-image: -moz-linear-gradient(left, #ececf4, #fff);
-  background-image: -webkit-gradient(linear, left top, right top, from(#ececf4), to(#fff));
-  background-image: -webkit-linear-gradient(left, #ececf4, #fff);
-  background-image: -o-linear-gradient(left, #ececf4, #fff);
-  background-image: linear-gradient(left, #ececf4, #fff);
+  background: #f1f0f8;
 }
 .dn {
   display: none;

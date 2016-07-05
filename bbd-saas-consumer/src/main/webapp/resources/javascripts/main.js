@@ -1,13 +1,14 @@
 $(function () {
 	
     // S sidebar\
-    var winhei = $(window).height();
+    var inithei = $(window).height();
     var dochei = $(document).height();
-
     function counthei() {
+        var winhei = $(window).height();
         $(".b-branch").css({minHeight: winhei - 60});
         $(".b-detail").css({minHeight: winhei});
-
+        $(".b-sidebar").css({height: winhei - 60,overflow:"auto"});
+        $(".i-hei").css({height:winhei-146});
     };
     counthei();
     $(".b-sidebar .lv1").click(function () {
@@ -242,15 +243,15 @@ $(function () {
         $(".j-siteM-pop").hide().removeClass("in");
         parentD.removeClass("modal-open").css({paddingRight:"0"});
     })
-    
-    $(".n-re-con").css({minHeight:winhei-152});
+
+    $(".n-re-con").css({minHeight:inithei-152});
 
     if(window.screen.availHeight<800){
         $(".y-scroll").css({maxHeight:"200px"})
     }else{
         $(".y-scroll").css({maxHeight:"300px"})
     }
-    $(".i-hei").css({height:winhei-146});
+
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
 //iframe 自适应高度
