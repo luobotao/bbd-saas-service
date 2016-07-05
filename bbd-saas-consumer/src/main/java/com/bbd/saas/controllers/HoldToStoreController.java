@@ -38,7 +38,6 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/holdToStoreController")
-@SessionAttributes("holdToStoreController")
 public class HoldToStoreController {
 
     @Autowired
@@ -126,15 +125,16 @@ public class HoldToStoreController {
         return "page/holdToStore";
     }
 
+
     /**
      * 根据状态，揽件员id 查询
-     *
-     * @param pageIndex//初始页
-     * @param orderSetStatus//状态
-     * @param embraceId//揽件员id
-     * @param request
-     * @param model
-     * @return
+     * @param pageIndex  当前页
+     * @param orderSetStatus 状态
+     * @param embraceId 揽件员
+     * @param type 查询类型。0：今日成功接单数；1：历史未入库；2：今日已入库；3：今日未入库
+     * @param request 请求
+     * @param model  模板
+     * @return 订单分页列表
      */
     @ResponseBody
     @RequestMapping(value = "/getList", method = RequestMethod.GET)
@@ -225,14 +225,12 @@ public class HoldToStoreController {
             doToStore(request, mailNum);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【分拣】操作";
-
         } else if (StringUtils.isBlank(site.getType())||"0".equals(site.getType())) {//不是分拨站点
             //入库
             doToStore(request, mailNum);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【揽件集包】操作";
         }
-
         result.put("msg", msg);
         result.put("status", status);
         return result;
@@ -242,7 +240,6 @@ public class HoldToStoreController {
 
     /**
      * 单个订单到站方法
-     *
      * @param order
      * @param user
      */
