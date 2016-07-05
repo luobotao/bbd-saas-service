@@ -127,68 +127,60 @@
                                     for (OrderHoldToStoreVo orderHoldToStoreVo : orderHoldPageModels.getDatas()) {
                             %>
                             <tr>
-                                <td><%=orderHoldToStoreVo.getUserName()%>
-                                </td>
-                                <td><%=orderHoldToStoreVo.getPhone()%>
-                                </td>
-                                <td><%=orderHoldToStoreVo.getMailNum()%>
-                                </td>
-                                <td><%=orderHoldToStoreVo.getRecieverName() %>
-                                </td>
-                                <td><%=orderHoldToStoreVo.getRecieverPhone()%>
-                                </td>
-                                <td class="tl"><%=orderHoldToStoreVo.getRecieverAddress()%>
-                                </td>
+                                <td><%=orderHoldToStoreVo.getUserName()%></td>
+                                <td><%=orderHoldToStoreVo.getPhone()%></td>
+                                <td><%=orderHoldToStoreVo.getMailNum()%></td>
+                                <td><%=orderHoldToStoreVo.getRecieverName() %></td>
+                                <td><%=orderHoldToStoreVo.getRecieverPhone()%></td>
+                                <td class="tl"><%=orderHoldToStoreVo.getRecieverAddress()%></td>
                                 <%
                                     if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.NOEMBRACE) {
                                 %>
-                                <td class="orange-a"><%=OrderSetStatus.NOEMBRACE.getMessage()%>
-                                </td>
+                                    <td class="orange-a"><%=OrderSetStatus.NOEMBRACE.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITTOIN) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITTOIN) {
                                 %>
-                                <td class="orange"><%=OrderSetStatus.WAITTOIN.getMessage()%>
-                                </td>
+                                    <td class="orange"><%=OrderSetStatus.WAITTOIN.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITSET) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITSET) {
                                 %>
-                                <td class="green-f"><%=OrderSetStatus.WAITSET.getMessage()%>
-                                </td>
+                                    <td class="green-f"><%=OrderSetStatus.WAITSET.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERGETED) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERGETED) {
                                 %>
-                                <td class="purple"><%=OrderSetStatus.WAITDRIVERGETED.getMessage()%>
-                                </td>
+                                    <td class="purple"><%=OrderSetStatus.WAITDRIVERGETED.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERGETED) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERGETED) {
                                 %>
-                                <td class="d-red"><%=OrderSetStatus.DRIVERGETED.getMessage()%>
-                                </td>
+                                    <td class="d-red"><%=OrderSetStatus.DRIVERGETED.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVEDISPATCH) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVEDISPATCH) {
                                 %>
-                                <td class="black"><%=OrderSetStatus.ARRIVEDISPATCH.getMessage()%>
-                                </td>
+                                    <td class="black"><%=OrderSetStatus.ARRIVEDISPATCH.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDISPATCHSET) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDISPATCHSET) {
                                 %>
-                                <td class="l-blue"><%=OrderSetStatus.WAITDISPATCHSET.getMessage()%>
-                                </td>
+                                    <td class="l-blue"><%=OrderSetStatus.WAITDISPATCHSET.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERTOSEND) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERTOSEND) {
                                 %>
-                                <td class="d-blue"><%=OrderSetStatus.WAITDRIVERTOSEND.getMessage()%>
-                                </td>
+                                    <td class="d-blue"><%=OrderSetStatus.WAITDRIVERTOSEND.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERSENDING) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERSENDING) {
                                 %>
-                                <td class="d-blue"><%=OrderSetStatus.DRIVERSENDING.getMessage()%>
-                                </td>
+                                    <td class="brown"><%=OrderSetStatus.DRIVERSENDING.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVED) {
+                                    } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVED) {
                                 %>
-                                <td class="c-green"><%=OrderSetStatus.ARRIVED.getMessage()%>
-                                </td>
+                                    <td class="c-green"><%=OrderSetStatus.ARRIVED.getMessage()%></td>
+                                <%
+                                    }else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.REMOVED) {
+                                %>
+                                    <td class="c-gray"><%=OrderSetStatus.REMOVED.getMessage()%></td>
+                                <%
+                                    }else {
+                                %>
+                                    <td></td>
                                 <%
                                     }
                                 %>
@@ -314,34 +306,28 @@
             row += "<td class='tl'>" + data.recieverAddress + "</td>";
             if (data.orderSetStatus == "<%=OrderSetStatus.NOEMBRACE%>") {
                 row += "<td  class='orange-a'>" + "<%=OrderSetStatus.NOEMBRACE.getMessage()%>" + "</td>";
-            }
-
-            else if (data.orderSetStatus == "<%=OrderSetStatus.WAITTOIN%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.WAITTOIN%>") {
                 row += "<td class='orange'>" + "<%=OrderSetStatus.WAITTOIN.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.WAITSET%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.WAITSET%>") {
                 row += "<td class='green-f'>" + "<%=OrderSetStatus.WAITSET.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDRIVERGETED%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDRIVERGETED%>") {
                 row += "<td class='purple'>" + "<%=OrderSetStatus.WAITDRIVERGETED.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.DRIVERGETED%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.DRIVERGETED%>") {
                 row += "<td class='d-red'>" + "<%=OrderSetStatus.DRIVERGETED.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.ARRIVEDISPATCH%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.ARRIVEDISPATCH%>") {
                 row += "<td class='black'>" + "<%=OrderSetStatus.ARRIVEDISPATCH.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDISPATCHSET%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDISPATCHSET%>") {
                 row += "<td class='l-blue'>" + "<%=OrderSetStatus.WAITDISPATCHSET.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDRIVERTOSEND%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDRIVERTOSEND%>") {
                 row += "<td class='d-blue'>" + "<%=OrderSetStatus.WAITDRIVERTOSEND.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.DRIVERSENDING%>") {
-                row += "<td class='d-blue'>" + "<%=OrderSetStatus.DRIVERSENDING.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.ARRIVED%>") {
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.DRIVERSENDING%>") {
+                row += "<td class='brown'>" + "<%=OrderSetStatus.DRIVERSENDING.getMessage()%>" + "</td>";
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.ARRIVED%>") {
                 row += "<td class='c-green'>" + "<%=OrderSetStatus.ARRIVED.getMessage()%>" + "</td>";
+            }else if (data.orderSetStatus == "<%=OrderSetStatus.REMOVED%>") {
+                row += "<td class='c-gray'>" + "<%=OrderSetStatus.REMOVED.getMessage()%>" + "</td>";
+            }else {
+                row += "<td></td>";
             }
 
         } else {
