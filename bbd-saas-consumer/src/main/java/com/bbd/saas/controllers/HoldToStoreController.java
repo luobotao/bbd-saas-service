@@ -151,8 +151,6 @@ public class HoldToStoreController {
                 }
             }
             if ("1".equals(type)||"3".equals(type)) {//历史未入库
-                orderSetStatusList.add(OrderSetStatus.NOEMBRACE);
-                orderSetStatusList.add(OrderSetStatus.SCANED);
                 orderSetStatusList.add(OrderSetStatus.WAITTOIN);
             }
             if ("2".equals(type)) {//今日已入库
@@ -208,10 +206,10 @@ public class HoldToStoreController {
         Site site = siteService.findSiteByAreaCode(order.getAreaCode());//查询此订单中的站点对象
 
         boolean status = true;
-        if (order == null) {//运单是否存在
+        if (order == null || order.getOrderSetStatus() == OrderSetStatus.NOEMBRACE) {//运单是否存在 未取件的也为不存在
             status = false;
             msg = "【异常扫描】不存在此运单号";
-        } else if (order.getOrderSetStatus() != null && order.getOrderSetStatus() != OrderSetStatus.NOEMBRACE && order.getOrderSetStatus() != OrderSetStatus.SCANED && order.getOrderSetStatus() != OrderSetStatus.WAITTOIN) {//是否重复扫描
+        } else if (order.getOrderSetStatus() != null  && order.getOrderSetStatus() != OrderSetStatus.WAITTOIN) {//是否重复扫描
             status = false;
             msg = "重复扫描，此运单已经扫描过啦";
         } else if (user.getSite().getAreaCode().equals(order.getAreaCode())) {//运单号存在且属于此站
@@ -220,7 +218,7 @@ public class HoldToStoreController {
             //入库
             doToStore(request, mailNum);
             status = true;
-            msg = "扫描成功，完成⼊库。此订单属于您的站点，可直接进⾏【运单分派】操作";
+            msg = "扫描成功,完成入库。此订单属于您的站点,可直接进行【运单分派】操作";
         } else if ("1".equals(site.getType())) {//分拨站点
             //入库
             doToStore(request, mailNum);
@@ -328,6 +326,9 @@ public class HoldToStoreController {
     private void doToStore(HttpServletRequest request, String mailNum) {
         Order order = orderService.findOneByMailNum(mailNum);//根据运单号查询
         if (order != null) {
+            User curUser = adminService.get(UserSession.get(request));
+            if(curUser!=null && curUser.getSite()!=null)
+                order.setTradeStationId(curUser.getSite().getId().toHexString());
             //入库
             order.setOrderSetStatus(OrderSetStatus.WAITSET);
             order.setDateUpd(new Date());
