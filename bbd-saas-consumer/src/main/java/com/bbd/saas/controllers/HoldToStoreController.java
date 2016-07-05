@@ -71,7 +71,7 @@ public class HoldToStoreController {
      */
     private List<String> getTradeNoListByUser(User user,String type){
         //获取站长下的所有揽件员
-        List<User> userList = userService.findUsersBySite(user.getSite(), null, UserStatus.VALID);
+        List<User> userList = userService.findUsersBySite(user.getSite(), null, null);
         //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
         List<String> tradeNoList = Lists.newArrayList();
         for(User userTemp : userList){
@@ -104,7 +104,7 @@ public class HoldToStoreController {
         User user = adminService.get(UserSession.get(request));
         if (user != null) {
             //获取站长下的所有揽件员
-            List<User> userList = userService.findUsersBySite(user.getSite(), null, UserStatus.VALID);
+            List<User> userList = userService.findUsersBySite(user.getSite(), null, null);
             List<String> tradeNoList = getTradeNoListByUser(user,null);
             //查询 今日成功揽件数量，今日入库，未入库，历史未入库数量
             OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(tradeNoList);
@@ -223,17 +223,17 @@ public class HoldToStoreController {
             //到站
             orderToSite(order, user);
             //入库
-            doToStore(request, mailNum);
+            doToStore(request, order);
             status = true;
             msg = "扫描成功,完成入库。此订单属于您的站点,可直接进行【运单分派】操作";
         } else if ("1".equals(site.getType())) {//分拨站点
             //入库
-            doToStore(request, mailNum);
+            doToStore(request, order);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【分拣】操作";
         } else if (StringUtils.isBlank(site.getType())||"0".equals(site.getType())) {//不是分拨站点
             //入库
-            doToStore(request, mailNum);
+            doToStore(request, order);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【揽件集包】操作";
         }
@@ -320,15 +320,12 @@ public class HoldToStoreController {
         }
     }
 
-
     /**
-     * 入库
-     *
+     * 做入库操作
      * @param request
-     * @param mailNum //运单号
+     * @param order
      */
-    private void doToStore(HttpServletRequest request, String mailNum) {
-        Order order = orderService.findOneByMailNum(mailNum);//根据运单号查询
+    private void doToStore(HttpServletRequest request, Order order) {
         if (order != null) {
             User curUser = adminService.get(UserSession.get(request));
             if(curUser!=null && curUser.getSite()!=null)
