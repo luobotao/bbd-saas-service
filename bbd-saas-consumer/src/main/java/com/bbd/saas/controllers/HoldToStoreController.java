@@ -9,11 +9,12 @@ import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.*;
-import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.StringUtil;
-import com.bbd.saas.vo.*;
+import com.bbd.saas.vo.Express;
+import com.bbd.saas.vo.OrderHoldToStoreNumVO;
+import com.bbd.saas.vo.OrderHoldToStoreVo;
+import com.bbd.saas.vo.OrderQueryVO;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -37,7 +38,6 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("/holdToStoreController")
-@SessionAttributes("holdToStoreController")
 public class HoldToStoreController {
 
     @Autowired
@@ -125,15 +125,16 @@ public class HoldToStoreController {
         return "page/holdToStore";
     }
 
+
     /**
      * 根据状态，揽件员id 查询
-     *
-     * @param pageIndex//初始页
-     * @param orderSetStatus//状态
-     * @param embraceId//揽件员id
-     * @param request
-     * @param model
-     * @return
+     * @param pageIndex  当前页
+     * @param orderSetStatus 状态
+     * @param embraceId 揽件员
+     * @param type 查询类型。0：今日成功接单数；1：历史未入库；2：今日已入库；3：今日未入库
+     * @param request 请求
+     * @param model  模板
+     * @return 订单分页列表
      */
     @ResponseBody
     @RequestMapping(value = "/getList", method = RequestMethod.GET)
@@ -223,15 +224,13 @@ public class HoldToStoreController {
             //入库
             doToStore(request, mailNum);
             status = true;
-            msg = "扫描成功，完成⼊库。请到App中进⾏【分拣】操作";
-
+            msg = "扫描成功，完成入库。请到App中进行【分拣】操作";
         } else if (StringUtils.isBlank(site.getType())||"0".equals(site.getType())) {//不是分拨站点
             //入库
             doToStore(request, mailNum);
             status = true;
-            msg = "扫描成功，完成⼊库。请到App中进⾏【揽件集包】操作";
+            msg = "扫描成功，完成入库。请到App中进行【揽件集包】操作";
         }
-
         result.put("msg", msg);
         result.put("status", status);
         return result;
@@ -241,7 +240,6 @@ public class HoldToStoreController {
 
     /**
      * 单个订单到站方法
-     *
      * @param order
      * @param user
      */
