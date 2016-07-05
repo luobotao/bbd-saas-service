@@ -234,7 +234,8 @@ public class PackageToSiteController {
 		orderService.save(order);
 
         if(order != null){
-			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
+			//包裹到站后物流信息推送
+			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
 				ExpressExchange expressExchange=new ExpressExchange();
 				expressExchange.setOperator(user.getRealName());
 				expressExchange.setStatus(ExpressExchangeStatus.waiting);
