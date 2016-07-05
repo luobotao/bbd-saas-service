@@ -457,4 +457,15 @@ public class TradeServiceImpl implements TradeService {
         return pulist;
     }
 
+
+    /**
+     * 分站点根据城市与状态
+     * @param city
+     * @param type
+     * @return
+     */
+    @Override
+    public List<Trade> findTradesBySenderCity(String city, String type) {
+        return tradeDao.findTradesBySenderCity(city,type);
+    }
 }

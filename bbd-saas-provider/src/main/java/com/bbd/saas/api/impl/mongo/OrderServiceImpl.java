@@ -488,4 +488,14 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.selectCountByMailNumsAndExpressStatus(mailNumList, orderStatusList);
 
     }
+
+    /**
+     * 此商户订单号下的所有已入库的运单
+     * @param tradeNo
+     * @return
+     */
+    @Override
+    public long findArrCountByTradeNo(String tradeNo) {
+        return orderDao.findArrCountByTradeNo(tradeNo);
+    }
 }

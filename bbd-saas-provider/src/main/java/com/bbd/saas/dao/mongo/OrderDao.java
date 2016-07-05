@@ -655,4 +655,24 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         return count(query);
     }
+
+
+    /**
+     * 此商户订单号下的所有已入库的运单
+     * @param tradeNo
+     * @return
+     */
+    public long findArrCountByTradeNo(String tradeNo) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        //商户订单号(我们自己生成的支付订单号)
+        if (StringUtils.isNotBlank(tradeNo)) {
+            query.filter("tradeNo", tradeNo);
+        }
+        query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
+        query.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
+        query.filter("orderSetStatus <>", OrderSetStatus.REMOVED);
+        query.filter("isRemoved", 0);
+        return count(query);
+    }
 }

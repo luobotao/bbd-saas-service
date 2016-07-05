@@ -80,6 +80,12 @@ public class HoldToStoreController {
                 tradeNoList.add(trade.getTradeNo());
             }
         }
+        if(user.getSite()!=null && "1".equals(user.getSite().getType())){//分拔站点
+            List<Trade> tradeListTemp = tradeService.findTradesBySenderCity(user.getSite().getCity(),type);
+            for (Trade trade : tradeListTemp) {
+                tradeNoList.add(trade.getTradeNo());
+            }
+        }
         return tradeNoList;
     }
     /**
@@ -131,6 +137,7 @@ public class HoldToStoreController {
      * @param pageIndex//初始页
      * @param orderSetStatus//状态
      * @param embraceId//揽件员id
+     * @param type//状态 0今日成功接单数 1历史未入库 2今日已入库 3今日未入库
      * @param request
      * @param model
      * @return
@@ -333,6 +340,15 @@ public class HoldToStoreController {
             order.setOrderSetStatus(OrderSetStatus.WAITSET);
             order.setDateUpd(new Date());
             orderService.save(order);
+
+            long totalCount = orderService.findCountByTradeNo(order.getTradeNo());//此商户订单号下的所有运单
+            long arrCount = orderService.findArrCountByTradeNo(order.getTradeNo());//此商户订单号下的所有已入库的运单
+            if(totalCount==arrCount){//全部入库完成,修改trade的状态
+                Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
+                trade.setTradeStatus(TradeStatus.ARRIVED);
+                trade.setDateUpd(new Date());
+                tradeService.save(trade);
+            }
         }
     }
 

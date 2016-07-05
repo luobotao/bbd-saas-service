@@ -224,4 +224,11 @@ public interface OrderService {
 	public List<String> reduceMailNum(String quantity);
 
 	public Site getSiteWithAddress(String address);
+
+    /**
+     * 此商户订单号下的所有已入库的运单
+     * @param tradeNo
+     * @return
+     */
+    long findArrCountByTradeNo(String tradeNo);
 }

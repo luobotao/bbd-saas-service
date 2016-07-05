@@ -183,4 +183,25 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         }
         return find(query).asList();
     }
+    /**
+     * 分站点根据城市与状态
+     * @param city
+     * @param type
+     * @return
+     */
+    public List<Trade> findTradesBySenderCity(String city, String type) {
+        Query<Trade> query = createQuery();
+        query.filter("sender.city", city);
+        if(StringUtils.isBlank(type)||"1".equals(type)||"-1".equals(type)){//历史未入库
+
+        }else{
+            //今日订单
+            Date start =  Dates.getBeginOfDay(new Date());
+            Date end =  Dates.getEndOfDay(new Date());
+            query.filter("dateUpd >=",start);
+            //加入时间
+            query.filter("dateUpd <=",end);
+        }
+        return find(query).asList();
+    }
 }

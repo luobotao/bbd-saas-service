@@ -95,4 +95,12 @@ public interface TradeService {
     public List<Trade> findTradesByEmbraceId(ObjectId embraceId,String type);
 
     void doJobWithAllPushTrade();
+
+    /**
+     * 分拔站点根据城市与状态
+     * @param city
+     * @param type
+     * @return
+     */
+    List<Trade> findTradesBySenderCity(String city, String type);
 }
