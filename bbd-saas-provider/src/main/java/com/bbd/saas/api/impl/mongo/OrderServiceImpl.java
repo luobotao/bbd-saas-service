@@ -307,8 +307,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order afterImportDealWithOrder(Order order) {
-        order = reduceAreaCodeWithOrder(order);
-        order = reduceMailNumWithOrder(order);
+        try {
+            order = reduceAreaCodeWithOrder(order);
+            order = reduceMailNumWithOrder(order);
+        }catch(Exception e){
+            e.printStackTrace();
+            logger.info("[afterImportDealWithOrder exception] orderNo :"+order.getOrderNo());
+        }
         return order;
     }
 
@@ -341,7 +346,7 @@ public class OrderServiceImpl implements OrderService {
                         Site site = siteService.findSite(siteId);
                         order.setAreaCode(site.getAreaCode());
                         order.setAreaRemark(site.getName());
-                        logger.info("订单:" + order.getOrderNo() + "，匹配的区域码（站点码）为" + order.getAreaCode() + ",站点名称为：" + order.getAreaRemark());
+                        logger.info("订单:" + order.getOrderNo() + "，匹配的区域码（站点码）为" + order.getAreaCode() + ",站点名称为：" + order.getAreaRemark()+",地址："+order.getReciever().getAddress());
                     } else {
                         order.setAreaCode("9999-999");
                         order.setAreaRemark("no match areacode");
