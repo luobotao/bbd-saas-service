@@ -41,7 +41,7 @@ public class Site implements Serializable {
     private String otherMessage;       //其他原因
     private String lat;         //纬度
     private String lng;         //经度
-    private String deliveryArea;//配送範圍
+    private String deliveryArea;//配送范围
     private Date dateAdd;      //创建时间
     private Date dateUpd;      //更新时间
     private  String type;   //1 为分拨站点，0 为普通站点
