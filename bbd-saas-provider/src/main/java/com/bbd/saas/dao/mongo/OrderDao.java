@@ -452,11 +452,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.or(query.criteria("mailNum").containsIgnoreCase(keyword),
                     query.criteria("orderNo").containsIgnoreCase(keyword),
                     query.criteria("reciever.phone").containsIgnoreCase(keyword),
-                    query.criteria("reciever.name").containsIgnoreCase(keyword),
-                    query.criteria("reciever.province").containsIgnoreCase(keyword),
-                    query.criteria("reciever.city").containsIgnoreCase(keyword),
-                    query.criteria("reciever.area").containsIgnoreCase(keyword),
-                    query.criteria("reciever.address").containsIgnoreCase(keyword));
+                    query.criteria("reciever.name").containsIgnoreCase(keyword));
         }
 
         //设置排序
@@ -509,11 +505,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         if (StringUtils.isNotBlank(keyword)) {
             query.or(query.criteria("reciever.phone").containsIgnoreCase(keyword),
-                    query.criteria("reciever.name").containsIgnoreCase(keyword),
-                    query.criteria("reciever.province").containsIgnoreCase(keyword),
-                    query.criteria("reciever.city").containsIgnoreCase(keyword),
-                    query.criteria("reciever.area").containsIgnoreCase(keyword),
-                    query.criteria("reciever.address").containsIgnoreCase(keyword));
+                    query.criteria("reciever.name").containsIgnoreCase(keyword));
         }
         //查询数据
         return find(query).asList();
