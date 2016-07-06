@@ -66,11 +66,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         }
         if(StringUtils.isNotBlank(tradeQueryVO.rcvKeyword)){
             query.or(query.criteria("orderSnaps.reciever.phone").containsIgnoreCase(tradeQueryVO.rcvKeyword),
-                    query.criteria("orderSnaps.reciever.name").containsIgnoreCase(tradeQueryVO.rcvKeyword),
-                    query.criteria("orderSnaps.reciever.province").containsIgnoreCase(tradeQueryVO.rcvKeyword),
-                    query.criteria("orderSnaps.reciever.city").containsIgnoreCase(tradeQueryVO.rcvKeyword),
-                    query.criteria("orderSnaps.reciever.area").containsIgnoreCase(tradeQueryVO.rcvKeyword),
-                    query.criteria("orderSnaps.reciever.address").containsIgnoreCase(tradeQueryVO.rcvKeyword));
+                    query.criteria("orderSnaps.reciever.name").containsIgnoreCase(tradeQueryVO.rcvKeyword));
         }
         if(StringUtils.isNotBlank(tradeQueryVO.dateAddStart)){//下单时间
             query.filter("dateAdd >=", Dates.strToDate(tradeQueryVO.dateAddStart));
