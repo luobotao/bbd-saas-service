@@ -450,6 +450,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         if (StringUtils.isNotBlank(keyword)) {
             query.or(query.criteria("mailNum").containsIgnoreCase(keyword),
+                    query.criteria("orderNo").containsIgnoreCase(keyword),
                     query.criteria("reciever.phone").containsIgnoreCase(keyword),
                     query.criteria("reciever.name").containsIgnoreCase(keyword),
                     query.criteria("reciever.province").containsIgnoreCase(keyword),
