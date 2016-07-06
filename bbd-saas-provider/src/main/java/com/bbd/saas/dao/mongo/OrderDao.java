@@ -4,10 +4,7 @@ import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.OrderHoldToStoreNumVO;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
@@ -453,6 +450,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         if (StringUtils.isNotBlank(keyword)) {
             query.or(query.criteria("mailNum").containsIgnoreCase(keyword),
+                    query.criteria("orderNo").containsIgnoreCase(keyword),
                     query.criteria("reciever.phone").containsIgnoreCase(keyword),
                     query.criteria("reciever.name").containsIgnoreCase(keyword),
                     query.criteria("reciever.province").containsIgnoreCase(keyword),
@@ -485,7 +483,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if (StringUtils.isNotBlank(tradeNo)) {
             query.filter("tradeNo", tradeNo);
         }
-        query.filter("isRemoved", 0);
+        query.filter("isRemoved", Constants.ISNOTREMOVED);
         return count(query);
     }
 
@@ -537,7 +535,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if (StringUtils.isNotBlank(tradeNo)) {
             query.filter("tradeNo", tradeNo);
         }
-        query.filter("isRemoved", 0);
+        query.filter("isRemoved", Constants.ISNOTREMOVED);
         return find(query).asList();
     }
 
@@ -553,6 +551,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
 
         //设置查询条件
         Query<Order> query = getQueryForHoldToStore( orderQueryVO );
+        query.filter("isRemoved", Constants.ISNOTREMOVED);
+
         //设置排序
         query.order("-dateUpd");
         //分页信息
@@ -736,7 +736,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
         query.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
         query.filter("orderSetStatus <>", OrderSetStatus.REMOVED);
-        query.filter("isRemoved", 0);
+        query.filter("isRemoved", Constants.ISNOTREMOVED);
         return count(query);
     }
 }
