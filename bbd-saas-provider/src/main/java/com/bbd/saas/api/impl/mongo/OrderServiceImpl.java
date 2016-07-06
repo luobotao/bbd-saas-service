@@ -403,24 +403,16 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
-    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex, List<String> tradeNoList, List<OrderSetStatus> orderSetStatusList, OrderQueryVO orderQueryVO) {
+    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex,  List<OrderSetStatus> orderSetStatusList, OrderQueryVO orderQueryVO) {
 
         if (orderQueryVO == null) {
             return null;
-        }
-        if(tradeNoList==null || tradeNoList.isEmpty()){
-            //设置分页操作
-            PageModel<OrderHoldToStoreVo> pageModel = new PageModel<OrderHoldToStoreVo>();
-            pageModel.setPageNo(0);
-            pageModel.setTotalCount(1);
-            pageModel.setDatas(Lists.newArrayList());
-            return pageModel;
         }
 
         //根据站点查询出订单的 收货人相关信息
         PageModel<Order> pageOrders = new PageModel<Order>();
         pageOrders.setPageNo(pageIndex);
-        pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders, tradeNoList, orderSetStatusList, orderQueryVO);
+        pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders, orderSetStatusList, orderQueryVO);
         List<Order> datas = pageOrders.getDatas();
 
         // 封装一个新的入库VorderHoldToStoreList
@@ -439,21 +431,28 @@ public class OrderServiceImpl implements OrderService {
             String tradeNo = order.getTradeNo();
             OrderSetStatus orderSetStatus = order.getOrderSetStatus();
             Trade oneByTradeNo = tradeService.findOneByTradeNo(tradeNo);
+            if(oneByTradeNo!=null && oneByTradeNo.getEmbraceId()!=null){
+                //通过Trade对象，获取到揽件员相关信息
+                ObjectId embraceId = oneByTradeNo.getEmbraceId();
+                User user = userService.findOne(embraceId.toString());
+                String realName = user.getRealName();
+                String loginName = user.getLoginName();
+                orderHoldToStoreVo.setUserName(realName);
+                orderHoldToStoreVo.setPhone(loginName);
+            }else{
+                orderHoldToStoreVo.setUserName("");
+                orderHoldToStoreVo.setPhone("");
+            }
 
-            //通过Trade对象，获取到揽件员相关信息
-            ObjectId embraceId = oneByTradeNo.getEmbraceId();
-            User user = userService.findOne(embraceId.toString());
-            String realName = user.getRealName();
-            String loginName = user.getLoginName();
 
             //把收件人相关信息，和揽件员相关信息从新封装到orderHoldToStoreVo 中
             orderHoldToStoreVo.setMailNum(mailNum);
             orderHoldToStoreVo.setRecieverName(name);
             orderHoldToStoreVo.setRecieverPhone(phone);
             orderHoldToStoreVo.setRecieverAddress(address);
-            orderHoldToStoreVo.setUserName(realName);
-            orderHoldToStoreVo.setPhone(loginName);
+
             orderHoldToStoreVo.setOrderSetStatus(orderSetStatus);
+            orderHoldToStoreVo.setAreaCode(order.getAreaCode());
             orderHoldToStoreList.add(orderHoldToStoreVo);
         }
         //设置分页操作
@@ -469,11 +468,11 @@ public class OrderServiceImpl implements OrderService {
      * 揽件入库
      * 根据站点下的用户列表获取该站点 揽件的订单数量
      *
-     * @param tradeNoList 站点下的所有用户的tradeNo
+     * @param user 当前用户
      * @return
      */
-    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(List<String> tradeNoList){
-        return orderDao.getOrderHoldToStoreNum(tradeNoList);
+    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(User user){
+        return orderDao.getOrderHoldToStoreNum(user);
     }
 
 

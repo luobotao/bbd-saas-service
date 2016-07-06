@@ -6,6 +6,7 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
@@ -191,16 +192,16 @@ public interface OrderService {
      * @param orderQueryVO
      * @return
      */
-    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex, List<String> tradeNoList, List<OrderSetStatus> orderSetStatusList, OrderQueryVO orderQueryVO);
+    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex,  List<OrderSetStatus> orderSetStatusList, OrderQueryVO orderQueryVO);
 
     /**
      * 揽件入库
      * 根据站点下的用户列表获取该站点 揽件的订单数量
      *
-     * @param tradeNoList 站点下的所有用户的tradeNo
+     * @param user 当前用户
      * @return
      */
-    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(List<String> tradeNoList);
+    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(User user);
 
     /**
      * 揽件入库

@@ -1,6 +1,7 @@
 package com.bbd.saas.vo;
 
 import com.bbd.saas.enums.OrderSetStatus;
+import com.bbd.saas.mongoModels.User;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,6 +18,9 @@ public class OrderQueryVO implements Serializable{
 	public String parcelCode;//包裹号
 	public String mailNum;//运单号
 	public String userId;//派件员Id
+	public String embraceId;//揽件员Id
+	public String type;//揽件入库状态 0：今日成功接单数；1：历史未入库；2：今日已入库；3：今日未入库
+	public User user;//站长
 	public Integer dispatchStatus;//运单分派状态，-1全部, 1-未分派,2-已分派
 	public String arriveBetween;//到站时间
 	public Integer abnormalStatus;//订单异常状态，-1全部 3-滞留,4-拒收
@@ -25,4 +29,5 @@ public class OrderQueryVO implements Serializable{
 	public String orderSetStatus;//运单集包状态
 	public String tradeNo;//商户订单号(我们自己生成的支付订单号)
 	public String dateArrived;//到达时间
+	public String selfFlag;//是否是本站下的订单 针对揽件入库使用 0非本站 即针对orderSetStatus为待揽件集包 1本站 即针对orderSetStatus为已入库
 }

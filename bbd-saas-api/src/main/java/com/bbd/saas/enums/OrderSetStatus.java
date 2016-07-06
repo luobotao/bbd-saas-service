@@ -67,6 +67,9 @@ public enum OrderSetStatus {
                 } else {
                     sb.append(Htmls.generateOption(ps.status, ps.message));
                 }
+                if(ps == OrderSetStatus.WAITSET){
+                    sb.append(Htmls.generateOption(1, "待揽件集包"));
+                }
             }
 
         }

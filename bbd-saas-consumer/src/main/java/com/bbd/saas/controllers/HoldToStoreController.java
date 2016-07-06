@@ -9,6 +9,8 @@ import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.*;
+import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Express;
@@ -80,7 +82,7 @@ public class HoldToStoreController {
                 tradeNoList.add(trade.getTradeNo());
             }
         }
-        if(user.getSite()!=null && "1".equals(user.getSite().getType())){//分拔站点
+        if(user.getSite()!=null && "1".equals(user.getSite().getType())){//分拨站点
             List<Trade> tradeListTemp = tradeService.findTradesBySenderCity(user.getSite().getCity(),type);
             for (Trade trade : tradeListTemp) {
                 tradeNoList.add(trade.getTradeNo());
@@ -93,21 +95,19 @@ public class HoldToStoreController {
      *
      * @param pageIndex //开始页
      * @param status    //状态
-     * @param embraceId //拦件员id
      * @param request//
      * @param model//
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String index(Integer pageIndex, @RequestParam(value = "status", defaultValue = "-1") String status, String embraceId, final HttpServletRequest request, Model model) {
+    public String index(Integer pageIndex, @RequestParam(value = "status", defaultValue = "-1") String status,  final HttpServletRequest request, Model model) {
         //当前登录的用户信息
         User user = adminService.get(UserSession.get(request));
         if (user != null) {
             //获取站长下的所有揽件员
             List<User> userList = userService.findUsersBySite(user.getSite(), null, UserStatus.VALID);
-            List<String> tradeNoList = getTradeNoListByUser(user,null);
             //查询 今日成功揽件数量，今日入库，未入库，历史未入库数量
-            OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(tradeNoList);
+            OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(user);
             long historyToStoreNum = orderHoldToStoreNum.getHistoryToStoreNum();
             long todayNoToStoreNum = orderHoldToStoreNum.getTodayNoToStoreNum();
             long successOrderNum = orderHoldToStoreNum.getSuccessOrderNum();
@@ -117,10 +117,10 @@ public class HoldToStoreController {
             model.addAttribute("todayNoToStoreNum", todayNoToStoreNum);
             model.addAttribute("successOrderNum", successOrderNum);
             model.addAttribute("todayToStoreNum", todayToStoreNum);
-
+            model.addAttribute("user", user);
             try {
                 //查询数据
-                PageModel<OrderHoldToStoreVo> orderHoldPageModel = getList(pageIndex, status, embraceId,null, request, model);
+                PageModel<OrderHoldToStoreVo> orderHoldPageModel = getList(pageIndex, status, null,null, request, model);
                 logger.info("=====揽件入库页面====" + orderHoldPageModel);
                 model.addAttribute("orderHoldPageModel", orderHoldPageModel);
                 model.addAttribute("userList", userList);
@@ -145,22 +145,45 @@ public class HoldToStoreController {
     @ResponseBody
     @RequestMapping(value = "/getList", method = RequestMethod.GET)
     public PageModel<OrderHoldToStoreVo> getList(Integer pageIndex, String orderSetStatus, String embraceId, String type,final HttpServletRequest request, Model model) {
-
+        //设置查询条件
+        OrderQueryVO orderQueryVO = new OrderQueryVO();
+        orderQueryVO.embraceId = embraceId;
+        orderQueryVO.user = adminService.get(UserSession.get(request));
+        orderQueryVO.type=type;
         //前台传来状态的集合
         List<OrderSetStatus> orderSetStatusList = Lists.newArrayList();
 
         if(StringUtils.isNotBlank(orderSetStatus) && !"-1".equals(orderSetStatus)){
-            orderSetStatusList.add(OrderSetStatus.status2Obj(Numbers.parseInt(orderSetStatus,0)));
+            if("1".equals(orderSetStatus)){//待揽件集包,orderSetStatus与已入库一样
+                orderQueryVO.selfFlag = "0";//非本站待揽件集包
+                orderSetStatusList.add(OrderSetStatus.WAITSET);
+            }else if(OrderSetStatus.WAITSET.getStatus()==Numbers.parseInt(orderSetStatus,0)){
+                orderQueryVO.selfFlag = "1";//本站已入库
+                orderSetStatusList.add(OrderSetStatus.WAITSET);
+            }else {
+                orderSetStatusList.add(OrderSetStatus.status2Obj(Numbers.parseInt(orderSetStatus,0)));
+            }
         }else{
             if ("0".equals(type)) {//今日成功接单数
+                Date start =  Dates.getBeginOfDay(new Date());
+                Date end =  Dates.getEndOfDay(new Date());
+                orderQueryVO.between = new DateBetween(start,end).toString();
                 for (OrderSetStatus orderSetStatusTemp: OrderSetStatus.values()) {
                     orderSetStatusList.add(orderSetStatusTemp);
                 }
             }
             if ("1".equals(type)||"3".equals(type)) {//历史未入库
                 orderSetStatusList.add(OrderSetStatus.WAITTOIN);
+                if ("3".equals(type)) {//今日未入库
+                    Date start =  Dates.getBeginOfDay(new Date());
+                    Date end =  Dates.getEndOfDay(new Date());
+                    orderQueryVO.between = new DateBetween(start,end).toString();
+                }
             }
             if ("2".equals(type)) {//今日已入库
+                Date start =  Dates.getBeginOfDay(new Date());
+                Date end =  Dates.getEndOfDay(new Date());
+                orderQueryVO.between = new DateBetween(start,end).toString();
                 orderSetStatusList.add(OrderSetStatus.WAITSET);
                 orderSetStatusList.add(OrderSetStatus.WAITDRIVERGETED);
                 orderSetStatusList.add(OrderSetStatus.DRIVERGETED);
@@ -174,23 +197,8 @@ public class HoldToStoreController {
 
         //首页进行默认值设置
         pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-
-        //设置查询条件
-        OrderQueryVO orderQueryVO = new OrderQueryVO();
-
         //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
-        List<String> tradeNoList = new ArrayList<>();
-        if (StringUtils.isNotBlank(embraceId) && !("0".equals(embraceId))) {
-            List<Trade> tradeList = tradeService.findTradesByEmbraceId(new ObjectId(embraceId),type);
-            for (Trade trade : tradeList) {
-                tradeNoList.add(trade.getTradeNo());
-            }
-        }else{
-            User user = adminService.get(UserSession.get(request));
-            tradeNoList = getTradeNoListByUser(user,type);
-        }
-        //把以上条件依次传人到service 层中进行查询
-        PageModel<OrderHoldToStoreVo> orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex, tradeNoList, orderSetStatusList, orderQueryVO);
+        PageModel<OrderHoldToStoreVo> orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex, orderSetStatusList, orderQueryVO);
 
         return orderHoldPageModel;
     }
@@ -358,7 +366,7 @@ public class HoldToStoreController {
     @ResponseBody
     @RequestMapping(value = "/updateOrderHoldToStoreNumVO", method = RequestMethod.GET)
     public OrderHoldToStoreNumVO updateOrderHoldToStoreNumVO(HttpServletRequest request) {
-        return orderService.getOrderHoldToStoreNum(getTradeNoListByUser(adminService.get(UserSession.get(request)),null));
+        return orderService.getOrderHoldToStoreNum(adminService.get(UserSession.get(request)));
     }
 
 }

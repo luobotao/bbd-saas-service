@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Created by huozhijie on 2016/6/25.
  */
 public class OrderHoldToStoreVo implements Serializable {
+    private  String areaCode;//订单所属站点的区域码
     private  String userName;//揽件人名称
     private  String  phone;//揽件人电话
     private String mailNum;//运单号
@@ -70,5 +71,13 @@ public class OrderHoldToStoreVo implements Serializable {
 
     public void setOrderSetStatus(OrderSetStatus orderSetStatus) {
         this.orderSetStatus = orderSetStatus;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
     }
 }

@@ -66,6 +66,7 @@ public class Order implements Serializable {
     private OrderSetStatus orderSetStatus;//运单集包状态
     private String parcelCode;//包裹号码默认为空
     private String tradeStationId;//揽件员站点id
+    private String embraceId;//揽件员id
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -435,5 +436,13 @@ public class Order implements Serializable {
 
     public void setTradeStationId(String tradeStationId) {
         this.tradeStationId = tradeStationId;
+    }
+
+    public String getEmbraceId() {
+        return embraceId;
+    }
+
+    public void setEmbraceId(String embraceId) {
+        this.embraceId = embraceId;
     }
 }

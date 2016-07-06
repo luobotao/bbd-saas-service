@@ -8,6 +8,7 @@
 <%@ page import="com.bbd.saas.enums.OrderSetStatus" %>
 <%@ page import="com.bbd.saas.vo.OrderHoldToStoreVo" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.bbd.saas.mongoModels.User" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -15,8 +16,7 @@
 
 </head>
 <%
-    String proPath = request.getContextPath();
-    String path = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + proPath;
+    User user = (User)request.getAttribute("user");
 %>
 <body class="fbg">
 <!-- S content -->
@@ -140,57 +140,18 @@
                                 <td class="tl"><%=orderHoldToStoreVo.getRecieverAddress()%>
                                 </td>
                                 <%
-                                    if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.NOEMBRACE) {
+                                    if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITSET && !user.getSite().getAreaCode().equals(orderHoldToStoreVo.getAreaCode())) {
                                 %>
-                                <td class="orange-a"><%=OrderSetStatus.NOEMBRACE.getMessage()%>
+                                <td class="orange-a">待揽件集包
                                 </td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITTOIN) {
+                                } else{
                                 %>
-                                <td class="orange"><%=OrderSetStatus.WAITTOIN.getMessage()%>
+                                <td class="orange"><%=orderHoldToStoreVo.getOrderSetStatus().WAITTOIN.getMessage()%>
                                 </td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITSET) {
-                                %>
-                                <td class="green-f"><%=OrderSetStatus.WAITSET.getMessage()%>
-                                </td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERGETED) {
-                                %>
-                                <td class="purple"><%=OrderSetStatus.WAITDRIVERGETED.getMessage()%>
-                                </td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERGETED) {
-                                %>
-                                <td class="d-red"><%=OrderSetStatus.DRIVERGETED.getMessage()%>
-                                </td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVEDISPATCH) {
-                                %>
-                                <td class="black"><%=OrderSetStatus.ARRIVEDISPATCH.getMessage()%>
-                                </td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDISPATCHSET) {
-                                %>
-                                <td class="l-blue"><%=OrderSetStatus.WAITDISPATCHSET.getMessage()%>
-                                </td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERTOSEND) {
-                                %>
-                                <td class="d-blue"><%=OrderSetStatus.WAITDRIVERTOSEND.getMessage()%>
-                                </td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERSENDING) {
-                                %>
-                                <td class="d-blue"><%=OrderSetStatus.DRIVERSENDING.getMessage()%>
-                                </td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVED) {
-                                %>
-                                <td class="c-green"><%=OrderSetStatus.ARRIVED.getMessage()%>
-                                </td>
-                                <%
-                                    }
+                                }
+
                                 %>
                             </tr>
                             <%
@@ -320,7 +281,14 @@
                 row += "<td class='orange'>" + "<%=OrderSetStatus.WAITTOIN.getMessage()%>" + "</td>";
             }
             else if (data.orderSetStatus == "<%=OrderSetStatus.WAITSET%>") {
-                row += "<td class='green-f'>" + "<%=OrderSetStatus.WAITSET.getMessage()%>" + "</td>";
+                console.log(data.areaCode);
+                console.log("<%=user.getSite().getAreaCode()%>");
+                if(data.areaCode!="<%=user.getSite().getAreaCode()%>"){
+                    row += "<td class='green-f'>待揽件集包</td>";
+                }else{
+                    row += "<td class='green-f'>" + "<%=OrderSetStatus.WAITSET.getMessage()%>" + "</td>";
+                }
+
             }
             else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDRIVERGETED%>") {
                 row += "<td class='purple'>" + "<%=OrderSetStatus.WAITDRIVERGETED.getMessage()%>" + "</td>";
