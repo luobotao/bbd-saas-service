@@ -588,6 +588,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }else if ("1".equals(orderQueryVO.type)||"3".equals(orderQueryVO.type)) {//未入库
                     if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
                         query.or(query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
+                                        .criteria("disAreaCode").equal(orderQueryVO.user.getSite().getAreaCode())
                                         .criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),
                                 query.criteria("tradeStationId").equal(orderQueryVO.user.getSite().getId().toHexString()).criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
                     }else {
@@ -597,6 +598,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
                         query.or(
                                 query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
+                                        .criteria("disAreaCode").equal(orderQueryVO.user.getSite().getAreaCode())
                                         .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
                                         .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
                                         .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
@@ -609,6 +611,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }else {
                     if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
                         query.or(query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
+                                        .criteria("disAreaCode").equal(orderQueryVO.user.getSite().getAreaCode())
                                         .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
                                         .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
                                         .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
@@ -642,6 +645,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
         if("1".equals(user.getSite().getType())){//分拨站点
             query.or(query.criteria("sender.city").equal(user.getSite().getCity())
+                            .criteria("disAreaCode").equal(user.getSite().getAreaCode())
                             .criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),
                     query.criteria("tradeStationId").equal(user.getSite().getId().toHexString()).criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
         }else {
@@ -668,6 +672,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if("1".equals(user.getSite().getType())){//分拨站点
             query.or(
                     query.criteria("sender.city").equal(user.getSite().getCity())
+                            .criteria("disAreaCode").equal(user.getSite().getAreaCode())
                             .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
                             .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
                             .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),

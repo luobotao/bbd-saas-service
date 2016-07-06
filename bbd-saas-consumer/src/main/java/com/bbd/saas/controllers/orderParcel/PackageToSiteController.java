@@ -231,6 +231,7 @@ public class PackageToSiteController {
 		order.setExpressStatus(ExpressStatus.ArriveStation);
 		order.setExpresses(expressList);
 		order.setDateUpd(new Date());
+		order.setOrderSetStatus(OrderSetStatus.ARRIVED);
 		orderService.save(order);
 
         if(order != null){
