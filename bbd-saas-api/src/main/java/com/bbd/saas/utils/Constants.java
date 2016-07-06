@@ -102,6 +102,8 @@ public class Constants {
     public static int ISREMOVED = 1;
     //运单未被移除
     public static int  ISNOTREMOVED = 0;
+    //商户订单详情页每页条数
+    public static final int PAGESIZE_MAIL = 50;
 
 
 }
