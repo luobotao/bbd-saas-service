@@ -150,7 +150,7 @@
                                 <td class="orange"><%=orderHoldToStoreVo.getOrderSetStatus().WAITTOIN.getMessage()%>
                                 </td>
                                 <%
-                                }
+                                    }
 
                                 %>
                             </tr>
@@ -281,8 +281,6 @@
                 row += "<td class='orange'>" + "<%=OrderSetStatus.WAITTOIN.getMessage()%>" + "</td>";
             }
             else if (data.orderSetStatus == "<%=OrderSetStatus.WAITSET%>") {
-                console.log(data.areaCode);
-                console.log("<%=user.getSite().getAreaCode()%>");
                 if(data.areaCode!="<%=user.getSite().getAreaCode()%>"){
                     row += "<td class='green-f'>待揽件集包</td>";
                 }else{
