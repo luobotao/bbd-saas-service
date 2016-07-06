@@ -114,10 +114,10 @@ public class TradeServiceImpl implements TradeService {
         Trade trade = tradeDao.findOne("tradeNo", tradeNo);
         if (trade != null){
             //快件数量（预计或者实取）
-            if(trade.getTradeStatus() == TradeStatus.WAITPAY){//待支付，订单还没有进入order表
-                trade.setTotalMail(trade.getOrderSnaps().size());
-            } else { //从order表中查询，因为有移动端移除的情况 -- 接口实现待修改
+            if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况
                 trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
+            } else { //订单预计的数量
+                trade.setTotalMail(trade.getOrderSnaps().size());
             }
         }
         return trade;
