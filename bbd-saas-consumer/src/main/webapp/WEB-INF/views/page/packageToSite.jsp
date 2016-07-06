@@ -3,7 +3,7 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="com.bbd.saas.constants.Constants" %>
+<%@ page import="com.bbd.saas.utils.Constants" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

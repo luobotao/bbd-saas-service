@@ -4,7 +4,7 @@ package com.bbd.saas.constants;
  * 常量定义
  * Created by luobotao on 2016/4/8.
  */
-public class Constants {
+public class Constants23 {
 
     public static final String ADMIN_SESSION_NAME = "_A_S";//adminuser session
     public static final String REDIS_ADMIN_ID = "SAAS_ADMINUSER_ID_";//adminid Key in redis session
@@ -98,6 +98,10 @@ public class Constants {
     public static int NO_DISPATCH_PERMISSION = 0;
     //派件员有到站分派权限 -- MYSQL库
     public static int POSTMAN_HAVE_DISPATCH_PERMISSION = 4;
+    //运单移除
+    public static int ISREMOVED = 1;
+    //运单未被移除
+    public static int  ISNOTREMOVED = 0;
 
 
 }

@@ -1,7 +1,7 @@
 package com.bbd.saas.Services;
 
-import com.bbd.saas.constants.Constants;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
