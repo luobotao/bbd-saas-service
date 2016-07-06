@@ -172,11 +172,7 @@
                                 %>
                                 <td class="black"><%=OrderSetStatus.ARRIVEDISPATCH.getMessage()%></td>
                                 <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDISPATCHSET) {
-                                %>
-                                <td class="l-blue"><%=OrderSetStatus.WAITDISPATCHSET.getMessage()%></td>
-                                <%
-                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERTOSEND) {
+                                }else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERTOSEND) {
                                 %>
                                 <td class="d-blue"><%=OrderSetStatus.WAITDRIVERTOSEND.getMessage()%></td>
                                 <%
@@ -341,9 +337,6 @@
             }
             else if (data.orderSetStatus == "<%=OrderSetStatus.ARRIVEDISPATCH%>") {
                 row += "<td class='black'>" + "<%=OrderSetStatus.ARRIVEDISPATCH.getMessage()%>" + "</td>";
-            }
-            else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDISPATCHSET%>") {
-                row += "<td class='l-blue'>" + "<%=OrderSetStatus.WAITDISPATCHSET.getMessage()%>" + "</td>";
             }
             else if (data.orderSetStatus == "<%=OrderSetStatus.WAITDRIVERTOSEND%>") {
                 row += "<td class='d-blue'>" + "<%=OrderSetStatus.WAITDRIVERTOSEND.getMessage()%>" + "</td>";

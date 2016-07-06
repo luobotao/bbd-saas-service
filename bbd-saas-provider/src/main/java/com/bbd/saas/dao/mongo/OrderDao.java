@@ -599,7 +599,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                                         .criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),
                                 query.criteria("tradeStationId").equal(orderQueryVO.user.getSite().getId().toHexString()).criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
                     }else {
-                        query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
+                        query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString()).filter("orderSetStatus",OrderSetStatus.WAITTOIN);
                     }
                 }else if("2".equals(orderQueryVO.type)){//已入库
                     if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
@@ -653,7 +653,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                             .criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),
                     query.criteria("tradeStationId").equal(user.getSite().getId().toHexString()).criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
         }else {
-            query.filter("tradeStationId", user.getSite().getId().toHexString());
+            query.filter("tradeStationId", user.getSite().getId().toHexString()).filter("orderSetStatus",OrderSetStatus.WAITTOIN);
         }
         // 历史未入库订单数
         orderHoldToStoreNumVO.setHistoryToStoreNum(count(query));
