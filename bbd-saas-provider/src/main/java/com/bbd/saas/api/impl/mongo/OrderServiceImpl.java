@@ -403,7 +403,7 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
-    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex,  List<OrderSetStatus> orderSetStatusList, OrderQueryVO orderQueryVO) {
+    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex,  OrderQueryVO orderQueryVO) {
 
         if (orderQueryVO == null) {
             return null;
@@ -412,7 +412,7 @@ public class OrderServiceImpl implements OrderService {
         //根据站点查询出订单的 收货人相关信息
         PageModel<Order> pageOrders = new PageModel<Order>();
         pageOrders.setPageNo(pageIndex);
-        pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders, orderSetStatusList, orderQueryVO);
+        pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders, orderQueryVO);
         List<Order> datas = pageOrders.getDatas();
 
         // 封装一个新的入库VorderHoldToStoreList

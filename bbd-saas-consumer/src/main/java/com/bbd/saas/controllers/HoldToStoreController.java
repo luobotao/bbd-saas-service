@@ -150,30 +150,23 @@ public class HoldToStoreController {
         orderQueryVO.embraceId = embraceId;
         orderQueryVO.user = adminService.get(UserSession.get(request));
         orderQueryVO.type=type;
-        //前台传来状态的集合
-        List<OrderSetStatus> orderSetStatusList = Lists.newArrayList();
+        orderQueryVO.orderSetStatus=orderSetStatus;
 
         if(StringUtils.isNotBlank(orderSetStatus) && !"-1".equals(orderSetStatus)){
             if("1".equals(orderSetStatus)){//待揽件集包,orderSetStatus与已入库一样
                 orderQueryVO.selfFlag = "0";//非本站待揽件集包
-                orderSetStatusList.add(OrderSetStatus.WAITSET);
+                orderQueryVO.orderSetStatus=String.valueOf(OrderSetStatus.WAITSET.getStatus());
             }else if(OrderSetStatus.WAITSET.getStatus()==Numbers.parseInt(orderSetStatus,0)){
                 orderQueryVO.selfFlag = "1";//本站已入库
-                orderSetStatusList.add(OrderSetStatus.WAITSET);
-            }else {
-                orderSetStatusList.add(OrderSetStatus.status2Obj(Numbers.parseInt(orderSetStatus,0)));
             }
         }else{
             if ("0".equals(type)) {//今日成功接单数
                 Date start =  Dates.getBeginOfDay(new Date());
                 Date end =  Dates.getEndOfDay(new Date());
                 orderQueryVO.between = new DateBetween(start,end).toString();
-                for (OrderSetStatus orderSetStatusTemp: OrderSetStatus.values()) {
-                    orderSetStatusList.add(orderSetStatusTemp);
-                }
+
             }
             if ("1".equals(type)||"3".equals(type)) {//历史未入库
-                orderSetStatusList.add(OrderSetStatus.WAITTOIN);
                 if ("3".equals(type)) {//今日未入库
                     Date start =  Dates.getBeginOfDay(new Date());
                     Date end =  Dates.getEndOfDay(new Date());
@@ -184,21 +177,13 @@ public class HoldToStoreController {
                 Date start =  Dates.getBeginOfDay(new Date());
                 Date end =  Dates.getEndOfDay(new Date());
                 orderQueryVO.between = new DateBetween(start,end).toString();
-                orderSetStatusList.add(OrderSetStatus.WAITSET);
-                orderSetStatusList.add(OrderSetStatus.WAITDRIVERGETED);
-                orderSetStatusList.add(OrderSetStatus.DRIVERGETED);
-                orderSetStatusList.add(OrderSetStatus.ARRIVEDISPATCH);
-                orderSetStatusList.add(OrderSetStatus.WAITDISPATCHSET);
-                orderSetStatusList.add(OrderSetStatus.WAITDRIVERTOSEND);
-                orderSetStatusList.add(OrderSetStatus.DRIVERSENDING);
-                orderSetStatusList.add(OrderSetStatus.ARRIVED);
             }
         }
 
         //首页进行默认值设置
         pageIndex = Numbers.defaultIfNull(pageIndex, 0);
         //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
-        PageModel<OrderHoldToStoreVo> orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex, orderSetStatusList, orderQueryVO);
+        PageModel<OrderHoldToStoreVo> orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex,  orderQueryVO);
 
         return orderHoldPageModel;
     }
@@ -218,29 +203,31 @@ public class HoldToStoreController {
         Map<String, Object> result = new HashMap<String, Object>();//封装返回参数
         String msg = "";
         Order order = orderService.findOneByMailNum(mailNum);//根据运单号查询
-        Site site = siteService.findSiteByAreaCode(order.getAreaCode());//查询此订单中的站点对象
 
         boolean status = true;
         if (order == null || order.getOrderSetStatus() == OrderSetStatus.NOEMBRACE) {//运单是否存在 未取件的也为不存在
             status = false;
             msg = "【异常扫描】不存在此运单号";
-        } else if (order.getOrderSetStatus() != null  && order.getOrderSetStatus() != OrderSetStatus.WAITTOIN) {//是否重复扫描
+        } else if (order.getOrderSetStatus() != OrderSetStatus.WAITTOIN && order.getOrderSetStatus() != OrderSetStatus.DRIVERGETED ) {//是否重复扫描
             status = false;
             msg = "重复扫描，此运单已经扫描过啦";
         } else if (user.getSite().getAreaCode().equals(order.getAreaCode())) {//运单号存在且属于此站
+            order.setOrderSetStatus(OrderSetStatus.ARRIVED);
             //到站
             orderToSite(order, user);
             //入库
             doToStore(request, order);
             status = true;
             msg = "扫描成功,完成入库。此订单属于您的站点,可直接进行【运单分派】操作";
-        } else if ("1".equals(site.getType())) {//分拨站点
+        } else if ("1".equals(user.getSite().getType())) {//分拨站点
+            order.setOrderSetStatus(OrderSetStatus.ARRIVEDISPATCH);
             //入库
             doToStore(request, order);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【分拣】操作";
-        } else if (StringUtils.isBlank(site.getType())||"0".equals(site.getType())) {//不是分拨站点
+        } else if (StringUtils.isBlank(user.getSite().getType())||"0".equals(user.getSite().getType())) {//不是分拨站点
             //入库
+            order.setOrderSetStatus(OrderSetStatus.WAITSET);
             doToStore(request, order);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【揽件集包】操作";
@@ -335,11 +322,7 @@ public class HoldToStoreController {
      */
     private void doToStore(HttpServletRequest request, Order order) {
         if (order != null) {
-            User curUser = adminService.get(UserSession.get(request));
-            if(curUser!=null && curUser.getSite()!=null)
-                order.setTradeStationId(curUser.getSite().getId().toHexString());
             //入库
-            order.setOrderSetStatus(OrderSetStatus.WAITSET);
             order.setDateUpd(new Date());
             orderService.save(order);
 

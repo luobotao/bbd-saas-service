@@ -546,14 +546,13 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     /**
      * 揽件入库的根据条件查询
      * @param pageModel
-     * @param orderSetStatusList 状态集合
      * @param orderQueryVO 封装的查询条件
      * @return
      */
-    public PageModel<Order> findPageOrdersForHoldToStore(PageModel<Order> pageModel,List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO ) {
+    public PageModel<Order> findPageOrdersForHoldToStore(PageModel<Order> pageModel,OrderQueryVO orderQueryVO ) {
 
         //设置查询条件
-        Query<Order> query = getQueryForHoldToStore( orderSetStatusList,orderQueryVO );
+        Query<Order> query = getQueryForHoldToStore( orderQueryVO );
         //设置排序
         query.order("-dateUpd");
         //分页信息
@@ -567,15 +566,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
 
     /**
      * 揽件入库 封装查询条件
-     * @param orderSetStatusList 状态
      * @param orderQueryVO  订单的查询条件
      * @return
      */
-    private Query<Order> getQueryForHoldToStore(List<OrderSetStatus>  orderSetStatusList, OrderQueryVO orderQueryVO ) {
-        Query<Order> query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null);
+    private Query<Order> getQueryForHoldToStore( OrderQueryVO orderQueryVO ) {
+        Query<Order> query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
 
         if (orderQueryVO != null) {
-            // //揽件入库  站点查询
+            if (StringUtils.isNotBlank(orderQueryVO.orderSetStatus)&& !"-1".equals(orderQueryVO.orderSetStatus)) {//有集包状态
+                query.filter("orderSetStatus", OrderSetStatus.status2Obj(Numbers.parseInt(orderQueryVO.orderSetStatus,0)));
+            }
+
+            //揽件入库  站点查询
             if("0".equals(orderQueryVO.selfFlag)){//待揽件集包,orderSetStatus与已入库一样 非本站待揽件集包
                 query.filter("areaCode <>", orderQueryVO.user.getSite().getAreaCode());
                 query.filter("orderSetStatus", OrderSetStatus.WAITSET);
@@ -588,21 +590,44 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if (StringUtils.isNotBlank(orderQueryVO.embraceId) && !"-1".equals(orderQueryVO.embraceId) && !"0".equals(orderQueryVO.embraceId)) {
                 query.filter("embraceId", orderQueryVO.embraceId);
             }else {
-                if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
-                    query.or(query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity()),
-                            query.criteria("tradeStationId").equal(orderQueryVO.user.getSite().getId().toHexString()));
-                }else {
+                //揽件入库 的状态查询
+                if("0".equals(orderQueryVO.type)){//今日成功接单数
                     query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
+                }else if ("1".equals(orderQueryVO.type)||"3".equals(orderQueryVO.type)) {//未入库
+                    if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
+                        query.or(query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
+                                        .criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),
+                                query.criteria("tradeStationId").equal(orderQueryVO.user.getSite().getId().toHexString()).criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
+                    }else {
+                        query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
+                    }
+                }else if("2".equals(orderQueryVO.type)){//已入库
+                    if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
+                        query.or(
+                                query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
+                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
+                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
+                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
+                                query.criteria("tradeStationId").equal(orderQueryVO.user.getSite().getId().toHexString())
+                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
+                        );
+                    }else {
+                        query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString()).filter("orderSetStatus <>",OrderSetStatus.WAITTOIN);
+                    }
+                }else {
+                    if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
+                        query.or(query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
+                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
+                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
+                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
+                                query.criteria("tradeStationId").equal(orderQueryVO.user.getSite().getId().toHexString()));
+                    }else {
+                        query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
+                    }
                 }
+
             }
 
-            //揽件入库 的状态查询
-            query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
-            if ("1".equals(orderQueryVO.type)||"3".equals(orderQueryVO.type)) {//未入库
-                query.filter("orderSetStatus", OrderSetStatus.WAITTOIN);
-            }else if("2".equals(orderQueryVO.type)){//已入库
-                query.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
-            }
             if (StringUtils.isNotBlank(orderQueryVO.between)) {//到站时间
                 DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                 query.filter("dateUpd >=", dateBetween.getStart());
@@ -622,15 +647,15 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      */
     public OrderHoldToStoreNumVO getOrderHoldToStoreNum(User user){
         OrderHoldToStoreNumVO orderHoldToStoreNumVO = new OrderHoldToStoreNumVO();
-        Query<Order> query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null);
+        Query<Order> query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
         if("1".equals(user.getSite().getType())){//分拨站点
-            query.or(query.criteria("sender.city").equal(user.getSite().getCity()),
-                    query.criteria("tradeStationId").equal(user.getSite().getId().toHexString()));
+            query.or(query.criteria("sender.city").equal(user.getSite().getCity())
+                            .criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),
+                    query.criteria("tradeStationId").equal(user.getSite().getId().toHexString()).criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
         }else {
             query.filter("tradeStationId", user.getSite().getId().toHexString());
         }
         // 历史未入库订单数
-        query.filter("orderSetStatus", OrderSetStatus.WAITTOIN);
         orderHoldToStoreNumVO.setHistoryToStoreNum(count(query));
 
         Date start =  Dates.getBeginOfDay(new Date());
@@ -641,18 +666,26 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         orderHoldToStoreNumVO.setTodayNoToStoreNum(count(query));
 
         //今日成功接单数
-        query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null);
-        if("1".equals(user.getSite().getType())){//分拨站点
-            query.or(query.criteria("sender.city").equal(user.getSite().getCity()),
-                    query.criteria("tradeStationId").equal(user.getSite().getId().toHexString()));
-        }else {
-            query.filter("tradeStationId", user.getSite().getId().toHexString());
-        }
+        query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
+        query.filter("tradeStationId", user.getSite().getId().toHexString());
         query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
         query.filter("dateUpd >=",start);
         query.filter("dateUpd <=",end);
         orderHoldToStoreNumVO.setSuccessOrderNum(count(query));
         // 今日已入库订单数
+        if("1".equals(user.getSite().getType())){//分拨站点
+            query.or(
+                    query.criteria("sender.city").equal(user.getSite().getCity())
+                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
+                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
+                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
+                    query.criteria("tradeStationId").equal(user.getSite().getId().toHexString())
+                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
+            );
+        }else {
+            query.filter("tradeStationId", user.getSite().getId().toHexString()).filter("orderSetStatus <>",OrderSetStatus.WAITTOIN);
+        }
+
         query.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
         orderHoldToStoreNumVO.setTodayToStoreNum(count(query));
         return orderHoldToStoreNumVO;

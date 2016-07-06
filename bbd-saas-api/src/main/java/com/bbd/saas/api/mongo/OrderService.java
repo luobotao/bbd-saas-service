@@ -192,7 +192,7 @@ public interface OrderService {
      * @param orderQueryVO
      * @return
      */
-    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex,  List<OrderSetStatus> orderSetStatusList, OrderQueryVO orderQueryVO);
+    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex, OrderQueryVO orderQueryVO);
 
     /**
      * 揽件入库

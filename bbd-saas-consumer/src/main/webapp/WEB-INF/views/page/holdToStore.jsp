@@ -139,19 +139,64 @@
                                 </td>
                                 <td class="tl"><%=orderHoldToStoreVo.getRecieverAddress()%>
                                 </td>
+
                                 <%
-                                    if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITSET && !user.getSite().getAreaCode().equals(orderHoldToStoreVo.getAreaCode())) {
+                                    if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.NOEMBRACE) {
                                 %>
-                                <td class="orange-a">待揽件集包
-                                </td>
+                                <td class="orange-a"><%=OrderSetStatus.NOEMBRACE.getMessage()%></td>
                                 <%
-                                } else{
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITTOIN) {
                                 %>
-                                <td class="orange"><%=orderHoldToStoreVo.getOrderSetStatus().WAITTOIN.getMessage()%>
-                                </td>
+                                <td class="orange"><%=OrderSetStatus.WAITTOIN.getMessage()%></td>
                                 <%
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITSET) {
+                                    if(!user.getSite().getAreaCode().equals(orderHoldToStoreVo.getAreaCode())){
+                                        %>
+                                        <td class="green-f">待揽件集包</td>
+                                        <%
+                                    }else{
+                                        %>
+                                        <td class="green-f"><%=OrderSetStatus.WAITSET.getMessage()%></td>
+                                        <%
                                     }
 
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERGETED) {
+                                %>
+                                <td class="purple"><%=OrderSetStatus.WAITDRIVERGETED.getMessage()%></td>
+                                <%
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERGETED) {
+                                %>
+                                <td class="d-red"><%=OrderSetStatus.DRIVERGETED.getMessage()%></td>
+                                <%
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVEDISPATCH) {
+                                %>
+                                <td class="black"><%=OrderSetStatus.ARRIVEDISPATCH.getMessage()%></td>
+                                <%
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDISPATCHSET) {
+                                %>
+                                <td class="l-blue"><%=OrderSetStatus.WAITDISPATCHSET.getMessage()%></td>
+                                <%
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.WAITDRIVERTOSEND) {
+                                %>
+                                <td class="d-blue"><%=OrderSetStatus.WAITDRIVERTOSEND.getMessage()%></td>
+                                <%
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.DRIVERSENDING) {
+                                %>
+                                <td class="brown"><%=OrderSetStatus.DRIVERSENDING.getMessage()%></td>
+                                <%
+                                } else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.ARRIVED) {
+                                %>
+                                <td class="c-green"><%=OrderSetStatus.ARRIVED.getMessage()%></td>
+                                <%
+                                }else if (orderHoldToStoreVo.getOrderSetStatus() == OrderSetStatus.REMOVED) {
+                                %>
+                                <td class="c-gray"><%=OrderSetStatus.REMOVED.getMessage()%></td>
+                                <%
+                                }else {
+                                %>
+                                <td></td>
+                                <%
+                                    }
                                 %>
                             </tr>
                             <%
@@ -309,7 +354,9 @@
             else if (data.orderSetStatus == "<%=OrderSetStatus.ARRIVED%>") {
                 row += "<td class='c-green'>" + "<%=OrderSetStatus.ARRIVED.getMessage()%>" + "</td>";
             }
-
+            else if (data.orderSetStatus == "<%=OrderSetStatus.REMOVED%>") {
+                row += "<td class='c-gray'>" + "<%=OrderSetStatus.REMOVED.getMessage()%>" + "</td>";
+            }
         } else {
             row += "<td colspan='7'>" + 没有符合查询条件的数据 + "</td>"
         }
