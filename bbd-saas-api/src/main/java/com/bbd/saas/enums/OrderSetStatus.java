@@ -10,7 +10,7 @@ public enum OrderSetStatus {
 
     NOEMBRACE(0, "待取件"),
     WAITTOIN(2, "已取件,待入库"),
-    WAITSET(3, "已入库"),
+    WAITSET(3, "待揽件集包"),
     WAITDRIVERGETED(4, "待司机取货送往分拨中心"),
     DRIVERGETED(5, "正在运输到分拨中心"),
     ARRIVEDISPATCH(6, "待分拣集包"),
@@ -58,16 +58,13 @@ public enum OrderSetStatus {
         OrderSetStatus[] orderEnum = OrderSetStatus.values();
         sb.append(Htmls.generateOption(-1, "默认全部"));
         for (OrderSetStatus ps : orderEnum) {
-            if(ps == OrderSetStatus.NOEMBRACE){
+            if(ps == OrderSetStatus.NOEMBRACE || ps ==OrderSetStatus.REMOVED){
                 continue;
             }else{
                 if (id == ps.status) {
                     sb.append(Htmls.generateSelectedOption(ps.status, ps.message));
                 } else {
                     sb.append(Htmls.generateOption(ps.status, ps.message));
-                }
-                if(ps == OrderSetStatus.WAITSET){
-                    sb.append(Htmls.generateOption(1, "待揽件集包"));
                 }
             }
 

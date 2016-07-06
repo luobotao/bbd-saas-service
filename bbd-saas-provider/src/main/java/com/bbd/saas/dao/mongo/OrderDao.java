@@ -577,14 +577,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 query.filter("orderSetStatus", OrderSetStatus.status2Obj(Numbers.parseInt(orderQueryVO.orderSetStatus,0)));
             }
 
-            //揽件入库  站点查询
-            if("0".equals(orderQueryVO.selfFlag)){//待揽件集包,orderSetStatus与已入库一样 非本站待揽件集包
-                query.filter("areaCode <>", orderQueryVO.user.getSite().getAreaCode());
-                query.filter("orderSetStatus", OrderSetStatus.WAITSET);
-            }else if("1".equals(orderQueryVO.selfFlag)){//本站已入库
-                query.filter("areaCode", orderQueryVO.user.getSite().getAreaCode());
-                query.filter("orderSetStatus", OrderSetStatus.WAITSET);
-            }
 
             //揽件入库 根据揽件员的id 查询
             if (StringUtils.isNotBlank(orderQueryVO.embraceId) && !"-1".equals(orderQueryVO.embraceId) && !"0".equals(orderQueryVO.embraceId)) {

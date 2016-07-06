@@ -152,32 +152,23 @@ public class HoldToStoreController {
         orderQueryVO.type=type;
         orderQueryVO.orderSetStatus=orderSetStatus;
 
-        if(StringUtils.isNotBlank(orderSetStatus) && !"-1".equals(orderSetStatus)){
-            if("1".equals(orderSetStatus)){//待揽件集包,orderSetStatus与已入库一样
-                orderQueryVO.selfFlag = "0";//非本站待揽件集包
-                orderQueryVO.orderSetStatus=String.valueOf(OrderSetStatus.WAITSET.getStatus());
-            }else if(OrderSetStatus.WAITSET.getStatus()==Numbers.parseInt(orderSetStatus,0)){
-                orderQueryVO.selfFlag = "1";//本站已入库
-            }
-        }else{
-            if ("0".equals(type)) {//今日成功接单数
-                Date start =  Dates.getBeginOfDay(new Date());
-                Date end =  Dates.getEndOfDay(new Date());
-                orderQueryVO.between = new DateBetween(start,end).toString();
+        if ("0".equals(type)) {//今日成功接单数
+            Date start =  Dates.getBeginOfDay(new Date());
+            Date end =  Dates.getEndOfDay(new Date());
+            orderQueryVO.between = new DateBetween(start,end).toString();
 
-            }
-            if ("1".equals(type)||"3".equals(type)) {//历史未入库
-                if ("3".equals(type)) {//今日未入库
-                    Date start =  Dates.getBeginOfDay(new Date());
-                    Date end =  Dates.getEndOfDay(new Date());
-                    orderQueryVO.between = new DateBetween(start,end).toString();
-                }
-            }
-            if ("2".equals(type)) {//今日已入库
+        }
+        if ("1".equals(type)||"3".equals(type)) {//历史未入库
+            if ("3".equals(type)) {//今日未入库
                 Date start =  Dates.getBeginOfDay(new Date());
                 Date end =  Dates.getEndOfDay(new Date());
                 orderQueryVO.between = new DateBetween(start,end).toString();
             }
+        }
+        if ("2".equals(type)) {//今日已入库
+            Date start =  Dates.getBeginOfDay(new Date());
+            Date end =  Dates.getEndOfDay(new Date());
+            orderQueryVO.between = new DateBetween(start,end).toString();
         }
 
         //首页进行默认值设置

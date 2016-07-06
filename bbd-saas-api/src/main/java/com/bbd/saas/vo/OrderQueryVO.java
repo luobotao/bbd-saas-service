@@ -29,5 +29,4 @@ public class OrderQueryVO implements Serializable{
 	public String orderSetStatus;//运单集包状态
 	public String tradeNo;//商户订单号(我们自己生成的支付订单号)
 	public String dateArrived;//到达时间
-	public String selfFlag;//是否是本站下的订单 针对揽件入库使用 0非本站 即针对orderSetStatus为待揽件集包 1本站 即针对orderSetStatus为已入库
 }
