@@ -250,6 +250,7 @@ public class HoldToStoreController {
         order.setExpressStatus(ExpressStatus.ArriveStation);
         order.setExpresses(expressList);
         order.setDateUpd(new Date());
+        order.setDateArrived(new Date());
         orderService.save(order);
 
         if (null != order) {
