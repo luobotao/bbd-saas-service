@@ -192,6 +192,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if (StringUtils.isNotBlank(orderQueryVO.mailNum)) {
                 query.and(query.criteria("mailNum").containsIgnoreCase(orderQueryVO.mailNum));
             }
+            //商户订单号（tradeNo）或者运单号(mailnum)--模糊查询
+            if (StringUtils.isNotBlank(orderQueryVO.tradeOrMailNoLike)) {
+                query.or(query.criteria("mailNum").containsIgnoreCase(orderQueryVO.tradeOrMailNoLike),
+                        query.criteria("tradeNo").containsIgnoreCase(orderQueryVO.tradeOrMailNoLike));
+            }
             //包裹号
             if (StringUtils.isNotBlank(orderQueryVO.parcelCode)) {
                 query.filter("parcelCode", orderQueryVO.parcelCode);

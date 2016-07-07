@@ -1,6 +1,5 @@
 package com.bbd.saas.vo;
 
-import com.bbd.saas.enums.OrderSetStatus;
 import com.bbd.saas.mongoModels.User;
 
 import java.io.Serializable;
@@ -28,5 +27,6 @@ public class OrderQueryVO implements Serializable{
 	public List<String> areaCodeList;//公司Id
 	public String orderSetStatus;//运单集包状态
 	public String tradeNo;//商户订单号(我们自己生成的支付订单号)
+	public String tradeOrMailNoLike;//商户订单号（tradeNo）或者运单号(mailnum)
 	public String dateArrived;//到达时间
 }
