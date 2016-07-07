@@ -447,7 +447,7 @@ public class TradeServiceImpl implements TradeService {
 
         //postrole 0 代表小件员 4 代表站长 poststatus 1 代表司机处于接单状态
         String sql="SELECT u.*  FROM postmanuser"
-                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND (u.postrole = '0' or u.postrole='99') AND u.poststatus="+poststatus+""
+                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND u.sta='1' AND token<>'' AND (u.postrole = '0' or u.postrole='99') AND u.poststatus="+poststatus+""
                 +"  AND SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) < "+i
                 + " order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc";
 
