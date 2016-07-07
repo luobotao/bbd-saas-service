@@ -57,10 +57,10 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(StringUtils.isNotBlank(tradeQueryVO.tradeNoLike)){//商户订单号模糊查询
             query.and(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.tradeNoLike));
         }
-//        if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//商户运单号模糊查询
-//            query.or(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.noLike),
-//                    query.criteria("orderSnaps.mailNum").containsIgnoreCase(tradeQueryVO.noLike));
-//        }
+        if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//商户运单号模糊查询
+            query.or(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.noLike),
+                    query.criteria("orderSnaps.mailNum").containsIgnoreCase(tradeQueryVO.noLike));
+        }
         if(tradeQueryVO.tradeNoList!=null && tradeQueryVO.tradeNoList.size()>0){
             query.filter("tradeNo in", tradeQueryVO.tradeNoList);
         }

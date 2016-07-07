@@ -122,44 +122,6 @@ public class TradeServiceImpl implements TradeService {
         }
         return trade;
     }
-
-    /**
-     * 根据查询条件和订单状态获取商户订单列表信息
-     * @param pageIndex 当前页
-     * @param tradeQueryVO 查询条件
-     * @param rcvKeyword 收件人查询关键词
-     * @return 分页对象（分页信息和当前页的数据）
-     */
-    //@Override
-    public PageModel<Trade> findTradePage2(Integer pageIndex, TradeQueryVO tradeQueryVO, String rcvKeyword){
-        //查询运单号包含tradeQueryVO.tradeNo && 收件人手机号、姓名、地址中包含rcvKeyword的运单的订单号集合tradeNoSet
-        List<Order> orderList = orderDao.findOrderList(tradeQueryVO.uId, tradeQueryVO.tradeNoLike, rcvKeyword);
-        Set<String> tradeNoSet = new HashSet<String>();
-        if(orderList != null && orderList.size() > 0){
-            for (Order order : orderList){
-                if(order != null && order.getTradeNo() != null){
-                    tradeNoSet.add(order.getTradeNo());
-                }
-            }
-        }
-        //根据uId、tradeNo、dateAddBetween，tradeStatus查询订单
-        tradeQueryVO.tradeNoSet = tradeNoSet;
-        tradeQueryVO.tradeNoLike = null;
-        PageModel<Trade> tradePageModel = tradeDao.findTradePage(pageIndex, tradeQueryVO);
-        //设置快件数量和揽件人、状态
-        List<Trade> tradeList = tradePageModel.getDatas();
-        if (tradeList != null && tradeList.size() > 0){
-            for (Trade trade : tradeList){
-                //快件数据量
-                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
-                //揽件人
-                trade.setEmbrace(userDao.findOne("_id", trade.getEmbraceId()));
-                //状态
-                trade.setStatusMsg(trade.getTradeStatus().getMessage());
-            }
-        }
-        return tradePageModel;
-    }
     /**
      * 根据查询条件和订单状态获取商户订单列表信息
      * @param pageIndex 当前页
