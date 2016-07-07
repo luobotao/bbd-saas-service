@@ -131,7 +131,8 @@ public class PackageToSiteController {
 	public boolean checkOrderParcelByParcelCode(HttpServletRequest request,@RequestParam(value = "parcelCode", required = true) String parcelCode) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		OrderParcel orderParcel =  orderParcelService.findOrderParcelByParcelCode(user.getSite().getAreaCode(),parcelCode);
-		if(orderParcel==null)
+		//包裹类型 0：配件包裹（默认） 1：集包
+		if(orderParcel==null || "1".equals(orderParcel.getParceltyp()))
 			return false;
 		else
 			return true;

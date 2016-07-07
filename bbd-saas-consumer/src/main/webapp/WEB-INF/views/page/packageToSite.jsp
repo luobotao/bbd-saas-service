@@ -6,6 +6,7 @@
 <%@ page import="com.bbd.saas.utils.Constants" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
+<%@ page import="com.bbd.saas.enums.OrderSetStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -367,13 +368,18 @@
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
 						}else{
-							if(response.expressStatus != null && response.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
-								$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
-								$("#toSitePrompt").modal("show");
-								isBatchToSite = false;//单个运单执行到站
+							if(response.orderSetStatus!=null && response.orderSetStatus == "<%=OrderSetStatus.WAITTOIN%>"){
+								$("#mailNumP").html("请进行揽件入库操作");
+								$("#mailNumP").attr("style","color:red");
 							}else{
-								isBatchToSite = false;//单个运单执行到站
-								doToSite();
+								if(response.expressStatus != null && response.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
+									$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
+									$("#toSitePrompt").modal("show");
+									isBatchToSite = false;//单个运单执行到站
+								}else{
+									isBatchToSite = false;//单个运单执行到站
+									doToSite();
+								}
 							}
 						}
 					}else{
