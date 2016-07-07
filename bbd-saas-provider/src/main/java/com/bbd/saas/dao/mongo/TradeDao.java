@@ -54,13 +54,19 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(StringUtils.isNotBlank(tradeQueryVO.tradeNo)){//商户订单号
             query.filter("tradeNo", tradeQueryVO.tradeNo);
         }
-        if(StringUtils.isNotBlank(tradeQueryVO.tradeNoLike)){//商户订单号模糊查询
+        if(StringUtils.isNotBlank(tradeQueryVO.tradeNoLike)){//商户订单号模糊
             query.and(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.tradeNoLike));
         }
-//        if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//商户运单号模糊查询
-//            query.or(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.noLike),
-//                    query.criteria("orderSnaps.mailNum").containsIgnoreCase(tradeQueryVO.noLike));
-//        }
+        if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//商户订单号或者运单号模糊查询
+            if(tradeQueryVO.tradeStatus == null || tradeQueryVO.tradeStatus == TradeStatus.WAITPAY.getStatus()){//未支付
+                query.and(query.criteria("tradeNo").containsIgnoreCase(tradeQueryVO.noLike));//运单号还未生成
+            }else{//已支付
+                if(tradeQueryVO.tradeNoList != null && tradeQueryVO.tradeNoList.size()>0){
+                    query.filter("tradeNo in", tradeQueryVO.tradeNoList);
+                    tradeQueryVO.tradeNoList = null;//跟下面的语句相同，避免重复执行
+                }
+            }
+        }
         if(tradeQueryVO.tradeNoList!=null && tradeQueryVO.tradeNoList.size()>0){
             query.filter("tradeNo in", tradeQueryVO.tradeNoList);
         }
