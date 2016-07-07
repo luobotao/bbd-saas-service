@@ -4,12 +4,10 @@ import com.bbd.saas.enums.*;
 import com.bbd.saas.vo.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -74,6 +72,8 @@ public class Order implements Serializable {
     private String printStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message -- 打印状态
     @Transient
     private String orderStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message -- 运单状态
+    @Transient
+    private String expressStatusMsg;//快件状态
     @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
@@ -400,6 +400,37 @@ public class Order implements Serializable {
 
     public void setPrintStatusMsg(String printStatusMsg) {
         this.printStatusMsg = printStatusMsg;
+    }
+
+    public String getExpressStatusMsg() {
+        if(this.orderStatus != null && this.orderStatus != OrderStatus.NOTARR){//快件状态从orderStatus中取得
+            if(this.orderStatus == OrderStatus.NOTDISPATCH){
+                this.expressStatusMsg = "已到达配送点";
+            }else if(this.orderStatus == OrderStatus.DISPATCHED){
+                this.expressStatusMsg = "正在配送";
+            }else{
+                this.expressStatusMsg = this.orderStatus != null ? this.orderStatus.getMessage() : "";
+            }
+        }else{//快件状态从orderSetStatus中取得
+            if(this.orderSetStatus == OrderSetStatus.WAITTOIN){
+                this.expressStatusMsg = this.orderSetStatus.getMessage();
+            }else if(this.orderSetStatus == OrderSetStatus.WAITSET){
+                this.expressStatusMsg = "已入库";
+            }else if(this.orderSetStatus == OrderSetStatus.WAITDRIVERGETED || this.orderSetStatus == OrderSetStatus.DRIVERGETED){
+                this.expressStatusMsg = "前往分拨中心";
+            }else if(this.orderSetStatus == OrderSetStatus.ARRIVEDISPATCH || this.orderSetStatus == OrderSetStatus.WAITDRIVERTOSEND){
+                this.expressStatusMsg = "已到达分拨中心";
+            }else if(this.orderSetStatus == OrderSetStatus.DRIVERSENDING){
+                this.expressStatusMsg = "前往配送点";
+            }else{
+                this.expressStatusMsg = this.orderSetStatus != null ? this.orderSetStatus.getMessage() : "";
+            }
+        }
+        return this.expressStatusMsg;
+    }
+
+    public void setExpressStatusMsg(String expressStatusMsg) {
+        this.expressStatusMsg = expressStatusMsg;
     }
 
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
