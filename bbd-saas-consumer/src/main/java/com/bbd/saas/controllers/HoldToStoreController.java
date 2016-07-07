@@ -56,7 +56,7 @@ public class HoldToStoreController {
     @Autowired
     ExpressExchangeService expressExchangeService;
     @Autowired
-    OrderParcelService orderPacelService;
+    OrderParcelService orderParcelService;
     @Autowired
     OrderTrackService orderTrackService;
     @Autowired
@@ -264,47 +264,7 @@ public class HoldToStoreController {
                 expressExchangeService.save(expressExchange);
             }
         }
-        OrderParcel orderParcel = orderPacelService.findOrderParcelByOrderId(order.getId().toHexString());
-        if (orderParcel != null) {
-            Boolean flag = true;//是否可以更新包裹的状态
-            for (Order orderTemp : orderParcel.getOrderList()) {
-                if (orderTemp.getOrderStatus() == null || orderTemp.getOrderStatus() == OrderStatus.NOTARR) {
-                    flag = false;
-                }
-            }
-            if (flag) {//更新包裹状态，做包裹到站操作
-                orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
-                orderParcel.setDateUpd(new Date());
-                orderPacelService.saveOrderParcel(orderParcel);
-                /**修改orderTrack里的状态*/
-                try {
-                    String trackNo = orderParcel.getTrackNo();
-                    if (StringUtils.isNotBlank(trackNo)) {
-                        OrderTrack orderTrack = orderTrackService.findOneByTrackNo(trackNo);
-                        if (orderTrack != null) {
-                            List<OrderParcel> orderParcelList = orderPacelService.findOrderParcelListByTrackCode(trackNo);
-                            Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
-                            for (OrderParcel orderParcel1 : orderParcelList) {
-                                if (orderParcel1.getStatus() != ParcelStatus.ArriveStation) {
-                                    flagForUpdateTrackNo = false;//不可更新
-                                }
-                            }
-                            if (flagForUpdateTrackNo) {//可以更新orderTrack下的状态
-                                orderTrack.dateUpd = new Date();
-                                orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
-                                orderTrack.transStatus = TransStatus.YWC;
-                                orderTrack.preSchedule = "已送达";
-                                orderTrackService.updateOrderTrack(trackNo, orderTrack);
-                                incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
+        orderParcleStatusChange(order.getId().toHexString(),"0");//parceType 包裹类型 0：配件包裹（默认） 1：集包
     }
 
     /**
@@ -318,6 +278,9 @@ public class HoldToStoreController {
             order.setDateUpd(new Date());
             orderService.save(order);
 
+            //修改司机包裹的状态
+            orderParcleStatusChange(order.getId().toHexString(),"1");//parceType 包裹类型 0：配件包裹（默认） 1：集包
+            //修改交易订单的状态
             long totalCount = orderService.findCountByTradeNo(order.getTradeNo());//此商户订单号下的所有运单
             long arrCount = orderService.findArrCountByTradeNo(order.getTradeNo());//此商户订单号下的所有已入库的运单
             if(totalCount==arrCount){//全部入库完成,修改trade的状态
@@ -340,5 +303,53 @@ public class HoldToStoreController {
     public OrderHoldToStoreNumVO updateOrderHoldToStoreNumVO(HttpServletRequest request) {
         return orderService.getOrderHoldToStoreNum(adminService.get(UserSession.get(request)));
     }
+    /**
+     * 检查是否需要更新包裹状态
+     * @param orderId
+     * @param parceType 包裹类型 0：配件包裹（默认） 1：集包
+     */
+    private void orderParcleStatusChange(String orderId,String parceType){
+        OrderParcel orderParcel = orderParcelService.findOrderParcelByOrderIdAndParcelType(orderId,parceType);
+        if (orderParcel != null) {
+            Boolean flag = true;//是否可以更新包裹的状态
+            for (Order orderTemp : orderParcel.getOrderList()) {
+                Order orderReal = orderService.findOneByMailNum(orderTemp.getAreaCode(),orderTemp.getMailNum());
+                if (orderReal==null || orderReal.getOrderStatus() == null || orderReal.getOrderStatus() == OrderStatus.NOTARR) {
+                    flag = false;
+                }
+            }
+            if (flag) {//更新包裹状态，做包裹到站操作
+                orderParcel.setStatus(ParcelStatus.ArriveStation);//包裹到站
+                orderParcel.setDateUpd(new Date());
+                orderParcelService.saveOrderParcel(orderParcel);
+                /**修改orderTrack里的状态*/
+                try {
+                    String trackNo = orderParcel.getTrackNo();
+                    if (StringUtils.isNotBlank(trackNo)) {
+                        OrderTrack orderTrack = orderTrackService.findOneByTrackNo(trackNo);
+                        if (orderTrack != null) {
+                            List<OrderParcel> orderParcelList = orderParcelService.findOrderParcelListByTrackCode(trackNo);
+                            Boolean flagForUpdateTrackNo = true;//是否可以更新orderTrack下的状态
+                            for (OrderParcel orderParcel1 : orderParcelList) {
+                                if (orderParcel1.getStatus() != ParcelStatus.ArriveStation) {
+                                    flagForUpdateTrackNo = false;//不可更新
+                                }
+                            }
+                            if (flagForUpdateTrackNo) {//可以更新orderTrack下的状态
+                                orderTrack.dateUpd = new Date();
+                                orderTrack.sendStatus = OrderTrack.SendStatus.ArriveStation;
+                                orderTrack.transStatus = TransStatus.YWC;
+                                orderTrack.preSchedule="已送达";
+                                orderTrackService.updateOrderTrack(trackNo, orderTrack);
+                                incomeService.driverIncome(Numbers.parseInt(orderTrack.driverId, 0), orderTrack.actOrderPrice, orderTrack.trackNo);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
+            }
+        }
+    }
 }

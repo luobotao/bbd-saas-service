@@ -207,7 +207,6 @@ public class PackageToSiteController {
 			if(order!=null){
 				orderToSite(order,user);
 			}
-//			orderService.updateOrderOrderStatu(mailNum.toString(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);
 		}
 		return true;
 	}
@@ -247,7 +246,7 @@ public class PackageToSiteController {
 				expressExchange.setDateAdd(new Date());
 				expressExchangeService.save(expressExchange);
 			}
-			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+			orderParcleStatusChange(order.getId().toHexString(),"0");//检查是否需要更新包裹状态 包裹类型 0：配件包裹（默认） 1：集包
 		}
 
 	}
@@ -274,7 +273,7 @@ public class PackageToSiteController {
 			//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
 			orderService.save(order);
 			postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因：超出配送范围。","滞留原因：超出配送范围");
-			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+			orderParcleStatusChange(order.getId().toHexString(),"0");//检查是否需要更新包裹状态 包裹类型 0：配件包裹（默认） 1：集包
 		}
 		return true;
 	}
@@ -325,9 +324,10 @@ public class PackageToSiteController {
 	/**
 	 * 检查是否需要更新包裹状态
 	 * @param orderId
-     */
-	private void orderParcleStatusChange(String orderId){
-		OrderParcel orderParcel = orderParcelService.findOrderParcelByOrderId(orderId);
+	 * @param parceType 包裹类型 0：配件包裹（默认） 1：集包
+	 */
+	private void orderParcleStatusChange(String orderId,String parceType){
+		OrderParcel orderParcel = orderParcelService.findOrderParcelByOrderIdAndParcelType(orderId,parceType);
 		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
 			for (Order orderTemp : orderParcel.getOrderList()) {
