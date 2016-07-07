@@ -209,10 +209,10 @@ public class HoldToStoreController {
             msg = "重复扫描，此运单已经扫描过啦";
         } else if (user.getSite().getAreaCode().equals(order.getAreaCode())) {//运单号存在且属于此站
             order.setOrderSetStatus(OrderSetStatus.ARRIVED);
-            //到站 == 到站和入库顺序不可以颠倒，若颠倒order需要重新查一遍。
-            order = orderToSite(order, user);
             //入库
             doToStore(request, order);
+            //到站 == 到站和入库顺序不可以颠倒，若颠倒order需要重新查一遍。
+            orderToSite(order, user);
             status = true;
             msg = "扫描成功,完成入库。此订单属于您的站点,可直接进行【运单分派】操作";
         } else if ("1".equals(user.getSite().getType())) {//分拨站点
@@ -269,6 +269,7 @@ public class HoldToStoreController {
             }
         }
         orderParcleStatusChange(order.getId().toHexString(),"0");//parceType 包裹类型 0：配件包裹（默认） 1：集包
+        return order;
     }
 
     /**
@@ -355,6 +356,5 @@ public class HoldToStoreController {
 
             }
         }
-        return order;
     }
 }
