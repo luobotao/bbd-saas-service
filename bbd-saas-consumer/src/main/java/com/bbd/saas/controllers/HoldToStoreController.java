@@ -19,16 +19,21 @@ import com.bbd.saas.vo.OrderHoldToStoreVo;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 揽件入库
@@ -204,8 +209,8 @@ public class HoldToStoreController {
             msg = "重复扫描，此运单已经扫描过啦";
         } else if (user.getSite().getAreaCode().equals(order.getAreaCode())) {//运单号存在且属于此站
             order.setOrderSetStatus(OrderSetStatus.ARRIVED);
-            //到站
-            orderToSite(order, user);
+            //到站 == 到站和入库顺序不可以颠倒，若颠倒order需要重新查一遍。
+            order = orderToSite(order, user);
             //入库
             doToStore(request, order);
             status = true;
@@ -235,7 +240,7 @@ public class HoldToStoreController {
      * @param order
      * @param user
      */
-    public void orderToSite(Order order, User user) {
+    public Order orderToSite(Order order, User user) {
         orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
         order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
         Express express = new Express();
@@ -250,10 +255,9 @@ public class HoldToStoreController {
         order.setExpressStatus(ExpressStatus.ArriveStation);
         order.setExpresses(expressList);
         order.setDateUpd(new Date());
-        order.setDateArrived(new Date());
         orderService.save(order);
 
-        if (null != order) {
+        if (order != null) {
             if (Srcs.DANGDANG.equals(order.getSrc()) || Srcs.PINHAOHUO.equals(order.getSrc())) {
                 ExpressExchange expressExchange = new ExpressExchange();
                 expressExchange.setOperator(user.getRealName());
@@ -305,6 +309,7 @@ public class HoldToStoreController {
 
             }
         }
+        return order;
     }
 
     /**
