@@ -7,10 +7,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderSnap;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.Goods;
-import com.bbd.saas.vo.Reciever;
-import com.bbd.saas.vo.Sender;
-import com.bbd.saas.vo.TradeQueryVO;
+import com.bbd.saas.vo.*;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -180,7 +177,20 @@ public class TradeServiceTest {
 	}
 
 
-
+	@Test
+	public void testElemMatch() throws Exception{
+		//设置查询条件
+		OrderQueryVO tradeQueryVO = new OrderQueryVO();
+		/*tradeQueryVO.uId = uId;
+		tradeQueryVO.tradeStatus = -1;
+		tradeQueryVO.noLike = null;
+		tradeQueryVO.rcvKeyword = "奎文";
+		tradeQueryVO.dateAddStart = "2016-06-21";
+		tradeQueryVO.dateAddEnd = "2016-06-21";
+		//若此方法超时，则把设置快件数量、揽件员、订单状态提到controller中
+		PageModel<Order> tradePage = orderService.findOrders();*/
+		Assert.isTrue(true);//无用
+	}
 
 
 }
