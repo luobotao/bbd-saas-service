@@ -148,8 +148,6 @@ public class TradeServiceImpl implements TradeService {
                 }
             }
         }
-
-
         PageModel<Trade> tradePageModel = tradeDao.findTradePage(pageIndex, tradeQueryVO);
         //设置快件数量和揽件人、状态
         List<Trade> tradeList = tradePageModel.getDatas();
