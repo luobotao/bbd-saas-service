@@ -5,6 +5,7 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
+import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -56,10 +57,13 @@ public class HandleAbnormalController {
     ToOtherSiteLogService toOtherSiteLogService;
     @Autowired
     PostDeliveryService postDeliveryService;
-
     @Autowired
     ExpressCompanyService expressCompanyService;
+    @Autowired
+    SmsInfoService smsInfoService;
 
+    @Value("${bbd.contact}")
+    private String contact;
     @Value("${EPREE100_KEY}")
     private String EPREE100_KEY ;
     @Value("${EPREE100_CALLBACK_URL}")
@@ -196,6 +200,7 @@ public class HandleAbnormalController {
                 } else {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 }
+                smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact);
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
                 expressList.add(express);
