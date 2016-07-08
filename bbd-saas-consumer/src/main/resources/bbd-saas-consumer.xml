@@ -49,6 +49,7 @@
     <dubbo:reference id="smsInfoService" interface="com.bbd.saas.api.mysql.SmsInfoService"/>
     <dubbo:reference id="orderLogService" interface="com.bbd.saas.api.mysql.OrderLogService"/>
     <dubbo:reference id="incomeService" interface="com.bbd.saas.api.mysql.IncomeService"/>
+    <dubbo:reference id="pushService" interface="com.bbd.saas.api.mysql.PushService"/>
     <dubbo:reference id="expressStatStationService" interface="com.bbd.saas.api.mysql.ExpressStatStationService"/>
 
      <!--转为其他快递    获取所有的快递公司-->

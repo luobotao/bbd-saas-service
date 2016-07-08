@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.IncomeDao">
+
+
+
+    <parameterMap type="map" id="tradePushParameterMap">
+        <parameter property="uid" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="typ" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="tradeNo" jdbcType="VARCHAR" mode="IN"/>
+    </parameterMap>
+    <update id="tradePush" parameterMap="tradePushParameterMap" statementType="CALLABLE">
+        {call sp_postman_bbdpush_trade(?, ?, ?)}
+    </update>
+
+</mapper>

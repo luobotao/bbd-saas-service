@@ -6,6 +6,7 @@ import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.IncomeService;
+import com.bbd.saas.api.mysql.PushService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.*;
@@ -54,6 +55,8 @@ public class HoldToStoreController {
     @Autowired
     AdminService adminService;
 
+    @Autowired
+    PushService pushService;
     @Autowired
     TradeService tradeService;
     @Autowired
@@ -293,6 +296,7 @@ public class HoldToStoreController {
                 trade.setTradeStatus(TradeStatus.ARRIVED);
                 trade.setDateUpd(new Date());
                 tradeService.save(trade);
+                pushService.tradePush(trade.getEmbrace().getPostmanuserId(),"2",trade.getTradeNo());
             }
         }
     }
