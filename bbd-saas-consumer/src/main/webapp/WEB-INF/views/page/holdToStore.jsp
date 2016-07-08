@@ -361,35 +361,39 @@
     //查询按钮事件
     function searchOrder() {
         type="-1";
-        var embraceId = $("#embraceId").val();
         gotoPage(0);
     }
     //历史未入库
     function historyNoToStore() {
         type = "1";
-        gotoPage(0);
+        $('#embraceId').val("-1");
         $('#orderSetStatus').val("-1");
+        gotoPage(0);
 
     }
     //今日成功接单数
     function todaySuccessOrder() {
         type = "0";
-        gotoPage(0);
+        $('#embraceId').val("-1");
         $('#orderSetStatus').val("-1");
+        gotoPage(0);
 
     }
     //今日已入库
     function todayToStore() {
         type = "2";
-        gotoPage(0);
+        $('#embraceId').val("-1");
         $('#orderSetStatus').val("-1");
+        gotoPage(0);
+
 
     }
     //今日未入库
     function todayNoToStore() {
         type = "3";
-        gotoPage(0);
+        $('#embraceId').val("-1");
         $('#orderSetStatus').val("-1");
+        gotoPage(0);
 
     }
     //确定按钮
