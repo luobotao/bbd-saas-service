@@ -110,7 +110,7 @@ public class HoldToStoreController {
         User user = adminService.get(UserSession.get(request));
         if (user != null) {
             //获取站长下的所有揽件员
-            List<User> userList = userService.findUsersBySite(user.getSite(), null, UserStatus.VALID);
+            List<User> userList = userService.findUsersBySite(user.getSite(), null, null);
             //查询 今日成功揽件数量，今日入库，未入库，历史未入库数量
             OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(user);
             long historyToStoreNum = orderHoldToStoreNum.getHistoryToStoreNum();
