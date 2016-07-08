@@ -301,8 +301,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public long findCountByTradeNo(String tradeNo) {
-        return orderDao.findCountByTradeNo(tradeNo);
+    public long findCountByTradeNo(String tradeNo, Integer removeStatus) {
+        return orderDao.findCountByTradeNo(tradeNo, removeStatus);
     }
 
     @Override

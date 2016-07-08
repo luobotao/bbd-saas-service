@@ -112,14 +112,6 @@ public class TradeServiceImpl implements TradeService {
     public Trade findOneByTradeNo(String tradeNo) {
         //订单信息
         Trade trade = tradeDao.findOne("tradeNo", tradeNo);
-        if (trade != null){
-            //快件数量（预计或者实取）
-            if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况
-                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
-            } else { //订单预计的数量
-                trade.setTotalMail(trade.getOrderSnaps().size());
-            }
-        }
         return trade;
     }
     /**
@@ -148,17 +140,12 @@ public class TradeServiceImpl implements TradeService {
                 }
             }
         }
+
         PageModel<Trade> tradePageModel = tradeDao.findTradePage(pageIndex, tradeQueryVO);
         //设置快件数量和揽件人、状态
         List<Trade> tradeList = tradePageModel.getDatas();
         if (tradeList != null && tradeList.size() > 0){
             for (Trade trade : tradeList){
-                //快件数据量
-                if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况==实取
-                    trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
-                } else { //订单预计的数量
-                    trade.setTotalMail(trade.getOrderSnaps().size());
-                }
                 //揽件人
                 if(trade.getEmbraceId() != null){
                     trade.setEmbrace(userDao.findOne("_id", trade.getEmbraceId()));

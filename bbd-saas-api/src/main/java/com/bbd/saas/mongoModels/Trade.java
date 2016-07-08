@@ -46,8 +46,6 @@ public class Trade implements Serializable {
     @Transient
     private User embrace;//揽件员
     @Transient
-    private long totalMail;//快件数量
-    @Transient
     private String statusMsg;//商户订单状态 -- tradeStatus.message
 
 
@@ -164,16 +162,13 @@ public class Trade implements Serializable {
         this.embrace = embrace;
     }
 
-    public long getTotalMail() {
-        return totalMail;
-    }
-
-    public void setTotalMail(long totalMail) {
-        this.totalMail = totalMail;
-    }
 
     public String getStatusMsg() {
-        return this.tradeStatus != null ? this.tradeStatus.getMessage() : "";
+        if(this.tradeStatus == TradeStatus.GETED || this.tradeStatus == TradeStatus.ARRIVED){
+            return "已取件";
+        }else{
+            return this.tradeStatus != null ? this.tradeStatus.getMessage() : "";
+        }
     }
 
     public void setStatusMsg(String statusMsg) {

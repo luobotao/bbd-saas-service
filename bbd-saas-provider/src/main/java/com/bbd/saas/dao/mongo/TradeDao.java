@@ -85,6 +85,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         }
         return  query;
     }
+
     /**
      * 根据查询条件和站点状态获取商户订单列表信息
      * @param pageIndex 当前页
@@ -94,7 +95,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
     public PageModel<Trade> findTradePage(Integer pageIndex,TradeQueryVO tradeQueryVO) {
         PageModel<Trade> pageModel = new PageModel<Trade>();
         if(tradeQueryVO!=null){
-            Query<Trade> query = getQuery(tradeQueryVO);
+            Query<Trade> query = getQuery(tradeQueryVO).retrievedFields(false, "orderSnaps");
             //设置排序
             //query.order("-dateUpd");
             List<Trade> tradeList = find(query.offset(pageIndex * pageModel.getPageSize()).order("-dateUpd").limit(pageModel.getPageSize())).asList();
