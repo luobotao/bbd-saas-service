@@ -207,4 +207,35 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         }
         return find(query).asList();
     }
+
+    /**
+     *
+     * @param city
+     * @param type
+     * @return
+     */
+    /**
+     *
+     * @param orderNo
+     * @param mailNum
+     * @return
+     */
+    public List<Trade> selectByOrderSnapNo(String orderNo, String mailNum) {
+        Query<Trade> query = createQuery();
+        /*OrderSnap orderSnap = new OrderSnap();
+        orderSnap.setOrderNo(orderNo);
+        orderSnap
+        query.filter("sender.city", city);
+        if(StringUtils.isBlank(type)||"1".equals(type)||"-1".equals(type)){//历史未入库
+
+        }else{
+            //今日订单
+            Date start =  Dates.getBeginOfDay(new Date());
+            Date end =  Dates.getEndOfDay(new Date());
+            query.filter("dateUpd >=",start);
+            //加入时间
+            query.filter("dateUpd <=",end);
+        }*/
+        return find(query).asList();
+    }
 }
