@@ -436,11 +436,15 @@
 				url: '<%=request.getContextPath()%>/packageToSite/checkOrderParcelByParcelCode?parcelCode='+parcelCode,
 				type: 'GET',
 				cache: false,
-				dataType: "text",
+				dataType: "json",
 				data: {},
 				success: function(response){
-					if(response=="false"){
+
+					if(response==null){
 						$("#parcelCodeP").html("【异常扫描】包裹号不存在") ;
+						$("#parcelCodeP").attr("style","color:red");
+					}else if(response.parceltyp=="1"){
+						$("#parcelCodeP").html("【异常扫描】请进行揽件入库操作") ;
 						$("#parcelCodeP").attr("style","color:red");
 					}else{
 						$("#parcelCodeP").html("扫描成功，请扫描运单号");
@@ -449,7 +453,7 @@
 					}
 				},
 				error: function(){
-					$("#parcelCodeP").html("【异常扫描】不存在此包裹号");
+					$("#parcelCodeP").html("【异常扫描】包裹号不存在");
 					$("#parcelCodeP").attr("style","color:red");
 				}
 			});
