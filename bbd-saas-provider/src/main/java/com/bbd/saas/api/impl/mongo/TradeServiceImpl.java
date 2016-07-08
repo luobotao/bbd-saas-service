@@ -4,8 +4,10 @@ import com.bbd.saas.dao.mongo.*;
 import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.models.PostmanUser;
-import com.bbd.saas.mongoModels.*;
-import com.bbd.saas.utils.Constants;
+import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.OrderNum;
+import com.bbd.saas.mongoModels.Trade;
+import com.bbd.saas.mongoModels.TradePush;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.PropertiesLoader;
@@ -110,14 +112,6 @@ public class TradeServiceImpl implements TradeService {
     public Trade findOneByTradeNo(String tradeNo) {
         //订单信息
         Trade trade = tradeDao.findOne("tradeNo", tradeNo);
-        if (trade != null){
-            //快件数量（预计或者实取）
-            if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况
-                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo(), Constants.ISNOTREMOVED));
-            } else { //订单预计的数量
-                trade.setTotalMail(trade.getOrderSnaps().size());
-            }
-        }
         return trade;
     }
     /**
@@ -152,12 +146,6 @@ public class TradeServiceImpl implements TradeService {
         List<Trade> tradeList = tradePageModel.getDatas();
         if (tradeList != null && tradeList.size() > 0){
             for (Trade trade : tradeList){
-                //快件数据量
-                if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况==实取
-                    trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo(), Constants.ISNOTREMOVED));
-                }else{//从order表中查询，预计取件数量，不考虑移除的情况
-                    trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo(), null));
-                }
                 //揽件人
                 if(trade.getEmbraceId() != null){
                     trade.setEmbrace(userDao.findOne("_id", trade.getEmbraceId()));
