@@ -366,7 +366,7 @@
     //历史未入库
     function historyNoToStore() {
         type = "1";
-        $('#embraceId').val("-1");
+        $('#embrace').val("0");
         $('#orderSetStatus').val("-1");
         gotoPage(0);
 
@@ -374,7 +374,7 @@
     //今日成功接单数
     function todaySuccessOrder() {
         type = "0";
-        $('#embraceId').val("-1");
+        $('#embrace').val("0");
         $('#orderSetStatus').val("-1");
         gotoPage(0);
 
@@ -382,7 +382,7 @@
     //今日已入库
     function todayToStore() {
         type = "2";
-        $('#embraceId').val("-1");
+        $('#embrace').val("0");
         $('#orderSetStatus').val("-1");
         gotoPage(0);
 
@@ -391,7 +391,7 @@
     //今日未入库
     function todayNoToStore() {
         type = "3";
-        $('#embraceId').val("-1");
+        $('#embrace').val("0");
         $('#orderSetStatus').val("-1");
         gotoPage(0);
 
