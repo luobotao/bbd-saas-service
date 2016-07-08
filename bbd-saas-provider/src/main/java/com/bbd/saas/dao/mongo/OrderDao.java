@@ -57,7 +57,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if (orderQueryVO.arriveStatus != null && orderQueryVO.arriveStatus != -1) {
                 if (orderQueryVO.arriveStatus == 1) {//已到站 即只要不是未到站,待揽件,已揽件，则全为已到站
                     query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
-                    //query.filter("orderStatus <>", OrderStatus.NOEMBRACE).filter("orderStatus <>", OrderStatus.EMBRACED);
+                    query.filter("orderSetStatus",OrderSetStatus.ARRIVED);
                     if (StringUtils.isNotBlank(orderQueryVO.between)) {//到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateArrived >=", dateBetween.getStart());
@@ -65,6 +65,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 } else {//未到站
                     query.filter("orderStatus", OrderStatus.NOTARR);
+                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
+
                     if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateMayArrive >=", dateBetween.getStart());
@@ -73,6 +75,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }
             }else{//全部（已到站||未到站）
                 query.filter("orderStatus <>", null);
+                query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED));
                 if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                     DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                     query.filter("dateMayArrive >=", dateBetween.getStart());
