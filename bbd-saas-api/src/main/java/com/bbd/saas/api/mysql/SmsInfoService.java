@@ -16,4 +16,15 @@ public interface SmsInfoService {
      * @return 短信
      */
     SmsInfo saveVerify(String phone, String code, String type);
+
+    /**
+     * 已分派揽件员 正在派送短信
+     * 【棒棒糖】您的#src#快件#mailnum#正在由快递员#username#派送，请保持电话通畅，如需帮助请致电快递员#phone#或客服#contact#
+     * @param src
+     * @param mailnum
+     * @param username
+     * @param phone
+     * @param contact
+     */
+    void sendToSending(String src, String mailnum, String username, String phone, String contact);
 }
