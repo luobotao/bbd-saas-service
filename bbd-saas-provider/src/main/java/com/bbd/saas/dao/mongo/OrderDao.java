@@ -65,7 +65,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 } else {//未到站
                     query.filter("orderStatus", OrderStatus.NOTARR);
-                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(null));
+                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(null));
 
                     if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
@@ -75,7 +75,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }
             }else{//全部（已到站||未到站）
                 query.filter("orderStatus <>", null);
-                query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED),query.criteria("orderSetStatus").equal(null));
+                query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED),query.criteria("orderSetStatus").equal(null));
                 if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                     DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                     query.filter("dateMayArrive >=", dateBetween.getStart());
@@ -108,7 +108,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.filter("orderStatus", OrderStatus.NOTARR);
-        query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(null));
+        query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(null));
 
         orderNumVO.setNoArriveHis(count(query));//历史未到站
 
@@ -181,11 +181,17 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if (orderQueryVO.arriveStatus != null) {
                 if (orderQueryVO.arriveStatus == -1) {//全部（未到站||已到站）
                     query.filter("orderStatus <>", null);
+                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED),query.criteria("orderSetStatus").equal(null));
                 } else if (orderQueryVO.arriveStatus == 1) {//已到站 即只要不是未到站，则全为已到站
                     query.filter("orderStatus <>", null).filter("orderStatus <>", OrderStatus.NOTARR);
                 } else {//未到站
                     query.filter("orderStatus", OrderStatus.NOTARR);
+                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(null));
+
                 }
+            }else{
+                query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED),query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED),query.criteria("orderSetStatus").equal(null));
+
             }
             //预计到站时间
             if (StringUtils.isNotBlank(orderQueryVO.between)) {
