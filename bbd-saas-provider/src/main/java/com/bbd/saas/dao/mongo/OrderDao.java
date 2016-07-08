@@ -65,7 +65,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 } else {//未到站
                     query.filter("orderStatus", OrderStatus.NOTARR);
-                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN));
+                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(null));
 
                     if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
@@ -75,7 +75,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }
             }else{//全部（已到站||未到站）
                 query.filter("orderStatus <>", null);
-                query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED));
+                query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED),query.criteria("orderSetStatus").equal(null));
                 if(StringUtils.isNotBlank(orderQueryVO.between)){//预计到站时间
                     DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                     query.filter("dateMayArrive >=", dateBetween.getStart());
@@ -108,6 +108,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.filter("orderStatus", OrderStatus.NOTARR);
+        query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING),query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN),query.criteria("orderSetStatus").equal(null));
+
         orderNumVO.setNoArriveHis(count(query));//历史未到站
 
         Calendar cal = Calendar.getInstance();
