@@ -128,10 +128,9 @@ public class TradeServiceImpl implements TradeService {
             //先去order表里检索mailNum为nolike的order,将tradeNo值取出来
             if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//订单或者运单的搜索
                 OrderQueryVO orderQueryVO = new OrderQueryVO();
-                orderQueryVO.mailNum = tradeQueryVO.noLike;
-                List<Order> orders = orderDao.findOrders(orderQueryVO);
+                orderQueryVO.tradeOrMailNoLike = tradeQueryVO.noLike;
+                List<Order> orders = orderDao.findTradeNoList(orderQueryVO);
                 tradeQueryVO.tradeNoList = Lists.newArrayList();
-                tradeQueryVO.tradeNoList.add(tradeQueryVO.noLike);
                 for(Order order : orders){
                     String tradeNo = order.getTradeNo();
                     if(StringUtils.isNotBlank(tradeNo)){

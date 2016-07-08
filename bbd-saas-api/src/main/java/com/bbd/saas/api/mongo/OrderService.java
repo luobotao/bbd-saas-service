@@ -231,4 +231,15 @@ public interface OrderService {
      * @return
      */
     long findArrCountByTradeNo(String tradeNo);
+
+
+    /**
+     * 根据物流状态查询订单
+     * @param pageModel 分页信息
+     * @param remark 物流remark包含关键词
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public PageModel<Order> findPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate);
 }

@@ -735,4 +735,33 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("isRemoved", Constants.ISNOTREMOVED);
         return count(query);
     }
+
+    /**
+     * 根据查询条件，只查询tradeNo
+     * @param orderQueryVO 查询条件
+     * @return order只有tradeNo有值的运单集合
+     */
+    public List<Order> findTradeNoList(OrderQueryVO orderQueryVO) {
+        //设置查询条件
+        Query<Order> query = getQuery(orderQueryVO).retrievedFields(true, "tradeNo");
+        //查询数据
+        List<Order> orderList = find(query).asList();
+        return orderList;
+    }
+    /**
+     * 根据物流状态查询订单
+     * @param pageModel 分页信息
+     * @param remark 物流remark包含关键词
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public PageModel<Order> selectPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate){
+        //设置查询条件,并按照更新时间倒叙
+        Query<Order> query = createQuery().field("tradeNo").contains("");
+
+        //查询数据
+        List<Order> orderList = find(query).asList();
+        return pageModel;
+    }
 }

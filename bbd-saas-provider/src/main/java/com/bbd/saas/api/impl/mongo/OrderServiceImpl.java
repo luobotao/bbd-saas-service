@@ -502,4 +502,13 @@ public class OrderServiceImpl implements OrderService {
     public long findArrCountByTradeNo(String tradeNo) {
         return orderDao.findArrCountByTradeNo(tradeNo);
     }
+
+    @Override
+    public PageModel<Order> findPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate) {
+        //设置分页操作
+        /*pageModel.setPageNo(pageOrders.getPageNo());
+        pageModel.setTotalCount(pageOrders.getTotalCount());
+        pageModel.setDatas(orderHoldToStoreList);*/
+        return pageModel;
+    }
 }
