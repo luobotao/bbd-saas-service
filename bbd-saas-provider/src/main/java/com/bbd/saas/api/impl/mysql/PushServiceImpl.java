@@ -13,7 +13,7 @@ import java.util.Map;
  * 返现Service实现
  * Created by luobotao on 2016/5/25.
  */
-@Service("incomeService")
+@Service("pushService")
 @Transactional
 public class PushServiceImpl implements PushService {
     @Resource
