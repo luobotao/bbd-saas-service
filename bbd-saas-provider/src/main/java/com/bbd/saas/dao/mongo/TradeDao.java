@@ -2,6 +2,7 @@ package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.TradeStatus;
+import com.bbd.saas.mongoModels.OrderSnap;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
@@ -97,7 +98,7 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         if(tradeQueryVO!=null){
             Query<Trade> query = getQuery(tradeQueryVO).retrievedFields(false, "orderSnaps");
             //设置排序
-            //query.order("-dateUpd");
+            query.order("-dateUpd");
             List<Trade> tradeList = find(query.offset(pageIndex * pageModel.getPageSize()).order("-dateUpd").limit(pageModel.getPageSize())).asList();
             pageModel.setDatas(tradeList);
             pageModel.setTotalCount(count(query));
@@ -207,35 +208,17 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
         }
         return find(query).asList();
     }
-
     /**
-     *
-     * @param city
-     * @param type
-     * @return
-     */
-    /**
-     *
-     * @param orderNo
-     * @param mailNum
-     * @return
+     * 根据运单号和订单号查询
+     * @param orderNo 订单号
+     * @param mailNum 运单号
+     * @return 订单集合
      */
     public List<Trade> selectByOrderSnapNo(String orderNo, String mailNum) {
         Query<Trade> query = createQuery();
-        /*OrderSnap orderSnap = new OrderSnap();
+        OrderSnap orderSnap = new OrderSnap();
         orderSnap.setOrderNo(orderNo);
-        orderSnap
-        query.filter("sender.city", city);
-        if(StringUtils.isBlank(type)||"1".equals(type)||"-1".equals(type)){//历史未入库
-
-        }else{
-            //今日订单
-            Date start =  Dates.getBeginOfDay(new Date());
-            Date end =  Dates.getEndOfDay(new Date());
-            query.filter("dateUpd >=",start);
-            //加入时间
-            query.filter("dateUpd <=",end);
-        }*/
-        return find(query).asList();
+        orderSnap.setMailNum(mailNum);
+        return this.createQuery().field("orderSnaps").hasThisElement(orderSnap).asList();
     }
 }
