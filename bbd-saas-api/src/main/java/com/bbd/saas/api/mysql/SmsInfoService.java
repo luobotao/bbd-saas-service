@@ -25,6 +25,7 @@ public interface SmsInfoService {
      * @param username
      * @param phone
      * @param contact
+     * @param receiverPhone
      */
-    void sendToSending(String src, String mailnum, String username, String phone, String contact);
+    void sendToSending(String src, String mailnum, String username, String phone, String contact,String receiverPhone);
 }

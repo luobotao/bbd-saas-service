@@ -132,13 +132,14 @@ public class SmsInfoServiceImpl implements SmsInfoService {
      * @param username
      * @param phone
      * @param contact
+     * @param receiverPhone
      */
     @Override
-    public void sendToSending(String src, String mailnum, String username, String phone, String contact) {
+    public void sendToSending(String src, String mailnum, String username, String phone, String contact,String receiverPhone) {
         String args = "#src#=" + src + "&#mailnum#=" + mailnum + "&#username#=" + username+ "&#phone#=" + phone+ "&#contact#=" + contact;
         String tpl_id = "1462919";
         String type = "1";
-        saveSmsInfo(args, phone, tpl_id, type);
+        saveSmsInfo(args, receiverPhone, tpl_id, type);
     }
 
 

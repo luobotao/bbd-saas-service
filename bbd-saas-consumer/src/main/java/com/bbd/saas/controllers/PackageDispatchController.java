@@ -186,7 +186,7 @@ public class PackageDispatchController {
 		Key<Order> r = orderService.save(order);
 		if(r != null){
 			saveOneOrUpdatePost(order, user);
-			smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact);
+			smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
