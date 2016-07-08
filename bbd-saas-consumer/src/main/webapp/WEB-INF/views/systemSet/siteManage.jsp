@@ -454,14 +454,14 @@
                         url: linkUrl,
                         type: 'GET',
                         cache: false,
-                        dataType: "text",
                         data: {},
                         success: function(response){
-                            if(response=="false"){
-                                $("#phoneFlag").val(0);
-                                ioutDiv("手机号已存在");
-                            }else{
+                            console.log(response);
+                            if(response.success){
                                 $("#phoneFlag").val(1);
+                            }else{
+                                $("#phoneFlag").val(0);
+                                ioutDiv(response.msg);
                             }
                         },
                         error: function(){
@@ -519,12 +519,12 @@
                         url: linkUrl,
                         type: 'GET',
                         cache: false,
-                        dataType: "text",
                         data: {},
                         success: function(response){
-                            if(response=="false"){
+                            console.log(response);
+                            if(!response.success){
                                 $("#phoneFlag").val(0);
-                                ioutDiv("手机号已存在");
+                                ioutDiv(response.msg);
                             }else{
                                 $("#phoneFlag").val(1);
                                 var password = $("#password").val();

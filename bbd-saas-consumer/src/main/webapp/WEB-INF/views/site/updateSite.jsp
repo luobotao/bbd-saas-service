@@ -131,16 +131,15 @@
 				url: linkUrl,
 				type: 'GET',
 				cache: false,
-				dataType: "text",
 				data: {},
 				success: function(response){
-					if(response=="false"){
-						$("#usernameFlag").val(0);
-						$("#usernameP").html("手机号已存在");
-						$("#usernameP").attr("style","color:red");
-					}else{
+					if(response.success){
 						$("#usernameFlag").val(1);
 						$("#usernameP").attr("style","display:none");
+					}else{
+						$("#usernameFlag").val(0);
+						$("#usernameP").html(response.msg);
+						$("#usernameP").attr("style","color:red");
 					}
 				},
 				error: function(){

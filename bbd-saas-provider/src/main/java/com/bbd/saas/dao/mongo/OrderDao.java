@@ -477,15 +477,16 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param tradeNo //商户订单号(我们自己生成的支付订单号)
      * @return 订单下包含的运单数目
      */
-    public long findCountByTradeNo(String tradeNo) {
+    public long findCountByTradeNo(String tradeNo, Integer removeStatus) {
         //创建查询条件
         Query<Order> query = createQuery();
         //商户订单号(我们自己生成的支付订单号)
         if (StringUtils.isNotBlank(tradeNo)) {
             query.filter("tradeNo", tradeNo);
         }
-        query.filter("orderSetStatus <>", OrderSetStatus.REMOVED);
-        query.filter("isRemoved", Constants.ISNOTREMOVED);
+        if(removeStatus != null){
+            query.filter("isRemoved", removeStatus);
+        }
         return count(query);
     }
 

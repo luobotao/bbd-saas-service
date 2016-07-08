@@ -4,10 +4,8 @@ import com.bbd.saas.dao.mongo.*;
 import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.models.PostmanUser;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.OrderNum;
-import com.bbd.saas.mongoModels.Trade;
-import com.bbd.saas.mongoModels.TradePush;
+import com.bbd.saas.mongoModels.*;
+import com.bbd.saas.utils.Constants;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.PropertiesLoader;
@@ -115,7 +113,7 @@ public class TradeServiceImpl implements TradeService {
         if (trade != null){
             //快件数量（预计或者实取）
             if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况
-                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
+                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo(), Constants.ISNOTREMOVED));
             } else { //订单预计的数量
                 trade.setTotalMail(trade.getOrderSnaps().size());
             }
@@ -148,6 +146,7 @@ public class TradeServiceImpl implements TradeService {
                 }
             }
         }
+
         PageModel<Trade> tradePageModel = tradeDao.findTradePage(pageIndex, tradeQueryVO);
         //设置快件数量和揽件人、状态
         List<Trade> tradeList = tradePageModel.getDatas();
@@ -155,9 +154,9 @@ public class TradeServiceImpl implements TradeService {
             for (Trade trade : tradeList){
                 //快件数据量
                 if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况==实取
-                    trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
-                } else { //订单预计的数量
-                    trade.setTotalMail(trade.getOrderSnaps().size());
+                    trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo(), Constants.ISNOTREMOVED));
+                }else{//从order表中查询，预计取件数量，不考虑移除的情况
+                    trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo(), null));
                 }
                 //揽件人
                 if(trade.getEmbraceId() != null){

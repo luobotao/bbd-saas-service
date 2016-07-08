@@ -173,7 +173,11 @@ public class Trade implements Serializable {
     }
 
     public String getStatusMsg() {
-        return this.tradeStatus != null ? this.tradeStatus.getMessage() : "";
+        if(this.tradeStatus == TradeStatus.GETED || this.tradeStatus == TradeStatus.ARRIVED){
+            return "已取件";
+        }else{
+            return this.tradeStatus != null ? this.tradeStatus.getMessage() : "";
+        }
     }
 
     public void setStatusMsg(String statusMsg) {

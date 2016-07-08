@@ -286,7 +286,7 @@ public class HoldToStoreController {
             //修改司机包裹的状态
             orderParcleStatusChange(order.getId().toHexString(),"1");//parceType 包裹类型 0：配件包裹（默认） 1：集包
             //修改交易订单的状态
-            long totalCount = orderService.findCountByTradeNo(order.getTradeNo());//此商户订单号下的所有运单
+            long totalCount = orderService.findCountByTradeNo(order.getTradeNo(), null);//此商户订单号下的所有运单
             long arrCount = orderService.findArrCountByTradeNo(order.getTradeNo());//此商户订单号下的所有已入库的运单
             if(totalCount==arrCount){//全部入库完成,修改trade的状态
                 Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
