@@ -52,7 +52,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if (orderQueryVO.arriveStatus != null && orderQueryVO.arriveStatus != -1) {
                 if (orderQueryVO.arriveStatus == 1) {//已到站 即只要不是未到站,待揽件,已揽件，则全为已到站
                     query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
-                    query.filter("orderSetStatus",OrderSetStatus.ARRIVED);
+                    query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED),query.criteria("orderSetStatus").equal(null));
+
                     if (StringUtils.isNotBlank(orderQueryVO.between)) {//到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateArrived >=", dateBetween.getStart());
