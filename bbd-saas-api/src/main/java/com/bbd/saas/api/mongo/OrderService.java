@@ -170,4 +170,5 @@ public interface OrderService {
 	 */
 	public long getCounByMailNumsAndOrderStatusList(BasicDBList mailNumList, List<OrderStatus> orderStatusList);
 
+	String findBestSiteWithAddress(String address);
 }
