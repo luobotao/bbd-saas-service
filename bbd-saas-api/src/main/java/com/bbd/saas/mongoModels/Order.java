@@ -66,6 +66,7 @@ public class Order implements Serializable {
     private String tradeStationId;//揽件员站点id
     private String embraceId;//揽件员id
     private String disAreaCode;//分拨中心Code
+    private List<SiteTime> siteTimes;//揽件时间的集合
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -484,5 +485,13 @@ public class Order implements Serializable {
 
     public void setDisAreaCode(String disAreaCode) {
         this.disAreaCode = disAreaCode;
+    }
+
+    public List<SiteTime> getSiteTimes() {
+        return siteTimes;
+    }
+
+    public void setSiteTimes(List<SiteTime> siteTimes) {
+        this.siteTimes = siteTimes;
     }
 }

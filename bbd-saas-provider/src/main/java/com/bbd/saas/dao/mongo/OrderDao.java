@@ -5,10 +5,8 @@ import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.OrderHoldToStoreNumVO;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
+import com.bbd.saas.vo.*;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
@@ -22,10 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -580,14 +575,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @return
      */
     private Query<Order> getQueryForHoldToStore( OrderQueryVO orderQueryVO ) {
+        Date start =  Dates.getBeginOfDay(new Date());
+        Date end =  Dates.getEndOfDay(new Date());
+        Map<String,Object> time = new HashMap<>();
+        time.put("$gt",start);
+        time.put("$lt",end);
+
         Query<Order> query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
 
         if (orderQueryVO != null) {
             if (StringUtils.isNotBlank(orderQueryVO.orderSetStatus)&& !"-1".equals(orderQueryVO.orderSetStatus)) {//有集包状态
                 query.filter("orderSetStatus", OrderSetStatus.status2Obj(Numbers.parseInt(orderQueryVO.orderSetStatus,0)));
             }
-
-
             //揽件入库 根据揽件员的id 查询
             if (StringUtils.isNotBlank(orderQueryVO.embraceId) && !"-1".equals(orderQueryVO.embraceId) && !"0".equals(orderQueryVO.embraceId)) {
                 query.filter("embraceId", orderQueryVO.embraceId);
@@ -595,7 +594,26 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 //揽件入库 的状态查询
                 if("0".equals(orderQueryVO.type)){//今日成功接单数
                     query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
+
+                    query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
+                    query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
+                    query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
+
+                    Map<String,Object> siteTimeCatch = new HashMap<>();
+                    siteTimeCatch.put("siteId",orderQueryVO.user.getSite().getId().toHexString());
+                    siteTimeCatch.put("orderSetStatus",OrderSetStatus.WAITTOIN);
+                    siteTimeCatch.put("dateAdd",time);
+                    Map<String,Object> elemQuery = new HashMap<>();
+                    elemQuery.put("$elemMatch",siteTimeCatch);
+                    query.filter("siteTimes",elemQuery);
+
                 }else if ("1".equals(orderQueryVO.type)||"3".equals(orderQueryVO.type)) {//未入库
+                    if ("3".equals(orderQueryVO.type) && StringUtils.isNotBlank(orderQueryVO.between)) {//今日未入库
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.between);
+                        query.filter("dateUpd >=", dateBetween.getStart());
+                        query.filter("dateUpd <=", dateBetween.getEnd());
+                    }
+
                     if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
                         query.or(query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
                                         .criteria("disAreaCode").equal(orderQueryVO.user.getSite().getAreaCode())
@@ -604,20 +622,24 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }else {
                         query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString()).filter("orderSetStatus",OrderSetStatus.WAITTOIN);
                     }
-                }else if("2".equals(orderQueryVO.type)){//已入库
-                    if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
-                        query.or(
-                                query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
-                                        .criteria("disAreaCode").equal(orderQueryVO.user.getSite().getAreaCode())
-                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
-                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
-                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
-                                query.criteria("tradeStationId").equal(orderQueryVO.user.getSite().getId().toHexString())
-                                        .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
-                        );
-                    }else {
-                        query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString()).filter("orderSetStatus <>",OrderSetStatus.WAITTOIN);
-                    }
+                }else if("2".equals(orderQueryVO.type)){//今日已入库
+                    query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE)
+                            .filter("orderSetStatus <>", OrderSetStatus.REMOVED).filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);;
+                    Map<String,Object> siteTimeCatch = new HashMap<>();
+                    siteTimeCatch.put("siteId",orderQueryVO.user.getSite().getId().toHexString());
+
+                    List<OrderSetStatus> orderSetStatusList = Lists.newArrayList();
+                    orderSetStatusList.add(OrderSetStatus.WAITSET);
+                    orderSetStatusList.add(OrderSetStatus.ARRIVEDISPATCH);
+                    orderSetStatusList.add(OrderSetStatus.ARRIVED);
+                    Map<String,Object> inQuery = new HashMap<>();
+                    inQuery.put("$in",orderSetStatusList);
+                    siteTimeCatch.put("orderSetStatus",inQuery);
+                    siteTimeCatch.put("dateAdd",time);
+                    Map<String,Object> elemQuery = new HashMap<>();
+                    elemQuery.put("$elemMatch",siteTimeCatch);
+                    query.filter("siteTimes",elemQuery);
+
                 }else {
                     if("1".equals(orderQueryVO.user.getSite().getType())){//分拨站点
                         query.or(query.criteria("sender.city").equal(orderQueryVO.user.getSite().getCity())
@@ -632,13 +654,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }
 
             }
-
-            if (StringUtils.isNotBlank(orderQueryVO.between)) {//到站时间
-                DateBetween dateBetween = new DateBetween(orderQueryVO.between);
-                query.filter("dateUpd >=", dateBetween.getStart());
-                query.filter("dateUpd <=", dateBetween.getEnd());
-            }
-
         }
         return query;
     }
@@ -651,6 +666,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @return
      */
     public OrderHoldToStoreNumVO getOrderHoldToStoreNum(User user){
+        Date start =  Dates.getBeginOfDay(new Date());
+        Date end =  Dates.getEndOfDay(new Date());
+        Map<String,Object> time = new HashMap<>();
+        time.put("$gt",start);
+        time.put("$lt",end);
+
         OrderHoldToStoreNumVO orderHoldToStoreNumVO = new OrderHoldToStoreNumVO();
         Query<Order> query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
         if("1".equals(user.getSite().getType())){//分拨站点
@@ -664,8 +685,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         // 历史未入库订单数
         orderHoldToStoreNumVO.setHistoryToStoreNum(count(query));
 
-        Date start =  Dates.getBeginOfDay(new Date());
-        Date end =  Dates.getEndOfDay(new Date());
         //今日未入库订单数
         query.filter("dateUpd >=",start);
         query.filter("dateUpd <=",end);
@@ -675,25 +694,47 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
         query.filter("tradeStationId", user.getSite().getId().toHexString());
         query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
-        query.filter("dateUpd >=",start);
-        query.filter("dateUpd <=",end);
-        orderHoldToStoreNumVO.setSuccessOrderNum(count(query));
-        // 今日已入库订单数
-        if("1".equals(user.getSite().getType())){//分拨站点
-            query.or(
-                    query.criteria("sender.city").equal(user.getSite().getCity())
-                            .criteria("disAreaCode").equal(user.getSite().getAreaCode())
-                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
-                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
-                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
-                    query.criteria("tradeStationId").equal(user.getSite().getId().toHexString())
-                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
-            );
-        }else {
-            query.filter("tradeStationId", user.getSite().getId().toHexString()).filter("orderSetStatus <>",OrderSetStatus.WAITTOIN);
-        }
 
-        query.filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);
+        Map<String,Object> siteTimeCatch = new HashMap<>();
+        siteTimeCatch.put("siteId",user.getSite().getId().toHexString());
+        siteTimeCatch.put("orderSetStatus",OrderSetStatus.WAITTOIN);
+        siteTimeCatch.put("dateAdd",time);
+        Map<String,Object> elemQuery = new HashMap<>();
+        elemQuery.put("$elemMatch",siteTimeCatch);
+        query.filter("siteTimes",elemQuery);
+        orderHoldToStoreNumVO.setSuccessOrderNum(count(query));
+
+        // 今日已入库订单数
+        query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE)
+                .filter("orderSetStatus <>", OrderSetStatus.REMOVED).filter("orderSetStatus <>", OrderSetStatus.WAITTOIN);;
+        siteTimeCatch = new HashMap<>();
+        siteTimeCatch.put("siteId",user.getSite().getId().toHexString());
+
+        List<OrderSetStatus> orderSetStatusList = Lists.newArrayList();
+        orderSetStatusList.add(OrderSetStatus.WAITSET);
+        orderSetStatusList.add(OrderSetStatus.ARRIVEDISPATCH);
+        orderSetStatusList.add(OrderSetStatus.ARRIVED);
+        Map<String,Object> inQuery = new HashMap<>();
+        inQuery.put("$in",orderSetStatusList);
+        siteTimeCatch.put("orderSetStatus",inQuery);
+        siteTimeCatch.put("dateAdd",time);
+        elemQuery = new HashMap<>();
+        elemQuery.put("$elemMatch",siteTimeCatch);
+        query.filter("siteTimes",elemQuery);
+//        if("1".equals(user.getSite().getType())){//分拨站点
+//            query.or(
+//                    query.criteria("sender.city").equal(user.getSite().getCity())
+//                            .criteria("disAreaCode").equal(user.getSite().getAreaCode())
+//                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
+//                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITSET)
+//                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITDRIVERGETED),
+//                    query.criteria("tradeStationId").equal(user.getSite().getId().toHexString())
+//                            .criteria("orderSetStatus").notEqual(OrderSetStatus.WAITTOIN)
+//            );
+//        }else {
+//            query.filter("tradeStationId", user.getSite().getId().toHexString()).filter("orderSetStatus <>",OrderSetStatus.WAITTOIN);
+//        }
+
         orderHoldToStoreNumVO.setTodayToStoreNum(count(query));
         return orderHoldToStoreNumVO;
     }
