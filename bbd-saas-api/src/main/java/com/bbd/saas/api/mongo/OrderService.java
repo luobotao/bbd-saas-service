@@ -242,4 +242,6 @@ public interface OrderService {
      * @return
      */
     public PageModel<Order> findPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate);
+
+    String findBestSiteWithAddress(String address);
 }

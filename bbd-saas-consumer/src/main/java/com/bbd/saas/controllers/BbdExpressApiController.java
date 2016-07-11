@@ -5,9 +5,11 @@ import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.Result;
+import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.Numbers;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
@@ -22,8 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/bbd")
@@ -32,6 +33,8 @@ public class BbdExpressApiController {
 	public static final Logger logger = LoggerFactory.getLogger("bbdpoi");
 	@Autowired
 	SiteService siteService;
+	@Autowired
+	OrderService orderService;
 	@Autowired
 	SitePoiApi sitePoiApi;
 	@Autowired
@@ -68,15 +71,7 @@ public class BbdExpressApiController {
 	@ResponseBody
 	public String getAreaCode(@PathVariable String address, HttpServletRequest request ) {
 		//args :company address
-		List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
-		logger.info(address);
-		logger.info(areaCodeList.size()+"");
-		if(areaCodeList!=null && areaCodeList.size()>0){
-			//通过积分获取优选区域码，暂时用第一个
-			String areaCode = areaCodeList.get(0);
-			return areaCode;
-		}
-		return "";
+		return orderService.findBestSiteWithAddress(address);
 	}
 
 	@RequestMapping(value="/postAllAreaCode",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
@@ -153,7 +148,6 @@ public class BbdExpressApiController {
 				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
 				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
 
-				String city="北京";
 				MapPoint mapPoint = geo.getGeoInfo(str);//起点地址
 				if (areaCodeList != null && areaCodeList.size() > 0) {
 					//通过积分获取优选区域码
@@ -161,9 +155,7 @@ public class BbdExpressApiController {
 						Site site = siteService.findSite(siteId);
 						if(site!=null) {
 							//获取当前位置到站点的距离，
-							List mapPointList = Lists.newArrayList();
-							mapPointList.add(new MapPoint(Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())));
-							long length = geo.getDistance(city, mapPoint, mapPointList, false);
+							double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
 							//获取站点的日均积分
 							Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
 							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
