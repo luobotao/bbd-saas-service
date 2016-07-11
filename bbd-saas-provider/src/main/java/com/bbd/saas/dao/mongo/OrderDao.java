@@ -594,10 +594,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             }else {
                 //揽件入库 的状态查询
                 if("0".equals(orderQueryVO.type)){//今日成功接单数
-                    query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
 
                     query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
-                    query.filter("tradeStationId", orderQueryVO.user.getSite().getId().toHexString());
                     query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
 
                     Map<String,Object> siteTimeCatch = new HashMap<>();
@@ -693,7 +691,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
 
         //今日成功接单数
         query = createQuery().filter("orderSetStatus <>", null).filter("tradeNo <>", null).filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE).filter("orderSetStatus <>", OrderSetStatus.REMOVED);
-        query.filter("tradeStationId", user.getSite().getId().toHexString());
         query.filter("orderSetStatus <>", OrderSetStatus.NOEMBRACE);
 
         Map<String,Object> siteTimeCatch = new HashMap<>();
