@@ -82,7 +82,15 @@
 					</div>
 				</form>
 				<!-- E 搜索区域 -->
-				<div class="tab-bod mt20">
+				<!-- S button -->
+				<div class="clearfix mt20">
+					<a href="#" onclick="batchBtn()" data-toggle="modal" class="ser-btn l">批量到站</a>
+					<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+						<a href="javascript:void(0)" onclick="batchSuperAreaBtn()" data-toggle="modal" class="ser-btn l">批量设为超区件</a>
+					</c:if>
+				</div>
+				<!-- E button -->
+				<div class="tab-bod mt10">
 					<!-- S table -->
 					<div class="table-responsive">
 						<table id="orderTable" class="table">
@@ -177,14 +185,6 @@
 					<!-- E table -->
 					<!-- S tableBot -->
 					<div class="clearfix pad20">
-						<!-- S button -->
-						<div class="clearfix fl">
-							<a href="#" onclick="batchBtn()" data-toggle="modal" class="ser-btn l">批量到站</a>
-							<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
-								<a href="javascript:void(0)" onclick="batchSuperAreaBtn()" data-toggle="modal" class="ser-btn l">批量设为超区件</a>
-							</c:if>
-						</div>
-						<!-- E button -->
 						<!-- S page -->
 						<div id="pagin"></div>
 						<!-- E page -->
