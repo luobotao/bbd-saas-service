@@ -298,7 +298,9 @@ public class HoldToStoreController {
                 trade.setTradeStatus(TradeStatus.ARRIVED);
                 trade.setDateUpd(new Date());
                 tradeService.save(trade);
-                pushService.tradePush(trade.getEmbrace().getPostmanuserId(),"2",trade.getTradeNo());
+                User embrace = userService.findOne(trade.getEmbraceId().toHexString());
+                if(embrace!=null)
+                    pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());
             }
         }
     }
