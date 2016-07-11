@@ -54,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
 	Geo geo;
 	@Autowired
 	private PostmanUserService userMysqlService;
-	@Autowired
+	//@Autowired
 	private SiteService siteService;
 
     public UserDao getUserDao() {
@@ -274,8 +274,8 @@ public class OrderServiceImpl implements OrderService {
 				Reciever reciever = order.getReciever();
 				String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
 				address = StringUtil.filterString(address);
-				//List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
-				List<String> areaCodeList = null;
+				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
+				//List<String> areaCodeList = null;
 				logger.info(address);
 				logger.info(areaCodeList.size()+"");
 				if(areaCodeList!=null && areaCodeList.size()>0){
