@@ -67,7 +67,8 @@
                                 <th>站长姓名</th>
                                 <th>手机号</th>
                                 <th>邮箱</th>
-                                <th>状态</th>
+                                <th>站点状态</th>
+                                <th>配送区域</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -91,6 +92,7 @@
                                 </td>
                                 <td><%=site.getStatus().getMessage()%>
                                 </td>
+                                <td></td>
 
                                 <td>
                                     <%
@@ -107,6 +109,7 @@
                                         }
                                         if (SiteStatus.APPROVE == site.getStatus()) {
                                     %>
+                                    <a href="javascript:void(0);" class="orange">启用</a>
                                     <a href="javascript:void(0);" onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
                                        class="orange j-siteM">修改</a>
                                     <a href="javascript:void(0);" data-toggle='modal' data-target='#stopModal'
