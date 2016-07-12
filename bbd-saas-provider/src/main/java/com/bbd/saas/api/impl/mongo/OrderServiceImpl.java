@@ -245,7 +245,7 @@ public class OrderServiceImpl implements OrderService {
 			logger.info("[address]:" + address + " [search poi result] :" + areaCodeList.size() + "");
 			if (areaCodeList != null && areaCodeList.size() > 0) {
 				//通过积分获取优选区域码，暂时用第一个
-				String siteId = areaCodeList.get(0);
+				String siteId = findBestSiteWithAddress(address);
 				Site site = siteService.findSite(siteId);
 				return site;
 			}
@@ -534,7 +534,7 @@ public class OrderServiceImpl implements OrderService {
                     Site site = siteService.findSite(siteId);
                     if (site != null) {
                         //获取当前位置到站点的距离，
-                        double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
+                        double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()))*1000;
                         //获取站点的日均积分
                         Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
                         //int integral = userMysqlService.getIntegral("101010-016","17710174098");
@@ -563,9 +563,6 @@ public class OrderServiceImpl implements OrderService {
                         return o2.getValue().compareTo(o1.getValue());
                     }
                 });
-                for(Map.Entry<String,Integer> mapping:list){
-                    System.out.println(mapping.getKey()+":"+mapping.getValue());
-                }
                 resultAreaCode = list.get(0).getKey();
             }else{
                 //通过积分获取优选区域码，暂时用第一个
