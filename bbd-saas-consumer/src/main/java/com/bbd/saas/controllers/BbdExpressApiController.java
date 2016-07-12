@@ -8,6 +8,7 @@ import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.Numbers;
@@ -96,7 +97,7 @@ public class BbdExpressApiController {
 				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
 				if (areaCodeList != null && areaCodeList.size() > 0) {
 					//通过积分获取优选区域码，暂时用第一个
-					String siteId = areaCodeList.get(0);
+					String siteId = orderService.findBestSiteWithAddress(address);
 					Site site = siteService.findSite(siteId);
 					sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\n");
 				}else{
@@ -195,6 +196,31 @@ public class BbdExpressApiController {
 				}
 			}catch(Exception e){
 				sb.append(str).append("\t").append("").append("\t").append("").append("\n");
+			}
+		}
+		String str = sb.toString();
+		return str;
+	}
+
+	@RequestMapping(value="/updateSiteWithOrder",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
+	@ResponseBody
+	public String updateSiteWithOrder(@RequestParam String orderNoStr) throws UnsupportedEncodingException {
+		//args :company address
+		String[] orderNoes = orderNoStr.split(";");
+		StringBuffer sb = new StringBuffer();
+		for (String orderNo: orderNoes) {
+			try {
+				Order order = orderService.findByOrderNo(orderNo);
+				if(order!=null){
+					//更新订单的运单号
+					order = orderService.reduceAreaCodeWithOrder(order);
+					logger.info("[order]:" + order + " [reduce areacode result] :" + order.getAreaCode() + "");
+					sb.append(orderNo).append("\t").append(order.getAreaCode()).append("\t").append(order.getAreaRemark()).append("\n");
+				}else{
+					sb.append(orderNo).append("\t").append("not match site").append("\t").append("").append("\n");
+				}
+			}catch(Exception e){
+				sb.append(orderNo).append("\t").append("error").append("\t").append("").append("\n");
 			}
 		}
 		String str = sb.toString();
