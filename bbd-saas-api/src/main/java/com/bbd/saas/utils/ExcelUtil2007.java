@@ -1,16 +1,14 @@
 package com.bbd.saas.utils;
 
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,7 +16,7 @@ import java.util.*;
 /**
  * 操作Excel表格的功能类 -- 2007版(.xlsx)
  */
-public class ExcelReaderX {
+public class ExcelUtil2007 {
 	private POIFSFileSystem fs;
 	private XSSFWorkbook wb;
 	private XSSFSheet sheet;
@@ -198,25 +196,37 @@ public class ExcelReaderX {
 		return cellvalue;
 
 	}
+	/**
+	 * 读取Excel数据内容
+	 * @param is
+	 * @return Map 包含单元格数据内容的Map对象
+	 */
+	public List<List<String>> readExcelContent(InputStream is, int areaCodeIndex, int nameIndex, int totalRows){
+		return readExcelContent(is, 0, areaCodeIndex, nameIndex, totalRows);
+	}
+
 
 	/**
 	 * 读取Excel数据内容
 	 * @param is
 	 * @return Map 包含单元格数据内容的Map对象
 	 */
-	public List<List<String>> readExcelContent(InputStream is, int areaCodeIndex, int nameIndex) {
+	public List<List<String>> readExcelContent(InputStream is, int sheetIndex, int areaCodeIndex, int nameIndex, int totalRows) {
 		List<List<String>> rowList = new ArrayList<List<String>>();
 		try {
 			wb = new XSSFWorkbook(is);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		sheet = wb.getSheetAt(0);
+		sheet = wb.getSheetAt(sheetIndex);
 		// 得到总行数
 		int rowNum = sheet.getLastRowNum();
 		row = sheet.getRow(0);
 		int colNum = row.getPhysicalNumberOfCells();
 		// 正文内容应该从第二行开始,第一行为表头的标题
+		if(totalRows > 0){
+			rowNum = totalRows;
+		}
 		System.out.println("行数：" + rowNum);
 		for (int i = 1; i <= rowNum; i++) {
 			row = sheet.getRow(i);
@@ -234,7 +244,7 @@ public class ExcelReaderX {
 	 * @param excelReader
 	 * @throws FileNotFoundException
      */
-	private void testReadTitle(ExcelReaderX excelReader, InputStream is) throws FileNotFoundException {
+	private void testReadTitle(ExcelUtil2007 excelReader, InputStream is) throws FileNotFoundException {
 		String[] title = excelReader.readExcelTitle(is);
 		System.out.println("获得Excel表格的标题:");
 		for (String s : title) {
@@ -247,16 +257,87 @@ public class ExcelReaderX {
 	 * @param excelReader
 	 * @throws FileNotFoundException
      */
-	private void testReadBody(ExcelReaderX excelReader, InputStream is) throws FileNotFoundException {
+	private void testReadBody(ExcelUtil2007 excelReader, InputStream is) throws FileNotFoundException {
 		Map<Integer, String> map = excelReader.readExcelContent33(is);
 		System.out.println("获得Excel表格的内容:");
 		for (int i = 1; i <= map.size(); i++) {
 			System.out.println(map.get(i));
 		}
 	}
+
+
+	/**
+	 * 创建2007版Excel文件
+	 *
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public  void creat2007Excel(String filePath, int sheetIndex, int startCol, int[] colWidths, Map<Integer, List<String>> addressRowMap) throws FileNotFoundException,IOException {
+		InputStream is = new FileInputStream(filePath);
+		wb = new XSSFWorkbook(is);
+		// 创建一个工作薄对象
+		XSSFSheet sheet = wb.getSheetAt(sheetIndex);
+		for (Map.Entry<Integer,List<String>> entry : addressRowMap.entrySet()) {
+			System.out.println("key= " + entry.getKey() + " , value= " + entry.getValue());
+			XSSFRow row = sheet.getRow(entry.getKey());// 得到一行对象
+			//row.setHeightInPoints(23);// 设置行高23像素
+			XSSFCellStyle style = getStyle(wb);// 创建样式对象
+			List<String> addressList =  entry.getValue();
+			if(addressList != null && addressList.size() >0){
+				int colNums = colWidths.length;
+				for(int i = 0; i < colNums; i++){
+					// 设置各列的宽度
+					sheet.setColumnWidth(startCol + i, colWidths[i]);
+					XSSFCell cell = row.createCell(startCol + i);// 创建单元格
+					cell.setCellStyle(style);// 应用样式对象
+					cell.setCellValue(addressList.get(i));// 写入当前日期
+
+				}
+			}
+		}
+		// 文件输出流
+		FileOutputStream os = new FileOutputStream(filePath);
+		wb.write(os);// 将文档对象写入文件输出流
+		os.close();// 关闭文件输出流
+		is.close();
+		System.out.println(" excel 修改成功");
+	}
+
+	private static XSSFCellStyle getStyle(XSSFWorkbook workBook){
+		XSSFCellStyle style = workBook.createCellStyle();// 创建样式对象
+		// 设置对齐方式
+		style.setAlignment(HSSFCellStyle.ALIGN_CENTER_SELECTION);// 水平居中
+		style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直居中
+		// 设置边框
+		style.setBorderTop(HSSFCellStyle.BORDER_THIN);// 顶部边框粗线
+		style.setBorderBottom(HSSFCellStyle.BORDER_THIN);// 底部边框双线
+		style.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边边框
+		style.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边边框
+		return style;
+	}
+	private void setStyle1(XSSFWorkbook workBook, XSSFCellStyle style){
+		// 设置字体
+		XSSFFont font = workBook.createFont();// 创建字体对象
+		font.setFontHeightInPoints((short) 15);// 设置字体大小
+		font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);// 设置粗体
+		font.setFontName("黑体");// 设置为黑体字
+		style.setFont(font);// 将字体加入到样式对象
+		// 格式化日期
+		style.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
+		XSSFCell cell = row.createCell(1);// 创建单元格
+		cell.setCellValue(new Date());// 写入当前日期
+		cell.setCellStyle(style);// 应用样式对象
+
+		// 设置边框
+		style.setBorderTop(HSSFCellStyle.BORDER_THICK);// 顶部边框粗线
+		style.setTopBorderColor(HSSFColor.RED.index);// 设置为红色
+		style.setBorderBottom(HSSFCellStyle.BORDER_DOUBLE);// 底部边框双线
+		style.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);// 左边边框
+		style.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);// 右边边框
+	}
 	public static void main(String[] args) {
 		try {
-			ExcelReaderX excelReader = new ExcelReaderX();
+			ExcelUtil2007 excelReader = new ExcelUtil2007();
 			String filePath = "E:\\updateSite\\北京站点新命名.xlsx";
 			InputStream is = new FileInputStream(filePath);
 			// 对读取Excel表格标题测试

@@ -10,9 +10,7 @@ import com.bbd.saas.vo.TradeQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateOperations;
-import org.mongodb.morphia.query.UpdateResults;
+import org.mongodb.morphia.query.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -215,10 +213,12 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
      * @return 订单集合
      */
     public List<Trade> selectByOrderSnapNo(String orderNo, String mailNum) {
-        Query<Trade> query = createQuery();
+
         OrderSnap orderSnap = new OrderSnap();
-        orderSnap.setOrderNo(orderNo);
-        orderSnap.setMailNum(mailNum);
-        return this.createQuery().field("orderSnaps").hasThisElement(orderSnap).asList();
+        orderSnap.setOrderNo("{ $regex : "+ orderNo +"}");
+        orderSnap.setMailNum("{ $regex : "+ mailNum +"}");
+        QueryResults<Trade> queryResults = this.createQuery().field("orderSnaps").hasThisElement(orderSnap);
+
+        return queryResults.asList();
     }
 }

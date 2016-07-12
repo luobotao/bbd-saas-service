@@ -2,7 +2,7 @@ package com.bbt.demo.provider;
 
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.utils.ExcelReaderX;
+import com.bbd.saas.utils.ExcelUtil2007;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,14 +38,17 @@ public class UpdateSiteTest {
 	@Test
 	public void testReadExcel() throws Exception{
 		// 对读取Excel表格内容测试
-		ExcelReaderX excelReader = new ExcelReaderX();
-		InputStream is = new FileInputStream("E:\\updateSite\\上海站点名称更改明细.xlsx");
-		List<List<String>> rowList = excelReader.readExcelContent(is, 0, 2);
+		ExcelUtil2007 excelReader = new ExcelUtil2007();
+		InputStream is = new FileInputStream("E:\\updateSite\\工作簿1.xlsx");
+		List<List<String>> rowList = excelReader.readExcelContent(is, 0, 2, 3);
 		System.out.println("获得Excel表格的内容:");
 		StringBuffer  rowSB = null;
-		for (List<String> row : rowList) {
-			rowSB = new StringBuffer();
+		int size = rowList.size();
+		for (int i = 0; i < size; i++) {
+			List<String> row = rowList.get(i);
+			rowSB = new StringBuffer(i+"");
 			for(String col : row){
+				rowSB.append("        ");
 				rowSB.append(col);
 				rowSB.append("        ");
 			}
@@ -56,9 +59,9 @@ public class UpdateSiteTest {
 	@Test
 	public void testUpdate() throws Exception{
 		// 对读取Excel表格内容测试
-		ExcelReaderX excelReader = new ExcelReaderX();
-		InputStream is = new FileInputStream("E:\\updateSite\\上海站点名称更改明细.xlsx");
-		List<List<String>> rowList = excelReader.readExcelContent(is, 0, 2);
+		ExcelUtil2007 excelReader = new ExcelUtil2007();
+		InputStream is = new FileInputStream("E:\\updateSite\\工作簿1.xlsx");
+		List<List<String>> rowList = excelReader.readExcelContent(is, 0, 2, 3);
 		System.out.println("获得Excel表格的内容:");
 		StringBuffer  rowSB = null;
 		for (List<String> row : rowList) {
