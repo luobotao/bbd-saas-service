@@ -35,14 +35,30 @@ public class UpdateSiteTest {
     public void tearDown() throws Exception{
         System.out.println("tear down");
     }
-
 	@Test
-	public void testUpdate() throws Exception{
-
+	public void testReadExcel() throws Exception{
 		// 对读取Excel表格内容测试
 		ExcelReaderX excelReader = new ExcelReaderX();
-		InputStream is = new FileInputStream("E:\\updateSite\\北京站点新命名.xlsx");
-		List<List<String>> rowList = excelReader.readExcelContent(is);
+		InputStream is = new FileInputStream("E:\\updateSite\\上海站点名称更改明细.xlsx");
+		List<List<String>> rowList = excelReader.readExcelContent(is, 0, 2);
+		System.out.println("获得Excel表格的内容:");
+		StringBuffer  rowSB = null;
+		for (List<String> row : rowList) {
+			rowSB = new StringBuffer();
+			for(String col : row){
+				rowSB.append(col);
+				rowSB.append("        ");
+			}
+			System.out.println(rowSB.toString());
+		}
+		Assert.isTrue(true);//无用
+	}
+	@Test
+	public void testUpdate() throws Exception{
+		// 对读取Excel表格内容测试
+		ExcelReaderX excelReader = new ExcelReaderX();
+		InputStream is = new FileInputStream("E:\\updateSite\\上海站点名称更改明细.xlsx");
+		List<List<String>> rowList = excelReader.readExcelContent(is, 0, 2);
 		System.out.println("获得Excel表格的内容:");
 		StringBuffer  rowSB = null;
 		for (List<String> row : rowList) {
@@ -51,13 +67,6 @@ public class UpdateSiteTest {
 			site.setName(row.get(1).trim());
 			//doUpdate(site);
 			System.out.println(row.get(0).trim() + ":" + doUpdate(site));
-			/*
-			rowSB = new StringBuffer();
-			for(String col : row){
-				rowSB.append(col);
-				rowSB.append("      ");
-			}
-			System.out.println(rowSB.toString());*/
 		}
 		Assert.isTrue(true);//无用
 	}

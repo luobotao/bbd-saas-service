@@ -204,7 +204,7 @@ public class ExcelReaderX {
 	 * @param is
 	 * @return Map 包含单元格数据内容的Map对象
 	 */
-	public List<List<String>> readExcelContent(InputStream is) {
+	public List<List<String>> readExcelContent(InputStream is, int areaCodeIndex, int nameIndex) {
 		List<List<String>> rowList = new ArrayList<List<String>>();
 		try {
 			wb = new XSSFWorkbook(is);
@@ -217,16 +217,13 @@ public class ExcelReaderX {
 		row = sheet.getRow(0);
 		int colNum = row.getPhysicalNumberOfCells();
 		// 正文内容应该从第二行开始,第一行为表头的标题
-		rowNum = 60;
-
+		System.out.println("行数：" + rowNum);
 		for (int i = 1; i <= rowNum; i++) {
 			row = sheet.getRow(i);
 			int j = 0;
 			List<String> colList = new ArrayList<String>();
-
-			colList.add(getStringCellValue(row.getCell(1)).trim());
-			colList.add(getStringCellValue(row.getCell(3)).trim());
-
+			colList.add(getStringCellValue(row.getCell(areaCodeIndex)).trim());//areaCode
+			colList.add(getStringCellValue(row.getCell(nameIndex)).trim());//站点新名称
 			rowList.add(colList);
 		}
 		return rowList;
