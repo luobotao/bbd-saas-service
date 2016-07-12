@@ -274,25 +274,19 @@ public class OrderServiceImpl implements OrderService {
 				Reciever reciever = order.getReciever();
 				String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
 				address = StringUtil.filterString(address);
-				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
-				//List<String> areaCodeList = null;
-				logger.info(address);
-				logger.info(areaCodeList.size()+"");
-				if(areaCodeList!=null && areaCodeList.size()>0){
-					//通过积分获取优选区域码，暂时用第一个
-					String siteId = areaCodeList.get(0);
-					if (!"".equals(siteId)) {
-						logger.info("订单:" + order.getOrderNo() + "，匹配的站点Id为" + siteId);
-						//根据站点id获取site信息，更新areacode, areaRemark
-						Site site = siteService.findSite(siteId);
-						order.setAreaCode(site.getAreaCode());
-						order.setAreaRemark(site.getName());
-						logger.info("订单:" + order.getOrderNo() + "，匹配的区域码（站点码）为" + order.getAreaCode() + ",站点名称为：" + order.getAreaRemark());
-					} else {
-						order.setAreaCode("9999-999");
-						order.setAreaRemark("no match areacode");
-						logger.info("订单:" + order.getOrderNo() + "，匹配的站点区域码失败");
-					}
+				//通过积分获取优选区域码，
+				String siteId = findBestSiteWithAddress(address);
+				if (!"".equals(siteId)) {
+					logger.info("订单:" + order.getOrderNo() + "，匹配的站点Id为" + siteId);
+					//根据站点id获取site信息，更新areacode, areaRemark
+					Site site = siteService.findSite(siteId);
+					order.setAreaCode(site.getAreaCode());
+					order.setAreaRemark(site.getName());
+					logger.info("订单:" + order.getOrderNo() + "，匹配的区域码（站点码）为" + order.getAreaCode() + ",站点名称为：" + order.getAreaRemark());
+				} else {
+					order.setAreaCode("9999-999");
+					order.setAreaRemark("no match areacode");
+					logger.info("订单:" + order.getOrderNo() + "，匹配的站点区域码失败");
 				}
 			} catch (Exception e) {
 				order.setAreaCode("9999-999");
