@@ -4,6 +4,7 @@ import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
@@ -171,4 +172,6 @@ public interface OrderService {
 	public long getCounByMailNumsAndOrderStatusList(BasicDBList mailNumList, List<OrderStatus> orderStatusList);
 
 	String findBestSiteWithAddress(String address);
+
+	public Site getSiteWithAddress(String address);
 }

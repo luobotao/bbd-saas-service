@@ -385,4 +385,22 @@ public class OrderServiceImpl implements OrderService {
 		logger.info("[findBestSiteWithAddress]request address:"+address+", response siteId:"+resultAreaCode);
 		return resultAreaCode;
 	}
+
+	@Override
+	public Site getSiteWithAddress(String address) {
+		try {
+			List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
+			logger.info("[address]:" + address + " [search poi result] :" + areaCodeList.size() + "");
+			if (areaCodeList != null && areaCodeList.size() > 0) {
+				//通过积分获取优选区域码，暂时用第一个
+				String siteId = findBestSiteWithAddress(address);
+				Site site = siteService.findSite(siteId);
+				return site;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
 }
