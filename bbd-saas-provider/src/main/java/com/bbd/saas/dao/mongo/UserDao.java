@@ -126,9 +126,9 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         return update(query,ops);
     }
     /**
-     * 更新派件员--到站分派的权限;开通时，密码为空，设置初始化密码
+     * 更新派件员--到站的权限;开通时，密码为空，设置初始化密码
      * @param loginName 登录名称
-     * @param dispatchPermsn 权限 0：关闭到站分派的权限；1：开通到站分派的权限
+     * @param dispatchPermsn 权限 0：关闭到站的权限；1：开通到站的权限
      */
     public UpdateResults updateDispatchPermsn(String loginName, Integer dispatchPermsn, String pwd) {
         Query<User> query = createQuery();
@@ -223,9 +223,9 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         return findOne(query);
     }
     /**
-     * 根据站点和到站分派权限，查询符合条件的数目
+     * 根据站点和到站权限，查询符合条件的数目
      * @param site 站点
-     * @param dispatchPermsn 到站分派权限
+     * @param dispatchPermsn 到站权限
      * @return 符合查询条件的数目
      */
     public long selectCountBySiteAndDisptcherPermsn(Site site, int dispatchPermsn){

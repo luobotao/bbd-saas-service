@@ -133,16 +133,16 @@
 									<%
 										}
 									%>
-									<%--只有派件员才会显示 开通到站分派权限 --%>
+									<%--只有派件员才会显示 开通到站权限 --%>
 									<%
 										if(user.getRole() == UserRole.SENDMEM){
 											if(user.getDispatchPermsn() == 1){
 									%>
-												<a href="javascript:void(0)" data-toggle='modal' data-target='#dispatchPermsn' onclick="showDispatchPermsnDiv(0, '<%=user.getLoginName() %>')" class="orange ml6">关闭到站分派权限</a>
+												<a href="javascript:void(0)" data-toggle='modal' data-target='#dispatchPermsn' onclick="showDispatchPermsnDiv(0, '<%=user.getLoginName() %>')" class="orange ml6">关闭到站权限</a>
 									<%
 											}else{
 									%>
-												<a href="javascript:void(0)" data-toggle='modal' data-target='#dispatchPermsn' onclick="showDispatchPermsnDiv(1, '<%=user.getLoginName() %>')" class="orange ml6">开通到站分派权限</a>
+												<a href="javascript:void(0)" data-toggle='modal' data-target='#dispatchPermsn' onclick="showDispatchPermsnDiv(1, '<%=user.getLoginName() %>')" class="orange ml6">开通到站权限</a>
 									<%
 											}
 										}
@@ -253,7 +253,7 @@
 	</div>
 </div>
 <!--E 修改用户状态-->
-<!--S 到站分派权限-->
+<!--S 到站权限-->
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dispatchPermsnLabel" id="dispatchPermsn"
 	 aria-hidden="true">
 	<div class="modal-dialog b-modal-dialog middleS" role="document">
@@ -272,7 +272,7 @@
 		</div>
 	</div>
 </div>
-<!--E 到站分派权限-->
+<!--E 到站权限-->
 <!-- E pop -->
 <script type="text/javascript">
 	//是否需要校验手机号，默认需要；但是当失去焦点点击关闭按钮时，不需要校验手机号
@@ -355,12 +355,12 @@
 		}else{
 			row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#changeModal' onclick=\"changeStatus(1,'"+temp+"','"+data.loginName+"')\" class=\"orange ml6\">启用</a>";
 		}
-		//到站分派权限
+		//到站权限
 		if(data.role == "<%=UserRole.SENDMEM%>"){//派件员才会显示
 			if(data.dispatchPermsn == 1){
-				row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#dispatchPermsn' onclick=\"showDispatchPermsnDiv(0, '"+data.loginName+"')\" class=\"orange ml6\">关闭到站分派权限</a>";
+				row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#dispatchPermsn' onclick=\"showDispatchPermsnDiv(0, '"+data.loginName+"')\" class=\"orange ml6\">关闭到站权限</a>";
 			}else{
-				row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#dispatchPermsn' onclick=\"showDispatchPermsnDiv(1, '"+data.loginName+"')\" class=\"orange ml6\">开通到站分派权限</a>";
+				row += "<a href='javascript:void(0)' data-toggle='modal' data-target='#dispatchPermsn' onclick=\"showDispatchPermsnDiv(1, '"+data.loginName+"')\" class=\"orange ml6\">开通到站权限</a>";
 			}
 		}
 		row += "</tr>";
@@ -493,7 +493,7 @@
 			}
 		</c:if>
 		//校验密码 == 站长账号
-		if(haveDispatchPermsn){//有到站分派权限的需要校验密码
+		if(haveDispatchPermsn){//有到站权限的需要校验密码
 			var b = checkPwd();
 			if(!b){
 				return false;
@@ -638,8 +638,8 @@
 		</c:if>
 	}
 
-	/************************************ S 到站分派权限 *******************************/
-	//修改到站分派权限弹出确认框的提示信息 0: 关闭；1：开通
+	/************************************ S 到站权限 *******************************/
+	//修改到站权限弹出确认框的提示信息 0: 关闭；1：开通
 	var loginName = null;
 	var dispatchPermsn = null;
 	function showDispatchPermsnDiv(dispthPms, lgnName){
@@ -651,7 +651,7 @@
 		loginName = lgnName;
 		dispatchPermsn = dispthPms;
 	}
-	//修改到站分派权限弹出确认框的提示信息 0: 关闭；1：开通
+	//修改到站权限弹出确认框的提示信息 0: 关闭；1：开通
 	function updateDispatchPermsn(){
 		$("#dispatchPermsn").modal("hide");
 		$.ajax({
@@ -673,7 +673,7 @@
 			}
 		});
 	}
-	/************************************ E 到站分派权限 *******************************/
+	/************************************ E 到站权限 *******************************/
 
 </script>
 </body>

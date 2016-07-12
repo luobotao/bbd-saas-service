@@ -143,16 +143,8 @@ User user = (User)request.getAttribute("user");
 								<h3>包裹到站</h3>
 							</div>
 						</a>
+					</li>
 
-					</li>
-					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
-						<a href="<c:url value="/?typ=asign" />">
-							<div class="b-status-card">
-								<span><img src="<c:url value="/resources/images/asign.png" />" alt="运单分派" /></span>
-								<h3>运单分派</h3>
-							</div>
-						</a>
-					</li>
 				<% 
 					}else{
 				%>

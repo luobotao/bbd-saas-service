@@ -617,9 +617,9 @@ public class UserManageController {
 	}
 
 	/**
-	 * 开通/关闭到站分派权限
+	 * 开通/关闭到站权限
 	 * @param loginName 用户名
-	 * @param dispatchPermsn 是否有到站分派权限。0：无; 1: 有。
+	 * @param dispatchPermsn 是否有到站权限。0：无; 1: 有。
      * @return 结果
      */
 	@ResponseBody
@@ -647,27 +647,27 @@ public class UserManageController {
 	}
 
 	/**
-	 * 做修改到站分派权限的操作
+	 * 做修改到站权限的操作
 	 * @param map 存放返回的结果
 	 * @param user 用户
-	 * @param dispatchPermsn  是否有到站分派权限。0：无; 1: 有。
+	 * @param dispatchPermsn  是否有到站权限。0：无; 1: 有。
      */
 	private void doUpdDispatchPermsn(Map<String, Object> map, User user, Integer dispatchPermsn){
 		if(dispatchPermsn == 1){//开通
-			//查询本站点的开通到站分派权限的派件员数量是否达到最大值（配置在mongodb常量表中constant）
+			//查询本站点的开通到站权限的派件员数量是否达到最大值（配置在mongodb常量表中constant）
 			long  realCount = userService.findCountBySiteAndDisptcherPermsn(user.getSite(), dispatchPermsn);
-			String maxCount = constantService.findValueByName(Constants.DISPATCH_PERMISSION_COUNT);
+			String maxCount = constantService.findValueByName(Constants.TOSISTE_PERMISSION_COUNT);
 			if(realCount < Long.parseLong(maxCount)){
 				String pwd = null;
 				if(StringUtils.isEmpty(user.getPassWord())){
-					pwd = Constants.DISPATCH_PERMISSION_DEFAULT_PWD;
+					pwd = Constants.TOSISTE_PERMISSION_DEFAULT_PWD;
 				}
 				int i = userService.updateDispatchPermsn(user.getLoginName(), dispatchPermsn, pwd);
 				if(i > 0){//修改成功
-					int j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.POSTMAN_HAVE_DISPATCH_PERMISSION);
+					int j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.POSTMAN_HAVE_TOSITE_PERMISSION);
 					int count = 0;
 					while(j == 0 && count < 5){
-						j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.POSTMAN_HAVE_DISPATCH_PERMISSION);
+						j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.POSTMAN_HAVE_TOSITE_PERMISSION);
 						count++;
 					}
 					map.put("success", true);
@@ -678,15 +678,15 @@ public class UserManageController {
 				}
 			}else{
 				map.put("success", false);
-				map.put("msg", "每个站点最多只能有" + maxCount + "个派件员拥有到站分派权限");
+				map.put("msg", "每个站点最多只能有" + maxCount + "个派件员拥有到站权限");
 			}
 		}else{//关闭
 			int i = userService.updateDispatchPermsn(user.getLoginName(), dispatchPermsn, null);
 			if(i > 0){//修改成功
-				int j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.NO_DISPATCH_PERMISSION);
+				int j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.NO_TOSITE_PERMISSION);
 				int count = 0;
 				while(j == 0 && count < 5){
-					j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.NO_DISPATCH_PERMISSION);
+					j = userMysqlService.updateRoleByPhone(user.getLoginName(), Constants.NO_TOSITE_PERMISSION);
 					count++;
 				}
 				map.put("success", true);

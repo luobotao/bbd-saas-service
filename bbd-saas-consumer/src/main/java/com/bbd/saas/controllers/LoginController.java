@@ -86,8 +86,8 @@ public class LoginController {
 						}
 					}
 				}else{//站长 | 派件员
-					//拥有到站分派权限的派件员才能登陆此系统
-					if(user.getRole() == UserRole.SENDMEM && user.getDispatchPermsn() != Constants.HAVE_DISPATCH_PERMISSION){
+					//拥有到站权限的派件员才能登陆此系统
+					if(user.getRole() == UserRole.SENDMEM && user.getDispatchPermsn() != Constants.HAVE_TOSITE_PERMISSION){
 						redirectAttrs.addFlashAttribute("message", "用户角色无登录此系统的权限");
 						return "redirect:/login";
 					}

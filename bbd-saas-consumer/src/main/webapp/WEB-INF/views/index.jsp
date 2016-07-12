@@ -75,7 +75,6 @@
 						} else if(UserRole.SENDMEM.equals(user.getRole())){
 					%>
 						<li id="arrive" class="lv1"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
-						<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
 					<%
 						} else if(UserRole.COMPANY.equals(user.getRole())){
 					%>
@@ -95,7 +94,6 @@
 						}else{
 					%>
 					<li id="arrive" class="lv1"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
-					<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
 				<%
 						}
 					}
