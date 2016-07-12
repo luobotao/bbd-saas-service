@@ -11,6 +11,7 @@ import com.bbd.saas.vo.*;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -25,6 +26,8 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
 public class TradeServiceTest {
+	public static final org.slf4j.Logger logger = LoggerFactory.getLogger(TradeServiceTest.class);
+
 	@Autowired
 	private TradeService tradeService;
 	@Autowired
@@ -189,6 +192,12 @@ public class TradeServiceTest {
 		tradeQueryVO.dateAddEnd = "2016-06-21";
 		//若此方法超时，则把设置快件数量、揽件员、订单状态提到controller中
 		PageModel<Order> tradePage = orderService.findOrders();*/
+		List<Trade> tradeList = tradeService.findByOrderSnapNo("O201606301735490", "BBDT2016063017354900");
+		if(tradeList != null){
+			for (Trade trade : tradeList){
+				System.out.println(trade.toString());
+			}
+		}
 		Assert.isTrue(true);//无用
 	}
 

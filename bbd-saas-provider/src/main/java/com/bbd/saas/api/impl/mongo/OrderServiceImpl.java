@@ -304,7 +304,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, ObjectId uId, String keyword) {
-
         return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
     }
 
