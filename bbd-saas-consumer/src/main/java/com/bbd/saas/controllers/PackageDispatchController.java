@@ -393,7 +393,7 @@ public class PackageDispatchController {
 		//运单分派给派件员
 		order.setUserId(null);
 		//更新物流信息
-		OrderCommon.addOrderExpress(ExpressStatus.CANCELDISPATCH, order, currUser, "取消分派");
+		//OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, currUser, "取消分派");
 		//更新运单状态--未分派
 		order.setOrderStatus(OrderStatus.NOTDISPATCH);
 		order.setDateUpd(new Date());
