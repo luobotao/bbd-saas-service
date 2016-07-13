@@ -461,18 +461,18 @@ public class SiteManageController {
 			Key<Site> r = siteService.save(site);
 			if(r != null && r.getId() != null){
 				try {
-					Result result = null;
-					if(areaFlag == 1){//启用配送区域
-						result =  sitePoiApi.enableSite(site.getId().toString());
-						logger.info("配送区域启用：" + result);
-					}else{//停用配送区域
-						result = sitePoiApi.disableSite(site.getId().toString());
-						logger.info("配送区域停用：" + result);
-					}
+					Result result = doUpdatePoiArea(areaFlag, site);
 					if(result != null && result.code == 0){
 						return true;
-					}else{
-						return false;
+					}else{//-1：站点不存在
+						//往POI表中增加站点记录
+						setLatAndLng(site.getId().toString());
+						result = doUpdatePoiArea(areaFlag, site);
+						if(result != null && result.code == 0){
+							return true;
+						}else{
+							return false;
+						}
 					}
 				}catch (Exception e){
 					e.printStackTrace();
@@ -482,4 +482,15 @@ public class SiteManageController {
 		return false;
 	}
 
+	private  Result doUpdatePoiArea(Integer areaFlag, Site site){
+		Result result = null;
+		if(areaFlag == 1){//启用配送区域
+			result =  sitePoiApi.enableSite(site.getId().toString());
+			logger.info("配送区域启用：" + result);
+		}else{//停用配送区域
+			result = sitePoiApi.disableSite(site.getId().toString());
+			logger.info("配送区域停用：" + result);
+		}
+		return result;
+	}
 }
