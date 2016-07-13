@@ -50,6 +50,9 @@
     <bean id="expressExchangeDao" class="com.bbd.saas.dao.mongo.ExpressExchangeDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <bean id="siteExchangeDao" class="com.bbd.saas.dao.mongo.SiteExchangeDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->

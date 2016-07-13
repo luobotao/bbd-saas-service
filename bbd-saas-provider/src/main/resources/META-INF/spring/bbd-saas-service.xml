@@ -99,6 +99,11 @@
             <ref bean="expressExchangeDao"/>
         </property>
     </bean>
+    <bean id="siteExchangeService" class="com.bbd.saas.api.impl.mongo.SiteExchangeServiceImpl">
+        <property name="siteExchangeDao">
+            <ref bean="siteExchangeDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->
