@@ -97,7 +97,7 @@ public class BbdExpressApiController {
 				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
 				if (areaCodeList != null && areaCodeList.size() > 0) {
 					//通过积分获取优选区域码，暂时用第一个
-					String siteId = orderService.findBestSiteWithAddress(address);
+					String siteId = orderService.findBestSiteWithAddress(str);
 					Site site = siteService.findSite(siteId);
 					sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\n");
 				}else{
