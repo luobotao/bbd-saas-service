@@ -175,6 +175,7 @@ public class SiteManageController {
 					site.setCompanycode(postcompany.getCompanycode());
 				}
 				site.setStatus(SiteStatus.APPROVE);
+				site.setAreaFlag(1);//默认启用配送区域
 				site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
 				user.setPassWord(siteForm.getPassword());
 				postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
@@ -205,9 +206,6 @@ public class SiteManageController {
 			//staffid就是该用户的手机号
 			postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
 		}
-
-
-
 		site.setDateUpd(new Date());
 
 		Key<Site> siteKey = siteService.save(site);//保存站点
@@ -399,16 +397,17 @@ public class SiteManageController {
 		site.setStatus(SiteStatus.INVALID);
 		site.setDateUpd(new Date());
 		siteService.save(site);
-		try {
-			Result result = sitePoiApi.disableSite(site.getId().toString());
-			logger.info(result+"==========");
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER, UserStatus.VALID);//所有有效站长
 		for(User user:userList){//将站点下的所有站长置为无效
 			userService.updateUserStatu(user.getLoginName(), UserStatus.INVALID);
 			userMysqlService.updateById(UserStatus.INVALID.getStatus(),user.getPostmanuserId());
+		}
+		//停用配送区域,失败最多尝试3次
+		boolean areaFlag = false;
+		int operCount = 0;
+		while (!areaFlag && operCount < 3){
+			areaFlag = updateArea(areaCode,  0);
+			operCount ++;
 		}
 		return true;
 	}
@@ -424,12 +423,6 @@ public class SiteManageController {
 		site.setStatus(SiteStatus.APPROVE);
 		site.setDateUpd(new Date());
 		siteService.save(site);
-		try {
-			Result result = sitePoiApi.enableSite(site.getId().toString());
-			logger.info(result+"==========");
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER,null);//所有站长
 		for(User user:userList){//将站点下的所有站长置为有效
 			userService.updateUserStatu(site.getUsername(), UserStatus.VALID);
@@ -452,5 +445,41 @@ public class SiteManageController {
 		return true;
 	}
 
+	/**
+	 * 配送区域 == 启用 || 停用
+	 * @param areaCode 站点编码
+	 * @param areaFlag 配送区域启用停用标志（1：启用；0：停用）
+     * @return
+     */
+	@ResponseBody
+	@RequestMapping(value = "/updateArea", method = RequestMethod.POST)
+	public boolean updateArea(String areaCode, Integer  areaFlag) {
+		Site site = siteService.findSiteByAreaCode(areaCode);
+		if(site != null){
+			site.setAreaFlag(areaFlag);
+			site.setDateUpd(new Date());
+			Key<Site> r = siteService.save(site);
+			if(r != null && r.getId() != null){
+				try {
+					Result result = null;
+					if(areaFlag == 1){//启用配送区域
+						result =  sitePoiApi.enableSite(site.getId().toString());
+						logger.info("配送区域启用：" + result);
+					}else{//停用配送区域
+						result = sitePoiApi.disableSite(site.getId().toString());
+						logger.info("配送区域停用：" + result);
+					}
+					if(result != null && result.code == 0){
+						return true;
+					}else{
+						return false;
+					}
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
 
 }

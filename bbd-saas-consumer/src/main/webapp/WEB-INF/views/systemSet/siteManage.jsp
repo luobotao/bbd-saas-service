@@ -49,7 +49,7 @@
                         <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <a href="javascript:void(0)" onclick=" gotoPage(0);" class="ser-btn l"><i
                                     class="b-icon p-query p-ser"></i>查询</a>
-                            <a href="javascript:void(0)" class="ser-btn d ml6 j-siteM" data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
+                            <a href="javascript:void(0)" class="ser-btn d ml6 " data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
 
                         </div>
                     </div>
@@ -78,52 +78,60 @@
                                 for (Site site : sitePage.getDatas()) {
                             %>
                             <tr>
-                                <td><%=site.getName()%>
+                                <td><%=site.getName()%></td>
+                                <td><%=site.getAreaCode()==null?"":site.getAreaCode()%></td>
+                                <td><%=site.getProvince()%>-<%=site.getCity()%>-<%=site.getArea()%> <%=site.getAddress()%></td>
+                                <td><%=site.getResponser()%></td>
+                                <td><%=site.getUsername()%></td>
+                                <td><%=site.getEmail()%></td>
+                                <td><%=site.getStatus().getMessage()%></td>
+                                <td>
+                                    <%
+                                        if (site.getAreaFlag() == 1) {
+                                    %>
+                                        有效
+                                    <%
+                                        }else{
+                                    %>
+                                        无效
+                                    <%
+                                        }
+                                    %>
                                 </td>
-                                <td><%=site.getAreaCode()==null?"":site.getAreaCode()%>
-                                </td>
-                                <td><%=site.getProvince()%>-<%=site.getCity()%>-<%=site.getArea()%> <%=site.getAddress()%>
-                                </td>
-                                <td><%=site.getResponser()%>
-                                </td>
-                                <td><%=site.getUsername()%>
-                                </td>
-                                <td><%=site.getEmail()%>
-                                </td>
-                                <td><%=site.getStatus().getMessage()%>
-                                </td>
-                                <td></td>
-
                                 <td>
                                     <%
                                         if (SiteStatus.WAIT == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange" data-toggle='modal' data-target='#validModal'>通过</a>
-                                    <a href="javascript:void(0);"  onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange ml6 j-reject">驳回</a>
+                                        <span onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange cp" data-toggle='modal' data-target='#validModal'>通过</span>
+                                        <span onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange ml6 j-reject cp">驳回</span>
                                     <%
-                                        }
-                                        if (SiteStatus.TURNDOWN == site.getStatus()) {
+                                        }else if (SiteStatus.TURNDOWN == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);" onclick="getTurnDownMessage('<%=site.getTurnDownReasson() %>','<%=site.getTurnDownReasson().getMessage() %>','<%=site.getOtherMessage() %>')" class="orange ml6" data-toggle='modal' data-target='#messageModal'>查看驳回原因</a>
+                                        <span  onclick="getTurnDownMessage('<%=site.getTurnDownReasson() %>','<%=site.getTurnDownReasson().getMessage() %>','<%=site.getOtherMessage() %>')" class="orange ml6 cp" data-toggle='modal' data-target='#messageModal'>查看驳回原因</span>
                                     <%
-                                        }
-                                        if (SiteStatus.APPROVE == site.getStatus()) {
+                                        }else if (SiteStatus.APPROVE == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);" class="orange">启用</a>
-                                    <a href="javascript:void(0);" onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
-                                       class="orange j-siteM">修改</a>
-                                    <a href="javascript:void(0);" data-toggle='modal' data-target='#stopModal'
-                                       onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange">停用</a>
+                                        <%
+                                            if (site.getAreaFlag() == 1) {
+                                        %>
+                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableArea', '确定停用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>停用配送区域</span>
+                                        <%
+                                            }else{
+                                        %>
+                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableArea', '确定启用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>启用配送区域</span>
+                                        <%
+                                            }
+                                        %>
+                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
+                                           class="orange j-siteM cp">修改</span>
+                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableSite', '确认停用吗？')" data-toggle='modal' data-target='#confirmModal'>停用</span>
                                     <%
-                                        }
-                                        if (SiteStatus.INVALID == site.getStatus()) {
+                                        }else if (SiteStatus.INVALID == site.getStatus()) {
                                     %>
-                                    <a href="javascript:void(0);" onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
-                                       class="orange j-siteM">修改</a>
-                                    <a href="javascript:void(0);" data-toggle='modal' data-target='#startModal'
-                                       onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange">启用</a>
-                                    <%--<a href="javascript:void(0);" data-toggle='modal' data-target='#delModal'--%>
-                                       <%--onclick="setAreaCode('<%=site.getAreaCode() %>')" class="orange ml6">删除</a>--%>
+                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
+                                           class="orange j-siteM cp">修改</span>
+                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableSite', '确认启用吗？')" data-toggle='modal' data-target='#confirmModal'>启用</span>
+                                        <%--<span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除?')" data-toggle='modal' data-target='#confirmModal'>删除</span>--%>
                                     <%
                                         }
                                     %>
@@ -308,68 +316,41 @@
     </div>
 </div>
 <!--E 查看驳回原因-->
-<!--S 停用-->
-<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="stopModalLabel" id="stopModal"
-     aria-hidden="true">
-    <div class="modal-dialog b-modal-dialog middleS" role="document">
-        <div class="modal-content">
-            <div class="modal-header b-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title tc">确认停用</h4>
-            </div>
-            <div class="modal-body b-modal-body">
-                <em class="f16">确认停用吗？</em>
-                <div class="clearfix mt20">
-                    <a href="javascript:void(0);" id="conFirmForStopBtn" class="sbtn sbtn2 l col-md-12">确认</a>
+
+<!--S 操作确认-->
+<div class="j-pl-pop modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal_wrapper">
+        <div class="modal-dialog b-modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header b-modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title  tc" id="confirmTitle">确认</h4>
+                </div>
+                <div class="modal-body b-modal-body">
+                    <em class="f16" id="confirmBody">确认启用配送区域吗？</em>
+                </div>
+                <div class="modal-footer tc">
+                    <%--<div class="row mt20">--%>
+						<span class="col-md-6">
+							<button type="button" class="ser-btn g wp80" data-dismiss="modal" class="close">取消</button>
+						</span>
+						<span class="col-md-6">
+							<button  type="button" class="ser-btn l wp80" onclick="doOperation()">确认</button>
+						</span>
+                    <%--</div>--%>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!--E 停用-->
-<!--S 启用-->
-<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="startModalLabel" id="startModal"
-     aria-hidden="true">
-    <div class="modal-dialog b-modal-dialog middleS" role="document">
-        <div class="modal-content">
-            <div class="modal-header b-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title tc">确认停用</h4>
-            </div>
-            <div class="modal-body b-modal-body">
-                <em class="f16">确认启用吗？</em>
-                <div class="clearfix mt20">
-                    <a href="javascript:void(0);" id="conFirmForSartBtn" class="sbtn sbtn2 l col-md-12">确认</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--E 启用-->
-<!--S 删除-->
-<div class="j-user-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel" id="delModal"
-     aria-hidden="true">
-    <div class="modal-dialog b-modal-dialog middleS" role="document">
-        <div class="modal-content">
-            <div class="modal-header b-modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title tc">确认删除</h4>
-            </div>
-            <div class="modal-body b-modal-body">
-                <em class="f16">确认删除？删除站点将会将该站点下的所有用户删除？</em>
-                <div class="clearfix mt20">
-                    <a href="javascript:void(0);" id="conFirmForDelBtn" class="sbtn sbtn2 l col-md-12">确认</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--E 删除-->
+<!--E 操作确认-->
+
 <!-- E pop -->
 <script type="text/javascript">
     //是否需要校验手机号，默认需要；但是当失去焦点点击关闭按钮时，不需要校验手机号
     var isCheckPhone = true;
-
+    var operFlag = ""; //操作类型（enableArea：启用配送区域；disableArea：停用配送区域；）
+    var areaCode = "";//站点编码
     //显示分页条
     var pageStr = paginNav(<%=sitePage.getPageNo()%>, <%=sitePage.getTotalPages()%>, <%=sitePage.getTotalCount()%>);
     $("#pagin").html(pageStr);
@@ -426,22 +407,32 @@
         row += "<td>" + data.username + "</td>";
         row += "<td>" + data.email + "</td>";
         row += "<td>" + data.statusMessage + "</td>";
+        if(data.areaFlag == 1 ){
+            row += "<td>有效</td>";
+        }else{
+            row += "<td>无效</td>";
+        }
         row += "<td>";
         if(data.status=="<%=SiteStatus.WAIT%>" ){
-            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"','"+data.name+"')\" class='orange' data-toggle='modal' data-target='#validModal'>通过</a> ";
-            row += "<a href='javascript:void(0);' onclick=\"setPhone('"+data.username+"','"+data.name+"')\" class='orange' data-toggle='modal' data-target='#turnDownModal'>驳回</a>";
+            row += "<span  onclick=\"setPhone('"+data.username+"','"+data.name+"')\" class='orange cp' data-toggle='modal' data-target='#validModal'>通过</span> ";
+            row += "<span  onclick=\"setPhone('"+data.username+"','"+data.name+"')\" class='orange cp' data-toggle='modal' data-target='#turnDownModal'>驳回</span>";
         }
         if(data.status=="<%=SiteStatus.TURNDOWN%>" ){
-            row += "<a href='javascript:void(0);' onclick=\"getTurnDownMessage('"+data.turnDownReasson+"','"+data.turnDownMessage+"','"+data.otherMessage+"')\" class='orange ml6' data-toggle='modal' data-target='#messageModal'>查看驳回原因</a>";
+            row += "<span  onclick=\"getTurnDownMessage('"+data.turnDownReasson+"','"+data.turnDownMessage+"','"+data.otherMessage+"')\" class='orange ml6 cp' data-toggle='modal' data-target='#messageModal'>查看驳回原因</span>";
         }
         if(data.status=="<%=SiteStatus.APPROVE%>" ){
-            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM' data-toggle='modal' data-target='#siteModal'>修改</a> ";
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#stopModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>停用</a>";
+            if(data.areaFlag == 1 ){
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确定停用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
+            }else{
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableArea', '确定启用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>启用配送区域</span> ";
+            }
+            row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp' data-toggle='modal' data-target='#siteModal'>修改</span> ";
+            row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableSite', '确定停用吗？')\" class='orange cp'>停用</span>";
         }
         if(data.status=="<%=SiteStatus.INVALID%>" ){
-            row += "<a href='javascript:void(0);' onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM'  data-toggle='modal' data-target='#siteModal'>修改</a> ";
-            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#startModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>启用</a> ";
-//            row += "<a href='javascript:void(0);' data-toggle='modal' data-target='#delModal' onclick=\"setAreaCode('"+data.areaCode+"')\" class='orange'>删除</a>";
+            row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp'  data-toggle='modal' data-target='#siteModal'>修改</span> ";
+            row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableSite', '确定启用吗？')\" class='orange cp'>启用</span> ";
+//            row += "<span data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除？')\" class='orange cp'>删除</span>";
         }
         row += "</td></tr>";
         return row;
@@ -631,13 +622,14 @@
             }
         });
     });
-    $("#conFirmForStopBtn").click(function(){
+    function disableSiteFct(){
+        console.log("停用站点");
         $.ajax({
             type: "GET",
             url: '<c:url value="/system/siteManage/stopSite" />',
             dataType: "text",
             data: {
-                "areaCode": $("#areaCodeForModal").val()
+                "areaCode": areaCode
             },
             success: function (data) {
                 if (data == 'true') {
@@ -648,14 +640,15 @@
                 ioutDiv("异常！");
             }
         });
-    });
-    $("#conFirmForSartBtn").click(function(){
+    }
+
+    function enableSiteFct(){
         $.ajax({
             type: "GET",
             url: '<c:url value="/system/siteManage/startSite" />',
             dataType: "text",
             data: {
-                "areaCode": $("#areaCodeForModal").val()
+                "areaCode": areaCode
             },
             success: function (data) {
                 if (data == 'true') {
@@ -666,14 +659,15 @@
                 ioutDiv("异常！");
             }
         });
-    });
-    $("#conFirmForDelBtn").click(function(){
+    }
+
+    function delSiteFct(){
         $.ajax({
             type: "GET",
             url: '<c:url value="/system/siteManage/delSite" />',
             dataType: "text",
             data: {
-                "areaCode": $("#areaCodeForModal").val()
+                "areaCode": areaCode
             },
             success: function (data) {
                 if (data == 'true') {
@@ -684,12 +678,8 @@
                 ioutDiv("异常！");
             }
         });
-    });
-
-    //赋值
-    function setAreaCode(areaCode){
-        $('#areaCodeForModal').val(areaCode);
     }
+
     //赋值
     function setPhone(phone,siteName){
         $('#phoneForModal').val(phone);
@@ -763,6 +753,62 @@ function createSite(){
 
 
     }
+
+
+/******************************************************** 配送区域操作 *****************************************************************/
+    //显示操作提示框
+    function showConfirmDiv(areaCodeStr, operType, info, title) {
+        areaCode = areaCodeStr;
+        operFlag = operType;
+        $("#confirmBody").html(info);
+        if(title == null){
+            $("#confirmBody .tc").html("确认");
+        }else{
+            $("#confirmBody .tc").html(title);
+        }
+
+    }
+    //操作确认按钮
+    function doOperation() {
+        if(operFlag == "enableArea"){//启用配送区域
+            updateAreaFct(1);
+        }else if(operFlag == "disableArea"){//停用配送区域
+            updateAreaFct(0);
+        }else if(operFlag == "enableSite"){//启用配送区域
+            enableSiteFct();
+        }else if(operFlag == "disableSite"){//停用配送区域
+            disableSiteFct();
+        }else if(operFlag == "delSite"){//停用配送区域
+            delSiteFct();
+        }
+
+    }
+
+    //配送区域操作
+    function updateAreaFct(areaFlag) {
+        $.ajax({
+            type : "POST",  //提交方式
+            url : "<c:url value="/system/siteManage/updateArea?${_csrf.parameterName}=${_csrf.token}" />",//路径
+            data : {
+                areaCode : areaCode,
+                areaFlag : areaFlag
+            },//数据，这里使用的是Json格式进行传输
+            success : function(data) {//返回数据根据结果进行相应的处理
+                if(data){//
+                    ioutDiv("操作成功！");
+                    var pageIndex = parseInt($(".pagination .active").text())-1;
+                    gotoPage(pageIndex);
+                }else{
+                    ioutDiv("操作失败！");
+                }
+            },
+            error : function() {
+                ioutDiv("服务器繁忙，请稍后再试！");
+            }
+        });
+        $("#confirmModal").modal("hide");
+    }
+/********************************************************** 配送区域操作 **************************************************************/
 
 </script>
 </body>

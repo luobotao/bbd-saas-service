@@ -16,7 +16,6 @@ import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.Sender;
 import com.bbd.saas.vo.UserVO;
@@ -33,7 +32,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("/packageDispatch")
@@ -226,26 +229,21 @@ public class PackageDispatchController {
 	@SuppressWarnings("deprecation")
 	private void setOrderExpress(Order order, User user){
 		//更新物流信息
-		List<Express> expressList = order.getExpresses();
-		if(expressList == null){
-			expressList = new ArrayList<Express>();
-		}
-		Express express = new Express();
-		express.setDateAdd(new Date());
+		String remark = null;
 		if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
             if(new Date().getHours() < 19){
-            	express.setRemark("配送员正在为您派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+				remark = "配送员正在为您派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName();
             }else{
-            	express.setRemark("配送员正在为您派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+				remark = "配送员正在为您派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName();
             }
         }else{
         	if(new Date().getHours() < 19){
-            	express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+				remark = "配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName();
             }else{
-            	express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
+				remark = "配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName();
             }
         }
-		OrderCommon.addOrderExpress(ExpressStatus.Delivering, order, user, express.getRemark());
+		OrderCommon.addOrderExpress(ExpressStatus.Delivering, order, user, remark);
 	}
 	/**
 	 * Description: 运单号不存在，则添加一条记录；存在，则更新派件员postManId和staffId
@@ -348,4 +346,70 @@ public class PackageDispatchController {
 		}
 		return orderList;
 	}
+
+	/**
+	 * 运单取消分派
+	 * @param mailNum 运单号
+	 * @param request 请求
+     * @return 返回值 true:操作成功；false:操作失败
+     */
+	@ResponseBody
+	@RequestMapping(value="/cancelDispatch", method=RequestMethod.GET)
+	public Map<String, Object>  cancelDispatch(String mailNum, final HttpServletRequest request) {
+		Map<String, Object> map = null;
+		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
+			//查询运单信息
+			Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+			map = new ConcurrentHashMap<String, Object>();
+			if(order == null){//运单不存在,与站点无关
+				map.put("success", false);
+				map.put("msg", "运单号不存在，或者运单与站点无关");
+			}else if(order.getOrderStatus() != OrderStatus.DISPATCHED){
+				map.put("success", false);
+				map.put("msg", "只有订单状态为已分派的订单才能取消分派");
+			}else{//运单存在
+				//添加物流信息
+				return saveOrderMail(order, currUser, map);
+			}
+		} catch (Exception e) {
+			logger.error("===取消运单分派===出错:" + e.getMessage());
+		}
+		return map;
+	}
+
+	/**
+	 * Description: 运单分派--mongodb库中跟新派件员和运单状态，添加一条数据到mysql库或者更新mysql库中快递员信息
+	 * @param order 订单
+	 * @param currUser 当前用户
+	 * @author: liyanlei
+	 * 2016年4月16日上午11:36:08
+	 */
+	private Map<String, Object> saveOrderMail(Order order, User currUser, Map<String, Object> map){
+		//运单分派给派件员
+		order.setUserId(null);
+		//更新物流信息
+		OrderCommon.addOrderExpress(ExpressStatus.CANCELDISPATCH, order, currUser, "取消分派");
+		//更新运单状态--未分派
+		order.setOrderStatus(OrderStatus.NOTDISPATCH);
+		order.setDateUpd(new Date());
+		//更新运单
+		Key<Order> r = orderService.save(order);
+		if(r != null){
+			postDeliveryService.deleteByMailNum(order.getMailNum());
+			logger.info("运单取消分派成功，已删除mysql的bbt数据库的postdelivery表中记录，mailNum："+order.getMailNum());
+			//smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),currUser.getRealName(),currUser.getLoginName(),contact,order.getReciever().getPhone());
+			map.put("success", true);
+			map.put("msg", "取消分派成功");
+		}else{
+			map.put("success", true);
+			map.put("msg", "取消分派成功");
+		}
+		return map;
+	}
+
 }

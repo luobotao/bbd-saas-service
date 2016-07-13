@@ -19,14 +19,11 @@ import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.OrderCommon;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
-import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang3.StringUtils;
-import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,20 +217,9 @@ public class PackageToSiteController {
 	public void orderToSite(Order order,User user ) {
 		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
 		order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
-		Express express = new Express();
-		express.setDateAdd(new Date());
-		express.setLat(user.getSite().getLat());
-		express.setLon(user.getSite().getLng());
-		express.setRemark("订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
-		List<Express> expressList = order.getExpresses();
-		if (expressList == null)
-			expressList = Lists.newArrayList();
-		expressList.add(express);//增加一条物流信息
-		order.setExpressStatus(ExpressStatus.ArriveStation);
-		order.setExpresses(expressList);
-		order.setDateUpd(new Date());
+		//增加物流信息
+		OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 		orderService.save(order);
-
         if(order != null){
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
 				ExpressExchange expressExchange=new ExpressExchange();

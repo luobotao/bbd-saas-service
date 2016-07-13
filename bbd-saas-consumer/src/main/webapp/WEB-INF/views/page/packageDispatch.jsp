@@ -116,14 +116,19 @@
 									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
 								%>
 									<td><em class="orange"><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>
+									<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a></td>
 								<%
 									}else{
 								%>
 									<td><em class="c-green"><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>
+									<td>
+										<a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a>
+										<a href="javascript:void(0);" onclick="showConfirmDiv('<%=order.getMailNum()%>', 'cancelDispatch', '确定取消分派？')" class="orange" data-toggle="modal" data-target="#confirmDiv">取消</a>
+									</td>
 								<%
 									}
 								%>
-								<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a></td>
+
 							</tr>
 						<%
 							}//for
@@ -191,6 +196,34 @@
 </div>
 <!-- 运单分派面板-结束 -->
 
+<!--S 取消分派-->
+<div class="j-pl-pop modal fade" id="confirmDiv" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal_wrapper">
+		<div class="modal-dialog b-modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header b-modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title  tc" id="confirmTitle">确认</h4>
+				</div>
+				<div class="modal-body b-modal-body">
+					<em class="f16" id="confirmBody">确认将该订单设置为超区件？</em>
+				</div>
+				<div class="modal-footer tc">
+					<%--<div class="row mt20">--%>
+						<span class="col-md-6">
+							<button type="button" class="ser-btn g wp80" data-dismiss="modal" class="close">取消</button>
+						</span>
+						<span class="col-md-6">
+							<button  type="button" class="ser-btn l wp80" onclick="doOperation()">确认</button>
+						</span>
+					<%--</div>--%>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 取消分派-->
+
 <jsp:include page="superArea.jsp" flush="true" />
 
 <script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
@@ -198,7 +231,8 @@
 <script type="text/javascript">
 var courierIsLoadSuccess = 0;
 var status = ""; 
-var arriveBetween = ""; 
+var arriveBetween = "";
+var operFlag = ""; //操作类型（cancelDispatch：取消分派；）
 
 $(document).ready(function() {
 	//显示分页条
@@ -368,10 +402,12 @@ function getRowHtml(data){
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
 		row += "<td><em class='orange'><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
 	}else{
 		row += "<td><em class='c-green'><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a>" +
+				"<a href='javascript:void(0);' onclick='showConfirmDiv(\"" + data.mailNum + "\",\"cancelDispatch\", \"确定取消分派？\")' class='orange ml16' data-toggle='modal' data-target='#confirmDiv'>取消</a></td>";
 	}
-	row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
 	row += "</tr>";
 	return row;
 }
@@ -439,7 +475,46 @@ function chooseCourier() {
   	arriveBetween = ""; 
 	$("#chooseCourier_div").modal("hide");
 }
-	
+
+/******************************************************** 取消操作 *****************************************************************/
+	//显示操作提示框
+	function showConfirmDiv(mailNumStr, operType, info) {
+		mailNum = mailNumStr;
+		operFlag = operType;
+		$("#confirmBody").html(info);
+	}
+	//操作确认按钮
+	function doOperation() {
+		if(operFlag == "cancelDispatch"){//取消分派
+			doCancel();
+		}
+	}
+
+	//取消分派
+	function doCancel() {
+		$.ajax({
+			type : "POST",  //提交方式
+			url : "<c:url value="/packageDispatch/cancelDispatch?${_csrf.parameterName}=${_csrf.token}" />",//路径
+			data : {
+				mailNum : mailNum
+			},//数据，这里使用的是Json格式进行传输
+			success : function(data) {//返回数据根据结果进行相应的处理
+				if(data){//
+					ioutDiv("操作成功！");
+					var pageIndex = parseInt($(".pagination .active").text())-1;
+					gotoPage(pageIndex);
+				}else{
+					ioutDiv("操作失败！");
+				}
+			},
+			error : function() {
+				ioutDiv("服务器繁忙，请稍后再试！");
+			}
+		});
+		$("#confirmDiv").modal("hide");
+	}
+/********************************************************** 取消操作 **************************************************************/
+
 </script>
 </body>
 </html>

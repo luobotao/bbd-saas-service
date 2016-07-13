@@ -2003,5 +2003,8 @@ input.spe-input{
 .txtA{
   min-height:100px;
 }
+.cp{
+  cursor:pointer;
+}
 
 /* E saas2.1 */
