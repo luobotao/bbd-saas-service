@@ -6,6 +6,7 @@ import com.bbd.drivers.mongoModels.OrderTrack;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.IncomeService;
+import com.bbd.saas.api.mysql.PushService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.*;
@@ -13,10 +14,7 @@ import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.Express;
-import com.bbd.saas.vo.OrderHoldToStoreNumVO;
-import com.bbd.saas.vo.OrderHoldToStoreVo;
-import com.bbd.saas.vo.OrderQueryVO;
+import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,6 +53,8 @@ public class HoldToStoreController {
     AdminService adminService;
 
     @Autowired
+    PushService pushService;
+    @Autowired
     TradeService tradeService;
     @Autowired
     SiteService siteService;
@@ -71,31 +71,6 @@ public class HoldToStoreController {
     public static final Logger logger = LoggerFactory.getLogger(HoldToStoreController.class);
 
     /**
-     * 根据用户获取该用户下的所有tradeNo
-     * @param user
-     * @param type 1历史未入库
-     * @return
-     */
-    private List<String> getTradeNoListByUser(User user,String type){
-        //获取站长下的所有揽件员
-        List<User> userList = userService.findUsersBySite(user.getSite(), null, null);
-        //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
-        List<String> tradeNoList = Lists.newArrayList();
-        for(User userTemp : userList){
-            List<Trade> tradeList = tradeService.findTradesByEmbraceId(userTemp.getId(),type);
-            for (Trade trade : tradeList) {
-                tradeNoList.add(trade.getTradeNo());
-            }
-        }
-        if(user.getSite()!=null && "1".equals(user.getSite().getType())){//分拨站点
-            List<Trade> tradeListTemp = tradeService.findTradesBySenderCity(user.getSite().getCity(),type);
-            for (Trade trade : tradeListTemp) {
-                tradeNoList.add(trade.getTradeNo());
-            }
-        }
-        return tradeNoList;
-    }
-    /**
      * 跳转到揽件入库页面
      *
      * @param pageIndex //开始页
@@ -110,7 +85,7 @@ public class HoldToStoreController {
         User user = adminService.get(UserSession.get(request));
         if (user != null) {
             //获取站长下的所有揽件员
-            List<User> userList = userService.findUsersBySite(user.getSite(), null, UserStatus.VALID);
+            List<User> userList = userService.findUsersBySite(user.getSite(), null, null);
             //查询 今日成功揽件数量，今日入库，未入库，历史未入库数量
             OrderHoldToStoreNumVO orderHoldToStoreNum = orderService.getOrderHoldToStoreNum(user);
             long historyToStoreNum = orderHoldToStoreNum.getHistoryToStoreNum();
@@ -209,6 +184,16 @@ public class HoldToStoreController {
             msg = "重复扫描，此运单已经扫描过啦";
         } else if (user.getSite().getAreaCode().equals(order.getAreaCode())) {//运单号存在且属于此站
             order.setOrderSetStatus(OrderSetStatus.ARRIVED);
+            List<SiteTime> siteTimes = order.getSiteTimes();
+            if(siteTimes==null){
+                siteTimes = Lists.newArrayList();
+            }
+            SiteTime siteTime = new SiteTime();
+            siteTime.setDateAdd(new Date());
+            siteTime.setOrderSetStatus(OrderSetStatus.ARRIVED);
+            siteTime.setSiteId(user.getSite().getId().toHexString());
+            siteTimes.add(siteTime);
+            order.setSiteTimes(siteTimes);
             //入库
             doToStore(request, order);
             //到站 == 到站和入库顺序不可以颠倒，若颠倒order需要重新查一遍。
@@ -217,6 +202,16 @@ public class HoldToStoreController {
             msg = "扫描成功,完成入库。此订单属于您的站点,可直接进行【运单分派】操作";
         } else if ("1".equals(user.getSite().getType())) {//分拨站点
             order.setOrderSetStatus(OrderSetStatus.ARRIVEDISPATCH);
+            List<SiteTime> siteTimes = order.getSiteTimes();
+            if(siteTimes==null){
+                siteTimes = Lists.newArrayList();
+            }
+            SiteTime siteTime = new SiteTime();
+            siteTime.setDateAdd(new Date());
+            siteTime.setOrderSetStatus(OrderSetStatus.ARRIVEDISPATCH);
+            siteTime.setSiteId(user.getSite().getId().toHexString());
+            siteTimes.add(siteTime);
+            order.setSiteTimes(siteTimes);
             //入库
             doToStore(request, order);
             status = true;
@@ -224,6 +219,16 @@ public class HoldToStoreController {
         } else if (StringUtils.isBlank(user.getSite().getType())||"0".equals(user.getSite().getType())) {//不是分拨站点
             //入库
             order.setOrderSetStatus(OrderSetStatus.WAITSET);
+            List<SiteTime> siteTimes = order.getSiteTimes();
+            if(siteTimes==null){
+                siteTimes = Lists.newArrayList();
+            }
+            SiteTime siteTime = new SiteTime();
+            siteTime.setDateAdd(new Date());
+            siteTime.setOrderSetStatus(OrderSetStatus.WAITSET);
+            siteTime.setSiteId(user.getSite().getId().toHexString());
+            siteTimes.add(siteTime);
+            order.setSiteTimes(siteTimes);
             doToStore(request, order);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【揽件集包】操作";
@@ -233,7 +238,6 @@ public class HoldToStoreController {
         return result;
     }
 
-    //到站
 
     /**
      * 单个订单到站方法
@@ -281,18 +285,22 @@ public class HoldToStoreController {
         if (order != null) {
             //入库
             order.setDateUpd(new Date());
+
             orderService.save(order);
 
             //修改司机包裹的状态
             orderParcleStatusChange(order.getId().toHexString(),"1");//parceType 包裹类型 0：配件包裹（默认） 1：集包
             //修改交易订单的状态
-            long totalCount = orderService.findCountByTradeNo(order.getTradeNo());//此商户订单号下的所有运单
+            long totalCount = orderService.findCountByTradeNo(order.getTradeNo(), 0);//此商户订单号下的所有运单(非移除的)
             long arrCount = orderService.findArrCountByTradeNo(order.getTradeNo());//此商户订单号下的所有已入库的运单
             if(totalCount==arrCount){//全部入库完成,修改trade的状态
                 Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
                 trade.setTradeStatus(TradeStatus.ARRIVED);
                 trade.setDateUpd(new Date());
                 tradeService.save(trade);
+                User embrace = userService.findOne(trade.getEmbraceId().toHexString());
+                if(embrace!=null)
+                    pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());
             }
         }
     }
@@ -319,7 +327,7 @@ public class HoldToStoreController {
             Boolean flag = true;//是否可以更新包裹的状态
             for (Order orderTemp : orderParcel.getOrderList()) {
                 Order orderReal = orderService.findOneByMailNum(orderTemp.getAreaCode(),orderTemp.getMailNum());
-                if (orderReal==null || orderReal.getOrderStatus() == null || orderReal.getOrderStatus() == OrderStatus.NOTARR) {
+                if (orderReal==null || orderReal.getOrderSetStatus() == null || orderReal.getOrderSetStatus() == OrderSetStatus.WAITTOIN) {
                     flag = false;
                 }
             }

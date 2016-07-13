@@ -1,7 +1,6 @@
 package com.bbd.saas.api.mongo;
 
 import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.OrderSetStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
@@ -166,7 +165,7 @@ public interface OrderService {
      * @param tradeNo //商户订单号(我们自己生成的支付订单号)
      * @return 订单下包含的运单数目
      */
-    public long findCountByTradeNo(String tradeNo);
+    public long findCountByTradeNo(String tradeNo, Integer removeStatus);
 
 
     /**
@@ -232,4 +231,17 @@ public interface OrderService {
      * @return
      */
     long findArrCountByTradeNo(String tradeNo);
+
+
+    /**
+     * 根据物流状态查询订单
+     * @param pageModel 分页信息
+     * @param remark 物流remark包含关键词
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public PageModel<Order> findPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate);
+
+    String findBestSiteWithAddress(String address);
 }

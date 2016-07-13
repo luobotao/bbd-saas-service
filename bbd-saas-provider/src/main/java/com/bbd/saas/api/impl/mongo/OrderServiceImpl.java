@@ -1,11 +1,15 @@
 package com.bbd.saas.api.impl.mongo;
 
 
+import com.alibaba.dubbo.common.json.JSONObject;
+import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
+import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
@@ -15,6 +19,7 @@ import com.bbd.saas.enums.OrderSetStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.*;
+import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.*;
@@ -23,15 +28,14 @@ import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonNode;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -46,6 +50,10 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private SitePoiApi sitePoiApi;
+    @Autowired
+    Geo geo;
+    @Autowired
+    private PostmanUserService userMysqlService;
     @Autowired
     private SiteService siteService;
     @Autowired
@@ -237,7 +245,7 @@ public class OrderServiceImpl implements OrderService {
 			logger.info("[address]:" + address + " [search poi result] :" + areaCodeList.size() + "");
 			if (areaCodeList != null && areaCodeList.size() > 0) {
 				//通过积分获取优选区域码，暂时用第一个
-				String siteId = areaCodeList.get(0);
+				String siteId = findBestSiteWithAddress(address);
 				Site site = siteService.findSite(siteId);
 				return site;
 			}
@@ -296,13 +304,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, ObjectId uId, String keyword) {
-
         return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
     }
 
     @Override
-    public long findCountByTradeNo(String tradeNo) {
-        return orderDao.findCountByTradeNo(tradeNo);
+    public long findCountByTradeNo(String tradeNo, Integer removeStatus) {
+        return orderDao.findCountByTradeNo(tradeNo, removeStatus);
     }
 
     @Override
@@ -501,5 +508,67 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public long findArrCountByTradeNo(String tradeNo) {
         return orderDao.findArrCountByTradeNo(tradeNo);
+    }
+
+    @Override
+    public PageModel<Order> findPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate) {
+        //设置分页操作
+        /*pageModel.setPageNo(pageOrders.getPageNo());
+        pageModel.setTotalCount(pageOrders.getTotalCount());
+        pageModel.setDatas(orderHoldToStoreList);*/
+        return pageModel;
+    }
+
+    @Override
+    public String findBestSiteWithAddress(String address) {
+        List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
+        logger.info("[findBestSiteWithAddress]request address:"+address+", response siteId List size:"+ areaCodeList.size());
+        String resultAreaCode = "";
+        if(areaCodeList!=null && areaCodeList.size()>0){
+            if(areaCodeList.size()>1) {
+                //通过积分获取优选区域码
+                MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
+                Map<String,Integer> map = new TreeMap<String,Integer>();
+                for (String siteId : areaCodeList) {
+                    Site site = siteService.findSite(siteId);
+                    if (site != null) {
+                        //获取当前位置到站点的距离，
+                        double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()))*1000;
+                        //获取站点的日均积分
+                        Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
+                        //int integral = userMysqlService.getIntegral("101010-016","17710174098");
+                        logger.info("积分：" + result.toString());
+                        int integral = (int) result.get("totalscore");
+                        int integralVal = 0;
+                        //根据地址到站点的距离计算积分
+                        if (length < 3000) {
+                            integralVal = integral + 5;
+                        } else if (length < 5000) {
+                            integralVal = integral + 3;
+                        } else {
+                            integralVal = integral + 2;
+                        }
+                        //保存站点和积分，按照积分进行排序
+                        map.put(siteId, integralVal );
+                    }
+                }
+                //这里将map.entrySet()转换成list
+                List<Map.Entry<String,Integer>> list = new ArrayList<Map.Entry<String,Integer>>(map.entrySet());
+                //然后通过比较器来实现排序
+                Collections.sort(list,new Comparator<Map.Entry<String,Integer>>() {
+                    //降序排序
+                    public int compare(Map.Entry<String, Integer> o1,
+                                       Map.Entry<String, Integer> o2) {
+                        return o2.getValue().compareTo(o1.getValue());
+                    }
+                });
+                resultAreaCode = list.get(0).getKey();
+            }else{
+                //通过积分获取优选区域码，暂时用第一个
+                resultAreaCode = areaCodeList.get(0);
+            }
+        }
+        logger.info("[findBestSiteWithAddress]request address:"+address+", response siteId:"+resultAreaCode);
+        return resultAreaCode;
     }
 }

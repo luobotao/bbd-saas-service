@@ -112,14 +112,6 @@ public class TradeServiceImpl implements TradeService {
     public Trade findOneByTradeNo(String tradeNo) {
         //订单信息
         Trade trade = tradeDao.findOne("tradeNo", tradeNo);
-        if (trade != null){
-            //快件数量（预计或者实取）
-            if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况
-                trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
-            } else { //订单预计的数量
-                trade.setTotalMail(trade.getOrderSnaps().size());
-            }
-        }
         return trade;
     }
     /**
@@ -131,18 +123,19 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public PageModel<Trade> findTradePage(Integer pageIndex, TradeQueryVO tradeQueryVO){
         //查询订单号或者运单号包含tradeQueryVO.tradeNoLike && 运单的收件人手机号、姓名、地址中包含rcvKeyword的订单
-        if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//订单或者运单的搜索
+        if(tradeQueryVO.tradeStatus != null && tradeQueryVO.tradeStatus != TradeStatus.WAITPAY.getStatus()){
             //针对已经打单成功的数据,此时并未更新trade表里的orderSnaps里的运单号
-            //先去order表里检索mailNum为nolIke的order,将tradeNo值取出来
-            OrderQueryVO orderQueryVO = new OrderQueryVO();
-            orderQueryVO.mailNum = tradeQueryVO.noLike;
-            List<Order> orders = orderDao.findOrders(orderQueryVO);
-            tradeQueryVO.tradeNoList = Lists.newArrayList();
-            tradeQueryVO.tradeNoList.add(tradeQueryVO.noLike);
-            for(Order order : orders){
-               String tradeNo = order.getTradeNo();
-                if(StringUtils.isNotBlank(tradeNo)){
-                    tradeQueryVO.tradeNoList.add(tradeNo);
+            //先去order表里检索mailNum为nolike的order,将tradeNo值取出来
+            if(StringUtils.isNotBlank(tradeQueryVO.noLike)){//订单或者运单的搜索
+                OrderQueryVO orderQueryVO = new OrderQueryVO();
+                orderQueryVO.tradeOrMailNoLike = tradeQueryVO.noLike;
+                List<Order> orders = orderDao.findTradeNoList(orderQueryVO);
+                tradeQueryVO.tradeNoList = Lists.newArrayList();
+                for(Order order : orders){
+                    String tradeNo = order.getTradeNo();
+                    if(StringUtils.isNotBlank(tradeNo)){
+                        tradeQueryVO.tradeNoList.add(tradeNo);
+                    }
                 }
             }
         }
@@ -152,12 +145,6 @@ public class TradeServiceImpl implements TradeService {
         List<Trade> tradeList = tradePageModel.getDatas();
         if (tradeList != null && tradeList.size() > 0){
             for (Trade trade : tradeList){
-                //快件数据量
-                if(trade.getTradeStatus() == TradeStatus.GETED){//从order表中查询，因为有移动端移除的情况==实取
-                    trade.setTotalMail(orderDao.findCountByTradeNo(trade.getTradeNo()));
-                } else { //订单预计的数量
-                    trade.setTotalMail(trade.getOrderSnaps().size());
-                }
                 //揽件人
                 if(trade.getEmbraceId() != null){
                     trade.setEmbrace(userDao.findOne("_id", trade.getEmbraceId()));
@@ -409,7 +396,7 @@ public class TradeServiceImpl implements TradeService {
 
         //postrole 0 代表小件员 4 代表站长 poststatus 1 代表司机处于接单状态
         String sql="SELECT u.*  FROM postmanuser"
-                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND (u.postrole = '0' or u.postrole='99') AND u.poststatus="+poststatus+""
+                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND u.sta='1' AND token<>'' AND (u.postrole = '0' or u.postrole='99') AND u.poststatus="+poststatus+""
                 +"  AND SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) < "+i
                 + " order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc";
 
@@ -429,5 +416,14 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public List<Trade> findTradesBySenderCity(String city, String type) {
         return tradeDao.findTradesBySenderCity(city,type);
+    }
+    /**
+     * 根据运单号和订单号查询
+     * @param orderNo 订单号
+     * @param mailNum 运单号
+     * @return 订单集合
+     */
+    public List<Trade> findByOrderSnapNo(String orderNo, String mailNum){
+        return tradeDao.selectByOrderSnapNo(orderNo, mailNum);
     }
 }

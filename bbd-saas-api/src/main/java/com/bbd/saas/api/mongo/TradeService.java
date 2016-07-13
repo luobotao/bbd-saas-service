@@ -103,4 +103,11 @@ public interface TradeService {
      * @return
      */
     List<Trade> findTradesBySenderCity(String city, String type);
+    /**
+     * 根据运单号和订单号查询
+     * @param orderNo 订单号
+     * @param mailNum 运单号
+     * @return 订单集合
+     */
+    public List<Trade> findByOrderSnapNo(String orderNo, String mailNum);
 }

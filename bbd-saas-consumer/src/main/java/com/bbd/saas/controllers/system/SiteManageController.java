@@ -20,6 +20,7 @@ import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.impl.common.ConcurrentReaderHashMap;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统设置 -- 站点管理
@@ -69,22 +71,31 @@ public class SiteManageController {
      */
 	@ResponseBody
 	@RequestMapping(value="/checkSiteWithLoginName", method=RequestMethod.GET)
-	public Boolean checkSiteWithUsername(@RequestParam(value = "loginName", required = true) String loginName, String areaCode) {
+	public Map<String, Object> checkSiteWithUsername(@RequestParam(value = "loginName", required = true) String loginName, String areaCode) {
+		Map<String, Object> map = new ConcurrentReaderHashMap();;
 		try{
 			User user = userService.findUserByLoginName(loginName);
 			if(user == null){//新添加手机号
-				return true;
-			}else{
-				if(user.getSite()!=null && user.getSite().getAreaCode().equals(areaCode)){//修改，可以用
-					return true;
+				PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(loginName, 0);
+				if(postmanUser == null){
+					map.put("success", true);
 				}else{
-					return false;
+					map.put("success", false);
+					map.put("msg", "手机号已注册派件员");
+				}
+			}else{//修改
+				if(user.getSite() != null && user.getSite().getAreaCode().equals(areaCode)){//修改，可以用
+					map.put("success", true);
+				}else{
+					map.put("success", false);
+					map.put("msg", "手机号已存在");
 				}
 			}
 		}catch (Exception e){
 			e.printStackTrace();
-			return false;
+			map.put("success", false);
 		}
+		return map;
 	}
 //	@RequestMapping(value="/updateSite", method=RequestMethod.GET)
 //	public String updateSite(Model model, HttpServletRequest request) {
@@ -124,7 +135,7 @@ public class SiteManageController {
 			oldPhone = site.getUsername();
 			BeanUtils.copyProperties(siteForm,site);
 			user = userService.findUserByLoginName(site.getUsername());
-			if(user==null){//原始站长被删除了
+			if(user == null){//原始站长被删除了
 				List<User> userList = userService.findUsersBySite(site,UserRole.SITEMASTER,null);
 				if(userList!=null && userList.size()>0){
 					user = userList.get(0);
@@ -170,7 +181,7 @@ public class SiteManageController {
 				postmanUser.setSta("3");//对应mongdb user表中的userStatus,默认3位无效
 			}else{//公司用户创建
 				Site siteTemp = siteService.findSiteByUserName(siteForm.getPhone());
-				if(siteTemp!=null){//更新操作
+				if(siteTemp != null){//更新操作
 					site = siteTemp;
 				}
 				BeanUtils.copyProperties(siteForm,site);
