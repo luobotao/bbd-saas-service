@@ -40,6 +40,7 @@
                         <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
                             <label>配送区域状态：</label>
                             <select id="areaFlag" name="areaFlag" class="form-control form-con-new">
+                                <option value="-1">全部</option>
                                 <option value="1">有效</option>
                                 <option value="0">无效</option>
                             </select>
