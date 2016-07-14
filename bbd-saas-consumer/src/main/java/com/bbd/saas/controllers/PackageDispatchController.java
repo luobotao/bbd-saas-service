@@ -369,11 +369,11 @@ public class PackageDispatchController {
 			if(order == null){//运单不存在,与站点无关
 				map.put("success", false);
 				map.put("msg", "运单不存在");
-			}else if(order.getAreaCode().equals(currUser.getSite().getAreaCode())){
+			}else if(!order.getAreaCode().equals(currUser.getSite().getAreaCode())){
 				map.put("success", false);
 				map.put("msg", "此运单不属于本站点");
 			}else if(order.getOrderStatus() != OrderStatus.DISPATCHED){
-				map.put("success", false);
+				map.put("success", true);
 				map.put("msg", "该订单已被处理");
 			}else{//运单存在
 				//添加物流信息
