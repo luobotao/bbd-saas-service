@@ -499,12 +499,12 @@ function chooseCourier() {
 				mailNum : mailNum
 			},//数据，这里使用的是Json格式进行传输
 			success : function(data) {//返回数据根据结果进行相应的处理
-				if(data){//
-					ioutDiv("操作成功！");
-					var pageIndex = parseInt($(".pagination .active").text())-1;
-					gotoPage(pageIndex);
-				}else{
-					ioutDiv("操作失败！");
+				if(data != null){
+					ioutDiv(data.msg);
+					if(data.success){//取消分派成功
+						var pageIndex = parseInt($(".pagination .active").text())-1;
+						gotoPage(pageIndex);
+					}
 				}
 			},
 			error : function() {

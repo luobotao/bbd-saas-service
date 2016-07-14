@@ -354,7 +354,7 @@ public class PackageDispatchController {
      * @return 返回值 true:操作成功；false:操作失败
      */
 	@ResponseBody
-	@RequestMapping(value="/cancelDispatch", method=RequestMethod.GET)
+	@RequestMapping(value="/cancelDispatch", method=RequestMethod.POST)
 	public Map<String, Object>  cancelDispatch(String mailNum, final HttpServletRequest request) {
 		Map<String, Object> map = null;
 		try {
@@ -398,15 +398,15 @@ public class PackageDispatchController {
 		order.setDateUpd(new Date());
 		//更新运单
 		Key<Order> r = orderService.save(order);
-		if(r != null){
+		if(r != null && r.getId() != null){
 			postDeliveryService.deleteByMailNum(order.getMailNum());
 			logger.info("运单取消分派成功，已删除mysql的bbt数据库的postdelivery表中记录，mailNum："+order.getMailNum());
 			//smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),currUser.getRealName(),currUser.getLoginName(),contact,order.getReciever().getPhone());
 			map.put("success", true);
-			map.put("msg", "取消分派成功");
+			map.put("msg", "操作成功");
 		}else{
-			map.put("success", true);
-			map.put("msg", "取消分派成功");
+			map.put("success", false);
+			map.put("msg", "操作失败");
 		}
 		return map;
 	}
