@@ -644,9 +644,9 @@
 	var dispatchPermsn = null;
 	function showDispatchPermsnDiv(dispthPms, lgnName){
 		if(dispthPms == 0){//表示要停用
-			$("#dispatchMsg").html("关闭后派件员在App中将无法使用\"包裹到站、运单分派\"功能，确认关闭吗？");
+			$("#dispatchMsg").html("关闭后派件员在App中将无法使用\"包裹到站\"功能，确认关闭吗？");
 		}else if(dispthPms==1){//表示要启用
-			$("#dispatchMsg").html("开通后派件员可在App中使用\"包裹到站、运单分派\"功能，确认开通吗？");
+			$("#dispatchMsg").html("开通后派件员可在App中使用\"包裹到站\"功能，确认开通吗？");
 		}
 		loginName = lgnName;
 		dispatchPermsn = dispthPms;
