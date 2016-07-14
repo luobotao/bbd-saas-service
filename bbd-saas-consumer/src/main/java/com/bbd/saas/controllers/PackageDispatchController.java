@@ -364,14 +364,17 @@ public class PackageDispatchController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询运单信息
-			Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+			Order order = orderService.findOneByMailNum(null, mailNum);
 			map = new ConcurrentHashMap<String, Object>();
 			if(order == null){//运单不存在,与站点无关
 				map.put("success", false);
-				map.put("msg", "运单号不存在，或者运单与站点无关");
+				map.put("msg", "运单不存在");
+			}else if(order.getAreaCode().equals(currUser.getSite().getAreaCode())){
+				map.put("success", false);
+				map.put("msg", "此运单不属于本站点");
 			}else if(order.getOrderStatus() != OrderStatus.DISPATCHED){
 				map.put("success", false);
-				map.put("msg", "只有订单状态为已分派的订单才能取消分派");
+				map.put("msg", "该订单已被处理");
 			}else{//运单存在
 				//添加物流信息
 				return saveOrderMail(order, currUser, map);

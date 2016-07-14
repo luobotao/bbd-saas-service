@@ -1,5 +1,4 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
-<%@ page import="com.bbd.saas.enums.UserStatus" %>
 <%@ page import="com.bbd.saas.mongoModels.Site" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.SiteStatus" %>
@@ -33,9 +32,16 @@
                     <div class="row pb20">
 
                         <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                            <label>状态：</label>
+                            <label>站点状态：</label>
                             <select id="status" name="status" class="form-control form-con-new">
                                 <%=SiteStatus.Stas2HTML(-1)%>
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                            <label>配送区域状态：</label>
+                            <select id="areaFlag" name="areaFlag" class="form-control form-con-new">
+                                <option value="1">有效</option>
+                                <option value="0">无效</option>
                             </select>
                         </div>
                         <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
@@ -359,6 +365,7 @@
     //加载带有查询条件的指定页的数据
     function gotoPage(pageIndex) {
         var status = $("#status").val();
+        var areaFlag = $("#areaFlag").val();
         var keyword = $("#keyword").val();
         var url = "<c:url value="/system/siteManage/getSitePage" />";
         $.ajax({
@@ -368,6 +375,7 @@
             data: {
                 "pageIndex": pageIndex,
                 "status": status,
+                "areaFlag": areaFlag,
                 "keyword": keyword
             },//数据，这里使用的是Json格式进行传输
             success: function (dataObject) {//返回数据根据结果进行相应的处理

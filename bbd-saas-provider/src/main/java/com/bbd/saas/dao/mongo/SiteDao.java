@@ -42,12 +42,15 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param keyword
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, Integer status, String keyword) {
+    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, Integer status, Integer areaFlag, String keyword) {
         SiteQueryVO queryVO = new SiteQueryVO();
         queryVO.companyId = companyId;
         queryVO.status = SiteStatus.status2Obj(status);
         queryVO.keyword = keyword;
         Query<Site> query = getQuerys(queryVO);
+        if(areaFlag != null && areaFlag != -1){//配送区域
+            query.filter("areaFlag", areaFlag);
+        }
         query.order("-dateAdd");
         return queryPageData(pageModel, query);
     }

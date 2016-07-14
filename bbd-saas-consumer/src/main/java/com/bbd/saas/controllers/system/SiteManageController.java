@@ -248,28 +248,32 @@ public class SiteManageController {
      */
 	@RequestMapping(method=RequestMethod.GET)
 	public String siteManage(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		PageModel<Site> sitePage = getSitePage(request,0,-1,keyword);
+		PageModel<Site> sitePage = getSitePage(request, 0, -1, -1, keyword);
 		model.addAttribute("sitePage", sitePage);
 		return "systemSet/siteManage";
 	}
 
 	/**
-     * 站点分页查询
-     * @param 
-     * @return
+	 * 站点分页查询
+	 * @param request 请求
+	 * @param pageIndex 当前页
+	 * @param status 站点状态
+	 * @param areaFlag 配送区域状态
+	 * @param keyword 查询关键字
+     * @return 每页的数据和分页信息
      */
 	@ResponseBody
 	@RequestMapping(value = "/getSitePage", method = RequestMethod.GET)
-	public PageModel<Site> getSitePage(HttpServletRequest request, Integer pageIndex, Integer status, String keyword) {
+	public PageModel<Site> getSitePage(HttpServletRequest request, Integer pageIndex, Integer status, Integer areaFlag, String keyword) {
 		User user = adminService.get(UserSession.get(request));
-		if (pageIndex==null) pageIndex =0 ;
+		if (pageIndex==null) pageIndex = 0 ;
 
 		PageModel<Site> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
 
-		PageModel<Site> sitePage = siteService.getSitePage(pageModel,user.getCompanyId(),status,keyword);
+		PageModel<Site> sitePage = siteService.getSitePage(pageModel,user.getCompanyId(),status, areaFlag, keyword);
 		for(Site site :sitePage.getDatas()){
-			site.setTurnDownMessage(site.getTurnDownReasson()==null?"":site.getTurnDownReasson().getMessage());
+			site.setTurnDownMessage(site.getTurnDownReasson() == null ? "" : site.getTurnDownReasson().getMessage());
 		}
 		return sitePage;
 	}

@@ -89,6 +89,8 @@
   						<thead>
   							<tr>
   								<%--<th>包裹号</th>--%>
+								<th>站点编码</th>
+								<th>站点名称</th>
 								<th>运单号</th>
 								<%--<th>订单号</th>
 								<th>来源</th>--%>
@@ -118,6 +120,8 @@
 									for(Order order : orderPage.getDatas()){
 							%>
 								<tr>
+									<td><%=order.getAreaCode()%></td>
+									<td><%=order.getAreaRemark()%></td>
 									<%--<td><%=order.getParcelCode()%></td>--%>
 									<td><%=order.getMailNum()%></td>
 									<%--<td><%=order.getOrderNo()%></td>
@@ -316,6 +320,8 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
+	row += "<td>" + data.areaCode + "</td>";
+	row += "<td>" + data.areaRemark + "</td>";
 	/*row +=  "<td>" + data.parcelCode + "</td>";*/
 	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
 		row += "<td>" + data.mailNum + "</td>";
