@@ -114,7 +114,8 @@ public class PackageDispatchController {
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			//查询派件员姓名电话
 			if(orderPage != null && orderPage.getDatas() != null){
-				formatOrder(orderPage.getDatas()) ;
+				List<Order> orderList = formatOrder(orderPage.getDatas()) ;
+				orderPage.setDatas(orderList);
 			}
 		} catch (Exception e) {
 			logger.error("===分页Ajax更新列表===出错:" + e.getMessage());
