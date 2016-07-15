@@ -35,6 +35,7 @@
     <dubbo:service interface="com.bbd.saas.api.mongo.TradeService" ref="tradeService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.ConstantService" ref="constantService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.ExpressExchangeService" ref="expressExchangeService" />
+    <dubbo:service interface="com.bbd.saas.api.mongo.SiteExchangeService" ref="siteExchangeService" />
 
 
     <!--start mysql services -->

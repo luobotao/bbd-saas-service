@@ -149,15 +149,6 @@ public class PackageDispatchController {
 				map.put("operFlag", 0);//0:运单号不存在
 			}else{//运单存在
 
-				if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
-				ExpressExchange expressExchange=new ExpressExchange();
-				expressExchange.setOperator(user.getRealName());
-				expressExchange.setStatus(ExpressExchangeStatus.waiting);
-				expressExchange.setPhone(user.getLoginName());
-				expressExchange.setOrder(order);
-				expressExchange.setDateAdd(new Date());
-				expressExchangeService.save(expressExchange);
-				   }
 
 				//当运单到达站点(未分派)，首次分派;当运单状态处于滞留时，可以重新分派
 				if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
@@ -217,6 +208,16 @@ public class PackageDispatchController {
 		}else{
 			map.put("operFlag", 3);//3:分派失败
 		}
+		if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
+			ExpressExchange expressExchange=new ExpressExchange();
+			expressExchange.setOperator(user.getRealName());
+			expressExchange.setStatus(ExpressExchangeStatus.waiting);
+			expressExchange.setPhone(user.getLoginName());
+			expressExchange.setOrder(order);
+			expressExchange.setDateAdd(new Date());
+			expressExchangeService.save(expressExchange);
+		}
+
 	}
 	
 	/**

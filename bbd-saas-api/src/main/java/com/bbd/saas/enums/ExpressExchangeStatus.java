@@ -9,7 +9,9 @@ import com.bbd.saas.utils.Htmls;
 public enum ExpressExchangeStatus {
     waiting(0, "新增物流推送"),
     pushing(1, "推送"),
-    finish(2, "完成");
+    finish(2, "完成"),
+    error(3, "错误"),
+    nohandle(4, "不做处理");
 
     private int status;
     private String message;
