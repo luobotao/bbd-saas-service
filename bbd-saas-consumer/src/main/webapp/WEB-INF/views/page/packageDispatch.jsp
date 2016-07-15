@@ -123,7 +123,7 @@
 									<td><em class="c-green"><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>
 									<td>
 										<a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a>
-										<a href="javascript:void(0);" onclick="showConfirmDiv('<%=order.getMailNum()%>', 'cancelDispatch', '确定取消分派？')" class="orange" data-toggle="modal" data-target="#confirmDiv">取消</a>
+										<a href="javascript:void(0);" onclick="checkOrderStatus('<%=order.getMailNum()%>')" class="orange">取消</a>
 									</td>
 								<%
 									}
@@ -223,6 +223,30 @@
 	</div>
 </div>
 <!--E 取消分派-->
+
+<!--S 订单已被处理-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="orderStatusLabel" id="orderStatusModal"
+	 aria-hidden="true">
+	<div class="modal-dialog b-modal-dialog middleS" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">取消分派</h4>
+			</div>
+			<div class="modal-body b-modal-body">
+				<em class="f16 d-red" id="modal_body"></em>
+				<div class="clearfix mt20">
+					<span class="col-md-3"></span>
+					<span class="col-md-6">
+						<button  type="button" class="ser-btn l wp80" onclick="closeModal('orderStatusModal')">确认</button>
+					</span>
+					<span class="col-md-3"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 订单已被处理-->
 
 <jsp:include page="superArea.jsp" flush="true" />
 
@@ -334,6 +358,9 @@ function queryData(pageIndex) {
  
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
+	if(pageIndex == null){
+		pageIndex = parseInt($(".pagination .active").text())-1;
+	}
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -406,7 +433,7 @@ function getRowHtml(data){
 	}else{
 		row += "<td><em class='c-green'><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>";
 		row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a>" +
-				"<a href='javascript:void(0);' onclick='showConfirmDiv(\"" + data.mailNum + "\",\"cancelDispatch\", \"确定取消分派？\")' class='orange ml16' data-toggle='modal' data-target='#confirmDiv'>取消</a></td>";
+				"<a href='javascript:void(0);' onclick='checkOrderStatus(\"" + data.mailNum + "\")' class='orange ml16'>取消</a></td>";
 	}
 	row += "</tr>";
 	return row;
@@ -489,6 +516,34 @@ function chooseCourier() {
 			doCancel();
 		}
 	}
+	//检查订单状态，只有订单处于已分派时，才能取消分派
+	function checkOrderStatus(mailNumStr) {
+		$.ajax({
+			type : "POST",  //提交方式
+			url : "<c:url value="/packageDispatch/checkOrderStatus?${_csrf.parameterName}=${_csrf.token}" />",//路径
+			data : {
+				"mailNum" : mailNumStr
+			},//数据，这里使用的是Json格式进行传输
+			success : function(data) {//返回数据根据结果进行相应的处理
+				if(data != null){
+					if(data.code == 1){//订单状态为已分派
+						//执行取消分派操作
+						showConfirmDiv(mailNumStr, 'cancelDispatch', '确定取消分派？');
+						$("#confirmDiv").modal("show");
+					}else if(data.code == 0){//订单状态不为已分派
+						$("#orderStatusModal").modal("show");
+						$("#modal_body").html("取消分派失败！该订单已被" + data.msg + "!");
+					}else{//datat.code == -1,订单不存在
+						ioutDiv(data.msg);
+					}
+				}
+			},
+			error : function() {
+				ioutDiv("服务器繁忙，请稍后再试！");
+			}
+		});
+		$("#confirmDiv").modal("hide");
+	}
 
 	//取消分派
 	function doCancel() {
@@ -502,8 +557,7 @@ function chooseCourier() {
 				if(data != null){
 					ioutDiv(data.msg);
 					if(data.success){//取消分派成功
-						var pageIndex = parseInt($(".pagination .active").text())-1;
-						gotoPage(pageIndex);
+						gotoPage();
 					}
 				}
 			},
@@ -512,6 +566,10 @@ function chooseCourier() {
 			}
 		});
 		$("#confirmDiv").modal("hide");
+	}
+	//操作确认按钮
+	function closeModal(modalId) {
+		$("#"+modalId).modal("hide");
 	}
 /********************************************************** 取消操作 **************************************************************/
 

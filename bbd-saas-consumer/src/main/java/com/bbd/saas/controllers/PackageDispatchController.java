@@ -351,6 +351,42 @@ public class PackageDispatchController {
 	 * 运单取消分派
 	 * @param mailNum 运单号
 	 * @param request 请求
+	 * @return 返回值 true:操作成功；false:操作失败
+	 */
+	@ResponseBody
+	@RequestMapping(value="/checkOrderStatus", method=RequestMethod.POST)
+	public Map<String, Object>  checkOrderStatus(String mailNum, final HttpServletRequest request) {
+		Map<String, Object> map = null;
+		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
+			//查询运单信息
+			Order order = orderService.findOneByMailNum(null, mailNum);
+			map = new ConcurrentHashMap<String, Object>();
+			if(order == null){//运单不存在,与站点无关
+				map.put("code", -1);
+				map.put("msg", "运单不存在");
+			}else if(!order.getAreaCode().equals(currUser.getSite().getAreaCode())){
+				map.put("code", -1);
+				map.put("msg", "此运单不属于本站点");
+			}else if(order.getOrderStatus() != OrderStatus.DISPATCHED){
+				map.put("code", 0);
+				map.put("msg", order.getOrderStatus().getMessage());
+			}else{
+				map.put("code", 1);
+			}
+		} catch (Exception e) {
+			logger.error("===取消分派，检查运单状态===出错:" + e.getMessage());
+		}
+		return map;
+	}
+	/**
+	 * 运单取消分派
+	 * @param mailNum 运单号
+	 * @param request 请求
      * @return 返回值 true:操作成功；false:操作失败
      */
 	@ResponseBody
