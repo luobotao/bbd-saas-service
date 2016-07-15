@@ -447,10 +447,10 @@ public class PackageDispatchController {
 			logger.info("运单取消分派成功，已删除mysql的bbt数据库的postdelivery表中记录，mailNum："+order.getMailNum()+", 执行次数："+j);
 			//smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),currUser.getRealName(),currUser.getLoginName(),contact,order.getReciever().getPhone());
 			map.put("success", true);
-			map.put("msg", "操作成功");
+			map.put("msg", "取消分派成功");
 		}else{
 			map.put("success", false);
-			map.put("msg", "操作失败");
+			map.put("msg", "取消分派失败");
 		}
 		return map;
 	}
