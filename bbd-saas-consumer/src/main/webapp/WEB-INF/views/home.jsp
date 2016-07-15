@@ -25,11 +25,6 @@
 </head>
 <body>
 
-<!--S 提示信息-->
-<div class="b-prompt">
-	<i class="b-prompt-txt">用户名不存在</i>
-</div>
-<!--E 提示信息-->
 <!-- S alert -->
 <div class="j-alert-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="margin-left: -110px">
 	<div class="modal-dialog b-modal-dialog middleS" role="document">
