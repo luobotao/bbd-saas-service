@@ -2027,4 +2027,8 @@ input.spe-input{
 .pop-tip2 i img {
   margin-top: -10px;
 }
+.modal-header .close{
+  position:absolute;
+  right:15px;
+}
 /* E 左图右文 */
