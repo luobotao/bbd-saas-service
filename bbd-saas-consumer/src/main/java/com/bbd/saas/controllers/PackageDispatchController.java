@@ -438,8 +438,13 @@ public class PackageDispatchController {
 		//更新运单
 		Key<Order> r = orderService.save(order);
 		if(r != null && r.getId() != null){
-			postDeliveryService.deleteByMailNum(order.getMailNum());
-			logger.info("运单取消分派成功，已删除mysql的bbt数据库的postdelivery表中记录，mailNum："+order.getMailNum());
+			int num = postDeliveryService.deleteByMailNum(order.getMailNum());
+			int j = 0;
+			while (num == 0 && j < 3 ){//最多执行3次
+				num = postDeliveryService.deleteByMailNum(order.getMailNum());
+				j++;
+			}
+			logger.info("运单取消分派成功，已删除mysql的bbt数据库的postdelivery表中记录，mailNum："+order.getMailNum()+", 执行次数："+j);
 			//smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),currUser.getRealName(),currUser.getLoginName(),contact,order.getReciever().getPhone());
 			map.put("success", true);
 			map.put("msg", "操作成功");

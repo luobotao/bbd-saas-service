@@ -201,7 +201,7 @@ public class PackageToSiteController {
 		BasicDBList idList = (BasicDBList) JSON.parse(ids);
 		for (Object mailNum :idList){
 			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum.toString());
-			if(order!=null){
+			if(order !=null && (order.getOrderStatus() == OrderStatus.NOTARR || order.getOrderStatus() == null)){//只有未到站的才做到站处理
 				orderToSite(order,user);
 			}
 //			orderService.updateOrderOrderStatu(mailNum.toString(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);
