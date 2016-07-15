@@ -231,16 +231,18 @@
 		<div class="modal-content">
 			<div class="modal-header b-modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<h4 class="modal-title tc">取消分派</h4>
+				<h4 class="modal-title tc">提示</h4>
 			</div>
-			<div class="modal-body b-modal-body">
-				<em class="f16 d-red" id="modal_body"></em>
-				<div class="clearfix mt20">
-					<span class="col-md-3"></span>
-					<span class="col-md-6">
-						<button  type="button" class="ser-btn l wp80" onclick="closeModal('orderStatusModal')">确认</button>
-					</span>
-					<span class="col-md-3"></span>
+			<div class="modal-body b-modal-bodyS">
+				<div class="pop-tip2">
+					<i class="mr10">
+						<img src="<c:url value="/resources/images/per_erroricon.png" />" />
+					</i>
+					<em class="f16" id="modal_body"></em>
+				</div>
+
+				<div class="clearfix mt20 tc">
+					<button  type="button" class="ser-btn l w160" onclick="closeModal('orderStatusModal')">确 定</button>
 				</div>
 			</div>
 		</div>

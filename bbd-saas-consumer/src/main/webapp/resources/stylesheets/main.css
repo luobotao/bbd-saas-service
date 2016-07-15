@@ -2008,3 +2008,23 @@ input.spe-input{
 }
 
 /* E saas2.1 */
+
+
+/* S 左图右文 */
+.w160{
+  width:160px;
+}
+.b-modal-bodyS{
+  padding:24px;
+ }
+.pop-tip2 {
+  text-align: center;
+}
+.pop-tip2 i,
+.pop-tip2 em {
+  display: inline-block;
+}
+.pop-tip2 i img {
+  margin-top: -10px;
+}
+/* E 左图右文 */
