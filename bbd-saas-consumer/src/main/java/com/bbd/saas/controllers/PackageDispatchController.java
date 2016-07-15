@@ -435,6 +435,7 @@ public class PackageDispatchController {
 		//OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, currUser, "取消分派");
 		//更新运单状态--未分派
 		order.setOrderStatus(OrderStatus.NOTDISPATCH);
+		order.setExpressStatus(ExpressStatus.ArriveStation);
 		order.setDateUpd(new Date());
 		//更新运单
 		Key<Order> r = orderService.save(order);
