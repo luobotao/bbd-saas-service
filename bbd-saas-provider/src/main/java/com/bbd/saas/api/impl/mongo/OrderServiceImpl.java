@@ -34,6 +34,7 @@ import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -47,13 +48,13 @@ public class OrderServiceImpl implements OrderService {
     private OrderNumDao orderNumDao;
     private OrderParcelDao orderParcelDao;
     private UserDao userDao;
-	//@Autowired
+	@Autowired
 	private SitePoiApi sitePoiApi;
-	//@Autowired
+	@Autowired
 	Geo geo;
-	//@Autowired
+	@Autowired
 	private PostmanUserService userMysqlService;
-	//@Autowired
+	@Autowired
 	private SiteService siteService;
 
     public UserDao getUserDao() {
