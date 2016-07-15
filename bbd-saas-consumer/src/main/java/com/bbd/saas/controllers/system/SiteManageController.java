@@ -175,7 +175,6 @@ public class SiteManageController {
 					site.setCompanycode(postcompany.getCompanycode());
 				}
 				site.setStatus(SiteStatus.APPROVE);
-				site.setAreaFlag(1);//默认启用配送区域
 				site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
 				user.setPassWord(siteForm.getPassword());
 				postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
