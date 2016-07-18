@@ -12,6 +12,7 @@ import com.mongodb.BasicDBList;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -244,4 +245,6 @@ public interface OrderService {
     public PageModel<Order> findPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate);
 
     String findBestSiteWithAddress(String address);
+
+    List<Order> findByDateAdd(Date date);
 }

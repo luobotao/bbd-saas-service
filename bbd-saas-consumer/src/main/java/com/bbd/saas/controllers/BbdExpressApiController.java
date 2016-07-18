@@ -1,5 +1,6 @@
 package com.bbd.saas.controllers;
 
+import ch.hsr.geohash.GeoHash;
 import com.alibaba.dubbo.common.json.JSON;
 import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
@@ -7,10 +8,15 @@ import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.api.mysql.GeoRecHistoService;
 import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.models.GeoRecHisto;
+import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.vo.Reciever;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -41,6 +47,9 @@ public class BbdExpressApiController {
 	Geo geo;
 	@Autowired
 	private PostmanUserService userMysqlService;
+	@Autowired
+	private GeoRecHistoService geoRecHistoService;
+
 	/**
 	 * description: 推送站点信息接口
 	 * 2016年4月14日下午4:05:01
@@ -120,6 +129,7 @@ public class BbdExpressApiController {
 		return str;
 	}
 
+
 	@RequestMapping(value="/getDistance")
 	@ResponseBody
 	public String getDistance(String city, String start, String ends) throws IOException {
@@ -183,5 +193,62 @@ public class BbdExpressApiController {
 		}
 		String str = sb.toString();
 		return str;
+	}
+
+
+	@RequestMapping(value="/reduceGeoRecHisto/{dateStr}", method=RequestMethod.GET)
+	@ResponseBody
+	public String reduceGeoRecHisto(@PathVariable String dateStr, HttpServletRequest request ) {
+		logger.info("处理收件人信息");
+		//Date date = Dates.parseDate(dateStr,"yyyy-MM-dd");
+
+		List<String> dateList = Dates.getAfterNoDays(dateStr,1,"yyyy-MM-dd");
+		for (String str: dateList) {
+			Date date = Dates.parseDate(str,"yyyy-MM-dd");
+			logger.info("当前处理时间："+Dates.formatDate(date));
+			//data 的格式为yyyy-MM-dd
+			if(date != null){
+				List<Order> orderList = orderService.findByDateAdd(date);
+				logger.info(String.format("日期：%s 处理订单数：%s",Dates.formatDate2(date),orderList.size()));
+				dealGeoRecWithOrder(orderList);
+			}
+			logger.info("geo deal date:"+date+"cover Reciver address to geo finish");
+		}
+		logger.info(" reduceGeoRecHisto success");
+		return "success";
+	}
+	private void dealGeoRecWithOrder(List<Order> orderList) {
+		for (Order order : orderList) {
+			try {
+				Reciever reciever = order.getReciever();
+				if (reciever != null) {
+					//将订单信息入库
+					GeoRecHisto geoRecHisto = geoRecHistoService.findOneByOrderNo(order.getOrderNo());
+					if (geoRecHisto == null) {
+						geoRecHisto = new GeoRecHisto();
+						geoRecHisto.setOrderNo(order.getOrderNo());
+						geoRecHisto.province = reciever.getProvince();
+						geoRecHisto.city = reciever.getCity();
+						geoRecHisto.area = reciever.getArea();
+						geoRecHisto.address = reciever.getAddress();
+						geoRecHisto.src = order.getSrc().getMessage();
+						geoRecHisto.dateAdd = Dates.formatDate2(order.getDateAdd());
+						MapPoint mapPoint = geo.getGeoInfo(reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress());
+						if (mapPoint != null) {
+							geoRecHisto.setLat(mapPoint.getLat());
+							geoRecHisto.setLng(mapPoint.getLng());
+							GeoHash geoHash = GeoHash.withCharacterPrecision(geoRecHisto.getLat(), geoRecHisto.getLng(), 9);
+							geoRecHisto.setGeoStr(geoHash.toBase32());
+							geoRecHistoService.insert(geoRecHisto);
+							logger.info("订单：" + order.getOrderNo() + "收件人地址转换完成");
+						}
+					}
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+				logger.info("[error]订单：" + order.getOrderNo() + "收件人地址转换异常");
+				continue;
+			}
+		}
 	}
 }

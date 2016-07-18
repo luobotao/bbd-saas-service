@@ -814,4 +814,17 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         List<Order> orderList = find(query).asList();
         return pageModel;
     }
+
+    public List<Order> findByDateAdd(Date dateAdd) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        if(dateAdd!=null) {
+            //商户订单号(我们自己生成的支付订单号)
+            Date startDate = Dates.getBeginOfDay(dateAdd);
+            Date endDate = Dates.getEndOfDay(dateAdd);
+            query.filter("dateAdd >=", startDate);
+            query.filter("dateAdd <=", endDate);
+        }
+        return find(query).asList();
+    }
 }

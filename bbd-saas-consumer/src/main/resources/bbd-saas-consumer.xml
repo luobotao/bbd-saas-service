@@ -56,4 +56,5 @@
     <dubbo:reference id="expressCompanyService" interface="com.bbd.saas.api.mysql.ExpressCompanyService"/>
 
     <dubbo:reference id="balanceService" interface="com.bbd.saas.api.mysql.BalanceService"/>
+    <dubbo:reference id="geoRecHistoService" interface="com.bbd.saas.api.mysql.GeoRecHistoService"/>
 </beans>

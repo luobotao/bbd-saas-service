@@ -1,7 +1,6 @@
 package com.bbd.saas.api.impl.mongo;
 
 
-import com.alibaba.dubbo.common.json.JSONObject;
 import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
@@ -9,6 +8,7 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.GeoRecHistoService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
@@ -19,6 +19,7 @@ import com.bbd.saas.enums.OrderSetStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.*;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
@@ -48,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderParcelDao orderParcelDao;
     private UserDao userDao;
 
+
 	@Autowired
 	private SitePoiApi sitePoiApi;
     @Autowired
@@ -60,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
     private TradeService tradeService;
     @Autowired
     private UserService userService;
+
 
     public UserDao getUserDao() {
         return userDao;
@@ -571,4 +574,13 @@ public class OrderServiceImpl implements OrderService {
         logger.info("[findBestSiteWithAddress]request address:"+address+", response siteId:"+resultAreaCode);
         return resultAreaCode;
     }
+
+    /**
+     */
+    @Override
+    public List<Order> findByDateAdd(Date dateAdd) {
+        return orderDao.findByDateAdd(dateAdd);
+    }
+
+
 }
