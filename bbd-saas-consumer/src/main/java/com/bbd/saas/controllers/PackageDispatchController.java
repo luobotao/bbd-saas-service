@@ -245,7 +245,7 @@ public class PackageDispatchController {
 		if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
 			remark = "配送员正在为您派件，配送员电话：" + user.getRealName() + " " + user.getLoginName();
 		}else{
-			remark = "配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName();
+			remark = "配送员正在为您重新派件，配送员电话：" + user.getRealName() + " " + user.getLoginName();
 		}
 		OrderCommon.addOrderExpress(ExpressStatus.Delivering, order, user, remark);
 	}
