@@ -192,11 +192,12 @@ public class HandleAbnormalController {
                 }
                 Express express = new Express();
                 express.setDateAdd(new Date());
-                if (new Date().getHours() < 19) {
+                /*if (new Date().getHours() < 19) {
                     express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 } else {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-                }
+                }*/
+                express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
