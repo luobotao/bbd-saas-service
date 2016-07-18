@@ -172,7 +172,6 @@ public class UserManageController {
 				postmanUser = getPostManUser(currUser, userForm);//拼装一些默认值
 				userMysqlService.updateByPhone(postmanUser);
 			}
-
 			if(postmanuserId > 0){//保存成功
 				User user = getUserByUserForm(currUser, userForm);
 				user.setPostmanuserId(postmanuserId);
