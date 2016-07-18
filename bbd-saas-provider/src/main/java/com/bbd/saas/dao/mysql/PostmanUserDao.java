@@ -86,4 +86,11 @@ public interface PostmanUserDao {
     public List<Map<String, Object>> selectLatAndLngByIds(@Param("ids") List<Integer> ids);
 
     public List<Map<String, Object>> getIntegral(Map<String, Object> map);
+
+    /**
+     * 删除电话为phone,id不为id的postmanUser
+     * @param phone
+     * @param id
+     */
+    public int deleteByPhoneAndId(@Param("phone")String phone, @Param("id")int id);
 }

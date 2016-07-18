@@ -163,17 +163,14 @@ public class UserManageController {
 		}else{
 			int postmanuserId = 0;
 			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName(), 0);
-			if(postmanUser==null){
+			if(postmanUser == null){//不存在，添加
 				postmanUser = getPostManUser(currUser, userForm);//拼装一些默认值
 				//保存成功，把数据同步到mysql中的postmanUser表中
-				postmanUser.setSiteid(currUser.getSite().getId().toString());
 				postmanuserId = userMysqlService.insertUser(postmanUser).getId();//插入数据
-			}else{
-				postmanUser.setPoststatus(1);//默认为1
-				postmanUser.setPostrole(0);//快递员
-				postmanUser.setSiteid(currUser.getSite().getId().toString());
-				userMysqlService.updateByPhone(postmanUser);
+			}else{//存在的话，覆盖掉
 				postmanuserId = postmanUser.getId();
+				postmanUser = getPostManUser(currUser, userForm);//拼装一些默认值
+				userMysqlService.updateByPhone(postmanUser);
 			}
 
 			if(postmanuserId > 0){//保存成功
@@ -272,6 +269,7 @@ public class UserManageController {
 		postmanUser.setPoststatus(1);//默认为1
 		//快递员
 		postmanUser.setPostrole(0);
+		postmanUser.setSiteid(currUser.getSite().getId().toString());
 		return postmanUser;
 	}
 	/**
@@ -290,13 +288,10 @@ public class UserManageController {
 				//查找在mysql的bbt数据库的postmanuser表中是否存在该userForm.getLoginName() 即手机号记录
 				PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getLoginName(), newUser.getPostmanuserId());
 				if(postmanUser != null){//存在2个相同手机号的postmanUser对象
-					map.put("success", false);
-					map.put("msg", "手机号已存在!");
-					return map;
-				}else{
-					doUpdateUser(request, userForm, map);
+					userMysqlService.deleteByPhoneAndId(userForm.getLoginName(), postmanUser.getId());
 				}
-			}else{
+				doUpdateUser(request, userForm, map);
+			}else{//mongodb库重复
 				map.put("success", false);
 				map.put("msg", "手机号已存在!");
 				return map;
@@ -370,7 +365,7 @@ public class UserManageController {
 	public String checkUser(Model model,@RequestParam(value = "realname", required = true) String realname,HttpServletResponse response) {
 		String checkRealName = "";
 		try {
-			checkRealName=new String(realname.getBytes("iso-8859-1"),"utf-8");
+			checkRealName = new String(realname.getBytes("iso-8859-1"),"utf-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -555,23 +550,9 @@ public class UserManageController {
 		}
 		User user = userService.findUserByLoginName(loginName);
 		if(user != null){
-			if(user.getId().toString().equals(userId)){//修改
-				PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(loginName, user.getPostmanuserId());
-				if(postmanUser != null){//存在
-					return "true";
-				}else{
-					return "false";
-				}
-			}else{
-				return "true";
-			}
+			return "true";
 		}else{
-			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(loginName, 0);
-			if(postmanUser != null){
-				return "true";
-			}else{
-				return "false";
-			}
+			return "false";
 		}
 	}
 	

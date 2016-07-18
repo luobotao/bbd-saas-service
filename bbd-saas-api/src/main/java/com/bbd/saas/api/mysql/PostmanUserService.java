@@ -88,4 +88,11 @@ public interface PostmanUserService {
      * @return 更新条数
      */
     int updateRoleByPhone(String phone, Integer postrole);
+
+    /**
+     * 删除电话为phone,id不为id的postmanUser
+     * @param phone
+     * @param id
+     */
+    public int deleteByPhoneAndId(String phone, int id);
 }
