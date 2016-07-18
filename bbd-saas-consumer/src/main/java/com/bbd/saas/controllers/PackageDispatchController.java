@@ -16,7 +16,6 @@ import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.Sender;
 import com.bbd.saas.vo.UserVO;
@@ -33,7 +32,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/packageDispatch")
@@ -225,13 +227,7 @@ public class PackageDispatchController {
 	@SuppressWarnings("deprecation")
 	private void setOrderExpress(Order order, User user){
 		//更新物流信息
-		List<Express> expressList = order.getExpresses();
-		if(expressList == null){
-			expressList = new ArrayList<Express>();
-		}
-		Express express = new Express();
-		express.setDateAdd(new Date());
-		if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
+		/*if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
             if(new Date().getHours() < 19){
             	express.setRemark("配送员正在为您派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
             }else{
@@ -243,8 +239,9 @@ public class PackageDispatchController {
             }else{
             	express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
             }
-        }
-		OrderCommon.addOrderExpress(ExpressStatus.Delivering, order, user, express.getRemark());
+        }*/
+		String remark = "配送员正在为您派件，配送员电话：" + user.getRealName() + " " + user.getLoginName();
+		OrderCommon.addOrderExpress(ExpressStatus.Delivering, order, user, remark);
 	}
 	/**
 	 * Description: 运单号不存在，则添加一条记录；存在，则更新派件员postManId和staffId
