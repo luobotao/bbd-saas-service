@@ -3,8 +3,6 @@ package com.bbt.demo.provider;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.ExcelUtil2007;
-import com.bbd.saas.utils.StringUtil;
-import com.bbd.saas.vo.Reciever;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +24,8 @@ import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
-public class OrderRecieverTest {
-	public static final org.slf4j.Logger logger = LoggerFactory.getLogger(OrderRecieverTest.class);
+public class OrderExpressStatusTest {
+	public static final org.slf4j.Logger logger = LoggerFactory.getLogger(OrderExpressStatusTest.class);
 
 	@Autowired
 	private OrderService orderService;
@@ -44,13 +42,14 @@ public class OrderRecieverTest {
 	@Test
 	public void testReadExcel() throws Exception{
 		//readOrderInfo(1, 2, 4, 6);//sheet1
-		readOrderInfo(2, 1, 3, 52);//sheet2
+		//addAddress(1, 0, 2, 1000, 3);//第二个表单sheet1
+		readOrderInfo(0, 0, 0, 10);//第二个表单sheet1
 		Assert.isTrue(true);//无用
 	}
 	private void readOrderInfo(int sheetIndex, int areaCodeIndex, int nameIndex, int totalRows) throws FileNotFoundException {
 		// 对读取Excel表格内容测试
 		ExcelUtil2007 excelReader = new ExcelUtil2007();
-		InputStream is = new FileInputStream("E:\\updateSite\\54.xlsx");
+		InputStream is = new FileInputStream("E:\\updateSite\\bbd.xlsx");
 		List<List<String>> rowList = excelReader.readExcelContent(is, sheetIndex, areaCodeIndex, nameIndex, totalRows);
 		System.out.println("获得Excel表格的内容:");
 		StringBuffer  rowSB = null;
@@ -59,7 +58,7 @@ public class OrderRecieverTest {
 		for (int i = 0; i < size; i++) {
 			List<String> row = rowList.get(i);
 			rowSB = new StringBuffer(i+"");
-			List<String> addressList = getRcvAddressByMailNum(row.get(0));
+			List<String> addressList = getDataByMailNum(row.get(0));
 			map.put(i+1, addressList);
 			if(addressList != null && addressList.size() > 0){
 				for(String col : addressList){
@@ -73,14 +72,24 @@ public class OrderRecieverTest {
 	}
 	@Test
 	public void testUpdateExcel() throws Exception{
-		//addAddress(1, 2, 4, 6, 8);//sheet1
-		addAddress(2, 1, 3, 52, 6);//sheet2
+		addAddress(0, 0, 0, -1, 3);//第二个表单sheet0
+		//addAddress(1, 0, 2, 1000, 3);//第二个表单sheet1
 		Assert.isTrue(true);//无用
 	}
+
+	/**
+	 *
+	 * @param sheetIndex
+	 * @param areaCodeIndex
+	 * @param nameIndex
+	 * @param totalRows 总行数
+	 * @param startCol 待写列的开始
+     * @throws IOException
+     */
 	private void addAddress(int sheetIndex, int areaCodeIndex, int nameIndex, int totalRows, int startCol ) throws IOException {
 		// 对读取Excel表格内容测试
 		ExcelUtil2007 excelReader = new ExcelUtil2007();
-		String filePath = "E:\\updateSite\\54.xlsx";
+		String filePath = "E:\\updateSite\\bbd.xlsx";
 		InputStream is = new FileInputStream(filePath);
 		List<List<String>> rowList = excelReader.readExcelContent(is, sheetIndex, areaCodeIndex, nameIndex, totalRows);
 		System.out.println("获得Excel表格的内容:");
@@ -89,40 +98,34 @@ public class OrderRecieverTest {
 		map.put(0, getTitle());//标题
 		for (int i = 0; i < size; i++) {
 			List<String> row = rowList.get(i);
-			List<String> addressList = getRcvAddressByMailNum(row.get(0));
+			List<String> addressList = getDataByMailNum(row.get(0));
 			map.put(i+1, addressList);
 		}
-		int [] colWidths = new int[]{5000, 3000, 3000, 3500, 15000};
+		int [] colWidths = new int[]{5000, 3000, 3500};
 		excelReader.creat2007Excel(filePath, sheetIndex, startCol, colWidths, map);
 		is.close();
 	}
 	private List<String> getTitle(){
 		List<String> titleList = new ArrayList<>();
 		titleList.add("原单号");
-		titleList.add("省");
-		titleList.add("市");
-		titleList.add("区");
-		titleList.add("地址");
+		titleList.add("ExpressStatusName");
+		titleList.add("物流状态");
 		return  titleList;
 	}
 	@Test
 	public void testOneUpdate() throws Exception{
-		System.out.println(getRcvAddressByMailNum("BBD186866451"));
-		System.out.println(getRcvAddressByMailNum("2008000000005 "));
+		//System.out.println(getDataByMailNum("BBD186866451"));
+		System.out.println(getDataByMailNum("2008000000005 "));
 		Assert.isTrue(true);//无用
 	}
-	private List<String> getRcvAddressByMailNum(String mailNum){
-		Order order = orderService.findOneByMailNum(mailNum);
-		boolean r = false;
-		if(order != null && order.getReciever() != null){
-			Reciever reciever = order.getReciever();
-			List<String> addressList = new ArrayList<String>();
-			addressList.add(mailNum);
-			addressList.add(StringUtil.initStr(reciever.getProvince(), ""));
-			addressList.add(StringUtil.initStr(reciever.getCity(), ""));
-			addressList.add(StringUtil.initStr(reciever.getArea(), ""));
-			addressList.add(StringUtil.initStr(reciever.getAddress(), ""));
-			return addressList;
+	private List<String> getDataByMailNum(String mailNum){
+		Order order = orderService.findOneByMailNumLike(mailNum);
+		if(order != null){
+			List<String> statusList = new ArrayList<String>();
+			statusList.add(mailNum);
+			statusList.add(order.getExpressStatus().toString());
+			statusList.add(order.getExpressStatus().getMessage());
+			return statusList;
 		}
 		return null;
 	}
