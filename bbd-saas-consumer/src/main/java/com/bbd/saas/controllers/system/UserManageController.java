@@ -301,6 +301,12 @@ public class UserManageController {
 		return map;
 	}
 
+	/**
+	 * 执行修改用户操作
+	 * @param request 请求
+	 * @param userForm 表单信息
+	 * @param map controller返回结果
+     */
 	private void doUpdateUser(HttpServletRequest request, UserForm userForm, Map<String, Object> map){
 		User currentUser = adminService.get(UserSession.get(request));
 		User user = userService.findOne(userForm.getUserId());
@@ -323,32 +329,55 @@ public class UserManageController {
 				site.setUsername(user.getLoginName());//负责人电话
 				siteService.save(site);
 			}
+			//删除mysql中与新手机号相同的手机号
+			userMysqlService.deleteByPhoneAndId(userForm.getLoginName(), user.getPostmanuserId());
 			//原有手机号
 			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(userForm.getOldLoginName(), 0);
-			if (postmanUser != null) {
+			if (postmanUser != null) {//存在修改
 				postmanUser.setDateUpd(new Date());
 				postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
-				if(user.getRole() == UserRole.SITEMASTER){
-					postmanUser.setPostrole(4);
-				}else  if(user.getRole()== UserRole.SENDMEM){
-					postmanUser.setPostrole(0);
-				}
+				setPostRole(user.getRole(), postmanUser);
 				//修改手机号
 				postmanUser.setStaffid(userForm.getLoginName());
 				postmanUser.setPhone(userForm.getOldLoginName());
 				int i = userMysqlService.updateByPhone(postmanUser);
-				if(i > 0){
-					map.put("success", true);
-					map.put("msg", "修改用户成功");
-				}else{
-					map.put("success", false);
-					map.put("msg", "修改用户失败");
-				}
-			}else{
-				map.put("success", false);
-				map.put("msg", "修改用户失败");
+				returnResult(i, map);
+			}else{//不存在，添加
+				postmanUser = getPostManUser(currentUser, userForm);//拼装一些默认值
+				setPostRole(user.getRole(), postmanUser);
+				//保存成功，把数据同步到mysql中的postmanUser表中
+				int postmanuserId = userMysqlService.insertUser(postmanUser).getId();//插入数据
+				returnResult(postmanuserId, map);
 			}
 		}else {
+			map.put("success", false);
+			map.put("msg", "修改用户失败");
+		}
+	}
+
+	/**
+	 * 设置角色
+	 * @param userRole 用户角色
+	 * @param postmanUser 派件员 -- mysql库
+     */
+	private void setPostRole(UserRole userRole, PostmanUser postmanUser){
+		if(userRole == UserRole.SITEMASTER){
+			postmanUser.setPostrole(4);
+		}else  if(userRole== UserRole.SENDMEM){
+			postmanUser.setPostrole(0);
+		}
+	}
+
+	/**
+	 * 根据执行结果设置controller返回值
+	 * @param i 执行结果
+	 * @param map controller返回值
+     */
+	private void returnResult(int i, Map<String, Object> map){
+		if(i > 0){
+			map.put("success", true);
+			map.put("msg", "修改用户成功");
+		}else{
 			map.put("success", false);
 			map.put("msg", "修改用户失败");
 		}
