@@ -224,7 +224,7 @@
 					</li>
 					<li>
 						<i>　运单号：</i>
-						<input id="mailNum" name="mailNum"  class="form-control form-bod" type="text" placeholder="请输入运单号" />
+						<input id="mailNum" name="mailNum"  onkeyup="this.value=this.value.replace(/^ +| +$/g,'')" class="form-control form-bod" type="text" placeholder="请输入运单号" />
 					</li>
 				</ul>
 				<div class="row mt20">
