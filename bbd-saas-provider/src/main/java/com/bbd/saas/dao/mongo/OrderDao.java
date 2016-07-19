@@ -827,4 +827,16 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         return find(query).asList();
     }
+
+    /**
+     * 根据订单号或运单号查询
+     * @param keyword
+     * @return
+     */
+    public Order findByOrderNoOrMailNum(String keyword) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        query.or(query.criteria("orderNo").equal(keyword),query.criteria("mailNum").equal(keyword));
+        return findOne(query);
+    }
 }

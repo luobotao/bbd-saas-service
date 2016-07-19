@@ -247,4 +247,6 @@ public interface OrderService {
     String findBestSiteWithAddress(String address);
 
     List<Order> findByDateAdd(Date date);
+
+    Order findByOrderNoOrMailNum(String keyword);
 }

@@ -49,6 +49,8 @@ public class Site implements Serializable {
     private String statusMessage;//JS展示状态
     @Transient
     private String turnDownMessage;//JS展示状态
+    @Transient
+    private String integralInfo;    //积分信息
     public ObjectId getId() {
         return id;
     }
@@ -273,5 +275,13 @@ public class Site implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getIntegralInfo() {
+        return integralInfo;
+    }
+
+    public void setIntegralInfo(String integralInfo) {
+        this.integralInfo = integralInfo;
     }
 }

@@ -582,5 +582,10 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.findByDateAdd(dateAdd);
     }
 
+    @Override
+    public Order findByOrderNoOrMailNum(String keyword) {
+        return  orderDao.findByOrderNoOrMailNum(keyword);
+    }
+
 
 }
