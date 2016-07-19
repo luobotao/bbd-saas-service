@@ -119,6 +119,7 @@ public class SiteManageController {
 		PostmanUser postmanUser = new PostmanUser();
 		String newPhone = siteForm.getPhone();
 		String oldPhone = "";
+
 		if(StringUtils.isNotBlank(siteForm.getAreaCode())){//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
@@ -179,8 +180,13 @@ public class SiteManageController {
 				user.setPassWord(siteForm.getPassword());
 				postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
 				user.setUserStatus(UserStatus.VALID);//公司创建的为有效
+				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone(), 0);
+				if(postmanUser==null){
+					postmanUser = new PostmanUser();
+				}else{//手机号码重复，覆盖
+					oldPhone = siteForm.getPhone();
+				}
 			}
-
 			site.setDateAdd(new Date());
 			site.setUsername(siteForm.getPhone());
 			user.setDateAdd(new Date());
@@ -228,12 +234,12 @@ public class SiteManageController {
 		postmanUser.setSubstation(user.getSite().getName());
 		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
 		postmanUser.setDateUpd(new Date());
+		postmanUser.setSiteid(user.getSite().getId().toString());
 		if(StringUtils.isNotBlank(siteForm.getAreaCode()) || postmanUser.getId()!=null){//修改
 			postmanUser.setStaffid(newPhone);
 			postmanUser.setPhone(oldPhone);
 			userMysqlService.updateByPhone(postmanUser);
 		}else{//新增
-			postmanUser.setSiteid(user.getSite().getId().toString());
 			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
 			user.setPostmanuserId(postmanuserId);
 		}
