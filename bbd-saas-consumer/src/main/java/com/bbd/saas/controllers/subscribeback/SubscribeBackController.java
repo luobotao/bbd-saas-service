@@ -72,6 +72,8 @@ public class SubscribeBackController {
                             if (StringUtils.isNotBlank(mailNum)) {
                                 List<Order> orderList = orderService.findOneByNewMailNum(mailNum);//根据其他快递的运单号查询订单
                                 if(orderList != null && orderList.size() > 0){
+                                    //进行数据反转
+                                    Collections.reverse(data);
                                     for(Order order: orderList){
                                         handleOneOrder(order, state, status, message, data, lastResult, restRequestDTO);
                                     }
@@ -121,9 +123,6 @@ public class SubscribeBackController {
             if (expressList == null || expressList.isEmpty()) {
                 expressList = Lists.newArrayList();
             }
-            //进行数据反转
-            Collections.reverse(data);
-
             List <Express> newExpressList =new ArrayList<Express>();
             Map<String,Express> expressMap = new LinkedHashMap<String,Express>();
 
