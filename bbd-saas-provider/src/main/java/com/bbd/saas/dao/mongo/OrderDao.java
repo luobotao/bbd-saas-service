@@ -839,4 +839,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.or(query.criteria("orderNo").equal(keyword),query.criteria("mailNum").equal(keyword));
         return findOne(query);
     }
+    public Order findOneByMailNumLike(String mailNum) {
+        //创建查询条件
+        Query<Order> query = createQuery().field("mailNum").contains(mailNum);
+        return findOne(query);
+    }
 }

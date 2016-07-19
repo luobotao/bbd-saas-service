@@ -97,6 +97,10 @@ public class ExcelUtil2007 {
 				break;
 			case XSSFCell.CELL_TYPE_NUMERIC:
 				strCell = String.valueOf(cell.getNumericCellValue());
+				if(strCell.indexOf("E") != -1){
+					DecimalFormat df = new DecimalFormat("#");
+					strCell = df.format(cell.getNumericCellValue());
+				}
 				break;
 			case XSSFCell.CELL_TYPE_BOOLEAN:
 				strCell = String.valueOf(cell.getBooleanCellValue());
@@ -222,18 +226,20 @@ public class ExcelUtil2007 {
 		// 得到总行数
 		int rowNum = sheet.getLastRowNum();
 		row = sheet.getRow(0);
-		int colNum = row.getPhysicalNumberOfCells();
+		//int colNum = row.getPhysicalNumberOfCells();
 		// 正文内容应该从第二行开始,第一行为表头的标题
+		System.out.println("表单：" + areaCodeIndex + ",总行数：" + rowNum + ",读取行数：" + totalRows);
 		if(totalRows > 0){
 			rowNum = totalRows;
 		}
-		System.out.println("行数：" + rowNum);
 		for (int i = 1; i <= rowNum; i++) {
 			row = sheet.getRow(i);
 			int j = 0;
+			//System.out.println(i);
 			List<String> colList = new ArrayList<String>();
-			colList.add(getStringCellValue(row.getCell(areaCodeIndex)).trim());//areaCode
-			colList.add(getStringCellValue(row.getCell(nameIndex)).trim());//站点新名称
+			//System.out.println(getStringCellValue(row.getCell(areaCodeIndex)));
+			colList.add(getStringCellValue(row.getCell(areaCodeIndex)));//areaCode
+			colList.add(getStringCellValue(row.getCell(nameIndex)));//站点新名称
 			rowList.add(colList);
 		}
 		return rowList;

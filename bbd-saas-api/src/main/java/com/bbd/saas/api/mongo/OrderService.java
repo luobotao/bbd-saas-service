@@ -249,4 +249,11 @@ public interface OrderService {
     List<Order> findByDateAdd(Date date);
 
     Order findByOrderNoOrMailNum(String keyword);
+
+    /**
+     * 根据运单号模糊查询
+     * @param mailNum 运单号
+     * @return 运单
+     */
+    public Order findOneByMailNumLike(String mailNum);
 }

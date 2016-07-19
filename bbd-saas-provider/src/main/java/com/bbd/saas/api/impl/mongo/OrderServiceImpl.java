@@ -8,7 +8,6 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.api.mongo.UserService;
-import com.bbd.saas.api.mysql.GeoRecHistoService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
@@ -19,7 +18,6 @@ import com.bbd.saas.enums.OrderSetStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.*;
-import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
@@ -29,7 +27,6 @@ import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.JsonNode;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.query.UpdateResults;
 import org.slf4j.Logger;
@@ -587,5 +584,9 @@ public class OrderServiceImpl implements OrderService {
         return  orderDao.findByOrderNoOrMailNum(keyword);
     }
 
+    @Override
+    public Order findOneByMailNumLike(String mailNum) {
+        return orderDao.findOneByMailNumLike(mailNum);
+    }
 
 }
