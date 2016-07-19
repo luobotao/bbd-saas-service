@@ -238,6 +238,8 @@ public class SiteManageController {
 		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
 		postmanUser.setDateUpd(new Date());
 		postmanUser.setSiteid(user.getSite().getId().toString());
+		//删除mysql中与新手机号相同的手机号
+		userMysqlService.deleteByPhoneAndId(newPhone, user.getPostmanuserId());
 		if (StringUtils.isNotBlank(areaCode) || postmanUser.getId() != null) {//修改
 			postmanUser.setStaffid(newPhone);
 			postmanUser.setPhone(oldPhone);
