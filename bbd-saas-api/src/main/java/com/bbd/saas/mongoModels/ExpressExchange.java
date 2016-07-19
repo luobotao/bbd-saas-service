@@ -2,6 +2,7 @@ package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.vo.OrderVO;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
@@ -18,20 +19,28 @@ public class ExpressExchange implements Serializable {
     @Id
     private ObjectId id;
 
-    public String url;                                  //请求url
-    public String operator;                             //操作人       （初始必填）
-    public String phone;                                //手机号       （初始必填）
-    public Order order;                                 //订单         （初始必填）
-    public String typ;                                  //操作类型
-    public String pushInfo;                             //推送内容，json字符串
-    public String requestStr;                           //请求串
-    public List<String> responseStr;                    //返回结果串
-    public ExpressExchangeStatus status;                //操作状态      （初始必填）
-    public List<String> memo;                           //备注
-    public int pushCount;                               //推送次数
-    public int timeInterval;                            //间隔时间
-    public Date dateAdd;                                //添加时间      （初始必填）
-    public Date dateUpd;                                //更新时间
+    private String url;                                  //请求url
+    private String operator;                             //操作人       （初始必填）
+    private String phone;                                //手机号       （初始必填）
+    private OrderVO order;                                 //订单         （初始必填）
+    private String typ;                                  //操作类型
+    private String pushInfo;                             //推送内容，json字符串
+    private String requestStr;                           //请求串
+    private List<String> responseStr;                    //返回结果串
+    private ExpressExchangeStatus status;                //操作状态      （初始必填）
+    private List<String> memo;                           //备注
+    private int pushCount;                               //推送次数
+    private int timeInterval;                            //间隔时间
+    private Date dateAdd;                                //添加时间      （初始必填）
+    private Date dateUpd;                                //更新时间
+
+    public int getTimeInterval() {
+        return timeInterval;
+    }
+
+    public void setTimeInterval(int timeInterval) {
+        this.timeInterval = timeInterval;
+    }
 
     public ObjectId getId() {
         return id;
@@ -57,11 +66,19 @@ public class ExpressExchange implements Serializable {
         this.operator = operator;
     }
 
-    public Order getOrder() {
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public OrderVO getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(OrderVO order) {
         this.order = order;
     }
 
@@ -105,14 +122,6 @@ public class ExpressExchange implements Serializable {
         this.status = status;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public List<String> getMemo() {
         return memo;
     }
@@ -127,14 +136,6 @@ public class ExpressExchange implements Serializable {
 
     public void setPushCount(int pushCount) {
         this.pushCount = pushCount;
-    }
-
-    public int getTimeInterval() {
-        return timeInterval;
-    }
-
-    public void setTimeInterval(int timeInterval) {
-        this.timeInterval = timeInterval;
     }
 
     public Date getDateAdd() {

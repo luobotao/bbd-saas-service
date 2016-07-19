@@ -55,6 +55,11 @@ public class SiteServiceImpl implements SiteService {
         return siteDao.findOne("areaCode", areaCode);
     }
 
+    @Override
+    public Site findSiteByName(String name) {
+        return siteDao.findOne("name", name);
+    }
+
     /**
      * 根据手机号查询站点
      * @param phone

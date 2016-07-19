@@ -1,5 +1,7 @@
 package com.bbd.saas.vo;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 import java.util.Date;
 

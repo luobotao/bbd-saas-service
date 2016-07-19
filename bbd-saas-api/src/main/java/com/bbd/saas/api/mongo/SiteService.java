@@ -53,6 +53,14 @@ public interface SiteService {
      * @return 站点
      */
     Site findSiteByUserName(String phone);
+
+    /**
+     * 根据name查找站点
+     * @param name
+     * @return 站点
+     */
+    Site findSiteByName(String name);
+
     /**
      * 查询同一公司下除当前站点selfSite的其他所有站点的VO对象
      * @param selfSite 当前站点
