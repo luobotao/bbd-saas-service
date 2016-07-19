@@ -123,7 +123,7 @@
 									<td><em class="c-green"><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>
 									<td>
 										<a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a>
-										<a href="javascript:void(0);" onclick="checkOrderStatus('<%=order.getMailNum()%>')" class="orange">取消</a>
+										<a href="javascript:void(0);" onclick="checkOrderStatus('<%=order.getMailNum()%>')" class="orange">取消分派</a>
 									</td>
 								<%
 									}
@@ -436,7 +436,7 @@ function getRowHtml(data){
 	}else{
 		row += "<td><em class='c-green'><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>";
 		row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a>" +
-				"<a href='javascript:void(0);' onclick='checkOrderStatus(\"" + data.mailNum + "\")' class='orange ml16'>取消</a></td>";
+				"<a href='javascript:void(0);' onclick='checkOrderStatus(\"" + data.mailNum + "\")' class='orange ml16'>取消分派</a></td>";
 	}
 	row += "</tr>";
 	return row;
