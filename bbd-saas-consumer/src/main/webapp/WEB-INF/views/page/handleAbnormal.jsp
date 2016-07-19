@@ -746,6 +746,11 @@ function toOtherExpressCompanys() {
 		ioutDiv("请输入运单号");
 		$("#mailNum").focus();
 		return false;
+	}else{
+		if(!mailNumreg.test(mailNumNew)){
+			ioutDiv("请输入10-20位数字或字母组成的运单号");
+			return false;
+		}
 	}
 	//获取当前页
 	var pageIndex = getCurrPage();

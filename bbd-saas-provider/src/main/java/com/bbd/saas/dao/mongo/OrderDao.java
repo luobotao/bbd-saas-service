@@ -372,11 +372,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param newMailNum
      * @return
      */
-    public Order findOneByNewMailNum(String newMailNum) {
+    public List<Order> findOneByNewMailNum(String newMailNum) {
         Query<Order> query = createQuery();
         if(StringUtils.isNotBlank(newMailNum))
             query.filter("otherExprees.mailNum",newMailNum);
-        return findOne(query);
+        return find(query).asList();
     }
 
     /**
