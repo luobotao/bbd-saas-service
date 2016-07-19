@@ -42,7 +42,6 @@ public class Order implements Serializable {
     private int errorFlag;//异常面单？ 0否 1是
     private String errorRemark;//异常信息
     private List<Goods> goods;
-    @Embedded
     private List<Express> expresses;
     private List<OtherExpreeVO> otherExprees;
     private String rtnReason;//退货原因

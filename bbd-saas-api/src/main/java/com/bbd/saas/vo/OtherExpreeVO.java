@@ -1,11 +1,14 @@
 package com.bbd.saas.vo;
 
+import org.mongodb.morphia.annotations.Embedded;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by huozhijie on 2016/5/31.
  */
+@Embedded
 public class OtherExpreeVO implements Serializable {
     private Integer id;
     private String context;/*内容*/
