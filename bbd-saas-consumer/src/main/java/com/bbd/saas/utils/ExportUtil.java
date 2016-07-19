@@ -81,7 +81,7 @@ public class ExportUtil
 		// 设置字体加粗
 		font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
 		font.setFontName("宋体");
-		font.setFontHeight((short) 200);
+		font.setFontHeight((short) 230);
 		cellStyle.setFont(font);
 		// 设置单元格边框为细线条
 		cellStyle.setBorderLeft(XSSFCellStyle.BORDER_THIN);
@@ -109,15 +109,15 @@ public class ExportUtil
 		// 设置单元格字体样式
 		XSSFFont font = wb.createFont();
 		// 设置字体加粗
-		font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+		//font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
 		font.setFontName("宋体");
-		font.setFontHeight((short) 200);
+		font.setFontHeight((short) 230);
 		cellStyle.setFont(font);
 		// 设置单元格边框为细线条
-		cellStyle.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+		/*cellStyle.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 		cellStyle.setBorderBottom(XSSFCellStyle.BORDER_THIN);
 		cellStyle.setBorderRight(XSSFCellStyle.BORDER_THIN);
-		cellStyle.setBorderTop(XSSFCellStyle.BORDER_THIN);
+		cellStyle.setBorderTop(XSSFCellStyle.BORDER_THIN);*/
 		return cellStyle;
 	}
 	
@@ -159,6 +159,7 @@ public class ExportUtil
 				List<String> dataRow = null;
 				for (int row = 0; row < dataList.size(); row++){
 					XSSFRow bodyRow = sheet.createRow(row + 1);
+					//bodyRow.setHeight((short)500);
 					dataRow = dataList.get(row);
 					for(int col = 0; col < dataRow.size(); col++){
 						cell = bodyRow.createCell(col);
