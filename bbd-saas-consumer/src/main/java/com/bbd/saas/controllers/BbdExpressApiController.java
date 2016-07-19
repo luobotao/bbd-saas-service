@@ -3,26 +3,21 @@ package com.bbd.saas.controllers;
 import ch.hsr.geohash.GeoHash;
 import com.alibaba.dubbo.common.json.JSON;
 import com.bbd.poi.api.Geo;
+import com.bbd.poi.api.PostmanPoiApi;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
-import com.bbd.poi.api.vo.PageList;
 import com.bbd.poi.api.vo.Result;
-import com.bbd.poi.api.vo.SiteKeyword;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.GeoRecHistoService;
 import com.bbd.saas.api.mysql.PostmanUserService;
-import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.models.GeoRecHisto;
+import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
-import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.GeoUtil;
-import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.vo.Reciever;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -57,6 +51,10 @@ public class BbdExpressApiController {
 	private PostmanUserService userMysqlService;
 	@Autowired
 	private GeoRecHistoService geoRecHistoService;
+	@Autowired
+	private PostmanUserService postmanUserService;
+	@Autowired
+	private PostmanPoiApi postmanPoiApi;
 
 	/**
 	 * description: 推送站点信息接口
@@ -314,6 +312,45 @@ public class BbdExpressApiController {
 		}
 		model.addAttribute("siteList",siteList);//当前查询的地址坐标
 		return "geo/geoMatchSite";
+	}
+
+	@RequestMapping(value="/postmanEfence", method=RequestMethod.GET)
+	public String postmanEfence(Model model, HttpServletRequest request ) {
+		String phone = request.getParameter("phone");
+		String siteStr = "";
+		if(StringUtils.isNotBlank(phone)){
+			//查找用户postmanuser
+			PostmanUser postmanUser = postmanUserService.selectPostmanUserByPhone(phone,0);
+			if(postmanUser!=null){
+				List<List<MapPoint>> mapPointList = postmanPoiApi.getSiteEfence(postmanUser.getId());
+				siteStr = dealPostmanUserPoints(mapPointList);
+			}
+		}
+		model.addAttribute("sitePoints", siteStr);
+		model.addAttribute("phone",phone);
+		return "geo/postmanRegionMap";
+	}
+
+	/**
+	 * 处理小件员的地址围栏
+	 * @param sitePoints
+	 * @return
+     */
+	private String dealPostmanUserPoints(List<List<MapPoint>> sitePoints) {
+		StringBuffer sb = new StringBuffer();
+		for (int j = 0; j < sitePoints.size(); j++) {
+			for (int i = 0; i < sitePoints.get(j).size(); i++) {
+				String str = sitePoints.get(j).get(i).getLng()+"_"+sitePoints.get(j).get(i).getLat();
+				sb.append(str);
+				if(i<sitePoints.get(j).size()-1){
+					sb.append(",");
+				}
+			}
+			if(j<sitePoints.size()-1) {
+				sb.append(";");
+			}
+		}
+		return sb.toString();
 	}
 
 }

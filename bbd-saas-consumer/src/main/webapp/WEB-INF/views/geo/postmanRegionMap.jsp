@@ -6,7 +6,7 @@
 <%@ include file="../main.jsp"%>
 <html>
 <head>
-	<title>地址匹配站点展示</title>
+	<title>快递员配送区域展示</title>
 	<style>
 		.capacity-map .BMapLabel{
 			max-width:inherit;
@@ -37,22 +37,16 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- S detail -->
-			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9  j-full-div">
+			<div class="j-full-div">
 				<!-- S 搜索区域 -->
 				<!-- S 搜索区域 -->
-				<form class="form-inline form-inline-n" action="/bbd/geo/geoMatchSite" method="get">
+				<form class="form-inline form-inline-n" action="/bbd/postmanEfence" method="get">
 					<div class="search-area">
 						<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>关键字：</label>
-								<input type="text" id="keyword" name="keyword" placeholder="订单号/运单号" class="form-control" value="${keyword}" />
-							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>地址：</label>
-								<input type="text" id="address" name="address" placeholder="查询地址" class="form-control" value="${address}" />
-							</div>
 							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<input type="submit" id="queryBtn" class="form-control" value="查询" />
+								<label>快递员手机号：</label>
+								<input type="text" id="phone" name="phone" placeholder="请输入快递员手机号" class="form-control" value="${phone}" />
+								<input type="submit" id="queryBtn" class="form-control ser-btn l"  value="查询" />
 							</div>
 						</div>
 					</div>
@@ -60,29 +54,16 @@
 				<!-- E 搜索区域 -->
 
 				<!-- S tab -->
-				<div class="tab-area mt20">
-					<ul class="clearfix b-tab">
-						<li  class="tab-cur">电子围栏</li>
-					</ul>
-					<div class="b-tab-con form-inline form-inline-n tab-content capacity-map">
-
-						<!-- S 绘制电子围栏 -->
-						<div class="row tab-pane fade" id="draw-map">
-							<div class="col-md-12 full-screen">
-								<div class="b-map">
-									<div id="allmap" class="bod-rad" style="height: 533px;"></div>
-									<a href="javascript:void(0)" onclick="bmap.theLocation()" class="pos-adr"></a>
-									<div class="b-f-screen b-forward-full j-full-btn"></div>
-									<div class="draw-btn">
-										<div class="bg-alpha"></div>
-										<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
-										<a href="javascript:void(0);" class="ser-btn c ml12" onclick="openDraw()">绘制</a>
-										<a href="javascript:void(0);" class="ser-btn d ml6" id="formBtn">提 交</a>
-									</div>
-								</div>
-							</div>
+				<div class="col-xs-12">
+					<div class="box">
+						<div class="box-header">
 						</div>
-						<!-- E 绘制电子围栏 -->
+						<div class="box-body table-responsive">
+							<!-- S 绘制电子围栏 -->
+							<div id="allmap" class="bod-rad j-s-hei" style="height: 533px;"></div>
+							<input type="hidden" id="sitePoints" name="sitePoints" value="${sitePoints}"/>
+							<!-- E 绘制电子围栏 -->
+						</div>
 					</div>
 				</div>
 				<!-- S tab -->
@@ -98,38 +79,6 @@
 <footer class="pos-footer tc">
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
-
-<!-- E footer -->
-<div class="b-loading">
-	<div class="spinner" style="display:none">
-		<i class="prompt-txt" ><img src="${ctx}/resources/images/loading.gif" width="30" class="mr10 load-img" />正在导入，请稍候...</i>
-	</div>
-</div>
-
-<!-- S pop -->
-<!--S 提示-->
-<div class="j-import-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog b-modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<h4 class="modal-title tc">导入</h4>
-			</div>
-			<div class="modal-body">
-				<div class="col-md-12">
-					<span>确定要导入吗？</span>
-				</div>
-			</div>
-			<div class="modal-footer mt20 bod0">
-				<a href="javascript:void(0);" class="ser-btn g" id="cancelBtn">取消</a>
-				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
-			</div>
-		</div>
-	</div>
-</div>
-
-<!--E 提示-->
-
 <!-- E pop -->
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
@@ -139,138 +88,13 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="application/javascript">
-	// 导入文件
-	$(".import-file").on("change",function(){
-		$(".j-import-pop").modal();
-	})
-	$("input[type='checkbox']").iCheck({
-		checkboxClass : 'icheckbox_square-blue'
-	});
-	$("#selectAll").on('ifUnchecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
-	}).on('ifChecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("check");
-	});;
-	//保存站点配送范围信息
-	$("#saveSiteBtn").click(function(){
-		var radiusVal = $("#radius option:selected").val();
-		if(radiusVal==0){
-			ioutDiv("请选择站点配送范围");
-			return false;
-		}else{
-			$.ajax({
-				url: '${ctx}/site/updateSiteWithRadius/'+radiusVal+'/'+$("#siteId").val(),
-				type: 'get',
-				cache: false,
-				dataType: "text",
-				data: {},
-				success: function(response){
-					ioutDiv("保存成功");
-					window.location.href="${ctx}/deliverRegion/map/1";
-				},
-				error: function(){
-					ioutDiv("抱歉，由于您长时间未操作，当前登录信息已失效。请重新登录");
-					if(window.top==window.self){//不存在父页面
-						window.location.href="<c:url value="/login" />"
-					}else{
-						window.top.location.href="<c:url value="/login" />"
-					}
-				}
-			});
-		}
-	})
-	$("#importBtn").click(function(){
-		$(this).parents(".j-import-pop").hide();
-		$(".spinner").show();
-		$("#importFileForm").submit();
-		$("[name='file']").val("");
-	})
-	//更改配送范围
-	$("#radius").change(function(){
-		var radius = $("#radius option:selected").val();
-		showMap(radius*1000);
-	})
+	var jhei=$(window).height();
+	$(".j-s-hei").css({height:jhei-82});
 
-
-	//展示配送范围
-	function showMap(radius){
-		// 百度地图API功能
-		var allmapPs = new BMap.Map("allmapPs", {enableMapClick:false,minZoom:11});
-		var pointPs = new BMap.Point(${site.lng}, ${site.lat});
-		var radiusVal = 15;
-		if(radius<2000){
-			radiusVal = 15;
-		}else if(radius<3000){
-			radiusVal = 14;
-		}else if(radius<5000){
-			radiusVal = 13;
-		}else if(radius<10000){
-			radiusVal = 12;
-		}else{
-			radiusVal = 11;
-		}
-		allmapPs.centerAndZoom(pointPs, radiusVal);
-		var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
-		var marker = new BMap.Marker(pointPs,{icon:myIcon});  // 创建标注
-		allmapPs.addOverlay(marker);               // 将标注添加到地图中
-		marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-		//var circle = new BMap.Circle(point,radius,{strokeColor:"red", strokeWeight:2, strokeOpacity:0.5}); //创建圆
-		var circle = new BMap.Circle(pointPs,radius,{fillColor:"#ff2400", strokeColor:"#ff2400", strokeWeight: 1 ,fillOpacity: 0.1, strokeOpacity: 1});
-		allmapPs.addOverlay(circle);            //增加圆
-		allmapPs.enableScrollWheelZoom(true);
-	}
-
-	//--------------------panel 3------------------------------------
-	$("#between").daterangepicker({
-		locale: {
-			applyLabel: '确定',
-			cancelLabel: '取消',
-			fromLabel: '开始',
-			toLabel: '结束',
-			weekLabel: 'W',
-			customRangeLabel: 'Custom Range',
-			showDropdowns: true
-		},
-		format: 'YYYY/MM/DD'
-	});
-	$("#querySiteBtn").click(function(){
-		$("#page").val("0");
-		$("#siteKeywordForm").submit();
-	})
-	//批量删除
-	$("#piliangDel").click(function(){
-		var id_array=new Array();
-		$('input[name="inputC"]:checked').each(function(){
-			id_array.push($(this).val());//向数组中添加元素
-		});
-		var delIds = id_array.join(',');
-		if(delIds==""){
-			ioutDiv("请选择要删除的站点关键词");
-			return false;
-		}
-		if(confirm("确认批量删除所选站点关键词？")){
-			window.location.href="${ctx}/site/piliangDeleteSitePoiKeyword/"+delIds
-		}
-	})
-
-	//显示分页条
-	var pageStr = paginNav(${page}, ${pageNum}, ${pageCount});
-	$("#pagin").html(pageStr);
-
-	//加载带有查询条件的指定页的数据
-	function gotoPage(pageIndex,keyword,between) {
-		$("#page").val(pageIndex);
-		$("#siteKeywordForm").submit();
-	}
-	$("#cancelBtn").click(function(){
-		$(".j-import-pop").modal('hide');
-		$("[name='file']").val("");
-	})
-
-	//--------------------panel 2------------------------------------
-
+	var defaultPoint = new BMap.Point(116.404, 39.915);
 	var bmapArr = [];
 	var arrayPoint = $("#sitePoints").val();
+	console.log(arrayPoint);
 	var siteArr = arrayPoint.split(";");
 	for (var i = 0; i < siteArr.length; i++) {
 		var arr = siteArr[i].split(",");
@@ -279,57 +103,11 @@
 			var tmp = arr[j].split("_");
 			barr.push(new BMap.Point(tmp[0], tmp[1]));
 		}
+		if(i==0){
+			defaultPoint = barr[0];
+		}
 		bmapArr.push(barr);
 	}
-	//提交保存
-	$("#formBtn").click(function () {
-		var jsonStr = "";
-		bmap.overlays.forEach(function (e) {
-			var arrs = e.ro;
-			if(arrs.length>2){
-				for (var i = 0; i < arrs.length; i++) {
-					jsonStr = jsonStr + arrs[i].lng + "_" + arrs[i].lat;
-					if (i < arrs.length - 1) {
-						jsonStr = jsonStr + ",";
-					}
-				}
-				jsonStr.substring(0, jsonStr.length - 1);
-				jsonStr = jsonStr + ";";
-			}
-		})
-		if ("" != jsonStr) {
-			var siteId =  $("#siteId").val();
-			var url = "<c:url value='/site/putAllOverLay?${_csrf.parameterName}=${_csrf.token}'/>";
-			$.ajax({
-				url: url,
-				type: 'POST',
-				cache: false,
-				data: {
-					"jsonStr" : jsonStr,
-					"siteId":siteId
-				},
-				success: function(data){
-					/*if(data!=null && data.code == 0){
-						ioutDiv("提交成功");
-					}else{
-						ioutDiv("抱歉，电子围栏暂不支持交叉绘制");
-					}*/
-					if(data != null){
-						ioutDiv(data.msg);
-					}else {
-						ioutDiv("操作失败");
-					}
-				},
-				error: function(){
-					ioutDiv("抱歉，电子围栏暂不支持交叉绘制");
-				}
-			});
-			/*          $("#jsonStr").val(jsonStr);
-			 $('#allLaysForm').submit();*/
-		} else {
-			ioutDiv("请先绘制电子围栏");
-		}
-	})
 
 	function newLabel(point, name){
 		var opts = {
@@ -372,20 +150,13 @@
 			}
 			this.status = true;
 			this.map = new BMap.Map('allmap',{enableMapClick:false,minZoom:11,noAnimation:true});
-			this.point = new BMap.Point(${site.lng},${site.lat});
-			this.map.centerAndZoom(this.point,12);
+			this.point = defaultPoint;
+			this.map.centerAndZoom(this.point,14);
 			this.map.enableScrollWheelZoom();
 			this.map.disableInertialDragging();
 
 			var map = this.map;
 			var styleOptions = this.styleOptions;
-			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
-			var marker = new BMap.Marker(this.point,{icon:myIcon});  // 创建标注
-			marker.disableMassClear();
-			this.map.addOverlay(marker);               // 将标注添加到地图中
-			/*var label = new BMap.Label("${site.name}",{offset:new BMap.Size(20,-10)});
-			marker.setLabel(label);*/
-
 			//实例化鼠标绘制工具
 			this.drawingManager = new BMapLib.DrawingManager(map, {
 				isOpen: false, //是否开启绘制模式
@@ -541,23 +312,13 @@
 			$("showPanelBtn").innerHTML = "编辑多边形<br/>>";
 		}
 	}
-	//加载一个已有的多边形
 
-	/*bmap.myOverlay = [[
-	 new BMap.Point(116.256515,39.995242),
-	 new BMap.Point(116.502579,39.951893),
-	 new BMap.Point(116.256515,39.866882)
-	 ],[new BMap.Point(116.403863,40.910426),
-	 new BMap.Point(116.636129,40.902574),
-	 new BMap.Point(116.582087,40.731351)
-	 ]];*/
 	function openDraw(){
 		bmap.drawingManager.open();
 		bmap.drawingManager.setDrawingMode(BMAP_DRAWING_POLYGON);
 	}
 
 	$('.b-tab li:eq(${activeNum-1}) a').tab('show');
-	showMap(${site.deliveryArea*1000});
 	bmap.myOverlay=bmapArr;
 	bmap.init();
 	$('.b-tab a').click(function (e) {
