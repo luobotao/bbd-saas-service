@@ -27,6 +27,7 @@
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
     <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />
     <dubbo:reference id="geo" interface="com.bbd.poi.api.Geo" />
+    <dubbo:reference id="postmanPoiApi" interface="com.bbd.poi.api.PostmanPoiApi" />
     <!--ToOtherSiteLog Service-->
     <dubbo:reference id="toOtherSiteLogService" interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" />
     <!--orderTrackService from bbd-driver-api -->
