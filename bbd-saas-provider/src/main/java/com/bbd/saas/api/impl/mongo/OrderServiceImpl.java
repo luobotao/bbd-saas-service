@@ -1,6 +1,7 @@
 package com.bbd.saas.api.impl.mongo;
 
 
+import com.alibaba.dubbo.common.json.JSONObject;
 import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
@@ -302,6 +303,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 			order = updateOrderWithAreaCode(order);
 			//针对订单进一步处理orderParcel
+			logger.info(String.format("订单%s生成区域码%s完成,开始匹配包裹",order.getOrderNo(),order.getAreaCode()));
 			updateParcelWithOrder(order);
 		}
 		return order;
@@ -315,6 +317,7 @@ public class OrderServiceImpl implements OrderService {
 		//查询订单所在站点是否已有Suspense待打包的包裹
 		OrderParcel orderParcel = orderParcelDao.findByOrderInfo(order);
 		if(orderParcel==null){
+			logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel null" ,order.getOrderNo()));
 			//没有，插入orderParcel
 			orderParcel = new OrderParcel();
 			orderParcel.setParcelCode("");
@@ -338,13 +341,17 @@ public class OrderServiceImpl implements OrderService {
 			orderParcel.setCity(site.getCity());
 			orderParcel.setArea(site.getArea());
 			orderParcel.setOrdercnt(1);
+			logger.info(String.format("插入包裹 来源：%s 站点：%s 状态：%s 订单数量%d --> %d",orderParcel.getSrc(),orderParcel.getAreaCode(),orderParcel.getStatus().getMessage(),0,1));
 		}else {
+			logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel id:" ,orderParcel.getId()));
+			logger.info(String.format("更新包裹 %s 订单数量%d --> %d",orderParcel.getId(),orderParcel.getOrdercnt(),orderParcel.getOrdercnt()+1));
 			//已有，更新orderParcel里的ordercnt dateUpd
 			orderParcel.setOrdercnt(orderParcel.getOrdercnt()+1);
 			orderParcel.setDateUpd(new Date());
 		}
 		//更新orderParcel
 		orderParcelDao.save(orderParcel);
+		logger.info(String.format("根据订单%s 插入/更新包裹完成",order.getOrderNo()));
 	}
 
 	@Override
