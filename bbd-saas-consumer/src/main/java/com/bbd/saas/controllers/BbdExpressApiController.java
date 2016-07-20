@@ -252,4 +252,26 @@ public class BbdExpressApiController {
 		}
 		return result;
 	}
+
+	@RequestMapping(value="/updateOrderWithDealParcel/{orderNo}",method=RequestMethod.GET)
+	@ResponseBody
+	public String updateOrderWithDealParcel(@PathVariable String orderNo) throws UnsupportedEncodingException {
+		logger.info("当即打印订单"+orderNo+"后生成包裹");
+		String result = "";
+		if(StringUtils.isNotBlank(orderNo)) {
+			try {
+				Order order = orderService.findByOrderNo(orderNo);
+				//针对订单进一步处理orderParcel
+				logger.info(String.format("订单%s生成区域码%s完成,开始匹配包裹",order.getOrderNo(),order.getAreaCode()));
+				result = orderService.updateParcelWithOrder(order);
+			} catch (Exception e) {
+				e.printStackTrace();
+				result = "exception";
+			}
+		}
+		return result;
+	}
+
+
+
 }

@@ -174,4 +174,6 @@ public interface OrderService {
 	String findBestSiteWithAddress(String address);
 
 	public Site getSiteWithAddress(String address);
+
+	String updateParcelWithOrder(Order order);
 }

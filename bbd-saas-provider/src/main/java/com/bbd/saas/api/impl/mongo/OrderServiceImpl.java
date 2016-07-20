@@ -12,10 +12,7 @@ import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
-import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.ParcelStatus;
-import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderNum;
 import com.bbd.saas.mongoModels.OrderParcel;
@@ -302,9 +299,6 @@ public class OrderServiceImpl implements OrderService {
 				e.printStackTrace();
 			}
 			order = updateOrderWithAreaCode(order);
-			//针对订单进一步处理orderParcel
-			logger.info(String.format("订单%s生成区域码%s完成,开始匹配包裹",order.getOrderNo(),order.getAreaCode()));
-			updateParcelWithOrder(order);
 		}
 		return order;
 	}
@@ -313,45 +307,56 @@ public class OrderServiceImpl implements OrderService {
 	 * 更新包裹信息
 	 * @param order
      */
-	private void updateParcelWithOrder(Order order) {
-		//查询订单所在站点是否已有Suspense待打包的包裹
-		OrderParcel orderParcel = orderParcelDao.findByOrderInfo(order);
-		if(orderParcel==null){
-			logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel null" ,order.getOrderNo()));
-			//没有，插入orderParcel
-			orderParcel = new OrderParcel();
-			orderParcel.setParcelCode("");
-			orderParcel.setSort_uid("");
-			orderParcel.setDriver_uid("");
-			orderParcel.setStation_uid("");
-			orderParcel.setStatus(ParcelStatus.Suspense);
-			Site site = siteService.findSiteByAreaCode(order.getAreaCode());
-			orderParcel.setAreaRemark(site.getName());
-			orderParcel.setAreaCode(site.getAreaCode());
-			orderParcel.setAreaName(site.getName());
-			orderParcel.setStation_address(site.getAddress());
-			orderParcel.setOrderList(Lists.newArrayList());
-			orderParcel.setDateAdd(new Date());
-			orderParcel.setDateUpd(new Date());
-			orderParcel.setParceltyp("0");
-			orderParcel.setTrackNo("");
-			orderParcel.setSrcAreaCode("");
-			orderParcel.setSrc(order.getSrc().toString());
-			orderParcel.setProvince(site.getProvince());
-			orderParcel.setCity(site.getCity());
-			orderParcel.setArea(site.getArea());
-			orderParcel.setOrdercnt(1);
-			logger.info(String.format("插入包裹 来源：%s 站点：%s 状态：%s 订单数量%d --> %d",orderParcel.getSrc(),orderParcel.getAreaCode(),orderParcel.getStatus().getMessage(),0,1));
-		}else {
-			logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel id:" ,orderParcel.getId()));
-			logger.info(String.format("更新包裹 %s 订单数量%d --> %d",orderParcel.getId(),orderParcel.getOrdercnt(),orderParcel.getOrdercnt()+1));
-			//已有，更新orderParcel里的ordercnt dateUpd
-			orderParcel.setOrdercnt(orderParcel.getOrdercnt()+1);
-			orderParcel.setDateUpd(new Date());
+	public String updateParcelWithOrder(Order order) {
+		try {
+			if(order!=null&& PrintStatus.waitToPrint.equals(order.getPrintStatus())) {
+				//查询订单所在站点是否已有Suspense待打包的包裹
+				OrderParcel orderParcel = orderParcelDao.findByOrderInfo(order);
+				if (orderParcel == null) {
+					logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel null", order.getOrderNo()));
+					//没有，插入orderParcel
+					orderParcel = new OrderParcel();
+					orderParcel.setParcelCode("");
+					orderParcel.setSort_uid("");
+					orderParcel.setDriver_uid("");
+					orderParcel.setStation_uid("");
+					orderParcel.setStatus(ParcelStatus.Suspense);
+					Site site = siteService.findSiteByAreaCode(order.getAreaCode());
+					orderParcel.setAreaRemark(site.getName());
+					orderParcel.setAreaCode(site.getAreaCode());
+					orderParcel.setAreaName(site.getName());
+					orderParcel.setStation_address(site.getAddress());
+					orderParcel.setOrderList(Lists.newArrayList());
+					orderParcel.setDateAdd(new Date());
+					orderParcel.setDateUpd(new Date());
+					orderParcel.setParceltyp("0");
+					orderParcel.setTrackNo("");
+					orderParcel.setSrcAreaCode("");
+					orderParcel.setSrc(order.getSrc().toString());
+					orderParcel.setProvince(site.getProvince());
+					orderParcel.setCity(site.getCity());
+					orderParcel.setArea(site.getArea());
+					orderParcel.setOrdercnt(1);
+					logger.info(String.format("插入包裹 来源：%s 站点：%s 状态：%s 订单数量%d --> %d", orderParcel.getSrc(), orderParcel.getAreaCode(), orderParcel.getStatus().getMessage(), 0, 1));
+				} else {
+					logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel id:", orderParcel.getId()));
+					logger.info(String.format("更新包裹 %s 订单数量%d --> %d", orderParcel.getId(), orderParcel.getOrdercnt(), orderParcel.getOrdercnt() + 1));
+					//已有，更新orderParcel里的ordercnt dateUpd
+					orderParcel.setOrdercnt(orderParcel.getOrdercnt() + 1);
+					orderParcel.setDateUpd(new Date());
+				}
+				//更新orderParcel
+				orderParcelDao.save(orderParcel);
+				logger.info(String.format("订单%s 插入/更新包裹完成", order.getOrderNo()));
+			}else{
+				logger.info(String.format("订单%s 已打印无需更新包裹", order.getOrderNo()));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info(String.format("根据订单%s 插入/更新包裹失败，原因：%s", order.getOrderNo(),e.getMessage()));
+			return "fail";
 		}
-		//更新orderParcel
-		orderParcelDao.save(orderParcel);
-		logger.info(String.format("根据订单%s 插入/更新包裹完成",order.getOrderNo()));
+		return "success";
 	}
 
 	@Override
