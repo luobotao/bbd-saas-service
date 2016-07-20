@@ -97,7 +97,7 @@ public class Constants {
     //派件员无到站权限
     public static int NO_TOSITE_PERMISSION = 0;
     //派件员有到站权限 -- MYSQL库
-    public static int POSTMAN_HAVE_TOSITE_PERMISSION = 4;
+    public static int POSTMAN_HAVE_TOSITE_PERMISSION = 5;
 
 
 }
