@@ -244,6 +244,7 @@ public class SiteManageController {
 			postmanUser.setStaffid(newPhone);
 			postmanUser.setPhone(oldPhone);
 			userMysqlService.updateByPhone(postmanUser);
+			userMysqlService.updateSitenameBySiteId(postmanUser.getSiteid(), postmanUser.getSubstation());
 		} else {//新增
 			postmanUser = userMysqlService.insertUser(postmanUser);
 		}

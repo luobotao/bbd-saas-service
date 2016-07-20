@@ -93,4 +93,11 @@ public interface PostmanUserDao {
      * @param id
      */
     public int deleteByPhoneAndId(@Param("phone")String phone, @Param("id")int id);
+    /**
+     * 根据站点Id更新站点名称（substation）
+     * @param siteid 站点id
+     * @param siteName 站点名称
+     * @return
+     */
+    int updateSubstationBySiteId(@Param("siteid") String siteid, @Param("siteName") String siteName);
 }

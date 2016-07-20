@@ -186,4 +186,9 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	public int deleteByPhoneAndId(String phone, int id){
 		return postmanUserDao.deleteByPhoneAndId(phone, id);
 	}
+
+	@Override
+	public int updateSitenameBySiteId(String siteid, String siteName) {
+		return postmanUserDao.updateSubstationBySiteId(siteid, siteName);
+	}
 }

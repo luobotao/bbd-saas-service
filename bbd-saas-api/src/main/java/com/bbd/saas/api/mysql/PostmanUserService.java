@@ -95,4 +95,12 @@ public interface PostmanUserService {
      * @param id
      */
     public int deleteByPhoneAndId(String phone, int id);
+
+    /**
+     * 根据站点Id更新站点名称
+     * @param siteid 站点id
+     * @param siteName 站点名称
+     * @return
+     */
+    int updateSitenameBySiteId(String siteid, String siteName);
 }
