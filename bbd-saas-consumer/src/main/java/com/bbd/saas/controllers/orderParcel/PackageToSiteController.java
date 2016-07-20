@@ -32,10 +32,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("/packageToSite")
@@ -242,23 +240,36 @@ public class PackageToSiteController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/doSuperArea", method = RequestMethod.POST)
-	public boolean doSuperArea(HttpServletRequest request,String mailNum) {
+	public Map<String, Object> doSuperArea(HttpServletRequest request, String mailNum) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		return doOneSuperArea(user, mailNum);
 	}
-	private boolean doOneSuperArea(User user, String mailNum){
+	private Map<String, Object> doOneSuperArea(User user, String mailNum){
+		Map<String, Object> map = new ConcurrentHashMap<String, Object>();
 		Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
-		if(order!=null){
-			order.setOrderStatus(OrderStatus.RETENTION);//滞留
-			order.setDateArrived(new Date());
-			OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因：超出配送范围。");
-			//更新mysql
-			//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
-			orderService.save(order);
-			postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因：超出配送范围。","滞留原因：超出配送范围");
-			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+		if(order != null){
+			if(order.getOrderStatus() == OrderStatus.NOTARR
+				|| order.getOrderStatus() == OrderStatus.NOTDISPATCH
+				|| order.getOrderStatus() == OrderStatus.DISPATCHED){
+				order.setOrderStatus(OrderStatus.RETENTION);//滞留
+				order.setDateArrived(new Date());
+				OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因：超出配送范围。");
+				//更新mysql
+				//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
+				orderService.save(order);
+				postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因：超出配送范围。","滞留原因：超出配送范围");
+				orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+				map.put("success", true);
+			}else{
+				map.put("success", false);
+				map.put("msg", "设置超区失败，当前运单已" + order.getOrderStatusMsg());
+			}
+
+		}else{
+			map.put("success", false);
+			map.put("msg", "运单不存在或者不属于本站点");
 		}
-		return true;
+		return map;
 	}
 
 
@@ -296,7 +307,8 @@ public class PackageToSiteController {
 		boolean r = true;
 		for (Object mailNum : mailNumList){
 			if(r){
-				r = doOneSuperArea(user, mailNum.toString());
+				Map<String, Object> map = doOneSuperArea(user, mailNum.toString());
+				r = (Boolean) map.get("success");
 			}else{
 				doOneSuperArea(user, mailNum.toString());
 			}
