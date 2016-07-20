@@ -114,7 +114,8 @@ public class PackageDispatchController {
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			//查询派件员姓名电话
 			if(orderPage != null && orderPage.getDatas() != null){
-				formatOrder(orderPage.getDatas()) ;
+				List<Order> orderList = formatOrder(orderPage.getDatas()) ;
+				orderPage.setDatas(orderList);
 			}
 		} catch (Exception e) {
 			logger.error("===分页Ajax更新列表===出错:" + e.getMessage());
@@ -230,7 +231,7 @@ public class PackageDispatchController {
 	@SuppressWarnings("deprecation")
 	private void setOrderExpress(Order order, User user){
 		//更新物流信息
-		String remark = null;
+		/*String remark = null;
 		if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
             if(new Date().getHours() < 19){
 				remark = "配送员正在为您派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName();
@@ -243,7 +244,13 @@ public class PackageDispatchController {
             }else{
 				remark = "配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName();
             }
-        }
+        }*/
+		String remark = null;
+		if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
+			remark = "配送员正在为您派件，配送员电话：" + user.getRealName() + " " + user.getLoginName();
+		}else{
+			remark = "配送员正在为您重新派件，配送员电话：" + user.getRealName() + " " + user.getLoginName();
+		}
 		OrderCommon.addOrderExpress(ExpressStatus.Delivering, order, user, remark);
 	}
 	/**
@@ -435,6 +442,7 @@ public class PackageDispatchController {
 		//OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, currUser, "取消分派");
 		//更新运单状态--未分派
 		order.setOrderStatus(OrderStatus.NOTDISPATCH);
+		order.setExpressStatus(ExpressStatus.ArriveStation);
 		order.setDateUpd(new Date());
 		//更新运单
 		Key<Order> r = orderService.save(order);

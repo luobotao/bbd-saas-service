@@ -11,21 +11,20 @@
 			<div class="modal-content">
 				<div class="modal-header b-modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title  tc" id="superAreaConform">确认</h4>
+					<h4 class="modal-title  tc" id="superAreaConform">确 认</h4>
 				</div>
-				<div class="modal-body b-modal-body">
+				<div class="modal-body b-modal-bodyS tc">
 					<em class="f16" id="superAreaBody">确认将该订单设置为超区件？</em>
-				</div>
-				<div class="modal-footer tc">
-					<%--<div class="row mt20">--%>
+					<div class="row mt20">
 						<span class="col-md-6">
-							<button type="button" class="ser-btn g wp80" data-dismiss="modal" class="close">取消</button>
+							<button type="button" class="sbtn sbtn2 g" data-dismiss="modal" class="close">取消</button>
 						</span>
 						<span class="col-md-6">
-							<button  type="button" class="ser-btn l wp80" onclick="doSuperArea()">确认</button>
+							<button  type="button" class="sbtn sbtn2 l" onclick="doSuperArea()">确认</button>
 						</span>
-					<%--</div>--%>
+					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>

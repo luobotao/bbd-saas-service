@@ -118,26 +118,26 @@
                                     <%
                                         }else if (SiteStatus.APPROVE == site.getStatus()) {
                                     %>
+                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
+                                           class="orange j-siteM cp">修改</span>
+                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableSite', '确认停用站点吗？')" data-toggle='modal' data-target='#confirmModal'>停用站点</span>
                                         <%
                                             if (site.getAreaFlag() == 1) {
                                         %>
-                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableArea', '确定停用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>停用配送区域</span>
+                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableArea', '确认停用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>停用配送区域</span>
                                         <%
                                             }else{
                                         %>
-                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableArea', '确定启用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>启用配送区域</span>
+                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableArea', '确认启用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>启用配送区域</span>
                                         <%
                                             }
                                         %>
-                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
-                                           class="orange j-siteM cp">修改</span>
-                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableSite', '确认停用吗？')" data-toggle='modal' data-target='#confirmModal'>停用</span>
                                     <%
                                         }else if (SiteStatus.INVALID == site.getStatus()) {
                                     %>
                                         <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
                                            class="orange j-siteM cp">修改</span>
-                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableSite', '确认启用吗？')" data-toggle='modal' data-target='#confirmModal'>启用</span>
+                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableSite', '确认启用站点吗？')" data-toggle='modal' data-target='#confirmModal'>启用站点</span>
                                         <%--<span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除?')" data-toggle='modal' data-target='#confirmModal'>删除</span>--%>
                                     <%
                                         }
@@ -147,7 +147,6 @@
                             <%
                                 }
                             %>
-
                             </tbody>
                         </table>
                     </div>
@@ -430,17 +429,17 @@
             row += "<span  onclick=\"getTurnDownMessage('"+data.turnDownReasson+"','"+data.turnDownMessage+"','"+data.otherMessage+"')\" class='orange ml6 cp' data-toggle='modal' data-target='#messageModal'>查看驳回原因</span>";
         }
         if(data.status=="<%=SiteStatus.APPROVE%>" ){
-            if(data.areaFlag == 1 ){
-                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确定停用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
-            }else{
-                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableArea', '确定启用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>启用配送区域</span> ";
-            }
             row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp' data-toggle='modal' data-target='#siteModal'>修改</span> ";
-            row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableSite', '确定停用吗？')\" class='orange cp'>停用</span>";
+            row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableSite', '确认停用站点吗？')\" class='orange cp'>停用站点</span>";
+            if(data.areaFlag == 1 ){
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确认停用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
+            }else{
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableArea', '确认启用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>启用配送区域</span> ";
+            }
         }
         if(data.status=="<%=SiteStatus.INVALID%>" ){
             row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp'  data-toggle='modal' data-target='#siteModal'>修改</span> ";
-            row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableSite', '确定启用吗？')\" class='orange cp'>启用</span> ";
+            row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableSite', '确认启用站点吗？')\" class='orange cp'>启用站点</span> ";
 //            row += "<span data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除？')\" class='orange cp'>删除</span>";
         }
         row += "</td></tr>";

@@ -147,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
 	 * @return
      */
 	@Override
-	public Order findOneByNewMailNum(String newMailNum) {
+	public List<Order> findOneByNewMailNum(String newMailNum) {
 		return orderDao.findOneByNewMailNum(newMailNum);
 	}
 

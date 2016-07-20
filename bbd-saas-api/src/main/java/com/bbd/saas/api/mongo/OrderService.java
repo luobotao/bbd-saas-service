@@ -36,7 +36,7 @@ public interface OrderService {
 	 * @param newMailNum
 	 * @return
 	 */
-	Order findOneByNewMailNum(String newMailNum);
+	List<Order> findOneByNewMailNum(String newMailNum);
 
 	/**
 	 * 根据订单号查询订单

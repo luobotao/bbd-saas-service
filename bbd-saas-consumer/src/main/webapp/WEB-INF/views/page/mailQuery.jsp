@@ -88,12 +88,7 @@
   					<table class="table">
   						<thead>
   							<tr>
-  								<%--<th>包裹号</th>--%>
-								<th>站点编码</th>
-								<th>站点名称</th>
 								<th>运单号</th>
-								<%--<th>订单号</th>
-								<th>来源</th>--%>
 								<th>收货人</th>
 								<th>收货人电话</th>
 								<th width="15%">收货人地址</th>
@@ -120,22 +115,8 @@
 									for(Order order : orderPage.getDatas()){
 							%>
 								<tr>
-									<td><%=order.getAreaCode()%></td>
-									<td><%=order.getAreaRemark()%></td>
-									<%--<td><%=order.getParcelCode()%></td>--%>
+
 									<td><%=order.getMailNum()%></td>
-									<%--<td><%=order.getOrderNo()%></td>
-									<%
-										if(order.getSrc() == null){//来源
-									%>
-											<td></td>
-									<%
-										}else{
-									%>
-											<td><%=order.getSrc().getMessage()%></td>
-									<%
-										}
-									%>--%>
 									<td><%=order.getReciever().getName()%></td>
 									<td><%=order.getReciever().getPhone()%></td>
 									<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
@@ -320,16 +301,11 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
-	row += "<td>" + data.areaCode + "</td>";
-	row += "<td>" + data.areaRemark + "</td>";
-	/*row +=  "<td>" + data.parcelCode + "</td>";*/
 	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
 		row += "<td>" + data.mailNum + "</td>";
 	}else{
 		row += "<td>" + data.mailNum.replace(mailNum, "<span class='font-bg-color'>" + mailNum + "</span>") + "</td>";
 	}
-	/*row += "<td>" + data.orderNo + "</td>";
-	row += "<td>" + getSrcName(data.src) + "</td>";*/
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td>" + data.reciever.phone + "</td>";
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
@@ -351,53 +327,12 @@ function getRowHtml(data){
 		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
-	row += "<td>" + getStatus(data.orderStatus) + "</td>";
+	row += "<td>" + data.orderStatusMsg + "</td>";
 	row += "<td><a href='<%=path%>/mailQuery/getOrderMail?areaCode=" + data.areaCode + "&mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
 }
 
-//转义状态
-function getStatus(status) {
-	if(status == null){
-		return "<em class='l-blue'>未到站</em>";
-	}
-    x = "<em class='l-blue'>未到站</em>";
-	switch (status)
-	{
-	case "NOTARR":
-	  	x = "<em class='l-blue'>未到站</em>";
-	 	break;
-	case "NOTDISPATCH":
-	  	x =  "<em class='orange'>未分派</em>";
-	  	break;
-	case "DISPATCHED":
-	  	x =  "<em class='c-green'>已分派</em>";
-	  	break;
-	case "RETENTION":
-	  x =  "<em class='purple'>滞留</em>";
-	  break; 
-	case "REJECTION":
-	  	x =  "<em class='d-red'>拒收</em>";
-	  	break;
-	case "SIGNED":
-	  	x =  "<em class='black'>已签收</em>";
-	  	break;
-	case "TO_OTHER_EXPRESS":
-	  	x =  "<em class='d-blue'>已转其他快递</em>";
-	  	break;
-	case "APPLY_RETURN":
-	  	x =  "<em class='brown'>申请退货</em>";
-	  	break;
-	case "RETURNED":
-	  	x =  "<em class='l-green'>退货完成</em>";
-	  	break; 	
-	default : 
-		//x = "未到站";
-		x = status;
-	}
-	return x;
-}	
 
 //导出数据
 function exportData() {

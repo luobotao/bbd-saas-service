@@ -88,4 +88,19 @@ public interface PostmanUserService {
      * @return 更新条数
      */
     int updateRoleByPhone(String phone, Integer postrole);
+
+    /**
+     * 删除电话为phone,id不为id的postmanUser
+     * @param phone
+     * @param id
+     */
+    public int deleteByPhoneAndId(String phone, int id);
+
+    /**
+     * 根据站点Id更新站点名称
+     * @param siteid 站点id
+     * @param siteName 站点名称
+     * @return
+     */
+    int updateSitenameBySiteId(String siteid, String siteName);
 }

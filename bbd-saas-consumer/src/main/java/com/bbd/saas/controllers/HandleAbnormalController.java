@@ -192,11 +192,12 @@ public class HandleAbnormalController {
                 }
                 Express express = new Express();
                 express.setDateAdd(new Date());
-                if (new Date().getHours() < 19) {
+                /*if (new Date().getHours() < 19) {
                     express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 } else {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-                }
+                }*/
+                express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
@@ -554,7 +555,7 @@ public class HandleAbnormalController {
                     fromSB.toString(), toSB.toString(), mailNumNew);
             if(resposeDTO != null){
                 String message=   resposeDTO.getMessage();
-                if(message.contains("重复订阅")) {//失败
+                /*if(message.contains("重复订阅")) {//失败
                     map.put("success", false);
                     map.put("msg", "重复订阅");
                     logger.info("= 转其他快递==重复订阅==="  );
@@ -570,6 +571,17 @@ public class HandleAbnormalController {
                         map.put("success", false);//失败
                         map.put("msg", "转运信息添加失败，请稍候再试");
                     }
+                }*/
+                //更新运单
+                Key<Order> r = orderService.save(order);
+                if(r != null){
+                    map.put("success", true);//成功
+                    map.put("msg", "转运信息添加成功");//0
+                    //刷新列表
+                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+                }else{
+                    map.put("success", false);//失败
+                    map.put("msg", "转运信息添加失败，请稍候再试");
                 }
             }else{
                 map.put("success", false);//0:运单号不存在

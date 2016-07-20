@@ -229,4 +229,11 @@
     <update id="updateRoleByPhone" >
         update postmanuser set postrole = #{postrole}  where  phone = #{phone}
     </update>
+    <delete id="deleteByPhoneAndId">
+        delete from postmanuser where phone = #{phone} and id != #{id}
+    </delete>
+
+    <update id="updateSubstationBySiteId" >
+         update postmanuser set substation = #{siteName}  where  siteid = #{siteid}
+    </update>
 </mapper>

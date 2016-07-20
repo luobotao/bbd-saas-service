@@ -9,11 +9,9 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.ExportUtil;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.SiteVO;
@@ -32,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 运单查询
@@ -234,6 +234,7 @@ public class MailQueryController {
 			orderQueryVO.areaCode = areaCode;
 			//查询数据
 			List<Order> orderList = null;
+			Map<String,String> siteMap = new ConcurrentHashMap<String, String>();
 			//公司查询
 			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
 				//同一个公司的所有站点
@@ -244,6 +245,7 @@ public class MailQueryController {
 				List<String> areaCodeList = new ArrayList<String>();
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){
+						siteMap.put(siteVO.getAreaCode(), siteVO.getName());
 						areaCodeList.add(siteVO.getAreaCode());
 					}
 				}
@@ -252,6 +254,8 @@ public class MailQueryController {
 					orderList = orderService.findOrders(orderQueryVO);
 				}
 			}else{
+				Site site = siteService.findSiteByAreaCode(areaCode);
+				siteMap.put(site.getAreaCode(), site.getName());
 				orderList = orderService.findOrders(orderQueryVO);
 			}
 
@@ -259,13 +263,12 @@ public class MailQueryController {
 			//表格数据
 			List<List<String>> dataList = new ArrayList<List<String>>();
 			List<String> row = null;
-			String parcelCodeTemp = null;
-			
+
 			if(orderList != null){
 				for(Order order : orderList){
 					row = new ArrayList<String>();
 					row.add(order.getAreaCode());
-					row.add(order.getAreaRemark());
+					row.add(StringUtil.initStr(siteMap.get(order.getAreaCode()), ""));
 					row.add(order.getMailNum());
 					row.add(order.getReciever().getName());
 					row.add(order.getReciever().getPhone());
@@ -307,7 +310,7 @@ public class MailQueryController {
 			
 			//表头
 			String[] titles = { "站点编码", "站点名称", "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" ,"异常原因" };
-			int[] colWidths = {  3000, 6000, 5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500,  2000,  3500, 3000,4000};
+			int[] colWidths = {  3500, 6000, 5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500,  3000,  3500, 3000,4000};
 			ExportUtil exportUtil = new ExportUtil();
 			exportUtil.exportExcel("运单查询", dataList, titles, colWidths, response);
 		} catch (Exception e) {

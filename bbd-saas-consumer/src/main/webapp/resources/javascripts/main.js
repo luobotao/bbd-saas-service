@@ -253,6 +253,7 @@ $(function () {
     $(".i-hei").css({height:winhei-146});
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
+var mailNumreg=/^[0-9A-Za-z]{10,20}$/;
 //iframe 自适应高度
 //function iFrameHeight() {
 //
