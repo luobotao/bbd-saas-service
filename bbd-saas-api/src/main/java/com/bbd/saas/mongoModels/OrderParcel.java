@@ -23,12 +23,13 @@ public class OrderParcel implements Serializable {
     private ObjectId id;
     // 包裹号
     private String parcelCode;
-    // 运单号
-    private String trackNo;
+
     //分拣员ID
     private String sort_uid;
     //司机ID
     private String driver_uid;
+    //站长ID
+    private String station_uid;
     //包裹状态
     private ParcelStatus status;
     //区域（站点）地址
@@ -44,6 +45,22 @@ public class OrderParcel implements Serializable {
 
     private Date dateAdd;
     private Date dateUpd;
+    //包裹类型 0：配件包裹（默认） 1：集包
+    private String parceltyp;
+    // 运单号
+    private String trackNo;
+    // 源区域码
+    private String srcAreaCode;
+    //订单企业来源
+    private String src;
+    //订单省份
+    private String province;
+    //订单城市
+    private String city;
+    //订单区域
+    private String area;
+    //包裹订单数量
+    private Integer ordercnt;
 
     public ObjectId getId() {
         return id;
@@ -147,5 +164,69 @@ public class OrderParcel implements Serializable {
 
     public void setTrackNo(String trackNo) {
         this.trackNo = trackNo;
+    }
+
+    public String getStation_uid() {
+        return station_uid;
+    }
+
+    public void setStation_uid(String station_uid) {
+        this.station_uid = station_uid;
+    }
+
+    public String getParceltyp() {
+        return parceltyp;
+    }
+
+    public void setParceltyp(String parceltyp) {
+        this.parceltyp = parceltyp;
+    }
+
+    public String getSrcAreaCode() {
+        return srcAreaCode;
+    }
+
+    public void setSrcAreaCode(String srcAreaCode) {
+        this.srcAreaCode = srcAreaCode;
+    }
+
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public Integer getOrdercnt() {
+        return ordercnt;
+    }
+
+    public void setOrdercnt(Integer ordercnt) {
+        this.ordercnt = ordercnt;
     }
 }

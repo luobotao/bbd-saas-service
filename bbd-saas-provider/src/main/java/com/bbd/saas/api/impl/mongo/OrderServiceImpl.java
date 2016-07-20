@@ -13,6 +13,7 @@ import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.ParcelStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderNum;
@@ -267,6 +268,11 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
+	/**
+	 * 生成订单区域码
+	 * @param order
+	 * @return
+     */
 	@Override
 	public Order reduceAreaCodeWithOrder(Order order) {
 		if(order!=null&&order.getReciever()!=null) {
@@ -295,8 +301,50 @@ public class OrderServiceImpl implements OrderService {
 				e.printStackTrace();
 			}
 			order = updateOrderWithAreaCode(order);
+			//针对订单进一步处理orderParcel
+			updateParcelWithOrder(order);
 		}
 		return order;
+	}
+
+	/**
+	 * 更新包裹信息
+	 * @param order
+     */
+	private void updateParcelWithOrder(Order order) {
+		//查询订单所在站点是否已有Suspense待打包的包裹
+		OrderParcel orderParcel = orderParcelDao.findByOrderInfo(order);
+		if(orderParcel==null){
+			//没有，插入orderParcel
+			orderParcel = new OrderParcel();
+			orderParcel.setParcelCode("");
+			orderParcel.setSort_uid("");
+			orderParcel.setDriver_uid("");
+			orderParcel.setStation_uid("");
+			orderParcel.setStatus(ParcelStatus.Suspense);
+			Site site = siteService.findSiteByAreaCode(order.getAreaCode());
+			orderParcel.setAreaRemark(site.getName());
+			orderParcel.setAreaCode(site.getAreaCode());
+			orderParcel.setAreaName(site.getName());
+			orderParcel.setStation_address(site.getAddress());
+			orderParcel.setOrderList(Lists.newArrayList());
+			orderParcel.setDateAdd(new Date());
+			orderParcel.setDateUpd(new Date());
+			orderParcel.setParceltyp("0");
+			orderParcel.setTrackNo("");
+			orderParcel.setSrcAreaCode("");
+			orderParcel.setSrc(order.getSrc().toString());
+			orderParcel.setProvince(site.getProvince());
+			orderParcel.setCity(site.getCity());
+			orderParcel.setArea(site.getArea());
+			orderParcel.setOrdercnt(1);
+		}else {
+			//已有，更新orderParcel里的ordercnt dateUpd
+			orderParcel.setOrdercnt(orderParcel.getOrdercnt()+1);
+			orderParcel.setDateUpd(new Date());
+		}
+		//更新orderParcel
+		orderParcelDao.save(orderParcel);
 	}
 
 	@Override

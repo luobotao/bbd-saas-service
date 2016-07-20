@@ -2,6 +2,7 @@ package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.ParcelStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import org.apache.commons.lang.StringUtils;
@@ -84,5 +85,19 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
         Query<OrderParcel> query = createQuery();
         query.filter("trackNo",trackNo);
         return find(query).asList();
+    }
+
+    /**
+     * 查找是否有满足指定条件的包裹
+     * 指定来源src,指定站点areaCode,指定状态，待打包
+     * @param order
+     * @return
+     */
+    public OrderParcel findByOrderInfo(Order order) {
+        Query<OrderParcel> query = createQuery();
+        query.filter("areaCode",order.getAreaCode());
+        query.filter("src",order.getSrc());
+        query.filter("status", ParcelStatus.Suspense);
+        return findOne(query);
     }
 }
