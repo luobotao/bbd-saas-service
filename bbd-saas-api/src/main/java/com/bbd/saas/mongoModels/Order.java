@@ -4,12 +4,10 @@ import com.bbd.saas.enums.*;
 import com.bbd.saas.vo.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -78,7 +76,7 @@ public class Order implements Serializable {
     @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
-    public static class SiteTime{
+    public static class SiteTime implements Serializable{
         public String siteId;
         public OrderSetStatus orderSetStatus;
         public Date dateAdd;
