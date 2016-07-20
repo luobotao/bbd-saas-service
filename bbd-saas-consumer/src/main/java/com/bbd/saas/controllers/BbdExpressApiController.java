@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.PathParam;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -225,5 +227,29 @@ public class BbdExpressApiController {
 		}
 		String str = sb.toString();
 		return str;
+	}
+
+	@RequestMapping(value="/updateOrderWithAreaCode/{orderNo}",method=RequestMethod.GET)
+	@ResponseBody
+	public String updateOrderWithAreaCode(@PathVariable String orderNo) throws UnsupportedEncodingException {
+		logger.info("当即更新订单"+orderNo+"的区域码");
+		String result = "";
+		if(StringUtils.isNotBlank(orderNo)) {
+			try {
+				Order order = orderService.findByOrderNo(orderNo);
+				if (order != null) {
+					//更新订单的运单号
+					order = orderService.reduceAreaCodeWithOrder(order);
+					logger.info("[order]:" + order + " [reduce areacode result] :" + order.getAreaCode() + "");
+					result = "success";
+				} else {
+					result = "failed";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				result = "exception";
+			}
+		}
+		return result;
 	}
 }
