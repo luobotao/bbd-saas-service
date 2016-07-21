@@ -45,7 +45,7 @@ import java.util.List;
  * 骆波涛
  */
 @Controller
-@RequestMapping("/system/siteManage")
+@RequestMapping("/siteManage")
 public class SiteManageController {
 	public static final Logger logger = LoggerFactory.getLogger(SiteManageController.class);
 	@Autowired

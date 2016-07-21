@@ -176,7 +176,7 @@
 <div class="j-siteM-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="siteModal">
     <div class="modal-dialog b-modal-dialog b-guide-dialog" role="document">
         <div class="modal-content">
-        <c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
+        <c:url var="actionUrl" value="/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
             <input type="hidden" id="areaCode" name="areaCode" value=""/>
             <div class="modal-header b-modal-header">
@@ -367,7 +367,7 @@
         var status = $("#status").val();
         var areaFlag = $("#areaFlag").val();
         var keyword = $("#keyword").val();
-        var url = "<c:url value="/system/siteManage/getSitePage" />";
+        var url = "<c:url value="/siteManage/getSitePage" />";
         $.ajax({
             type: "GET",  //提交方式
             url: url,//路径
@@ -451,7 +451,7 @@
             if(isCheckPhone){
                 var areaCode = $("#areaCode").val();
                 if(loginName!=""){
-                    var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
+                    var linkUrl = "<c:url value="/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
                     $.ajax({
                         url: linkUrl,
                         type: 'GET',
@@ -516,7 +516,7 @@
             }else{
                 var areaCode = $("#areaCode").val();
                 if(phone!=""){
-                    var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + phone + "&areaCode=" + areaCode;
+                    var linkUrl = "<c:url value="/siteManage/checkSiteWithLoginName?loginName=" />" + phone + "&areaCode=" + areaCode;
                     $.ajax({
                         url: linkUrl,
                         type: 'GET',
@@ -595,7 +595,7 @@
     $("#conFirmForValidBtn").click(function(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/validSite" />',
+            url: '<c:url value="/siteManage/validSite" />',
             dataType: "text",
             data: {
                 "phone": $("#phoneForModal").val()
@@ -613,7 +613,7 @@
     $("#conFirmForTurnDownBtn").click(function(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/turnDownSite" />',
+            url: '<c:url value="/siteManage/turnDownSite" />',
             dataType: "text",
             data: {
                 "phone": $("#phoneForModal").val(),
@@ -634,7 +634,7 @@
         console.log("停用站点");
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/stopSite" />',
+            url: '<c:url value="/siteManage/stopSite" />',
             dataType: "text",
             data: {
                 "areaCode": areaCode
@@ -653,7 +653,7 @@
     function enableSiteFct(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/startSite" />',
+            url: '<c:url value="/siteManage/startSite" />',
             dataType: "text",
             data: {
                 "areaCode": areaCode
@@ -672,7 +672,7 @@
     function delSiteFct(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/delSite" />',
+            url: '<c:url value="/siteManage/delSite" />',
             dataType: "text",
             data: {
                 "areaCode": areaCode
@@ -723,7 +723,7 @@ function createSite(){
         $('#areaCodeForModal').val(areaCode);
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/getSiteByAreaCode" />',
+            url: '<c:url value="/siteManage/getSiteByAreaCode" />',
             data: {
                 "areaCode": areaCode
             },
@@ -796,7 +796,7 @@ function createSite(){
     function updateAreaFct(areaFlag) {
         $.ajax({
             type : "POST",  //提交方式
-            url : "<c:url value="/system/siteManage/updateArea?${_csrf.parameterName}=${_csrf.token}" />",//路径
+            url : "<c:url value="/siteManage/updateArea?${_csrf.parameterName}=${_csrf.token}" />",//路径
             data : {
                 areaCode : areaCode,
                 areaFlag : areaFlag
