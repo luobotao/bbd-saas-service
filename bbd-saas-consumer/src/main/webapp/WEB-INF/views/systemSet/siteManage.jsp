@@ -432,9 +432,9 @@
             row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp' data-toggle='modal' data-target='#siteModal'>修改</span> ";
             row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableSite', '确认停用站点吗？')\" class='orange cp'>停用站点</span>";
             if(data.areaFlag == 1 ){
-                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确认停用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确认停用配送区域吗？')\" class='orange cp ml16' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
             }else{
-                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableArea', '确认启用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>启用配送区域</span> ";
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableArea', '确认启用配送区域吗？')\" class='orange cp ml16' data-toggle='modal' data-target='#confirmModal'>启用配送区域</span> ";
             }
         }
         if(data.status=="<%=SiteStatus.INVALID%>" ){
