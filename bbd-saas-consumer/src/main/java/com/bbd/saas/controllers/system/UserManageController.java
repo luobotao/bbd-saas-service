@@ -576,7 +576,7 @@ public class UserManageController {
 		if(loginName == null){
 			return "false";
 		}
-		User user = userService.findUserByLoginName(loginName);
+		User user = userService.findByLoginNameAndId(loginName, userId);
 		if(user != null){
 			return "true";
 		}else{
