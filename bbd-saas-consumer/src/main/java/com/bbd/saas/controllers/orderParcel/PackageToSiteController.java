@@ -262,7 +262,7 @@ public class PackageToSiteController {
 				map.put("success", true);
 			}else{
 				map.put("success", false);
-				map.put("msg", "设置超区失败，当前运单已" + order.getOrderStatusMsg());
+				map.put("msg", "设置超区失败，当前运单已" + order.getOrderStatusMsg().replace("已", ""));
 			}
 
 		}else{
