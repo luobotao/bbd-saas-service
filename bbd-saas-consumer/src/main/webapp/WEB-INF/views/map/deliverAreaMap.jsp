@@ -1294,7 +1294,6 @@
 		}
 		if(confirm('确认删除？')){
 			var url = "${ctx}/siteKeyWord/deleteKeyword/"+id;
-			$(".spinner").modal('show');
 			doDelete(url);
 		}
 	}
