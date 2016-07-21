@@ -1109,9 +1109,6 @@
 					fenceObj.map.reset();
 				}, 300);
 			}
-
-
-
 		}
 	});
 	window.setTimeout(function(){

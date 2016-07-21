@@ -400,9 +400,9 @@
 		if(isBatchToSite){//批量到站
 			doBatchToSite()();
 		}else{//单个运单到站
-			$("#mailNumP").html("");
-			$("#mailNumP").attr("style","display:none");
 			gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
+			$("#mailNumP").html("扫描成功，运单到站");
+			$("#mailNumP").attr("style","color:red");
 			$("#toSitePrompt").modal("hide");
 		}
 
