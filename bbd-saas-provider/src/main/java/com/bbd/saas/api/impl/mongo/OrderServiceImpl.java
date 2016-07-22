@@ -310,7 +310,7 @@ public class OrderServiceImpl implements OrderService {
      */
 	public String updateParcelWithOrder(Order order) {
 		try {
-			if(order!=null&& PrintStatus.waitToPrint.equals(order.getPrintStatus())) {
+			if(order!=null) {
 				//查询订单所在站点是否已有Suspense待打包的包裹
 				OrderParcel orderParcel = orderParcelDao.findByOrderInfo(order);
 				if (orderParcel == null) {
