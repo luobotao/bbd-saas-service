@@ -7,16 +7,14 @@ import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
+import com.bbd.saas.api.mongo.WayService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.*;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.OrderNum;
-import com.bbd.saas.mongoModels.OrderParcel;
-import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
@@ -28,7 +26,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
-import com.mongodb.util.JSONSerializers;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -57,8 +54,10 @@ public class OrderServiceImpl implements OrderService {
 	private PostmanUserService userMysqlService;
 	@Autowired
 	private SiteService siteService;
+	@Autowired
+	private WayService wayService;
 
-	Gson gson = new Gson();
+
 
     public UserDao getUserDao() {
 		return userDao;
@@ -341,6 +340,8 @@ public class OrderServiceImpl implements OrderService {
 					orderParcel.setCity(site.getCity());
 					orderParcel.setArea(site.getArea());
 					orderParcel.setOrdercnt(1);
+					orderParcel.setWayDate("");
+					orderParcel.setWayname("");
 					logger.info(String.format("插入包裹 来源：%s 站点：%s 状态：%s 订单数量%d --> %d", orderParcel.getSrc(), orderParcel.getAreaCode(), orderParcel.getStatus().getMessage(), 0, 1));
 				} else {
 					logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel id:", orderParcel.getId()));
@@ -475,5 +476,17 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> findByDateAdd(Date dateAdd) {
 		return orderDao.findByDateAdd(dateAdd);
+	}
+
+	public String findWayNameBySite(Site site) {
+		String wayName = "";
+		if(site!=null) {
+			List<Way> wayList = wayService.findAllWayBySiteId(site.getId().toString());
+			if (wayList != null && wayList.size() > 0) {
+				Way way = wayList.get(0);
+				wayName = way.name;
+			}
+		}
+		return wayName;
 	}
 }

@@ -179,4 +179,6 @@ public interface OrderService {
 	String updateParcelWithOrder(Order order);
 
 	List<Order> findByDateAdd(Date date);
+
+	String findWayNameBySite(Site site);
 }
