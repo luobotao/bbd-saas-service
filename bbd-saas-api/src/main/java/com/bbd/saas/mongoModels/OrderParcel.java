@@ -61,6 +61,8 @@ public class OrderParcel implements Serializable {
     private String area;
     //包裹订单数量
     private Integer ordercnt;
+    private String wayDate;
+    private String wayname;
 
     // 路线时间
     private String wayDate;

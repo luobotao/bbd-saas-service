@@ -137,7 +137,7 @@
 									%>
 									<%-- 签收时间  end --%>
 									<%
-										if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
+										if(order.getUserId() == null || "".equals(order.getUserId()) ||order.getUserVO()==null){//未分派
 									%>
 											<td></td>
 											<td></td>
