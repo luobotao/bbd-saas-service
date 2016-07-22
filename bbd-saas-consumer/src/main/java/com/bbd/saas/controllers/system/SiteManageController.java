@@ -166,7 +166,6 @@ public class SiteManageController {
 				site.setStatus(SiteStatus.APPROVE);
 				site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
 				user.setPassWord(siteForm.getPassword());
-				postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
 				user.setUserStatus(UserStatus.VALID);//公司创建的为有效
 				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone(), 0);
 				if (postmanUser == null) {
@@ -220,6 +219,7 @@ public class SiteManageController {
 		postmanUser.setDateNew(new Date());
 		postmanUser.setPoststatus(1);//默认为1
 		postmanUser.setPostrole(4);
+		postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
 		//staffid就是该用户的手机号
 		postmanUser.setStaffid(loginName.replaceAll(" ", ""));
 	}
