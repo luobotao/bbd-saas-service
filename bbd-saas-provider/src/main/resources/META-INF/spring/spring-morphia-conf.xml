@@ -13,11 +13,11 @@
         <!-- 对应全局的WriteConcern中的w，默认为0 -->
         <property name="writeConcern" value="0" />
         <!-- 与每个主机的连接数，默认为10 -->
-        <property name="minConnectionsPerHost" value="10" />
+        <property name="minConnectionsPerHost" value="100" />
         <!-- 与每个主机的连接数，默认为10 -->
-        <property name="maxConnectionsPerHost" value="10" />
+        <property name="maxConnectionsPerHost" value="200" />
         <!-- 可等待线程倍数，默认为5.例如connectionsPerHost最大允许10个连接，则10*5=50个线程可以等待，更多的线程将直接抛异常 -->
-        <property name="threadsAllowedToBlockForConnectionMultiplier" value="5" />
+        <property name="threadsAllowedToBlockForConnectionMultiplier" value="2" />
         <!-- 线程等待连接可用的最大时间(毫秒)，默认为120000 -->
         <property name="maxWaitTime" value="120000" />
         <!-- 线程等待连接可用的最大时间(毫秒)，默认为120000 -->
