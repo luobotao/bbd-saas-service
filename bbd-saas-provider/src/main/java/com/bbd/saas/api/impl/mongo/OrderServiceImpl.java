@@ -26,7 +26,9 @@ import com.bbd.saas.vo.OrderUpdateVO;
 import com.bbd.saas.vo.Reciever;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
+import com.mongodb.util.JSONSerializers;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -55,6 +57,8 @@ public class OrderServiceImpl implements OrderService {
 	private PostmanUserService userMysqlService;
 	@Autowired
 	private SiteService siteService;
+
+	Gson gson = new Gson();
 
     public UserDao getUserDao() {
 		return userDao;
@@ -440,6 +444,7 @@ public class OrderServiceImpl implements OrderService {
 							return o2.getValue().compareTo(o1.getValue());
 						}
 					});
+					logger.info("[findBestSiteWithAddress]address:"+address+"  ,result："+gson.toJson(list));
 					resultAreaCode = list.get(0).getKey();
 				}catch(Exception e){
 					e.printStackTrace();
