@@ -61,6 +61,8 @@ public class OrderParcel implements Serializable {
     private String area;
     //包裹订单数量
     private Integer ordercnt;
+    private String wayDate;
+    private String wayname;
 
     public ObjectId getId() {
         return id;
@@ -228,5 +230,21 @@ public class OrderParcel implements Serializable {
 
     public void setOrdercnt(Integer ordercnt) {
         this.ordercnt = ordercnt;
+    }
+
+    public String getWayDate() {
+        return wayDate;
+    }
+
+    public void setWayDate(String wayDate) {
+        this.wayDate = wayDate;
+    }
+
+    public String getWayname() {
+        return wayname;
+    }
+
+    public void setWayname(String wayname) {
+        this.wayname = wayname;
     }
 }
