@@ -24,7 +24,6 @@ import com.bbd.saas.vo.OrderUpdateVO;
 import com.bbd.saas.vo.Reciever;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
@@ -312,7 +311,7 @@ public class OrderServiceImpl implements OrderService {
      */
 	public String updateParcelWithOrder(Order order) {
 		try {
-			if(order!=null&& PrintStatus.waitToPrint.equals(order.getPrintStatus())) {
+			if(order!=null) {
 				//查询订单所在站点是否已有Suspense待打包的包裹
 				OrderParcel orderParcel = orderParcelDao.findByOrderInfo(order);
 				if (orderParcel == null) {
@@ -465,12 +464,14 @@ public class OrderServiceImpl implements OrderService {
 		try {
 			//通过积分获取优选区域码，暂时用第一个
 			String siteId = findBestSiteWithAddress(address);
-			Site site = siteService.findSite(siteId);
-			return site;
+			if(!"".equals(siteId)) {
+				Site site = siteService.findSite(siteId);
+				return site;
+			}
 		}catch (Exception e){
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	@Override
