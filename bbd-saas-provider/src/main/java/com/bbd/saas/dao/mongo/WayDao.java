@@ -33,7 +33,7 @@ public class WayDao extends BaseDAO<Way, ObjectId> {
         Query<Way> query = createQuery();
         if(StringUtils.isNotBlank(siteId)){
             query.filter("sites.siteId", siteId);
-            count(query);
+            return count(query);
         }
         return  0L;
     }
