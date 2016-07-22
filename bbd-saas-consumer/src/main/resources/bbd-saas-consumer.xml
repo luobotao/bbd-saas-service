@@ -10,9 +10,10 @@
     <!-- 	启动时不检查提供者 	-->
 	<dubbo:consumer check="false" timeout="30000"></dubbo:consumer>
 
-    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
+
     <!--生产环境外网IP-->
-     <dubbo:registry address="zookeeper://10.172.222.209:2181"/>
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+     <!--<dubbo:registry address="zookeeper://10.172.222.209:2181"/>-->
     <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
 
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.mongo.AdminUserService"/>
@@ -28,6 +29,7 @@
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
     <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />
     <dubbo:reference id="geo" interface="com.bbd.poi.api.Geo" />
+    <dubbo:reference id="postmanPoiApi" interface="com.bbd.poi.api.PostmanPoiApi" />
     <!--ToOtherSiteLog Service-->
     <dubbo:reference id="toOtherSiteLogService" interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" />
     <!--orderTrackService from bbd-driver-api -->
@@ -38,6 +40,8 @@
     <dubbo:reference id="tradeService" interface="com.bbd.saas.api.mongo.TradeService"/>
     <!--Constant Service-->
     <dubbo:reference id="constantService" interface="com.bbd.saas.api.mongo.ConstantService"/>
+    <!--Way Service-->
+    <dubbo:reference id="wayService" interface="com.bbd.saas.api.mongo.WayService"/>
 
     <!--expressExchangeService Service-->
     <dubbo:reference id="expressExchangeService" interface="com.bbd.saas.api.mongo.ExpressExchangeService"/>
@@ -56,4 +60,5 @@
     <dubbo:reference id="expressCompanyService" interface="com.bbd.saas.api.mysql.ExpressCompanyService"/>
 
     <dubbo:reference id="balanceService" interface="com.bbd.saas.api.mysql.BalanceService"/>
+    <dubbo:reference id="geoRecHistoService" interface="com.bbd.saas.api.mysql.GeoRecHistoService"/>
 </beans>

@@ -36,6 +36,7 @@ public class Site implements Serializable {
     private String companyName;      //所属公司名称
     private String companycode;      //所属公司编码
     private SiteStatus status;       //状态
+    private int areaFlag;//配送区域是否有效。1：有效；0：无效
     private String memo;       //备注
     private SiteTurnDownReasson turnDownReasson;       //驳回原因
     private String otherMessage;       //其他原因
@@ -265,5 +266,17 @@ public class Site implements Serializable {
 
     public void setTurnDownMessage(String turnDownMessage) {
         this.turnDownMessage = turnDownMessage;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public int getAreaFlag() {
+        return areaFlag;
+    }
+
+    public void setAreaFlag(int areaFlag) {
+        this.areaFlag = areaFlag;
     }
 }

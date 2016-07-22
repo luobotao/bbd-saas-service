@@ -224,7 +224,7 @@
 					</li>
 					<li>
 						<i>　运单号：</i>
-						<input id="mailNum" name="mailNum"  class="form-control form-bod" type="text" placeholder="请输入运单号" />
+						<input id="mailNum" name="mailNum"  onkeyup="this.value=this.value.replace(/^ +| +$/g,'')" class="form-control form-bod" type="text" placeholder="请输入运单号" />
 					</li>
 				</ul>
 				<div class="row mt20">
@@ -746,6 +746,11 @@ function toOtherExpressCompanys() {
 		ioutDiv("请输入运单号");
 		$("#mailNum").focus();
 		return false;
+	}else{
+		if(!mailNumreg.test(mailNumNew)){
+			ioutDiv("请输入10-20位数字或字母组成的运单号");
+			return false;
+		}
 	}
 	//获取当前页
 	var pageIndex = getCurrPage();

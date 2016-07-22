@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("/packageDispatch")
@@ -113,7 +114,8 @@ public class PackageDispatchController {
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			//查询派件员姓名电话
 			if(orderPage != null && orderPage.getDatas() != null){
-				formatOrder(orderPage.getDatas()) ;
+				List<Order> orderList = formatOrder(orderPage.getDatas()) ;
+				orderPage.setDatas(orderList);
 			}
 		} catch (Exception e) {
 			logger.error("===分页Ajax更新列表===出错:" + e.getMessage());
@@ -229,19 +231,6 @@ public class PackageDispatchController {
 	@SuppressWarnings("deprecation")
 	private void setOrderExpress(Order order, User user){
 		String remark = null;
-		/*if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
-            if(new Date().getHours() < 19){
-            	express.setRemark("配送员正在为您派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
-            }else{
-            	express.setRemark("配送员正在为您派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
-            }
-        }else{
-        	if(new Date().getHours() < 19){
-            	express.setRemark("配送员正在为您重新派件，预计3小时内送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
-            }else{
-            	express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + user.getRealName() + " " + user.getLoginName());
-            }
-        }*/
 		if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
 			remark = "配送员正在为您派件，配送员电话：" + user.getRealName() + " " + user.getLoginName();
 		}else{
@@ -350,4 +339,114 @@ public class PackageDispatchController {
 		}
 		return orderList;
 	}
+
+	/**
+	 * 运单取消分派
+	 * @param mailNum 运单号
+	 * @param request 请求
+	 * @return 返回值 true:操作成功；false:操作失败
+	 */
+	@ResponseBody
+	@RequestMapping(value="/checkOrderStatus", method=RequestMethod.POST)
+	public Map<String, Object>  checkOrderStatus(String mailNum, final HttpServletRequest request) {
+		Map<String, Object> map = null;
+		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
+			//查询运单信息
+			Order order = orderService.findOneByMailNum(null, mailNum);
+			map = new ConcurrentHashMap<String, Object>();
+			if(order == null){//运单不存在,与站点无关
+				map.put("code", -1);
+				map.put("msg", "运单不存在");
+			}else if(!order.getAreaCode().equals(currUser.getSite().getAreaCode())){
+				map.put("code", -1);
+				map.put("msg", "此运单不属于本站点");
+			}else if(order.getOrderStatus() != OrderStatus.DISPATCHED){
+				map.put("code", 0);
+				map.put("msg", order.getOrderStatus().getMessage());
+			}else{
+				map.put("code", 1);
+			}
+		} catch (Exception e) {
+			logger.error("===取消分派，检查运单状态===出错:" + e.getMessage());
+		}
+		return map;
+	}
+	/**
+	 * 运单取消分派
+	 * @param mailNum 运单号
+	 * @param request 请求
+     * @return 返回值 true:操作成功；false:操作失败
+     */
+	@ResponseBody
+	@RequestMapping(value="/cancelDispatch", method=RequestMethod.POST)
+	public Map<String, Object>  cancelDispatch(String mailNum, final HttpServletRequest request) {
+		Map<String, Object> map = null;
+		try {
+			if(mailNum != null){
+				mailNum = mailNum.trim();
+			}
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
+			//查询运单信息
+			Order order = orderService.findOneByMailNum(null, mailNum);
+			map = new ConcurrentHashMap<String, Object>();
+			if(order == null){//运单不存在,与站点无关
+				map.put("success", false);
+				map.put("msg", "运单不存在");
+			}else if(!order.getAreaCode().equals(currUser.getSite().getAreaCode())){
+				map.put("success", false);
+				map.put("msg", "此运单不属于本站点");
+			}else if(order.getOrderStatus() != OrderStatus.DISPATCHED){
+				map.put("success", true);
+				map.put("msg", "该订单已被处理");
+			}else{//运单存在
+				//添加物流信息
+				return saveOrderMail(order, currUser, map);
+			}
+		} catch (Exception e) {
+			logger.error("===取消运单分派===出错:" + e.getMessage());
+		}
+		return map;
+	}
+	/**
+	 * Description: 运单分派--mongodb库中跟新派件员和运单状态，添加一条数据到mysql库或者更新mysql库中快递员信息
+	 * @param order 订单
+	 * @param currUser 当前用户
+	 * @author: liyanlei
+	 * 2016年4月16日上午11:36:08
+	 */
+	private Map<String, Object> saveOrderMail(Order order, User currUser, Map<String, Object> map){
+		//运单分派给派件员
+		order.setUserId(null);
+		//更新物流信息
+		//OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, currUser, "取消分派");
+		//更新运单状态--未分派
+		order.setOrderStatus(OrderStatus.NOTDISPATCH);
+		order.setExpressStatus(ExpressStatus.ArriveStation);
+		order.setDateUpd(new Date());
+		//更新运单
+		Key<Order> r = orderService.save(order);
+		if(r != null && r.getId() != null){
+			int num = postDeliveryService.deleteByMailNum(order.getMailNum());
+			int j = 0;
+			while (num == 0 && j < 3 ){//最多执行3次
+				num = postDeliveryService.deleteByMailNum(order.getMailNum());
+				j++;
+			}
+			logger.info("运单取消分派成功，已删除mysql的bbt数据库的postdelivery表中记录，mailNum："+order.getMailNum()+", 执行次数："+j);
+			//smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),currUser.getRealName(),currUser.getLoginName(),contact,order.getReciever().getPhone());
+			map.put("success", true);
+			map.put("msg", "取消分派成功");
+		}else{
+			map.put("success", false);
+			map.put("msg", "取消分派失败");
+		}
+		return map;
+	}
+
 }

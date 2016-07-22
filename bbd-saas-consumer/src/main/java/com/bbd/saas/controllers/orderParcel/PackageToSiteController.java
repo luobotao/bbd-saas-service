@@ -15,18 +15,12 @@ import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.OrderCommon;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.Express;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
-import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang3.StringUtils;
-import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +29,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("/packageToSite")
@@ -159,11 +151,13 @@ public class PackageToSiteController {
 		}
 		if (pageIndex==null) pageIndex =0 ;
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.arriveStatus = arriveStatus;
-		orderQueryVO.between = between;
 		orderQueryVO.parcelCode = parcelCode;
 		orderQueryVO.mailNum = mailNum;
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
+		if(StringUtils.isEmpty(parcelCode) && StringUtils.isEmpty(mailNum)){
+			orderQueryVO.arriveStatus = arriveStatus;
+			orderQueryVO.between = between;
+		}
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
 		pageModel.setPageSize(50);
@@ -204,14 +198,13 @@ public class PackageToSiteController {
 		BasicDBList idList = (BasicDBList) JSON.parse(ids);
 		for (Object mailNum :idList){
 			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum.toString());
-			if(order!=null){
+			if(order !=null && (order.getOrderStatus() == OrderStatus.NOTARR || order.getOrderStatus() == null)){//只有未到站的才做到站处理
 				orderToSite(order,user);
 			}
 //			orderService.updateOrderOrderStatu(mailNum.toString(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);
 		}
 		return true;
 	}
-
 	/**
 	 * 单个订单到站方法
 	 * @param order
@@ -220,20 +213,9 @@ public class PackageToSiteController {
 	public void orderToSite(Order order,User user ) {
 		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
 		order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
-		Express express = new Express();
-		express.setDateAdd(new Date());
-		express.setLat(user.getSite().getLat());
-		express.setLon(user.getSite().getLng());
-		express.setRemark("订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
-		List<Express> expressList = order.getExpresses();
-		if (expressList == null)
-			expressList = Lists.newArrayList();
-		expressList.add(express);//增加一条物流信息
-		order.setExpressStatus(ExpressStatus.ArriveStation);
-		order.setExpresses(expressList);
-		order.setDateUpd(new Date());
+		//增加物流信息
+		OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 		orderService.save(order);
-
         if(order != null){
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
 				ExpressExchange expressExchange=new ExpressExchange();
@@ -257,23 +239,36 @@ public class PackageToSiteController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/doSuperArea", method = RequestMethod.POST)
-	public boolean doSuperArea(HttpServletRequest request,String mailNum) {
+	public Map<String, Object> doSuperArea(HttpServletRequest request, String mailNum) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		return doOneSuperArea(user, mailNum);
 	}
-	private boolean doOneSuperArea(User user, String mailNum){
+	private Map<String, Object> doOneSuperArea(User user, String mailNum){
+		Map<String, Object> map = new ConcurrentHashMap<String, Object>();
 		Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(), mailNum);
-		if(order!=null){
-			order.setOrderStatus(OrderStatus.RETENTION);//滞留
-			order.setDateArrived(new Date());
-			OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因：超出配送范围。");
-			//更新mysql
-			//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
-			orderService.save(order);
-			postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因：超出配送范围。","滞留原因：超出配送范围");
-			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+		if(order != null){
+			if(order.getOrderStatus() == OrderStatus.NOTARR
+				|| order.getOrderStatus() == OrderStatus.NOTDISPATCH
+				|| order.getOrderStatus() == OrderStatus.DISPATCHED){
+				order.setOrderStatus(OrderStatus.RETENTION);//滞留
+				order.setDateArrived(new Date());
+				OrderCommon.addOrderExpress(ExpressStatus.Delay, order, user, "订单已被滞留，滞留原因：超出配送范围。");
+				//更新mysql
+				//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
+				orderService.save(order);
+				postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因：超出配送范围。","滞留原因：超出配送范围");
+				orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+				map.put("success", true);
+			}else{
+				map.put("success", false);
+				map.put("msg", "设置超区失败，当前运单已" + order.getOrderStatusMsg().replace("已", ""));
+			}
+
+		}else{
+			map.put("success", false);
+			map.put("msg", "运单不存在或者不属于本站点");
 		}
-		return true;
+		return map;
 	}
 
 
@@ -311,7 +306,8 @@ public class PackageToSiteController {
 		boolean r = true;
 		for (Object mailNum : mailNumList){
 			if(r){
-				r = doOneSuperArea(user, mailNum.toString());
+				Map<String, Object> map = doOneSuperArea(user, mailNum.toString());
+				r = (Boolean) map.get("success");
 			}else{
 				doOneSuperArea(user, mailNum.toString());
 			}

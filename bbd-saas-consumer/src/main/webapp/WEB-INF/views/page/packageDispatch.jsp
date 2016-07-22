@@ -116,14 +116,19 @@
 									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
 								%>
 									<td><em class="orange"><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>
+									<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a></td>
 								<%
 									}else{
 								%>
 									<td><em class="c-green"><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>
+									<td>
+										<a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a>
+										<a href="javascript:void(0);" onclick="checkOrderStatus('<%=order.getMailNum()%>')" class="orange">取消分派</a>
+									</td>
 								<%
 									}
 								%>
-								<td><a href="javascript:void(0);" onclick="showSuperAreaDiv('<%=order.getMailNum()%>')" class="orange" data-toggle="modal" data-target="#superAreaDiv">设为超区件</a></td>
+
 							</tr>
 						<%
 							}//for
@@ -191,6 +196,61 @@
 </div>
 <!-- 运单分派面板-结束 -->
 
+<!--S 取消分派-->
+<div class="j-pl-pop modal fade" id="confirmDiv" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal_wrapper">
+		<div class="modal-dialog b-modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header b-modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title  tc" id="confirmTitle">确 认</h4>
+				</div>
+				<div class="modal-body b-modal-bodyS tc">
+					<em class="f16" id="confirmBody">确认将该订单设置为超区件？</em>
+					<div class="row mt20">
+						<span class="col-md-6">
+							<button type="button" class="sbtn sbtn2 g" data-dismiss="modal" class="close">取消</button>
+						</span>
+						<span class="col-md-6">
+							<button  type="button" class="sbtn sbtn2 l" onclick="doOperation()">确认</button>
+						</span>
+					</div>
+				</div>
+
+
+
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 取消分派-->
+
+<!--S 订单已被处理-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="orderStatusLabel" id="orderStatusModal"
+	 aria-hidden="true">
+	<div class="modal-dialog b-modal-dialog middleS" role="document">
+		<div class="modal-content">
+			<div class="modal-header b-modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4 class="modal-title tc">提 示</h4>
+			</div>
+			<div class="modal-body b-modal-bodyS">
+				<div class="pop-tip2">
+					<i class="mr10">
+						<img src="<c:url value="/resources/images/per_erroricon.png" />" />
+					</i>
+					<em class="f16" id="modal_body"></em>
+				</div>
+
+				<div class="clearfix mt20 tc">
+					<button  type="button" class="ser-btn l w160" onclick="closeModal('orderStatusModal')">确 定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--E 订单已被处理-->
+
 <jsp:include page="superArea.jsp" flush="true" />
 
 <script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
@@ -198,7 +258,8 @@
 <script type="text/javascript">
 var courierIsLoadSuccess = 0;
 var status = ""; 
-var arriveBetween = ""; 
+var arriveBetween = "";
+var operFlag = ""; //操作类型（cancelDispatch：取消分派；）
 
 $(document).ready(function() {
 	//显示分页条
@@ -300,6 +361,9 @@ function queryData(pageIndex) {
  
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
+	if(pageIndex == null){
+		pageIndex = parseInt($(".pagination .active").text())-1;
+	}
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -368,10 +432,12 @@ function getRowHtml(data){
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
 		row += "<td><em class='orange'><%=DispatchStatus.NOTDISPATCH.getMessage()%></em></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
 	}else{
 		row += "<td><em class='c-green'><%=DispatchStatus.DISPATCHED.getMessage()%></em></td>";
+		row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a>" +
+				"<a href='javascript:void(0);' onclick='checkOrderStatus(\"" + data.mailNum + "\")' class='orange ml16'>取消分派</a></td>";
 	}
-	row += "<td><a href='javascript:void(0);' onclick='showSuperAreaDiv(\"" + data.mailNum + "\")' class='orange' data-toggle='modal' data-target='#superAreaDiv'>设为超区件</a></td>";
 	row += "</tr>";
 	return row;
 }
@@ -439,7 +505,77 @@ function chooseCourier() {
   	arriveBetween = ""; 
 	$("#chooseCourier_div").modal("hide");
 }
-	
+
+/******************************************************** 取消操作 *****************************************************************/
+	//显示操作提示框
+	function showConfirmDiv(mailNumStr, operType, info) {
+		mailNum = mailNumStr;
+		operFlag = operType;
+		$("#confirmBody").html(info);
+	}
+	//操作确认按钮
+	function doOperation() {
+		if(operFlag == "cancelDispatch"){//取消分派
+			doCancel();
+		}
+	}
+	//检查订单状态，只有订单处于已分派时，才能取消分派
+	function checkOrderStatus(mailNumStr) {
+		$.ajax({
+			type : "POST",  //提交方式
+			url : "<c:url value="/packageDispatch/checkOrderStatus?${_csrf.parameterName}=${_csrf.token}" />",//路径
+			data : {
+				"mailNum" : mailNumStr
+			},//数据，这里使用的是Json格式进行传输
+			success : function(data) {//返回数据根据结果进行相应的处理
+				if(data != null){
+					if(data.code == 1){//订单状态为已分派
+						//执行取消分派操作
+						showConfirmDiv(mailNumStr, 'cancelDispatch', '确定取消分派？');
+						$("#confirmDiv").modal("show");
+					}else if(data.code == 0){//订单状态不为已分派
+						$("#orderStatusModal").modal("show");
+						$("#modal_body").html("取消分派失败！该订单已被" + data.msg + "!");
+					}else{//datat.code == -1,订单不存在
+						ioutDiv(data.msg);
+					}
+				}
+			},
+			error : function() {
+				ioutDiv("服务器繁忙，请稍后再试！");
+			}
+		});
+		$("#confirmDiv").modal("hide");
+	}
+
+	//取消分派
+	function doCancel() {
+		$.ajax({
+			type : "POST",  //提交方式
+			url : "<c:url value="/packageDispatch/cancelDispatch?${_csrf.parameterName}=${_csrf.token}" />",//路径
+			data : {
+				mailNum : mailNum
+			},//数据，这里使用的是Json格式进行传输
+			success : function(data) {//返回数据根据结果进行相应的处理
+				if(data != null){
+					ioutDiv(data.msg);
+					if(data.success){//取消分派成功
+						gotoPage();
+					}
+				}
+			},
+			error : function() {
+				ioutDiv("服务器繁忙，请稍后再试！");
+			}
+		});
+		$("#confirmDiv").modal("hide");
+	}
+	//操作确认按钮
+	function closeModal(modalId) {
+		$("#"+modalId).modal("hide");
+	}
+/********************************************************** 取消操作 **************************************************************/
+
 </script>
 </body>
 </html>

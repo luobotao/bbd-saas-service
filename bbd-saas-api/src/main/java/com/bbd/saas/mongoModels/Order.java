@@ -4,12 +4,10 @@ import com.bbd.saas.enums.*;
 import com.bbd.saas.vo.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -64,8 +62,11 @@ public class Order implements Serializable {
     private int isRemoved;//是否被移除？ 0：未被移除； 1：被移除
     private String removeReason;//移除原因
     private OrderSetStatus orderSetStatus;//运单集包状态
-    @Transient
-    private String parcelCode;
+    private String parcelCode;//包裹号码默认为空
+    private String tradeStationId;
+    private String embraceId;//揽件员id
+    private String disAreaCode;//分拨中心Code
+    private List<SiteTime> siteTimes;//揽件时间的集合
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -75,6 +76,11 @@ public class Order implements Serializable {
     @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
+    public static class SiteTime implements Serializable{
+        public String siteId;
+        public OrderSetStatus orderSetStatus;
+        public Date dateAdd;
+    }
 
     public List<OtherExpreeVO> getOtherExprees() {
         return otherExprees;
@@ -427,5 +433,37 @@ public class Order implements Serializable {
 
     public void setOrderSetStatus(OrderSetStatus orderSetStatus) {
         this.orderSetStatus = orderSetStatus;
+    }
+
+    public String getTradeStationId() {
+        return tradeStationId;
+    }
+
+    public void setTradeStationId(String tradeStationId) {
+        this.tradeStationId = tradeStationId;
+    }
+
+    public String getEmbraceId() {
+        return embraceId;
+    }
+
+    public void setEmbraceId(String embraceId) {
+        this.embraceId = embraceId;
+    }
+
+    public String getDisAreaCode() {
+        return disAreaCode;
+    }
+
+    public void setDisAreaCode(String disAreaCode) {
+        this.disAreaCode = disAreaCode;
+    }
+
+    public List<SiteTime> getSiteTimes() {
+        return siteTimes;
+    }
+
+    public void setSiteTimes(List<SiteTime> siteTimes) {
+        this.siteTimes = siteTimes;
     }
 }

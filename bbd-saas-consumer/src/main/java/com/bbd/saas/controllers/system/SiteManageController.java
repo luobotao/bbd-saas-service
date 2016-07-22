@@ -5,6 +5,7 @@ import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mongo.WayService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
@@ -45,7 +46,7 @@ import java.util.List;
  * 骆波涛
  */
 @Controller
-@RequestMapping("/system/siteManage")
+@RequestMapping("/siteManage")
 public class SiteManageController {
 	public static final Logger logger = LoggerFactory.getLogger(SiteManageController.class);
 	@Autowired
@@ -60,7 +61,8 @@ public class SiteManageController {
 	SiteService siteService;
 	@Autowired
 	SitePoiApi sitePoiApi;
-
+	@Autowired
+	WayService wayService;
 	/**
 	 * 检查手机号是否被注册
 	 * @param loginName 手机号
@@ -111,7 +113,7 @@ public class SiteManageController {
 	@RequestMapping(value="/saveSite",method=RequestMethod.POST)
 	public boolean saveSite(HttpServletRequest request, @Valid SiteForm siteForm, BindingResult result) throws IOException {
 		User userNow = adminService.get(UserSession.get(request));
-		if(result.hasErrors()){
+		if (result.hasErrors()) {
 			return false;
 		}
 		Site site = new Site();
@@ -119,129 +121,148 @@ public class SiteManageController {
 		PostmanUser postmanUser = new PostmanUser();
 		String newPhone = siteForm.getPhone();
 		String oldPhone = "";
-		if(StringUtils.isNotBlank(siteForm.getAreaCode())){//公司用户对站点进行修改
+
+		if (StringUtils.isNotBlank(siteForm.getAreaCode())) {//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
-			BeanUtils.copyProperties(siteForm,site);
+			BeanUtils.copyProperties(siteForm, site);
 			user = userService.findUserByLoginName(site.getUsername());
 			user.setLoginName(newPhone);
 			postmanUser = userMysqlService.selectPostmanUserByPhone(site.getUsername(), 0);
-			if(postmanUser==null){
+			if (postmanUser == null) {
 				postmanUser = new PostmanUser();
 			}
 			site.setUsername(newPhone);
-			Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
-			if(postcompany!=null){
-				site.setCompanyId(userNow.getCompanyId());
-				site.setCompanyName(postcompany.getCompanyname());
-				site.setCompanycode(postcompany.getCompanycode());
-			}
+			//当前登录公司用户的公司ID
+			setSiteCompany(site, userNow.getCompanyId());
 			user.setPassWord(siteForm.getPassword());
 			user.setUserStatus(UserStatus.VALID);//公司修改设置为有效
-		}else{
-			if("1".equals(siteForm.getFrom())){//外部注册 驳回时的修改
+		} else {
+			if ("1".equals(siteForm.getFrom())) {//外部注册 驳回时的修改
 				Site siteTemp = siteService.findSiteByUserName(siteForm.getPhone());
-				if(siteTemp!=null){//更新操作
+				if (siteTemp != null) {//更新操作
 					site = siteTemp;
 				}
 				oldPhone = site.getUsername();//newPhone == oldPhone
-				BeanUtils.copyProperties(siteForm,site);
-				Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(siteForm.getCompanyId(),0)) ;//当前登录公司用户的公司ID
-				if(postcompany!=null){
-					site.setCompanyId(siteForm.getCompanyId());
-					site.setCompanyName(postcompany.getCompanyname());
-					site.setCompanycode(postcompany.getCompanycode());
-				}
+				BeanUtils.copyProperties(siteForm, site);
+				setSiteCompany(site, siteForm.getCompanyId());
 				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone(), 0);
-				if(postmanUser==null)
+				if (postmanUser == null)
 					postmanUser = new PostmanUser();
 				site.setStatus(SiteStatus.WAIT);
 				site.setMemo("您的棒棒达快递账号申请信息提交成功。我们将在1-3个工作日完成审核。");
 				user = userService.findUserByLoginName(site.getUsername());
 				user.setUserStatus(UserStatus.INVALID);//设置为无效
 				postmanUser.setSta("3");//对应mongdb user表中的userStatus,默认3位无效
-			}else{//公司用户创建
+			} else {//公司用户创建
 				Site siteTemp = siteService.findSiteByUserName(siteForm.getPhone());
-				if(siteTemp!=null){//更新操作
+				if (siteTemp != null) {//更新操作
 					site = siteTemp;
 				}
-				BeanUtils.copyProperties(siteForm,site);
+				BeanUtils.copyProperties(siteForm, site);
 				String areaCode = siteService.dealOrderWithGetAreaCode(site.getProvince() + site.getCity());
 				site.setAreaCode(areaCode);
-				Postcompany postcompany =postcompanyService.selectPostmancompanyById(Numbers.parseInt(userNow.getCompanyId(),0)) ;//当前登录公司用户的公司ID
-				if(postcompany!=null){
-					site.setCompanyId(userNow.getCompanyId());
-					site.setCompanyName(postcompany.getCompanyname());
-					site.setCompanycode(postcompany.getCompanycode());
-				}
+				setSiteCompany(site, userNow.getCompanyId());
 				site.setStatus(SiteStatus.APPROVE);
 				site.setMemo("您提交的信息已审核通过，您可访问http://www.bangbangda.cn登录。");
 				user.setPassWord(siteForm.getPassword());
-				postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
 				user.setUserStatus(UserStatus.VALID);//公司创建的为有效
+				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone(), 0);
+				if (postmanUser == null) {
+					postmanUser = new PostmanUser();
+				} else {//手机号码重复，覆盖
+					oldPhone = siteForm.getPhone();
+				}
 			}
-
 			site.setDateAdd(new Date());
 			site.setUsername(siteForm.getPhone());
 			user.setDateAdd(new Date());
 			user.setLoginName(site.getUsername());
-
-			postmanUser.setHeadicon("");
-			postmanUser.setCardidno("");
-			postmanUser.setAlipayAccount("");
-			postmanUser.setToken("");
-			postmanUser.setBbttoken("");
-			postmanUser.setLat(0d);
-			postmanUser.setLon(0d);
-			postmanUser.setHeight(0d);
-			postmanUser.setAddr("");
-			postmanUser.setAddrdes("");
-			postmanUser.setShopurl("");
-
-			postmanUser.setSpreadticket("");
-			postmanUser.setDateNew(new Date());
-			postmanUser.setPoststatus(1);//默认为1
-			postmanUser.setPostrole(4);
-			//staffid就是该用户的手机号
-			postmanUser.setStaffid(user.getLoginName().replaceAll(" ", ""));
+			//设置postmanUser默认值
+			setPostmanUserDefaultValue(postmanUser, user.getLoginName());
 		}
-
-
-
 		site.setDateUpd(new Date());
-
 		Key<Site> siteKey = siteService.save(site);//保存站点
 		setLatAndLng(siteKey.getId().toString());//设置经纬度
-		//向用户表插入登录用户
-
-
-		user.setRealName(site.getResponser());
 		site.setId(new ObjectId(siteKey.getId().toString()));
-		user.setSite(site);
+		//向用户表插入登录用户
+		addUser(user, site, postmanUser, siteForm, newPhone, oldPhone);
+		return true;
+	}
+	private void setSiteCompany(Site site, String companyId){
+		Postcompany postcompany = postcompanyService.selectPostmancompanyById(Numbers.parseInt(companyId, 0));//当前登录公司用户的公司ID
+		if (postcompany != null) {
+			site.setCompanyId(companyId);
+			site.setCompanyName(postcompany.getCompanyname());
+			site.setCompanycode(postcompany.getCompanycode());
+		}
+	}
 
+	/**
+	 * 设置postmanUser默认值
+	 * @param postmanUser
+	 * @param loginName
+     */
+	private void setPostmanUserDefaultValue(PostmanUser postmanUser, String loginName){
+		postmanUser.setHeadicon("");
+		postmanUser.setCardidno("");
+		postmanUser.setAlipayAccount("");
+		postmanUser.setToken("");
+		postmanUser.setBbttoken("");
+		postmanUser.setLat(0d);
+		postmanUser.setLon(0d);
+		postmanUser.setHeight(0d);
+		postmanUser.setAddr("");
+		postmanUser.setAddrdes("");
+		postmanUser.setShopurl("");
+		postmanUser.setSpreadticket("");
+		postmanUser.setDateNew(new Date());
+		postmanUser.setPoststatus(1);//默认为1
+		postmanUser.setPostrole(4);
+		postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
+		//staffid就是该用户的手机号
+		postmanUser.setStaffid(loginName.replaceAll(" ", ""));
+	}
+
+	/**
+	 * 向mysql同步用户信息
+	 * @param postmanUser 派件员--mysql
+	 * @param user 派件员--mongodb
+	 * @param areaCode 站点编码
+	 * @param newPhone 新输入手机号
+     * @param oldPhone 旧手机号
+     */
+	private PostmanUser addOrUpdatePostmanUser(PostmanUser postmanUser, User user, String areaCode, String newPhone, String oldPhone){
+		postmanUser.setNickname(user.getRealName().replaceAll(" ", ""));
+		postmanUser.setCompanyname(user.getSite().getCompanyName() != null ? user.getSite().getCompanyName() : "");
+		postmanUser.setCompanyid(user.getSite().getCompanyId() != null ? Integer.parseInt(user.getSite().getCompanyId()) : 0);
+		postmanUser.setSubstation(user.getSite().getName());
+		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
+		postmanUser.setDateUpd(new Date());
+		postmanUser.setSiteid(user.getSite().getId().toString());
+		//删除mysql中与新手机号相同的手机号
+		userMysqlService.deleteByPhoneAndId(newPhone, user.getPostmanuserId());
+		if (StringUtils.isNotBlank(areaCode)) {//修改
+			postmanUser.setStaffid(newPhone);
+			postmanUser.setPhone(oldPhone);
+			userMysqlService.updateByPhone(postmanUser);
+			userMysqlService.updateSitenameBySiteId(postmanUser.getSiteid(), postmanUser.getSubstation());
+		} else {//新增
+			postmanUser = userMysqlService.insertUser(postmanUser);
+		}
+		return postmanUser;
+	}
+	private void addUser(User user, Site site, PostmanUser postmanUser, SiteForm siteForm, String newPhone, String oldPhone){
+		user.setRealName(site.getResponser());
+		user.setSite(site);
 		user.setRole(UserRole.SITEMASTER);
 		user.setCompanyId(site.getCompanyId());
 		user.setDateUpdate(new Date());
 		user.setEmail(siteForm.getEmail());
-
 		//向mysql同步用户信息
-		postmanUser.setNickname(user.getRealName().replaceAll(" ", ""));
-		postmanUser.setCompanyname(user.getSite().getCompanyName()!=null?user.getSite().getCompanyName():"");
-		postmanUser.setCompanyid(user.getSite().getCompanyId()!=null?Integer.parseInt(user.getSite().getCompanyId()):0);
-		postmanUser.setSubstation(user.getSite().getName());
-		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
-		postmanUser.setDateUpd(new Date());
-		if(StringUtils.isNotBlank(siteForm.getAreaCode()) || postmanUser.getId()!=null){//修改
-			postmanUser.setStaffid(newPhone);
-			postmanUser.setPhone(oldPhone);
-			userMysqlService.updateByPhone(postmanUser);
-		}else{//新增
-			postmanUser.setSiteid(user.getSite().getId().toString());
-			int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
-			user.setPostmanuserId(postmanuserId);
-		}
+		postmanUser = addOrUpdatePostmanUser(postmanUser, user, siteForm.getAreaCode(), newPhone, oldPhone);
+		user.setPostmanuserId(postmanUser.getId());
 		userService.save(user);//更新用户
-		return true;
 	}
 	/**
      * 获取某一公司下的站点列表信息
@@ -250,28 +271,32 @@ public class SiteManageController {
      */
 	@RequestMapping(method=RequestMethod.GET)
 	public String siteManage(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		PageModel<Site> sitePage = getSitePage(request,0,-1,keyword);
+		PageModel<Site> sitePage = getSitePage(request, 0, -1, -1, keyword);
 		model.addAttribute("sitePage", sitePage);
 		return "systemSet/siteManage";
 	}
 
 	/**
-     * 站点分页查询
-     * @param 
-     * @return
+	 * 站点分页查询
+	 * @param request 请求
+	 * @param pageIndex 当前页
+	 * @param status 站点状态
+	 * @param areaFlag 配送区域状态
+	 * @param keyword 查询关键字
+     * @return 每页的数据和分页信息
      */
 	@ResponseBody
 	@RequestMapping(value = "/getSitePage", method = RequestMethod.GET)
-	public PageModel<Site> getSitePage(HttpServletRequest request, Integer pageIndex, Integer status, String keyword) {
+	public PageModel<Site> getSitePage(HttpServletRequest request, Integer pageIndex, Integer status, Integer areaFlag, String keyword) {
 		User user = adminService.get(UserSession.get(request));
-		if (pageIndex==null) pageIndex =0 ;
+		if (pageIndex==null) pageIndex = 0 ;
 
 		PageModel<Site> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
 
-		PageModel<Site> sitePage = siteService.getSitePage(pageModel,user.getCompanyId(),status,keyword);
+		PageModel<Site> sitePage = siteService.getSitePage(pageModel,user.getCompanyId(),status, areaFlag, keyword);
 		for(Site site :sitePage.getDatas()){
-			site.setTurnDownMessage(site.getTurnDownReasson()==null?"":site.getTurnDownReasson().getMessage());
+			site.setTurnDownMessage(site.getTurnDownReasson() == null ? "" : site.getTurnDownReasson().getMessage());
 		}
 		return sitePage;
 	}
@@ -399,16 +424,17 @@ public class SiteManageController {
 		site.setStatus(SiteStatus.INVALID);
 		site.setDateUpd(new Date());
 		siteService.save(site);
-		try {
-			Result result = sitePoiApi.disableSite(site.getId().toString());
-			logger.info(result+"==========");
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER, UserStatus.VALID);//所有有效站长
 		for(User user:userList){//将站点下的所有站长置为无效
 			userService.updateUserStatu(user.getLoginName(), UserStatus.INVALID);
 			userMysqlService.updateById(UserStatus.INVALID.getStatus(),user.getPostmanuserId());
+		}
+		//停用配送区域,失败最多尝试3次
+		Integer areaFlag = 0;
+		int operCount = 0;
+		while (areaFlag != 1 && operCount < 3){
+			areaFlag = updateArea(areaCode,  0);
+			operCount ++;
 		}
 		return true;
 	}
@@ -424,12 +450,6 @@ public class SiteManageController {
 		site.setStatus(SiteStatus.APPROVE);
 		site.setDateUpd(new Date());
 		siteService.save(site);
-		try {
-			Result result = sitePoiApi.enableSite(site.getId().toString());
-			logger.info(result+"==========");
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 		List<User> userList = userService.findUsersBySite(site, UserRole.SITEMASTER,null);//所有站长
 		for(User user:userList){//将站点下的所有站长置为有效
 			userService.updateUserStatu(site.getUsername(), UserStatus.VALID);
@@ -452,5 +472,59 @@ public class SiteManageController {
 		return true;
 	}
 
+	/**
+	 * 配送区域 == 启用 || 停用
+	 * @param areaCode 站点编码
+	 * @param areaFlag 配送区域启用停用标志（1：启用；0：停用）
+     * @return
+     */
+	@ResponseBody
+	@RequestMapping(value = "/updateArea", method = RequestMethod.POST)
+	public Integer updateArea(String areaCode, Integer  areaFlag) {
+		Site site = siteService.findSiteByAreaCode(areaCode);
+		if(site != null){
+			if(areaFlag == 1){//启用配送区域,查询是否有路线经过此站点
+				long wayNum = wayService.findWayBySiteId(site.getId().toString());
+				if(wayNum <= 0){//没有查询到路线
+					logger.info("配送区域启用：此站点无司机线路");
+					return -1;//此站点无司机线路，请设置
+				}
+			}
+			site.setAreaFlag(areaFlag);
+			site.setDateUpd(new Date());
+			Key<Site> r = siteService.save(site);
+			if(r != null && r.getId() != null){
+				try {
+					Result result = null;
+					if(areaFlag == 1){//启用配送区域
+						result =  sitePoiApi.enableSite(site.getId().toString());
+						logger.info("配送区域启用：" + result);
+					}else{//停用配送区域
+						result = sitePoiApi.disableSite(site.getId().toString());
+						logger.info("配送区域停用：" + result);
+					}
+					if(result != null && result.code == 0){
+						return 1;
+					}else{//-1：站点不存在
+						//往POI表中增加站点记录,默认是启用状态
+						setLatAndLng(site.getId().toString());
+						if(areaFlag == 0){//停用需要更新一下状态
+							result = sitePoiApi.disableSite(site.getId().toString());
+							logger.info("配送区域停用：" + result);
+							if(result != null && result.code == 0){
+								return 1;
+							}else{
+								return 0;
+							}
+						}
+						return 1;
+					}
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+		return 0;
+	}
 
 }

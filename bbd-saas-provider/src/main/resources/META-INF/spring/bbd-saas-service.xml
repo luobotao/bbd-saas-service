@@ -104,6 +104,12 @@
             <ref bean="siteExchangeDao"/>
         </property>
     </bean>
+    <!-- Constant Service-->
+    <bean id="wayService" class="com.bbd.saas.api.impl.mongo.WayServiceImpl">
+        <property name="wayDao">
+            <ref bean="wayDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->
@@ -155,7 +161,11 @@
             <ref bean="balanceDao"/>
         </property>
     </bean>
-
+    <bean id="geoRecHistoService" class="com.bbd.saas.api.impl.mysql.GeoRecHistoServiceImpl">
+        <property name="geoRecHistoDao">
+            <ref bean="geoRecHistoDao"/>
+        </property>
+    </bean>
     <bean id="expressStatStationService" class="com.bbd.saas.api.impl.mysql.ExpressStatStationServiceImpl">
         <property name="expressStatStationDao">
             <ref bean="expressStatStationDao"/>

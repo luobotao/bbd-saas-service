@@ -32,7 +32,6 @@ public class TradeServiceTest {
 	private TradeService tradeService;
 	@Autowired
 	private OrderService orderService;
-
 	private ObjectId uId = new ObjectId("573c5f421e06c8275c08183c");
 	//junit.framework.TestCase时用
 	public void setUp() throws Exception{

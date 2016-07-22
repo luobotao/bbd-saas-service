@@ -177,4 +177,18 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	public int updateRoleByPhone(String phone, Integer postrole) {
 		return postmanUserDao.updateRoleByPhone(phone, postrole);
 	}
+
+	/**
+	 * 删除电话为phone,id不为id的postmanUser
+	 * @param phone
+	 * @param id
+     */
+	public int deleteByPhoneAndId(String phone, int id){
+		return postmanUserDao.deleteByPhoneAndId(phone, id);
+	}
+
+	@Override
+	public int updateSitenameBySiteId(String siteid, String siteName) {
+		return postmanUserDao.updateSubstationBySiteId(siteid, siteName);
+	}
 }

@@ -1109,9 +1109,6 @@
 					fenceObj.map.reset();
 				}, 300);
 			}
-
-
-
 		}
 	});
 	window.setTimeout(function(){
@@ -1133,10 +1130,7 @@
 			return;
 		}
 		$(".j-import-pop").modal();
-
-
 	});
-
 	$("#importBtn").click(function(){
 		$(this).parents(".j-import-pop").modal('hide');
 		$(".spinner").modal('show');
@@ -1176,8 +1170,6 @@
 		$("input[type='checkbox']", "#dis-table").iCheck("check");
 	});
 
-	//$(".spinner").modal('show');
-
 	//--------------------panel 3------------------------------------
 	$("#between").daterangepicker({
 		locale: {
@@ -1208,7 +1200,6 @@
 		}
 		if(confirm("确认批量删除所选站点关键词？")){
 			var url = "${ctx}/siteKeyWord/batchDeleteKeyword/"+delIds;
-			$(".spinner").modal('show');
 			doDelete(url);
 			$("#selectAll").attr("checked",false);
 		}
@@ -1294,7 +1285,6 @@
 		}
 		if(confirm('确认删除？')){
 			var url = "${ctx}/siteKeyWord/deleteKeyword/"+id;
-			$(".spinner").modal('show');
 			doDelete(url);
 		}
 	}

@@ -1,6 +1,7 @@
 package com.bbd.saas.api.impl.mongo;
 
 
+import com.alibaba.dubbo.common.json.JSONObject;
 import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
@@ -11,9 +12,7 @@ import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
-import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderNum;
 import com.bbd.saas.mongoModels.OrderParcel;
@@ -27,7 +26,9 @@ import com.bbd.saas.vo.OrderUpdateVO;
 import com.bbd.saas.vo.Reciever;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
+import com.mongodb.util.JSONSerializers;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -54,8 +55,10 @@ public class OrderServiceImpl implements OrderService {
 	Geo geo;
 	@Autowired
 	private PostmanUserService userMysqlService;
-	//@Autowired
+	@Autowired
 	private SiteService siteService;
+
+	Gson gson = new Gson();
 
     public UserDao getUserDao() {
 		return userDao;
@@ -146,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
 	 * @return
      */
 	@Override
-	public Order findOneByNewMailNum(String newMailNum) {
+	public List<Order> findOneByNewMailNum(String newMailNum) {
 		return orderDao.findOneByNewMailNum(newMailNum);
 	}
 
@@ -267,6 +270,11 @@ public class OrderServiceImpl implements OrderService {
 		return order;
 	}
 
+	/**
+	 * 生成订单区域码
+	 * @param order
+	 * @return
+     */
 	@Override
 	public Order reduceAreaCodeWithOrder(Order order) {
 		if(order!=null&&order.getReciever()!=null) {
@@ -297,6 +305,62 @@ public class OrderServiceImpl implements OrderService {
 			order = updateOrderWithAreaCode(order);
 		}
 		return order;
+	}
+
+	/**
+	 * 更新包裹信息
+	 * @param order
+     */
+	public String updateParcelWithOrder(Order order) {
+		try {
+			if(order!=null&& PrintStatus.waitToPrint.equals(order.getPrintStatus())) {
+				//查询订单所在站点是否已有Suspense待打包的包裹
+				OrderParcel orderParcel = orderParcelDao.findByOrderInfo(order);
+				if (orderParcel == null) {
+					logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel null", order.getOrderNo()));
+					//没有，插入orderParcel
+					orderParcel = new OrderParcel();
+					orderParcel.setParcelCode("");
+					orderParcel.setSort_uid("");
+					orderParcel.setDriver_uid("");
+					orderParcel.setStation_uid("");
+					orderParcel.setStatus(ParcelStatus.Suspense);
+					Site site = siteService.findSiteByAreaCode(order.getAreaCode());
+					orderParcel.setAreaRemark(site.getName());
+					orderParcel.setAreaCode(site.getAreaCode());
+					orderParcel.setAreaName(site.getName());
+					orderParcel.setStation_address(site.getAddress());
+					orderParcel.setOrderList(Lists.newArrayList());
+					orderParcel.setDateAdd(new Date());
+					orderParcel.setDateUpd(new Date());
+					orderParcel.setParceltyp("0");
+					orderParcel.setTrackNo("");
+					orderParcel.setSrcAreaCode("");
+					orderParcel.setSrc(order.getSrc().toString());
+					orderParcel.setProvince(site.getProvince());
+					orderParcel.setCity(site.getCity());
+					orderParcel.setArea(site.getArea());
+					orderParcel.setOrdercnt(1);
+					logger.info(String.format("插入包裹 来源：%s 站点：%s 状态：%s 订单数量%d --> %d", orderParcel.getSrc(), orderParcel.getAreaCode(), orderParcel.getStatus().getMessage(), 0, 1));
+				} else {
+					logger.info(String.format("[updateParcelWithOrder] order:%s find OrderParcel id:", orderParcel.getId()));
+					logger.info(String.format("更新包裹 %s 订单数量%d --> %d", orderParcel.getId(), orderParcel.getOrdercnt(), orderParcel.getOrdercnt() + 1));
+					//已有，更新orderParcel里的ordercnt dateUpd
+					orderParcel.setOrdercnt(orderParcel.getOrdercnt() + 1);
+					orderParcel.setDateUpd(new Date());
+				}
+				//更新orderParcel
+				orderParcelDao.save(orderParcel);
+				logger.info(String.format("订单%s 插入/更新包裹完成", order.getOrderNo()));
+			}else{
+				logger.info(String.format("订单%s 已打印无需更新包裹", order.getOrderNo()));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info(String.format("根据订单%s 插入/更新包裹失败，原因：%s", order.getOrderNo(),e.getMessage()));
+			return "fail";
+		}
+		return "success";
 	}
 
 	@Override
@@ -346,7 +410,7 @@ public class OrderServiceImpl implements OrderService {
 							//获取站点的日均积分
 							Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
 							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
-							logger.info("积分：" + result.toString());
+							logger.info("匹配站点"+siteId+"获取积分：" + result.toString());
 							int integral = 0;
 							if (result.containsKey("totalscore")) {
 								integral = (int) result.get("totalscore");
@@ -355,11 +419,15 @@ public class OrderServiceImpl implements OrderService {
 							//根据地址到站点的距离计算积分
 							if (length < 3000) {
 								integralVal = integral + 5;
+								logger.info("站点"+siteId+"增加距离"+length+"匹配积分后，积分由"+integral+"增加为"+integralVal);
 							} else if (length < 5000) {
 								integralVal = integral + 3;
+								logger.info("站点"+siteId+"增加距离"+length+"匹配积分后，积分由"+integral+"增加为"+integralVal);
 							} else {
 								integralVal = integral + 2;
+								logger.info("站点"+siteId+"增加距离"+length+"匹配积分后，积分由"+integral+"增加为"+integralVal);
 							}
+							logger.info("地址："+address+"匹配到的站点："+siteId+"最终积分："+integralVal);
 							//保存站点和积分，按照积分进行排序
 							map.put(siteId, integralVal);
 						}else{
@@ -376,6 +444,7 @@ public class OrderServiceImpl implements OrderService {
 							return o2.getValue().compareTo(o1.getValue());
 						}
 					});
+					logger.info("[findBestSiteWithAddress]address:"+address+"  ,result："+gson.toJson(list));
 					resultAreaCode = list.get(0).getKey();
 				}catch(Exception e){
 					e.printStackTrace();
@@ -402,5 +471,10 @@ public class OrderServiceImpl implements OrderService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public List<Order> findByDateAdd(Date dateAdd) {
+		return orderDao.findByDateAdd(dateAdd);
 	}
 }

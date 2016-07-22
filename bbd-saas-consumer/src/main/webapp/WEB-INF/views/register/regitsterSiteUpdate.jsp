@@ -57,7 +57,7 @@
 
 
 		<div class="n-suc-info">
-			<c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
+			<c:url var="actionUrl" value="/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
 			<form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
 				<input id="phone" name="phone" value="${site.username}" type="hidden"/>
 				<input id="from" name="from" value="1" type="hidden"/>

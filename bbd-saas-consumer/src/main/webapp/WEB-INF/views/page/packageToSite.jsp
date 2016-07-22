@@ -75,8 +75,7 @@
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
 								<label>扫描运单号：　</label>
-								<input id="mailNum" name="mailNum" class="form-control" type="text" onkeypress="enterPress(event)"/>
-								<p class="help-block" id="mailNumP" style="display:none;"></p>
+								<input id="mailNum" name="mailNum" class="form-control" type="text" onkeypress="enterPress(event)"/><p class="help-block" id="mailNumP" style="display:none;"></p>
 							</div>
 						</div>
 					</div>
@@ -400,9 +399,9 @@
 		if(isBatchToSite){//批量到站
 			doBatchToSite()();
 		}else{//单个运单到站
-			$("#mailNumP").html("");
-			$("#mailNumP").attr("style","display:none");
 			gotoPage(0,$("#parcelCode").val(),$("#mailNum").val());
+			$("#mailNumP").html("扫描成功，运单到站");
+			$("#mailNumP").attr("style","color:red");
 			$("#toSitePrompt").modal("hide");
 		}
 

@@ -8,16 +8,16 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum OrderSetStatus {
 
-    NOEMBRACE(0, "待揽件"),
-    WAITTOIN(1, "待入库"),
-    WAITSET(2, "待揽件集包"),
-    WAITDRIVERGETED(3, "待司机取货送往分拨中心"),
-    DRIVERGETED(4, "正在运输到分拨中心"),
-    ARRIVEDISPATCH(5, "已到达分拨中心"),
-    WAITDISPATCHSET(6, "待分拣集包"),
-    WAITDRIVERTOSEND(7, "待司机取货送往配送点"),
-    DRIVERSENDING(8, "正在运输到配送点"),
-    ARRIVED(9, "已到达配送点");
+    NOEMBRACE(0, "待取件"),
+    WAITTOIN(2, "已取件,待入库"),
+    WAITSET(3, "待揽件集包"),
+    WAITDRIVERGETED(4, "待司机取货送往分拨中心"),
+    DRIVERGETED(5, "正在运输到分拨中心"),
+    ARRIVEDISPATCH(6, "待分拣集包"),
+    WAITDRIVERTOSEND(8, "待司机取货送往配送点"),
+    DRIVERSENDING(9, "正在运输到配送点"),
+    ARRIVED(10, "已到达配送点"),
+    REMOVED(11, "已移除");
     private int status;
     private String message;
     private OrderSetStatus(int status, String message) {

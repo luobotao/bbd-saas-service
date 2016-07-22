@@ -13,6 +13,7 @@ import com.mongodb.BasicDBList;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public interface OrderService {
 	 * @param newMailNum
 	 * @return
 	 */
-	Order findOneByNewMailNum(String newMailNum);
+	List<Order> findOneByNewMailNum(String newMailNum);
 
 	/**
 	 * 根据订单号查询订单
@@ -174,4 +175,8 @@ public interface OrderService {
 	String findBestSiteWithAddress(String address);
 
 	public Site getSiteWithAddress(String address);
+
+	String updateParcelWithOrder(Order order);
+
+	List<Order> findByDateAdd(Date date);
 }

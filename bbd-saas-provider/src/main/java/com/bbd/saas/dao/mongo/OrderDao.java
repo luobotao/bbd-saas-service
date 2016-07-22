@@ -7,6 +7,7 @@ import com.bbd.saas.enums.PrintStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
@@ -192,17 +193,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             if(StringUtils.isNotBlank(orderQueryVO.parcelCode)){
                 query.filter("parcelCode", orderQueryVO.parcelCode);
             }
-            //包裹分派状态
-            if(orderQueryVO.dispatchStatus != null){
-            	if(orderQueryVO.dispatchStatus == -1){//全部（1-未分派，2-已分派）
-                	query.or(query.criteria("orderStatus").equal(OrderStatus.NOTDISPATCH), query.criteria("orderStatus").equal(OrderStatus.DISPATCHED));
-                }else{
-                	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.dispatchStatus));
-                }
-            }
-        	//派件员
+            //派件员
             if(StringUtils.isNotBlank(orderQueryVO.userId)){
-                query.filter("userId", orderQueryVO.userId);
+                query.filter("userId", orderQueryVO.userId);//只查询已经分派的
+            }else{
+                //包裹分派状态
+                if(orderQueryVO.dispatchStatus != null){
+                    if(orderQueryVO.dispatchStatus == -1){//全部（1-未分派，2-已分派）
+                        query.or(query.criteria("orderStatus").equal(OrderStatus.NOTDISPATCH), query.criteria("orderStatus").equal(OrderStatus.DISPATCHED));
+                    }else{
+                        query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.dispatchStatus));
+                    }
+                }
             }
         	//异常状态
             if(orderQueryVO.abnormalStatus != null){
@@ -371,11 +373,11 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param newMailNum
      * @return
      */
-    public Order findOneByNewMailNum(String newMailNum) {
+    public List<Order> findOneByNewMailNum(String newMailNum) {
         Query<Order> query = createQuery();
         if(StringUtils.isNotBlank(newMailNum))
             query.filter("otherExprees.mailNum",newMailNum);
-        return findOne(query);
+        return find(query).asList();
     }
 
     /**
@@ -536,5 +538,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.filter("orderStatus nin", orderStatusList);
         }
         return count(query);
+    }
+
+    public List<Order> findByDateAdd(Date dateAdd) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        if(dateAdd!=null) {
+            //商户订单号(我们自己生成的支付订单号)
+            Date startDate = Dates.getBeginOfDay(dateAdd);
+            Date endDate = Dates.getEndOfDay(dateAdd);
+            query.filter("dateAdd >=", startDate);
+            query.filter("dateAdd <=", endDate);
+        }
+        return find(query).asList();
     }
 }

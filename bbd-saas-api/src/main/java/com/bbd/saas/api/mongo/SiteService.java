@@ -70,7 +70,7 @@ public interface SiteService {
      * @param keyword 站点名称/站⻓姓名/⼿机号
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,Integer status, String keyword);
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,Integer status, Integer areaFlag, String keyword);
 
     /**
      * 根据站点状态进行站点分页查询
