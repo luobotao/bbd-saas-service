@@ -463,12 +463,14 @@ public class OrderServiceImpl implements OrderService {
 		try {
 			//通过积分获取优选区域码，暂时用第一个
 			String siteId = findBestSiteWithAddress(address);
-			Site site = siteService.findSite(siteId);
-			return site;
+			if(!"".equals(siteId)) {
+				Site site = siteService.findSite(siteId);
+				return site;
+			}
 		}catch (Exception e){
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	@Override
@@ -476,6 +478,7 @@ public class OrderServiceImpl implements OrderService {
 		return orderDao.findByDateAdd(dateAdd);
 	}
 
+	@Override
 	public String findWayNameBySite(Site site) {
 		String wayName = "";
 		if(site!=null) {
