@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByLoginNameAndId(String loginName, String userId) {
-        return null;
+        return userDao.selectByLoginNameAndId(loginName, userId);
     }
 
     /**

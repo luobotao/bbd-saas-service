@@ -5,6 +5,7 @@ import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mongo.WayService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.constants.UserSession;
@@ -45,7 +46,7 @@ import java.util.List;
  * 骆波涛
  */
 @Controller
-@RequestMapping("/system/siteManage")
+@RequestMapping("/siteManage")
 public class SiteManageController {
 	public static final Logger logger = LoggerFactory.getLogger(SiteManageController.class);
 	@Autowired
@@ -60,7 +61,8 @@ public class SiteManageController {
 	SiteService siteService;
 	@Autowired
 	SitePoiApi sitePoiApi;
-
+	@Autowired
+	WayService wayService;
 	/**
 	 * 检查手机号是否被注册
 	 * @param loginName 手机号
@@ -428,9 +430,9 @@ public class SiteManageController {
 			userMysqlService.updateById(UserStatus.INVALID.getStatus(),user.getPostmanuserId());
 		}
 		//停用配送区域,失败最多尝试3次
-		boolean areaFlag = false;
+		Integer areaFlag = 0;
 		int operCount = 0;
-		while (!areaFlag && operCount < 3){
+		while (areaFlag != 1 && operCount < 3){
 			areaFlag = updateArea(areaCode,  0);
 			operCount ++;
 		}
@@ -478,9 +480,16 @@ public class SiteManageController {
      */
 	@ResponseBody
 	@RequestMapping(value = "/updateArea", method = RequestMethod.POST)
-	public boolean updateArea(String areaCode, Integer  areaFlag) {
+	public Integer updateArea(String areaCode, Integer  areaFlag) {
 		Site site = siteService.findSiteByAreaCode(areaCode);
 		if(site != null){
+			if(areaFlag == 1){//启用配送区域,查询是否有路线经过此站点
+				long wayNum = wayService.findWayBySiteId(site.getId().toString());
+				if(wayNum <= 0){//没有查询到路线
+					logger.info("配送区域启用：此站点无司机线路");
+					return -1;//此站点无司机线路，请设置
+				}
+			}
 			site.setAreaFlag(areaFlag);
 			site.setDateUpd(new Date());
 			Key<Site> r = siteService.save(site);
@@ -495,7 +504,7 @@ public class SiteManageController {
 						logger.info("配送区域停用：" + result);
 					}
 					if(result != null && result.code == 0){
-						return true;
+						return 1;
 					}else{//-1：站点不存在
 						//往POI表中增加站点记录,默认是启用状态
 						setLatAndLng(site.getId().toString());
@@ -503,19 +512,19 @@ public class SiteManageController {
 							result = sitePoiApi.disableSite(site.getId().toString());
 							logger.info("配送区域停用：" + result);
 							if(result != null && result.code == 0){
-								return true;
+								return 1;
 							}else{
-								return false;
+								return 0;
 							}
 						}
-						return true;
+						return 1;
 					}
 				}catch (Exception e){
 					e.printStackTrace();
 				}
 			}
 		}
-		return false;
+		return 0;
 	}
 
 }

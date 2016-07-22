@@ -53,6 +53,10 @@
     <bean id="siteExchangeDao" class="com.bbd.saas.dao.mongo.SiteExchangeDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- constant DAO-->
+    <bean id="wayDao" class="com.bbd.saas.dao.mongo.WayDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->

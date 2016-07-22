@@ -213,11 +213,11 @@ public class UserDao extends BaseDAO<User, ObjectId> {
     public User selectByLoginNameAndId(String loginName, String userId) {
         Query<User> query = createQuery();
         //_id
-        if(StringUtils.isBlank(userId)){
-            query.filter("userId <>", userId);
+        if(StringUtils.isNotBlank(userId)){
+            query.filter("_id <>", new ObjectId(userId));
         }
         //用户名
-        if(StringUtils.isBlank(loginName)){
+        if(StringUtils.isNotBlank(loginName)){
             query.filter("loginName", loginName);
         }
         return findOne(query);

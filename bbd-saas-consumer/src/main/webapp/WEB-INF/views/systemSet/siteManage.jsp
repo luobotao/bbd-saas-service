@@ -176,7 +176,7 @@
 <div class="j-siteM-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="siteModal">
     <div class="modal-dialog b-modal-dialog b-guide-dialog" role="document">
         <div class="modal-content">
-        <c:url var="actionUrl" value="/system/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
+        <c:url var="actionUrl" value="/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
         <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
             <input type="hidden" id="areaCode" name="areaCode" value=""/>
             <div class="modal-header b-modal-header">
@@ -367,7 +367,7 @@
         var status = $("#status").val();
         var areaFlag = $("#areaFlag").val();
         var keyword = $("#keyword").val();
-        var url = "<c:url value="/system/siteManage/getSitePage" />";
+        var url = "<c:url value="/siteManage/getSitePage" />";
         $.ajax({
             type: "GET",  //提交方式
             url: url,//路径
@@ -432,9 +432,9 @@
             row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp' data-toggle='modal' data-target='#siteModal'>修改</span> ";
             row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableSite', '确认停用站点吗？')\" class='orange cp'>停用站点</span>";
             if(data.areaFlag == 1 ){
-                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确认停用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确认停用配送区域吗？')\" class='orange cp ml16' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
             }else{
-                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableArea', '确认启用配送区域吗？')\" class='orange cp' data-toggle='modal' data-target='#confirmModal'>启用配送区域</span> ";
+                row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableArea', '确认启用配送区域吗？')\" class='orange cp ml16' data-toggle='modal' data-target='#confirmModal'>启用配送区域</span> ";
             }
         }
         if(data.status=="<%=SiteStatus.INVALID%>" ){
@@ -451,7 +451,7 @@
             if(isCheckPhone){
                 var areaCode = $("#areaCode").val();
                 if(loginName!=""){
-                    var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
+                    var linkUrl = "<c:url value="/siteManage/checkSiteWithLoginName?loginName=" />" + loginName + "&areaCode=" + areaCode;
                     $.ajax({
                         url: linkUrl,
                         type: 'GET',
@@ -516,7 +516,7 @@
             }else{
                 var areaCode = $("#areaCode").val();
                 if(phone!=""){
-                    var linkUrl = "<c:url value="/system/siteManage/checkSiteWithLoginName?loginName=" />" + phone + "&areaCode=" + areaCode;
+                    var linkUrl = "<c:url value="/siteManage/checkSiteWithLoginName?loginName=" />" + phone + "&areaCode=" + areaCode;
                     $.ajax({
                         url: linkUrl,
                         type: 'GET',
@@ -595,7 +595,7 @@
     $("#conFirmForValidBtn").click(function(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/validSite" />',
+            url: '<c:url value="/siteManage/validSite" />',
             dataType: "text",
             data: {
                 "phone": $("#phoneForModal").val()
@@ -613,7 +613,7 @@
     $("#conFirmForTurnDownBtn").click(function(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/turnDownSite" />',
+            url: '<c:url value="/siteManage/turnDownSite" />',
             dataType: "text",
             data: {
                 "phone": $("#phoneForModal").val(),
@@ -634,7 +634,7 @@
         console.log("停用站点");
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/stopSite" />',
+            url: '<c:url value="/siteManage/stopSite" />',
             dataType: "text",
             data: {
                 "areaCode": areaCode
@@ -653,7 +653,7 @@
     function enableSiteFct(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/startSite" />',
+            url: '<c:url value="/siteManage/startSite" />',
             dataType: "text",
             data: {
                 "areaCode": areaCode
@@ -672,7 +672,7 @@
     function delSiteFct(){
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/delSite" />',
+            url: '<c:url value="/siteManage/delSite" />',
             dataType: "text",
             data: {
                 "areaCode": areaCode
@@ -723,7 +723,7 @@ function createSite(){
         $('#areaCodeForModal').val(areaCode);
         $.ajax({
             type: "GET",
-            url: '<c:url value="/system/siteManage/getSiteByAreaCode" />',
+            url: '<c:url value="/siteManage/getSiteByAreaCode" />',
             data: {
                 "areaCode": areaCode
             },
@@ -791,21 +791,22 @@ function createSite(){
         }
 
     }
-
     //配送区域操作
     function updateAreaFct(areaFlag) {
         $.ajax({
             type : "POST",  //提交方式
-            url : "<c:url value="/system/siteManage/updateArea?${_csrf.parameterName}=${_csrf.token}" />",//路径
+            url : "<c:url value="/siteManage/updateArea?${_csrf.parameterName}=${_csrf.token}" />",//路径
             data : {
                 areaCode : areaCode,
                 areaFlag : areaFlag
             },//数据，这里使用的是Json格式进行传输
             success : function(data) {//返回数据根据结果进行相应的处理
-                if(data){//
+                if(data == 1){//
                     ioutDiv("操作成功！");
                     var pageIndex = parseInt($(".pagination .active").text())-1;
                     gotoPage(pageIndex);
+                }else if(data == -1){
+                    ioutDiv("此站点无司机线路，请设置！");
                 }else{
                     ioutDiv("操作失败！");
                 }

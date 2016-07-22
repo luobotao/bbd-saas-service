@@ -87,7 +87,7 @@
 						<li id="deliverArea" class="lv1"><a href="<c:url value="/deliverArea/map?activeNum=1" />" target="iframe1" ><i class="b-icon p-dis"></i>配送区域</a></li>
 						<li class="lv1"><a href="#"><i class="b-icon p-set"></i>系统设置</a></li>
 						<ul class="menu dn">
-							<li id="siteManage"><a href="<c:url value="/system/siteManage" />" target="iframe1">站点管理</a></li>
+							<li id="siteManage"><a href="<c:url value="/siteManage" />" target="iframe1">站点管理</a></li>
 							<li id="userForComp"><a href="<c:url value="/userManage" />" target="iframe1">用户管理</a></li>
 						</ul>
 					<%

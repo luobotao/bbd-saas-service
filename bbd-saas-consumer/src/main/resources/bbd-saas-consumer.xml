@@ -40,6 +40,8 @@
     <dubbo:reference id="tradeService" interface="com.bbd.saas.api.mongo.TradeService"/>
     <!--Constant Service-->
     <dubbo:reference id="constantService" interface="com.bbd.saas.api.mongo.ConstantService"/>
+    <!--Way Service-->
+    <dubbo:reference id="wayService" interface="com.bbd.saas.api.mongo.WayService"/>
 
     <!--expressExchangeService Service-->
     <dubbo:reference id="expressExchangeService" interface="com.bbd.saas.api.mongo.ExpressExchangeService"/>

@@ -15,10 +15,7 @@ import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.OrderCommon;
-import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.mongodb.BasicDBList;
@@ -154,11 +151,13 @@ public class PackageToSiteController {
 		}
 		if (pageIndex==null) pageIndex =0 ;
 		OrderQueryVO orderQueryVO = new OrderQueryVO();
-		orderQueryVO.arriveStatus = arriveStatus;
-		orderQueryVO.between = between;
 		orderQueryVO.parcelCode = parcelCode;
 		orderQueryVO.mailNum = mailNum;
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
+		if(StringUtils.isEmpty(parcelCode) && StringUtils.isEmpty(mailNum)){
+			orderQueryVO.arriveStatus = arriveStatus;
+			orderQueryVO.between = between;
+		}
 		PageModel<Order> pageModel = new PageModel<>();
 		pageModel.setPageNo(pageIndex);
 		pageModel.setPageSize(50);
@@ -262,7 +261,7 @@ public class PackageToSiteController {
 				map.put("success", true);
 			}else{
 				map.put("success", false);
-				map.put("msg", "设置超区失败，当前运单已" + order.getOrderStatusMsg());
+				map.put("msg", "设置超区失败，当前运单已" + order.getOrderStatusMsg().replace("已", ""));
 			}
 
 		}else{
