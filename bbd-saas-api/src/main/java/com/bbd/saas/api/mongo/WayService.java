@@ -1,5 +1,9 @@
 package com.bbd.saas.api.mongo;
 
+import com.bbd.saas.mongoModels.Way;
+
+import java.util.List;
+
 /**
  * Created by liyanlei on 2016/7/22.
  * 站点接口
@@ -13,4 +17,5 @@ public interface WayService {
      */
     long findWayBySiteId(String siteId);
 
+    List<Way> findAllWayBySiteId(String s);
 }

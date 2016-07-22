@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
@@ -38,4 +39,17 @@ public class WayDao extends BaseDAO<Way, ObjectId> {
         return  0L;
     }
 
+    /**
+     * 查找一个站点下的所有路线
+     * @param siteId
+     * @return
+     */
+    public List<Way> findAllWayBySiteId(String siteId) {
+        Query<Way> query = createQuery();
+        if(StringUtils.isNotBlank(siteId)){
+            query.filter("sites.siteId", siteId);
+            return find(query).asList();
+        }
+        return null;
+    }
 }
