@@ -13,6 +13,7 @@ import com.mongodb.BasicDBList;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -176,4 +177,6 @@ public interface OrderService {
 	public Site getSiteWithAddress(String address);
 
 	String updateParcelWithOrder(Order order);
+
+	List<Order> findByDateAdd(Date date);
 }

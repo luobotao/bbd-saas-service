@@ -406,7 +406,7 @@ public class OrderServiceImpl implements OrderService {
 							//获取站点的日均积分
 							Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
 							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
-							logger.info("积分：" + result.toString());
+							logger.info("匹配站点"+siteId+"获取积分：" + result.toString());
 							int integral = 0;
 							if (result.containsKey("totalscore")) {
 								integral = (int) result.get("totalscore");
@@ -415,11 +415,15 @@ public class OrderServiceImpl implements OrderService {
 							//根据地址到站点的距离计算积分
 							if (length < 3000) {
 								integralVal = integral + 5;
+								logger.info("站点"+siteId+"增加距离"+length+"匹配积分后，积分由"+integral+"增加为"+integralVal);
 							} else if (length < 5000) {
 								integralVal = integral + 3;
+								logger.info("站点"+siteId+"增加距离"+length+"匹配积分后，积分由"+integral+"增加为"+integralVal);
 							} else {
 								integralVal = integral + 2;
+								logger.info("站点"+siteId+"增加距离"+length+"匹配积分后，积分由"+integral+"增加为"+integralVal);
 							}
+							logger.info("地址："+address+"匹配到的站点："+siteId+"最终积分："+integralVal);
 							//保存站点和积分，按照积分进行排序
 							map.put(siteId, integralVal);
 						}else{
@@ -462,5 +466,10 @@ public class OrderServiceImpl implements OrderService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public List<Order> findByDateAdd(Date dateAdd) {
+		return orderDao.findByDateAdd(dateAdd);
 	}
 }

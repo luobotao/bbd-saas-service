@@ -1367,4 +1367,10 @@ public class Dates {
 	}
 
 
+    public static Date getNextDay(Date date, int num) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.MONTH, num);
+        return c.getTime();
+    }
 }

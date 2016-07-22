@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.GeoRecHistoDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.GeoRecHisto">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="orderNo" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="src" property="src" jdbcType="VARCHAR"/>
+        <result column="lat" property="lat" jdbcType="DOUBLE"/>
+        <result column="lng" property="lng" jdbcType="DOUBLE"/>
+        <result column="geoStr" property="geoStr" jdbcType="VARCHAR"/>
+        <result column="dateAdd" property="dateAdd" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	id, orderNo, province, city, area, address, src, lat, lng, geoStr, dateAdd
+    </sql>
+    <!-- 插入一条记录  开始  -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.GeoRecHisto" >
+        INSERT INTO `geo_rec_histo`(
+            <include refid="baseColumnList"/>
+        )
+        VALUES (
+            #{id}, #{orderNo}, #{province}, #{city}, #{area}, #{address}, #{src}, #{lat}, #{lng},
+            #{geoStr}, #{dateAdd}
+        )
+    </insert>
+    <!-- 插入一条记录  结束  -->
+    <!--根据订单号查询-->
+    <select id="findOneByOrderNo" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `geo_rec_histo` where #{orderNo,jdbcType=VARCHAR} = orderNo
+    </select>
+
+</mapper>

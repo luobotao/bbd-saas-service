@@ -155,7 +155,11 @@
             <ref bean="balanceDao"/>
         </property>
     </bean>
-
+    <bean id="geoRecHistoService" class="com.bbd.saas.api.impl.mysql.GeoRecHistoServiceImpl">
+        <property name="geoRecHistoDao">
+            <ref bean="geoRecHistoDao"/>
+        </property>
+    </bean>
     <bean id="expressStatStationService" class="com.bbd.saas.api.impl.mysql.ExpressStatStationServiceImpl">
         <property name="expressStatStationDao">
             <ref bean="expressStatStationDao"/>
