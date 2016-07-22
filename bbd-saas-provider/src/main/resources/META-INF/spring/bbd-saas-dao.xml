@@ -108,6 +108,9 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.BalanceDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
-
+    <bean id="geoRecHistoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.GeoRecHistoDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
     <!--  end mysql daos  -->
 </beans>

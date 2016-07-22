@@ -7,6 +7,7 @@ import com.bbd.saas.enums.PrintStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.utils.DateBetween;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
@@ -537,5 +538,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.filter("orderStatus nin", orderStatusList);
         }
         return count(query);
+    }
+
+    public List<Order> findByDateAdd(Date dateAdd) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        if(dateAdd!=null) {
+            //商户订单号(我们自己生成的支付订单号)
+            Date startDate = Dates.getBeginOfDay(dateAdd);
+            Date endDate = Dates.getEndOfDay(dateAdd);
+            query.filter("dateAdd >=", startDate);
+            query.filter("dateAdd <=", endDate);
+        }
+        return find(query).asList();
     }
 }
