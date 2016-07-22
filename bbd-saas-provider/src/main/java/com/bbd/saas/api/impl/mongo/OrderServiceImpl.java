@@ -479,6 +479,7 @@ public class OrderServiceImpl implements OrderService {
 		return orderDao.findByDateAdd(dateAdd);
 	}
 
+	@Override
 	public String findWayNameBySite(Site site) {
 		String wayName = "";
 		if(site!=null) {
