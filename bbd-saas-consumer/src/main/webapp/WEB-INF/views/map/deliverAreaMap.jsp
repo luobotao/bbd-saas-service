@@ -565,10 +565,6 @@
 	}
 	function newEFenceLabel(point, name){
 		var index = 25;
-		/*if(){
-
-		 }*/
-
 		var opts = {
 			position : point,    // 指定文本标注所在的地理位置
 			offset   : new BMap.Size(-45, -20)    //设置文本偏移量
@@ -720,7 +716,6 @@
 		},
 		loadOneSite: function(name, lng, lat){//加载站点标注
 			var point = getPointBySite2(lng, lat);
-			console.log(point);
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 			var marker = new BMap.Marker(point, {icon:myIcon});  // 创建标注
 			this.map.addOverlay(marker);               // 将标注添加到地图中
@@ -735,7 +730,6 @@
 			%>
 			//加载站点
 			this.loadOneSite("<%=site.getName()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
-			//console.log("<%=site.getName()%>       <%=site.getLng()%>     <%=site.getLat()%>");
 			//加载电子围栏
 			var efenceObj = new EFenceObj("<%=site.getName()%>", "<%=site.geteFence()%>", "<%=site.getLng()%>", "<%=site.getLat()%>");
 			efenceObj.loadDataAndShow(false);
@@ -1040,7 +1034,6 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					console.log(data);
 					if(data.code == 0){
 						ioutDiv(data.msg);
 						//重新加载地图
