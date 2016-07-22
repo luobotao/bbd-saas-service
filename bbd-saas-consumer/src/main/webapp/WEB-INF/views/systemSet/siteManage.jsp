@@ -802,10 +802,12 @@ function createSite(){
                 areaFlag : areaFlag
             },//数据，这里使用的是Json格式进行传输
             success : function(data) {//返回数据根据结果进行相应的处理
-                if(data){//
+                if(data == 1){//
                     ioutDiv("操作成功！");
                     var pageIndex = parseInt($(".pagination .active").text())-1;
                     gotoPage(pageIndex);
+                }else if(data == -1){
+                    ioutDiv("此站点无司机线路，请设置！");
                 }else{
                     ioutDiv("操作失败！");
                 }

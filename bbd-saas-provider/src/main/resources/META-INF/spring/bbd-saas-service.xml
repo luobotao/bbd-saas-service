@@ -104,6 +104,12 @@
             <ref bean="siteExchangeDao"/>
         </property>
     </bean>
+    <!-- Constant Service-->
+    <bean id="wayService" class="com.bbd.saas.api.impl.mongo.WayServiceImpl">
+        <property name="wayDao">
+            <ref bean="wayDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->
