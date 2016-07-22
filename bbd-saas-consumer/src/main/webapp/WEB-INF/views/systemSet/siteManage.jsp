@@ -791,7 +791,6 @@ function createSite(){
         }
 
     }
-
     //配送区域操作
     function updateAreaFct(areaFlag) {
         $.ajax({
