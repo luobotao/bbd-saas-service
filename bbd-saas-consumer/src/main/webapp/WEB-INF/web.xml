@@ -99,4 +99,8 @@
 		<error-code>403</error-code>
 		<location>/404</location>
 	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/500</location>
+	</error-page>
 </web-app>
