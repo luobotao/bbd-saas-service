@@ -445,8 +445,6 @@ public class OrderServiceImpl implements OrderService {
 							return o2.getValue().compareTo(o1.getValue());
 						}
 					});
-					Gson gson = new Gson();
-					logger.info("[findBestSiteWithAddress]address:"+address+"  ,result："+gson.toJson(list));
 					resultAreaCode = list.get(0).getKey();
 				}catch(Exception e){
 					e.printStackTrace();
