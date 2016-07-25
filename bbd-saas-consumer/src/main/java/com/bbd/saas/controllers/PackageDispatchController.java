@@ -111,7 +111,10 @@ public class PackageDispatchController {
 			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.userId = courierId;
 			orderQueryVO.areaCode = user.getSite().getAreaCode();
-			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+			PageModel<Order> pageModel = new PageModel<Order>();
+			pageModel.setPageNo(pageIndex);
+			pageModel.setPageSize(50);
+			orderPage = orderService.findPageOrders(pageModel, orderQueryVO);
 			//查询派件员姓名电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> orderList = formatOrder(orderPage.getDatas()) ;
@@ -134,7 +137,7 @@ public class PackageDispatchController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/dispatch", method=RequestMethod.GET)
-	public Map<String, Object> dispatch(String mailNum, String courierId, final HttpServletRequest request) {
+	public Map<String, Object> dispatch(String mailNum, String courierId, Integer pageIndex, Integer status, final HttpServletRequest request) {
 		Map<String, Object> map = null;
 		try {
 			if(mailNum != null){
@@ -153,7 +156,7 @@ public class PackageDispatchController {
 				if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
 					||OrderStatus.RETENTION.equals(order.getOrderStatus())) {//滞留
 					//|| OrderStatus.REJECTION.equals(order.getOrderStatus())){//拒收
-					saveOrderMail(order, courierId, user.getSite().getAreaCode(), map);//更新mysql
+					saveOrderMail(order, courierId, user.getSite().getAreaCode(), pageIndex, status, map);//更新mysql
 				}else if(order.getUserId() != null && !"".equals(order.getUserId())){//重复扫描，此运单已分派过了
 					map.put("operFlag", 2);//0:运单号不存在;1:分派成功;2:重复扫描，此运单已分派过了;3:分派失败;4:未知错误（只有状态为未分派、滞留的运单才能分派！）。
 				}else{
@@ -176,7 +179,7 @@ public class PackageDispatchController {
 	 * @author: liyanlei
 	 * 2016年4月16日上午11:36:08
 	 */
-	private void saveOrderMail(Order order, String courierId, String areaCode, Map<String, Object> map){
+	private void saveOrderMail(Order order, String courierId, String areaCode, Integer pageIndex, Integer status, Map<String, Object> map){
 		//查询派件员信息
 		User user = userService.findOne(courierId);
 		//运单分派给派件员
@@ -194,11 +197,14 @@ public class PackageDispatchController {
 			map.put("operFlag", 1);//1:分派成功
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
+			orderQueryVO.dispatchStatus = status;
 			//orderQueryVO.userId = courierId;
 			orderQueryVO.areaCode = areaCode;
+			PageModel<Order> pageModel = new PageModel<Order>();
+			pageModel.setPageNo(pageIndex);
+			pageModel.setPageSize(50);
 			//查询数据
-			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+			PageModel<Order> orderPage = orderService.findPageOrders(pageModel, orderQueryVO);
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> orderList = formatOrder(orderPage.getDatas()) ;
 				orderPage.setDatas(orderList);

@@ -79,6 +79,16 @@ public interface OrderService {
 	 */
 	PageModel<Order> findPageOrders(Integer pageIndex, OrderQueryVO orderQueryVO);
 
+
+	/**
+	 * 带查询条件去检索订单
+	 * @param pageModel 分页对象
+	 * @param orderQueryVO 查询条件
+	 * @return 分页对象（分页信息和数据）
+	 */
+	PageModel<Order> findPageOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO);
+
+
 	/**
 	 * 按照查询条件检索订单-不分页
 	 * @param orderQueryVO 检索条件
