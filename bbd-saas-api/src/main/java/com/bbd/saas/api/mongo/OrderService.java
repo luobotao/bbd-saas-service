@@ -190,4 +190,11 @@ public interface OrderService {
 	List<Order> findByDateAdd(Date date);
 
 	String findWayNameBySite(Site site);
+
+	/**
+	 * 根据orderNo或者mailNum查询订单
+	 * @param keyword
+	 * @return
+     */
+	Order findByOrderNoOrMailNum(String keyword);
 }

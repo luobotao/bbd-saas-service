@@ -247,23 +247,25 @@ public class DataQueryController {
 			}
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
+			String areaCode = user.getSite().getAreaCode();
+			String siteName = user.getSite().getName();
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.orderStatus = status;
 			orderQueryVO.arriveBetween = arriveBetween_expt;
 			orderQueryVO.mailNum = mailNum;
-			orderQueryVO.areaCode = user.getSite().getAreaCode();
+			orderQueryVO.areaCode = areaCode;
 			//查询数据
 			List<Order> orderList = orderService.findOrders(orderQueryVO);
 			//导出==数据写到Excel中并写入response下载
 			//表格数据
 			List<List<String>> dataList = new ArrayList<List<String>>();
 			List<String> row = null;
-			String parcelCodeTemp = null;
-			
 			if(orderList != null){
 				for(Order order : orderList){
 					row = new ArrayList<String>();
+					row.add(areaCode);
+					row.add(siteName);
 					row.add(order.getMailNum());
 					row.add(order.getReciever().getName());
 					row.add(order.getReciever().getPhone());
@@ -299,16 +301,15 @@ public class DataQueryController {
 						}
 
 					}
-
 					dataList.add(row);
 				}
 			}
 			
 			//表头
-			String[] titles = { "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态","异常原因" };
-			int[] colWidths = { 5000, 2000, 3500, 12000, 5500, 3500, 5500, 5500, 2000, 3500, 3000,4000};
+			String[] titles = { "站点编码", "站点名称", "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态","异常原因" };
+			int[] colWidths = {  3500, 6000, 5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500, 3000, 3500, 3000,4000};
 			ExportUtil exportUtil = new ExportUtil();
-			exportUtil.exportExcel("数据查询", dataList, titles, colWidths, response);
+			exportUtil.exportExcel(siteName + "_数据导出", dataList, titles, colWidths, response);
 		} catch (Exception e) {
 			logger.error("===数据导出===出错:" + e.getMessage());
 		}

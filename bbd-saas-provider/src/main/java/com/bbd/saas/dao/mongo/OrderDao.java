@@ -270,8 +270,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
         //设置查询条件
     	Query<Order> query = getQuery(orderQueryVO);
-    	//设置排序
-    	query.order("-dateUpd");
+        if(orderQueryVO.dispatchStatus != null){//运单分派
+            //设置排序
+            query.order("-orderStatus");
+        }else{//其他页面
+            //设置排序
+            query.order("-dateUpd");
+        }
+
         //分页信息
         query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
         //查询数据
@@ -564,5 +570,16 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             query.filter("dateAdd <=", endDate);
         }
         return find(query).asList();
+    }
+    /**
+     * 根据订单号或运单号查询
+     * @param keyword
+     * @return
+     */
+    public Order findByOrderNoOrMailNum(String keyword) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        query.or(query.criteria("orderNo").equal(keyword),query.criteria("mailNum").equal(keyword));
+        return findOne(query);
     }
 }
