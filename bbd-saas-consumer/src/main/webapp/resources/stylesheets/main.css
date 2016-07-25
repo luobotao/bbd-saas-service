@@ -2032,3 +2032,31 @@ input.spe-input{
   right:15px;
 }
 /* E 左图右文 */
+
+
+/* S div左右布局样式 */
+.content{
+  height:650px;
+  /*此处对容器设置了高度，一般不建议对容器设置高度，一般使用overflow:auto;属性设置容器根据内容自适应高度，如果不指定高度或不设置自适应高度，容器将默认为1个字符高度，容器下方的布局元素（footer）设置margin-top:属性将无效*/
+  margin-top:20px;/*此处讲解margin的用法，设置content与上面header元素之间的距离*/
+}
+.content_left{
+  height:600px;
+  width:20%;
+  margin:10px;/*设置元素跟其他元素的距离为20像素*/
+  float:left;/*设置浮动，实现多列效果，div+Css布局中很重要的*/
+}
+.content_main{
+  height:600px;
+  width:77%;
+  margin:10px;/*设置元素跟其他元素的距离为20像素*/
+  float:left;/*设置浮动，实现多列效果，div+Css布局中很重要的*/
+}
+/* E div左右布局样式 */
+
+.sbtn80{
+  background: #ffc800;
+  width:60px;
+  border: 1px solid #efb600;
+  border-radius: 4px;
+}

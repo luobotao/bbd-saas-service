@@ -490,4 +490,9 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return wayName;
 	}
+
+	@Override
+	public Order findByOrderNoOrMailNum(String keyword) {
+		return  orderDao.findByOrderNoOrMailNum(keyword);
+	}
 }
