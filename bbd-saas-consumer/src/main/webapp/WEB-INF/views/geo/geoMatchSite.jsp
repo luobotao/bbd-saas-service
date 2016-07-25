@@ -151,6 +151,7 @@
 <script type="application/javascript">
 	var defaultPoint = new BMap.Point(116.404, 39.915);
 	var center = null;
+	var zoom = 16;
 	// 百度地图API功能
 	var addrMap = new BMap.Map("addrMap", {enableMapClick:false,minZoom:13});
 	var goalMarker = null;//目标marker,用于拖动到目标位置的图标
@@ -161,11 +162,11 @@
 		<c:choose>
 			<c:when test="${data.loc != null}">
 				center = new BMap.Point("${data.loc.lng}", "${data.loc.lat}");
-				addrMap.centerAndZoom(center, 16);
+				addrMap.centerAndZoom(center, zoom);
 				goalMarker = showPoint(center, "<%=LocSource.fromString(source).getMsg()%>返回结果", true);
 			</c:when>
 			<c:otherwise>
-				addrMap.centerAndZoom(defaultPoint, 16);
+				addrMap.centerAndZoom(defaultPoint, zoom);
 			</c:otherwise>
 		</c:choose>
 		//加载电子围栏
@@ -198,17 +199,19 @@
 	initAddrMap();
 	//在地图上显示点和label
 	function showPoint(point, name, isSource){
+		console.log("name==="+name+"   isSource==="+isSource);
 		var marker = null;
-		/*if(isSource){
-			console.log("${ctx}");
-			var myIcon = new BMap.Icon("${ctx}/resources/images/admin/end.png", new BMap.Size(55,55));
-			var marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
+		if(isSource){
+			console.log("<%=request.getContextPath()%>");
+			console.log("${ctx}/resources/images/admin/end.png");
+			var myIcon = new BMap.Icon("http://localhost:7016/resources/images/admin/end.png", new BMap.Size(55,55),{anchor: new BMap.Size(27, 55)});
+			marker = new BMap.Marker(point,{icon:myIcon});  // 创建标注
 		}else{
 			marker = new BMap.Marker(point);// 创建标注
-		}*/
-		marker = new BMap.Marker(point);// 创建标注
+		}
+		//marker = new BMap.Marker(point);// 创建标注
 		addrMap.addOverlay(marker);             // 将标注添加到地图中
-		var label = newLabel(point, name);
+		var label = newLabel(point, name, isSource);
 		addrMap.addOverlay(label);
 		return marker;
 	}
@@ -261,11 +264,19 @@
 		}
 
 	}
-	function newLabel(point, name){
+	function newLabel(point, name, isSource){
 		var index = 25;
-		var opts = {
-			position : point,    // 指定文本标注所在的地理位置
-			offset   : new BMap.Size(-30, -50)    //设置文本偏移量
+		var opts = null;
+		if(isSource){//目标图标（大图）
+			opts = {
+				position : point,    // 指定文本标注所在的地理位置
+				offset   : new BMap.Size(-30, -81)    //设置文本偏移量
+			}
+		}else{
+			opts = {
+				position : point,    // 指定文本标注所在的地理位置
+				offset   : new BMap.Size(-37, -55)    //设置文本偏移量
+			}
 		}
 		var label = new BMap.Label(name, opts);  // 创建文本标注对象
 		label.setStyle({
@@ -283,13 +294,13 @@
 		$("#fixSource").val(source);//来源
 		var point = new BMap.Point(lng, lat);
 		addrMap.panTo(point);//地图中心移动到选中目标位置
-		if(source == "BBD"){//获取地图上的经纬度
-			console.log(goalMarker);
+		addrMap.setZoom(18);
+		if(source == "BBD"){ //获取地图上的经纬度
 			goalMarker.enableDragging();
 			goalMarker.addEventListener("dragend", function(e){
 				$("#lng").val(e.point.lng);
 				$("#lat").val(e.point.lat);
-				console.log("当前位置：" + e.point.lng + ", " + e.point.lat);
+				//console.log("当前位置：" + e.point.lng + ", " + e.point.lat);
 			});
 		}else{
 			$("#lng").val(lng);
