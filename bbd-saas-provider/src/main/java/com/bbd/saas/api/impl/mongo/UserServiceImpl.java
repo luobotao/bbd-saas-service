@@ -252,4 +252,10 @@ public class UserServiceImpl implements UserService {
     public long findCountBySiteAndDisptcherPermsn(Site site, int dispatchPermsn) {
         return userDao.selectCountBySiteAndDisptcherPermsn(site, dispatchPermsn);
     }
+
+    @Override
+    public User findByAppkeyAndSessionkey(String appKey, String sessionKey) {
+        return userDao.findByAppkeyAndSessionkey(appKey, sessionKey);
+    }
+
 }

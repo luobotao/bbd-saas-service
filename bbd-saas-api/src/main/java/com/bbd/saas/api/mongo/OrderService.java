@@ -33,6 +33,15 @@ public interface OrderService {
 	Order findOneByMailNum(String areaCode,String mailNum);
 
 	/**
+	 * 揽件入库
+	 * 根据运单号查询
+	 *
+	 * @param mailNum
+	 * @return
+	 */
+	public Order findOneByMailNum(String mailNum);
+
+	/**
 	 * 根据其他快递的运单号查询订单
 	 * @param newMailNum
 	 * @return

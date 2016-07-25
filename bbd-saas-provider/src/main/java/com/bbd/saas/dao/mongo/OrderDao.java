@@ -155,6 +155,19 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("mailNum",mailNum);
         return findOne(query);
     }
+
+    /**
+     * 根据运单号查询
+     * @param mailNum
+     * @return
+     */
+    public Order findOneByMailNum(String mailNum) {
+        Query<Order> query = createQuery();
+        if (StringUtils.isNotBlank(mailNum))
+            query.filter("mailNum", mailNum);
+        return findOne(query);
+    }
+
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
     	Query<Order> query = createQuery();
         query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
