@@ -55,7 +55,8 @@
 	  						
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	  							<label>扫描运单号：</label>
-	  							<input id="mailNum" name="mailNum" type="text" placeholder="请扫描运单号" class="form-control" onkeypress="enterPress(event)" />
+	  							<input id="mailNum" name="mailNum" type="text" placeholder="扫描运单号,按回车键分派" class="form-control" onkeypress="enterPress(event)" />
+								<span onclick="dispatch()" class="ser-btn d">确定分派</span>
 	  							<span class="pl20 ft16 tip-info" id="mailNum_check"> </span>
 	  						</div>
 	  					</div>
@@ -297,29 +298,28 @@ $(document).ready(function() {
 	  	}
 	});
 	//扫描运单号--把快递分派给派件员--边输入边改变
-	$("#mailNum").on('input',function(e){ 
-		
-	});
-	 
+	$("#mailNum").on('input',function(e){
 
+	});
 });
 
 //回车事件--运单分派
 function enterPress(e){
 	if(!e) e = window.event;//火狐中是 window.event
 	if((e.keyCode || e.which) == 13){
-		//未选择派件员 
-		if($("#courierId").val() == null || $("#courierId").val() == ""){
-		  	$("#mailNum_check").text("请选择派件员！");
-		  	return ;
-		}	
-		//已选择派件员，把快递分派给派件员	 
+		//分派
 		dispatch();
 	}
 }
 	
 // 运单分派  
-function dispatch() {  
+function dispatch() {
+	//未选择派件员
+	if($("#courierId").val() == null || $("#courierId").val() == ""){
+		$("#mailNum_check").text("请选择派件员！");
+		return false;
+	}
+	//已选择派件员，把快递分派给派件员
 	$.ajax({
         type : "GET",  //提交方式  
 		url : "<%=request.getContextPath()%>/packageDispatch/dispatch",//路径  

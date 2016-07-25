@@ -131,7 +131,7 @@ public class ExportUtil
 	 * @author: liyanlei
 	 * 2016年4月20日上午11:02:03
 	 */
-	public  void exportExcel(String fileName,List<List<String>> dataList, String[] titles, int[] colWidths, final HttpServletResponse response){
+	public  void exportExcel(String fileName, List<List<String>> dataList, String[] titles, int[] colWidths, final HttpServletResponse response){
 		ServletOutputStream outputStream = null;
 		try{
 			// 创建一个workbook 对应一个excel应用文件

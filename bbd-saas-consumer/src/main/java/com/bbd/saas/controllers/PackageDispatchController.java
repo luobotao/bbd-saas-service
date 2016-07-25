@@ -76,7 +76,7 @@ public class PackageDispatchController {
 	public String index(Integer pageIndex, Integer status, String arriveBetween, String courierId, final HttpServletRequest request, Model model) {
 		try {
 			//设置默认查询条件
-			status = Numbers.defaultIfNull(status, -1);//全部
+			status = Numbers.defaultIfNull(status, -1);//未分派
 			//到站时间前天、昨天和今天
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
@@ -149,8 +149,6 @@ public class PackageDispatchController {
 			if(order == null){//运单不存在,与站点无关
 				map.put("operFlag", 0);//0:运单号不存在
 			}else{//运单存在
-
-
 				//当运单到达站点(未分派)，首次分派;当运单状态处于滞留时，可以重新分派
 				if(OrderStatus.NOTDISPATCH.equals(order.getOrderStatus())//未分派
 					||OrderStatus.RETENTION.equals(order.getOrderStatus())) {//滞留
@@ -197,7 +195,7 @@ public class PackageDispatchController {
 			//刷新列表
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
 			orderQueryVO.dispatchStatus = OrderStatus.DISPATCHED.getStatus();
-			orderQueryVO.userId = courierId;
+			//orderQueryVO.userId = courierId;
 			orderQueryVO.areaCode = areaCode;
 			//查询数据
 			PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);

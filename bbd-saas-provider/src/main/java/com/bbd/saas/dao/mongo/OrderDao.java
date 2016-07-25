@@ -257,8 +257,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
         //设置查询条件
     	Query<Order> query = getQuery(orderQueryVO);
-    	//设置排序
-    	query.order("-dateUpd");
+        if(orderQueryVO.dispatchStatus != null){//运单分派
+            //设置排序
+            query.order("-orderStatus");
+        }else{//其他页面
+            //设置排序
+            query.order("-dateUpd");
+        }
+
         //分页信息
         query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
         //查询数据
