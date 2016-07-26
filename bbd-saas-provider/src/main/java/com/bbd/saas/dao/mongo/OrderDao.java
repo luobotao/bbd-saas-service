@@ -272,7 +272,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     	Query<Order> query = getQuery(orderQueryVO);
         if(orderQueryVO.dispatchStatus != null){//运单分派
             //设置排序
-            query.order("-orderStatus");
+            query.order("-orderStatus,-dateUpd");
         }else{//其他页面
             //设置排序
             query.order("-dateUpd");
@@ -582,4 +582,26 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.or(query.criteria("orderNo").equal(keyword),query.criteria("mailNum").equal(keyword));
         return findOne(query);
     }
+
+    /**
+     * 根据areaCode和mailNumList查询
+     * @param areaCode
+     * @param mailNumList
+     * @return
+     */
+    public List<Order> selectByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList){
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(areaCode)){
+            query.filter("areaCode", areaCode);
+        }
+        if(mailNumList != null && mailNumList.size() > 0){
+            query.filter("mailNum in", mailNumList);
+        }
+        return find(query).asList();
+    }
+
+
+
+
+
 }

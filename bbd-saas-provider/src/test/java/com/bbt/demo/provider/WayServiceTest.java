@@ -33,5 +33,10 @@ public class WayServiceTest {
 		System.out.println(num);
 		Assert.isTrue(true);//无用
 	}
+	@Test
+	public void testStringBuffer() throws Exception{
+		StringBuffer msg = new StringBuffer();
+		System.out.println("00000"+msg.toString()+"====");
+	}
 
 }

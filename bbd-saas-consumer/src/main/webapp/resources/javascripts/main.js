@@ -294,14 +294,18 @@ function outDiv(content){
 // E 气泡 提示
 // S iframe气泡 提示
 var parentF=$('#psrE',window.parent.document);
-function ioutDiv(content){
+function ioutDiv(content, time){
     parentF.find(".b-prompt").addClass("mov");
     parentF.find(".b-prompt i").html(content);
     var txtwid=parentF.find(".b-prompt .b-prompt-txt").outerWidth();
     parentF.find(".b-prompt-txt").css({marginLeft:-txtwid/2})
+    if(time == null){
+        time = 3000;
+    }
     setTimeout(function(){
         parentF.find(".b-prompt").removeClass("mov")
-    },3000)
+    },time);
+
 }
 parentF.find(".b-prompt").removeClass("mov")
 // E iframe气泡 提示
