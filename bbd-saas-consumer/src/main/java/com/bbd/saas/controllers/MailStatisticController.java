@@ -11,7 +11,9 @@ import com.bbd.saas.models.ExpressStatStation;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteVO;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 统计汇总
@@ -46,8 +45,8 @@ public class MailStatisticController {
 	/**
 	 * Description: 跳转到统计汇总页面
 	 * @param pageIndex 页数
-	 * @param areaCode 站点编号
-	 * @param time 时间范围
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
+	 * @param time 时间
 	 * @param request 请求
 	 * @param model
 	 * @return 返回页面
@@ -55,12 +54,12 @@ public class MailStatisticController {
 	 * 2016年5月6日下午4:27:46
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, String areaCode, String time, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String areaCodeStr, String time, final HttpServletRequest request, Model model) {
 		try {
 			//设置默认查询条件 -- 当天
 			time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD2));
 			//查询数据
-			PageModel<ExpressStatStation> pageModel = getList(pageIndex, areaCode, time, request);
+			PageModel<ExpressStatStation> pageModel = getList(pageIndex, areaCodeStr, time, request);
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
@@ -79,14 +78,14 @@ public class MailStatisticController {
 	/**
 	 * 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
-	 * @param areaCode 站点编号
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
 	 * @param time 时间(一天的时间)
 	 * @param request 请求
 	 * @return 分页列表数据
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<ExpressStatStation> getList(Integer pageIndex, String areaCode, String time, final HttpServletRequest request) {
+	public PageModel<ExpressStatStation> getList(Integer pageIndex, String areaCodeStr, String time, final HttpServletRequest request) {
 		//查询数据
 		PageModel<ExpressStatStation> pageModel = new PageModel<ExpressStatStation>();
 		try {
@@ -100,55 +99,61 @@ public class MailStatisticController {
 			if(currUser.getRole() == UserRole.COMPANY){//公司角色
 				//设置默认查询条件
 				//areaCode = StringUtil.initStr(areaCode, "141725-001");
-				if(areaCode != null && !"".equals(areaCode)){//只查询一个站点
-					//列表数据
-					List<ExpressStatStation> dataList = findOneSiteData(areaCode, time);
-					pageModel.setTotalCount(1);
-					pageModel.setDatas(dataList);
-				}else {//查询本公司下的所有站点 （全部）
+				//分页查询站点
+				PageModel<Option> sitePageModel = new PageModel<Option>();
+				List<SiteStatus> statusList = null;
+				List<String> areaCodeList = null;
+				if(StringUtils.isBlank(areaCodeStr)){//查询全部 -- 同一个公司的所有站点
 					//查询登录用户的公司下的所有站点
-					List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+					statusList = new ArrayList<SiteStatus>();
 					statusList.add(SiteStatus.APPROVE);
 					statusList.add(SiteStatus.INVALID);
-					//查询登录用户的公司下的所有站点
-					PageModel<Site> sitePageModel = new PageModel<Site>();
 					sitePageModel.setPageNo(pageIndex);
-					sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), statusList);
-					pageModel.setTotalCount(sitePageModel.getTotalCount());
-					List<Site> siteList = sitePageModel.getDatas();
-					if(siteList != null && siteList.size() > 0){
-						List<String> areaCodeList = new ArrayList<String>();
-						for(Site site : siteList){
-							areaCodeList.add(site.getAreaCode());
+				}else{//部分站点
+					String [] areaCodes = areaCodeStr.split(",");
+					areaCodeList = Arrays.asList(areaCodes);
+				}
+				sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), areaCodeList, statusList);
+				pageModel.setTotalCount(sitePageModel.getTotalCount());
+				List<Option> siteList = sitePageModel.getDatas();
+				if(siteList != null && siteList.size() > 0){
+					if(areaCodeList == null){//全部
+						areaCodeList = new ArrayList<String>();
+						for(Option option : siteList){
+							areaCodeList.add(option.getId());
 						}
-						Map<String, ExpressStatStation> essMap = expressStatStationService.findByAreaCodeListAndTime(areaCodeList, time);
-						List<ExpressStatStation> dataList = new ArrayList<ExpressStatStation>();
-						ExpressStatStation ess = null;
-						for(Site site : siteList){
-							ess = essMap.get(site.getAreaCode());
-							if(ess == null){
-								ess = new ExpressStatStation(site.getCompanyId(), site.getAreaCode(), site.getName(),time);
-								ess.setSitename(site.getName());
-							}
-							dataList.add(ess);
-						}
-						if((pageModel.getPageNo() + 1) == pageModel.getTotalPages()){//最后一页 -- 需要显示汇总行
-							ExpressStatStation summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
-							if(summary == null){
-								summary = new ExpressStatStation(currUser.getCompanyId(), null, null, null);
-							}
-							summary.setSitename("总计");
-							dataList.add(summary);
-						}
-						pageModel.setDatas(dataList);
 					}
-
+					Map<String, ExpressStatStation> essMap = expressStatStationService.findByAreaCodeListAndTime(areaCodeList, time);
+					List<ExpressStatStation> dataList = new ArrayList<ExpressStatStation>();
+					ExpressStatStation ess = null;
+					for(Option option : siteList){
+						ess = essMap.get(option.getId());
+						if(ess == null){
+							ess = new ExpressStatStation(currUser.getCompanyId(), option.getId(), option.getName(),time);
+							ess.setSitename(option.getName());
+						}
+						dataList.add(ess);
+					}
+					if((pageModel.getPageNo() + 1) == pageModel.getTotalPages()){//最后一页 -- 需要显示汇总行
+						ExpressStatStation summary = null;
+						if(StringUtils.isBlank(areaCodeStr)){//查询全部 -- 同一个公司的所有站点
+							summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
+						}else{//部分站点
+							summary = expressStatStationService.findSummaryByAreaCodesAndTime(areaCodeList, time);
+						}
+						if(summary == null){
+							summary = new ExpressStatStation(currUser.getCompanyId(), null, null, null);
+						}
+						summary.setSitename("总计");
+						dataList.add(summary);
+					}
+					pageModel.setDatas(dataList);
 				}
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//z站长
 				if(currUser.getSite() != null){
-					areaCode = currUser.getSite().getAreaCode();
+					areaCodeStr = currUser.getSite().getAreaCode();
 					//列表数据
-					List<ExpressStatStation> dataList = findOneSiteData(areaCode, time);
+					List<ExpressStatStation> dataList = findOneSiteData(areaCodeStr, time);
 					pageModel.setTotalCount(1);
 					pageModel.setDatas(dataList);
 				}

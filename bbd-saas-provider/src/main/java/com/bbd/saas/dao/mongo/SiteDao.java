@@ -44,7 +44,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param keyword
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, Integer status, Integer areaFlag, String keyword) {
+    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, List<String> areaCodeList, Integer status, Integer areaFlag, String keyword) {
         SiteQueryVO queryVO = new SiteQueryVO();
         queryVO.companyId = companyId;
         queryVO.status = SiteStatus.status2Obj(status);
@@ -52,6 +52,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         Query<Site> query = getQuerys(queryVO);
         if(areaFlag != null && areaFlag != -1){//配送区域
             query.filter("areaFlag", areaFlag);
+        }
+        if(areaCodeList != null && areaCodeList.size() > 0){//站点编号集合
+            query.filter("areaCode in", areaCodeList);
         }
         query.order("-dateAdd");
         return queryPageData(pageModel, query);
@@ -63,15 +66,23 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param statusList
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId,  List<SiteStatus> statusList) {
-        SiteQueryVO queryVO = new SiteQueryVO();
-        queryVO.companyId = companyId;
-        Query<Site> query = getQuerys(queryVO);
+    public PageModel<Option> findSites(PageModel<Option> pageModel,String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
+        Query<Site> query = createQuery().retrievedFields(true, "areaCode", "name");
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(areaCodeList != null){
+            query.filter("areaCode in", areaCodeList);
+        }
         if(statusList != null){
             query.filter("status in", statusList);
         }
         query.order("areaCode");
-        return queryPageData(pageModel, query);
+        List<Site> siteList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        List<Option> optionList = toOptionList(siteList);
+        pageModel.setDatas(optionList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
     }
 
     private Query<Site> getQuerys(SiteQueryVO siteQueryVO){
@@ -142,6 +153,26 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     }
 
     /**
+     * 查询指定公司下的特定站点状态的所有站点
+     * @param companyId 公司名称
+     * @param areaCodeList 站点编码集合
+     * @param status 特定站点状态
+     * @return 站点VO集合
+     */
+    public List<Site> selectByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status) {
+        Query<Site> query = createQuery().order("areaCode");
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(areaCodeList != null && !areaCodeList.isEmpty()){
+            query.filter("areaCode in", areaCodeList);
+        }
+        if(status != null){
+            query.filter("status", status);
+        }
+        return  find(query).asList();
+    }
+    /**
      * 根据公司ID、地区获取该公司下的指定状态的站点集合
      * @param companyId 公司Id
      * @param prov 省
@@ -207,6 +238,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     private List<Option> selectAndToOptionList(Query<Site> query){
         query.retrievedFields(true, "areaCode", "name");
         List<Site> siteList = find(query).asList();
+        return toOptionList(siteList);
+    }
+    private List<Option> toOptionList(List<Site> siteList){
         List<Option> optionList  = new ArrayList<Option>();
         if(siteList != null){
             for (Site site : siteList){

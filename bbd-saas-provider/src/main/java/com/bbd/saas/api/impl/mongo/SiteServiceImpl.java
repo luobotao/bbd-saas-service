@@ -75,8 +75,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, Integer status, Integer areaFlag, String keyword) {
-        return siteDao.findSites(pageModel, companyId, status, areaFlag, keyword);
+    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<String> areaCodeList, Integer status, Integer areaFlag, String keyword) {
+        return siteDao.findSites(pageModel, companyId, areaCodeList, status, areaFlag, keyword);
     }
     /**
      * 根据站点状态与关键词进行站点分页查询
@@ -85,8 +85,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<SiteStatus> statusList) {
-        return siteDao.findSites(pageModel, companyId, statusList);
+    public PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
+        return siteDao.findSites(pageModel, companyId, areaCodeList, statusList);
     }
 
     /**
@@ -274,7 +274,13 @@ public class SiteServiceImpl implements SiteService {
         return siteListToSiteVO(siteList);
     }
 
-	@Override
+    @Override
+    public List<SiteVO> findSiteVOByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status) {
+        List<Site> siteList = this.siteDao.selectByCompanyIdAndAreaCode(companyId, areaCodeList, status);
+        return siteListToSiteVO(siteList);
+    }
+
+    @Override
 	public List<Site> findAllSiteList() {
 		return siteDao.find().asList();
 	}
@@ -314,5 +320,10 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public List<Option> findByAreaCodes(String[] areaCodes) {
         return this.siteDao.selectByAreaCodes(areaCodes);
+    }
+
+    @Override
+    public List<Site> findSiteListByAreaCodes(List<String> areaCodeList) {
+        return this.siteDao.selectByCompanyIdAndAreaCode(null, areaCodeList, null);
     }
 }

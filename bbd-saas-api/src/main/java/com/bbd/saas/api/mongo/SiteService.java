@@ -67,20 +67,22 @@ public interface SiteService {
      * 根据站点状态与关键词进行站点分页查询
      * @param pageModel 分页对象
      * @param companyId 公司ID
+     * @param areaCodeList 站点编号集合，为空即为查询公司下的全部站点
      * @param status 站点状态SiteStatus对应的值
      * @param keyword 站点名称/站⻓姓名/⼿机号
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,Integer status, Integer areaFlag, String keyword);
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<String> areaCodeList, Integer status, Integer areaFlag, String keyword);
 
     /**
      * 根据站点状态进行站点分页查询
      * @param pageModel 分页对象
      * @param companyId 公司ID
+     * @param areaCodeList 站点编号集合
      * @param statusList 站点状态集合
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<SiteStatus> statusList);
+    PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList);
 
     /**
      * 删除站点
@@ -114,7 +116,14 @@ public interface SiteService {
      * @return 站点VO集合
      */
     List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status);
-
+    /**
+     * 查询指定公司下的特定站点状态的所有站点
+     * @param companyId 公司名称
+     * @param areaCodeList 站点编码集合
+     * @param status 特定站点状态
+     * @return 站点VO集合
+     */
+    List<SiteVO> findSiteVOByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status);
     /**
      * 查询所有站点
      * @return 站点集合
@@ -148,6 +157,13 @@ public interface SiteService {
      * @return List<areaCode,name>集合
      */
     List<Option> findByAreaCodes(String[] areaCodes);
+
+    /**
+     * 根据站点编号集合查询站点列表
+     * @param areaCodes 站点编号集合
+     * @return List<site>站点集合
+     */
+    List<Site> findSiteListByAreaCodes(List<String> areaCodes);
 
 
 }

@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +65,63 @@ public class SiteManageController {
 	SitePoiApi sitePoiApi;
 	@Autowired
 	WayService wayService;
+	/**
+	 * 获取某一公司下的站点列表信息
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(method=RequestMethod.GET)
+	public String siteManage(HttpServletRequest request, Model model, String keyword) {
+		PageModel<Site> sitePage = getSitePage(request, 0, null, -1, -1, keyword);
+		model.addAttribute("sitePage", sitePage);
+		//当前登录的用户信息
+		User currUser = adminService.get(UserSession.get(request));
+		//查询登录用户的公司下的所有站点
+		List<Option> optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, null);
+		model.addAttribute("siteList", optionList);
+		return "systemSet/siteManage";
+	}
+
+	/**
+	 * 站点分页查询
+	 * @param request 请求
+	 * @param pageIndex 当前页
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
+	 * @param status 站点状态
+	 * @param areaFlag 配送区域状态
+	 * @param keyword 查询关键字
+	 * @return 每页的数据和分页信息
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getSitePage", method = RequestMethod.GET)
+	public PageModel<Site> getSitePage(HttpServletRequest request, Integer pageIndex, String areaCodeStr, Integer status, Integer areaFlag, String keyword) {
+		User user = adminService.get(UserSession.get(request));
+		if (pageIndex==null) pageIndex = 0 ;
+
+		PageModel<Site> pageModel = new PageModel<>();
+		pageModel.setPageNo(pageIndex);
+		List<String> areaCodeList = null;
+		if(StringUtils.isNotBlank(areaCodeStr)){//部分站点
+			String [] areaCodes = areaCodeStr.split(",");
+			areaCodeList = Arrays.asList(areaCodes);
+		}
+		PageModel<Site> sitePage = siteService.getSitePage(pageModel,user.getCompanyId(), areaCodeList, status, areaFlag, keyword);
+		for(Site site :sitePage.getDatas()){
+			site.setTurnDownMessage(site.getTurnDownReasson() == null ? "" : site.getTurnDownReasson().getMessage());
+		}
+		return sitePage;
+	}
+	/**
+	 * 根据区域码获取站点
+	 * @param
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getSiteByAreaCode", method = RequestMethod.GET)
+	public Site getSiteByAreaCode(HttpServletRequest request, String areaCode) {
+		return siteService.findSiteByAreaCode(areaCode);
+	}
+
 	/**
 	 * 检查手机号是否被注册
 	 * @param loginName 手机号
@@ -264,57 +322,6 @@ public class SiteManageController {
 		postmanUser = addOrUpdatePostmanUser(postmanUser, user, siteForm.getAreaCode(), newPhone, oldPhone);
 		user.setPostmanuserId(postmanUser.getId());
 		userService.save(user);//更新用户
-	}
-	/**
-     * 获取某一公司下的站点列表信息
-     * @param 
-     * @return
-     */
-	@RequestMapping(method=RequestMethod.GET)
-	public String siteManage(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
-		PageModel<Site> sitePage = getSitePage(request, 0, -1, -1, keyword);
-		model.addAttribute("sitePage", sitePage);
-		//当前登录的用户信息
-		User currUser = adminService.get(UserSession.get(request));
-		//查询登录用户的公司下的所有站点
-		List<Option> optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, null);
-		model.addAttribute("siteList", optionList);
-		return "systemSet/siteManage";
-	}
-
-	/**
-	 * 站点分页查询
-	 * @param request 请求
-	 * @param pageIndex 当前页
-	 * @param status 站点状态
-	 * @param areaFlag 配送区域状态
-	 * @param keyword 查询关键字
-     * @return 每页的数据和分页信息
-     */
-	@ResponseBody
-	@RequestMapping(value = "/getSitePage", method = RequestMethod.GET)
-	public PageModel<Site> getSitePage(HttpServletRequest request, Integer pageIndex, Integer status, Integer areaFlag, String keyword) {
-		User user = adminService.get(UserSession.get(request));
-		if (pageIndex==null) pageIndex = 0 ;
-
-		PageModel<Site> pageModel = new PageModel<>();
-		pageModel.setPageNo(pageIndex);
-
-		PageModel<Site> sitePage = siteService.getSitePage(pageModel,user.getCompanyId(),status, areaFlag, keyword);
-		for(Site site :sitePage.getDatas()){
-			site.setTurnDownMessage(site.getTurnDownReasson() == null ? "" : site.getTurnDownReasson().getMessage());
-		}
-		return sitePage;
-	}
-	/**
-     * 根据区域码获取站点
-     * @param
-     * @return
-     */
-	@ResponseBody
-	@RequestMapping(value = "/getSiteByAreaCode", method = RequestMethod.GET)
-	public Site getSiteByAreaCode(HttpServletRequest request, String areaCode) {
-		return siteService.findSiteByAreaCode(areaCode);
 	}
 
 	/**

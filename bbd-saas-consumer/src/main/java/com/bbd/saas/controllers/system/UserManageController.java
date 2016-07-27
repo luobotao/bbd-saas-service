@@ -39,10 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 版权：zuowenhai新石器时代<br/>
@@ -84,20 +81,25 @@ public class UserManageController {
 			List<Option> optionList = siteService.findByCompanyIdAndAddress(userNow.getCompanyId(), null, null, null, null, null);
 			model.addAttribute("siteList", optionList);
 		}
-		PageModel<User> userPage = getUserPage(request,0,null,null,null,null);
+		PageModel<User> userPage = getPageUser(request, null, 0, null, null, null);
 
 		model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, userNow.getCompanyId()));
 		model.addAttribute("userNow", userNow);
 		model.addAttribute("userPage", userPage);
 		return "systemSet/userManage";
 	}
-	
+
 	/**
-     * 获取用户列表信息
-     * @param 
+	 * 获取用户列表信息
+	 * @param request 请求
+	 * @param pageIndex 当前页
+	 * @param siteId 站点id
+	 * @param roleId 角色Id
+	 * @param status 用户状态
+	 * @param keyword 关键词（姓名或者手机号）
      * @return
      */
-	@ResponseBody
+	/*@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
 	public PageModel<User> getUserPage(HttpServletRequest request, Integer pageIndex, String siteId, String roleId , Integer status, String keyword) {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
@@ -133,17 +135,58 @@ public class UserManageController {
 		
 		return userPage;
 	}
-	
+	*/
 	/**
-     * 获取用户列表信息
+     * 获取用户列表信息 == 公司用户
      * @param 
+     * @return
+     */
+	/**
+	 * 获取用户列表信息 == 公司账号
+	 * @param request 请求
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
+	 * @param pageIndex 当前页
+	 * @param roleId 角色id
+	 * @param status 状态
+	 * @param keyword 关键词（姓名或者手机号）
      * @return
      */
 	@ResponseBody
 	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
-	public PageModel<User> getUserPageFenYe(HttpServletRequest request, Integer pageIndex, String siteId, String roleId, Integer status, String keyword) {
-		PageModel<User> userPage = getUserPage(request,pageIndex,siteId,roleId,status,keyword);
-		
+	public PageModel<User> getPageUser(HttpServletRequest request, String areaCodeStr, Integer pageIndex, String roleId, Integer status, String keyword) {
+		User userNow = adminService.get(UserSession.get(request));//当前登录用户
+		if (pageIndex==null) pageIndex =0 ;
+
+		UserQueryVO userQueryVO = new UserQueryVO();
+		userQueryVO.roleId=roleId;
+		userQueryVO.status=status;
+		userQueryVO.keyword=keyword;
+
+		PageModel<User> pageModel = new PageModel<>();
+		pageModel.setPageNo(pageIndex);
+		PageModel<User> userPage = new PageModel<>();
+		if(UserRole.COMPANY==userNow.getRole()){//公司用户
+			userQueryVO.companyId=userNow.getCompanyId();
+			List<Site> siteList = null;
+			List<String> areaCodeList = null;
+			if(StringUtils.isNotBlank(areaCodeStr)){//部分站点
+				String [] areaCodes = areaCodeStr.split(",");
+				areaCodeList = Arrays.asList(areaCodes);
+				siteList = siteService.findSiteListByAreaCodes(areaCodeList);
+			}
+			userPage = userService.findPageUser(pageModel,userQueryVO, siteList);
+		}else{//站长
+			userQueryVO.roleId= UserRole.SENDMEM.toString();
+			userPage = userService.findUserList(pageModel,userQueryVO,userNow.getSite());
+		}
+		//转义--id、角色、状态
+		for(User user : userPage.getDatas()){
+			user.setIdStr(user.getId().toString());
+			user.setRoleMessage(user.getRole()==null?"":user.getRole().getMessage());
+			if(user.getUserStatus()!=null && !user.getUserStatus().getMessage().equals("")){
+				user.setStatusMessage(user.getUserStatus().getMessage());
+			}
+		}
 		return userPage;
 	}
 	

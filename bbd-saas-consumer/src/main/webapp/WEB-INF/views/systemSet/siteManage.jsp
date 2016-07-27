@@ -380,6 +380,7 @@
             dataType: "json",
             data: {
                 "pageIndex": pageIndex,
+                "areaCodeStr" : getAreaCodeStr(),//站点编号集合
                 "status": status,
                 "areaFlag": areaFlag,
                 "keyword": keyword

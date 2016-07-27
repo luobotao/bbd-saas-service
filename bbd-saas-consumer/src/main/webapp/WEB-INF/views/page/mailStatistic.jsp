@@ -155,9 +155,9 @@ $(document).ready(function() {
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
-	var areaCode = null;
+	var areaCodeStr = null;
 	<c:if test="${role == UserRole.COMPANY}">
-		areaCode = $("#areaCode").val();
+		areaCodeStr = getAreaCodeStr();
 	</c:if>
 	//查询所有派件员
 	$.ajax({
@@ -165,7 +165,7 @@ function gotoPage(pageIndex) {
         url : "<c:url value="/mailStatistic/getList" />",//路径
         data : {  
             "pageIndex" : pageIndex,
-			"areaCode" : areaCode,
+			"areaCodeStr" : areaCodeStr,
             "time" : $("#time").val(),
         },//数据，这里使用的是Json格式进行传输
         success : function(dataObject) {//返回数据根据结果进行相应的处理 

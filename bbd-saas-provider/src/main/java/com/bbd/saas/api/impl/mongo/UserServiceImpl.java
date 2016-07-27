@@ -104,6 +104,11 @@ public class UserServiceImpl implements UserService {
         return userDao.findUserList(pageModel, userQueryVO, site);
     }
 
+    @Override
+    public PageModel<User> findPageUser(PageModel<User> pageModel, UserQueryVO userQueryVO, List<Site> siteList) {
+        return this.userDao.findPageUser(pageModel, userQueryVO, siteList);
+    }
+
     /**
      * Description: 获取指定站点下的所有派件员
      *

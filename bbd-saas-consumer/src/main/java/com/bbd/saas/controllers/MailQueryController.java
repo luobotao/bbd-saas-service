@@ -50,21 +50,19 @@ public class MailQueryController {
 	OrderParcelService orderParcelService;
 	@Autowired
 	SiteService siteService;
-
 	/**
-	 * Description: 跳转到运单查询页面
-	 * @param pageIndex 页数
-	 * @param status 运单状态
-	 * @param arriveBetween 到站时间
+	 * 跳转到运单查询页面
+	 * @param pageIndex 当前页,默认第一页
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
+	 * @param status 订单状态
+	 * @param arriveBetween 到站时间范围
 	 * @param mailNum 运单号
 	 * @param request 请求
-	 * @param model
-	 * @return
-	 * @author liyanlei
-	 * 2016年4月22日下午6:27:46
-	 */
+     * @param model 携带数据
+     * @return page
+     */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, String areaCode, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String areaCodeStr, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
 		try {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
@@ -74,7 +72,7 @@ public class MailQueryController {
 			//到站时间
 			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
-			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
+			PageModel<Order> orderPage = getList(pageIndex, areaCodeStr, status, arriveBetween, mailNum, request);
 			if(orderPage != null && orderPage.getDatas() != null){
 				/*for(Order order : orderPage.getDatas()){
 					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
@@ -137,10 +135,8 @@ public class MailQueryController {
 				statusList.add(SiteStatus.INVALID);
 				optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, statusList);
 			}else{//部分站点
-				if(StringUtils.isNotBlank(areaCodeStr)){
-					String [] areaCodes = areaCodeStr.split(",");
-					optionList = siteService.findByAreaCodes(areaCodes);
-				}
+				String [] areaCodes = areaCodeStr.split(",");
+				optionList = siteService.findByAreaCodes(areaCodes);
 			}
 			Map<String, String> siteMap = new HashMap<String, String>();
 			List<String> areaCodeList = new ArrayList<String>();

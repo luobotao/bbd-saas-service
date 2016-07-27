@@ -290,7 +290,6 @@
 	var pageStr = paginNav(<%=userPage.getPageNo()%>, <%=userPage.getTotalPages()%>, <%=userPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
 
-
 	//公司用户角色不可以修改
 	<c:if test="${userNow.role==UserRole.COMPANY}">
 	$("#roleId").attr("disabled","disabled");
@@ -301,16 +300,15 @@
 		var roleId = $("#saasrole").val();
 		var status = $("#status").val();
 		var keyword = $("#keyword").val();
-		var sites = $("#sites").val();
 		var url = "<c:url value="/userManage/getUserPageFenYe" />";
 		$.ajax({
 			type : "GET",  //提交方式
 			url : url,//路径
 			data : {
+				"areaCodeStr" : getAreaCodeStr(),//站点编号集合
 				"pageIndex" : pageIndex,
 				"roleId" : roleId,
 				"status" : status,
-				"siteId" : sites,
 				"keyword" : keyword
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据根据结果进行相应的处理

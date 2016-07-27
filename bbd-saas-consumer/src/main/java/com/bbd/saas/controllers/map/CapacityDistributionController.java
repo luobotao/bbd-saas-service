@@ -64,6 +64,8 @@ public class CapacityDistributionController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 			statusList.add(SiteStatus.APPROVE);
 			List<Option> optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, statusList);

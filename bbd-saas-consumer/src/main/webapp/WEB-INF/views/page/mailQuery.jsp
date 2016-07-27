@@ -68,7 +68,6 @@
   					<table class="table">
   						<thead>
   							<tr>
-								<th>站点编号</th>
 								<th>站点名称</th>
 								<th>运单号</th>
 								<th>收货人</th>
@@ -97,7 +96,6 @@
 									for(Order order : orderPage.getDatas()){
 							%>
 								<tr>
-									<td><%=order.getAreaCode()%></td>
 									<td><%=order.getAreaName()%></td>
 									<td><%=order.getMailNum()%></td>
 									<td><%=order.getReciever().getName()%></td>
@@ -240,16 +238,15 @@ $(document).ready(function() {
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
-	//站点编号集合
-	var areaCodeStr = getAreaCodeStr();
-	console.log(areaCodeStr);
+	/*var areaCodeStr = getAreaCodeStr();
+	console.log(areaCodeStr);*/
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/mailQuery/getList",//路径
         data : {  
             "pageIndex" : pageIndex,
-			"areaCodeStr" : areaCodeStr,
+			"areaCodeStr" : getAreaCodeStr(),//站点编号集合
             "status" : $("#status").val(), 
             //"arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
@@ -283,7 +280,6 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
-	row += "<td>" + data.areaCode + "</td>";
 	row += "<td>" + data.areaName + "</td>";
 	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
 		row += "<td>" + data.mailNum + "</td>";

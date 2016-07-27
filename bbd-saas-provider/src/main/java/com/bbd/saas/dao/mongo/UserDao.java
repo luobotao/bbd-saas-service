@@ -50,34 +50,53 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site) {
-    	
-    	Query<User> query = createQuery();
-    	//设置排序
-    	query.order("-dateUpdate");
-    	if(userQueryVO!=null){
-    		if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
+        Query<User> query = this.getPageQuery(userQueryVO);
+        if(site!=null){
+            query.filter("site", site);
+        }
+        List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        pageModel.setDatas(userList);
+        pageModel.setTotalCount(count(query));
+
+        return pageModel;
+    }
+    /**
+     * 获取用户列表信息
+     * @param pageModel
+     * @return PageModel<User>
+     */
+    public PageModel<User> findPageUser(PageModel<User> pageModel,UserQueryVO userQueryVO,List<Site> siteList) {
+        Query<User> query = this.getPageQuery(userQueryVO);
+        if(siteList != null && !siteList.isEmpty()){
+            query.filter("site in", siteList);
+        }
+        //设置排序
+        query.order("site,-dateUpdate");
+        List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        pageModel.setDatas(userList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
+    }
+    private Query<User> getPageQuery(UserQueryVO userQueryVO){
+        Query<User> query = createQuery();
+        //设置排序
+        query.order("-dateUpdate");
+        if(userQueryVO!=null){
+            if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
                 query.filter("companyId", userQueryVO.companyId);
             }
             query.filter("role <>", UserRole.COMPANY);
-    		if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){
-    			query.filter("role", userQueryVO.roleId);
-    		}
-            if(site!=null){
-                query.filter("site", site);
+            if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){
+                query.filter("role", userQueryVO.roleId);
             }
-    		if(userQueryVO.status!=null && userQueryVO.status!=-1){
-    			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
-    		}
-    		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
-    			
-    		}
+            if(userQueryVO.status!=null && userQueryVO.status!=-1){
+                query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
+            }
+            if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
+                query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
+            }
         }
-    	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-        pageModel.setDatas(userList);
-        pageModel.setTotalCount(count(query));
-    	
-        return pageModel;
+        return query;
     }
     
     /**
