@@ -1346,31 +1346,35 @@ public class Dates {
     }
 
 
-    public static void main(String[] args) {
-    	/*List<Date> a = findDates(new Date(), 7);
+   /* public static void main(String[] args) {
+    	*//*List<Date> a = findDates(new Date(), 7);
     	for(Date b:a){
     		System.out.println(b);
-    	}*/
+    	}*//*
 
         Date date = getDayTime(-1);
         Date date2 = getDayTime(0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("small===" + sdf.format(date) + "  big==" + sdf.format(date2));
-       /*
+       *//*
         try {
             int i = daysBetween(new Date(2016,5,11,01,01), new Date(2016,5,12,01,00));
             System.out.println(i);
         } catch (ParseException e) {
             e.printStackTrace();
-        }*/
+        }*//*
         //isSameDay(new Date(), new Date(2016,5,12));
 	}
-
+*/
 
     public static Date getNextDay(Date date, int num) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        c.add(Calendar.MONTH, num);
+        c.add(Calendar.DATE, num);
         return c.getTime();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Dates.getNextDay(new Date(),-1));
     }
 }
