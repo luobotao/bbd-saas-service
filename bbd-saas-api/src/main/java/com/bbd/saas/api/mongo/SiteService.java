@@ -3,6 +3,7 @@ package com.bbd.saas.api.mongo;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteVO;
 import org.mongodb.morphia.Key;
 
@@ -119,8 +120,6 @@ public interface SiteService {
      * @return 站点集合
      */
     List<Site> findAllSiteList();
-
-
     /**
      * 查询指定公司的不同地区的特定站点状态的站点集合
      * @param companyId 公司Id
@@ -131,5 +130,24 @@ public interface SiteService {
      * @return 站点集合
      */
     List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status);
+
+    /**
+     * 查询指定公司的不同地区的特定站点状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    List<Option> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList);
+
+    /**
+     * 根据站点编号数组查询
+     * @param areaCodes 站点编号数组
+     * @return List<areaCode,name>集合
+     */
+    List<Option> findByAreaCodes(String[] areaCodes);
+
 
 }

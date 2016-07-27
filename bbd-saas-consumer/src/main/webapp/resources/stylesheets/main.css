@@ -2060,3 +2060,70 @@ input.spe-input{
   border: 1px solid #efb600;
   border-radius: 4px;
 }
+
+
+/* S 模拟select */
+.padR6{
+  padding-right:6px;
+}
+.c-show{
+  width:10000px;
+}
+.c-sel{
+  position:relative;
+  width:100%;
+}
+.showA{
+  width:100%;
+  overflow:hidden;
+  position:absolute;
+  top:0;
+  padding:0 15px;
+}
+.c-show li{
+  float:left;
+  line-height:40px;
+}
+.sel-input{
+  width:100%;
+  padding-left:15px;
+  height: 40px;
+  line-height:40px;
+  border: 1px solid #d9d8eb;
+}
+.sel-input:focus {
+  border: 1px solid #ffa000;
+}
+.linputC b{
+  font-weight:normal;
+  color:#33333d;
+  font-size:14px;
+  padding-left:6px;
+}
+.all-area{
+  width:100%;
+  padding:8px 15px;
+  border: 1px solid #d9d8eb;
+  border-top:none;
+  background:#fff;
+}
+.pm-dn{
+  display:none;
+}
+.c-input{
+  color:#a5a5a6;
+}
+.all-area{
+  position:absolute;
+  z-index:20;
+  max-height:320px;
+  overflow:auto;
+}
+.crt-s{
+  position:relative;
+  display:inline-block;
+}
+.w400{
+  width:400px !important;
+}
+/* E 模拟select */

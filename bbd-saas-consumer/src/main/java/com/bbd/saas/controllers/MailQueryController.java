@@ -12,10 +12,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.Express;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.SiteVO;
-import com.bbd.saas.vo.UserVO;
+import com.bbd.saas.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,14 +81,15 @@ public class MailQueryController {
 				}*/
 				//当前登录的用户信息
 				User currUser = adminService.get(UserSession.get(request));
+				//查询登录用户的公司下的所有站点
 				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 				statusList.add(SiteStatus.APPROVE);
 				statusList.add(SiteStatus.INVALID);
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
+				List<Option> optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, statusList);
 				logger.info("=====运单查询页面列表===" + orderPage);
 				model.addAttribute("orderPage", orderPage);
 				//model.addAttribute("arriveBetween", arriveBetween);
-				model.addAttribute("siteList", siteVOList);
+				model.addAttribute("optionList", optionList);
 				return "page/mailQuery";
 			}else{
 				orderPage = new PageModel<Order>();

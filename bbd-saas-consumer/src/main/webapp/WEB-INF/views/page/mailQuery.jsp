@@ -33,44 +33,24 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
+						<div class="row pb20" >
+							<jsp:include page="../siteControl.jsp" flush="true" />
+						</div>
 	  					<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>站点：</label>
-								<select id="areaCode" name="areaCode" class="form-control form-con-new">
-									<option value="">全部</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.areaCode}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
-							</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
 	  							<label>状态：</label>
 	  							<select id="status" name="status" class="form-control form-con-new">
 	  								<%=OrderStatus.Srcs2HTML(-1)%>
 	  							</select>
 	  						</div>
-	  						<%--<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-	  							<label>到站时间：</label>
-	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
-	  						</div>--%>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3 pad0">
 								<label>运单号：</label>
 								<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
 							</div>
-	  					</div>
-						<%--<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-								<label>运单号：</label>
-								<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
+							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-6">
+								<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
+								<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
 							</div>
-						</div>--%>
-	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
-	  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
-	  						</div>
 	  					</div>
 	  				</div>
 				</form>
@@ -88,6 +68,8 @@
   					<table class="table">
   						<thead>
   							<tr>
+								<th>站点编号</th>
+								<th>站点名称</th>
 								<th>运单号</th>
 								<th>收货人</th>
 								<th>收货人电话</th>
@@ -108,14 +90,15 @@
 								if(orderPage==null || orderPage.getDatas() == null){
 							%>
 								<tr>
-									<td colspan="14">没有符合查询条件的数据</td>
+									<td colspan="16">没有符合查询条件的数据</td>
 								</tr>
 							<%
 								}else{
 									for(Order order : orderPage.getDatas()){
 							%>
 								<tr>
-
+									<td><%=order.getAreaCode()%></td>
+									<td><%=order.getAreaName()%></td>
 									<td><%=order.getMailNum()%></td>
 									<td><%=order.getReciever().getName()%></td>
 									<td><%=order.getReciever().getPhone()%></td>
@@ -237,25 +220,21 @@
     <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+</script>
+<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
+<script type="text/javascript">
 $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
-	
-	//初始化到站时间框
-	/*$("#arriveBetween").daterangepicker({
-		locale: {
-			applyLabel: '确定',
-			cancelLabel: '取消',
-			fromLabel: '开始',
-			toLabel: '结束',
-			weekLabel: 'W',
-			customRangeLabel: 'Custom Range',
-			showDropdowns: true
-		},
-		format: 'YYYY/MM/DD'
+	//绘制电子围栏 -- 更改站点
+	/*$("#areaCode").change(function(){
+		var siteId = $("#fenceSiteId").val();
+		getSiteListByAddr();
 	});*/
 });
 
@@ -342,9 +321,8 @@ function exportData() {
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
 }
-	
-	
-	
 </script>
+
+
 </body>
 </html>
