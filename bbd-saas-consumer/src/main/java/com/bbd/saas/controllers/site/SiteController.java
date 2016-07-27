@@ -421,7 +421,7 @@ public class SiteController {
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 			statusList.add(SiteStatus.APPROVE);
 			statusList.add(SiteStatus.INVALID);
-			return siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList);
+			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList);
 		}
 		return null;
 	}

@@ -133,7 +133,7 @@ public class MailQueryController {
 				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 				statusList.add(SiteStatus.APPROVE);
 				statusList.add(SiteStatus.INVALID);
-				optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, statusList);
+				optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, statusList);
 			}else{//部分站点
 				String [] areaCodes = areaCodeStr.split(",");
 				optionList = siteService.findByAreaCodes(areaCodes);

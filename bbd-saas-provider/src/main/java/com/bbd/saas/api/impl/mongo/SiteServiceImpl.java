@@ -275,9 +275,8 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
-    public List<SiteVO> findSiteVOByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status) {
-        List<Site> siteList = this.siteDao.selectByCompanyIdAndAreaCode(companyId, areaCodeList, status);
-        return siteListToSiteVO(siteList);
+    public List<Site> findSiteVOByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status) {
+        return this.siteDao.selectByCompanyIdAndAreaCode(companyId, areaCodeList, status);
     }
 
     @Override
@@ -313,7 +312,7 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
-    public List<Option> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList) {
+    public List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList) {
         return this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, siteName, statusList);
     }
 
@@ -325,5 +324,10 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public List<Site> findSiteListByAreaCodes(List<String> areaCodeList) {
         return this.siteDao.selectByCompanyIdAndAreaCode(null, areaCodeList, null);
+    }
+
+    @Override
+    public List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
+        return this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, siteIdList, statusList);
     }
 }

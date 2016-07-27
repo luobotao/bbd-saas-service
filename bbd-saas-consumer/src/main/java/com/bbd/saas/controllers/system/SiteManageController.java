@@ -77,7 +77,7 @@ public class SiteManageController {
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
 		//查询登录用户的公司下的所有站点
-		List<Option> optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, null);
+		List<Option> optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, null);
 		model.addAttribute("siteList", optionList);
 		return "systemSet/siteManage";
 	}

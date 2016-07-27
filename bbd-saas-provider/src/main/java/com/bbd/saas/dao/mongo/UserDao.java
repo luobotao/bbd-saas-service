@@ -98,7 +98,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         }
         return query;
     }
-    
+
     /**
      * Description: 获取指定站点下的所有状态为有效的用户
      * @param site 站点
@@ -107,19 +107,38 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * 2016年4月14日下午8:04:44
      */
     public List<User> findUserListBySite(Site site, UserRole userRole,UserStatus userStatus) {
-    	Query<User> query = createQuery();
-    	if(site != null){
-    		query.filter("site", site);
-    	}
-    	if(userRole != null){
-    		query.filter("role", userRole);
-    	}
+        Query<User> query = createQuery();
+        if(site != null){
+            query.filter("site", site);
+        }
+        if(userRole != null){
+            query.filter("role", userRole);
+        }
         if(userStatus!=null){
             query.filter("userStatus", userStatus);
         }
         return  find(query).asList();
     }
-    
+    /**
+     * 根据站点、角色、状态查询用户
+     * @param siteList 站点集合
+     * @param userRole 角色
+     * @param userStatus 状态
+     * @return
+     */
+    public List<User> selectUserListBySite(List<Site> siteList, UserRole userRole,UserStatus userStatus) {
+        Query<User> query = createQuery();
+        if(siteList != null && !siteList.isEmpty()){
+            query.filter("site in", siteList);
+        }
+        if(userRole != null){
+            query.filter("role", userRole);
+        }
+        if(userStatus!=null){
+            query.filter("userStatus", userStatus);
+        }
+        return  find(query).asList();
+    }
     
     /**
      * 根据site和staffid查找是该staffid是否在该站点已存在

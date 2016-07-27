@@ -225,6 +225,12 @@ public class UserServiceImpl implements UserService {
     public List<User> findUsersBySite(Site site,UserRole userRole,UserStatus userStatus) {
         return userDao.findUserListBySite(site, userRole,userStatus);
     }
+
+    @Override
+    public List<User> findUsersBySite(List<Site> siteList, UserRole userRole, UserStatus userStatus) {
+        return this.userDao.selectUserListBySite(siteList, userRole, userStatus);
+    }
+
     @Override
     public Map<Long, String> findUserSiteMap(List<Long> postManIdList, String companyId) {
         UserQueryVO2 query = new UserQueryVO2();

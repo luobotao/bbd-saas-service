@@ -21,6 +21,6 @@ public class SiteCommon {
         List<SiteStatus> statusList = new ArrayList<SiteStatus>();
         statusList.add(SiteStatus.APPROVE);
         statusList.add(SiteStatus.INVALID);
-        return siteService.findByCompanyIdAndAddress(companyId, null, null, null, null, statusList);
+        return siteService.findOptByCompanyIdAndAddress(companyId, null, null, null, null, statusList);
     }
 }

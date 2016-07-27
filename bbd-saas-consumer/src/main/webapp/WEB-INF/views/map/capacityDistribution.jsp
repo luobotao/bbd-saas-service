@@ -80,9 +80,9 @@
 <!-- E footer -->
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+	var  siteUrl = "<c:url value="/capacityDistribution/getSiteAndCourierList"/>";
 </script>
-<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<script src="<c:url value="/resources/javascripts/capacitySiteControl.js" />"> </script>
 <!-- E 省市区站点选择控件  -->
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
@@ -179,6 +179,9 @@
 			radiusVal = 11;
 		}
 		capamap.centerAndZoom(center, radiusVal);
+		showSiteAndUsers(siteList, userList);
+	}
+	function showSiteAndUsers(siteList, userList){
 		capamap.enableScrollWheelZoom();
 		var isShowAll = false;
 		//显示站点

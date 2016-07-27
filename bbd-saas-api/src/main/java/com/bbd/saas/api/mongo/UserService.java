@@ -147,6 +147,14 @@ public interface UserService {
      * @return 用户集合
      */
     public List<User> findUsersBySite(Site site, UserRole userRole,UserStatus userStatus);
+    /**
+     * 根据站点、用户角色、用户状态查询所有派件员
+     * @param siteList 站点集合
+     * @param userRole 用户角色
+     * @param userStatus 用户状态
+     * @return 用户集合
+     */
+    public List<User> findUsersBySite(List<Site> siteList, UserRole userRole,UserStatus userStatus);
 
     /**
      * 根据staffidLis获得同一公司下的派件员user与站点名称的对应关系
