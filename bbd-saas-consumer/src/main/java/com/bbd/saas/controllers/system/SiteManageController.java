@@ -20,6 +20,7 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -273,6 +274,11 @@ public class SiteManageController {
 	public String siteManage(HttpServletRequest request,Model model,Integer pageIndex, Integer roleId, Integer status,String keyword) {
 		PageModel<Site> sitePage = getSitePage(request, 0, -1, -1, keyword);
 		model.addAttribute("sitePage", sitePage);
+		//当前登录的用户信息
+		User currUser = adminService.get(UserSession.get(request));
+		//查询登录用户的公司下的所有站点
+		List<Option> optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, null);
+		model.addAttribute("siteList", optionList);
 		return "systemSet/siteManage";
 	}
 

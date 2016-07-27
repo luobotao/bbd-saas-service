@@ -29,8 +29,8 @@
 								<input type="checkbox" name="eachS" value=""><b>全部</b>
 							</label>
 						</li>
-						<c:if test="${not empty optionList}">
-							<c:forEach var="option" items="${optionList}">
+						<c:if test="${not empty siteList}">
+							<c:forEach var="option" items="${siteList}">
 								<li>
 									<label class="f12 linputC">
 										<input type="checkbox" name="eachS" value="${option.id}"><b>${option.name}</b>

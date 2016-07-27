@@ -64,14 +64,10 @@ public class MailStatisticController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
-			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-			statusList.add(SiteStatus.APPROVE);
-			statusList.add(SiteStatus.INVALID);
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
 			logger.info("=====统计汇总页面列表===" + pageModel);
 			model.addAttribute("pageModel", pageModel);
 			model.addAttribute("time", time);
-			model.addAttribute("siteList", siteVOList);
+			model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, currUser.getCompanyId()));
 			model.addAttribute("role", currUser.getRole());
 			return "page/mailStatistic";
 		} catch (Exception e) {

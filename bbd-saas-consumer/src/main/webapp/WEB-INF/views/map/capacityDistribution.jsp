@@ -55,17 +55,7 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>站点：　</label>
-								<select id="siteId" class="form-control form-con-new">
-									<option value="">全部</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
-							</div>
+							<jsp:include page="../siteControl.jsp" flush="true" />
 						</div>
 					</div>
 				</form>
@@ -88,7 +78,12 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
-
+<!-- S 省市区站点选择控件 -->
+<script type="text/javascript">
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+</script>
+<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
@@ -99,6 +94,7 @@
 <script type="application/javascript">
 	var defaultLng = "${centerSite.lng}";
 	var defaultLat = "${centerSite.lat}";
+	var siteId = "";
 	// 百度地图API功能
 	var capamap = new BMap.Map("capamap", {enableMapClick:false,minZoom:8});
 	//显示全部站点 -- 地图中心为公司经纬度

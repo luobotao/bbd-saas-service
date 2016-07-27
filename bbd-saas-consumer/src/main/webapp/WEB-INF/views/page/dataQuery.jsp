@@ -307,11 +307,37 @@ function getRowHtml(data){
 		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
-	row += "<td>" + data.orderStatusMsg + "</td>";
+	row += "<td><em class='" + getStatusCss(data.orderStatus) + "'>" + data.orderStatusMsg + "</em></td>";
 	row += "<td><a href='<%=path%>/dataQuery/getOrderMail?mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
 }
+//S 运单状态样式
+function getStatusCss(status){
+	if(status != null){
+		if(status == "<%=OrderStatus.NOTARR %>"){
+			return "l-blue";
+		}else if(status == "<%=OrderStatus.NOTDISPATCH %>"){
+			return "orange";
+		}else if(status == "<%=OrderStatus.DISPATCHED %>"){
+			return "c-green";
+		}else if(status == "<%=OrderStatus.RETENTION %>"){
+			return "purple";
+		}else if(status == "<%=OrderStatus.REJECTION %>"){
+			return "d-red";
+		}else if(status == "<%=OrderStatus.SIGNED %>"){
+			return "black";
+		}else if(status == "<%=OrderStatus.TO_OTHER_EXPRESS %>"){
+			return "d-blue";
+		}else if(status == "<%=OrderStatus.APPLY_RETURN %>"){
+			return "brown";
+		}else if(status == "<%=OrderStatus.RETURNED %>"){
+			return "l-green";
+		}
+	}
+	return "";
+}
+//S 运单状态样式
 //导出数据
 function exportData() {
 	$("#status_expt").val($("#status").val());

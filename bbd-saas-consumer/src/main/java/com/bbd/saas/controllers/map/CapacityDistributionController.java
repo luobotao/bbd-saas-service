@@ -14,6 +14,7 @@ import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
 import org.slf4j.Logger;
@@ -63,13 +64,15 @@ public class CapacityDistributionController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			List<Option> optionList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, statusList);
 			//查询登录用户的公司下的所有派件员信息
 			List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
 			//设置站点名称
 			setUserSiteName(userVOList, currUser.getCompanyId());
 			//setUserSiteName(userVOList, null);
-			logger.info("=====运力分布站点===" + siteVOList);
+			logger.info("=====运力分布站点===" + optionList);
 			String companyAddress = "";
 			Postcompany company = new Postcompany();
 			if (currUser.getCompanyId() != null ){
@@ -86,7 +89,7 @@ public class CapacityDistributionController {
 			//设置地图默认的中心点
 			SiteVO centerSite = getDefaultPoint(companyAddress);
 			model.addAttribute("centerSite", centerSite);
-			model.addAttribute("siteList", siteVOList);
+			model.addAttribute("siteList", optionList);
 			model.addAttribute("userList", userVOList);
 			return "map/capacityDistribution";
 		} catch (Exception e) {

@@ -36,28 +36,17 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-	  					<div class="row pb20">
-
-							<c:if test="${role == UserRole.COMPANY}">
-								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-									<label>站点：</label>
-									<select id="areaCode" name="areaCode" class="form-control form-con-new">
-										<option value="">全部</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.areaCode}">${site.name}</option>
-											</c:forEach>
-										</c:if>
-									</select>
-								</div>
-							</c:if>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-	  							<label>时间：</label>
-	  							<input id="time" name="time" value="${time}" type="text" placeholder="请选择时间" class="form-control c-disable"  data-date-format="yyyy-mm-dd"/>
+						<c:if test="${role == UserRole.COMPANY}">
+	  						<div class="row pb20">
+								<jsp:include page="../siteControl.jsp" flush="true" />
 	  						</div>
-	  					</div>
+						</c:if>
 	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 ">
+								<label>时间：</label>
+								<input id="time" name="time" value="${time}" type="text" placeholder="请选择时间" class="form-control c-disable"  data-date-format="yyyy-mm-dd"/>
+							</div>
+	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-8">
 	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
 	  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
 	  						</div>
@@ -142,6 +131,12 @@
     <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<!-- S 省市区站点选择控件 -->
+<script type="text/javascript">
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+</script>
+<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
 <script type="text/javascript">
 
 $(document).ready(function() {

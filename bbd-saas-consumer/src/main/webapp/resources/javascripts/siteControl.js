@@ -117,5 +117,12 @@ function selectS(selectSp){
 			$(".j-empty").val("");
 			$(".j-empty").prop("disabled",true)
 		};
-	})
+	});
+}
+function getAreaCodeStr(){
+	areaCodes = [];
+	$('input[name="eachS"]:checked').each(function(){
+		areaCodes.push(this.value);
+	});
+	return areaCodes.join(",");
 }

@@ -30,14 +30,16 @@
                 <!-- S 搜索区域 -->
                 <div class="search-area form-inline form-inline-n">
                     <div class="row pb20">
-
-                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                        <jsp:include page="../siteControl.jsp" flush="true" />
+                    </div>
+                    <div class="row pb20">
+                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
                             <label>站点状态：</label>
                             <select id="status" name="status" class="form-control form-con-new">
                                 <%=SiteStatus.Stas2HTML(-1)%>
                             </select>
                         </div>
-                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
                             <label>配送区域状态：</label>
                             <select id="areaFlag" name="areaFlag" class="form-control form-con-new">
                                 <option value="-1">全部</option>
@@ -45,21 +47,20 @@
                                 <option value="0">无效</option>
                             </select>
                         </div>
-                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                        <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
                             <label>关键字：</label>
                             <input type="text" id="keyword" name="keyword" placeholder="站点名称/站长姓名/手机"
                                    class="form-control"/>
                         </div>
-
-                    </div>
-                    <div class="row pb20">
-                        <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
                             <a href="javascript:void(0)" onclick=" gotoPage(0);" class="ser-btn l"><i
                                     class="b-icon p-query p-ser"></i>查询</a>
                             <a href="javascript:void(0)" class="ser-btn d ml6 " data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
 
                         </div>
                     </div>
+                    <%--<div class="row pb20">
+                    </div>--%>
                 </div>
                 <!-- E 搜索区域 -->
                 <div class="tab-bod mt20">
@@ -350,7 +351,12 @@
     </div>
 </div>
 <!--E 操作确认-->
-
+<!-- S 省市区站点选择控件 -->
+<script type="text/javascript">
+    var  siteUrl = "<c:url value="/site/getSiteList"/>";
+</script>
+<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
 <!-- E pop -->
 <script type="text/javascript">
     //是否需要校验手机号，默认需要；但是当失去焦点点击关闭按钮时，不需要校验手机号

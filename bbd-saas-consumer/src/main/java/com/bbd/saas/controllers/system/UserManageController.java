@@ -19,6 +19,8 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.SignUtil;
+import com.bbd.saas.utils.SiteCommon;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.UserQueryVO;
 import flexjson.JSONDeserializer;
 import org.apache.commons.lang3.StringUtils;
@@ -78,11 +80,13 @@ public class UserManageController {
 	public String index(HttpServletRequest request,Model model) {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
 		if(userNow.getRole()== UserRole.COMPANY){
-			List<Site> siteList = siteService.findSiteListByCompanyId(userNow.getCompanyId(), null);
-			model.addAttribute("siteList", siteList);
+			//查询登录用户的公司下的所有站点
+			List<Option> optionList = siteService.findByCompanyIdAndAddress(userNow.getCompanyId(), null, null, null, null, null);
+			model.addAttribute("siteList", optionList);
 		}
 		PageModel<User> userPage = getUserPage(request,0,null,null,null,null);
 
+		model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, userNow.getCompanyId()));
 		model.addAttribute("userNow", userNow);
 		model.addAttribute("userPage", userPage);
 		return "systemSet/userManage";

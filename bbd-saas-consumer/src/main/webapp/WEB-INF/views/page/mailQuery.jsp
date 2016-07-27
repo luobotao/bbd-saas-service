@@ -240,13 +240,16 @@ $(document).ready(function() {
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
+	//站点编号集合
+	var areaCodeStr = getAreaCodeStr();
+	console.log(areaCodeStr);
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/mailQuery/getList",//路径
         data : {  
             "pageIndex" : pageIndex,
-			"areaCode" : $("#areaCode").val(),
+			"areaCodeStr" : areaCodeStr,
             "status" : $("#status").val(), 
             //"arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
@@ -260,7 +263,7 @@ function gotoPage(pageIndex) {
 					datastr += getRowHtml(dataList[i]);
 				}
 				tbody.html(datastr);
-			} 
+			}
 			//更新分页条
 			var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
 			$("#pagin").html(pageStr);
@@ -280,6 +283,8 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
+	row += "<td>" + data.areaCode + "</td>";
+	row += "<td>" + data.areaName + "</td>";
 	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
 		row += "<td>" + data.mailNum + "</td>";
 	}else{
@@ -306,11 +311,37 @@ function getRowHtml(data){
 		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
-	row += "<td>" + data.orderStatusMsg + "</td>";
+	row += "<td><em class='" + getStatusCss(data.orderStatus) + "'>" + data.orderStatusMsg + "</em></td>";
 	row += "<td><a href='<%=path%>/mailQuery/getOrderMail?areaCode=" + data.areaCode + "&mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
 }
+//S 运单状态样式
+function getStatusCss(status){
+	if(status != null){
+		if(status == "<%=OrderStatus.NOTARR %>"){
+			return "l-blue";
+		}else if(status == "<%=OrderStatus.NOTDISPATCH %>"){
+			return "orange";
+		}else if(status == "<%=OrderStatus.DISPATCHED %>"){
+			return "c-green";
+		}else if(status == "<%=OrderStatus.RETENTION %>"){
+			return "purple";
+		}else if(status == "<%=OrderStatus.REJECTION %>"){
+			return "d-red";
+		}else if(status == "<%=OrderStatus.SIGNED %>"){
+			return "black";
+		}else if(status == "<%=OrderStatus.TO_OTHER_EXPRESS %>"){
+			return "d-blue";
+		}else if(status == "<%=OrderStatus.APPLY_RETURN %>"){
+			return "brown";
+		}else if(status == "<%=OrderStatus.RETURNED %>"){
+			return "l-green";
+		}
+	}
+	return "";
+}
+//S 运单状态样式
 
 
 //导出数据
