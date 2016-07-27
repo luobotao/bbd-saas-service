@@ -124,6 +124,7 @@ public class ExcelUtil2007 {
 	 *            Excel单元格
 	 * @return String 单元格数据内容
 	 */
+	@SuppressWarnings("deprecation")
 	private String getDateCellValue(XSSFCell cell) {
 		String result = "";
 		try {

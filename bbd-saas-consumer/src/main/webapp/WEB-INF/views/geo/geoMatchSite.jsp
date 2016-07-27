@@ -97,20 +97,20 @@
 							</div>
 
 							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<label>修正为：</label><input type="button"  class="sbtn80 ml16" onclick="fixAddress()" value="确定" /><br>
+								<label>修正为：</label><input type="button"  class="sbtn80 ml16" onclick="fixAddress()" value="确定" />
 								<c:if test="${data.source != 'AMAP'}">
-									<input class="ml16" type="radio" name="source" value="AMAP" onclick="chooseAddress('AMAP','${data.AMAP.lng}','${data.AMAP.lat}')"/>
+									<br><input class="ml16" type="radio" name="source" value="AMAP" onclick="chooseAddress('AMAP','${data.AMAP.lng}','${data.AMAP.lat}')"/>
 									&nbsp;高德&nbsp;&nbsp;
 								</c:if>
 								<c:if test="${data.source != 'BAIDU'}">
-									<input class="ml16"  type="radio" name="source" value="BAIDU"  onclick="chooseAddress('BAIDU','${data.BAIDU.lng}','${data.BAIDU.lat}')"/>
+									<br><input class="ml16"  type="radio" name="source" value="BAIDU"  onclick="chooseAddress('BAIDU','${data.BAIDU.lng}','${data.BAIDU.lat}')"/>
 									&nbsp;百度&nbsp;&nbsp;
 								</c:if>
 								<c:if test="${data.source != 'TENCENT'}">
-									<input class="ml16"  type="radio" name="source" value="TENCENT"  onclick="chooseAddress('TENCENT','${data.TENECNT.lng}','${data.TENECNT.lat}')"/>
+									<br><input class="ml16"  type="radio" name="source" value="TENCENT"  onclick="chooseAddress('TENCENT','${data.TENECNT.lng}','${data.TENECNT.lat}')"/>
 									&nbsp;腾讯&nbsp;&nbsp;
 								</c:if>
-								<br>手动修改(拖动图标到目标位置)&nbsp;<input class="ml16"  type="radio" name="source" value="BBD"  onclick="chooseAddress('BBD','${data.loc.lng}','${data.loc.lat}')"/>
+								<br><input class="ml16"  type="radio" name="source" value="BBD"  onclick="chooseAddress('BBD','${data.loc.lng}','${data.loc.lat}')"/>手动修改(拖动图标到目标位置)
 								<input type="hidden" id="fixSource" value="" />
 								<input type="hidden" id="lng" value="" />
 								<input type="hidden" id="lat" value="" />

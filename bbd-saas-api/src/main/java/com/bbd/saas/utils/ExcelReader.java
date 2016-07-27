@@ -25,6 +25,7 @@ public class ExcelReader {
 	 * @param is
 	 * @return String 表头内容的数组
 	 */
+	@SuppressWarnings("deprecation")
 	public String[] readExcelTitle(InputStream is) {
 		try {
 			fs = new POIFSFileSystem(is);
@@ -50,6 +51,7 @@ public class ExcelReader {
 	 * @param is
 	 * @return Map 包含单元格数据内容的Map对象
 	 */
+	@SuppressWarnings("deprecation")
 	public Map<Integer, String> readExcelContent33(InputStream is) {
 		Map<Integer, String> content = new HashMap<Integer, String>();
 		String str = "";
@@ -123,6 +125,7 @@ public class ExcelReader {
 	 *            Excel单元格
 	 * @return String 单元格数据内容
 	 */
+	@SuppressWarnings("deprecation")
 	private String getDateCellValue(HSSFCell cell) {
 		String result = "";
 		try {

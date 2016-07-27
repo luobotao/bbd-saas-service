@@ -115,7 +115,6 @@
 									<label>　区：</label>
 									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
 									</select>
-
 								</div>
 								<div class="col-md-12 pb20">
 									<label>站点：</label>

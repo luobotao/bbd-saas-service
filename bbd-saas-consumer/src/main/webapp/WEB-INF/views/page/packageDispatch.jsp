@@ -56,22 +56,30 @@
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	  							<label>扫描运单号：</label>
 	  							<input id="mailNum" name="mailNum" type="text" placeholder="扫描运单号,按回车键分派" class="form-control" onkeypress="enterPress(event)" />
-								<span onclick="dispatch()" class="ser-btn d">确定分派</span>
-	  							<span class="pl20 ft16 tip-info" id="mailNum_check"> </span>
+								<span onclick="dispatch()" class="ser-btn d ml16">确定分派</span>
+	  							<%--<span class="pl20 ft16 tip-info" id="mailNum_check"> </span>--%>
 	  						</div>
 	  					</div>
 	  				</div>
 				</form>
 				<!-- E 搜索区域 -->
+				<!-- S button -->
+				<div class="clearfix mt20">
+					<span href="#" onclick="batchDispatchBtn()" class="ser-btn l" >批量分派</span>
+				</div>
+				<!-- E button -->
   			<div class="tab-bod mt20">
   				<!-- S table -->
   				<div class="table-responsive">
   					<table id="orderTable" class="table">
   						<thead>
   							<tr>
-								<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
-									<th width="4%"><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
-								</c:if>
+								<c:choose>
+									<c:when test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+										<th width="4%"><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
+									</c:when>
+									<c:otherwise><th width="4%"></th></c:otherwise>
+								</c:choose>
 								<th>运单号</th>
 								<th>收货人</th>
 								<th width="20%">收货人地址</th>
@@ -95,9 +103,17 @@
 								for(Order order : orderPage.getDatas()){
 						%>
 							<tr>
-								<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+								<%
+									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){//未分派
+								%>
 									<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
-								</c:if>
+								<%
+									}else{
+								%>
+									<td></td>
+								<%
+									}
+								%>
 								<td><%=order.getMailNum()%></td>
 								<td><%=order.getReciever().getName()%></td>
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
@@ -261,7 +277,6 @@ var courierIsLoadSuccess = 0;
 var status = ""; 
 var arriveBetween = "";
 var operFlag = ""; //操作类型（cancelDispatch：取消分派；）
-
 $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
@@ -294,7 +309,7 @@ $(document).ready(function() {
 	//扫描运单号  focus事件
 	$("#mailNum").focus(function(){
 		if($("#courierId").val() == null || $("#courierId").val() == ""){
-	  		$("#mailNum_check").text("请选择派件员！");
+			ioutDiv("请选择派件员！");
 	  	}
 	});
 	//扫描运单号--把快递分派给派件员--边输入边改变
@@ -316,31 +331,42 @@ function enterPress(e){
 function dispatch() {
 	//未选择派件员
 	if($("#courierId").val() == null || $("#courierId").val() == ""){
-		$("#mailNum_check").text("请选择派件员！");
+		//$("#mailNum_check").text("请选择派件员！");
+		ioutDiv("请选择派件员！");
+		return false;
+	}
+	//未选择派件员
+	var mailNum = $("#mailNum").val();
+	if(mailNum == null || mailNum == ""){
+		//$("#mailNum_check").text("请选择派件员！");
+		ioutDiv("请扫描或输入运单号");
 		return false;
 	}
 	//已选择派件员，把快递分派给派件员
 	$.ajax({
         type : "GET",  //提交方式  
 		url : "<%=request.getContextPath()%>/packageDispatch/dispatch",//路径  
-		data : {  
-		    "mailNum" : $("#mailNum").val(),
-		    "courierId" : $("#courier_select").val()  
+		data : {
+			"pageIndex" : parseInt($(".pagination .active").text())-1,
+			"status" : $("#status").val(),
+			"arriveBetween" : $("#arriveBetween").val(),
+			"mailNum" : $("#mailNum").val(),
+		    "courierId" : $("#courier_select").val()
 		},//数据，这里使用的是Json格式进行传输  
 		dataType: "json",
 		success : function(data) {//返回数据根据结果进行相应的处理  
 		   	if (data.operFlag == 1) {
-		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派成功！");
+				ioutDiv($("#mailNum").val() + "运单分派成功！");
 		    	//刷新列表
 		    	refreshTable(data.orderPage);
 		    }else if(data.operFlag == 0){
-		    	$("#mailNum_check").text("【异常扫描】不存在此订单！");
+				ioutDiv("【异常扫描】不存在此订单！");
 		    }else if(data.operFlag == 2){
-		    	$("#mailNum_check").text("重复扫描，此运单已经分派过啦！");
+				ioutDiv("重复扫描，此运单已经分派过啦！");
 		    }else if(data.operFlag == 3){
-		    	$("#mailNum_check").text($("#mailNum").val() + "运单分派失败，请重试！");
+		    	ioutDiv($("#mailNum").val() + "运单分派失败，请重试！");
 		    }else{
-		    	$("#mailNum_check").text("只有状态为未分派、滞留的运单才能分派！");
+		    	ioutDiv("只有状态为未分派、滞留的运单才能分派！");
 		    }
 		},
 		error : function() {  
@@ -372,8 +398,7 @@ function gotoPage(pageIndex) {
             "pageIndex" : pageIndex,
             "status" : $("#status").val(),
             "arriveBetween" : $("#arriveBetween").val(),
-            "courierId" : $("#courierId").val()
-        },//数据，这里使用的是Json格式进行传输  
+        },//数据，这里使用的是Json格式进行传输
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             refreshTable(dataObject);
 		},
@@ -415,9 +440,11 @@ function refreshTable(dataObject){
 //封装一行的数据
 function getRowHtml(data){
 	var row = "<tr>";
-	<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
 		row +=  "<td><input type='checkbox' value='" + data.mailNum + "' name='id'></td>";
-	</c:if>
+	}else{
+		row +=  "<td></td>";
+	}
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
@@ -517,6 +544,8 @@ function chooseCourier() {
 	function doOperation() {
 		if(operFlag == "cancelDispatch"){//取消分派
 			doCancel();
+		}else if(operFlag == "batchDispatch"){//批量分派
+			doBatchDispatch();
 		}
 	}
 	//检查订单状态，只有订单处于已分派时，才能取消分派
@@ -575,6 +604,78 @@ function chooseCourier() {
 		$("#"+modalId).modal("hide");
 	}
 /********************************************************** 取消操作 **************************************************************/
+/********************************************************** 批量分派操作 **************************************************************/
+var ids = [];
+//检查订单状态，只有订单处于已分派时，才能取消分派
+function batchDispatchBtn() {
+	//未选择派件员
+	if($("#courierId").val() == null || $("#courierId").val() == ""){
+		//$("#mailNum_check").text("请选择派件员！");
+		ioutDiv("请选择派件员！");
+		return false;
+	}
+	var checkids = $('input[name="id"]:checked');
+	ids = [];
+	if(checkids.length) {
+		$.each(checkids, function(i, n){
+			if(!$(n).closest('tr').find('.status .label').hasClass('label-success')) {
+				ids.push($(n).val());
+			}
+		});
+	}
+	if(ids.length == 0){
+		ioutDiv('请选择运单！');
+		return false;
+	}
+	showConfirmDiv(JSON.stringify(ids), 'batchDispatch', '确认批量分派【' + ids.length + '单】给【' + $("#courierName").text().replace("已选择:", "") + "】吗？");
+	$("#confirmDiv").modal("show");
+}
+//批量分派操作
+function doBatchDispatch() {
+	var url = "<c:url value="/packageDispatch/batchDispatch?${_csrf.parameterName}=${_csrf.token}" />";
+	$.ajax({
+		url: url,
+		type: 'POST',
+		cache: false,
+		dataType: "json",
+		data: {
+			"pageIndex" : parseInt($(".pagination .active").text())-1,//查询条件
+			"status" : $("#status").val(),
+			"arriveBetween" : $("#arriveBetween").val(),
+			"mailNums" : mailNum,//批量分派Id
+			"courierId" : $("#courier_select").val()//派件员
+		},
+		success: function(data){
+			if(data != null){
+				var msg = data.msg;
+				if (msg == "-1") {
+					ioutDiv("派件员不存在！-1");
+				}else if(msg == "0"){
+					ioutDiv("所有运单均不存在！0");
+				}else{
+					if(msg == ""){
+						ioutDiv("所有运单均分派成功！");
+					}else{
+						msg = msg.replace(new RegExp(/(#0#)/g),'运单不存在');
+						msg = msg.replace(new RegExp(/(#2#)/g),'重复分派');
+						msg = msg.replace(new RegExp(/(#3#)/g),'分派失败');
+						msg = msg.replace(new RegExp(/(#4#)/g),'只有状态为未分派、滞留的运单才能分派');
+						ioutDiv(msg, 12000);
+					}
+					if(data.orderPage != null){
+						//刷新列表
+						refreshTable(data.orderPage);
+					}
+				}
+			}
+		},
+		error: function(){
+			ioutDiv('服务器繁忙，请稍后再试！');
+		}
+	});
+	$("#confirmDiv").modal("hide");
+}
+/********************************************************** 批量分派取消操作 **************************************************************/
 
 </script>
 </body>

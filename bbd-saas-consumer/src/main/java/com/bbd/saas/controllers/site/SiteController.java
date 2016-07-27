@@ -11,12 +11,14 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.ExportUtil;
 import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.vo.Option;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.*;
@@ -398,6 +400,30 @@ public class SiteController {
 		Result result = siteKeywordApi.deleteSitePoiKeyword(idList);
 		logger.info("批量删除完成");
 		return dealSiteKeywordWithAjax(request);
+	}
+
+	/**
+	 * 根据省市区查询站点集合--select下拉框
+	 * @param prov 省
+	 * @param city 市
+	 * @param area 区
+	 * @param request 请求
+     * @return siteList(name,areaCode)
+     */
+	@ResponseBody
+	@RequestMapping(value="/getSiteList", method=RequestMethod.GET)
+	public List<Option> getSiteListByAddr(String prov, String city, String area, String siteName, final HttpServletRequest request) {
+		String userId = UserSession.get(request);
+		if(userId != null && !"".equals(userId)) {
+			//当前登录的用户信息
+			User currUser = adminService.get(userId);
+			//查询登录用户的公司下的所有站点
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			statusList.add(SiteStatus.INVALID);
+			return siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList);
+		}
+		return null;
 	}
 
 

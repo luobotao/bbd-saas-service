@@ -207,4 +207,14 @@ public interface OrderService {
 	 * @return
      */
 	Order findByOrderNoOrMailNum(String keyword);
+
+	/**
+	 * 根据areaCode和mailNumList查询
+	 * @param areaCode
+	 * @param mailNumList
+     * @return
+     */
+	public List<Order> findByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList);
+
+
 }

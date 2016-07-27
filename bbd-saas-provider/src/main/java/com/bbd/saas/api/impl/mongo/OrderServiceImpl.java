@@ -514,4 +514,12 @@ public class OrderServiceImpl implements OrderService {
 	public Order findByOrderNoOrMailNum(String keyword) {
 		return  orderDao.findByOrderNoOrMailNum(keyword);
 	}
+
+	@Override
+	public List<Order> findByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList) {
+		if(mailNumList == null || mailNumList.size() == 0){
+			return null;
+		}
+		return orderDao.selectByAreaCodeAndMailNums(areaCode, mailNumList);
+	}
 }

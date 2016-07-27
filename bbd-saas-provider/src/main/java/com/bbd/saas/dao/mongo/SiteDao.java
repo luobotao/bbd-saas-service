@@ -4,6 +4,7 @@ import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -149,6 +151,32 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @return 站点集合
      */
     public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
+        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+        if(status != null){
+            query.filter("status", status);
+        }
+        return  find(query).asList();
+    }
+    /**
+     * 根据公司ID、地区获取该公司下的指定状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    public List<Option> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList) {
+        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+        if(StringUtils.isNotBlank(siteName)){
+            query.and(query.criteria("name").containsIgnoreCase(siteName));
+        }
+        if(statusList != null){
+            query.filter("status in", statusList);
+        }
+        return  selectAndToOptionList(query);
+    }
+    private Query<Site> getQueryByAddr(String companyId, String prov, String city, String area){
         Query<Site> query = createQuery().order("areaCode");
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
@@ -162,9 +190,32 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(StringUtils.isNotBlank(area)){
             query.filter("area", area);
         }
-        if(status != null){
-            query.filter("status", status);
+        return query;
+    }
+    /**
+     * 根据站点编号数组查询
+     * @param areaCodes 站点编号数组
+     * @return List<areaCode,name>集合
+     */
+    public List<Option> selectByAreaCodes(String[] areaCodes){
+        Query<Site> query = createQuery().order("areaCode");
+        if(areaCodes != null && areaCodes.length > 0){
+            query.filter("areaCode in", areaCodes);
         }
-        return  find(query).asList();
+        return  selectAndToOptionList(query);
+    }
+    private List<Option> selectAndToOptionList(Query<Site> query){
+        query.retrievedFields(true, "areaCode", "name");
+        List<Site> siteList = find(query).asList();
+        List<Option> optionList  = new ArrayList<Option>();
+        if(siteList != null){
+            for (Site site : siteList){
+                Option option = new Option();
+                option.setId(site.getAreaCode());
+                option.setName(site.getName());
+                optionList.add(option);
+            }
+        }
+        return optionList;
     }
 }
