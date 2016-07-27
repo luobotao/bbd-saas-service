@@ -3,6 +3,7 @@ package com.bbd.saas.api.impl.mysql;
 import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.dao.mysql.SmsInfoDao;
 import com.bbd.saas.models.SmsInfo;
+import com.bbd.saas.utils.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class SmsInfoServiceImpl implements SmsInfoService {
      * @return 短信
      */
     @Override
-    public SmsInfo saveVerify(String phone, String code, String type) {
+    public void saveVerify(String phone, String code, String type) {
         String args = code;
         String tpl_id = "";
         if (StringUtils.isBlank(type) || "1".equals(type)) {
@@ -36,7 +37,7 @@ public class SmsInfoServiceImpl implements SmsInfoService {
         } else {
             type = "3";
         }
-        return saveSmsInfo(args, phone, tpl_id, type);
+        saveSmsInfo(args, phone, tpl_id, type);
     }
 
     public void saveSFBack(String phone, String type) {
@@ -143,19 +144,19 @@ public class SmsInfoServiceImpl implements SmsInfoService {
     }
 
 
-    private SmsInfo saveSmsInfo(String args, String phone, String tpl_id, String type) {
+    private void saveSmsInfo(String args, String phone, String tpl_id, String type) {
         logger.info("args is " + args + "; Phone is " + phone + ";tpl_id is " + tpl_id);
-        SmsInfo smsInfo = new SmsInfo();
-        smsInfo.setFlg("0");// 未发送
-        smsInfo.setTplId(tpl_id);
-        smsInfo.setPhone(phone);
-        smsInfo.setArgs(args);
-        smsInfo.setTyp(type);// 1普通短信 2营销短信 3语音短信
-        smsInfo.setDateNew(new Date());
-        smsInfo.setDateUpd(new Date());
-        smsInfoDao.insertSmsinfo(smsInfo);
-        return smsInfo;
-
+        if(StringUtil.checkPhone(phone)){
+            SmsInfo smsInfo = new SmsInfo();
+            smsInfo.setFlg("0");// 未发送
+            smsInfo.setTplId(tpl_id);
+            smsInfo.setPhone(phone);
+            smsInfo.setArgs(args);
+            smsInfo.setTyp(type);// 1普通短信 2营销短信 3语音短信
+            smsInfo.setDateNew(new Date());
+            smsInfo.setDateUpd(new Date());
+            smsInfoDao.insertSmsinfo(smsInfo);
+        }
     }
 
     public SmsInfoDao getSmsInfoDao() {
