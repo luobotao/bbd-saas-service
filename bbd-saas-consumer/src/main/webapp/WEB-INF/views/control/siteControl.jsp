@@ -27,7 +27,7 @@
 					<ul class="pv-part" id="optionList">
 						<li>
 							<label class="f12 linputC">
-								<input type="checkbox" name="codeOpt" value=""><b>全部</b>
+								<input type="checkbox" name="codeOpt" value="" onclick="selectAll(this)"><b>全部</b>
 							</label>
 						</li>
 						<c:if test="${not empty siteList}">

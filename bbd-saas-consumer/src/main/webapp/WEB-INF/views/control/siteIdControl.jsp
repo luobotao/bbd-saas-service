@@ -20,14 +20,14 @@
 			<input id="areaCode" type="text" class="sel-input j-empty" placeholder="请输入站点名称"  value="全部"/>
 			<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
 		</div>
-		<div class="all-area pm-dn">
+		<div class="all-area all-area2 pm-dn">
 			<!-- S 1 -->
 			<div class="pv-bg clearfix">
 				<div class="l-sel-p">
 					<ul class="pv-part" id="optionList">
 						<li>
 							<label class="f12 linputC">
-								<input type="checkbox" name="idOpt" value=""><b>全部</b>
+								<input type="checkbox" name="idOpt" value="" onclick="selectAll(this)"><b>全部</b>
 							</label>
 						</li>
 						<c:if test="${not empty siteList}">

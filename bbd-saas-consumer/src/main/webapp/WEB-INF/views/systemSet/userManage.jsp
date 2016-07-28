@@ -30,9 +30,11 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-						<div class="row pb20">
-							<jsp:include page="../control/siteControl.jsp" flush="true" />
-						</div>
+						<c:if test="${userNow.role==UserRole.COMPANY}">
+							<div class="row pb20">
+								<jsp:include page="../control/siteControl.jsp" flush="true" />
+							</div>
+						</c:if>
 						<div class="row pb20">
 							<%--<c:if test="${userNow.role==UserRole.COMPANY}">
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">

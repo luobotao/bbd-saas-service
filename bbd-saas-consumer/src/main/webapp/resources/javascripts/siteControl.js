@@ -153,3 +153,6 @@ function getAreaCodeStr(name){
 	console.log(name + " : "+ areaCodes.join(","));
 	return areaCodes.join(",");
 }
+function selectAll(obj){
+	$(obj).siblings().attr("checked", $(obj).attr("checked"));
+}
