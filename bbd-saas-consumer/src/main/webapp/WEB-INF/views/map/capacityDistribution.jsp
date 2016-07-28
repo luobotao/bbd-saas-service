@@ -55,8 +55,58 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<div class="row pb20">
-							<jsp:include page="../siteControl.jsp" flush="true" />
+							<div id="addr_control" class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-12">
+								<label>省：　</label>
+								<select name="prov" class="prov form-control form-con-new">
+								</select>
+								<label id="cityLable" hidden>　市：</label>
+								<select  class="city form-control form-con-new" disabled="disabled">
+								</select>
+								<label id="distLable" hidden>　区：</label>
+								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+								</select>
+								<label class="ml16">站点：</label>
+								<div class="crt-s w400">
+									<div class="c-sel j-sel-input">
+										<input id="siteName" type="text" class="sel-input j-empty" placeholder="请输入站点名称"  value="全部"/>
+										<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
+									</div>
+									<div class="all-area pm-dn">
+										<!-- S 1 -->
+										<div class="pv-bg clearfix">
+											<div class="l-sel-p">
+												<ul class="pv-part" id="optionList">
+													<li>
+														<label class="f12 linputC">
+															<input type="checkbox" name="eachSiteId" value=""><b>全部</b>
+														</label>
+													</li>
+													<c:if test="${not empty siteList}">
+														<c:forEach var="option" items="${siteList}">
+															<li>
+																<label class="f12 linputC">
+																	<input type="checkbox" name="eachSiteId" value="${option.id}"><b>${option.name}</b>
+																</label>
+															</li>
+														</c:forEach>
+													</c:if>
+												</ul>
+											</div>
+										</div>
+										<!-- E 1 -->
+									</div>
+								</div>
+								<%-- 站点多选控件 E --%>
+								<span onclick=" getSiteAndUserList();" class="ser-btn l"><i
+										class="b-icon p-query p-ser"></i>查询</span>
+							</div>
 						</div>
+						<%--<div class="row pb20">
+							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
+								<span onclick=" getSiteAndUserList();" class="ser-btn l"><i
+										class="b-icon p-query p-ser"></i>查询</span>
+							</div>
+						</div>--%>
 					</div>
 				</form>
 				<!-- E 搜索区域 -->
@@ -80,7 +130,8 @@
 <!-- E footer -->
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-	var  siteUrl = "<c:url value="/capacityDistribution/getSiteAndCourierList"/>";
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+	var  mapDataUrl = "<c:url value="/capacityDistribution/getSiteAndCourierList"/>";
 </script>
 <script src="<c:url value="/resources/javascripts/capacitySiteControl.js" />"> </script>
 <!-- E 省市区站点选择控件  -->
@@ -103,7 +154,7 @@
 		//显示站点和派件员信息
 		initMap();
 		//更改站点
-		$("#siteId").change(function(){
+		$("#siteName").change(function(){
 			var siteId = $("#siteId option:selected").val();
 			loadDataAndShow(siteId);
 		});
@@ -222,6 +273,7 @@
 	//flag-0:站点，flag-1:派件员
 	//siteName:查看全部的时候需要显示派件员站点名称
 	function showOnePoint(name, lng, lat, flag, siteName){
+		//console.log(lng+"，"+lat);
 		var point = null;
 		//经纬度为空，显示在公司周围或者站点周围
 		if(lng == null || lng == "0.000000" || lng == "null" || lat == null || lat == "null" || lat == "0.000000" ){

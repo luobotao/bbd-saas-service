@@ -164,7 +164,7 @@ public class CapacityDistributionController {
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			if(!StringUtils.isEmpty(siteIdStr)){//查询本公司下的所有站点 （全部）
+			/*if(StringUtils.isEmpty(siteIdStr)){//查询本公司下的所有站点 （全部）
 				//查询登录用户的公司下的所有站点
 				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 				//查询登录用户的公司下的所有派件员信息
@@ -182,20 +182,26 @@ public class CapacityDistributionController {
 				map.put("userList", userVOList);
 
 			}else {//只查询一个站点
-				List<ObjectId> siteIdList = null;
-				if(!StringUtils.isEmpty(siteIdStr)){//部分站点
-					String [] ids = siteIdStr.split(",");
-					if(ids.length > 0){
-						siteIdList = new ArrayList<ObjectId>();
-						for(String id : ids){
-							siteIdList.add(new ObjectId(id));
-						}
+
+				//map.put("centerSite", site);
+			}
+*/
+
+			List<ObjectId> siteIdList = null;
+			if(!StringUtils.isEmpty(siteIdStr)){//部分站点
+				String [] ids = siteIdStr.split(",");
+				if(ids.length > 0){
+					siteIdList = new ArrayList<ObjectId>();
+					for(String id : ids){
+						siteIdList.add(new ObjectId(id));
 					}
 				}
-				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-				statusList.add(SiteStatus.APPROVE);
-				//查询登录用户的公司下的所有站点
-				List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
+			}
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			//查询登录用户的公司下的所有站点
+			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
+			if(siteList != null && !siteList.isEmpty()){
 				List<User> userList = userService.findUsersBySite(siteList, null, UserStatus.VALID);//所有小件员
 				if (userList != null && userList.size() >0){
 					List<Integer> postmanIdList = new ArrayList<Integer>();
@@ -208,13 +214,33 @@ public class CapacityDistributionController {
 					map.put("userList", userVOList);
 					logger.error("==all===userVOList:" + userVOList.size());
 				}
-				map.put("siteList", siteList);
-				//map.put("centerSite", site);
+				map.put("siteList", siteListToSiteVO(siteList));
 			}
 		} catch (Exception e) {
 			logger.error("===ajax查询所有站点和派件员经纬度===出错:" + e.getMessage());
 		}
 		return map;
+	}
+
+	private SiteVO siteToSiteVO(Site site){
+		SiteVO siteVo = new SiteVO();
+		siteVo.setId(site.getId().toString());
+		siteVo.setAreaCode(site.getAreaCode());
+		siteVo.setName(site.getName());
+		siteVo.setLng(site.getLng());
+		siteVo.setLat(site.getLat());
+		siteVo.setDeliveryArea(site.getDeliveryArea());
+		return siteVo;
+	}
+	private List<SiteVO> siteListToSiteVO(List<Site> siteList){
+		List<SiteVO> siteVoList = null;
+		if(siteList != null && siteList.size() > 0){
+			siteVoList = new ArrayList<SiteVO>();
+			for(Site site : siteList){
+				siteVoList.add(siteToSiteVO(site));
+			}
+		}
+		return siteVoList;
 	}
 
 

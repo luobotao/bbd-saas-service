@@ -22,6 +22,7 @@ $(document).ready(function() {
 	$('#addr_control .prov').change(function(){
 		$('#cityLable').show();
 		$('#distLable').hide();
+
 		//更新站点下拉框
 		getSiteListByAddr();
 	});
@@ -44,6 +45,8 @@ $(document).ready(function() {
 	});
 });
 function getSiteListByAddr(){
+	$('#areaCode').removeAttr("disabled");
+	$("#options").html("");
 	$.ajax({
 		type : "GET",  //提交方式
 		url : siteUrl,//路径
@@ -71,9 +74,9 @@ function loadSiteData(optionList){
 	ulObj.html("");
 	//为Select追加一个Option(下拉项)
 	if(optionList != null){
-		ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='eachS' value=''><b>全部</b></label></li>");
+		ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='eachCode' value=''><b>全部</b></label></li>");
 		optionList.forEach(function(option){
-			ulObj.append(getOneOption(option.id, option.name));
+			ulObj.append(getOneOption(option.code, option.name));
 		});
 		selectS(".all-area");
 	}
@@ -81,15 +84,11 @@ function loadSiteData(optionList){
 }
 
 function getOneOption(id, name){
-	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='eachS' value='" + id + "'><b>";
+	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='eachCode' value='" + id + "'><b>";
 	listr += name + "</b></label></li>";
 	return listr;
 }
 function selectS(selectSp){
-	var ulNum=$(selectSp).find("ul").length;
-	for(i = 0; i < ulNum; i++) {
-		$(selectSp).siblings(".c-sel").prepend("<div class='showA'><ul class='c-show cityshow'></ul></div>");
-	}
 	var sbox=$(selectSp).find(".pv-part li input")
 	sbox.on("click",function(){
 		var test=$(this).siblings("b").html();
@@ -121,7 +120,7 @@ function selectS(selectSp){
 }
 function getAreaCodeStr(){
 	areaCodes = [];
-	$('input[name="eachS"]:checked').each(function(){
+	$('input[name="eachCode"]:checked').each(function(){
 		areaCodes.push(this.value);
 	});
 	return areaCodes.join(",");

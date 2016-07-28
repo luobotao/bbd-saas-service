@@ -245,7 +245,8 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(siteList != null){
             for (Site site : siteList){
                 Option option = new Option();
-                option.setId(site.getAreaCode());
+                option.setId(site.getId().toString());
+                option.setCode(site.getAreaCode());
                 option.setName(site.getName());
                 optionList.add(option);
             }

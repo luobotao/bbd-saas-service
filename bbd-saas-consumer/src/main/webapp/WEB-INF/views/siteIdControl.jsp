@@ -27,14 +27,14 @@
 					<ul class="pv-part" id="optionList">
 						<li>
 							<label class="f12 linputC">
-								<input type="checkbox" name="eachCode" value=""><b>全部</b>
+								<input type="checkbox" name="eachS" value=""><b>全部</b>
 							</label>
 						</li>
 						<c:if test="${not empty siteList}">
 							<c:forEach var="option" items="${siteList}">
 								<li>
 									<label class="f12 linputC">
-										<input type="checkbox" name="eachCode" value="${option.code}"><b>${option.name}</b>
+										<input type="checkbox" name="eachS" value="${option.id}"><b>${option.name}</b>
 									</label>
 								</li>
 							</c:forEach>

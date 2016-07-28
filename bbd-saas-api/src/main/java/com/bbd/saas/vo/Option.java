@@ -11,6 +11,7 @@ public class Option implements Serializable{
 	private static final long serialVersionUID = -1123072469849637576L;
 	private String id;
 	private String name;
+	private String code;
 
 	public String getId() {
 		return id;
@@ -26,5 +27,17 @@ public class Option implements Serializable{
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 }

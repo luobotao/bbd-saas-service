@@ -142,8 +142,8 @@ public class MailQueryController {
 			List<String> areaCodeList = new ArrayList<String>();
 			if(optionList != null && optionList.size() > 0){
 				for (Option option : optionList){
-					areaCodeList.add(option.getId());
-					siteMap.put(option.getId(), option.getName());
+					areaCodeList.add(option.getCode());
+					siteMap.put(option.getCode(), option.getName());
 				}
 			}
 			orderQueryVO.areaCodeList = areaCodeList;
