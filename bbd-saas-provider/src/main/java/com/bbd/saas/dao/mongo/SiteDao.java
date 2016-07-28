@@ -53,7 +53,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(areaFlag != null && areaFlag != -1){//配送区域
             query.filter("areaFlag", areaFlag);
         }
-        if(siteIdList != null){//站点编号集合(siteIdList.isEmpty():省市区下没有站点，但是选择了全部)
+        if(siteIdList != null){//站点id集合(siteIdList.isEmpty():省市区下没有站点，但是选择了全部)
             query.filter("_id in", siteIdList);
         }
         query.order("-dateAdd");
@@ -71,7 +71,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
         }
-        if(areaCodeList != null){
+        if(areaCodeList != null){//站点编号集合(areaCodeList.isEmpty():省市区下没有站点，但是选择了全部)
             query.filter("areaCode in", areaCodeList);
         }
         if(statusList != null){

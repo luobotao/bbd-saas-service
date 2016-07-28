@@ -67,7 +67,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      */
     public PageModel<User> findPageUser(PageModel<User> pageModel,UserQueryVO userQueryVO,List<Site> siteList) {
         Query<User> query = this.getPageQuery(userQueryVO);
-        if(siteList != null && !siteList.isEmpty()){
+        if(siteList != null){//站点集合(siteList.isEmpty():省市区下没有站点，但是选择了全部)
             query.filter("site in", siteList);
         }
         //设置排序

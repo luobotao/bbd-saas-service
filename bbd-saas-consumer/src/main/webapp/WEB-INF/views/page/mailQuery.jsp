@@ -57,7 +57,7 @@
 				<!-- 用于导出 -->
 				<form action="<%=request.getContextPath()%>/mailQuery/exportToExcel" method="get" id="exptForm">
 					<input id="status_expt" name="status" type="hidden" />
-					<input id="areaCode_expt" name="areaCode" type="hidden" />
+					<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
 					<%--<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />--%>
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
@@ -244,7 +244,10 @@ function gotoPage(pageIndex) {
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/mailQuery/getList",//路径
-        data : {  
+        data : {
+			"prov" : $("#addr_control .prov").val(),
+			"city" :  $("#addr_control .city").val(),
+			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
 			"areaCodeStr" : getAreaCodeStr(),//站点编号集合
             "status" : $("#status").val(), 
@@ -254,13 +257,13 @@ function gotoPage(pageIndex) {
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             var tbody = $("#dataList");
             var dataList = dataObject.datas;
+			var datastr = "";
 			if(dataList != null){
-				var datastr = "";
 				for(var i = 0; i < dataList.length; i++){
 					datastr += getRowHtml(dataList[i]);
 				}
-				tbody.html(datastr);
 			}
+			tbody.html(datastr);
 			//更新分页条
 			var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
 			$("#pagin").html(pageStr);
@@ -343,7 +346,7 @@ function getStatusCss(status){
 //导出数据
 function exportData() {
 	$("#status_expt").val($("#status").val());
-	$("#areaCode_expt").val($("#areaCode").val());
+	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	//$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();

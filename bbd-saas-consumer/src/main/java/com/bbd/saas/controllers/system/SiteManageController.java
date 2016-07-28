@@ -109,7 +109,7 @@ public class SiteManageController {
 				}
 			}
 		}else {//全部
-			if(StringUtils.isNotBlank(prov)){//不是公司下的全部站点，是某个省市区下的站点
+			if(StringUtils.isNotBlank(prov)){//不是公司下的全部站点，是某个省市区下的全部站点
 				siteIdList = new ArrayList<ObjectId>();
 				List<Option> optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, null);
 				if(optionList != null && !optionList.isEmpty()){

@@ -255,13 +255,13 @@ function gotoPage(pageIndex) {
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             var tbody = $("#dataList");
             var dataList = dataObject.datas;
+			var datastr = "";
 			if(dataList != null){
-				var datastr = "";
 				for(var i = 0; i < dataList.length; i++){
 					datastr += getRowHtml(dataList[i]);
 				}
-				tbody.html(datastr);
-			} 
+			}
+			tbody.html(datastr);
 			//更新分页条
 			var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
 			$("#pagin").html(pageStr);

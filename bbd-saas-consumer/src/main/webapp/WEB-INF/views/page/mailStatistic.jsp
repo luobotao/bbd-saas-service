@@ -56,7 +56,7 @@
 				<!-- 用于导出 -->
 				<form action="<c:url value="/mailStatistic/exportToExcel" />" method="get" id="exptForm">
 					<c:if test="${role == UserRole.COMPANY}">
-						<input id="areaCode_expt" name="areaCode" type="hidden" />
+						<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
 					</c:if>
 					<input id="time_expt" name="time" type="hidden" />
 				</form>
@@ -163,7 +163,10 @@ function gotoPage(pageIndex) {
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<c:url value="/mailStatistic/getList" />",//路径
-        data : {  
+        data : {
+			"prov" : $("#addr_control .prov").val(),
+			"city" :  $("#addr_control .city").val(),
+			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
 			"areaCodeStr" : areaCodeStr,
             "time" : $("#time").val(),
@@ -215,7 +218,7 @@ function getRowHtml(data){
 //导出数据
 function exportData() {
 	<c:if test="${role == UserRole.COMPANY}">
-		$("#areaCode_expt").val($("#areaCode").val());
+		$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	</c:if>
 	$("#time_expt").val($("#time").val());
 	$("#exptForm").submit();

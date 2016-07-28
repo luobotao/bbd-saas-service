@@ -305,6 +305,9 @@
 			type : "GET",  //提交方式
 			url : url,//路径
 			data : {
+				"prov" : $("#addr_control .prov").val(),
+				"city" :  $("#addr_control .city").val(),
+				"area" :  $("#addr_control .dist").val(),
 				"areaCodeStr" : getAreaCodeStr(),//站点编号集合
 				"pageIndex" : pageIndex,
 				"roleId" : roleId,
