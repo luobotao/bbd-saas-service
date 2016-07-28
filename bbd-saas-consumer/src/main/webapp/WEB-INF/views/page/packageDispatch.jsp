@@ -654,7 +654,7 @@ function doBatchDispatch() {
 					ioutDiv("所有运单均不存在！0");
 				}else{
 					if(msg == ""){
-						ioutDiv("所有运单均分派成功！");
+						ioutDiv("批量分派成功！");//所有运单均分派成功！
 					}else{
 						msg = msg.replace(new RegExp(/(#0#)/g),'运单不存在');
 						msg = msg.replace(new RegExp(/(#2#)/g),'重复分派');
