@@ -164,29 +164,6 @@ public class CapacityDistributionController {
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			/*if(StringUtils.isEmpty(siteIdStr)){//查询本公司下的所有站点 （全部）
-				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
-				//查询登录用户的公司下的所有派件员信息
-				List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
-				//设置站点名称
-				setUserSiteName(userVOList, currUser.getCompanyId());
-				logger.error("==all===userVOList:" + userVOList.size());
-				//设置地图默认的中心点
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				map.put("centerSite", centerSite);
-				map.put("siteList", siteVOList);
-				map.put("userList", userVOList);
-
-			}else {//只查询一个站点
-
-				//map.put("centerSite", site);
-			}
-*/
-
 			List<ObjectId> siteIdList = null;
 			if(!StringUtils.isEmpty(siteIdStr)){//部分站点
 				String [] ids = siteIdStr.split(",");

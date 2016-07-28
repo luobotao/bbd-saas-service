@@ -220,11 +220,15 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }
             }
         	//异常状态
+            if(orderQueryVO.orderStatusList != null){
+                query.filter("orderStatus in", orderQueryVO.orderStatusList);
+            }
+            //订单状态集合
             if(orderQueryVO.abnormalStatus != null){
-            	if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
-                	query.or(query.criteria("orderStatus").equal(OrderStatus.RETENTION), query.criteria("orderStatus").equal(OrderStatus.REJECTION));
+                if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
+                    query.or(query.criteria("orderStatus").equal(OrderStatus.RETENTION), query.criteria("orderStatus").equal(OrderStatus.REJECTION));
                 }else{
-                	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
+                    query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
                 }
             }
             //订单状态和到站时间

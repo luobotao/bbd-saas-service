@@ -38,7 +38,7 @@
 					<div class="search-area">
 						<c:if test="${role == UserRole.COMPANY}">
 	  						<div class="row pb20">
-								<jsp:include page="../siteControl.jsp" flush="true" />
+								<jsp:include page="../control/siteControl.jsp" flush="true" />
 	  						</div>
 						</c:if>
 	  					<div class="row pb20">

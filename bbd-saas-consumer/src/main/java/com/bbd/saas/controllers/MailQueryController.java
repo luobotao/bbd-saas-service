@@ -55,7 +55,7 @@ public class MailQueryController {
 	 * 跳转到运单查询页面
 	 * @param pageIndex 当前页,默认第一页
 	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
-	 * @param status 订单状态
+	 * @param statusStr 运单状态集合status1,status2---
 	 * @param arriveBetween 到站时间范围
 	 * @param mailNum 运单号
 	 * @param request 请求
@@ -63,17 +63,15 @@ public class MailQueryController {
      * @return page
      */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, String areaCodeStr, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
 		try {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
 			}
-			//设置默认查询条件
-			status = Numbers.defaultIfNull(status, -1);//全部
 			//到站时间
 			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
-			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, status, arriveBetween, mailNum, request);
+			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, statusStr, arriveBetween, mailNum, request);
 			if(orderPage != null && orderPage.getDatas() != null){
 				/*for(Order order : orderPage.getDatas()){
 					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
@@ -101,7 +99,7 @@ public class MailQueryController {
 	 * Description: 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
 	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
-	 * @param status 运单状态
+	 * @param statusStr 运单状态集合status1,status2---
 	 * @param arriveBetween 到站时间
 	 * @param mailNum 运单号
 	 * @param request 请求
@@ -111,15 +109,14 @@ public class MailQueryController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<Order> getList(String prov, String city, String area, Integer pageIndex, String areaCodeStr, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
+	public PageModel<Order> getList(String prov, String city, String area, Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request) {
 		//查询数据
 		PageModel<Order> orderPage = new PageModel<Order>();
 		try {
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-			status = Numbers.defaultIfNull(status, -1);
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, status, mailNum, orderQueryVO);
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, mailNum, orderQueryVO);
 			//查询数据
 			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
 				orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
@@ -149,7 +146,7 @@ public class MailQueryController {
 		}
 		return orderPage;		
 	}
-	private Map<String, String> getOrderQueryAndSiteMap( final HttpServletRequest request, String prov, String city, String area, String areaCodeStr, Integer status, String mailNum, OrderQueryVO orderQueryVO){
+	private Map<String, String> getOrderQueryAndSiteMap( final HttpServletRequest request, String prov, String city, String area, String areaCodeStr, String statusStr, String mailNum, OrderQueryVO orderQueryVO){
 		if(mailNum != null){
 			mailNum = mailNum.trim();
 		}
@@ -159,7 +156,14 @@ public class MailQueryController {
 		if(orderQueryVO == null){
 			orderQueryVO = new OrderQueryVO();
 		}
-		orderQueryVO.orderStatus = status;
+		if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
+			String [] statusS = statusStr.split(",");
+			List<OrderStatus> orderStatusList = new ArrayList<OrderStatus>();
+			for(String status : statusS){
+				orderStatusList.add(OrderStatus.status2Obj(Integer.parseInt(status)));
+			}
+			orderQueryVO.orderStatusList = orderStatusList;
+		}
 		orderQueryVO.mailNum = mailNum;
 		List<Option> optionList = null;
 		//areaCodeList查询
@@ -212,7 +216,7 @@ public class MailQueryController {
 	
 	/**
 	 * Description: 导出数据
-	 * @param status 状态
+	 * @param statusStr 状态集合status1,status2---
 	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
 	 * @param mailNum 运单号
 	 * @param request
@@ -222,11 +226,11 @@ public class MailQueryController {
 	 * 2016年4月15日下午4:30:41
 	 */
 	@RequestMapping(value="/exportToExcel", method=RequestMethod.GET)
-	public void exportData(String prov, String city, String area, String areaCodeStr, Integer status, String arriveBetween_expt, String mailNum,
+	public void exportData(String prov, String city, String area, String areaCodeStr, String statusStr, String arriveBetween_expt, String mailNum,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		try {
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, status, mailNum, orderQueryVO);
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, mailNum, orderQueryVO);
 			//查询数据
 			List<Order> orderList = null;
 			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){

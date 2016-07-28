@@ -8,6 +8,9 @@ $(document).ready(function() {
 		dist: "",
 		nodata: "none"
 	});
+	function clisk(){
+
+	}
 	$(".j-sel-input").on("click",function(e){
 		e.stopPropagation();
 		$(".all-area").toggle();

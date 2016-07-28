@@ -12,17 +12,10 @@ $(document).ready(function() {
 		dist: "",
 		nodata: "none"
 	});
-	$(".j-sel-input").on("click",function(e){
-		e.stopPropagation();
-		$(".all-area").toggle();
-	});
-	$(".all-area").on("click",function(e){
-		e.stopPropagation();
-	});
-	$(document).on("click",function(){
-		$(".all-area").hide();
-	});
-	selectS(".all-area");
+	inputS(".j-sel-input",".all-area1");
+	inputS(".j-sel-input2",".all-area2");
+	selectS(".all-area1");
+	selectS(".all-area2");
 	// 省改变
 	$('#addr_control .prov').change(function(){
 		$('#cityLable').show();
@@ -46,7 +39,7 @@ $(document).ready(function() {
 	//扫描运单号--把快递分派给派件员--边输入边改变
 	$("#areaCode").on('input',function(e){
 		getSiteListByAddr();
-		$(".all-area").show();
+		$(".all-area2").show();
 	});
 });
 function getSiteListByAddr(){
@@ -90,7 +83,7 @@ function loadSiteData(optionList){
 			});
 		}
 
-		selectS(".all-area");
+		selectS(".all-area2");
 	}
 
 }
@@ -100,6 +93,22 @@ function getOneOption(id, name){
 	listr += name + "</b></label></li>";
 	return listr;
 }
+
+// S 点击input
+function inputS(clickWho,showWho){
+	$(clickWho).on("click",function(e){
+		e.stopPropagation();
+		$(showWho).toggle();
+		$(clickWho).parents(".crt-s").siblings().find(".all-area").hide()
+	});
+	$(showWho).on("click",function(e){
+		e.stopPropagation();
+	});
+	$(document).on("click",function(){
+		$(showWho).hide();
+	});
+}
+// E 点击input
 function selectS(selectSp){
 	var sbox=$(selectSp).find(".pv-part li input")
 	sbox.on("click",function(){
@@ -118,22 +127,29 @@ function selectS(selectSp){
 		if($(".cityshow li:last-child")){
 			$(".cityshow li:last-child").removeClass("padR6").siblings().addClass("padR6");
 		};
+
+
 		// 默认提示文字
-		var clen=$(".cityshow li").length;
+		var csel=$(selectSp).siblings(".c-sel");
+		var clen=csel.find(".cityshow li").length;
 		if(clen == 0){
-			$(".j-empty").prop("placeholder","请输入站点名称");
-			$(".j-empty").prop("disabled",false)
+			csel.find(".j-empty").prop("placeholder","请输入省份");
+			csel.find(".j-empty").prop("disabled",false)
 		}else{
-			$(".j-empty").prop("placeholder","");
-			$(".j-empty").val("");
-			$(".j-empty").prop("disabled",true)
+			csel.find(".j-empty").prop("placeholder","");
+			csel.find(".j-empty").val("");
+			csel.find(".j-empty").prop("disabled",true)
 		};
 	});
 }
-function getAreaCodeStr(){
+function getAreaCodeStr(name){
+	if(name == null){
+		name = controlName;
+	}
 	areaCodes = [];
-	$("input[name='" + controlName + "']:checked").each(function(){
-		areaCodes.push(this.value);
+	$("input[name='" + name + "']:checked").each(function(){
+		areaCodes.push(this.value.replace("全部", ""));
 	});
+	console.log(name + " : "+ areaCodes.join(","));
 	return areaCodes.join(",");
 }
