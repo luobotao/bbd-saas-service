@@ -44,7 +44,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param keyword
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, List<String> areaCodeList, Integer status, Integer areaFlag, String keyword) {
+    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword) {
         SiteQueryVO queryVO = new SiteQueryVO();
         queryVO.companyId = companyId;
         queryVO.status = SiteStatus.status2Obj(status);
@@ -53,8 +53,8 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(areaFlag != null && areaFlag != -1){//配送区域
             query.filter("areaFlag", areaFlag);
         }
-        if(areaCodeList != null && areaCodeList.size() > 0){//站点编号集合
-            query.filter("areaCode in", areaCodeList);
+        if(siteIdList != null){//站点编号集合(siteIdList.isEmpty():省市区下没有站点，但是选择了全部)
+            query.filter("_id in", siteIdList);
         }
         query.order("-dateAdd");
         return queryPageData(pageModel, query);

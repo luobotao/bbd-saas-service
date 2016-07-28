@@ -68,12 +68,12 @@ public interface SiteService {
      * 根据站点状态与关键词进行站点分页查询
      * @param pageModel 分页对象
      * @param companyId 公司ID
-     * @param areaCodeList 站点编号集合，为空即为查询公司下的全部站点
+     * @param siteIdList 站点id集合，为空即为查询公司下的全部站点
      * @param status 站点状态SiteStatus对应的值
      * @param keyword 站点名称/站⻓姓名/⼿机号
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<String> areaCodeList, Integer status, Integer areaFlag, String keyword);
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword);
 
     /**
      * 根据站点状态进行站点分页查询

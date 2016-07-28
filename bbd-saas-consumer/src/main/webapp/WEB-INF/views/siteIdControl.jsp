@@ -27,14 +27,14 @@
 					<ul class="pv-part" id="optionList">
 						<li>
 							<label class="f12 linputC">
-								<input type="checkbox" name="eachS" value=""><b>全部</b>
+								<input type="checkbox" name="idOpt" value=""><b>全部</b>
 							</label>
 						</li>
 						<c:if test="${not empty siteList}">
 							<c:forEach var="option" items="${siteList}">
 								<li>
 									<label class="f12 linputC">
-										<input type="checkbox" name="eachS" value="${option.id}"><b>${option.name}</b>
+										<input type="checkbox" name="idOpt" value="${option.id}"><b>${option.name}</b>
 									</label>
 								</li>
 							</c:forEach>
@@ -44,16 +44,10 @@
 			</div>
 			<!-- E 1 -->
 		</div>
-
 	</div>
-	<%--<select id="areaCode" name="areaCode" class="form-control form-con-new">
-		<option value="">全部</option>
-		<c:if test="${not empty siteList}">
-			<c:forEach var="site" items="${siteList}">
-				<option value="${site.areaCode}">${site.name}</option>
-			</c:forEach>
-		</c:if>
-	</select>--%>
 </div>
+<script type="text/javascript">
+	var isSiteId = true;
+</script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 var cityId = 0;
+var controlName = "status";
 $(document).ready(function() {
 	// 初始化省市区下拉框
 	$("#addr_control").citySelect({
@@ -22,34 +23,30 @@ $(document).ready(function() {
 	$('#addr_control .prov').change(function(){
 		$('#cityLable').show();
 		$('#distLable').hide();
-		updateSite(this.value);
+		//更新站点下拉框
+		getSiteListByAddr();
 	});
 	// 市改变
 	$('#addr_control .city').change(function(){
 		$('#distLable').show();
-		updateSite(this.value);
+		//更新站点下拉框
+		getSiteListByAddr();
 	}) ;
 	// 区改变
 	$('#addr_control .dist').change(function(){
-		updateSite($('#addr_control .city').val() + "市" + this.value);
+		//更新站点下拉框
+		getSiteListByAddr();
 	});
 	//绘制电子围栏 -- 更改站点
 	//扫描运单号--把快递分派给派件员--边输入边改变
-	$("#siteName").on('input',function(e){
+	$("#areaCode").on('input',function(e){
 		getSiteListByAddr();
 		$(".all-area").show();
 	});
 });
-//站点列表和站点地图(显示站点和派件员)更新
-function updateSite(center){
-	//设置地图中心点，并调整地图视野
-	capamap.centerAndZoom(center);
-	//站点列表和站点地图(显示站点和派件员)更新
-	getSiteListByAddr();
-}
 function getSiteListByAddr(){
+	$('#areaCode').removeAttr("disabled");
 	$("#options").html("");
-	$('#siteName').removeAttr("disabled");
 	$.ajax({
 		type : "GET",  //提交方式
 		url : siteUrl,//路径
@@ -57,14 +54,13 @@ function getSiteListByAddr(){
 			"prov" : $("#addr_control .prov").val(),
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
-			"siteName" :  $("#siteName").val().replace("全部", "")
+			"siteName" :  $("#areaCode").val().replace("全部", "")
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据
-			if(data != null){
+			if (data != null ||data.length > 0){//全部
 				//更新站点下拉列表数据
 				loadSiteData(data);
 			}
-
 		},
 		error : function() {
 			ioutDiv("服务器繁忙，请稍后再试");
@@ -77,55 +73,21 @@ function loadSiteData(optionList){
 	//清空数据
 	ulObj.html("");
 	//为Select追加一个Option(下拉项)
-	console.log(optionList);
 	if(optionList != null){
-		ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='eachSiteId' value=''><b>全部</b></label></li>");
+		ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='eachCode' value=''><b>全部</b></label></li>");
 		optionList.forEach(function(option){
-			ulObj.append(getOneOption(option.id, option.name));
+			ulObj.append(getOneOption(option.code, option.name));
 		});
 		selectS(".all-area");
 	}
+
 }
-//获得一个选项的html
+
 function getOneOption(id, name){
-	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='eachSiteId' value='" + id + "'><b>";
+	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='eachCode' value='" + id + "'><b>";
 	listr += name + "</b></label></li>";
 	return listr;
 }
-//获得站点多选框的值
-function getSiteIdStr(){
-	var siteIds = [];
-	$('input[name="eachSiteId"]:checked').each(function(){
-		siteIds.push(this.value);
-	});
-	return siteIds.join(",");
-}
-
-function getSiteAndUserList(){
-	$.ajax({
-		type : "GET",  //提交方式
-		url : mapDataUrl,//路径
-		data : {
-			"prov" : $("#addr_control .prov").val(),
-			"city" :  $("#addr_control .city").val(),
-			"area" :  $("#addr_control .dist").val(),
-			"siteIdStr" :  getSiteIdStr(),//站点id集合
-		},//数据，这里使用的是Json格式进行传输
-		success : function(data) {//返回数据
-
-			capamap.clearOverlays();
-			console.log(data);
-			if(data != null){
-				//更新地图（站点和派件员）
-				showSiteAndUsers(data.siteList, data.userList);
-			}
-		},
-		error : function() {
-			ioutDiv("服务器繁忙，请稍后再试");
-		}
-	});
-}
-//站点下拉框选则操作
 function selectS(selectSp){
 	var sbox=$(selectSp).find(".pv-part li input")
 	sbox.on("click",function(){
@@ -147,7 +109,7 @@ function selectS(selectSp){
 		// 默认提示文字
 		var clen=$(".cityshow li").length;
 		if(clen == 0){
-			$(".j-empty").prop("placeholder","请输入站点名称");
+			$(".j-empty").prop("placeholder","请输入省份");
 			$(".j-empty").prop("disabled",false)
 		}else{
 			$(".j-empty").prop("placeholder","");
@@ -156,5 +118,10 @@ function selectS(selectSp){
 		};
 	});
 }
-
-
+function getAreaCodeStr(){
+	areaCodes = [];
+	$('input[name="eachCode"]:checked').each(function(){
+		areaCodes.push(this.value);
+	});
+	return areaCodes.join(",");
+}

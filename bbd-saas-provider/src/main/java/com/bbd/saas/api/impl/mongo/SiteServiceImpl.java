@@ -75,8 +75,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<String> areaCodeList, Integer status, Integer areaFlag, String keyword) {
-        return siteDao.findSites(pageModel, companyId, areaCodeList, status, areaFlag, keyword);
+    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword) {
+        return siteDao.findSites(pageModel, companyId, siteIdList, status, areaFlag, keyword);
     }
     /**
      * 根据站点状态与关键词进行站点分页查询

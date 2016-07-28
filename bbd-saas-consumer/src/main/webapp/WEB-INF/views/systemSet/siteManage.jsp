@@ -30,7 +30,7 @@
                 <!-- S 搜索区域 -->
                 <div class="search-area form-inline form-inline-n">
                     <div class="row pb20">
-                        <jsp:include page="../siteControl.jsp" flush="true" />
+                        <jsp:include page="../siteIdControl.jsp" flush="true" />
                     </div>
                     <div class="row pb20">
                         <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
@@ -379,8 +379,11 @@
             url: url,//路径
             dataType: "json",
             data: {
+                "prov" : $("#addr_control .prov").val(),
+                "city" :  $("#addr_control .city").val(),
+                "area" :  $("#addr_control .dist").val(),
                 "pageIndex": pageIndex,
-                "areaCodeStr" : getAreaCodeStr(),//站点编号集合
+                "siteIdStr" : getAreaCodeStr(),//站点编号集合
                 "status": status,
                 "areaFlag": areaFlag,
                 "keyword": keyword
@@ -772,8 +775,8 @@ function createSite(){
 
 /******************************************************** 配送区域操作 *****************************************************************/
     //显示操作提示框
-    function showConfirmDiv(areaCodeStr, operType, info, title) {
-        areaCode = areaCodeStr;
+    function showConfirmDiv(siteIdStr, operType, info, title) {
+        areaCode = siteIdStr;
         operFlag = operType;
         $("#confirmBody").html(info);
         if(title == null){
