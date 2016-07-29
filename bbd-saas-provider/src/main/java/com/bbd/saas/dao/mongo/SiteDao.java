@@ -149,7 +149,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(status != null){
             query.filter("status", status);
         }
-        return  find(query).asList();
+        return  find(query.order("-dateAdd")).asList();
     }
 
     /**
@@ -221,7 +221,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(StringUtils.isNotBlank(area)){
             query.filter("area", area);
         }
-        return query;
+        return query.order("-dateAdd");
     }
     /**
      * 根据站点编号数组查询
