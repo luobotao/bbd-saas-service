@@ -50,7 +50,7 @@
 											<div class="pv-bg clearfix">
 												<input id="statusName" type="text" class="sel-input" placeholder="请输入状态" />
 												<div class="l-sel-p">
-													<ul class="pv-part" id="optionList">
+													<ul class="pv-part" id="optionList2">
 														<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
 													</ul>
 												</div>

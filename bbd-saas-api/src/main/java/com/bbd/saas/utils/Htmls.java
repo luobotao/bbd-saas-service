@@ -13,11 +13,11 @@ public class Htmls {
 	private static final String SELECTED_OPTION_NAME = "<option selected value=\"%s\" name=\"%s\">%s</option>";
 
 	private static final String MULTIOPTION = "<li><label class=\"f12 linputC\">" +
-			"<input type=\"checkbox\" name=\"%s\" value=\"%d\"><b>%s</b></label></li>";
+			"<input type=\"checkbox\" name=\"%s\" value=\"%d\" isAll=\"0\"><b>%s</b></label></li>";
 	private static final String SELECTED_MULTIOPTION = "<li><label class=\"f12 linputC\">" +
-			"<input type=\"checkbox\" name=\"%s\" value=\"%d\" checked><b>%s</b></label></li>";
+			"<input type=\"checkbox\" name=\"%s\" value=\"%d\" checked isAll=\"0\"><b>%s</b></label></li>";
 	private static final String SELECTED_MULTIOPTION_ALL = "<li><label class=\"f12 linputC\">" +
-			"<input type=\"checkbox\" name=\"%s\" value=\"%d\" onclick=\"selectAll(this)\"><b>%s</b></label></li>";
+			"<input type=\"checkbox\" name=\"%s\" value=\"%d\" isAll=\"1\"><b>%s</b></label></li>";
 
 	/**
 	 * value为数值

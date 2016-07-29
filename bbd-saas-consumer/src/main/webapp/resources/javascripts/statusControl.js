@@ -77,17 +77,24 @@ function loadSiteData(optionList){
 	ulObj.html("");
 	//为Select追加一个Option(下拉项)
 	if(optionList != null){
-		ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='eachCode' value=''><b>全部</b></label></li>");
-		optionList.forEach(function(option){
-			ulObj.append(getOneOption(option.code, option.name));
-		});
-		selectS(".all-area");
+		ulObj.append(getOneOption("", "全部", 1));
+		//ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='" + controlName + "' value=''><b>全部</b></label></li>");
+		if(isSiteId){//取得站点id
+			optionList.forEach(function(option){
+				ulObj.append(getOneOption(option.id, option.name, 0));
+			});
+		}else{
+			optionList.forEach(function(option){
+				ulObj.append(getOneOption(option.code, option.name, 0));
+			});
+		}
+		selectS(".all-area2");
 	}
 
 }
 
-function getOneOption(id, name){
-	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='eachCode' value='" + id + "'><b>";
+function getOneOption(id, name, isAll){
+	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='" + controlName + "' value='" + id + "' isAll='" + isAll + "'><b>";
 	listr += name + "</b></label></li>";
 	return listr;
 }
@@ -127,4 +134,8 @@ function getAreaCodeStr(){
 		areaCodes.push(this.value);
 	});
 	return areaCodes.join(",");
+}
+
+function selectAll(obj){
+	$("input[name='" + obj.name + "']").prop("checked", obj.checked);
 }
