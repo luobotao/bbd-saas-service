@@ -23,7 +23,7 @@
 	<div class="form-group pb20">
 		<label class="ml16">站点：</label>
 		<div class="crt-s w400">
-			<div class="c-sel j-sel-input">
+			<div class="c-sel j-sel-input2">
 				<input id="areaCode" type="text" class="sel-input j-empty" placeholder="请输入站点名称"  value="全部"/>
 				<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
 			</div>
