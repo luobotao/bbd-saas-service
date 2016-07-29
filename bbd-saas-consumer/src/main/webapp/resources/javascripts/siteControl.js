@@ -130,7 +130,6 @@ function selectS(selectSp){
 		var curP=$(this).parents('.l-sel-p').parent().index();
 		var shA=$(this).parents(selectSp).siblings(".c-sel").find(".showA");
 
-
 		//全选 -- 取消全选
 		var isAll = $(this).attr("isAll");
 
@@ -141,7 +140,9 @@ function selectS(selectSp){
 			$("input[name='" + this.name + "']").prop("checked", this.checked);
 			//上边框中显示的值
 			if(this.checked == true){//选中
-				showNameUlObj.html("<li city='1' class='licity'>全部</li>");
+				if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+					showNameUlObj.html("<li city='1' class='licity'>全部</li>");
+				}
 			}else{//取消选中
 				showNameUlObj.html("");
 			}
