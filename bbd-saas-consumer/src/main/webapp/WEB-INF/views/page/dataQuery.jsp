@@ -118,7 +118,7 @@
 									%>
 									<%-- 签收时间  end --%>
 									<%
-										if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
+										if(order.getUserVO() == null){//未分派
 									%>
 											<td></td>
 											<td></td>
@@ -300,7 +300,7 @@ function getRowHtml(data){
 	}
 	<%-- 签收时间  end --%>
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userVO==null ||data.userId == null || data.userId == ""){
+	if(data.userVO==null){//未分派||派件员没有查询到
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";

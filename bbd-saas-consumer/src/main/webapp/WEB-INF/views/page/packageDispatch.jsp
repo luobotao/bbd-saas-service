@@ -48,16 +48,17 @@
 	  					<div class="b-line"></div>
 	  					<div class="row pb20">
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn d">选择派件员</a>
-	  							<span class="ft16 pt20 tip-info" id="courierName"></span>
+								<span onclick="showCourierDiv()" class="ser-btn l" >选择派件员</span>
+	  							<%--<a href="javascript:void(0)" onclick="showCourierDiv()" class="ser-btn d">选择派件员</a>
+	  							--%>
+								<span class="ft16 pt20 tip-info" id="courierName"></span>
 	  							<input id="courierId" type="hidden" value="" /> 
 	  						</div>
 	  						
 	  						<div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-6">
 	  							<label>扫描运单号：</label>
 	  							<input id="mailNum" name="mailNum" type="text" placeholder="扫描运单号,按回车键分派" class="form-control" onkeypress="enterPress(event)" />
-								<span onclick="dispatch()" class="ser-btn d ml16">确定分派</span>
-	  							<%--<span class="pl20 ft16 tip-info" id="mailNum_check"> </span>--%>
+								<span onclick="dispatch()" class="ser-btn l ml16">确定分派</span>
 	  						</div>
 	  					</div>
 	  				</div>
@@ -65,7 +66,7 @@
 				<!-- E 搜索区域 -->
 				<!-- S button -->
 				<div class="clearfix mt20">
-					<span href="#" onclick="batchDispatchBtn()" class="ser-btn l" >批量分派</span>
+					<span onclick="batchDispatchBtn()" class="ser-btn l" >批量分派</span>
 				</div>
 				<!-- E button -->
   			<div class="tab-bod mt20">
@@ -119,7 +120,7 @@
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
+									if(order.getUserVO()==null){//未分派||派件员没有查询到
 								%>
 										<td></td>
 										<td></td>
@@ -331,14 +332,12 @@ function enterPress(e){
 function dispatch() {
 	//未选择派件员
 	if($("#courierId").val() == null || $("#courierId").val() == ""){
-		//$("#mailNum_check").text("请选择派件员！");
 		ioutDiv("请选择派件员！");
 		return false;
 	}
 	//未选择派件员
 	var mailNum = $("#mailNum").val();
 	if(mailNum == null || mailNum == ""){
-		//$("#mailNum_check").text("请选择派件员！");
 		ioutDiv("请扫描或输入运单号");
 		return false;
 	}
@@ -450,7 +449,7 @@ function getRowHtml(data){
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userVO==null || data.userId == null || data.userId == ""){
+	if(data.userVO == null){//未分派||派件员没有查询到
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";
@@ -610,7 +609,6 @@ var ids = [];
 function batchDispatchBtn() {
 	//未选择派件员
 	if($("#courierId").val() == null || $("#courierId").val() == ""){
-		//$("#mailNum_check").text("请选择派件员！");
 		ioutDiv("请选择派件员！");
 		return false;
 	}
