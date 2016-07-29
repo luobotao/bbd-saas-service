@@ -358,6 +358,8 @@
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
     var  siteUrl = "<c:url value="/site/getSiteList"/>";
+    var  inputName = "siteName_control";
+    var isSiteId = true;
 </script>
 <script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
 <!-- E 省市区站点选择控件  -->
