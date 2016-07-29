@@ -24,23 +24,24 @@ $(document).ready(function() {
 	$('#addr_control .prov').change(function(){
 		$('#cityLable').show();
 		$('#distLable').hide();
-		$("#addr_control .city").val();//清空
-		$("#addr_control .dist").val();
-		$("#"+inputName).val();
+		$("#addr_control .city").val("");//清空
+		$("#addr_control .dist").val("");
+		$("#"+inputName).val("");
+		console.log($("#addr_control .city").val());
 		//更新站点下拉框
 		getSiteListByAddr();
 	});
 	// 市改变
 	$('#addr_control .city').change(function(){
 		$('#distLable').show();
-		$("#addr_control .dist").val();//清空
-		$("#"+inputName).val();
+		$("#addr_control .dist").val("");//清空
+		$("#"+inputName).val("");
 		//更新站点下拉框
 		getSiteListByAddr();
 	}) ;
 	// 区改变
 	$('#addr_control .dist').change(function(){
-		$("#"+inputName).val();//清空
+		$("#"+inputName).val("");//清空
 		//更新站点下拉框
 		getSiteListByAddr();
 	});
