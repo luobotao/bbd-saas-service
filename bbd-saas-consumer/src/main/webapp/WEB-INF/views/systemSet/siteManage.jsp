@@ -357,7 +357,9 @@
 <!--E 操作确认-->
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-    var  siteUrl = "<c:url value="/site/getSiteList"/>";
+    var  siteUrl = "<c:url value="/site/getSiteList?isAll=1"/>";
+    var  inputName = "siteName_control";
+    var isSiteId = true;
 </script>
 <script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
 <!-- E 省市区站点选择控件  -->
@@ -501,9 +503,9 @@
             ioutDiv("请输入站点名称");
             return false;
         }
-        var province = $(".prov").val();
-        var city = $(".city").val();
-        var area = $(".dist").val();
+        var province = $("#city_4 .prov").val();
+        var city = $("#city_4 .city").val();
+        var area = $("#city_4 .dist").val();
         $("#province").val(province);
         $("#city").val(city);
         $("#area").val(area);

@@ -411,7 +411,9 @@ public class UserManageController {
 		if(userRole == UserRole.SITEMASTER){
 			postmanUser.setPostrole(4);
 		}else  if(userRole== UserRole.SENDMEM){
-			postmanUser.setPostrole(0);
+			if(postmanUser.getPostrole() != 5){
+				postmanUser.setPostrole(0);
+			}
 		}
 	}
 

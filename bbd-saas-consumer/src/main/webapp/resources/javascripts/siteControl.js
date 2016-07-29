@@ -4,6 +4,9 @@ var controlName = "codeOpt";
 if(isSiteId){
 	controlName = "idOpt";
 }
+if(inputName == null){
+	inputName = "areaCode";
+}
 $(document).ready(function() {
 	// 初始化省市区下拉框
 	$("#addr_control").citySelect({
@@ -37,13 +40,13 @@ $(document).ready(function() {
 	});
 	//绘制电子围栏 -- 更改站点
 	//扫描运单号--把快递分派给派件员--边输入边改变
-	$("#areaCode").on('input',function(e){
+	$("#"+inputName).on('input',function(e){
 		getSiteListByAddr();
 		$(".all-area2").show();
 	});
 });
 function getSiteListByAddr(){
-	$('#areaCode').removeAttr("disabled");
+	$("#"+inputName).removeAttr("disabled");
 	$("#options").html("");
 	$.ajax({
 		type : "GET",  //提交方式
@@ -52,7 +55,7 @@ function getSiteListByAddr(){
 			"prov" : $("#addr_control .prov").val(),
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
-			"siteName" :  $("#areaCode").val().replace("全部", "")
+			"siteName" :  $("#"+inputName).val().replace("全部", "")
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据
 			if (data != null ||data.length > 0){//全部

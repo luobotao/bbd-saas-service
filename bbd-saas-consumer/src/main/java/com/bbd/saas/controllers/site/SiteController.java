@@ -412,15 +412,18 @@ public class SiteController {
      */
 	@ResponseBody
 	@RequestMapping(value="/getSiteList", method=RequestMethod.GET)
-	public List<Option> getSiteListByAddr(String prov, String city, String area, String siteName, final HttpServletRequest request) {
+	public List<Option> getSiteListByAddr(String prov, String city, String area, String siteName, Integer isAll, final HttpServletRequest request) {
 		String userId = UserSession.get(request);
 		if(userId != null && !"".equals(userId)) {
 			//当前登录的用户信息
 			User currUser = adminService.get(userId);
-			//查询登录用户的公司下的所有站点
-			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-			statusList.add(SiteStatus.APPROVE);
-			statusList.add(SiteStatus.INVALID);
+			List<SiteStatus> statusList = null;
+			if(isAll != null && isAll != 1){
+				//查询登录用户的公司下的所有站点
+				statusList = new ArrayList<SiteStatus>();
+				statusList.add(SiteStatus.APPROVE);
+				statusList.add(SiteStatus.INVALID);
+			}
 			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList);
 		}
 		return null;
