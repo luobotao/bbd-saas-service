@@ -112,7 +112,7 @@
 				<!-- E 搜索区域 -->
 				<!-- S map -->
 				<div class="capacity-map mt20">
-					<div id="capamap" class="capa-br" style="height:533px;"></div>
+					<div id="capamap" class="capa-br" style="height:650px;"></div>
 				</div>
 
 				<!-- E map -->
