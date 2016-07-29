@@ -13,20 +13,26 @@ $(document).ready(function() {
 	$('#addr_control .prov').change(function(){
 		$('#cityLable').show();
 		$('#distLable').hide();
+		$("#addr_control .city").val();//清空
+		$("#addr_control .dist").val();
+		$("#"+inputName).val();
 		updateSite(this.value);
 	});
 	// 市改变
 	$('#addr_control .city').change(function(){
 		$('#distLable').show();
+		$("#addr_control .dist").val();//清空
+		$("#"+inputName).val();
 		updateSite(this.value);
 	}) ;
 	// 区改变
 	$('#addr_control .dist').change(function(){
+		$("#"+inputName).val();//清空
 		updateSite($('#addr_control .city').val() + "市" + this.value);
 	});
 	//绘制电子围栏 -- 更改站点
 	//扫描运单号--把快递分派给派件员--边输入边改变
-	$("#siteName").on('input',function(e){
+	$("#"+inputName).on('input',function(e){
 		getSiteListByAddr();
 		$(".all-area").show();
 	});
@@ -40,7 +46,7 @@ function updateSite(center){
 }
 function getSiteListByAddr(){
 	$("#options").html("");
-	$('#siteName').removeAttr("disabled");
+	$('#'+inputName).removeAttr("disabled");
 	$.ajax({
 		type : "GET",  //提交方式
 		url : siteUrl,//路径
@@ -48,7 +54,7 @@ function getSiteListByAddr(){
 			"prov" : $("#addr_control .prov").val(),
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
-			"siteName" :  $("#siteName").val().replace("全部", "")
+			"siteName" :  $("#"+inputName).val()
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据
 			if(data != null){
