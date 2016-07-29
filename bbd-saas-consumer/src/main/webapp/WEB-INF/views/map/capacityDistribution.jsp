@@ -156,11 +156,6 @@
 	$(document).ready(function() {
 		//显示站点和派件员信息
 		initMap();
-		//更改站点
-		$("#siteName").change(function(){
-			var siteId = $("#siteId option:selected").val();
-			loadDataAndShow(siteId);
-		});
 	});
 	//默认展示全部站点和所有派件员
 	function initMap(){
@@ -195,7 +190,7 @@
 	}
 
 	//加载站点和派件员名称和经纬度信息
-	function loadDataAndShow(siteId){
+	/*function loadDataAndShow(siteId){
 		$.ajax({
 			type : "GET",  //提交方式
 			url : "<%=path%>/capacityDistribution/getSiteAndCourierList",//路径
@@ -205,16 +200,18 @@
 			success : function(dataObject) {//返回数据
 				capamap.clearOverlays();
 				if (siteId == ""){//全部
-					var center = dataObject.centerSite
+					/!*var center = dataObject.centerSite
 					defaultLng = center.lng;
 					defaultLat = center.lat;
-					showJsonMap(center, dataObject.siteList, dataObject.userList);
+					showJsonMap(center, dataObject.siteList, dataObject.userList);*!/
+					showSiteAndUsers(dataObject.siteList, dataObject.userList);
 				}else {
 					//设置中心位置和显示派件员
-					var site = dataObject.site;
+					/!*var site = dataObject.site;
 					defaultLng = site.lng;
 					defaultLat = site.lat;
-					showJsonMap(site, null, dataObject.userList);
+					showJsonMap(site, null, dataObject.userList);*!/
+					showSiteAndUsers(dataObject.siteList, dataObject.userList);
 					//站点
 					var site = dataObject.site;
 					showOnePoint(site.name, site.lng, site.lat, 0);
@@ -224,17 +221,17 @@
 				ioutDiv("服务器繁忙，请稍后再试！");
 			}
 		});
-	}
+	}*/
 	//展示站点和派件员--ajax获取json对象
-	function showJsonMap(centerSite, siteList, userList){
-		var center = new BMap.Point(centerSite.lng, centerSite.lat);
+	/*function showJsonMap(centerSite, siteList, userList){
+		/!*var center = new BMap.Point(centerSite.lng, centerSite.lat);
 		var radiusVal = 15;//显示大小级别--单个站点
 		if (siteId == ""){//显示大小级别-全部
 			radiusVal = 11;
 		}
-		capamap.centerAndZoom(center, radiusVal);
+		capamap.centerAndZoom(center, radiusVal);*!/
 		showSiteAndUsers(siteList, userList);
-	}
+	}*/
 	function showSiteAndUsers(siteList, userList){
 		capamap.enableScrollWheelZoom();
 		var isShowAll = false;

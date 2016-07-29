@@ -64,6 +64,7 @@ function getSiteListByAddr(){
 }
 //更新站点下拉列表数据
 function loadSiteData(optionList){
+	console.log(optionList);
 	var ulObj = $("#optionList");
 	//清空数据
 	ulObj.html("");
@@ -73,15 +74,9 @@ function loadSiteData(optionList){
 			ulObj.append(getOneOption("", "全部", 1));
 		}
 		//ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='" + controlName + "' value=''><b>全部</b></label></li>");
-		if(isSiteId){//取得站点id
-			optionList.forEach(function(option){
-				ulObj.append(getOneOption(option.id, option.name, 0));
-			});
-		}else{
-			optionList.forEach(function(option){
-				ulObj.append(getOneOption(option.code, option.name, 0));
-			});
-		}
+		optionList.forEach(function(option){
+			ulObj.append(getOneOption(option.id, option.name, 0));
+		});
 		selectS(".all-area2");
 	}
 
