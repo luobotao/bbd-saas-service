@@ -31,11 +31,11 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<c:if test="${userNow.role==UserRole.COMPANY}">
-							<div class="row pb20">
+							<div class="row">
 								<jsp:include page="../control/siteControl.jsp" flush="true" />
 							</div>
 						</c:if>
-						<div class="row pb20">
+						<div class="row">
 							<%--<c:if test="${userNow.role==UserRole.COMPANY}">
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 									<label>　站点：</label>
@@ -47,35 +47,37 @@
 									</select>
 								</div>
 							</c:if>--%>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-								<label>　角色：</label>
-								<select id="saasrole" name="saasrole" class="form-control form-con-new" readonly="readOnly">
-									<c:if test="${userNow.role==UserRole.COMPANY}">
-										<option value ="-1" selected ="selected">全部</option>
-										<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
-										<option value ="<%=UserRole.SENDMEM%>"><%=UserRole.SENDMEM.getMessage()%></option>
-									</c:if>
-									<c:if test="${userNow.role==UserRole.SITEMASTER}">
-										<option value ="<%=UserRole.SENDMEM%>" selected ="selected"><%=UserRole.SENDMEM.getMessage()%></option>
-									</c:if>
-								</select>
-							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-								<label>状态：</label>
-								<select id="status" name="status" class="form-control form-con-new">
-									<%=UserStatus.Srcs2HTML(-1)%>
-								</select>
-							</div>
-								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
-									<label>关键字：</label>
+							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<div class="form-group ml6 pb20">
+									<label>角色：</label>
+									<select id="saasrole" name="saasrole" class="form-control form-con-new" readonly="readOnly">
+										<c:if test="${userNow.role==UserRole.COMPANY}">
+											<option value ="-1" selected ="selected">全部</option>
+											<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
+											<option value ="<%=UserRole.SENDMEM%>"><%=UserRole.SENDMEM.getMessage()%></option>
+										</c:if>
+										<c:if test="${userNow.role==UserRole.SITEMASTER}">
+											<option value ="<%=UserRole.SENDMEM%>" selected ="selected"><%=UserRole.SENDMEM.getMessage()%></option>
+										</c:if>
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label>　状态：</label>
+									<select id="status" name="status" class="form-control form-con-new">
+										<%=UserStatus.Srcs2HTML(-1)%>
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label>　关键字：</label>
 									<input type="text" id="keyword" name="keyword" placeholder="真实姓名/手机号" class="form-control"  />
 								</div>
-								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
+								<div class="form-group ml6 pb20">
 									<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
 									<c:if test="${userNow.role==UserRole.SITEMASTER}">
 										<a href="javascript:void(0)" onclick="showAddUserDiv();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
 									</c:if>
 								</div>
+							</div>
 						</div>
 						<%--<div class="row pb20">
 						</div>--%>
