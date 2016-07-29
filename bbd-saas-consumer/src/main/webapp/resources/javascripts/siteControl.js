@@ -172,7 +172,7 @@ function selectS(selectSp){
 					$("input[name='" + this.name + "'][isAll='1']").prop("checked", this.checked);
 					showNameUlObj.html("");
 					//把选中的值，添加到上边框中
-					$("input[name='" + this.name + "']:checked").siblings("b").each(function(){
+					$("input[name='" + this.name + "']:checked").each(function(){
 						test=$(this).siblings("b").html();
 						//获取上边显示框的一些值 == 用于添加和移除元素
 						city = $(this).attr("city");
@@ -210,7 +210,13 @@ function getWordNum(name){
 	if(name == null){
 		name = controlName;
 	}
+	var citys = [];
 	var num = 0;
+	$("input[name='" + this.name + "']:checked").each(function(){
+		test=$(this).siblings("b").html();
+		num += test.length;
+		showNameUlObj.append('<li class="licity" city='+city+'>'+test+'</li>');
+	});
 	$("input[name='" + name + "']:checked").siblings("b").each(function(){
 		num += $(this).html().length;
 	});
