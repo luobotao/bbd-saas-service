@@ -79,14 +79,14 @@
 												<ul class="pv-part" id="optionList">
 													<li>
 														<label class="f12 linputC">
-															<input type="checkbox" name="eachSiteId" value="" onclick="selectAll(this)"><b>全部</b>
+															<input type="checkbox" name="idOpt" value="" isAll="1"><b>全部</b>
 														</label>
 													</li>
 													<c:if test="${not empty siteList}">
 														<c:forEach var="option" items="${siteList}">
 															<li>
 																<label class="f12 linputC">
-																	<input type="checkbox" name="eachSiteId" value="${option.id}"><b>${option.name}</b>
+																	<input type="checkbox" name="idOpt" value="${option.id}" isAll="0"><b>${option.name}</b>
 																</label>
 															</li>
 														</c:forEach>
@@ -133,6 +133,8 @@
 <script type="text/javascript">
 	var  siteUrl = "<c:url value="/site/getSiteList"/>";
 	var  mapDataUrl = "<c:url value="/capacityDistribution/getSiteAndCourierList"/>";
+	var controlName = "idOpt";
+	var inputName = "siteName";
 </script>
 <script src="<c:url value="/resources/javascripts/capacitySiteControl.js" />"> </script>
 <!-- E 省市区站点选择控件  -->
