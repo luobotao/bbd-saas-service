@@ -56,6 +56,9 @@
 				<!-- 用于导出 -->
 				<form action="<c:url value="/mailStatistic/exportToExcel" />" method="get" id="exptForm">
 					<c:if test="${role == UserRole.COMPANY}">
+						<input id="prov_expt" name="prov" type="hidden" />
+						<input id="city_expt" name="city" type="hidden" />
+						<input id="area_expt" name="area" type="hidden" />
 						<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
 					</c:if>
 					<input id="time_expt" name="time" type="hidden" />
@@ -220,6 +223,9 @@ function getRowHtml(data){
 //导出数据
 function exportData() {
 	<c:if test="${role == UserRole.COMPANY}">
+		$("#prov_expt").val($("#addr_control .prov").val());
+		$("#city_expt").val($("#addr_control .city").val());
+		$("#area_expt").val($("#addr_control .dist").val());
 		$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	</c:if>
 	$("#time_expt").val($("#time").val());

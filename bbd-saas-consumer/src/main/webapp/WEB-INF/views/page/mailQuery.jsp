@@ -78,7 +78,10 @@
 				</form>
 				<!-- 用于导出 -->
 				<form action="<%=request.getContextPath()%>/mailQuery/exportToExcel" method="get" id="exptForm">
-					<input id="status_expt" name="status" type="hidden" />
+					<input id="prov_expt" name="prov" type="hidden" />
+					<input id="city_expt" name="city" type="hidden" />
+					<input id="area_expt" name="area" type="hidden" />
+					<input id="status_expt" name="statusStr" type="hidden" />
 					<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
 					<%--<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />--%>
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
@@ -371,7 +374,10 @@ function getStatusCss(status){
 
 //导出数据
 function exportData() {
-	$("#status_expt").val($("#status").val());
+	$("#prov_expt").val($("#addr_control .prov").val());
+	$("#city_expt").val($("#addr_control .city").val());
+	$("#area_expt").val($("#addr_control .dist").val());
+	$("#status_expt").val(getAreaCodeStr("statusOpt"));
 	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	//$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
