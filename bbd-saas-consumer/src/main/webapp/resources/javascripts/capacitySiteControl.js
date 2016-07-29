@@ -141,6 +141,7 @@ function inputS(clickWho,showWho){
 // E 点击input
 
 // S 多选框
+var txtMaxLen=18;
 // 创建省略号
 $(".c-sel").append("<sub class='c-dot'>&hellip;</sub>")
 function selectS(selectSp){
@@ -227,7 +228,7 @@ function selectS(selectSp){
 		});
 		var len = getLength(arr);
 		var iNum=Math.ceil(len/2);
-		if(iNum>18){
+		if(iNum>txtMaxLen){
 			$(selectSp).siblings(".c-sel").find(".c-dot").show();
 		}else{
 			$(selectSp).siblings(".c-sel").find(".c-dot").hide();
@@ -257,7 +258,7 @@ function getLength(str){
 	wordNum = 0;
 	var realLength = 0, len = str.length, charCode = -1;
 	for (var i = 0; i < len; i++) {
-		if(realLength < 18*2){
+		if(realLength < txtMaxLen*2){
 			wordNum ++;
 		}
 		charCode = str.charCodeAt(i);
