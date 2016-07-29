@@ -22,7 +22,11 @@ $(document).ready(function() {
 	selectS(".all-area2");
 	// 省改变
 	$('#addr_control .prov').change(function(){
-		$('#cityLable').show();
+		if(this.value == null || this.value == ""){
+			$('#cityLable').hide();
+		}else{
+			$('#cityLable').show();
+		}
 		$('#distLable').hide();
 		$("#addr_control .city").val("");//清空
 		$("#addr_control .dist").val("");
@@ -33,7 +37,11 @@ $(document).ready(function() {
 	});
 	// 市改变
 	$('#addr_control .city').change(function(){
-		$('#distLable').show();
+		if(this.value == null || this.value == ""){
+			$('#distLable').hide();
+		}else{
+			$('#distLable').show();
+		}
 		$("#addr_control .dist").val("");//清空
 		$("#"+inputName).val("");
 		//更新站点下拉框
