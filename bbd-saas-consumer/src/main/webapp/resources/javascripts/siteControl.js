@@ -153,6 +153,9 @@ function getAreaCodeStr(name){
 	console.log(name + " : "+ areaCodes.join(","));
 	return areaCodes.join(",");
 }
+console.log("00000000000");
 function selectAll(obj){
-	$(obj).siblings().attr("checked", $(obj).attr("checked"));
+	//$("input[type='checkbox']", "#orderTable").iCheck("uncheck");
+	console.log(obj.checked+" " + obj.name);
+	$("input[name='" + obj.name + "']").attr("checked", obj.checked);
 }

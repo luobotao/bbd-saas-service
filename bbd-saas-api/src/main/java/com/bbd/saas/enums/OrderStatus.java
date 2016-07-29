@@ -55,7 +55,7 @@ public enum OrderStatus {
     public static String Srcs2MultiHTML(Integer[] status) {
         StringBuilder sb = new StringBuilder();
         OrderStatus[] orderEnum = OrderStatus.values();
-        sb.append(Htmls.generateMultiOption("statusOpt", -1, "全部"));
+        sb.append(Htmls.generateMultiSelectedOptionAll("statusOpt", -1, "全部"));
         for (OrderStatus ps : orderEnum) {
             if (Arrays.asList(status).contains(ps.status)) {
                 sb.append(Htmls.generateMultiSelectedOption("statusOpt",ps.status,ps.message));

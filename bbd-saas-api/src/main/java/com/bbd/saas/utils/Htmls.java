@@ -16,6 +16,8 @@ public class Htmls {
 			"<input type=\"checkbox\" name=\"%s\" value=\"%d\"><b>%s</b></label></li>";
 	private static final String SELECTED_MULTIOPTION = "<li><label class=\"f12 linputC\">" +
 			"<input type=\"checkbox\" name=\"%s\" value=\"%d\" checked><b>%s</b></label></li>";
+	private static final String SELECTED_MULTIOPTION_ALL = "<li><label class=\"f12 linputC\">" +
+			"<input type=\"checkbox\" name=\"%s\" value=\"%d\" onclick=\"selectAll(this)\"><b>%s</b></label></li>";
 
 	/**
 	 * value为数值
@@ -105,5 +107,15 @@ public class Htmls {
 	 */
 	public static String generateMultiSelectedOption(Object name, Object value, Object showName) {
 		return String.format(SELECTED_MULTIOPTION, name, value, showName);
+	}
+	/**
+	 * 产生多选框选中的选项--全选
+	 * @param name inp
+	 * @param value
+	 * @param showName
+	 * @return
+	 */
+	public static String generateMultiSelectedOptionAll(Object name, Object value, Object showName) {
+		return String.format(SELECTED_MULTIOPTION_ALL, name, value, showName);
 	}
 }
