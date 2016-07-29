@@ -56,7 +56,7 @@ function getSiteListByAddr(){
 			"prov" : $("#addr_control .prov").val(),
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
-			"siteName" :  $("#"+inputName).val().replace("全部", "")
+			"siteName" :  $("#"+inputName).val()
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据
 			if (data != null ||data.length > 0){//全部
@@ -76,7 +76,9 @@ function loadSiteData(optionList){
 	ulObj.html("");
 	//为Select追加一个Option(下拉项)
 	if(optionList != null){
-		ulObj.append(getOneOption("", "全部", 1));
+		if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+			ulObj.append(getOneOption("", "全部", 1));
+		}
 		//ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='" + controlName + "' value=''><b>全部</b></label></li>");
 		if(isSiteId){//取得站点id
 			optionList.forEach(function(option){
