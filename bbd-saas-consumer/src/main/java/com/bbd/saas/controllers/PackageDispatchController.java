@@ -161,6 +161,7 @@ public class PackageDispatchController {
 			//查询派件员信息
 			User user = userService.findOne(courierId);
 			int r = doOneDispatch(order, user);
+			map.put("operFlag", r);
 			if(r == 1){//1:分派成功，查询列表数据
 				PageModel<Order> orderPage = queryData(pageIndex, status, arriveBetween, currUser.getSite().getAreaCode());
 				map.put("orderPage", orderPage);
