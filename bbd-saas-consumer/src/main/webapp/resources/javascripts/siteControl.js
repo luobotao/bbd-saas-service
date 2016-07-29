@@ -132,7 +132,7 @@ function selectS(selectSp){
 
 		//全选 -- 取消全选
 		var isAll = $(this).attr("isAll");
-
+		console.log("isAll===="+isAll);
 		var showNameUlObj = shA.eq(curP).find(".cityshow");//$("#options");
 		if(isAll == "1"){//全选
 			//optionArayy.push(this.value.replace("全部", ""));
@@ -152,12 +152,21 @@ function selectS(selectSp){
 			console.log("checkedCount==11="+checkedCount+"  itemCount==="+itemCount);
 			//上边框中显示的值
 			if(this.checked == true){//选中
-				if(checkedCount == itemCount ){//全部选中
-					//全选checkbox选中
-					$("input[name='" + this.name + "'][isAll='1']").prop("checked", this.checked);
-					//上边框中显示的值
-					showNameUlObj.html("<li city='1' class='licity'>全部</li>");
-				}else{//不是全部选中
+				if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+					if(checkedCount == itemCount ){//全部选中
+						//全选checkbox选中
+						$("input[name='" + this.name + "'][isAll='1']").prop("checked", this.checked);
+						//上边框中显示的值
+						showNameUlObj.html("<li city='1' class='licity'>全部</li>");
+					}else{//不是全部选中
+						//上边框中添加此元素
+						if(checkedCount == 1){
+							showNameUlObj.html('<li class="licity" city='+city+'>'+test+'</li>');
+						}else{
+							showNameUlObj.append('<li class="licity" city='+city+'>'+test+'</li>');
+						}
+					}
+				}else{//手动搜索，不显示全部
 					//上边框中添加此元素
 					if(checkedCount == 1){
 						showNameUlObj.html('<li class="licity" city='+city+'>'+test+'</li>');
