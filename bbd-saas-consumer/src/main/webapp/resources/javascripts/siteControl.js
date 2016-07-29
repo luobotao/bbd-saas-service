@@ -99,13 +99,16 @@ function inputS(clickWho,showWho){
 	$(clickWho).on("click",function(e){
 		e.stopPropagation();
 		$(showWho).toggle();
-		$(clickWho).parents(".row").siblings().find(".all-area").hide()
+		$(clickWho).toggleClass("bc");
+		$(clickWho).parents(".row").siblings().find(".all-area").hide();
+		$(clickWho).parents(".row").siblings().find("。c-sel").removeClass("bc");
 	});
 	$(showWho).on("click",function(e){
 		e.stopPropagation();
 	});
 	$(document).on("click",function(){
 		$(showWho).hide();
+		$(clickWho).removeClass("bc");
 	});
 }
 // E 点击input
@@ -133,12 +136,9 @@ function selectS(selectSp){
 		var csel=$(selectSp).siblings(".c-sel");
 		var clen=csel.find(".cityshow li").length;
 		if(clen == 0){
-			csel.find(".j-empty").prop("placeholder","请输入站点");
-			csel.find(".j-empty").prop("disabled",false)
+			csel.find(".j-empty").html("请选择");
 		}else{
-			csel.find(".j-empty").prop("placeholder","");
-			csel.find(".j-empty").val("");
-			csel.find(".j-empty").prop("disabled",true)
+			csel.find(".j-empty").html("　");
 		};
 	});
 }

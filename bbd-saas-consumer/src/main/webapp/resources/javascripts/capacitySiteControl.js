@@ -7,16 +7,7 @@ $(document).ready(function() {
 		dist: "",
 		nodata: "none"
 	});
-	$(".j-sel-input").on("click",function(e){
-		e.stopPropagation();
-		$(".all-area").toggle();
-	});
-	$(".all-area").on("click",function(e){
-		e.stopPropagation();
-	});
-	$(document).on("click",function(){
-		$(".all-area").hide();
-	});
+	inputS(".j-sel-input",".all-area");
 	selectS(".all-area");
 	// 省改变
 	$('#addr_control .prov').change(function(){
@@ -126,6 +117,24 @@ function getSiteAndUserList(){
 	});
 }
 //站点下拉框选则操作
+// S 点击input
+function inputS(clickWho,showWho){
+	$(clickWho).on("click",function(e){
+		e.stopPropagation();
+		$(showWho).toggle();
+		$(clickWho).toggleClass("bc");
+		$(clickWho).parents(".row").siblings().find(".all-area").hide();
+		$(clickWho).parents(".row").siblings().find("。c-sel").removeClass("bc");
+	});
+	$(showWho).on("click",function(e){
+		e.stopPropagation();
+	});
+	$(document).on("click",function(){
+		$(showWho).hide();
+		$(clickWho).removeClass("bc");
+	});
+}
+// E 点击input
 function selectS(selectSp){
 	var sbox=$(selectSp).find(".pv-part li input")
 	sbox.on("click",function(){
@@ -144,15 +153,15 @@ function selectS(selectSp){
 		if($(".cityshow li:last-child")){
 			$(".cityshow li:last-child").removeClass("padR6").siblings().addClass("padR6");
 		};
+
+
 		// 默认提示文字
-		var clen=$(".cityshow li").length;
+		var csel=$(selectSp).siblings(".c-sel");
+		var clen=csel.find(".cityshow li").length;
 		if(clen == 0){
-			$(".j-empty").prop("placeholder","请输入站点名称");
-			$(".j-empty").prop("disabled",false)
+			csel.find(".j-empty").html("请选择");
 		}else{
-			$(".j-empty").prop("placeholder","");
-			$(".j-empty").val("");
-			$(".j-empty").prop("disabled",true)
+			csel.find(".j-empty").html("　");
 		};
 	});
 }

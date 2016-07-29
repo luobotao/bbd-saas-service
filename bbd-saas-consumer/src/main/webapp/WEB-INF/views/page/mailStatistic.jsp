@@ -37,7 +37,7 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<c:if test="${role == UserRole.COMPANY}">
-	  						<div class="row pb20">
+	  						<div class="row">
 								<jsp:include page="../control/siteControl.jsp" flush="true" />
 	  						</div>
 						</c:if>

@@ -2072,13 +2072,22 @@ input.spe-input{
 .c-sel{
   position:relative;
   width:100%;
+  height: 40px;
+  line-height:40px;
+  border: 1px solid #d9d8eb;
+  padding-left:15px;
+  background:#fff url(../images/sel_bg.png) no-repeat center right;
+}
+.show-ele{
+  display:block;
+  height:40px;
 }
 .showA{
   width:100%;
   overflow:hidden;
   position:absolute;
   top:0;
-  padding:0 15px;
+  padding:0 15px 0 0;
 }
 .c-show li{
   float:left;
@@ -2090,9 +2099,13 @@ input.spe-input{
   height: 40px;
   line-height:40px;
   border: 1px solid #d9d8eb;
+  margin-bottom:6px;
 }
 .sel-input:focus {
   border: 1px solid #ffa000;
+}
+.bc{
+  border: 1px solid #ffa000 !important;
 }
 .linputC b{
   font-weight:normal;

@@ -24,12 +24,13 @@
 		<label class="ml16">站点：</label>
 		<div class="crt-s w400">
 			<div class="c-sel j-sel-input2">
-				<input id="areaCode" type="text" class="sel-input j-empty" placeholder="请输入站点名称"  value="全部"/>
+				<span class="show-ele j-empty">请选择</span>
 				<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
 			</div>
 			<div class="all-area all-area2 pm-dn">
 				<!-- S 1 -->
 				<div class="pv-bg clearfix">
+					<input id="areaCode" type="text" class="sel-input" placeholder="请输入站点名称" />
 					<div class="l-sel-p">
 						<ul class="pv-part" id="optionList">
 							<li>
