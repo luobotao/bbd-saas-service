@@ -77,7 +77,7 @@ function loadSiteData(optionList){
 		optionList.forEach(function(option){
 			ulObj.append(getOneOption(option.id, option.name, 0));
 		});
-		selectS(".all-area2");
+		selectS(".all-area");
 	}
 
 }
@@ -88,9 +88,15 @@ function getOneOption(id, name, isAll){
 	return listr;
 }
 //获得站点多选框的值
-function getSiteIdStr(){
+function getSiteIdStr(name){
+	if(name == null){
+		name = controlName;
+	}
+	if($("input[name='" + name + "'][isAll='1']:checked").length == 1){//全选
+		return "";
+	}
 	var siteIds = [];
-	$('input[name="idOpt"]:checked').each(function(){
+	$("input[name='" + name + "']:checked").each(function(){
 		siteIds.push(this.value);
 	});
 	return siteIds.join(",");

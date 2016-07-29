@@ -232,9 +232,12 @@ function getAreaCodeStr(name){
 	if(name == null){
 		name = controlName;
 	}
+	if($("input[name='" + name + "'][isAll='1']:checked").length == 1){//全选
+		return "";
+	}
 	areaCodes = [];
 	$("input[name='" + name + "']:checked").each(function(){
-		areaCodes.push(this.value.replace("全部", ""));
+		areaCodes.push(this.value);
 	});
 	return areaCodes.join(",");
 }
