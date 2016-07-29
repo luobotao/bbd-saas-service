@@ -68,25 +68,34 @@ function loadSiteData(optionList){
 	//清空数据
 	ulObj.html("");
 	//为Select追加一个Option(下拉项)
-	console.log(optionList);
 	if(optionList != null){
-		ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='eachSiteId' value=''><b>全部</b></label></li>");
-		optionList.forEach(function(option){
-			ulObj.append(getOneOption(option.id, option.name));
-		});
-		selectS(".all-area");
+		if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+			ulObj.append(getOneOption("", "全部", 1));
+		}
+		//ulObj.append("<li><label class='f12 linputC'><input type='checkbox' name='" + controlName + "' value=''><b>全部</b></label></li>");
+		if(isSiteId){//取得站点id
+			optionList.forEach(function(option){
+				ulObj.append(getOneOption(option.id, option.name, 0));
+			});
+		}else{
+			optionList.forEach(function(option){
+				ulObj.append(getOneOption(option.code, option.name, 0));
+			});
+		}
+		selectS(".all-area2");
 	}
+
 }
-//获得一个选项的html
-function getOneOption(id, name){
-	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='eachSiteId' value='" + id + "'><b>";
+
+function getOneOption(id, name, isAll){
+	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='" + controlName + "' value='" + id + "' isAll='" + isAll + "'><b>";
 	listr += name + "</b></label></li>";
 	return listr;
 }
 //获得站点多选框的值
 function getSiteIdStr(){
 	var siteIds = [];
-	$('input[name="eachSiteId"]:checked').each(function(){
+	$('input[name="idOpt"]:checked').each(function(){
 		siteIds.push(this.value);
 	});
 	return siteIds.join(",");
@@ -146,10 +155,9 @@ function selectS(selectSp){
 		var curP=$(this).parents('.l-sel-p').parent().index();
 		var shA=$(this).parents(selectSp).siblings(".c-sel").find(".showA");
 
-
 		//全选 -- 取消全选
 		var isAll = $(this).attr("isAll");
-
+		console.log("isAll===="+isAll);
 		var showNameUlObj = shA.eq(curP).find(".cityshow");//$("#options");
 		if(isAll == "1"){//全选
 			//optionArayy.push(this.value.replace("全部", ""));
@@ -157,7 +165,9 @@ function selectS(selectSp){
 			$("input[name='" + this.name + "']").prop("checked", this.checked);
 			//上边框中显示的值
 			if(this.checked == true){//选中
-				showNameUlObj.html("<li city='1' class='licity'>全部</li>");
+				if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+					showNameUlObj.html("<li city='1' class='licity'>全部</li>");
+				}
 			}else{//取消选中
 				showNameUlObj.html("");
 			}
@@ -167,12 +177,21 @@ function selectS(selectSp){
 			console.log("checkedCount==11="+checkedCount+"  itemCount==="+itemCount);
 			//上边框中显示的值
 			if(this.checked == true){//选中
-				if(checkedCount == itemCount ){//全部选中
-					//全选checkbox选中
-					$("input[name='" + this.name + "'][isAll='1']").prop("checked", this.checked);
-					//上边框中显示的值
-					showNameUlObj.html("<li city='1' class='licity'>全部</li>");
-				}else{//不是全部选中
+				if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+					if(checkedCount == itemCount ){//全部选中
+						//全选checkbox选中
+						$("input[name='" + this.name + "'][isAll='1']").prop("checked", this.checked);
+						//上边框中显示的值
+						showNameUlObj.html("<li city='1' class='licity'>全部</li>");
+					}else{//不是全部选中
+						//上边框中添加此元素
+						if(checkedCount == 1){
+							showNameUlObj.html('<li class="licity" city='+city+'>'+test+'</li>');
+						}else{
+							showNameUlObj.append('<li class="licity" city='+city+'>'+test+'</li>');
+						}
+					}
+				}else{//手动搜索，不显示全部
 					//上边框中添加此元素
 					if(checkedCount == 1){
 						showNameUlObj.html('<li class="licity" city='+city+'>'+test+'</li>');
