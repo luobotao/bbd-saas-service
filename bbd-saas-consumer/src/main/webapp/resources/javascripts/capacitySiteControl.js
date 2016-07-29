@@ -157,4 +157,8 @@ function selectS(selectSp){
 	});
 }
 
+function selectAll(obj){
+	$("input[name='" + obj.name + "']").prop("checked", obj.checked);
+}
+
 
