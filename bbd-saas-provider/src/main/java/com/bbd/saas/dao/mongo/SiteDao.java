@@ -237,7 +237,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     }
     private List<Option> selectAndToOptionList(Query<Site> query){
         query.retrievedFields(true, "areaCode", "name");
-        List<Site> siteList = find(query).asList();
+        List<Site> siteList = find(query.order("-dateAdd")).asList();
         return toOptionList(siteList);
     }
     private List<Option> toOptionList(List<Site> siteList){
