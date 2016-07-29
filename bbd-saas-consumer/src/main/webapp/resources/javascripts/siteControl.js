@@ -125,14 +125,14 @@ function selectS(selectSp){
 		if($(this).attr("city") == undefined){ $(this).attr("city", window.cityId++);}
 		//获取上边显示框的一些值 == 用于添加和移除元素
 		var city = $(this).attr("city");
-		/*var curP=$(this).parents('.l-sel-p').parent().index();
+		var curP=$(this).parents('.l-sel-p').parent().index();
 		var shA=$(this).parents(selectSp).siblings(".c-sel").find(".showA");
-		*/
+
 
 		//全选 -- 取消全选
 		var isAll = $(this).attr("isAll");
 
-		var showNameUlObj = $("#options");
+		var showNameUlObj = shA.eq(curP).find(".cityshow");//$("#options");
 		if(isAll == "1"){//全选
 			//optionArayy.push(this.value.replace("全部", ""));
 			//其他checkbox联动
@@ -145,8 +145,8 @@ function selectS(selectSp){
 			}
 		}else{//某个具体项
 			var checkedCount = $("input[name='" + this.name + "'][isAll='0']:checked").length;//选中的checkbox个数
-			var itemCount = $("#optionList li").length -1 ;//所有li个数（减去全部）
-			console.log("checkedCount==="+checkedCount+"  itemCount==="+itemCount);
+			var itemCount = $(selectSp).find(".pv-part li").length -1 ;//所有li个数（减去全部）
+			console.log("checkedCount==11="+checkedCount+"  itemCount==="+itemCount);
 			//上边框中显示的值
 			if(this.checked == true){//选中
 				if(checkedCount == itemCount ){//全部选中
@@ -164,6 +164,7 @@ function selectS(selectSp){
 				}
 			}else{//取消选中
 				//上边框中有值的话，移除
+				console.log("size========"+$('li[city="'+ city +'"]').size());
 				if( $('li[city="'+ city +'"]').size()){
 					$('li[city="'+ city +'"]').remove();
 				}
@@ -174,6 +175,7 @@ function selectS(selectSp){
 					//把选中的值，添加到上边框中
 					$("input[name='" + this.name + "']:checked").each(function(){
 						test=$(this).siblings("b").html();
+						if($(this).attr("city") == undefined){ $(this).attr("city", window.cityId++);}
 						//获取上边显示框的一些值 == 用于添加和移除元素
 						city = $(this).attr("city");
 						console.log(test + '   '+city);
