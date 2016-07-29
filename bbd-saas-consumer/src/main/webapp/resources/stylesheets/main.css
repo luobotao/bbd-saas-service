@@ -2138,4 +2138,11 @@ input.spe-input{
 .w400{
   width:400px !important;
 }
+.c-dot{
+  display:none;
+  position:absolute;
+  right:45px;
+  bottom:15px
+}
+
 /* E 模拟select */

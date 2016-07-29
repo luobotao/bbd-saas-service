@@ -99,7 +99,8 @@ function getOneOption(id, name, isAll){
 	listr += name + "</b></label></li>";
 	return listr;
 }
-
+// 创建省略号
+$(".c-sel").append("<sub class='c-dot'>&hellip;</sub>")
 // S 点击input
 function inputS(clickWho,showWho){
 	$(clickWho).on("click",function(e){
@@ -119,10 +120,13 @@ function inputS(clickWho,showWho){
 }
 
 // E 点击input
+// S 多选框
+var txtMaxLen=18;
 function selectS(selectSp){
-	var sbox=$(selectSp).find(".pv-part li input")
+	var sbox=$(selectSp).find(".pv-part li input");
 	sbox.on("click",function(){
 		var test=$(this).siblings("b").html();
+		var arr="";
 		//增加属性
 		if($(this).attr("city") == undefined){ $(this).attr("city", window.cityId++);}
 		//获取上边显示框的一些值 == 用于添加和移除元素
@@ -196,6 +200,19 @@ function selectS(selectSp){
 				}
 			}
 		}
+		// S 增加省略号
+		showNameUlObj.find("li").each(function(){
+			arr+=$(this).html();
+		});
+		var len = getLength(arr);
+		var iNum=Math.ceil(len/2);
+		if(iNum>txtMaxLen){
+			$(selectSp).siblings(".c-sel").find(".c-dot").show();
+		}else{
+			$(selectSp).siblings(".c-sel").find(".c-dot").hide();
+		}
+
+		// E 增加省略号
 		//增加间距
 		if($(".cityshow li:last-child")){
 			$(".cityshow li:last-child").removeClass("padR6").siblings().addClass("padR6");
@@ -210,6 +227,7 @@ function selectS(selectSp){
 		}
 	});
 }
+// E 多选框
 function getAreaCodeStr(name){
 	if(name == null){
 		name = controlName;
@@ -238,4 +256,22 @@ function getWordNum(name){
 }
 function selectAll(obj){
 	$("input[name='" + obj.name + "']").prop("checked", obj.checked);
+}
+
+//获得字符串实际长度，中文2，英文1
+function getLength(str){
+	wordNum = 0;
+	var realLength = 0, len = str.length, charCode = -1;
+	for (var i = 0; i < len; i++) {
+		if(realLength < txtMaxLen*2){
+			wordNum ++;
+		}
+		charCode = str.charCodeAt(i);
+		if (charCode >= 0 && charCode <= 128){//英文或者数字
+			realLength += 1;
+		} else{//中文
+			realLength += 2;
+		}
+	}
+	return realLength;
 }
