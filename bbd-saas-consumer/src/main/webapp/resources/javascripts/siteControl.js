@@ -150,7 +150,6 @@ function getAreaCodeStr(name){
 	$("input[name='" + name + "']:checked").each(function(){
 		areaCodes.push(this.value.replace("全部", ""));
 	});
-	console.log(name + " : "+ areaCodes.join(","));
 	return areaCodes.join(",");
 }
 function selectAll(obj){
