@@ -33,41 +33,45 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-						<div class="row pb20" >
+						<div class="row" >
 							<jsp:include page="../control/siteControl.jsp" flush="true" />
 						</div>
-	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<label>状态：</label>
-								<div class="crt-s w400">
-									<div class="c-sel j-sel-input">
-										<input id="areaCode" type="text" class="sel-input j-empty" placeholder="请输入状态"  value="全部"/>
-										<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
-									</div>
-									<div class="all-area all-area1 pm-dn">
-										<!-- S 1 -->
-										<div class="pv-bg clearfix">
-											<div class="l-sel-p">
-												<ul class="pv-part" id="optionList">
-													<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
-												</ul>
-											</div>
+	  					<div class="row">
+	  						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<div class="form-group pb20">
+									<label>状态：</label>
+									<div class="crt-s w400">
+										<div class="c-sel j-sel-input">
+											<input id="areaCode" type="text" class="sel-input j-empty" placeholder="请输入状态"  value="全部"/>
+											<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
 										</div>
-										<!-- E 1 -->
+										<div class="all-area all-area1 pm-dn">
+											<!-- S 1 -->
+											<div class="pv-bg clearfix">
+												<div class="l-sel-p">
+													<ul class="pv-part" id="optionList">
+														<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
+													</ul>
+												</div>
+											</div>
+											<!-- E 1 -->
+										</div>
 									</div>
+									<%--<select id="status" name="status" class="form-control form-con-new">
+                                        <%=OrderStatus.Srcs2HTML(-1)%>
+                                    </select>--%>
 								</div>
-	  							<%--<select id="status" name="status" class="form-control form-con-new">
-	  								<%=OrderStatus.Srcs2HTML(-1)%>
-	  							</select>--%>
+								<div class="form-group pb20">
+									<label>　运单号：</label>
+									<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
+								</div>
+								<div class="form-group ml6 pb20">
+									<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
+									<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
+								</div>
+
 	  						</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3 pad0">
-								<label>运单号：</label>
-								<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
-							</div>
-							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-5">
-								<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
-								<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
-							</div>
+
 	  					</div>
 	  				</div>
 				</form>
