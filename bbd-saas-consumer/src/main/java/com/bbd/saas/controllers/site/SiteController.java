@@ -418,7 +418,7 @@ public class SiteController {
 			//当前登录的用户信息
 			User currUser = adminService.get(userId);
 			List<SiteStatus> statusList = null;
-			if(isAll != 1){
+			if(isAll != null && isAll != 1){
 				//查询登录用户的公司下的所有站点
 				statusList = new ArrayList<SiteStatus>();
 				statusList.add(SiteStatus.APPROVE);
