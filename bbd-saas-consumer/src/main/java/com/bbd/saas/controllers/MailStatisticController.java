@@ -12,6 +12,7 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.Option;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,9 @@ public class MailStatisticController {
 				//分页查询站点
 				PageModel<Option> sitePageModel = new PageModel<Option>();
 				sitePageModel.setPageNo(pageIndex);
-				List<SiteStatus> statusList = null;
+				List<SiteStatus> statusList = Lists.newArrayList();
+				statusList.add(SiteStatus.APPROVE);
+				statusList.add(SiteStatus.INVALID);
 				List<String> areaCodeList = getAreaCodeAndStatusList(currUser.getCompanyId(), prov, city, area, areaCodeStr, statusList);
 				//分页查询
 				sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), areaCodeList, statusList);
@@ -144,9 +147,6 @@ public class MailStatisticController {
 	private List<String> getAreaCodeAndStatusList(String companyId, String prov, String city, String area, String areaCodeStr, List<SiteStatus> statusList){
 		List<String> areaCodeList = null;
 		if(StringUtils.isBlank(areaCodeStr)){//全部(公司下的全部areaCodeList == null|省市区下的全部 areaCodeList.isEmpty)
-			statusList = new ArrayList<SiteStatus>();
-			statusList.add(SiteStatus.APPROVE);
-			statusList.add(SiteStatus.INVALID);
 			if(StringUtils.isNotBlank(prov)){//某个省市区下的全部站点
 				areaCodeList = new ArrayList<String>();
 				List<Option> optionList = siteService.findOptByCompanyIdAndAddress(companyId, prov, city, area, null, statusList);
