@@ -105,7 +105,7 @@ function inputS(clickWho,showWho){
 		$(showWho).toggle();
 		$(clickWho).toggleClass("bc");
 		$(clickWho).parents(".row").siblings().find(".all-area").hide();
-		$(clickWho).parents(".row").siblings().find("。c-sel").removeClass("bc");
+		$(clickWho).parents(".row").siblings().find(".c-sel").removeClass("bc");
 	});
 	$(showWho).on("click",function(e){
 		e.stopPropagation();
