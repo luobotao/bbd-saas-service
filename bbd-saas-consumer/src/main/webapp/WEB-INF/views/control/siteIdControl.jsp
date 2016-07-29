@@ -4,7 +4,6 @@
 <head>
 </head>
 <body>
-
 <div id="addr_control" class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	<div class="form-group pb20">
 		<label>　省：</label>
@@ -31,7 +30,7 @@
 			<div class="all-area all-area2 pm-dn">
 				<!-- S 1 -->
 				<div class="pv-bg clearfix">
-					<input id="areaCode" type="text" class="sel-input" placeholder="请输入站点名称" />
+					<input id="siteName_control" type="text" class="sel-input" placeholder="请输入站点名称" />
 					<div class="l-sel-p">
 						<ul class="pv-part" id="optionList">
 							<li>

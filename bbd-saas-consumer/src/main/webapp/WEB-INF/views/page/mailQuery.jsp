@@ -48,7 +48,7 @@
 										<div class="all-area all-area1 pm-dn">
 											<!-- S 1 -->
 											<div class="pv-bg clearfix">
-												<input id="areaCode" type="text" class="sel-input" placeholder="请输入状态" />
+												<input id="statusName" type="text" class="sel-input" placeholder="请输入状态" />
 												<div class="l-sel-p">
 													<ul class="pv-part" id="optionList">
 														<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
