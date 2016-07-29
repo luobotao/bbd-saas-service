@@ -99,7 +99,7 @@ function inputS(clickWho,showWho){
 	$(clickWho).on("click",function(e){
 		e.stopPropagation();
 		$(showWho).toggle();
-		$(clickWho).parents(".crt-s").siblings().find(".all-area").hide()
+		$(clickWho).parents(".row").siblings().find(".all-area").hide()
 	});
 	$(showWho).on("click",function(e){
 		e.stopPropagation();
