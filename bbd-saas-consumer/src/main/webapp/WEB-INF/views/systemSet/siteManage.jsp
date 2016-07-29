@@ -503,9 +503,9 @@
             ioutDiv("请输入站点名称");
             return false;
         }
-        var province = $(".prov").val();
-        var city = $(".city").val();
-        var area = $(".dist").val();
+        var province = $("#city_4 .prov").val();
+        var city = $("#city_4 .city").val();
+        var area = $("#city_4 .dist").val();
         $("#province").val(province);
         $("#city").val(city);
         $("#area").val(area);
