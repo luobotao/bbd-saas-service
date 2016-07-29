@@ -133,7 +133,7 @@ function selectS(selectSp){
 		var csel=$(selectSp).siblings(".c-sel");
 		var clen=csel.find(".cityshow li").length;
 		if(clen == 0){
-			csel.find(".j-empty").prop("placeholder","请输入省份");
+			csel.find(".j-empty").prop("placeholder","请输入站点");
 			csel.find(".j-empty").prop("disabled",false)
 		}else{
 			csel.find(".j-empty").prop("placeholder","");

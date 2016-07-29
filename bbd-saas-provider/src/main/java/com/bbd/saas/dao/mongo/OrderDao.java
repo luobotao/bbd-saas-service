@@ -171,6 +171,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
     	Query<Order> query = createQuery();
         query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.filter("orderStatus <>", null).filter("orderStatus <>", "");//状态不能为空
 
 
         if(orderQueryVO != null){
