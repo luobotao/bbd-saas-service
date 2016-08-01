@@ -719,7 +719,7 @@
 		},
 		loadOneSite: function(name, lng, lat){//加载站点标注
 			var point = getPointBySite2(lng, lat);
-			console.log(point);
+			//console.log(point);
 			var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(20,25));
 			var marker = new BMap.Marker(point, {icon:myIcon});  // 创建标注
 			this.map.addOverlay(marker);               // 将标注添加到地图中
@@ -937,6 +937,8 @@
 			$('#cityLable').show();
 		}
 		$('#distLable').hide();
+		$("#fenceAddr .city").val("");//清空
+		$("#fenceAddr .dist").val("");
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新
@@ -949,6 +951,7 @@
 		}else{
 			$('#distLable').show();
 		}
+		$("#fenceAddr .dist").val("");
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新
@@ -956,9 +959,9 @@
 	}) ;
 	//绘制电子地图 == 区改变
 	$('#fenceAddr .dist').change(function(){
-		console.log($('#areaAddr .city').val()+this.value);
+		//console.log($('#fenceAddr .city').val()+this.value);
 		//设置地图中心点，并调整地图视野
-		fenceObj.map.centerAndZoom($('#areaAddr .city').val() + "市" + this.value);
+		fenceObj.map.centerAndZoom($('#fenceAddr .city').val() + "市" + this.value);
 		//站点列表和站点地图更新
 		eFenceMapChangeSite(null, "fenceSiteId");
 	}) ;
@@ -1048,7 +1051,7 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					console.log(data);
+					//console.log(data);
 					if(data.code == 0){
 						ioutDiv(data.msg);
 						//重新加载地图
