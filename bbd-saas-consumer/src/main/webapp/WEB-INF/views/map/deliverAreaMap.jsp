@@ -931,7 +931,11 @@
 
 	//绘制电子地图 == 省改变
 	$('#fenceAddr .prov').change(function(){
-		$('#cityLable').show();
+		if(this.value == null || this.value == ""){
+			$('#cityLable').hide();
+		}else{
+			$('#cityLable').show();
+		}
 		$('#distLable').hide();
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
@@ -940,7 +944,11 @@
 	}) ;
 	//绘制电子地图 == 市改变
 	$('#fenceAddr .city').change(function(){
-		$('#distLable').show();
+		if(this.value == null || this.value == ""){
+			$('#distLable').hide();
+		}else{
+			$('#distLable').show();
+		}
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新

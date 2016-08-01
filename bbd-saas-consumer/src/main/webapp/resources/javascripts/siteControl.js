@@ -31,7 +31,7 @@ $(document).ready(function() {
 		$("#addr_control .city").val("");//清空
 		$("#addr_control .dist").val("");
 		$("#"+inputName).val("");
-		console.log($("#addr_control .city").val());
+		//console.log($("#addr_control .city").val());
 		//更新站点下拉框
 		getSiteListByAddr();
 	});
