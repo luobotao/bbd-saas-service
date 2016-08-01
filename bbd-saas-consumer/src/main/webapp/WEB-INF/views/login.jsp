@@ -11,7 +11,7 @@
 	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link rel="bookmark" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
-	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
+	<link href="<c:url value="/resources/stylesheets/main.css?_123" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 	<link href="<c:url value="/resources/bootstrap/css/fileinput.css" />" rel="stylesheet"  type="text/css" />
 	<!-- iCheck -->
 	<link href="<c:url value="/resources/adminLTE/plugins/iCheck/flat/blue.css" />" rel="stylesheet"  type="text/css" />

@@ -41,7 +41,7 @@ folder instead of downloading all of them to reduce the load. -->
 	<!-- alertify -->
 	<link href="<c:url value="/resources/adminLTE/plugins/alertify/alertify.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/adminLTE/plugins/alertify/bootstrap.css" />" rel="stylesheet"  type="text/css" />
-	<link href="<c:url value="/resources/stylesheets/main.css" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
+	<link href="<c:url value="/resources/stylesheets/main.css?_123" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 
 
 	<!-- jQuery 2.1.3 -->

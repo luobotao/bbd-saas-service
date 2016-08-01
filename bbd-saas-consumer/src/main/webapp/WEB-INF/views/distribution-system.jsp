@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>配送系统首页  - 棒棒达快递</title>
         <link rel="stylesheet" href="static/css/bootstrap.min.css" /> <!--bootstrap.min.css-->
-        <link rel="stylesheet" href="static/css/main.css" /> <!--自定义css-->
+        <link rel="stylesheet" href="static/css/main.css?_123" /> <!--自定义css-->
         <script src="static/js/jquery-2.1.4.min.js"></script>
         <script src="static/js/bootstrap.min.js"></script> <!--bootstrap.min.js-->
         <script src="static/js/main.js"></script> <!--自定义js-->

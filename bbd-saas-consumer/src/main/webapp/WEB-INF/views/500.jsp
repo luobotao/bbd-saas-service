@@ -6,7 +6,7 @@
         <meta charset="UTF-8">
         <title>500  - 棒棒达快递</title>
         <link rel="stylesheet" href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" /> <!--bootstrap.min.css-->
-        <link rel="stylesheet" href="<c:url value="/resources/stylesheets/main.css" />" /> <!--自定义css-->
+        <link rel="stylesheet" href="<c:url value="/resources/stylesheets/main.css?_123" />" /> <!--自定义css-->
 
     </head>
     <body>
