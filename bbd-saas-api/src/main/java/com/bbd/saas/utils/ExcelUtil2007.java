@@ -89,7 +89,7 @@ public class ExcelUtil2007 {
 	 * @param cell Excel单元格
 	 * @return String 单元格数据内容
 	 */
-	private String getStringCellValue(XSSFCell cell) {
+	public static String getStringCellValue(XSSFCell cell) {
 		String strCell = "";
 		switch (cell.getCellType()) {
 			case XSSFCell.CELL_TYPE_STRING:
@@ -124,6 +124,7 @@ public class ExcelUtil2007 {
 	 *            Excel单元格
 	 * @return String 单元格数据内容
 	 */
+	@SuppressWarnings("deprecation")
 	private String getDateCellValue(XSSFCell cell) {
 		String result = "";
 		try {

@@ -33,6 +33,15 @@ public interface OrderService {
 	Order findOneByMailNum(String areaCode,String mailNum);
 
 	/**
+	 * 揽件入库
+	 * 根据运单号查询
+	 *
+	 * @param mailNum
+	 * @return
+	 */
+	public Order findOneByMailNum(String mailNum);
+
+	/**
 	 * 根据其他快递的运单号查询订单
 	 * @param newMailNum
 	 * @return
@@ -69,6 +78,16 @@ public interface OrderService {
 	 * 2016年4月15日下午1:30:21
 	 */
 	PageModel<Order> findPageOrders(Integer pageIndex, OrderQueryVO orderQueryVO);
+
+
+	/**
+	 * 带查询条件去检索订单
+	 * @param pageModel 分页对象
+	 * @param orderQueryVO 查询条件
+	 * @return 分页对象（分页信息和数据）
+	 */
+	PageModel<Order> findPageOrders(PageModel<Order> pageModel,OrderQueryVO orderQueryVO);
+
 
 	/**
 	 * 按照查询条件检索订单-不分页
@@ -181,4 +200,21 @@ public interface OrderService {
 	List<Order> findByDateAdd(Date date);
 
 	String findWayNameBySite(Site site);
+
+	/**
+	 * 根据orderNo或者mailNum查询订单
+	 * @param keyword
+	 * @return
+     */
+	Order findByOrderNoOrMailNum(String keyword);
+
+	/**
+	 * 根据areaCode和mailNumList查询
+	 * @param areaCode
+	 * @param mailNumList
+     * @return
+     */
+	public List<Order> findByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList);
+
+
 }

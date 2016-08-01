@@ -16,6 +16,7 @@ import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 运力分布
@@ -154,21 +152,34 @@ public class CapacityDistributionController {
 
 	/**
 	 *  根据站点Ajax更新地图
-	 * @param siteId 站点Id
+	 * @param siteIdStr 站点编号集合areaCode1,areaCode2---
 	 * @param request 请求
 	 * @return 分页列表数据
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getSiteAndCourierList", method=RequestMethod.GET)
-	public Map<String, Object> getAllSiteAndCourier(String siteId, final HttpServletRequest request) {
+	public Map<String, Object> getAllSiteAndCourier(String prov, String city, String area, String siteIdStr, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			if(siteId != null && !"".equals(siteId)){//只查询一个站点
-				Site site = siteService.findSite(siteId);
-				List<User> userList = userService.findUsersBySite(site, null, UserStatus.VALID);//所有小件员
+			List<ObjectId> siteIdList = null;
+			if(!StringUtils.isEmpty(siteIdStr)){//部分站点
+				String [] ids = siteIdStr.split(",");
+				if(ids.length > 0){
+					siteIdList = new ArrayList<ObjectId>();
+					for(String id : ids){
+						siteIdList.add(new ObjectId(id));
+					}
+				}
+			}
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			//查询登录用户的公司下的所有站点
+			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
+			if(siteList != null && !siteList.isEmpty()){
+				List<User> userList = userService.findUsersBySite(siteList, null, UserStatus.VALID);//所有小件员
 				if (userList != null && userList.size() >0){
 					List<Integer> postmanIdList = new ArrayList<Integer>();
 					for (User user : userList){
@@ -180,29 +191,33 @@ public class CapacityDistributionController {
 					map.put("userList", userVOList);
 					logger.error("==all===userVOList:" + userVOList.size());
 				}
-				map.put("site", site);
-				map.put("centerSite", site);
-			}else {//查询本公司下的所有站点 （全部）
-				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
-				//查询登录用户的公司下的所有派件员信息
-				List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
-				//设置站点名称
-				setUserSiteName(userVOList, currUser.getCompanyId());
-				logger.error("==all===userVOList:" + userVOList.size());
-				//设置地图默认的中心点
-				SiteVO centerSite = new SiteVO();
-				centerSite.setName("");
-				centerSite.setLat("39.915");
-				centerSite.setLng("116.404");
-				map.put("centerSite", centerSite);
-				map.put("siteList", siteVOList);
-				map.put("userList", userVOList);
+				map.put("siteList", siteListToSiteVO(siteList));
 			}
 		} catch (Exception e) {
 			logger.error("===ajax查询所有站点和派件员经纬度===出错:" + e.getMessage());
 		}
 		return map;
+	}
+
+	private SiteVO siteToSiteVO(Site site){
+		SiteVO siteVo = new SiteVO();
+		siteVo.setId(site.getId().toString());
+		siteVo.setAreaCode(site.getAreaCode());
+		siteVo.setName(site.getName());
+		siteVo.setLng(site.getLng());
+		siteVo.setLat(site.getLat());
+		siteVo.setDeliveryArea(site.getDeliveryArea());
+		return siteVo;
+	}
+	private List<SiteVO> siteListToSiteVO(List<Site> siteList){
+		List<SiteVO> siteVoList = null;
+		if(siteList != null && siteList.size() > 0){
+			siteVoList = new ArrayList<SiteVO>();
+			for(Site site : siteList){
+				siteVoList.add(siteToSiteVO(site));
+			}
+		}
+		return siteVoList;
 	}
 
 

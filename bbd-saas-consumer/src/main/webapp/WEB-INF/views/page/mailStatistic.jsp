@@ -36,28 +36,17 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-	  					<div class="row pb20">
-
-							<c:if test="${role == UserRole.COMPANY}">
-								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-									<label>站点：</label>
-									<select id="areaCode" name="areaCode" class="form-control form-con-new">
-										<option value="">全部</option>
-										<c:if test="${not empty siteList}">
-											<c:forEach var="site" items="${siteList}">
-												<option value="${site.areaCode}">${site.name}</option>
-											</c:forEach>
-										</c:if>
-									</select>
-								</div>
-							</c:if>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-	  							<label>时间：</label>
-	  							<input id="time" name="time" value="${time}" type="text" placeholder="请选择时间" class="form-control c-disable"  data-date-format="yyyy-mm-dd"/>
+						<c:if test="${role == UserRole.COMPANY}">
+	  						<div class="row">
+								<jsp:include page="../control/siteControl.jsp" flush="true" />
 	  						</div>
-	  					</div>
+						</c:if>
 	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 ">
+								<label>时间：</label>
+								<input id="time" name="time" value="${time}" type="text" placeholder="请选择时间" class="form-control c-disable"  data-date-format="yyyy-mm-dd"/>
+							</div>
+	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-8">
 	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
 	  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
 	  						</div>
@@ -67,7 +56,10 @@
 				<!-- 用于导出 -->
 				<form action="<c:url value="/mailStatistic/exportToExcel" />" method="get" id="exptForm">
 					<c:if test="${role == UserRole.COMPANY}">
-						<input id="areaCode_expt" name="areaCode" type="hidden" />
+						<input id="prov_expt" name="prov" type="hidden" />
+						<input id="city_expt" name="city" type="hidden" />
+						<input id="area_expt" name="area" type="hidden" />
+						<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
 					</c:if>
 					<input id="time_expt" name="time" type="hidden" />
 				</form>
@@ -142,6 +134,14 @@
     <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<!-- S 省市区站点选择控件 -->
+<script type="text/javascript">
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+	var  inputName = null;
+	var isSiteId = false;
+</script>
+<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -160,17 +160,20 @@ $(document).ready(function() {
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
-	var areaCode = null;
+	var areaCodeStr = null;
 	<c:if test="${role == UserRole.COMPANY}">
-		areaCode = $("#areaCode").val();
+		areaCodeStr = getAreaCodeStr();
 	</c:if>
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<c:url value="/mailStatistic/getList" />",//路径
-        data : {  
+        data : {
+			"prov" : $("#addr_control .prov").val(),
+			"city" :  $("#addr_control .city").val(),
+			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
-			"areaCode" : areaCode,
+			"areaCodeStr" : areaCodeStr,
             "time" : $("#time").val(),
         },//数据，这里使用的是Json格式进行传输
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
@@ -220,7 +223,10 @@ function getRowHtml(data){
 //导出数据
 function exportData() {
 	<c:if test="${role == UserRole.COMPANY}">
-		$("#areaCode_expt").val($("#areaCode").val());
+		$("#prov_expt").val($("#addr_control .prov").val());
+		$("#city_expt").val($("#addr_control .city").val());
+		$("#area_expt").val($("#addr_control .dist").val());
+		$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	</c:if>
 	$("#time_expt").val($("#time").val());
 	$("#exptForm").submit();

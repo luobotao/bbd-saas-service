@@ -3,7 +3,9 @@ package com.bbd.saas.api.mongo;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteVO;
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 
 import java.util.List;
@@ -66,20 +68,22 @@ public interface SiteService {
      * 根据站点状态与关键词进行站点分页查询
      * @param pageModel 分页对象
      * @param companyId 公司ID
+     * @param siteIdList 站点id集合，为空即为查询公司下的全部站点
      * @param status 站点状态SiteStatus对应的值
      * @param keyword 站点名称/站⻓姓名/⼿机号
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId,Integer status, Integer areaFlag, String keyword);
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword);
 
     /**
      * 根据站点状态进行站点分页查询
      * @param pageModel 分页对象
      * @param companyId 公司ID
+     * @param areaCodeList 站点编号集合
      * @param statusList 站点状态集合
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<SiteStatus> statusList);
+    PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList);
 
     /**
      * 删除站点
@@ -100,6 +104,14 @@ public interface SiteService {
      */
     List<Site> findSiteListByCompanyId(String companyId, SiteStatus status);
     /**
+     * 查询指定公司下的特定站点状态的所有站点
+     * @param companyId 公司名称
+     * @param areaCodeList 站点编码集合
+     * @param status 特定站点状态
+     * @return 站点VO集合
+     */
+    List<Site> findSiteVOByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status);
+    /**
      * 查询指定公司下的指定状态集合的所有站点
      * @param companyId 公司id
      * @param statusList 站点状态集合
@@ -119,8 +131,6 @@ public interface SiteService {
      * @return 站点集合
      */
     List<Site> findAllSiteList();
-
-
     /**
      * 查询指定公司的不同地区的特定站点状态的站点集合
      * @param companyId 公司Id
@@ -131,5 +141,44 @@ public interface SiteService {
      * @return 站点集合
      */
     List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status);
+
+    /**
+     * 查询指定公司的不同地区的特定站点状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList);
+
+    /**
+     * 根据站点编号数组查询
+     * @param areaCodes 站点编号数组
+     * @return List<areaCode,name>集合
+     */
+    List<Option> findByAreaCodes(String[] areaCodes);
+
+    /**
+     * 根据站点编号集合查询站点列表
+     * @param areaCodes 站点编号集合
+     * @return List<site>站点集合
+     */
+    List<Site> findSiteListByAreaCodes(List<String> areaCodes);
+
+    /**
+     * 查询指定公司的不同地区的特定站点状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param siteIdList 站点集合
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
+
+
 
 }

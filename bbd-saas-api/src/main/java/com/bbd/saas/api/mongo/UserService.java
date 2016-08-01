@@ -64,13 +64,22 @@ public interface UserService {
     Key<User> save(User user);
 
     /**
-     * 根据查询条件和站点状态获取用户列表信息
+     * 根据条件分页查询指定站点下的用户列表信息
      * @param pageModel 分页对象
      * @param userQueryVO 查询条件
      * @param site 站点对象
      * @return 分页对象（分页信息和当前页的数据）
      */
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site);
+
+    /**
+     * 根据条件分页查询多个站点下的用户列表信息
+     * @param pageModel 分页对象
+     * @param userQueryVO 查询条件
+     * @param siteList 站点对象集合
+     * @return 分页对象（分页信息和当前页的数据）
+     */
+    public PageModel<User> findPageUser(PageModel<User> pageModel, UserQueryVO userQueryVO, List<Site> siteList);
 
     /**
      * 获取指定站点编号下的所有派件员 -- 暂时没有用到
@@ -138,6 +147,14 @@ public interface UserService {
      * @return 用户集合
      */
     public List<User> findUsersBySite(Site site, UserRole userRole,UserStatus userStatus);
+    /**
+     * 根据站点、用户角色、用户状态查询所有派件员
+     * @param siteList 站点集合
+     * @param userRole 用户角色
+     * @param userStatus 用户状态
+     * @return 用户集合
+     */
+    public List<User> findUsersBySite(List<Site> siteList, UserRole userRole,UserStatus userStatus);
 
     /**
      * 根据staffidLis获得同一公司下的派件员user与站点名称的对应关系
@@ -154,4 +171,9 @@ public interface UserService {
      * @return 符合查询条件的数目
      */
     public long findCountBySiteAndDisptcherPermsn(Site site, int dispatchPermsn);
+
+    /*
+   * 查找指定的用户
+   */
+    public User findByAppkeyAndSessionkey(String appKey, String sessionKey);
 }

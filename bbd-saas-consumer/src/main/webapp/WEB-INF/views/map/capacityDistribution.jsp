@@ -55,24 +55,79 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>站点：　</label>
-								<select id="siteId" class="form-control form-con-new">
-									<option value="">全部</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.id}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
+							<div id="addr_control" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<div class="form-group pb20">
+									<label>省：　</label>
+									<select name="prov" class="prov form-control form-con-new">
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label id="cityLable" hidden>　市：</label>
+									<select  class="city form-control form-con-new" disabled="disabled">
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label id="distLable" hidden>　区：</label>
+									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+									</select>
+								</div>
+
+								<div class="form-group pb20">
+									<label class="ml16">站点：</label>
+									<div class="crt-s w400">
+										<div class="c-sel j-sel-input">
+											<span class="show-ele j-empty">请选择</span>
+											<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
+										</div>
+										<div class="all-area pm-dn">
+											<!-- S 1 -->
+											<div class="pv-bg clearfix">
+												<input id="siteName" type="text" class="sel-input" placeholder="请输入站点名称"  >
+												<div class="l-sel-p">
+													<ul class="pv-part" id="optionList">
+														<li>
+															<label class="f12 linputC">
+																<input type="checkbox" name="idOpt" value="" isAll="1"><b>全部</b>
+															</label>
+														</li>
+														<c:if test="${not empty siteList}">
+															<c:forEach var="option" items="${siteList}">
+																<li>
+																	<label class="f12 linputC">
+																		<input type="checkbox" name="idOpt" value="${option.id}" isAll="0"><b>${option.name}</b>
+																	</label>
+																</li>
+															</c:forEach>
+														</c:if>
+													</ul>
+												</div>
+											</div>
+											<!-- E 1 -->
+										</div>
+									</div>
+									<%-- 站点多选控件 E --%>
+								</div>
+								<div class="form-group pb20">
+									<span onclick=" getSiteAndUserList();" class="ser-btn l"><i
+											class="b-icon p-query p-ser"></i>查询</span>
+								</div>
+
+
+
 							</div>
 						</div>
+						<%--<div class="row pb20">
+							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-3">
+								<span onclick=" getSiteAndUserList();" class="ser-btn l"><i
+										class="b-icon p-query p-ser"></i>查询</span>
+							</div>
+						</div>--%>
 					</div>
 				</form>
 				<!-- E 搜索区域 -->
 				<!-- S map -->
 				<div class="capacity-map mt20">
-					<div id="capamap" class="capa-br" style="height:533px;"></div>
+					<div id="capamap" class="capa-br" style="height:650px;"></div>
 				</div>
 
 				<!-- E map -->
@@ -88,7 +143,15 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
-
+<!-- S 省市区站点选择控件 -->
+<script type="text/javascript">
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+	var  mapDataUrl = "<c:url value="/capacityDistribution/getSiteAndCourierList"/>";
+	var controlName = "idOpt";
+	var inputName = "siteName";
+</script>
+<script src="<c:url value="/resources/javascripts/capacitySiteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
@@ -99,6 +162,7 @@
 <script type="application/javascript">
 	var defaultLng = "${centerSite.lng}";
 	var defaultLat = "${centerSite.lat}";
+	var siteId = "";
 	// 百度地图API功能
 	var capamap = new BMap.Map("capamap", {enableMapClick:false,minZoom:8});
 	//显示全部站点 -- 地图中心为公司经纬度
@@ -106,11 +170,6 @@
 	$(document).ready(function() {
 		//显示站点和派件员信息
 		initMap();
-		//更改站点
-		$("#siteId").change(function(){
-			var siteId = $("#siteId option:selected").val();
-			loadDataAndShow(siteId);
-		});
 	});
 	//默认展示全部站点和所有派件员
 	function initMap(){
@@ -145,7 +204,7 @@
 	}
 
 	//加载站点和派件员名称和经纬度信息
-	function loadDataAndShow(siteId){
+	/*function loadDataAndShow(siteId){
 		$.ajax({
 			type : "GET",  //提交方式
 			url : "<%=path%>/capacityDistribution/getSiteAndCourierList",//路径
@@ -155,16 +214,18 @@
 			success : function(dataObject) {//返回数据
 				capamap.clearOverlays();
 				if (siteId == ""){//全部
-					var center = dataObject.centerSite
+					/!*var center = dataObject.centerSite
 					defaultLng = center.lng;
 					defaultLat = center.lat;
-					showJsonMap(center, dataObject.siteList, dataObject.userList);
+					showJsonMap(center, dataObject.siteList, dataObject.userList);*!/
+					showSiteAndUsers(dataObject.siteList, dataObject.userList);
 				}else {
 					//设置中心位置和显示派件员
-					var site = dataObject.site;
+					/!*var site = dataObject.site;
 					defaultLng = site.lng;
 					defaultLat = site.lat;
-					showJsonMap(site, null, dataObject.userList);
+					showJsonMap(site, null, dataObject.userList);*!/
+					showSiteAndUsers(dataObject.siteList, dataObject.userList);
 					//站点
 					var site = dataObject.site;
 					showOnePoint(site.name, site.lng, site.lat, 0);
@@ -174,15 +235,18 @@
 				ioutDiv("服务器繁忙，请稍后再试！");
 			}
 		});
-	}
+	}*/
 	//展示站点和派件员--ajax获取json对象
-	function showJsonMap(centerSite, siteList, userList){
-		var center = new BMap.Point(centerSite.lng, centerSite.lat);
+	/*function showJsonMap(centerSite, siteList, userList){
+		/!*var center = new BMap.Point(centerSite.lng, centerSite.lat);
 		var radiusVal = 15;//显示大小级别--单个站点
 		if (siteId == ""){//显示大小级别-全部
 			radiusVal = 11;
 		}
-		capamap.centerAndZoom(center, radiusVal);
+		capamap.centerAndZoom(center, radiusVal);*!/
+		showSiteAndUsers(siteList, userList);
+	}*/
+	function showSiteAndUsers(siteList, userList){
 		capamap.enableScrollWheelZoom();
 		var isShowAll = false;
 		//显示站点
@@ -223,6 +287,7 @@
 	//flag-0:站点，flag-1:派件员
 	//siteName:查看全部的时候需要显示派件员站点名称
 	function showOnePoint(name, lng, lat, flag, siteName){
+		//console.log(lng+"，"+lat);
 		var point = null;
 		//经纬度为空，显示在公司周围或者站点周围
 		if(lng == null || lng == "0.000000" || lng == "null" || lat == null || lat == "null" || lat == "0.000000" ){

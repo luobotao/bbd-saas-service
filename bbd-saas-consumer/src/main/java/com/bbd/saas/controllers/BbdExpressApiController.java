@@ -17,10 +17,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.GeoUtil;
-import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.vo.Reciever;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
@@ -32,10 +29,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.PathParam;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -383,5 +380,62 @@ public class BbdExpressApiController {
 			}
 		}
 		return sb.toString();
+	}
+
+
+
+	@RequestMapping(value="/geoMatchSite", method=RequestMethod.GET)
+	public String geoMatchSite(Model model, HttpServletRequest request ) {
+		String keyword = request.getParameter("keyword");	//订单号或包裹号
+		String address = request.getParameter("address");
+		if(StringUtils.isNotBlank(keyword)){
+			//根据订单号查询
+			Order order = orderService.findByOrderNoOrMailNum(keyword);
+			if(order!=null){
+				Reciever reciever = order.getReciever();
+				if(reciever!=null) {
+					address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
+				}
+			}
+		}
+		//address = "北京北京市西城区中国北京北京市西城区复兴门内大街2号民生银行";
+		if(StringUtils.isNotBlank(address)){
+			Result result = sitePoiApi.searchSiteByAddressDirect(address);
+			MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
+
+			Map<String, Object> data = (Map<String, Object>)result.data;
+			Map<String, String> efenceMap = new HashMap<String, String>();
+			if(data != null && data.get("efences") != null){
+				Map<String ,List<List<MapPoint>>> efMap = (Map<String ,List<List<MapPoint>>>)data.get("efences");
+				for (Map.Entry<String ,List<List<MapPoint>>> entry : efMap.entrySet()) {
+					efenceMap.put(entry.getKey(), dealPostmanUserPoints(entry.getValue()));
+				}
+				data.remove("efences");
+				model.addAttribute("efenceMap", efenceMap);//当前查询的地址坐标
+			}
+			model.addAttribute("data",data);//当前查询的地址坐标
+		}
+		model.addAttribute("keyword",keyword);//当前查询的地址
+		model.addAttribute("address",address);//当前查询的地址
+		return "geo/geoMatchSite";
+	}
+	@ResponseBody
+	@RequestMapping(value="/fixAddress", method=RequestMethod.POST)
+	public Result fixAddress(String address, String source, String lng, String lat) {
+		Result result  = new Result();
+		if(StringUtils.isBlank(address)){
+			return new Result(-1, "地址不能为空");
+		}
+		if(StringUtils.isBlank(source)){
+			return new Result(-1, "请选择来源");
+		}
+		if(StringUtils.isBlank(lng)){
+			return new Result(-1, "经度不能为空");
+		}
+		if(StringUtils.isBlank(lat)){
+			return new Result(-1, "纬度不能为空");
+		}
+		MapPoint point = new MapPoint(Double.parseDouble(lng), Double.parseDouble(lat));
+		return geo.fixAddressGeo(address, source, point);
 	}
 }

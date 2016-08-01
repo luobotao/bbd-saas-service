@@ -77,6 +77,13 @@ public interface ExpressStatStationService {
 	 * @return 统计数据集合
 	 */
 	public ExpressStatStation findSummaryByCompanyIdAndTime(String companyId, String tim);
+	/**
+	 * 根据站点编号集合和时间查询各个站点的汇总信息
+	 * @param areaCodeList 站点编号集合
+	 * @param tim 时间
+	 * @return 各个站点的汇总信息
+	 */
+	public ExpressStatStation findSummaryByAreaCodesAndTime(List<String> areaCodeList, String tim);
 
 	/**
 	 * 根据站点编号集合和时间进行查询

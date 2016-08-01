@@ -33,51 +33,56 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-	  					<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>站点：</label>
-								<select id="areaCode" name="areaCode" class="form-control form-con-new">
-									<option value="">全部</option>
-									<c:if test="${not empty siteList}">
-										<c:forEach var="site" items="${siteList}">
-											<option value="${site.areaCode}">${site.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
-							</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<label>状态：</label>
-	  							<select id="status" name="status" class="form-control form-con-new">
-	  								<%=OrderStatus.Srcs2HTML(-1)%>
-	  							</select>
+						<div class="row" >
+							<jsp:include page="../control/siteControl.jsp" flush="true" />
+						</div>
+	  					<div class="row">
+	  						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<div class="form-group pb20">
+									<label>状态：</label>
+									<div class="crt-s w400">
+										<div class="c-sel j-sel-input">
+											<span class="show-ele j-empty">请选择</span>
+											<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
+										</div>
+										<div class="all-area all-area1 pm-dn">
+											<!-- S 1 -->
+											<div class="pv-bg clearfix">
+												<%--<input id="statusName" type="text" class="sel-input" placeholder="请输入状态" />--%>
+												<div class="l-sel-p">
+													<ul class="pv-part" id="optionList2">
+														<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
+													</ul>
+												</div>
+											</div>
+											<!-- E 1 -->
+										</div>
+									</div>
+									<%--<select id="status" name="status" class="form-control form-con-new">
+                                        <%=OrderStatus.Srcs2HTML(-1)%>
+                                    </select>--%>
+								</div>
+								<div class="form-group pb20">
+									<label>　运单号：</label>
+									<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
+								</div>
+								<div class="form-group ml6 pb20">
+									<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
+									<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
+								</div>
+
 	  						</div>
-	  						<%--<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-	  							<label>到站时间：</label>
-	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
-	  						</div>--%>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-								<label>运单号：</label>
-								<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
-							</div>
-	  					</div>
-						<%--<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
-								<label>运单号：</label>
-								<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
-							</div>
-						</div>--%>
-	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
-	  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
-	  						</div>
+
 	  					</div>
 	  				</div>
 				</form>
 				<!-- 用于导出 -->
 				<form action="<%=request.getContextPath()%>/mailQuery/exportToExcel" method="get" id="exptForm">
-					<input id="status_expt" name="status" type="hidden" />
-					<input id="areaCode_expt" name="areaCode" type="hidden" />
+					<input id="prov_expt" name="prov" type="hidden" />
+					<input id="city_expt" name="city" type="hidden" />
+					<input id="area_expt" name="area" type="hidden" />
+					<input id="status_expt" name="statusStr" type="hidden" />
+					<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
 					<%--<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />--%>
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
@@ -88,6 +93,7 @@
   					<table class="table">
   						<thead>
   							<tr>
+								<th>站点名称</th>
 								<th>运单号</th>
 								<th>收货人</th>
 								<th>收货人电话</th>
@@ -108,14 +114,14 @@
 								if(orderPage==null || orderPage.getDatas() == null){
 							%>
 								<tr>
-									<td colspan="14">没有符合查询条件的数据</td>
+									<td colspan="16">没有符合查询条件的数据</td>
 								</tr>
 							<%
 								}else{
 									for(Order order : orderPage.getDatas()){
 							%>
 								<tr>
-
+									<td><%=order.getAreaName()%></td>
 									<td><%=order.getMailNum()%></td>
 									<td><%=order.getReciever().getName()%></td>
 									<td><%=order.getReciever().getPhone()%></td>
@@ -137,7 +143,7 @@
 									%>
 									<%-- 签收时间  end --%>
 									<%
-										if(order.getUserId() == null || "".equals(order.getUserId()) ||order.getUserVO()==null){//未分派
+										if(order.getUserVO() == null){//未分派||派件员没有查询到
 									%>
 											<td></td>
 											<td></td>
@@ -237,51 +243,55 @@
     <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+	var  inputName = null;
+	var isSiteId = false;
+</script>
+<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<%--<script src="<c:url value="/resources/javascripts/statusControl.js" />"> </script>--%>
+<!-- E 省市区站点选择控件  -->
+<script type="text/javascript">
 $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
-	
-	//初始化到站时间框
-	/*$("#arriveBetween").daterangepicker({
-		locale: {
-			applyLabel: '确定',
-			cancelLabel: '取消',
-			fromLabel: '开始',
-			toLabel: '结束',
-			weekLabel: 'W',
-			customRangeLabel: 'Custom Range',
-			showDropdowns: true
-		},
-		format: 'YYYY/MM/DD'
+	//绘制电子围栏 -- 更改站点
+	/*$("#areaCode").change(function(){
+		var siteId = $("#fenceSiteId").val();
+		getSiteListByAddr();
 	});*/
 });
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
+	/*var areaCodeStr = getAreaCodeStr();
+	console.log(areaCodeStr);*/
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
         url : "<%=path%>/mailQuery/getList",//路径
-        data : {  
+        data : {
+			"prov" : $("#addr_control .prov").val(),
+			"city" :  $("#addr_control .city").val(),
+			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
-			"areaCode" : $("#areaCode").val(),
-            "status" : $("#status").val(), 
+			"areaCodeStr" : getAreaCodeStr(),//站点编号集合
+            "statusStr" : getAreaCodeStr("statusOpt"),
             //"arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             var tbody = $("#dataList");
             var dataList = dataObject.datas;
+			var datastr = "";
 			if(dataList != null){
-				var datastr = "";
 				for(var i = 0; i < dataList.length; i++){
 					datastr += getRowHtml(dataList[i]);
 				}
-				tbody.html(datastr);
-			} 
+			}
+			tbody.html(datastr);
 			//更新分页条
 			var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
 			$("#pagin").html(pageStr);
@@ -301,6 +311,7 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var mailNum = $("#mailNum").val();
 	var row = "<tr>";
+	row += "<td>" + data.areaName + "</td>";
 	if(mailNum == null || mailNum == ""){//没有按照yun查，不需要着色
 		row += "<td>" + data.mailNum + "</td>";
 	}else{
@@ -320,31 +331,60 @@ function getRowHtml(data){
 	}
 	<%-- 签收时间  end --%>
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userId == null || data.userId == ""){
+	//console.log(data.userId + "   "+ data.userVO);
+	if(data.userVO == null || data.userVO == ""){
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";
 		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
-	row += "<td>" + data.orderStatusMsg + "</td>";
+	row += "<td><em class='" + getStatusCss(data.orderStatus) + "'>" + data.orderStatusMsg + "</em></td>";
 	row += "<td><a href='<%=path%>/mailQuery/getOrderMail?areaCode=" + data.areaCode + "&mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
 }
+//S 运单状态样式
+function getStatusCss(status){
+	if(status != null){
+		if(status == "<%=OrderStatus.NOTARR %>"){
+			return "l-blue";
+		}else if(status == "<%=OrderStatus.NOTDISPATCH %>"){
+			return "orange";
+		}else if(status == "<%=OrderStatus.DISPATCHED %>"){
+			return "c-green";
+		}else if(status == "<%=OrderStatus.RETENTION %>"){
+			return "purple";
+		}else if(status == "<%=OrderStatus.REJECTION %>"){
+			return "d-red";
+		}else if(status == "<%=OrderStatus.SIGNED %>"){
+			return "black";
+		}else if(status == "<%=OrderStatus.TO_OTHER_EXPRESS %>"){
+			return "d-blue";
+		}else if(status == "<%=OrderStatus.APPLY_RETURN %>"){
+			return "brown";
+		}else if(status == "<%=OrderStatus.RETURNED %>"){
+			return "l-green";
+		}
+	}
+	return "";
+}
+//S 运单状态样式
 
 
 //导出数据
 function exportData() {
-	$("#status_expt").val($("#status").val());
-	$("#areaCode_expt").val($("#areaCode").val());
+	$("#prov_expt").val($("#addr_control .prov").val());
+	$("#city_expt").val($("#addr_control .city").val());
+	$("#area_expt").val($("#addr_control .dist").val());
+	$("#status_expt").val(getAreaCodeStr("statusOpt"));
+	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	//$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
 }
-	
-	
-	
 </script>
+
+
 </body>
 </html>

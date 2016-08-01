@@ -30,8 +30,13 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-						<div class="row pb20">
-							<c:if test="${userNow.role==UserRole.COMPANY}">
+						<c:if test="${userNow.role==UserRole.COMPANY}">
+							<div class="row">
+								<jsp:include page="../control/siteControl.jsp" flush="true" />
+							</div>
+						</c:if>
+						<div class="row">
+							<%--<c:if test="${userNow.role==UserRole.COMPANY}">
 								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
 									<label>　站点：</label>
 									<select id="sites" name="sites" class="form-control form-con-new">
@@ -41,42 +46,41 @@
 										</c:forEach>
 									</select>
 								</div>
-							</c:if>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>　角色：</label>
-								<select id="saasrole" name="saasrole" class="form-control form-con-new" readonly="readOnly">
-									<c:if test="${userNow.role==UserRole.COMPANY}">
-										<option value ="-1" selected ="selected">全部</option>
-										<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
-										<option value ="<%=UserRole.SENDMEM%>"><%=UserRole.SENDMEM.getMessage()%></option>
-									</c:if>
-									<c:if test="${userNow.role==UserRole.SITEMASTER}">
-										<option value ="<%=UserRole.SENDMEM%>" selected ="selected"><%=UserRole.SENDMEM.getMessage()%></option>
-									</c:if>
-								</select>
-							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>状态：</label>
-								<select id="status" name="status" class="form-control form-con-new">
-									<%=UserStatus.Srcs2HTML(-1)%>
-								</select>
-							</div>
-						</div>
-						<div class="row pb20">
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>关键字：</label>
-								<input type="text" id="keyword" name="keyword" placeholder="真实姓名/手机号" class="form-control"  />
-							</div>
-						</div>
-						<div class="row pb20">
+							</c:if>--%>
 							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
-								<c:if test="${userNow.role==UserRole.SITEMASTER}">
-									<a href="javascript:void(0)" onclick="showAddUserDiv();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
-								</c:if>
-
+								<div class="form-group ml6 pb20">
+									<label>角色：</label>
+									<select id="saasrole" name="saasrole" class="form-control form-con-new" readonly="readOnly">
+										<c:if test="${userNow.role==UserRole.COMPANY}">
+											<option value ="-1" selected ="selected">全部</option>
+											<option value ="<%=UserRole.SITEMASTER%>"><%=UserRole.SITEMASTER.getMessage()%></option>
+											<option value ="<%=UserRole.SENDMEM%>"><%=UserRole.SENDMEM.getMessage()%></option>
+										</c:if>
+										<c:if test="${userNow.role==UserRole.SITEMASTER}">
+											<option value ="<%=UserRole.SENDMEM%>" selected ="selected"><%=UserRole.SENDMEM.getMessage()%></option>
+										</c:if>
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label>　状态：</label>
+									<select id="status" name="status" class="form-control form-con-new">
+										<%=UserStatus.Srcs2HTML(-1)%>
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label>　关键字：</label>
+									<input type="text" id="keyword" name="keyword" placeholder="真实姓名/手机号" class="form-control"  />
+								</div>
+								<div class="form-group ml6 pb20">
+									<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
+									<c:if test="${userNow.role==UserRole.SITEMASTER}">
+										<a href="javascript:void(0)" onclick="showAddUserDiv();" class="ser-btn d ml6 j-user"><i class="num-add mr10">＋</i>新建</a>
+									</c:if>
+								</div>
 							</div>
 						</div>
+						<%--<div class="row pb20">
+						</div>--%>
 					</div>
 				</form>
 				<!-- E 搜索区域 -->
@@ -274,6 +278,16 @@
 </div>
 <!--E 到站权限-->
 <!-- E pop -->
+
+<!-- S 省市区站点选择控件 -->
+<script type="text/javascript">
+	var  siteUrl = "<c:url value="/site/getSiteList?isAll=1"/>";
+	var  inputName = null;
+	var isSiteId = false;
+</script>
+<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
+
 <script type="text/javascript">
 	//是否需要校验手机号，默认需要；但是当失去焦点点击关闭按钮时，不需要校验手机号
 	var isCheckPhone = true;
@@ -281,7 +295,6 @@
 	//显示分页条
 	var pageStr = paginNav(<%=userPage.getPageNo()%>, <%=userPage.getTotalPages()%>, <%=userPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
-
 
 	//公司用户角色不可以修改
 	<c:if test="${userNow.role==UserRole.COMPANY}">
@@ -293,16 +306,18 @@
 		var roleId = $("#saasrole").val();
 		var status = $("#status").val();
 		var keyword = $("#keyword").val();
-		var sites = $("#sites").val();
 		var url = "<c:url value="/userManage/getUserPageFenYe" />";
 		$.ajax({
 			type : "GET",  //提交方式
 			url : url,//路径
 			data : {
+				"prov" : $("#addr_control .prov").val(),
+				"city" :  $("#addr_control .city").val(),
+				"area" :  $("#addr_control .dist").val(),
+				"areaCodeStr" : getAreaCodeStr(),//站点编号集合
 				"pageIndex" : pageIndex,
 				"roleId" : roleId,
 				"status" : status,
-				"siteId" : sites,
 				"keyword" : keyword
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据根据结果进行相应的处理

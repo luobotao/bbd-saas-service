@@ -155,9 +155,23 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("mailNum",mailNum);
         return findOne(query);
     }
+
+    /**
+     * 根据运单号查询
+     * @param mailNum
+     * @return
+     */
+    public Order findOneByMailNum(String mailNum) {
+        Query<Order> query = createQuery();
+        if (StringUtils.isNotBlank(mailNum))
+            query.filter("mailNum", mailNum);
+        return findOne(query);
+    }
+
     private Query<Order> getQuery(OrderQueryVO orderQueryVO){
     	Query<Order> query = createQuery();
         query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.filter("orderStatus <>", null).filter("orderStatus <>", "");//状态不能为空
 
 
         if(orderQueryVO != null){
@@ -207,11 +221,15 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }
             }
         	//异常状态
+            if(orderQueryVO.orderStatusList != null){
+                query.filter("orderStatus in", orderQueryVO.orderStatusList);
+            }
+            //订单状态集合
             if(orderQueryVO.abnormalStatus != null){
-            	if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
-                	query.or(query.criteria("orderStatus").equal(OrderStatus.RETENTION), query.criteria("orderStatus").equal(OrderStatus.REJECTION));
+                if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
+                    query.or(query.criteria("orderStatus").equal(OrderStatus.RETENTION), query.criteria("orderStatus").equal(OrderStatus.REJECTION));
                 }else{
-                	query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
+                    query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
                 }
             }
             //订单状态和到站时间
@@ -257,8 +275,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
         //设置查询条件
     	Query<Order> query = getQuery(orderQueryVO);
-    	//设置排序
-    	query.order("-dateUpd");
+        if(orderQueryVO.dispatchStatus != null){//运单分派
+            //设置排序
+            query.order("-orderStatus,-dateUpd");
+        }else{//其他页面
+            //设置排序
+            query.order("-dateUpd");
+        }
+
         //分页信息
         query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
         //查询数据
@@ -552,4 +576,37 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         return find(query).asList();
     }
+    /**
+     * 根据订单号或运单号查询
+     * @param keyword
+     * @return
+     */
+    public Order findByOrderNoOrMailNum(String keyword) {
+        //创建查询条件
+        Query<Order> query = createQuery();
+        query.or(query.criteria("orderNo").equal(keyword),query.criteria("mailNum").equal(keyword));
+        return findOne(query);
+    }
+
+    /**
+     * 根据areaCode和mailNumList查询
+     * @param areaCode
+     * @param mailNumList
+     * @return
+     */
+    public List<Order> selectByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList){
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(areaCode)){
+            query.filter("areaCode", areaCode);
+        }
+        if(mailNumList != null && mailNumList.size() > 0){
+            query.filter("mailNum in", mailNumList);
+        }
+        return find(query).asList();
+    }
+
+
+
+
+
 }

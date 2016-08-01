@@ -7,6 +7,7 @@ import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.models.BbtAddress;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -74,8 +75,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, Integer status, Integer areaFlag, String keyword) {
-        return siteDao.findSites(pageModel, companyId, status, areaFlag, keyword);
+    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword) {
+        return siteDao.findSites(pageModel, companyId, siteIdList, status, areaFlag, keyword);
     }
     /**
      * 根据站点状态与关键词进行站点分页查询
@@ -84,8 +85,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<SiteStatus> statusList) {
-        return siteDao.findSites(pageModel, companyId, statusList);
+    public PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
+        return siteDao.findSites(pageModel, companyId, areaCodeList, statusList);
     }
 
     /**
@@ -265,30 +266,20 @@ public class SiteServiceImpl implements SiteService {
 	@Override
 	public List<SiteVO> findAllSiteVOByCompanyIdAndStatusList(String companyId, List<SiteStatus> statusList) {
         List<Site> siteList = this.siteDao.selectByCompanyId(companyId, statusList);
-		List<SiteVO> siteVoList = null;
-		if(siteList != null && siteList.size() > 0){
-			siteVoList = new ArrayList<SiteVO>();
-			SiteVO siteVo = null;
-			for(Site site : siteList){
-				siteVoList.add(siteToSiteVO(site));
-			}
-		}
-		return siteVoList;
+        return siteListToSiteVO(siteList);
 	}
     @Override
     public List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status) {
         List<Site> siteList = this.siteDao.selectByCompanyId(companyId, status);
-        List<SiteVO> siteVoList = null;
-        if(siteList != null && siteList.size() > 0){
-            siteVoList = new ArrayList<SiteVO>();
-            for(Site site : siteList){
-                siteVoList.add(siteToSiteVO(site));
-            }
-        }
-        return siteVoList;
+        return siteListToSiteVO(siteList);
     }
 
-	@Override
+    @Override
+    public List<Site> findSiteVOByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status) {
+        return this.siteDao.selectByCompanyIdAndAreaCode(companyId, areaCodeList, status);
+    }
+
+    @Override
 	public List<Site> findAllSiteList() {
 		return siteDao.find().asList();
 	}
@@ -303,12 +294,7 @@ public class SiteServiceImpl implements SiteService {
         siteVo.setDeliveryArea(site.getDeliveryArea());
 		return siteVo;
 	}
-
-    @Override
-    public List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
-        List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-        statusList.add(status);
-        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status);
+    private List<SiteVO> siteListToSiteVO(List<Site> siteList){
         List<SiteVO> siteVoList = null;
         if(siteList != null && siteList.size() > 0){
             siteVoList = new ArrayList<SiteVO>();
@@ -317,5 +303,31 @@ public class SiteServiceImpl implements SiteService {
             }
         }
         return siteVoList;
+    }
+
+    @Override
+    public List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
+        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status);
+        return siteListToSiteVO(siteList);
+    }
+
+    @Override
+    public List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList) {
+        return this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, siteName, statusList);
+    }
+
+    @Override
+    public List<Option> findByAreaCodes(String[] areaCodes) {
+        return this.siteDao.selectByAreaCodes(areaCodes);
+    }
+
+    @Override
+    public List<Site> findSiteListByAreaCodes(List<String> areaCodeList) {
+        return this.siteDao.selectByCompanyIdAndAreaCode(null, areaCodeList, null);
+    }
+
+    @Override
+    public List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
+        return this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, siteIdList, statusList);
     }
 }

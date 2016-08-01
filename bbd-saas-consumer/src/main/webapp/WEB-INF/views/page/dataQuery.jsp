@@ -118,7 +118,7 @@
 									%>
 									<%-- 签收时间  end --%>
 									<%
-										if(order.getUserVO()==null || order.getUserId() == null || "".equals(order.getUserId())){//未分派
+										if(order.getUserVO() == null){//未分派
 									%>
 											<td></td>
 											<td></td>
@@ -255,13 +255,13 @@ function gotoPage(pageIndex) {
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             var tbody = $("#dataList");
             var dataList = dataObject.datas;
+			var datastr = "";
 			if(dataList != null){
-				var datastr = "";
 				for(var i = 0; i < dataList.length; i++){
 					datastr += getRowHtml(dataList[i]);
 				}
-				tbody.html(datastr);
-			} 
+			}
+			tbody.html(datastr);
 			//更新分页条
 			var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
 			$("#pagin").html(pageStr);
@@ -300,18 +300,44 @@ function getRowHtml(data){
 	}
 	<%-- 签收时间  end --%>
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userVO==null ||data.userId == null || data.userId == ""){
+	if(data.userVO==null){//未分派||派件员没有查询到
 		row += "<td></td><td></td>";
 	}else{
 		row += "<td>" + data.userVO.realName + "</td>";
 		row += "<td>" + data.userVO.loginName + "</td>";
 	}
 	//状态
-	row += "<td>" + data.orderStatusMsg + "</td>";
+	row += "<td><em class='" + getStatusCss(data.orderStatus) + "'>" + data.orderStatusMsg + "</em></td>";
 	row += "<td><a href='<%=path%>/dataQuery/getOrderMail?mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";
 	row += "</tr>";	
 	return row;
 }
+//S 运单状态样式
+function getStatusCss(status){
+	if(status != null){
+		if(status == "<%=OrderStatus.NOTARR %>"){
+			return "l-blue";
+		}else if(status == "<%=OrderStatus.NOTDISPATCH %>"){
+			return "orange";
+		}else if(status == "<%=OrderStatus.DISPATCHED %>"){
+			return "c-green";
+		}else if(status == "<%=OrderStatus.RETENTION %>"){
+			return "purple";
+		}else if(status == "<%=OrderStatus.REJECTION %>"){
+			return "d-red";
+		}else if(status == "<%=OrderStatus.SIGNED %>"){
+			return "black";
+		}else if(status == "<%=OrderStatus.TO_OTHER_EXPRESS %>"){
+			return "d-blue";
+		}else if(status == "<%=OrderStatus.APPLY_RETURN %>"){
+			return "brown";
+		}else if(status == "<%=OrderStatus.RETURNED %>"){
+			return "l-green";
+		}
+	}
+	return "";
+}
+//S 运单状态样式
 //导出数据
 function exportData() {
 	$("#status_expt").val($("#status").val());

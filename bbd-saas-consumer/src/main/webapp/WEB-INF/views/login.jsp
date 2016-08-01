@@ -294,7 +294,7 @@
 </div>
 <!--E 站点注册-->
 <!-- E pop -->
-<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
+<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js?_123" />"></script>
 <script>
 	$("#password").val("");
 	$("input[type='checkbox']").iCheck({

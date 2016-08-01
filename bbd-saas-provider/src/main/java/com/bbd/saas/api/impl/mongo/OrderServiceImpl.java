@@ -141,6 +141,17 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	/**
+	 * 揽件入库
+	 * 根据运单号查询
+	 *
+	 * @param mailNum
+	 * @return
+	 */
+	public Order findOneByMailNum(String mailNum) {
+		return orderDao.findOneByMailNum(mailNum);
+	}
+
+	/**
 	 * 根据其他快递的运单号查询订单
 	 * @param newMailNum
 	 * @return
@@ -202,6 +213,14 @@ public class OrderServiceImpl implements OrderService {
 		}
 		PageModel<Order> pageModel = new PageModel<Order>();
 		pageModel.setPageNo(pageIndex);
+		return orderDao.findPageOrders(pageModel, orderQueryVO);
+	}
+
+	@Override
+	public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
+		if(orderQueryVO == null){
+			return null;
+		}
 		return orderDao.findPageOrders(pageModel, orderQueryVO);
 	}
 
@@ -489,5 +508,18 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 		return wayName;
+	}
+
+	@Override
+	public Order findByOrderNoOrMailNum(String keyword) {
+		return  orderDao.findByOrderNoOrMailNum(keyword);
+	}
+
+	@Override
+	public List<Order> findByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList) {
+		if(mailNumList == null || mailNumList.size() == 0){
+			return null;
+		}
+		return orderDao.selectByAreaCodeAndMailNums(areaCode, mailNumList);
 	}
 }

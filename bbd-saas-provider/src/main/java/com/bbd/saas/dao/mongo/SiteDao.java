@@ -4,6 +4,7 @@ import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param keyword
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, Integer status, Integer areaFlag, String keyword) {
+    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword) {
         SiteQueryVO queryVO = new SiteQueryVO();
         queryVO.companyId = companyId;
         queryVO.status = SiteStatus.status2Obj(status);
@@ -50,6 +52,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         Query<Site> query = getQuerys(queryVO);
         if(areaFlag != null && areaFlag != -1){//配送区域
             query.filter("areaFlag", areaFlag);
+        }
+        if(siteIdList != null){//站点id集合(siteIdList.isEmpty():省市区下没有站点，但是选择了全部)
+            query.filter("_id in", siteIdList);
         }
         query.order("-dateAdd");
         return queryPageData(pageModel, query);
@@ -61,15 +66,23 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param statusList
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId,  List<SiteStatus> statusList) {
-        SiteQueryVO queryVO = new SiteQueryVO();
-        queryVO.companyId = companyId;
-        Query<Site> query = getQuerys(queryVO);
+    public PageModel<Option> findSites(PageModel<Option> pageModel,String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
+        Query<Site> query = createQuery().retrievedFields(true, "areaCode", "name");
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(areaCodeList != null){//站点编号集合(areaCodeList.isEmpty():省市区下没有站点，但是选择了全部)
+            query.filter("areaCode in", areaCodeList);
+        }
         if(statusList != null){
             query.filter("status in", statusList);
         }
         query.order("areaCode");
-        return queryPageData(pageModel, query);
+        List<Site> siteList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        List<Option> optionList = toOptionList(siteList);
+        pageModel.setDatas(optionList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
     }
 
     private Query<Site> getQuerys(SiteQueryVO siteQueryVO){
@@ -136,9 +149,29 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(status != null){
             query.filter("status", status);
         }
-        return  find(query).asList();
+        return  find(query.order("-dateAdd")).asList();
     }
 
+    /**
+     * 查询指定公司下的特定站点状态的所有站点
+     * @param companyId 公司名称
+     * @param areaCodeList 站点编码集合
+     * @param status 特定站点状态
+     * @return 站点VO集合
+     */
+    public List<Site> selectByCompanyIdAndAreaCode(String companyId, List<String> areaCodeList, SiteStatus status) {
+        Query<Site> query = createQuery().order("areaCode");
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(areaCodeList != null && !areaCodeList.isEmpty()){
+            query.filter("areaCode in", areaCodeList);
+        }
+        if(status != null){
+            query.filter("status", status);
+        }
+        return  find(query).asList();
+    }
     /**
      * 根据公司ID、地区获取该公司下的指定状态的站点集合
      * @param companyId 公司Id
@@ -149,6 +182,32 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @return 站点集合
      */
     public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
+        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+        if(status != null){
+            query.filter("status", status);
+        }
+        return  find(query).asList();
+    }
+    /**
+     * 根据公司ID、地区获取该公司下的指定状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    public List<Option> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList) {
+        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+        if(StringUtils.isNotBlank(siteName)){
+            query.and(query.criteria("name").containsIgnoreCase(siteName));
+        }
+        if(statusList != null){
+            query.filter("status in", statusList);
+        }
+        return  selectAndToOptionList(query);
+    }
+    private Query<Site> getQueryByAddr(String companyId, String prov, String city, String area){
         Query<Site> query = createQuery().order("areaCode");
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
@@ -162,8 +221,73 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(StringUtils.isNotBlank(area)){
             query.filter("area", area);
         }
+        return query.order("-dateAdd");
+    }
+    /**
+     * 根据站点编号数组查询
+     * @param areaCodes 站点编号数组
+     * @return List<areaCode,name>集合
+     */
+    public List<Option> selectByAreaCodes(String[] areaCodes){
+        Query<Site> query = createQuery().order("areaCode");
+        if(areaCodes != null && areaCodes.length > 0){
+            query.filter("areaCode in", areaCodes);
+        }
+        return  selectAndToOptionList(query);
+    }
+    private List<Option> selectAndToOptionList(Query<Site> query){
+        query.retrievedFields(true, "areaCode", "name");
+        List<Site> siteList = find(query.order("-dateAdd")).asList();
+        return toOptionList(siteList);
+    }
+    private List<Option> toOptionList(List<Site> siteList){
+        List<Option> optionList  = new ArrayList<Option>();
+        if(siteList != null){
+            for (Site site : siteList){
+                Option option = new Option();
+                option.setId(site.getId().toString());
+                option.setCode(site.getAreaCode());
+                option.setName(site.getName());
+                optionList.add(option);
+            }
+        }
+        return optionList;
+    }
+
+    /**
+     * 根据公司ID、地区获取该公司下的指定状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param siteIdList 站点id集合
+     * @param status 站点状态
+     * @return 站点集合
+     */
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, SiteStatus status) {
+        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
         if(status != null){
             query.filter("status", status);
+        }
+        return  find(query).asList();
+    }
+    /**
+     * 根据公司ID、地区获取该公司下的指定状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param siteIdList 站点Id集合
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
+        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+        if(siteIdList != null && !siteIdList.isEmpty()){
+            query.filter("_id in", siteIdList);
+        }
+        if(statusList != null && !statusList.isEmpty()){
+            query.filter("status in", statusList);
         }
         return  find(query).asList();
     }

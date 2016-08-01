@@ -19,6 +19,8 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.SignUtil;
+import com.bbd.saas.utils.SiteCommon;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.UserQueryVO;
 import flexjson.JSONDeserializer;
 import org.apache.commons.lang3.StringUtils;
@@ -37,10 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 版权：zuowenhai新石器时代<br/>
@@ -78,22 +77,81 @@ public class UserManageController {
 	public String index(HttpServletRequest request,Model model) {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
 		if(userNow.getRole()== UserRole.COMPANY){
-			List<Site> siteList = siteService.findSiteListByCompanyId(userNow.getCompanyId(), null);
-			model.addAttribute("siteList", siteList);
+			//查询登录用户的公司下的所有站点
+			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(userNow.getCompanyId(), null, null, null, null, null);
+			model.addAttribute("siteList", optionList);
 		}
-		PageModel<User> userPage = getUserPage(request,0,null,null,null,null);
+		PageModel<User> userPage = getPageUser(request, null, null, null, null, 0, null, null, null);
 
+		model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, userNow.getCompanyId()));
 		model.addAttribute("userNow", userNow);
 		model.addAttribute("userPage", userPage);
 		return "systemSet/userManage";
 	}
-	
 	/**
-     * 获取用户列表信息
-     * @param 
+	 * 获取用户列表信息 == 公司账号
+	 * @param request 请求
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
+	 * @param pageIndex 当前页
+	 * @param roleId 角色id
+	 * @param status 状态
+	 * @param keyword 关键词（姓名或者手机号）
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
+	public PageModel<User> getPageUser(HttpServletRequest request, String prov, String city, String area, String areaCodeStr, Integer pageIndex, String roleId, Integer status, String keyword) {
+		User userNow = adminService.get(UserSession.get(request));//当前登录用户
+		if (pageIndex==null) pageIndex =0 ;
+
+		UserQueryVO userQueryVO = new UserQueryVO();
+		userQueryVO.roleId=roleId;
+		userQueryVO.status=status;
+		userQueryVO.keyword=keyword;
+
+		PageModel<User> pageModel = new PageModel<>();
+		pageModel.setPageNo(pageIndex);
+		PageModel<User> userPage = new PageModel<>();
+		if(UserRole.COMPANY==userNow.getRole()){//公司用户
+			userQueryVO.companyId=userNow.getCompanyId();
+			List<Site> siteList = null;
+			List<String> areaCodeList = null;
+			if(StringUtils.isNotBlank(areaCodeStr)){//部分站点
+				String [] areaCodes = areaCodeStr.split(",");
+				areaCodeList = Arrays.asList(areaCodes);
+				siteList = siteService.findSiteListByAreaCodes(areaCodeList);
+			}else {//全部(公司下的全部|省市区下的全部)
+				if(StringUtils.isNotBlank(prov)){//某个省市区下的全部站点
+					siteList = siteService.findByCompanyIdAndAddress(userNow.getCompanyId(), prov, city, area, null, null);
+				}
+			}
+			userPage = userService.findPageUser(pageModel,userQueryVO, siteList);
+		}else{//站长
+			userQueryVO.roleId= UserRole.SENDMEM.toString();
+			userPage = userService.findUserList(pageModel,userQueryVO,userNow.getSite());
+		}
+		//转义--id、角色、状态
+		for(User user : userPage.getDatas()){
+			user.setIdStr(user.getId().toString());
+			user.setRoleMessage(user.getRole()==null?"":user.getRole().getMessage());
+			if(user.getUserStatus()!=null && !user.getUserStatus().getMessage().equals("")){
+				user.setStatusMessage(user.getUserStatus().getMessage());
+			}
+		}
+		return userPage;
+	}
+
+	/**
+	 * 获取用户列表信息
+	 * @param request 请求
+	 * @param pageIndex 当前页
+	 * @param siteId 站点id
+	 * @param roleId 角色Id
+	 * @param status 用户状态
+	 * @param keyword 关键词（姓名或者手机号）
      * @return
      */
-	@ResponseBody
+	/*@ResponseBody
 	@RequestMapping(value = "/getUserPage", method = RequestMethod.GET)
 	public PageModel<User> getUserPage(HttpServletRequest request, Integer pageIndex, String siteId, String roleId , Integer status, String keyword) {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
@@ -129,20 +187,9 @@ public class UserManageController {
 		
 		return userPage;
 	}
-	
-	/**
-     * 获取用户列表信息
-     * @param 
-     * @return
-     */
-	@ResponseBody
-	@RequestMapping(value = "/getUserPageFenYe", method = RequestMethod.GET)
-	public PageModel<User> getUserPageFenYe(HttpServletRequest request, Integer pageIndex, String siteId, String roleId, Integer status, String keyword) {
-		PageModel<User> userPage = getUserPage(request,pageIndex,siteId,roleId,status,keyword);
-		
-		return userPage;
-	}
-	
+	*/
+
+
 	/**
      * 保存新建用户（派件员）
      * @param userForm
@@ -247,7 +294,7 @@ public class UserManageController {
 		postmanUser.setCardidno("");
 		postmanUser.setCompanyname(currUser.getSite().getCompanyName() != null ? currUser.getSite().getCompanyName():"");
 		postmanUser.setCompanyid(currUser.getSite().getCompanyId()!=null?Integer.parseInt(currUser.getSite().getCompanyId()):0);
-
+		postmanUser.setAreaCode(currUser.getSite().getAreaCode());
 		postmanUser.setSubstation(currUser.getSite().getName());
 		postmanUser.setAlipayAccount("");
 		postmanUser.setToken("");
@@ -364,7 +411,9 @@ public class UserManageController {
 		if(userRole == UserRole.SITEMASTER){
 			postmanUser.setPostrole(4);
 		}else  if(userRole== UserRole.SENDMEM){
-			postmanUser.setPostrole(0);
+			if(postmanUser.getPostrole() != 5){
+				postmanUser.setPostrole(0);
+			}
 		}
 	}
 

@@ -9,12 +9,11 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.Express;
+import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,9 +28,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 运单查询
@@ -52,31 +51,27 @@ public class MailQueryController {
 	OrderParcelService orderParcelService;
 	@Autowired
 	SiteService siteService;
-
 	/**
-	 * Description: 跳转到运单查询页面
-	 * @param pageIndex 页数
-	 * @param status 运单状态
-	 * @param arriveBetween 到站时间
+	 * 跳转到运单查询页面
+	 * @param pageIndex 当前页,默认第一页
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
+	 * @param statusStr 运单状态集合status1,status2---
+	 * @param arriveBetween 到站时间范围
 	 * @param mailNum 运单号
 	 * @param request 请求
-	 * @param model
-	 * @return
-	 * @author liyanlei
-	 * 2016年4月22日下午6:27:46
-	 */
+     * @param model 携带数据
+     * @return page
+     */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, String areaCode, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
 		try {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
 			}
-			//设置默认查询条件
-			status = Numbers.defaultIfNull(status, -1);//全部
 			//到站时间
 			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
-			PageModel<Order> orderPage = getList(pageIndex, areaCode, status, arriveBetween, mailNum, request);
+			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, statusStr, arriveBetween, mailNum, request);
 			if(orderPage != null && orderPage.getDatas() != null){
 				/*for(Order order : orderPage.getDatas()){
 					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
@@ -84,14 +79,11 @@ public class MailQueryController {
 				}*/
 				//当前登录的用户信息
 				User currUser = adminService.get(UserSession.get(request));
-				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-				statusList.add(SiteStatus.APPROVE);
-				statusList.add(SiteStatus.INVALID);
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(currUser.getCompanyId(), statusList);
 				logger.info("=====运单查询页面列表===" + orderPage);
 				model.addAttribute("orderPage", orderPage);
 				//model.addAttribute("arriveBetween", arriveBetween);
-				model.addAttribute("siteList", siteVOList);
+				//查询登录用户的公司下的所有站点
+				model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId()));
 				return "page/mailQuery";
 			}else{
 				orderPage = new PageModel<Order>();
@@ -106,8 +98,8 @@ public class MailQueryController {
 	/**
 	 * Description: 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
-	 * @param areaCode 站点编号
-	 * @param status 运单状态
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
+	 * @param statusStr 运单状态集合status1,status2---
 	 * @param arriveBetween 到站时间
 	 * @param mailNum 运单号
 	 * @param request 请求
@@ -117,54 +109,29 @@ public class MailQueryController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<Order> getList(Integer pageIndex, String areaCode, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
+	public PageModel<Order> getList(String prov, String city, String area, Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request) {
 		//查询数据
 		PageModel<Order> orderPage = new PageModel<Order>();
 		try {
-			if(mailNum != null){
-				mailNum = mailNum.trim();
-			}
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-			status = Numbers.defaultIfNull(status, -1);
-			//当前登录的用户信息
-			User user = adminService.get(UserSession.get(request));
-			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-			statusList.add(SiteStatus.APPROVE);
-			statusList.add(SiteStatus.INVALID);
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(user.getCompanyId(), statusList);
-			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.orderStatus = status;
-			//orderQueryVO.arriveBetween = arriveBetween;
-			orderQueryVO.mailNum = mailNum;
-			orderQueryVO.areaCode = areaCode;
-			//公司查询
-			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
-				List<String> areaCodeList = new ArrayList<String>();
-				if(siteVOList != null && siteVOList.size() > 0){
-					for (SiteVO siteVO : siteVOList){
-						areaCodeList.add(siteVO.getAreaCode());
-					}
-				}
-				orderQueryVO.areaCodeList = areaCodeList;
-				//查询数据
-				if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
-					orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-				}
-			}else{
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, mailNum, orderQueryVO);
+			//查询数据
+			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
 				orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			}
-
 			//设置包裹号,派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
 				List<Order> dataList = orderPage.getDatas();
-				String parcelCodeTemp = null;
+				//String parcelCodeTemp = null;
 				User courier = null;
 				UserVO userVO = null;
 				for(Order order : dataList){
 					/*parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
 					order.setParcelCode(parcelCodeTemp);//设置包裹号*/
+					//站点名称
+					order.setAreaName(siteMap.get(order.getAreaCode()));
 					courier = userService.findOne(order.getUserId());
 					if(courier != null){
 						userVO = new UserVO();
@@ -178,6 +145,47 @@ public class MailQueryController {
 			logger.error("===分页查询，Ajax查询列表数据===出错:" + e.getMessage());
 		}
 		return orderPage;		
+	}
+	private Map<String, String> getOrderQueryAndSiteMap( final HttpServletRequest request, String prov, String city, String area, String areaCodeStr, String statusStr, String mailNum, OrderQueryVO orderQueryVO){
+		if(mailNum != null){
+			mailNum = mailNum.trim();
+		}
+		//当前登录的用户信息
+		User currUser = adminService.get(UserSession.get(request));
+		//设置查询条件
+		if(orderQueryVO == null){
+			orderQueryVO = new OrderQueryVO();
+		}
+		if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
+			String [] statusS = statusStr.split(",");
+			List<OrderStatus> orderStatusList = new ArrayList<OrderStatus>();
+			for(String status : statusS){
+				orderStatusList.add(OrderStatus.status2Obj(Integer.parseInt(status)));
+			}
+			orderQueryVO.orderStatusList = orderStatusList;
+		}
+		orderQueryVO.mailNum = mailNum;
+		List<Option> optionList = null;
+		//areaCodeList查询
+		if(StringUtils.isBlank(areaCodeStr)){//全部(公司下的全部|省市区下的全部)
+			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			statusList.add(SiteStatus.APPROVE);
+			statusList.add(SiteStatus.INVALID);
+			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList);
+		}else{//部分站点
+			String [] areaCodes = areaCodeStr.split(",");
+			optionList = siteService.findByAreaCodes(areaCodes);
+		}
+		Map<String, String> siteMap = new HashMap<String, String>();
+		List<String> areaCodeList = new ArrayList<String>();
+		if(optionList != null && optionList.size() > 0){
+			for (Option option : optionList){
+				areaCodeList.add(option.getCode());
+				siteMap.put(option.getCode(), option.getName());
+			}
+		}
+		orderQueryVO.areaCodeList = areaCodeList;
+		return siteMap;
 	}
 
 
@@ -208,8 +216,8 @@ public class MailQueryController {
 	
 	/**
 	 * Description: 导出数据
-	 * @param status 状态
-	 * @param areaCode 站点编号
+	 * @param statusStr 状态集合status1,status2---
+	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
 	 * @param mailNum 运单号
 	 * @param request
 	 * @param response
@@ -218,47 +226,16 @@ public class MailQueryController {
 	 * 2016年4月15日下午4:30:41
 	 */
 	@RequestMapping(value="/exportToExcel", method=RequestMethod.GET)
-	public void exportData(String areaCode, Integer status, String arriveBetween_expt, String mailNum,
+	public void exportData(String prov, String city, String area, String areaCodeStr, String statusStr, String arriveBetween_expt, String mailNum,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		try {
-			if(mailNum != null){
-				mailNum = mailNum.trim();
-			}
-			//当前登录的用户信息
-			User user = adminService.get(UserSession.get(request));
-			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.orderStatus = status;
-			//orderQueryVO.arriveBetween = arriveBetween_expt;
-			orderQueryVO.mailNum = mailNum;
-			orderQueryVO.areaCode = areaCode;
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, mailNum, orderQueryVO);
 			//查询数据
 			List<Order> orderList = null;
-			Map<String,String> siteMap = new ConcurrentHashMap<String, String>();
-			//公司查询
-			if(StringUtils.isBlank(areaCode)){//查询全部 -- 同一个公司的所有站点
-				//同一个公司的所有站点
-				List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-				statusList.add(SiteStatus.APPROVE);
-				statusList.add(SiteStatus.INVALID);
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyIdAndStatusList(user.getCompanyId(), statusList);
-				List<String> areaCodeList = new ArrayList<String>();
-				if(siteVOList != null && siteVOList.size() > 0){
-					for (SiteVO siteVO : siteVOList){
-						siteMap.put(siteVO.getAreaCode(), siteVO.getName());
-						areaCodeList.add(siteVO.getAreaCode());
-					}
-				}
-				orderQueryVO.areaCodeList = areaCodeList;
-				if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
-					orderList = orderService.findOrders(orderQueryVO);
-				}
-			}else{
-				Site site = siteService.findSiteByAreaCode(areaCode);
-				siteMap.put(site.getAreaCode(), site.getName());
+			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
 				orderList = orderService.findOrders(orderQueryVO);
 			}
-
 			//导出==数据写到Excel中并写入response下载
 			//表格数据
 			List<List<String>> dataList = new ArrayList<List<String>>();
@@ -267,8 +244,8 @@ public class MailQueryController {
 			if(orderList != null){
 				for(Order order : orderList){
 					row = new ArrayList<String>();
-					row.add(order.getAreaCode());
 					row.add(StringUtil.initStr(siteMap.get(order.getAreaCode()), ""));
+					row.add(order.getAreaCode());
 					row.add(order.getMailNum());
 					row.add(order.getReciever().getName());
 					row.add(order.getReciever().getPhone());
@@ -309,10 +286,10 @@ public class MailQueryController {
 			}
 			
 			//表头
-			String[] titles = { "站点编码", "站点名称", "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" ,"异常原因" };
-			int[] colWidths = {  3500, 6000, 5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500,  3000,  3500, 3000,4000};
+			String[] titles = { "站点名称","站点编码",  "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" ,"异常原因" };
+			int[] colWidths = {  6000, 3500, 5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500,  3000,  3500, 3000,4000};
 			ExportUtil exportUtil = new ExportUtil();
-			exportUtil.exportExcel("运单查询", dataList, titles, colWidths, response);
+			exportUtil.exportExcel("运单查询导出", dataList, titles, colWidths, response);
 		} catch (Exception e) {
 			logger.error("===运单查询数据导出===出错:" + e.getMessage());
 		}

@@ -104,6 +104,11 @@ public class UserServiceImpl implements UserService {
         return userDao.findUserList(pageModel, userQueryVO, site);
     }
 
+    @Override
+    public PageModel<User> findPageUser(PageModel<User> pageModel, UserQueryVO userQueryVO, List<Site> siteList) {
+        return this.userDao.findPageUser(pageModel, userQueryVO, siteList);
+    }
+
     /**
      * Description: 获取指定站点下的所有派件员
      *
@@ -220,6 +225,12 @@ public class UserServiceImpl implements UserService {
     public List<User> findUsersBySite(Site site,UserRole userRole,UserStatus userStatus) {
         return userDao.findUserListBySite(site, userRole,userStatus);
     }
+
+    @Override
+    public List<User> findUsersBySite(List<Site> siteList, UserRole userRole, UserStatus userStatus) {
+        return this.userDao.selectUserListBySite(siteList, userRole, userStatus);
+    }
+
     @Override
     public Map<Long, String> findUserSiteMap(List<Long> postManIdList, String companyId) {
         UserQueryVO2 query = new UserQueryVO2();
@@ -252,4 +263,10 @@ public class UserServiceImpl implements UserService {
     public long findCountBySiteAndDisptcherPermsn(Site site, int dispatchPermsn) {
         return userDao.selectCountBySiteAndDisptcherPermsn(site, dispatchPermsn);
     }
+
+    @Override
+    public User findByAppkeyAndSessionkey(String appKey, String sessionKey) {
+        return userDao.findByAppkeyAndSessionkey(appKey, sessionKey);
+    }
+
 }

@@ -50,36 +50,55 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @return PageModel<User>
      */
     public PageModel<User> findUserList(PageModel<User> pageModel,UserQueryVO userQueryVO,Site site) {
-    	
-    	Query<User> query = createQuery();
-    	//设置排序
-    	query.order("-dateUpdate");
-    	if(userQueryVO!=null){
-    		if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
+        Query<User> query = this.getPageQuery(userQueryVO);
+        if(site!=null){
+            query.filter("site", site);
+        }
+        List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        pageModel.setDatas(userList);
+        pageModel.setTotalCount(count(query));
+
+        return pageModel;
+    }
+    /**
+     * 获取用户列表信息
+     * @param pageModel
+     * @return PageModel<User>
+     */
+    public PageModel<User> findPageUser(PageModel<User> pageModel,UserQueryVO userQueryVO,List<Site> siteList) {
+        Query<User> query = this.getPageQuery(userQueryVO);
+        if(siteList != null){//站点集合(siteList.isEmpty():省市区下没有站点，但是选择了全部)
+            query.filter("site in", siteList);
+        }
+        //设置排序
+        query.order("site,-dateUpdate");
+        List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
+        pageModel.setDatas(userList);
+        pageModel.setTotalCount(count(query));
+        return pageModel;
+    }
+    private Query<User> getPageQuery(UserQueryVO userQueryVO){
+        Query<User> query = createQuery();
+        //设置排序
+        query.order("-dateUpdate");
+        if(userQueryVO!=null){
+            if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
                 query.filter("companyId", userQueryVO.companyId);
             }
             query.filter("role <>", UserRole.COMPANY);
-    		if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){
-    			query.filter("role", userQueryVO.roleId);
-    		}
-            if(site!=null){
-                query.filter("site", site);
+            if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){
+                query.filter("role", userQueryVO.roleId);
             }
-    		if(userQueryVO.status!=null && userQueryVO.status!=-1){
-    			query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
-    		}
-    		if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
-    			query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
-    			
-    		}
+            if(userQueryVO.status!=null && userQueryVO.status!=-1){
+                query.filter("userStatus", UserStatus.status2Obj(userQueryVO.status));
+            }
+            if(userQueryVO.keyword!=null && !userQueryVO.keyword.equals("")){
+                query.or(query.criteria("realName").containsIgnoreCase(userQueryVO.keyword),query.criteria("loginName").containsIgnoreCase(userQueryVO.keyword));
+            }
         }
-    	List<User> userList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
-        pageModel.setDatas(userList);
-        pageModel.setTotalCount(count(query));
-    	
-        return pageModel;
+        return query;
     }
-    
+
     /**
      * Description: 获取指定站点下的所有状态为有效的用户
      * @param site 站点
@@ -88,19 +107,38 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * 2016年4月14日下午8:04:44
      */
     public List<User> findUserListBySite(Site site, UserRole userRole,UserStatus userStatus) {
-    	Query<User> query = createQuery();
-    	if(site != null){
-    		query.filter("site", site);
-    	}
-    	if(userRole != null){
-    		query.filter("role", userRole);
-    	}
+        Query<User> query = createQuery();
+        if(site != null){
+            query.filter("site", site);
+        }
+        if(userRole != null){
+            query.filter("role", userRole);
+        }
         if(userStatus!=null){
             query.filter("userStatus", userStatus);
         }
         return  find(query).asList();
     }
-    
+    /**
+     * 根据站点、角色、状态查询用户
+     * @param siteList 站点集合
+     * @param userRole 角色
+     * @param userStatus 状态
+     * @return
+     */
+    public List<User> selectUserListBySite(List<Site> siteList, UserRole userRole,UserStatus userStatus) {
+        Query<User> query = createQuery();
+        if(siteList != null && !siteList.isEmpty()){
+            query.filter("site in", siteList);
+        }
+        if(userRole != null){
+            query.filter("role", userRole);
+        }
+        if(userStatus!=null){
+            query.filter("userStatus", userStatus);
+        }
+        return  find(query).asList();
+    }
     
     /**
      * 根据site和staffid查找是该staffid是否在该站点已存在
@@ -233,6 +271,13 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         query.filter("site", site);
         query.filter("dispatchPermsn", dispatchPermsn);
         return count(query);
+    }
+
+    public User findByAppkeyAndSessionkey(String appKey, String sessionKey) {
+        Query<User> query = createQuery();
+        query.filter("appKey", appKey);
+        query.filter("sessionKey", sessionKey);
+        return findOne(query);
     }
 
 }

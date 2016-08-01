@@ -91,6 +91,11 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 	}
 
 	@Override
+	public ExpressStatStation findSummaryByAreaCodesAndTime(List<String> areaCodeList, String tim) {
+		return expressStatStationDao.selectSummaryByAreaCodesAndTime(areaCodeList, tim);
+	}
+
+	@Override
 	public Map<String, ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String time) {
 		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByAreaCodeListAndTime(areaCodeList, time);
 		return getEssMap(expressStatStationList);

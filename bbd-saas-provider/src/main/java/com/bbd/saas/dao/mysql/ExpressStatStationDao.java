@@ -82,6 +82,14 @@ public interface ExpressStatStationDao {
 	public ExpressStatStation selectSummaryByCompanyIdAndTime(@Param("companyId") Integer companyId, @Param("tim") String tim);
 
 	/**
+	 * 根据站点编号集合和时间查询各个站点的汇总信息
+	 * @param areaCodeList 站点编号集合
+	 * @param tim 时间
+	 * @return 各个站点的汇总信息
+	 */
+	public ExpressStatStation selectSummaryByAreaCodesAndTime(@Param("areaCodeList") List<String> areaCodeList, @Param("tim") String tim);
+
+	/**
 	 * 根据站点编号集合和时间进行查询
 	 * @param areaCodeList 站点编号集合
 	 * @param time 时间

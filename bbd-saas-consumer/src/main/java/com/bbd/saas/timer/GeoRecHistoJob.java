@@ -32,7 +32,7 @@ public class GeoRecHistoJob {
     @Autowired
     private GeoRecHistoService geoRecHistoService;
     //每天凌晨跑一次
-    @Scheduled(cron = "0 17 12 * * ?")
+    @Scheduled(cron = "0 30 0 * * ?")
     public void doJobWithPushAllTrade() {
         Date date = Dates.getNextDay(new Date(),-1);
         logger.info("定时处理收件人信息"+date);
