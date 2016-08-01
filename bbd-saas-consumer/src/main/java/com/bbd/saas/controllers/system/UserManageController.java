@@ -294,7 +294,7 @@ public class UserManageController {
 		postmanUser.setCardidno("");
 		postmanUser.setCompanyname(currUser.getSite().getCompanyName() != null ? currUser.getSite().getCompanyName():"");
 		postmanUser.setCompanyid(currUser.getSite().getCompanyId()!=null?Integer.parseInt(currUser.getSite().getCompanyId()):0);
-
+		postmanUser.setAreaCode(currUser.getSite().getAreaCode());
 		postmanUser.setSubstation(currUser.getSite().getName());
 		postmanUser.setAlipayAccount("");
 		postmanUser.setToken("");

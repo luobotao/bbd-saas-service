@@ -35,6 +35,9 @@ public class PostmanUser implements Serializable {
 	private Date dateNew;
 	private Date dateUpd;
 	private String siteid;
+	private String src;
+	private String areaCode;
+
 
 	public Integer getId() {
 		return id;
@@ -234,5 +237,25 @@ public class PostmanUser implements Serializable {
 
 	public void setSiteid(String siteid) {
 		this.siteid = siteid;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
+	}
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
 	}
 }

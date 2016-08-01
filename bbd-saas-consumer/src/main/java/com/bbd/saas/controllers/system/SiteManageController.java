@@ -310,6 +310,7 @@ public class SiteManageController {
 		postmanUser.setCompanyname(user.getSite().getCompanyName() != null ? user.getSite().getCompanyName() : "");
 		postmanUser.setCompanyid(user.getSite().getCompanyId() != null ? Integer.parseInt(user.getSite().getCompanyId()) : 0);
 		postmanUser.setSubstation(user.getSite().getName());
+		postmanUser.setAreaCode(user.getSite().getAreaCode());
 		postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
 		postmanUser.setDateUpd(new Date());
 		postmanUser.setSiteid(user.getSite().getId().toString());
@@ -382,6 +383,7 @@ public class SiteManageController {
 			postmanUser.setCompanyname(user.getSite().getCompanyName()!=null?user.getSite().getCompanyName():"");
 			postmanUser.setCompanyid(user.getSite().getCompanyId()!=null?Integer.parseInt(user.getSite().getCompanyId()):0);
 			postmanUser.setSubstation(user.getSite().getName());
+			postmanUser.setAreaCode(user.getSite().getAreaCode());
 			postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
 			postmanUser.setDateUpd(new Date());
 			if(postmanUser.getId()!=null){//修改
