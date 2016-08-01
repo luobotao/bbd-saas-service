@@ -90,7 +90,7 @@ public class ExcelReader {
 	 * @param cell Excel单元格
 	 * @return String 单元格数据内容
 	 */
-	private String getStringCellValue(HSSFCell cell) {
+	public static String getStringCellValue(HSSFCell cell) {
 		String strCell = "";
 		switch (cell.getCellType()) {
 			case HSSFCell.CELL_TYPE_STRING:
@@ -126,7 +126,7 @@ public class ExcelReader {
 	 * @return String 单元格数据内容
 	 */
 	@SuppressWarnings("deprecation")
-	private String getDateCellValue(HSSFCell cell) {
+	public static String getDateCellValue(HSSFCell cell) {
 		String result = "";
 		try {
 			int cellType = cell.getCellType();
@@ -152,7 +152,7 @@ public class ExcelReader {
 	 * @param cell
 	 * @return
 	 */
-	private String getCellFormatValue(HSSFCell cell) {
+	public static String getCellFormatValue(HSSFCell cell) {
 		String cellvalue = "";
 		if (cell != null) {
 			// 判断当前Cell的Type
