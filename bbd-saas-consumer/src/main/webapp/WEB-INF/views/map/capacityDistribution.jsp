@@ -143,15 +143,7 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
-<!-- S 省市区站点选择控件 -->
-<script type="text/javascript">
-	var  siteUrl = "<c:url value="/site/getSiteList"/>";
-	var  mapDataUrl = "<c:url value="/capacityDistribution/getSiteAndCourierList"/>";
-	var controlName = "idOpt";
-	var inputName = "siteName";
-</script>
-<script src="<c:url value="/resources/javascripts/capacitySiteControl.js" />"> </script>
-<!-- E 省市区站点选择控件  -->
+
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
@@ -159,14 +151,26 @@
 <!--加载检索信息窗口-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
-<script type="application/javascript">
+<!-- S 省市区站点选择控件 -->
+<script type="text/javascript">
+	//地图默认值
 	var defaultLng = "${centerSite.lng}";
 	var defaultLat = "${centerSite.lat}";
+	var defaultPoint = new BMap.Point("${centerSite.lng}", "${centerSite.lat}");
 	var siteId = "";
+	//调用地图js
+	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+	var  mapDataUrl = "<c:url value="/capacityDistribution/getSiteAndCourierList"/>";
+	var controlName = "idOpt";
+	var inputName = "siteName";
+</script>
+<script src="<c:url value="/resources/javascripts/capacitySiteControl.js" />"> </script>
+<!-- E 省市区站点选择控件  -->
+<script type="application/javascript">
 	// 百度地图API功能
 	var capamap = new BMap.Map("capamap", {enableMapClick:false,minZoom:8});
 	//显示全部站点 -- 地图中心为公司经纬度
-	var defaultPoint = new BMap.Point("${centerSite.lng}", "${centerSite.lat}");
+
 	$(document).ready(function() {
 		//显示站点和派件员信息
 		initMap();
@@ -176,7 +180,7 @@
 		var center = new BMap.Point("${centerSite.lng}", "${centerSite.lat}");
 		var radiusVal = 11;//显示大小级别--单个站点
 		if (siteId == ""){//显示大小级别-全部
-			radiusVal = 6;
+			radiusVal = 8;
 		}
 		capamap.centerAndZoom(center, radiusVal);
 		capamap.enableScrollWheelZoom();
@@ -203,49 +207,6 @@
 		%>
 	}
 
-	//加载站点和派件员名称和经纬度信息
-	/*function loadDataAndShow(siteId){
-		$.ajax({
-			type : "GET",  //提交方式
-			url : "<%=path%>/capacityDistribution/getSiteAndCourierList",//路径
-			data : {
-				"siteId" : siteId
-			},//数据，这里使用的是Json格式进行传输
-			success : function(dataObject) {//返回数据
-				capamap.clearOverlays();
-				if (siteId == ""){//全部
-					/!*var center = dataObject.centerSite
-					defaultLng = center.lng;
-					defaultLat = center.lat;
-					showJsonMap(center, dataObject.siteList, dataObject.userList);*!/
-					showSiteAndUsers(dataObject.siteList, dataObject.userList);
-				}else {
-					//设置中心位置和显示派件员
-					/!*var site = dataObject.site;
-					defaultLng = site.lng;
-					defaultLat = site.lat;
-					showJsonMap(site, null, dataObject.userList);*!/
-					showSiteAndUsers(dataObject.siteList, dataObject.userList);
-					//站点
-					var site = dataObject.site;
-					showOnePoint(site.name, site.lng, site.lat, 0);
-				}
-			},
-			error : function() {
-				ioutDiv("服务器繁忙，请稍后再试！");
-			}
-		});
-	}*/
-	//展示站点和派件员--ajax获取json对象
-	/*function showJsonMap(centerSite, siteList, userList){
-		/!*var center = new BMap.Point(centerSite.lng, centerSite.lat);
-		var radiusVal = 15;//显示大小级别--单个站点
-		if (siteId == ""){//显示大小级别-全部
-			radiusVal = 11;
-		}
-		capamap.centerAndZoom(center, radiusVal);*!/
-		showSiteAndUsers(siteList, userList);
-	}*/
 	function showSiteAndUsers(siteList, userList){
 		capamap.enableScrollWheelZoom();
 		var isShowAll = false;
