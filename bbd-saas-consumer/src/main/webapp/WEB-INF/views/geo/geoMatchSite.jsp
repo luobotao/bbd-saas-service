@@ -78,7 +78,9 @@
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-12">
 								<label>来源：</label>
-								<%=LocSource.fromString(source).getMsg()%>
+								<%if (source != null){%>
+									<%=LocSource.fromString(source).getMsg()%>
+								<%}%>
 								<%--<c:choose>
 									<c:when test="${data.source == 'AMAP'}"><c:set var="source" scope="session" value="高德地图"/>高德地图</c:when>
 									<c:when test="${data.source == 'BAIDU'}">百度地图</c:when>
