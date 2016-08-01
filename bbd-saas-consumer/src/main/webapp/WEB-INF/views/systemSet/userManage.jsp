@@ -281,7 +281,7 @@
 
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-	var  siteUrl = "<c:url value="/site/getSiteList"/>";
+	var  siteUrl = "<c:url value="/site/getSiteList?isAll=1"/>";
 	var  inputName = null;
 	var isSiteId = false;
 </script>
