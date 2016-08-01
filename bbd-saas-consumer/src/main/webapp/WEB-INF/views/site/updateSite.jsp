@@ -106,7 +106,7 @@
 		</form>
 	</div>
 </section>
-<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js" />"></script>
+<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js?_123" />"></script>
 <script type="text/javascript">
 	var defprov = "北京";
 	var defcity = "北京";
