@@ -114,7 +114,7 @@
 									<br><input class="ml16"  type="radio" name="source" value="TENCENT"  onclick="chooseAddress('TENCENT','${data.TENECNT.lng}','${data.TENECNT.lat}')"/>
 									&nbsp;腾讯&nbsp;&nbsp;
 								</c:if>
-								<br><input class="ml16"  type="radio" name="source" value="BBD"  onclick="chooseAddress('BBD','${data.loc.lng}','${data.loc.lat}')"/>&nbsp;手动修改(拖动图标到目标位置)
+								<br><input class="ml16"  type="radio" name="source" value="BBD"  onclick="chooseAddress('BBD','${data.loc.lng}','${data.loc.lat}')"/>&nbsp;&nbsp;手动修改(拖动图标到目标位置)
 								<input type="hidden" id="fixSource" value="" />
 								<input type="hidden" id="lng" value="" />
 								<input type="hidden" id="lat" value="" />
