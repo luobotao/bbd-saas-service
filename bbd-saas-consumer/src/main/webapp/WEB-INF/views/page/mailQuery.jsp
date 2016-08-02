@@ -43,7 +43,7 @@
 									<div class="crt-s w400">
 										<div class="c-sel j-sel-input">
 											<span class="show-ele j-empty">请选择</span>
-											<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
+											<div class='showA'><ul class='c-show cityshow' id="statusOpts"></ul></div>
 										</div>
 										<div class="all-area all-area1 pm-dn">
 											<!-- S 1 -->
@@ -278,7 +278,7 @@ function gotoPage(pageIndex) {
 			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
 			"areaCodeStr" : getAreaCodeStr(),//站点编号集合
-            "statusStr" : getAreaCodeStr("statusOpt"),
+            "statusStr" : getAreaCodeStr("statusOpts"),
             //"arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
         },//数据，这里使用的是Json格式进行传输  
@@ -377,7 +377,7 @@ function exportData() {
 	$("#prov_expt").val($("#addr_control .prov").val());
 	$("#city_expt").val($("#addr_control .city").val());
 	$("#area_expt").val($("#addr_control .dist").val());
-	$("#status_expt").val(getAreaCodeStr("statusOpt"));
+	$("#status_expt").val(getAreaCodeStr("statusOpts"));
 	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	//$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
