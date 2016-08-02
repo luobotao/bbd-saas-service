@@ -74,7 +74,9 @@
 						<div class="row pb20">
 							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-12">
 								<label>地址：</label>
-								${data.province}-${data.city}-${data.district}-${data.street}-${data.formatedAddress}
+								<c:if test="${data.province != null}">
+									${data.province}-${data.city}-${data.district}-${data.street}-${data.formatedAddress}
+								</c:if>
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-12">
 								<label>来源：</label>
@@ -112,7 +114,7 @@
 									<br><input class="ml16"  type="radio" name="source" value="TENCENT"  onclick="chooseAddress('TENCENT','${data.TENECNT.lng}','${data.TENECNT.lat}')"/>
 									&nbsp;腾讯&nbsp;&nbsp;
 								</c:if>
-								<br><input class="ml16"  type="radio" name="source" value="BBD"  onclick="chooseAddress('BBD','${data.loc.lng}','${data.loc.lat}')"/>手动修改(拖动图标到目标位置)
+								<br><input class="ml16"  type="radio" name="source" value="BBD"  onclick="chooseAddress('BBD','${data.loc.lng}','${data.loc.lat}')"/>&nbsp;手动修改(拖动图标到目标位置)
 								<input type="hidden" id="fixSource" value="" />
 								<input type="hidden" id="lng" value="" />
 								<input type="hidden" id="lat" value="" />
