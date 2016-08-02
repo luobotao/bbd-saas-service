@@ -13,5 +13,32 @@
     </update>
 
 
+    <parameterMap type="map" id="expresstomysqlParameterMap">
+        <parameter property="mailNum" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="printDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="packDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="driverDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="stationDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="deliveryDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="successDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="dailyDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="refuseDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="changeStationDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="changeExpressDate" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="areaCode" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="sitename" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="city" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="province" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="companycode" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="companyId" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="companyName" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="src" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="expressSource" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="driver_Id" jdbcType="VARCHAR" mode="IN"/>
+    </parameterMap>
+    <update id="expresstomysql" parameterMap="expresstomysqlParameterMap" statementType="CALLABLE">
+        {call sp_express_totalprelist(?, ?, ?,?,?,?, ?, ?,?,?,?, ?, ?,?,?,?, ?, ?,?,?,?)}
+    </update>
+
 
 </mapper>
