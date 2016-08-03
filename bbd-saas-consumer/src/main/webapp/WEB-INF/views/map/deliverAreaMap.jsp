@@ -219,37 +219,36 @@
 									</select>
 								</div>
 								<div class="row pb20">
-									<div class="form-group col-lg-7">
+									<div class="form-group col-lg-12">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
 										<label class="ml16">关键词：</label>
 										<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
 										<span  class="ser-btn l ml16" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</span>
 									</div>
-									<div class="form-group col-lg-5">
-										<label class="ser-btn b fileup_ui fl">
-											<span>导入地址关键词</span>
-											<input type="file" name="file" class="import-file" style="width:160px"/>
-										</label>&nbsp;&nbsp;
-										<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
-										<span onclick="exportKeyword();" class="ser-btn b ml16">导出地址关键词</span>
-									</div>
+
 									<input type="hidden" id="pageIndex" value="${pageIndex}" name="pageIndex">
 								</div>
 							</form>
-							<form action="${importKeywordUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
-								<input type="hidden" name="siteId" id="imptSiteId" />
-							</form>
+							<div class="row">
+								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<form action="${importKeywordUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
+										<input type="hidden" name="siteId" id="imptSiteId" />
+										<label class="ser-btn b fileup_ui fl">
+											<span>导入地址关键词</span>
+											<input type="file" name="file" class="import-file" style="width:160px"/>
+										</label>
+									</form>
+									&nbsp;&nbsp;<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml16">下载导入模板</a>
+									&nbsp;<span onclick="exportKeyword();" class="ser-btn b ml16">导出地址关键词</span>
+								</div>
+							</div>
 							<form action="${ctx}/siteKeyWord/exportKeyWord" method="get" id="exptForm">
 								<input id="siteId_expt" name="siteId" type="hidden" />
 								<input id="between_expt" name="between" type="hidden" />
 								<input id="keyword_expt" name="keyword" type="hidden" />
 							</form>
-							<%--<div class="row pb20">
-								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-								</div>
-							</div>--%>
+							<%----%>
 
 							<!-- S table -->
 							<div class="tab-bod mt20">
