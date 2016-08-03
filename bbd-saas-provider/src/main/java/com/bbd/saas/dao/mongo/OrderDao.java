@@ -253,6 +253,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         Criteria arrivedCS = query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList);
                         Criteria arrivedC = query.and(startC, endC, arrivedCS);
                         query.or(notArriveCS, arrivedC);
+                    }else{
+                        //到站时间，只有已到站的订单才会有到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                        query.filter("dateArrived >=",dateBetween.getStart());
+                        query.filter("dateArrived <=",dateBetween.getEnd());
+                        query.filter("orderStatus in", orderQueryVO.orderStatusList);
                     }
                 }else {//orderQueryVO.orderStatus == null, orderQueryVO.orderStatusList == null 全部
                     //到站的运单，根据时间查询；未到站，时间为空
