@@ -148,7 +148,7 @@ function inputS(clickWho,showWho){
 
 // E 点击input
 // S 多选框
-var txtMaxLen=18;
+var txtMaxLen=12;
 function selectS(selectSp){
 	var sbox=$(selectSp).find(".pv-part li input");
 	sbox.on("click",function(){

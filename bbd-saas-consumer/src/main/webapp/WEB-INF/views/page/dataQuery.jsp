@@ -33,7 +33,7 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+	  						<div class="form-group">
 								<label>状态：</label>
 								<div class="crt-s w400">
 									<div class="c-sel j-sel-input">
@@ -54,11 +54,11 @@
 									</div>
 								</div>
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+	  						<div class="form-group ml16">
 	  							<label>到站时间：</label>
 	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+	  						<div class="form-group ml16">
 	  							<label>运单号：</label>
 	  							<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
 	  						</div>

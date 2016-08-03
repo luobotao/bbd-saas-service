@@ -159,7 +159,7 @@ function inputS(clickWho,showWho){
 // E 点击input
 
 // S 多选框
-var txtMaxLen=18;
+var txtMaxLen=12;
 // 创建省略号
 $(".c-sel").append("<sub class='c-dot'>&hellip;</sub>")
 function selectS(selectSp){
