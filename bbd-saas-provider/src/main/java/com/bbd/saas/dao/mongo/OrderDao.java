@@ -220,10 +220,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 }
             }
-        	//异常状态
-            if(orderQueryVO.orderStatusList != null){
-                query.filter("orderStatus in", orderQueryVO.orderStatusList);
-            }
+
             //订单状态集合
             if(orderQueryVO.abnormalStatus != null){
                 if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
@@ -232,45 +229,63 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
                 }
             }
-            //订单状态和到站时间
-            if(orderQueryVO.orderStatus == null){//除了数据查询页面之外的其他的页面的到站时间查询
-            	//预计到站时间
-                if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
-                	DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
-                    query.filter("dateArrived >=",dateBetween.getStart());
-                    query.filter("dateArrived <=",dateBetween.getEnd());
-                }
-            }else if(orderQueryVO.orderStatus == -1){//数据查询页面===查询全部，就相当于不需要按状态字段查询,并且包含到站时间为空（未到站）的记录
-                //未到站||已到站
-                query.filter("orderStatus <>", null);
-                //到站的运单，根据时间查询；未到站，时间为空
-                if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
-                	//按照时间查询--已到站的记录
-                	Query<Order> timeQuery = createQuery();
-                    DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
-                    Criteria startC = timeQuery.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
-                    Criteria endC = timeQuery.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
-                    Criteria timeC = timeQuery.and(startC, endC);
-                    //时间为空query--未到站的记录(未到站的运单，到站时间为空)
-                    Query<Order> timeNullQuery = createQuery();
-                    Criteria notArriveC =timeNullQuery.criteria("orderStatus").equal(OrderStatus.NOTARR);
-                    query.or(timeC, notArriveC);
-                }
-            }else{//数据查询页面查询订单某一状态的记录
-            	if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0
-                    query.filter("orderStatus", OrderStatus.NOTARR);
-                }else{//已到站
-                    query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
-                    //到站时间，只有已到站的订单才会有到站时间
-                    if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){
+            //到站时间和状态
+            if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){//根据到站时间查询
+                if(orderQueryVO.orderStatus != null){//单个状态
+                    if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0
+                        query.filter("orderStatus", OrderStatus.NOTARR);
+                    }else{//已到站
+                        query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+                        //到站时间，只有已到站的订单才会有到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
                     }
+                }else if(orderQueryVO.orderStatusList != null) {//查询多个状态
+                    if(orderQueryVO.orderStatusList.contains(OrderStatus.NOTARR)){
+                        //未到站的记录(未到站的运单，到站时间为空)
+                        Criteria notArriveCS = query.criteria("orderStatus").equal(OrderStatus.NOTARR);
+                        //按照时间查询--已到站的记录
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                        Criteria startC = query.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
+                        Criteria endC = query.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
+                        orderQueryVO.orderStatusList.remove(OrderStatus.NOTARR);//移除未到站状态
+                        Criteria arrivedCS = query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList);
+                        Criteria arrivedC = query.and(startC, endC, arrivedCS);
+                        query.or(notArriveCS, arrivedC);
+                    }
+                }else {//orderQueryVO.orderStatus == null, orderQueryVO.orderStatusList == null 全部
+                    //到站的运单，根据时间查询；未到站，时间为空
+                    setQueryDateArrived(query, orderQueryVO.arriveBetween);
                 }
+            }else{//不根据到站时间查询
+               if(orderQueryVO.orderStatus != null){//单个状态
+                   query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+               }
+               if(orderQueryVO.orderStatusList != null) {//查询多个状态
+                   query.filter("orderStatus in", orderQueryVO.orderStatusList);
+               }
             }
         }
     	return query;
+    }
+
+    /**
+     * 未到站，时间为空 || 到站的运单，根据时间查询；
+     * @param query
+     * @param arriveBetween
+     */
+    private void setQueryDateArrived(Query<Order> query, String arriveBetween){
+        if(StringUtils.isNotBlank(arriveBetween)){
+            //时间为空query--未到站的记录(未到站的运单，到站时间为空)
+            Criteria notArriveC =query.criteria("orderStatus").equal(OrderStatus.NOTARR);
+            //按照时间查询--已到站的记录
+            DateBetween dateBetween = new DateBetween(arriveBetween);
+            Criteria startC = query.criteria("dateArrived").greaterThanOrEq(dateBetween.getStart());
+            Criteria endC = query.criteria("dateArrived").lessThanOrEq(dateBetween.getEnd());
+            Criteria timeC = query.and(startC, endC);
+            query.or(timeC, notArriveC);
+        }
     }
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO) {
         //设置查询条件
