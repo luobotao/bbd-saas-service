@@ -121,6 +121,7 @@ public class ExportUtil
 		return cellStyle;
 	}
 	
+
 	/**
 	 * Description: 把数据写入Excel，并下载
 	 * @param fileName 文件名称
@@ -131,14 +132,14 @@ public class ExportUtil
 	 * @author: liyanlei
 	 * 2016年4月20日上午11:02:03
 	 */
-	public  void exportExcel(String fileName, List<List<String>> dataList, String[] titles, int[] colWidths, final HttpServletResponse response){
+	public static void exportExcel(String fileName, List<List<String>> dataList, String[] titles, int[] colWidths, HttpServletResponse response){
 		ServletOutputStream outputStream = null;
 		try{
 			// 创建一个workbook 对应一个excel应用文件
-			wb = new XSSFWorkbook();
+			XSSFWorkbook workbook = new XSSFWorkbook();
 			// 在workbook中添加一个sheet,对应Excel文件中的sheet
-			sheet = wb.createSheet(fileName);
-			ExportUtil exportUtil = new ExportUtil(wb, sheet);
+			XSSFSheet sheet = workbook.createSheet(fileName);
+			ExportUtil exportUtil = new ExportUtil(workbook, sheet);
 			XSSFCellStyle headStyle = exportUtil.getHeadStyle();
 			XSSFCellStyle bodyStyle = exportUtil.getBodyStyle();
 			// 构建表头
@@ -168,15 +169,17 @@ public class ExportUtil
 					}
 				}
 			}
-			
-			fileName = new String((fileName).getBytes("UTF-8"), "ISO8859_1")+Dates.formatDateTime_New(new Date());
+
+			fileName = new String((fileName).getBytes(), "ISO8859_1")+Dates.formatDate2(new Date());
 			//输出
-			//response.setContentType("application/vnd.ms-excel;charset=UTF-8"); //后缀.xls
-			//火狐后缀是.xlsx
-			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
+			//火狐后缀是.xlsx--扩展名.xlsx
+			//response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=ISO8859_1");
+			//response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=ISO8859_1");
+			response.setContentType("application/binary;charset=ISO8859_1");
 			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
 			outputStream = response.getOutputStream();
-			wb.write(outputStream);
+
+			workbook.write(outputStream);
 			outputStream.flush();
 			outputStream.close();
 		}catch (IOException e){

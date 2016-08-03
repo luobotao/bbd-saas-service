@@ -105,19 +105,17 @@
 								设置配送范围后，将优先匹配站点附近的订单。
 							</div>
 							<form  method="POST" id="siteRadiusForm">
-								<div class="col-md-12 pb20" id="areaAddr" hidden>
+								<div class="col-md-12 pb20" id="areaAddr">
 									<label>省：　</label>
 									<select name="prov" class="prov form-control form-con-new">
 									</select>
-									<label>　市：</label>
+									<label class="cityLable" hidden>　市：</label>
 									<select  class="city form-control form-con-new" disabled="disabled">
 									</select>
-									<label>　区：</label>
+									<label class="distLable" hidden>　区：</label>
 									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
 									</select>
-								</div>
-								<div class="col-md-12 pb20">
-									<label>站点：</label>
+									<label>　站点：　</label>
 									<select id="siteId" class="form-control form-con-new">
 										<option value="">请选择</option>
 										<c:if test="${not empty siteList}">
@@ -136,6 +134,17 @@
 										</select>  公里
 									</label>
 								</div>
+								<%--<div class="col-md-12 pb20">
+									<label class="f16">
+										　站点周围：<c:set var="count" value="20"/>
+										<select id="radius" name="radius"  class="form-control form-con-new f16">
+											<option value="0">请选择</option>
+											<c:forEach var = "temp" begin="1" step="1" end="${count}">
+												<option value ="${temp}" <c:if test="${temp eq site.getDeliveryArea()}">selected</c:if>>${temp}</option>
+											</c:forEach>
+										</select>  公里
+									</label>
+								</div>--%>
 
 								<div class="col-md-12">
 									<div class="b-map">
@@ -156,10 +165,10 @@
 								<label>省：　</label>
 								<select name="prov" class="prov form-control form-con-new">
 								</select>
-								<label id="cityLable" hidden>　市：</label>
+								<label class="cityLable" hidden>　市：</label>
 								<select  class="city form-control form-con-new" disabled="disabled">
 								</select>
-								<label id="distLable" hidden>　区：</label>
+								<label class="distLable" hidden>　区：</label>
 								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
 								</select>
 								<label>　站点：　</label>
@@ -188,52 +197,59 @@
 						<!-- E 绘制电子围栏 -->
 						<!-- S 导入地址关键词 -->
 						<div class="clearfix tab-pane fade" id="import-key">
-							<div class="row pb20">
-								<c:url var="importKeywordUrl" value="/siteKeyWord/importKeyword?${_csrf.parameterName}=${_csrf.token}"/>
-								<form action="${ctx}/deliverArea/queryKeyWord" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
-									<div class="form-group col-lg-3">
-										<label>站点：　</label>
-										<select id="keywordSiteId" name="siteId" class="form-control form-con-new">
-											<c:if test="${not empty siteList}">
-												<c:forEach var="site" items="${siteList}">
-													<option value="${site.id}">${site.name}</option>
-												</c:forEach>
-											</c:if>
-										</select>
-									</div>
-									<div class="form-group col-lg-3">
+							<c:url var="importKeywordUrl" value="/siteKeyWord/importKeyword?${_csrf.parameterName}=${_csrf.token}"/>
+							<form action="${ctx}/deliverArea/queryKeyWord" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
+								<div class="row col-md-12 pb20" id="keywordAddr">
+									<label>省：</label>
+									<select name="prov" class="prov form-control form-con-new">
+									</select>
+									<label class="cityLable" hidden>　市：</label>
+									<select  class="city form-control form-con-new" disabled="disabled">
+									</select>
+									<label class="distLable" hidden>　区：</label>
+									<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+									</select>
+									<label>　站点：</label>
+									<select id="keywordSiteId" name="siteId" class="form-control form-con-new">
+										<c:if test="${not empty siteList}">
+											<c:forEach var="site" items="${siteList}">
+												<option value="${site.id}">${site.name}</option>
+											</c:forEach>
+										</c:if>
+									</select>
+								</div>
+								<div class="row pb20">
+									<div class="form-group col-lg-7">
 										<label>导入时间：</label>
 										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
-									</div>
-									<div class="form-group col-lg-3">
-										<label>关键词：</label>
+										<label class="ml16">关键词：</label>
 										<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
+										<span  class="ser-btn l ml16" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</span>
 									</div>
-									<div class="form-group col-lg-2">
-										<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
-									</div>
-									<input type="hidden" id="pageIndex" value="${pageIndex}" name="pageIndex">
-								</form>
-							</div>
-							<div class="row pb20">
-								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-									<form action="${importKeywordUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
-										<input type="hidden" name="siteId" id="imptSiteId" />
+									<div class="form-group col-lg-5">
 										<label class="ser-btn b fileup_ui fl">
 											<span>导入地址关键词</span>
-											<input type="file" name="file" class="import-file" />
-										</label>
-
+											<input type="file" name="file" class="import-file" style="width:160px"/>
+										</label>&nbsp;&nbsp;
 										<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
-										<a href="javascript:void(0)" onclick="exportKeyword();" class="ser-btn b ml10">导出地址关键词</a>
-									</form>
-									<form action="${ctx}/siteKeyWord/exportKeyWord" method="get" id="exptForm">
-										<input id="siteId_expt" name="siteId" type="hidden" />
-										<input id="between_expt" name="between" type="hidden" />
-										<input id="keyword_expt" name="keyword" type="hidden" />
-									</form>
+										<span onclick="exportKeyword();" class="ser-btn b ml16">导出地址关键词</span>
+									</div>
+									<input type="hidden" id="pageIndex" value="${pageIndex}" name="pageIndex">
 								</div>
-							</div>
+							</form>
+							<form action="${importKeywordUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
+								<input type="hidden" name="siteId" id="imptSiteId" />
+							</form>
+							<form action="${ctx}/siteKeyWord/exportKeyWord" method="get" id="exptForm">
+								<input id="siteId_expt" name="siteId" type="hidden" />
+								<input id="between_expt" name="between" type="hidden" />
+								<input id="keyword_expt" name="keyword" type="hidden" />
+							</form>
+							<%--<div class="row pb20">
+								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+								</div>
+							</div>--%>
 
 							<!-- S table -->
 							<div class="tab-bod mt20">
@@ -345,11 +361,10 @@
 	/************************ 配送区域 ************* start **************************/
 
 	$("#areaAddr").citySelect({
-		prov: null,
-		city: null,
-		dist: null,
-		required: false,
-		nodata: ""
+		prov: "",
+		city: "",
+		dist: "",
+		nodata: "none"
 	});
 
 	// 百度地图API功能
@@ -357,6 +372,7 @@
 
 	//配送区域==省改变
 	$('#areaAddr .prov').change(function(){
+		provChange(this.value, "areaAddr");
 		//设置地图中心点，并调整地图视野
 		areaMap.centerAndZoom(this.value);
 		//站点列表和站点地图更新
@@ -364,6 +380,7 @@
 	}) ;
 	//配送区域==市改变
 	$('#areaAddr .city').change(function(){
+		cityChange(this.value, "areaAddr");
 		//设置地图中心点，并调整地图视野
 		areaMap.centerAndZoom(this.value);
 		//站点列表和站点地图更新
@@ -392,6 +409,26 @@
 			}
 		%>
 
+	}
+	//省选择框值改变
+	function provChange(val, divId){
+		if(val == null || val == ""){
+			$("#" + divId + " .cityLable").hide();
+		}else{
+			$("#" + divId + " .cityLable").show();
+		}
+		$("#" + divId + " .distLable").hide();
+		$("#" + divId + " .city").val("");//清空
+		$("#" + divId + " .dist").val("");
+	}
+	//市选择框值改变
+	function cityChange(val, divId){
+		if(val == null || val == ""){
+			$("#" + divId + " .distLable").hide();
+		}else{
+			$("#" + divId + " .distLable").show();
+		}
+		$("#" + divId + " .dist").val("");
 	}
 
 	function getPointBySite2(lng, lat){
@@ -931,14 +968,7 @@
 
 	//绘制电子地图 == 省改变
 	$('#fenceAddr .prov').change(function(){
-		if(this.value == null || this.value == ""){
-			$('#cityLable').hide();
-		}else{
-			$('#cityLable').show();
-		}
-		$('#distLable').hide();
-		$("#fenceAddr .city").val("");//清空
-		$("#fenceAddr .dist").val("");
+		provChange(this.value, "fenceAddr");
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新
@@ -946,12 +976,7 @@
 	}) ;
 	//绘制电子地图 == 市改变
 	$('#fenceAddr .city').change(function(){
-		if(this.value == null || this.value == ""){
-			$('#distLable').hide();
-		}else{
-			$('#distLable').show();
-		}
-		$("#fenceAddr .dist").val("");
+		cityChange(this.value, "fenceAddr");
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom(this.value);
 		//站点列表和站点地图更新
@@ -959,7 +984,6 @@
 	}) ;
 	//绘制电子地图 == 区改变
 	$('#fenceAddr .dist').change(function(){
-		//console.log($('#fenceAddr .city').val()+this.value);
 		//设置地图中心点，并调整地图视野
 		fenceObj.map.centerAndZoom($('#fenceAddr .city').val() + "市" + this.value);
 		//站点列表和站点地图更新
@@ -1131,6 +1155,54 @@
 	/************************ 绘制电子围栏 ************* end **************************/
 
 	/************************ 导入地址关键词 ************* start **************************/
+
+		//绘制电子地图 === 初始化省市区下拉框
+	$("#keywordAddr").citySelect({
+		prov: "",
+		city: "",
+		dist: "",
+		nodata: "none"
+	});
+
+	//绘制电子地图 == 省改变
+	$('#keywordAddr .prov').change(function(){
+		provChange(this.value, "keywordAddr");
+		//更新站点下拉框
+		getSiteListByAddr();
+	}) ;
+	//绘制电子地图 == 市改变
+	$('#keywordAddr .city').change(function(){
+		cityChange(this.value, "keywordAddr");
+		//更新站点下拉框
+		getSiteListByAddr();
+	}) ;
+	//绘制电子地图 == 区改变
+	$('#keywordAddr .dist').change(function(){
+		//更新站点下拉框
+		getSiteListByAddr();
+	}) ;
+
+	function getSiteListByAddr(){
+		var  siteUrl = "<c:url value="/site/getSiteList"/>";
+		$.ajax({
+			type : "GET",  //提交方式
+			url : siteUrl,//路径
+			data : {
+				"prov" : $("#keywordAddr .prov").val(),
+				"city" :  $("#keywordAddr .city").val(),
+				"area" :  $("#keywordAddr .dist").val(),
+			},//数据，这里使用的是Json格式进行传输
+			success : function(data) {//返回数据
+				if (data != null ||data.length > 0){//全部
+					//更新站点下拉列表数据
+					loadSiteData("keywordSiteId", data);
+				}
+			},
+			error : function() {
+				ioutDiv("服务器繁忙，请稍后再试");
+			}
+		});
+	}
 
 		// 导入文件
 	$(".import-file").on("change",function(){
