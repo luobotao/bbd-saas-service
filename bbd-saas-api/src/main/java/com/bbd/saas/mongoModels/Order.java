@@ -63,7 +63,7 @@ public class Order implements Serializable {
     private String removeReason;//移除原因
     private OrderSetStatus orderSetStatus;//运单集包状态
     private String parcelCode;//包裹号码默认为空
-    private String tradeStationId;
+    private String tradeStationId;//揽件员站点id
     private String embraceId;//揽件员id
     private String disAreaCode;//分拨中心Code
     private List<SiteTime> siteTimes;//揽件时间的集合
@@ -74,13 +74,10 @@ public class Order implements Serializable {
     @Transient
     private String orderStatusMsg;//前台JSP页面中的JS无法根据枚举来获取message -- 运单状态
     @Transient
+    private String expressStatusMsg;//快件状态
+    @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
-    public static class SiteTime implements Serializable{
-        public String siteId;
-        public OrderSetStatus orderSetStatus;
-        public Date dateAdd;
-    }
 
     public List<OtherExpreeVO> getOtherExprees() {
         return otherExprees;
@@ -406,18 +403,49 @@ public class Order implements Serializable {
         this.printStatusMsg = printStatusMsg;
     }
 
+    public String getExpressStatusMsg() {
+        if(this.orderStatus != null && this.orderStatus != OrderStatus.NOTARR){//快件状态从orderStatus中取得
+            if(this.orderStatus == OrderStatus.NOTDISPATCH){
+                this.expressStatusMsg = "已到达配送点";
+            }else if(this.orderStatus == OrderStatus.DISPATCHED){
+                this.expressStatusMsg = "正在配送";
+            }else{
+                this.expressStatusMsg = this.orderStatus != null ? this.orderStatus.getMessage() : "";
+            }
+        }else{//快件状态从orderSetStatus中取得
+            if(this.orderSetStatus == OrderSetStatus.WAITTOIN){
+                this.expressStatusMsg = this.orderSetStatus.getMessage();
+            }else if(this.orderSetStatus == OrderSetStatus.WAITSET){
+                this.expressStatusMsg = "已入库";
+            }else if(this.orderSetStatus == OrderSetStatus.WAITDRIVERGETED || this.orderSetStatus == OrderSetStatus.DRIVERGETED){
+                this.expressStatusMsg = "前往分拨中心";
+            }else if(this.orderSetStatus == OrderSetStatus.ARRIVEDISPATCH || this.orderSetStatus == OrderSetStatus.WAITDRIVERTOSEND){
+                this.expressStatusMsg = "已到达分拨中心";
+            }else if(this.orderSetStatus == OrderSetStatus.DRIVERSENDING){
+                this.expressStatusMsg = "前往配送点";
+            }else{
+                this.expressStatusMsg = this.orderSetStatus != null ? this.orderSetStatus.getMessage() : "";
+            }
+        }
+        return this.expressStatusMsg;
+    }
+
+    public void setExpressStatusMsg(String expressStatusMsg) {
+        this.expressStatusMsg = expressStatusMsg;
+    }
+
     public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
 
-		if(expressList == null){
-			return "";
-		}
-		ObjectMapper mapper = new ObjectMapper(); 
-		String json = mapper.writeValueAsString(expressList).replaceAll("\"", "\\\"");
-		json = json.replaceAll("\"", "`");
-		System.out.println(json);
-		//json = "{`name`:`lisi`}";
-        return json;  
-	}
+        if(expressList == null){
+            return "";
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(expressList).replaceAll("\"", "\\\"");
+        json = json.replaceAll("\"", "`");
+        System.out.println(json);
+        //json = "{`name`:`lisi`}";
+        return json;
+    }
 
     public TransportStatus getTransportStatus() {
         return transportStatus;
@@ -465,5 +493,51 @@ public class Order implements Serializable {
 
     public void setSiteTimes(List<SiteTime> siteTimes) {
         this.siteTimes = siteTimes;
+    }
+
+    public OrderVO coverOrderVo() {
+        OrderVO orderVo = new OrderVO();
+        orderVo.setAdminUserId(adminUserId);
+        orderVo.setMailNum(mailNum);
+        orderVo.setOrderNo(orderNo);
+        orderVo.setAreaName(areaName);
+        orderVo.setAreaCode(areaCode);//站点编码
+        orderVo.setAreaRemark(areaRemark);//站点地址
+        orderVo.setSender(sender);
+        orderVo.setReciever(reciever);
+        orderVo.setUserId(userId);
+        orderVo.setSrc(src);
+        orderVo.setOrderStatus(orderStatus);
+        orderVo.setExpressStatus(expressStatus);
+        orderVo.setPrintStatus(printStatus);
+        orderVo.setErrorFlag(errorFlag);//异常面单？ 0否 1是
+        orderVo.setErrorRemark(errorRemark);//异常信息
+        orderVo.setGoods(goods);
+        orderVo.setExpresses(expresses);
+        orderVo.setOtherExprees(otherExprees);
+        orderVo.setRtnReason(rtnReason);//退货原因
+        orderVo.setRtnRemark(rtnRemark);//退货原因备注（退货原因为其他时，此字段不为空）
+        orderVo.setDateAplyRtn(dateAplyRtn);//申请退货时间
+        orderVo.setOrderCreate(orderCreate);//订单创建时间
+        orderVo.setOrderPay(orderPay);     //订单支付时间
+        orderVo.setDateAdd(dateAdd);
+        orderVo.setDatePrint(datePrint);//物流单打印时间
+        orderVo.setDateMayArrive(dateMayArrive);//预计到站时间
+        orderVo.setDateArrived(dateArrived);//到站时间
+        orderVo.setDateDriverGeted(dateDriverGeted);//司机取货时间
+        orderVo.setDateUpd(dateUpd);//
+        orderVo.setSynsFlag(synsFlag);//与易普同步状态0未同步 1已同步 2同步失败
+        orderVo.setTransportStatus(transportStatus);//运输状态
+        orderVo.setTradeNo(tradeNo);//商户订单号(我们自己生成的支付订单号)
+        orderVo.setuId(uId);//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
+        orderVo.setIsRemoved(isRemoved);//是否被移除？ 0：未被移除； 1：被移除
+        orderVo.setRemoveReason(removeReason);//移除原因
+        orderVo.setOrderSetStatus(orderSetStatus);//运单集包状态
+        orderVo.setParcelCode(parcelCode);//包裹号码默认为空
+        orderVo.setTradeStationId(tradeStationId);//揽件员站点id
+        orderVo.setEmbraceId(embraceId);//揽件员id
+        orderVo.setDisAreaCode(disAreaCode);//分拨中心Code
+        orderVo.setSiteTimes(siteTimes);//揽件时间的集合
+        return orderVo;
     }
 }
