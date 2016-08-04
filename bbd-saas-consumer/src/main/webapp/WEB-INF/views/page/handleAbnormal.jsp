@@ -102,7 +102,7 @@
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<br>
-										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递111</a>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 									</td>
 								<%
@@ -111,7 +111,7 @@
 									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
 									<td class="tl">
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
-										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递111</a>
 										<br>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 									</td>
@@ -464,7 +464,11 @@ function chooseCourier() {
         	if(data.operFlag == 1){
         		//分派成功，刷新列表！
         		refreshTable(data.orderPage);
-        	}else{
+        	}else if(data.operFlag == 2){//已分派过了
+				ioutDiv("此运单已被" + data.courierName + "领取啦");
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
+			}else{
 				ioutDiv("重新分派失败，请稍后再试！");
         	}
         },
@@ -557,6 +561,14 @@ function chooseOtherSite() {
 			if(data.operFlag == 1){
 				//分派成功，刷新列表！
 				refreshTable(data.orderPage);
+			}else if(data.operFlag == 2){
+				ioutDiv("此运单已经转到"+data.siteName+"啦");
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
+			}else if(data.operFlag == 3){
+				ioutDiv("只有滞留或者拒收的运单才能转其他站点");
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
 			}else{
 				ioutDiv("转其他站点失败，请稍后再试！");
 			}
@@ -639,14 +651,32 @@ function applyReturn() {
 			"arriveBetween" : $("#arriveBetween").val()
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据根据结果进行相应的处理
-			ioutDiv(data.msg);
+			if(data.operFlag == 1){
+				ioutDiv("申请退货成功");
+				refreshTable(data.orderPage);
+			}else if(data.operFlag == 2){
+				ioutDiv("此运单已经申请退货啦");
+				//刷新列表！
+				refreshTable(data.orderPage);
+			}else if(data.operFlag == -1){
+				ioutDiv("运单不存在");
+				//刷新列表！
+				refreshTable(data.orderPage);
+			}else if(data.operFlag == 3){
+				ioutDiv("只有滞留或者拒收的运单才能申请退货");
+				//刷新列表！
+				refreshTable(data.orderPage);
+			}else{
+				ioutDiv("申请退货失败，请稍候再试");
+			}
+			/*ioutDiv(data.msg);
 			if(data.success){//分派成功，刷新列表！
 				refreshTable(data.orderPage);
 				//outDiv有延迟，所以页面刷新需要同步延迟
-				/*setTimeout(function(){
+				/!*setTimeout(function(){
 					refreshTable(data.orderPage);
-				},2000);*/
-			}
+				},2000);*!/
+			}*/
 		},
 		error : function() {
 			ioutDiv("服务器繁忙，请稍后再试！");
@@ -768,13 +798,23 @@ function toOtherExpressCompanys() {
 			"arriveBetween": $("#arriveBetween").val()
 		},//数据，这里使用的是Json格式进行传输
 		success: function (data) {//返回数据根据结果进行相应的处理
-			ioutDiv(data.msg);
-			if (data.success) {//分派成功，刷新列表！
-				//outDiv有延迟，所以页面刷新需要同步延迟
+			if(data.operFlag == 1){//转快递成功
+				ioutDiv(data.msg);
 				refreshTable(data.orderPage);
-				/*setTimeout(function () {
-				 refreshTable(data.orderPage);
-				 }, 2000);*/
+			}else if(data.operFlag == 2){
+				ioutDiv("此运单已经转到"+data.companyName+"啦");
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
+			}else if(data.operFlag == -1){
+				ioutDiv("运单不存在");
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
+			}else if(data.operFlag == 3){
+				ioutDiv("只有滞留或者拒收的运单才能转其他快递");
+				//分派成功，刷新列表！
+				refreshTable(data.orderPage);
+			}else{
+				ioutDiv(data.msg);
 			}
 		},
 		error: function () {

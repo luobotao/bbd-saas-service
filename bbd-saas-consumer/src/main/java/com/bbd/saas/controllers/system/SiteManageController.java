@@ -386,10 +386,10 @@ public class SiteManageController {
 			postmanUser.setAreaCode(user.getSite().getAreaCode());
 			postmanUser.setPhone(user.getLoginName().replaceAll(" ", ""));
 			postmanUser.setDateUpd(new Date());
+			postmanUser.setSiteid(user.getSite().getId().toString());
 			if(postmanUser.getId()!=null){//修改
 				userMysqlService.updateByPhone(postmanUser);
 			}else{//新增
-				postmanUser.setSiteid(user.getSite().getId().toString());
 				int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
 				user.setPostmanuserId(postmanuserId);
 			}

@@ -250,7 +250,7 @@ public class PackageDispatchController {
 			postDelivery.setReceiver_name(order.getReciever().getName());
 			postDelivery.setReceiver_phone(order.getReciever().getPhone());
 			postDelivery.setReceiver_province(order.getReciever().getProvince());
-			postDelivery.setSender_company_name(order.getSrc().getMessage());
+			postDelivery.setSender_company_name(order.getSrc()== null ? "" : order.getSrc().getMessage());
 			Sender sender = order.getSender();
 			if(sender!=null){
 				postDelivery.setSender_address(order.getSender().getAddress());
