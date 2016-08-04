@@ -102,7 +102,7 @@
 										<a href="javascript:void(0);" onclick="showCourierDiv('<%=order.getMailNum()%>')" class="orange">重新分派</a>
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
 										<br>
-										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递111</a>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 									</td>
 								<%
@@ -111,7 +111,7 @@
 									<td><%=AbnormalStatus.REJECTION.getMessage()%></td>
 									<td class="tl">
 										<a href="javascript:void(0);" onclick="showOtherSiteDiv('<%=order.getMailNum()%>')" class="orange">转其他站点</a>
-										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递111</a>
+										<a href="javascript:void(0);" onclick="showExpressCompanyDiv('<%=order.getMailNum()%>')" class="orange">转其他快递</a>
 										<br>
 										<a href="javascript:void(0);" onclick="showApplyReturnDiv('<%=order.getMailNum()%>')" class="orange">申请退货</a>
 									</td>
