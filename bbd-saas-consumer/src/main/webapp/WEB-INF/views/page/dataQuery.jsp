@@ -287,13 +287,9 @@ function gotoPage(pageIndex) {
 			var pageStr = paginNav(pageIndex, dataObject.totalPages, dataObject.totalCount);
 			$("#pagin").html(pageStr);
 		},
-        error : function() {  
-           	if(window.top==window.self){//不存在父页面
-				window.location.href="<c:url value="/login" />"
-			}else{
-				window.top.location.href="<c:url value="/login" />"
-			}
-      	}    
+        error : function() {
+			ioutDiv("加载分页数据异常！");
+		}
     });	
 }	
 
