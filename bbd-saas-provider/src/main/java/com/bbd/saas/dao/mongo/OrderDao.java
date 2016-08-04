@@ -262,7 +262,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 }else {//orderQueryVO.orderStatus == null, orderQueryVO.orderStatusList == null 全部
                     //到站的运单，根据时间查询；未到站，时间为空
-                    setQueryDateArrived(query, orderQueryVO.arriveBetween);
+                    if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus.intValue()==1){//到站的订单
+                        //到站时间，只有已到站的订单才会有到站时间
+                        DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
+                        query.filter("dateArrived >=",dateBetween.getStart());
+                        query.filter("dateArrived <=",dateBetween.getEnd());
+                    }else{
+                        setQueryDateArrived(query, orderQueryVO.arriveBetween);
+                    }
                 }
             }else{//不根据到站时间查询
                if(orderQueryVO.orderStatus != null){//单个状态

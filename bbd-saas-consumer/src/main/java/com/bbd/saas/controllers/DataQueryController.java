@@ -120,6 +120,7 @@ public class DataQueryController {
 			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = user.getSite().getAreaCode();
+			orderQueryVO.arriveStatus = 1;
 			//状态集合
 			if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
 				String [] statusS = statusStr.split(",");
