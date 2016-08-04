@@ -2,6 +2,7 @@ package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.vo.OrderVO;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
@@ -21,7 +22,7 @@ public class ExpressExchange implements Serializable {
     public String url;                                  //请求url
     public String operator;                             //操作人       （初始必填）
     public String phone;                                //手机号       （初始必填）
-    public Order order;                                 //订单         （初始必填）
+    public OrderVO order;                                 //订单         （初始必填）
     public String typ;                                  //操作类型
     public String pushInfo;                             //推送内容，json字符串
     public String requestStr;                           //请求串
@@ -57,11 +58,11 @@ public class ExpressExchange implements Serializable {
         this.operator = operator;
     }
 
-    public Order getOrder() {
+    public OrderVO getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(OrderVO order) {
         this.order = order;
     }
 

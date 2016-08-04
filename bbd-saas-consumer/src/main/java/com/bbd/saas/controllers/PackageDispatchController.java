@@ -192,13 +192,13 @@ public class PackageDispatchController {
 		Key<Order> r = orderService.save(order);
 		if(r != null){
 			saveOneOrUpdatePost(order, user);
-			smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
+			smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
 				ExpressExchange expressExchange=new ExpressExchange();
 				expressExchange.setOperator(user.getRealName());
 				expressExchange.setStatus(ExpressExchangeStatus.waiting);
 				expressExchange.setPhone(user.getLoginName());
-				expressExchange.setOrder(order);
+				expressExchange.setOrder(order.coverOrderVo());
 				expressExchange.setDateAdd(new Date());
 				expressExchangeService.save(expressExchange);
 			}
@@ -242,14 +242,15 @@ public class PackageDispatchController {
 			postDelivery.setMail_num(order.getMailNum());
 			postDelivery.setOut_trade_no(order.getOrderNo());
 			postDelivery.setPostman_id(user.getPostmanuserId());
-			postDelivery.setReceiver_address(order.getReciever().getAddress());
+			postDelivery.setReceiver_province(order.getReciever().getProvince());
 			postDelivery.setReceiver_city(order.getReciever().getCity());
+			postDelivery.setReceiver_district(order.getReciever().getArea());
+			postDelivery.setReceiver_address(order.getReciever().getAddress());
 			postDelivery.setReceiver_company_name("");
-			postDelivery.setReceiver_district("");
 			postDelivery.setReceiver_name(order.getReciever().getName());
 			postDelivery.setReceiver_phone(order.getReciever().getPhone());
 			postDelivery.setReceiver_province(order.getReciever().getProvince());
-			postDelivery.setSender_company_name(order.getSrc().getMessage());
+			postDelivery.setSender_company_name(order.getSrcMessage());
 			Sender sender = order.getSender();
 			if(sender!=null){
 				postDelivery.setSender_address(order.getSender().getAddress());

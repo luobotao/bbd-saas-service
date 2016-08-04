@@ -27,10 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 运单查询
@@ -69,7 +66,7 @@ public class MailQueryController {
 				mailNum = mailNum.trim();
 			}
 			//到站时间
-			//arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
+			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, statusStr, arriveBetween, mailNum, request);
 			if(orderPage != null && orderPage.getDatas() != null){
@@ -81,7 +78,7 @@ public class MailQueryController {
 				User currUser = adminService.get(UserSession.get(request));
 				logger.info("=====运单查询页面列表===" + orderPage);
 				model.addAttribute("orderPage", orderPage);
-				//model.addAttribute("arriveBetween", arriveBetween);
+				model.addAttribute("arriveBetween", arriveBetween);
 				//查询登录用户的公司下的所有站点
 				model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId()));
 				return "page/mailQuery";
@@ -116,7 +113,7 @@ public class MailQueryController {
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, mailNum, orderQueryVO);
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, arriveBetween,mailNum, orderQueryVO);
 			//查询数据
 			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
 				orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
@@ -146,7 +143,7 @@ public class MailQueryController {
 		}
 		return orderPage;		
 	}
-	private Map<String, String> getOrderQueryAndSiteMap( final HttpServletRequest request, String prov, String city, String area, String areaCodeStr, String statusStr, String mailNum, OrderQueryVO orderQueryVO){
+	private Map<String, String> getOrderQueryAndSiteMap( final HttpServletRequest request, String prov, String city, String area, String areaCodeStr, String statusStr,String arriveBetween, String mailNum, OrderQueryVO orderQueryVO){
 		if(mailNum != null){
 			mailNum = mailNum.trim();
 		}
@@ -156,6 +153,8 @@ public class MailQueryController {
 		if(orderQueryVO == null){
 			orderQueryVO = new OrderQueryVO();
 		}
+		orderQueryVO.arriveStatus=1;//已到站 2.6.1版本后将未到站去掉了
+		orderQueryVO.arriveBetween = arriveBetween;
 		if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
 			String [] statusS = statusStr.split(",");
 			List<OrderStatus> orderStatusList = new ArrayList<OrderStatus>();
@@ -230,7 +229,7 @@ public class MailQueryController {
 			final HttpServletRequest request, final HttpServletResponse response) {
 		try {
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, mailNum, orderQueryVO);
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, arriveBetween_expt,mailNum, orderQueryVO);
 			//查询数据
 			List<Order> orderList = null;
 			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){

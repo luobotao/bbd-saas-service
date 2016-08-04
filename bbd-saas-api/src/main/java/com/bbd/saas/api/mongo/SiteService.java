@@ -179,6 +179,11 @@ public interface SiteService {
      */
     List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
 
-
+    /**
+     * 根据name查找站点
+     * @param name
+     * @return 站点
+     */
+    Site findSiteByName(String name);
 
 }

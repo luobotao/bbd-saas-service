@@ -256,7 +256,7 @@ public class OrderToOtherCompanyTest {
             expressExchange.setOperator(user.getRealName());
             expressExchange.setStatus(ExpressExchangeStatus.waiting);
             expressExchange.setPhone(user.getLoginName());
-            expressExchange.setOrder(order);
+            expressExchange.setOrder(order.coverOrderVo());
             expressExchange.setDateAdd(new Date());
             expressExchangeService.save(expressExchange);
         }

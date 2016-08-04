@@ -180,6 +180,9 @@
 	        	<if test="siteid != null">
                     siteid = #{siteid,jdbcType=VARCHAR},
 	        	</if>
+                <if test="areaCode != null">
+                    areaCode = #{areaCode,jdbcType=VARCHAR}
+                </if>
         	</set>
         	WHERE phone = #{phone,jdbcType=INTEGER}
     </update>

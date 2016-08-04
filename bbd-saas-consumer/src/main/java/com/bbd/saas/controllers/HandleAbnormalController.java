@@ -198,7 +198,7 @@ public class HandleAbnormalController {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 }*/
                 express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-                smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
+                smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
                 expressList.add(express);
@@ -240,14 +240,15 @@ public class HandleAbnormalController {
             postDelivery.setMail_num(order.getMailNum());
             postDelivery.setOut_trade_no(order.getOrderNo());
             postDelivery.setPostman_id(user.getPostmanuserId());
-            postDelivery.setReceiver_address(order.getReciever().getAddress());
+
+            postDelivery.setReceiver_province(order.getReciever().getProvince());
             postDelivery.setReceiver_city(order.getReciever().getCity());
+            postDelivery.setReceiver_district(order.getReciever().getArea());
+            postDelivery.setReceiver_address(order.getReciever().getAddress());
             postDelivery.setReceiver_company_name("");
-            postDelivery.setReceiver_district("");
             postDelivery.setReceiver_name(order.getReciever().getName());
             postDelivery.setReceiver_phone(order.getReciever().getPhone());
-            postDelivery.setReceiver_province(order.getReciever().getProvince());
-            postDelivery.setSender_company_name(order.getSrc().getMessage());
+            postDelivery.setSender_company_name(order.getSrcMessage());
             Sender sender = order.getSender();
             if(sender!=null){
                 postDelivery.setSender_address(order.getSender().getAddress());

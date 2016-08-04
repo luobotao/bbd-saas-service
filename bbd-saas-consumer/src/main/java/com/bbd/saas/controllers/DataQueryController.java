@@ -16,6 +16,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class DataQueryController {
 	/**
 	 * Description: 跳转到数据查询页面
 	 * @param pageIndex 页数
-	 * @param status 运单状态
+	 * @param statusStr 状态集合status1,status2---
 	 * @param arriveBetween 到站时间
 	 * @param mailNum 运单号
 	 * @param request
@@ -67,17 +68,15 @@ public class DataQueryController {
 	 * 2016年4月22日下午6:27:46
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
 		try {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
 			}
-			//设置默认查询条件
-			status = Numbers.defaultIfNull(status, -1);//全部
 			//到站时间
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
-			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, mailNum, request);
+			PageModel<Order> orderPage = getList(pageIndex, statusStr, arriveBetween, mailNum, request);
 			/*for(Order order : orderPage.getDatas()){
 				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
@@ -95,7 +94,7 @@ public class DataQueryController {
 	/**
 	 * Description: 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
-	 * @param status 运单状态
+	 * @param statusStr 状态集合status1,status2---
 	 * @param arriveBetween 到站时间
 	 * @param mailNum 运单号
 	 * @param request
@@ -105,7 +104,7 @@ public class DataQueryController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<Order> getList(Integer pageIndex, Integer status, String arriveBetween, String mailNum, final HttpServletRequest request) {
+	public PageModel<Order> getList(Integer pageIndex, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request) {
 		//查询数据
 		PageModel<Order> orderPage = null;
 		try {
@@ -114,15 +113,23 @@ public class DataQueryController {
 			}
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-			status = Numbers.defaultIfNull(status, -1);
 			//当前登录的用户信息
 			User user = adminService.get(UserSession.get(request));
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.orderStatus = status;
 			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = user.getSite().getAreaCode();
+			orderQueryVO.arriveStatus = 1;
+			//状态集合
+			if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
+				String [] statusS = statusStr.split(",");
+				List<OrderStatus> orderStatusList = new ArrayList<OrderStatus>();
+				for(String status : statusS){
+					orderStatusList.add(OrderStatus.status2Obj(Integer.parseInt(status)));
+				}
+				orderQueryVO.orderStatusList = orderStatusList;
+			}
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
 			//设置派件员快递和电话
 			if(orderPage != null && orderPage.getDatas() != null){
@@ -230,7 +237,7 @@ public class DataQueryController {
 	}
 	/**
 	 * Description: 导出数据
-	 * @param status 状态
+	 * @param statusStr 状态集合status1,status2---
 	 * @param mailNum 运单号
 	 * @param request
 	 * @param response
@@ -239,7 +246,7 @@ public class DataQueryController {
 	 * 2016年4月15日下午4:30:41
 	 */
 	@RequestMapping(value="/exportToExcel", method=RequestMethod.GET)
-	public void exportData(Integer status, String arriveBetween_expt, String mailNum, 
+	public void exportData(String statusStr, String arriveBetween_expt, String mailNum,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		try {
 			if(mailNum != null){
@@ -251,10 +258,18 @@ public class DataQueryController {
 			String siteName = user.getSite().getName();
 			//设置查询条件
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			orderQueryVO.orderStatus = status;
 			orderQueryVO.arriveBetween = arriveBetween_expt;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = areaCode;
+			//运单状态集合
+			if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
+				String [] statusS = statusStr.split(",");
+				List<OrderStatus> orderStatusList = new ArrayList<OrderStatus>();
+				for(String status : statusS){
+					orderStatusList.add(OrderStatus.status2Obj(Integer.parseInt(status)));
+				}
+				orderQueryVO.orderStatusList = orderStatusList;
+			}
 			//查询数据
 			List<Order> orderList = orderService.findOrders(orderQueryVO);
 			//导出==数据写到Excel中并写入response下载
@@ -308,8 +323,7 @@ public class DataQueryController {
 			//表头
 			String[] titles = {  "站点名称", "站点编码","运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态","异常原因" };
 			int[] colWidths = {   6000, 3500,5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500, 3000, 3500, 3000,4000};
-			ExportUtil exportUtil = new ExportUtil();
-			exportUtil.exportExcel(siteName + "_数据导出", dataList, titles, colWidths, response);
+			ExportUtil.exportExcel(siteName + "_数据导出", dataList, titles, colWidths, response);
 		} catch (Exception e) {
 			logger.error("===数据导出===出错:" + e.getMessage());
 		}

@@ -32,18 +32,33 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-	  					<div class="row pb20">
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-	  							<label>状态：</label>
-	  							<select id="status" name="status" class="form-control form-con-new">
-	  								<%=OrderStatus.Srcs2HTML(-1)%>
-	  							</select>
+	  					<div class="row">
+	  						<div class="form-group plr">
+								<label>状态：　</label>
+								<div class="crt-s w400">
+									<div class="c-sel j-sel-input">
+										<span class="show-ele j-empty">请选择</span>
+										<div class='showA'><ul class='c-show cityshow' id="statusOpts"></ul></div>
+									</div>
+									<div class="all-area all-area1 pm-dn">
+										<!-- S 1 -->
+										<div class="pv-bg clearfix">
+											<%--<input id="statusName" type="text" class="sel-input" placeholder="请输入状态" />--%>
+											<div class="l-sel-p">
+												<ul class="pv-part" id="optionList2">
+													<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
+												</ul>
+											</div>
+										</div>
+										<!-- E 1 -->
+									</div>
+								</div>
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+	  						<div class="form-group plr">
 	  							<label>到站时间：</label>
 	  							<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
 	  						</div>
-	  						<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4 pad0">
+	  						<div class="form-group plr">
 	  							<label>运单号：</label>
 	  							<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
 	  						</div>
@@ -59,7 +74,7 @@
 				</form>
 				<!-- 用于导出 -->
 				<form action="<%=request.getContextPath()%>/dataQuery/exportToExcel" method="get" id="exptForm">
-					<input id="status_expt" name="status" type="hidden" />
+					<input id="status_expt" name="statusStr" type="hidden" />
 					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
@@ -218,6 +233,12 @@
     <em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<!-- S 状态多选择控件 -->
+<script type="text/javascript">
+	var  inputName = "statusOpt";
+</script>
+<script src="<c:url value="/resources/javascripts/multSelect.js" />"> </script>
+<!-- E 状态多选择控件  -->
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -248,7 +269,7 @@ function gotoPage(pageIndex) {
         url : "<%=path%>/dataQuery/getList",//路径  
         data : {  
             "pageIndex" : pageIndex,
-            "status" : $("#status").val(), 
+            "statusStr" : getMultValStr("statusOpts"),
             "arriveBetween" : $("#arriveBetween").val(), 
             "mailNum" : $("#mailNum").val() 
         },//数据，这里使用的是Json格式进行传输  
@@ -340,7 +361,7 @@ function getStatusCss(status){
 //S 运单状态样式
 //导出数据
 function exportData() {
-	$("#status_expt").val($("#status").val());
+	$("#status_expt").val(getMultValStr("statusOpts"));
 	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();

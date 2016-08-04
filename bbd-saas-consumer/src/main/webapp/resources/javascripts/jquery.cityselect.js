@@ -32,7 +32,7 @@
 
         // 默认值
         settings = $.extend({
-            url:  '/resources/javascripts/city.js?_123',
+            url:  '/resources/javascripts/city.js?_1',
             prov: null,
             city: null,
             dist: null,

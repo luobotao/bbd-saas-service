@@ -386,6 +386,7 @@ public class UserManageController {
 				setPostRole(user.getRole(), postmanUser);
 				//修改手机号
 				postmanUser.setStaffid(userForm.getLoginName());
+				postmanUser.setAreaCode(user.getSite().getAreaCode());
 				postmanUser.setPhone(userForm.getOldLoginName());
 				int i = userMysqlService.updateByPhone(postmanUser);
 				returnResult(i, map);

@@ -109,14 +109,13 @@ public class SiteKeyWordController {
 		//查询登录用户的公司下的所有站点
 		List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 		//火狐浏览器没有扩展名
-		//response.setContentType("application/binary;charset=ISO8859_1");
+		response.setContentType("application/binary;charset=ISO8859_1");
 		//扩展名.xlsx
-		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=ISO8859_1");
+		//response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=ISO8859_1");
 		try{
 			ServletOutputStream outputStream = response.getOutputStream();
 			String fileName = new String(("地址关键词").getBytes(), "ISO8859_1")+Dates.formatDate2(new Date());
 			response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".xlsx");// 组装附件名称和格式
-
 			String[] titles = { "站点名称", "省/直辖市", "市", "区", "地址关键词"};
 			int[] colWidths = { 10000, 5000, 5000, 5000, 20000};
 			exportExcel(siteVOList, titles, colWidths, outputStream, request);

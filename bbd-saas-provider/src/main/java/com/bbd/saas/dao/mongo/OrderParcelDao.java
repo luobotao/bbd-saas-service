@@ -75,7 +75,14 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
     public OrderParcel findOrderParcelByOrderId(String orderId) {
         return findOne(createQuery().filter("orderList._id",new ObjectId(orderId)));
     }
-
+    /**
+     * 根据订单的运单号查询该运单号所处的包裹
+     * @param mailNum
+     * @return
+     */
+    public OrderParcel findOrderParcelByMailNum(String mailNum) {
+        return findOne(createQuery().filter("orderList.mailNum",mailNum));
+    }
     /**
      * 根据运单号查询所有的包裹
      * @param trackNo
@@ -99,5 +106,18 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
         query.filter("src",order.getSrc());
         query.filter("status", ParcelStatus.Suspense);
         return findOne(query);
+    }
+
+    /**
+     * 根据站点编码和包裹状态获取包裹列表
+     * @param areaCode
+     * @param parcelStatus
+     * @return
+     */
+    public List<OrderParcel> findOrderParcelsByAreaCodeAndStatus(String areaCode, ParcelStatus parcelStatus) {
+        Query<OrderParcel> query = createQuery();
+        query.filter("areaCode",areaCode);
+        query.filter("status",parcelStatus);
+        return find(query).asList();
     }
 }

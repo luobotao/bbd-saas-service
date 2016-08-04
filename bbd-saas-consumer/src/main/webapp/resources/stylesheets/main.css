@@ -2083,7 +2083,7 @@ input.spe-input{
   height:40px;
 }
 .showA{
-  width:80%;
+  width:74%;
   overflow:hidden;
   position:absolute;
   top:0;
@@ -2136,7 +2136,7 @@ input.spe-input{
   display:inline-block;
 }
 .w400{
-  width:400px !important;
+  width:320px !important;
 }
 .c-dot{
   display:none;
@@ -2146,3 +2146,9 @@ input.spe-input{
 }
 
 /* E 模拟select */
+
+/* S 左右间距 */
+.plr{
+  padding:0 15px 20px;
+}
+/* E 左右间距 */

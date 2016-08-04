@@ -62,6 +62,10 @@
                                         <%=OrderStatus.Srcs2HTML(-1)%>
                                     </select>--%>
 								</div>
+								<div class="form-group plr">
+									<label>到站时间：</label>
+									<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
+								</div>
 								<div class="form-group pb20">
 									<label>　运单号：</label>
 									<input id="mailNum" name="mailNum" type="text" placeholder="请输入运单号" class="form-control"  />
@@ -83,7 +87,7 @@
 					<input id="area_expt" name="area" type="hidden" />
 					<input id="status_expt" name="statusStr" type="hidden" />
 					<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
-					<%--<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />--%>
+					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
 				<!-- E 搜索区域 -->
@@ -257,11 +261,19 @@ $(document).ready(function() {
 	//显示分页条
 	var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
-	//绘制电子围栏 -- 更改站点
-	/*$("#areaCode").change(function(){
-		var siteId = $("#fenceSiteId").val();
-		getSiteListByAddr();
-	});*/
+	//初始化到站时间框
+	$("#arriveBetween").daterangepicker({
+		locale: {
+			applyLabel: '确定',
+			cancelLabel: '取消',
+			fromLabel: '开始',
+			toLabel: '结束',
+			weekLabel: 'W',
+			customRangeLabel: 'Custom Range',
+			showDropdowns: true
+		},
+		format: 'YYYY/MM/DD'
+	});
 });
 
 //加载带有查询条件的指定页的数据
@@ -279,7 +291,7 @@ function gotoPage(pageIndex) {
             "pageIndex" : pageIndex,
 			"areaCodeStr" : getAreaCodeStr(),//站点编号集合
             "statusStr" : getAreaCodeStr("statusOpts"),
-            //"arriveBetween" : $("#arriveBetween").val(),
+            "arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
         },//数据，这里使用的是Json格式进行传输  
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
@@ -379,7 +391,7 @@ function exportData() {
 	$("#area_expt").val($("#addr_control .dist").val());
 	$("#status_expt").val(getAreaCodeStr("statusOpts"));
 	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
-	//$("#arriveBetween_expt").val($("#arriveBetween").val());
+	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();
 }

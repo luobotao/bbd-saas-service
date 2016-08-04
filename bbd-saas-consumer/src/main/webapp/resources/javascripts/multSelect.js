@@ -1,130 +1,22 @@
-var controlName = "codeOpt";
-if(isSiteId){
-	controlName = "idOpt";
-}
+
 if(inputName == null){
-	inputName = "areaCode";
+	inputName = "statusOpt";
 }
 $(document).ready(function() {
-	// 初始化省市区下拉框
-	$("#addr_control").citySelect({
-		prov: "",
-		city: "",
-		dist: "",
-		nodata: "none"
-	});
 	inputS(".j-sel-input",".all-area1");
-	inputS(".j-sel-input2",".all-area2");
 	selectS(".all-area1");
-	selectS(".all-area2");
-	// 省改变
-	$('#addr_control .prov').change(function(){
-		if(this.value == null || this.value == ""){
-			$('#cityLable').hide();
-		}else{
-			$('#cityLable').show();
-		}
-		$('#distLable').hide();
-		$("#addr_control .city").val("");//清空
-		$("#addr_control .dist").val("");
-		$("#"+inputName).val("");
-		//更新站点下拉框
-		getSiteListByAddr();
-	});
-	// 市改变
-	$('#addr_control .city').change(function(){
-		if(this.value == null || this.value == ""){
-			$('#distLable').hide();
-		}else{
-			$('#distLable').show();
-		}
-		$("#addr_control .dist").val("");//清空
-		$("#"+inputName).val("");
-		//更新站点下拉框
-		getSiteListByAddr();
-	}) ;
-	// 区改变
-	$('#addr_control .dist').change(function(){
-		$("#"+inputName).val("");//清空
-		//更新站点下拉框
-		getSiteListByAddr();
-	});
-	//站点搜索--边输入边改变
-	$("#"+inputName).on('input',function(e){
-		getSiteListByAddr();
-		$(".all-area2").show();
-	});
 });
-function getSiteListByAddr(){
-	$.ajax({
-		type : "GET",  //提交方式
-		url : siteUrl,//路径
-		data : {
-			"prov" : $("#addr_control .prov").val(),
-			"city" :  $("#addr_control .city").val(),
-			"area" :  $("#addr_control .dist").val(),
-			"siteName" :  $("#"+inputName).val()
-		},//数据，这里使用的是Json格式进行传输
-		success : function(data) {//返回数据
-			if (data != null ||data.length > 0){//全部
-				//更新站点下拉列表数据
-				loadSiteData(data);
-			}
-		},
-		error : function() {
-			ioutDiv("服务器繁忙，请稍后再试");
-		}
-	});
-}
-//更新站点下拉列表数据
-function loadSiteData(optionList){
-	var ulObj = $("#optionList");
-	//清空数据
-	ulObj.html("");
-	//为Select追加一个Option(下拉项)
-	if(optionList != null){
-		if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
-			ulObj.append(getOneOption("", "全部", 1));
-		}
-		var size = 0;
-		if(isSiteId){//取得站点id
-			optionList.forEach(function(option){
-				size = $('#options li[site="'+ option.id +'"]').size();
-				ulObj.append(getOneOption(option.id, option.name, 0, size));
-			});
-		}else{
-			optionList.forEach(function(option){
-				size = $('#options li[site="'+ option.code +'"]').size();
-				ulObj.append(getOneOption(option.code, option.name, 0, size));
-			});
-		}
-		selectS(".all-area2");
-	}
-
-}
-
-function getOneOption(id, name, isAll, checked){
-	var listr = "<li><label class='f12 linputC'><input type='checkbox' name='" + controlName + "' value='" + id + "' isAll='" + isAll + "'";
-	if(checked){
-		listr += "checked";
-	}
-	listr += "><b>" + name + "</b></label></li>";
-	return listr;
-}
 //获得站点多选框的值
-function getAreaCodeStr(ulId){
+function getMultValStr(ulId){
 	if(ulId == null){
 		ulId = "options";
 	}
-	/*if($("input[name='" + name + "'][isAll='1']:checked").length == 1){//全选
-	 return "";
-	 }*/
-	areaCodes = [];
+	codes = [];
 	//size = $('#options li[site="'+ option.id +'"]').size();
 	$("#" + ulId +" li").each(function(){
-		areaCodes.push($(this).attr("site"));
+		codes.push($(this).attr("site"));
 	});
-	return areaCodes.join(",");
+	return codes.join(",");
 }
 // 创建省略号
 $(".c-sel").append("<sub class='c-dot'>&hellip;</sub>")
