@@ -390,8 +390,7 @@ function initCourierList() {
         },
         error : function() {  
        		courierList = null;
-       		gotoLoginPage();
-       	}    
+       	}
     });
 }
 //出错跳转到登录页

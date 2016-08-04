@@ -191,11 +191,7 @@ function gotoPage(pageIndex) {
 			$("#pagin").html(pageStr);
 		},
         error : function() {  
-           	if(window.top==window.self){//不存在父页面
-				window.location.href="<c:url value="/login" />"
-			}else{
-				window.top.location.href="<c:url value="/login" />"
-			}
+
       	}    
     });	
 }	

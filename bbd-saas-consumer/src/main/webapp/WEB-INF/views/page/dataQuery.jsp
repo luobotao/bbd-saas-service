@@ -288,7 +288,6 @@ function gotoPage(pageIndex) {
 			$("#pagin").html(pageStr);
 		},
         error : function() {
-			ioutDiv("加载分页数据异常！");
 		}
     });	
 }	

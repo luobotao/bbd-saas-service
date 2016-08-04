@@ -369,8 +369,7 @@ function dispatch() {
 		    }
 		},
 		error : function() {  
-			gotoLoginPage();
-		}     
+		}
     });
 }  
 //加载带有查询条件的指定页的数据
@@ -402,8 +401,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);
 		},
         error : function() {  
-           gotoLoginPage();
-      	}    
+      	}
     });	
 }	
 //刷新列表--列表数据和分页条

@@ -283,8 +283,7 @@ function gotoPage(pageIndex) {
             refreshTable(dataObject);
 		},
         error : function() {  
-           	ioutDiv("加载分页数据异常！");
-      	}    
+      	}
     });	
 }	
 //刷新列表--列表数据和分页条

@@ -274,7 +274,6 @@
 				updateOrderNumVO();
 			},
 			error : function() {
-				ioutDiv("加载分页数据异常！");
 			}
 		});
 	}
