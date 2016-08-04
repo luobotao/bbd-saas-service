@@ -192,7 +192,7 @@ public class PackageDispatchController {
 		Key<Order> r = orderService.save(order);
 		if(r != null){
 			saveOneOrUpdatePost(order, user);
-			smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
+			smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
 				ExpressExchange expressExchange=new ExpressExchange();
 				expressExchange.setOperator(user.getRealName());
@@ -250,7 +250,7 @@ public class PackageDispatchController {
 			postDelivery.setReceiver_name(order.getReciever().getName());
 			postDelivery.setReceiver_phone(order.getReciever().getPhone());
 			postDelivery.setReceiver_province(order.getReciever().getProvince());
-			postDelivery.setSender_company_name(order.getSrc()== null ? "" : order.getSrc().getMessage());
+			postDelivery.setSender_company_name(order.getSrcMessage());
 			Sender sender = order.getSender();
 			if(sender!=null){
 				postDelivery.setSender_address(order.getSender().getAddress());
