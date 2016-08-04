@@ -242,10 +242,11 @@ public class PackageDispatchController {
 			postDelivery.setMail_num(order.getMailNum());
 			postDelivery.setOut_trade_no(order.getOrderNo());
 			postDelivery.setPostman_id(user.getPostmanuserId());
-			postDelivery.setReceiver_address(order.getReciever().getAddress());
+			postDelivery.setReceiver_province(order.getReciever().getProvince());
 			postDelivery.setReceiver_city(order.getReciever().getCity());
+			postDelivery.setReceiver_district(order.getReciever().getArea());
+			postDelivery.setReceiver_address(order.getReciever().getAddress());
 			postDelivery.setReceiver_company_name("");
-			postDelivery.setReceiver_district("");
 			postDelivery.setReceiver_name(order.getReciever().getName());
 			postDelivery.setReceiver_phone(order.getReciever().getPhone());
 			postDelivery.setReceiver_province(order.getReciever().getProvince());
