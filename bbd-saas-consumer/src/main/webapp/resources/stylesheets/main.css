@@ -1412,7 +1412,7 @@ select.form-control::-ms-expand { display: none; }
 }
 @media screen and (-webkit-min-device-pixel-ratio:0){.daterangepicker{width:670px;}}{} /* safari(Chrome) 有效 */
 .daterangepicker .calendar{
-  max-width:300px !important;;
+  max-width:238px !important;;
 }
 /* E 修改 */
 /* 循环加载 开始*/
