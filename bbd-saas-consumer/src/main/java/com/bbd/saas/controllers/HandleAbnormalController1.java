@@ -91,7 +91,7 @@ public class HandleAbnormalController1 {
         } catch (Exception e) {
             logger.error("===跳转到异常件处理页面===出错:" + e.getMessage());
         }
-        return "page/handleAbnormal";
+        return "page/handleAbnormal1";
     }
 
     //分页Ajax更新
@@ -178,7 +178,7 @@ public class HandleAbnormalController1 {
             Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
             if (order == null) {//运单不存在,与站点无关--正常情况不会执行
                 map.put("operFlag", 0);//0:运单号不存在
-            }else if(order.getUserId() != null && !"".equals(order.getUserId())){//重复扫描，此运单已分派过了 {
+            }else if(StringUtils.isNotBlank(order.getUserId())){//重复扫描，此运单已分派过了 {
                 User courier1 = userService.findOne(order.getUserId());
                 map.put("courierName", courier1 != null ? courier1.getRealName() : "");
                 map.put("operFlag", 2);//2:此运单已分派过了
@@ -382,7 +382,7 @@ public class HandleAbnormalController1 {
                 map.put("operFlag", 2);//已转其他站点
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else if(OrderStatus.RETENTION.equals(order.getOrderStatus())||OrderStatus.REJECTION.equals(order.getOrderStatus())){
+            } else if(OrderStatus.RETENTION  != order.getOrderStatus() && OrderStatus.REJECTION != order.getOrderStatus()){
                 map.put("operFlag", 3);//只有滞留||拒收的才能转其他站点
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
@@ -484,7 +484,7 @@ public class HandleAbnormalController1 {
                 map.put("operFlag", 2);//此运单已经申请退货啦
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else if(OrderStatus.RETENTION.equals(order.getOrderStatus())||OrderStatus.REJECTION.equals(order.getOrderStatus())){
+            } else if(order.getOrderStatus() != OrderStatus.RETENTION && order.getOrderStatus() != OrderStatus.REJECTION){
                 map.put("operFlag", 3);//只有滞留或者拒收的运单才能申请退货
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
@@ -568,7 +568,7 @@ public class HandleAbnormalController1 {
                     map.put("operFlag", 2);//已转其他快递
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                } else if (OrderStatus.RETENTION.equals(order.getOrderStatus()) || OrderStatus.REJECTION.equals(order.getOrderStatus())) {
+                } else if (order.getOrderStatus() != OrderStatus.RETENTION && order.getOrderStatus() != OrderStatus.REJECTION) {
                     map.put("operFlag", 3);//只有滞留或者拒收的运单才能转其他快递
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
