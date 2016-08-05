@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by luobotao on 2016/4/8.
  */
 public class LoginInterceptor extends HandlerInterceptorAdapter {
-    private static final String[] IGNORE_URI = {"/login","/500","/404","/resources","/site/","/system","register","bbd/","main.jsp","sendVerifyCode","subscribe/"};
+    private static final String[] IGNORE_URI = {"/login","/500","/404","/resources","/site/","/system","register","bbd/","main.jsp","sendVerifyCode","subscribe/","/geoMailManage"};
 
     @Autowired
     AdminService adminService;
