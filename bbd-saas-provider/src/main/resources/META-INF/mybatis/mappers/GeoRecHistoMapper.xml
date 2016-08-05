@@ -35,5 +35,25 @@
         <include refid="baseColumnList"/>
         FROM `geo_rec_histo` where #{orderNo,jdbcType=VARCHAR} = orderNo
     </select>
+    <!--根据订单号查询-->
+    <select id="selectByAddrAndDates" resultMap="baseResultMap">
+        SELECT  orderNo, address, lat, lng
+        FROM `geo_rec_histo`
+        <where>
+            <if test="prov != null ">
+                province like CONCAT('%',#{prov},'%' )
+            </if>
+            <if test="city != null ">
+                and city like CONCAT('%',#{city},'%' )
+            </if>
+            <if test="area != null ">
+                and area like CONCAT('%',#{area},'%' )
+            </if>
+            <if test="startDate != null and startDate != ''">
+                 and `dateAdd` BETWEEN #{startDate} and #{endDate}
+            </if>
+        </where>
+
+    </select>
 
 </mapper>

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 返现Service实现
@@ -22,10 +23,10 @@ public class GeoRecHistoServiceImpl implements GeoRecHistoService {
         return geoRecHistoDao;
     }
 
+
     public void setGeoRecHistoDao(GeoRecHistoDao geoRecHistoDao) {
         this.geoRecHistoDao = geoRecHistoDao;
     }
-
 
     @Override
     public void insert(GeoRecHisto geoRecHisto) {
@@ -36,4 +37,10 @@ public class GeoRecHistoServiceImpl implements GeoRecHistoService {
     public GeoRecHisto findOneByOrderNo(String orderNo) {
         return geoRecHistoDao.findOneByOrderNo(orderNo);
     }
+
+    @Override
+    public List<GeoRecHisto> findByDates(String prov, String city, String area, String startDate, String endDate) {
+        return geoRecHistoDao.selectByAddrAndDates(prov, city, area, startDate, endDate);
+    }
+
 }
