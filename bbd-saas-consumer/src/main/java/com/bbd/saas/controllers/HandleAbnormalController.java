@@ -475,7 +475,7 @@ public class HandleAbnormalController {
             //当前登录的用户信息
             User currUser = adminService.get(UserSession.get(request));
             //查询运单信息
-            Order order = orderService.findOneByMailNum(null, mailNum);
+            Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
             if(order == null){
                 map.put("operFlag", -1);//-1:运单号不存在
             }else if(order.getOrderStatus() == OrderStatus.APPLY_RETURN){//已申请退货
@@ -555,7 +555,7 @@ public class HandleAbnormalController {
             User currUser = adminService.get(UserSession.get(request));
             Order order = null;
             if (StringUtils.isNotBlank(mailNum)) {
-                order = orderService.findOneByMailNum(null, mailNum);
+                order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
                 if (order == null) {//运单不存在,与站点无关--正常情况不会执行
                     map.put("operFlag", -1);//-1:运单号不存在
                     //刷新列表
