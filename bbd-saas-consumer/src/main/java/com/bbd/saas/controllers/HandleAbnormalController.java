@@ -27,17 +27,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Controller
 @RequestMapping("/handleAbnormal")
-@SessionAttributes("handleAbnormal")
 public class HandleAbnormalController {
 
-    public static final Logger logger = LoggerFactory.getLogger(HandleAbnormalController.class);
+    public static final Logger logger = LoggerFactory.getLogger(HandleAbnormalController1.class);
 
     @Autowired
     OrderService orderService;
@@ -178,7 +176,13 @@ public class HandleAbnormalController {
             Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
             if (order == null) {//运单不存在,与站点无关--正常情况不会执行
                 map.put("operFlag", 0);//0:运单号不存在
-            } else {//运单存在
+            }else if(StringUtils.isNotBlank(order.getUserId())){//重复扫描，此运单已分派过了 {
+                User courier1 = userService.findOne(order.getUserId());
+                map.put("courierName", courier1 != null ? courier1.getRealName() : "");
+                map.put("operFlag", 2);//2:此运单已分派过了
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+            }else{//运单存在
                 //查询派件员
                 User courier = userService.findOne(userId);
                 order.setUserId(userId);
@@ -198,7 +202,7 @@ public class HandleAbnormalController {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 }*/
                 express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-                smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
+                smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
                 expressList.add(express);
@@ -216,6 +220,7 @@ public class HandleAbnormalController {
                 } else {
                     map.put("operFlag", 0);//0:分派失败
                 }
+
             }
         } catch (Exception e) {
             logger.error("===运单重新分派===出错:" + e.getMessage());
@@ -240,7 +245,6 @@ public class HandleAbnormalController {
             postDelivery.setMail_num(order.getMailNum());
             postDelivery.setOut_trade_no(order.getOrderNo());
             postDelivery.setPostman_id(user.getPostmanuserId());
-
             postDelivery.setReceiver_province(order.getReciever().getProvince());
             postDelivery.setReceiver_city(order.getReciever().getCity());
             postDelivery.setReceiver_district(order.getReciever().getArea());
@@ -248,7 +252,8 @@ public class HandleAbnormalController {
             postDelivery.setReceiver_company_name("");
             postDelivery.setReceiver_name(order.getReciever().getName());
             postDelivery.setReceiver_phone(order.getReciever().getPhone());
-            postDelivery.setSender_company_name(order.getSrcMessage());
+            postDelivery.setReceiver_province(order.getReciever().getProvince());
+            postDelivery.setSender_company_name(order.getSrc().getMessage());
             Sender sender = order.getSender();
             if(sender!=null){
                 postDelivery.setSender_address(order.getSender().getAddress());
@@ -365,9 +370,20 @@ public class HandleAbnormalController {
             //当前登录的用户信息
             User currUser = adminService.get(UserSession.get(request));
             //查询运单信息
-            Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+            //Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+            Order order = orderService.findOneByMailNum(mailNum);
             if (order == null) {//运单不存在,与站点无关--正常情况不会执行
                 map.put("operFlag", 0);//0:运单号不存在
+            } else if(!currUser.getSite().getAreaCode().equals(order.getAreaCode())){
+                Site site = siteService.findSiteByAreaCode(order.getAreaCode());
+                map.put("siteName", site != null ? site.getName() : "");//已转其他站点
+                map.put("operFlag", 2);//已转其他站点
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+            } else if(OrderStatus.RETENTION  != order.getOrderStatus() && OrderStatus.REJECTION != order.getOrderStatus()){
+                map.put("operFlag", 3);//只有滞留||拒收的才能转其他站点
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             } else {//运单存在
                 String fromAreaCode = order.getAreaCode();
                 Site site = siteService.findSite(siteId);
@@ -456,12 +472,22 @@ public class HandleAbnormalController {
     public Map<String, Object> dispatch(String mailNum, Integer rtnReason, String rtnRemark, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
+            //当前登录的用户信息
+            User currUser = adminService.get(UserSession.get(request));
             //查询运单信息
-            Order order = orderService.findOneByMailNum("", mailNum);
-            if(order != null){
+            Order order = orderService.findOneByMailNum(null, mailNum);
+            if(order == null){
+                map.put("operFlag", -1);//-1:运单号不存在
+            }else if(order.getOrderStatus() == OrderStatus.APPLY_RETURN){//已申请退货
+                map.put("operFlag", 2);//此运单已经申请退货啦
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+            } else if(order.getOrderStatus() != OrderStatus.RETENTION && order.getOrderStatus() != OrderStatus.REJECTION){
+                map.put("operFlag", 3);//只有滞留或者拒收的运单才能申请退货
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+            }else{
                 ReturnReason reason = returnReasonService.findOneByStatus(rtnReason);
-                //当前登录的用户信息
-                User currUser = adminService.get(UserSession.get(request));
                 order.setRtnReason(reason.getMessage());//退货原因
                 order.setRtnRemark(rtnRemark);//退货备注
                 order.setDateAplyRtn(new Date());//申请退货时间
@@ -481,17 +507,12 @@ public class HandleAbnormalController {
                 //更新运单
                 Key<Order> r = orderService.save(order);
                 if(r != null){
-                    map.put("success", true);//成功
-                    map.put("msg", "申请退货成功");//0
+                    map.put("operFlag", 1);//成功
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
                 }else{
-                    map.put("success", false);//失败
-                    map.put("msg", "申请退货失败，请稍候再试");
+                    map.put("operFlag", 0);//失败
                 }
-            }else{
-                map.put("success", false);//0:运单号不存在
-                map.put("msg", "运单不存在");//0
             }
         } catch (Exception e) {
             logger.error("===退货===出错:" + e.getMessage());
@@ -501,9 +522,7 @@ public class HandleAbnormalController {
     /**************************申请退货***************结束***********************************/
 
 
-    /**************************
-     * 转为其他快递   得到所有的快递公司***************开始
-     ***********************************/
+    /************************ 转为其他快递   得到所有的快递公司 *************** 开始 **********************/
     @ResponseBody
     @RequestMapping(value = "/getExpressCompanys", method = RequestMethod.GET)
     public List<ExpressCompany> getExpressCompanys() {
@@ -534,59 +553,82 @@ public class HandleAbnormalController {
         try {
             //当前登录的用户信息
             User currUser = adminService.get(UserSession.get(request));
-            //查询运单信息
-            Order order = updExpressForToOtherCmp(companyId, mailNum, mailNumNew, currUser);
-            Sender sender = order.getSender();
-            Reciever reciever = order.getReciever();
-            StringBuffer fromSB = new StringBuffer();
-            StringBuffer toSB = new StringBuffer();
-            if (sender != null){
-                fromSB.append(sender.getProvince());
-                fromSB.append(sender.getCity());
-                fromSB.append(sender.getArea());
-                fromSB.append(sender.getAddress());
-            }
-            if (reciever != null){
-                toSB.append(reciever.getProvince());
-                toSB.append(reciever.getCity());
-                toSB.append(reciever.getArea());
-                toSB.append(reciever.getAddress());
-            }
-            ResultResposeDTO resposeDTO = goTo100Subscribe("", "", companyId, mailNum,
-                    fromSB.toString(), toSB.toString(), mailNumNew);
-            if(resposeDTO != null){
-                String message=   resposeDTO.getMessage();
-                /*if(message.contains("重复订阅")) {//失败
-                    map.put("success", false);
-                    map.put("msg", "重复订阅");
-                    logger.info("= 转其他快递==重复订阅==="  );
-                }else{//成功
-                    //更新运单
-                    Key<Order> r = orderService.save(order);
-                    if(r != null){
-                        map.put("success", true);//成功
-                        map.put("msg", "转运信息添加成功");//0
-                        //刷新列表
-                        map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                    }else{
-                        map.put("success", false);//失败
-                        map.put("msg", "转运信息添加失败，请稍候再试");
-                    }
-                }*/
-                //更新运单
-                Key<Order> r = orderService.save(order);
-                if(r != null){
-                    map.put("success", true);//成功
-                    map.put("msg", "转运信息添加成功");//0
+            Order order = null;
+            if (StringUtils.isNotBlank(mailNum)) {
+                order = orderService.findOneByMailNum(null, mailNum);
+                if (order == null) {//运单不存在,与站点无关--正常情况不会执行
+                    map.put("operFlag", -1);//-1:运单号不存在
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                }else{
-                    map.put("success", false);//失败
-                    map.put("msg", "转运信息添加失败，请稍候再试");
+                } else if (order.getOrderStatus() == OrderStatus.TO_OTHER_EXPRESS) {//已转其他快递
+                    Site site = siteService.findSiteByAreaCode(order.getAreaCode());
+                    map.put("companyName", site != null ? site.getCompanyName() : "");//已转其他快递
+                    map.put("operFlag", 2);//已转其他快递
+                    //刷新列表
+                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+                } else if (order.getOrderStatus() != OrderStatus.RETENTION && order.getOrderStatus() != OrderStatus.REJECTION) {
+                    map.put("operFlag", 3);//只有滞留或者拒收的运单才能转其他快递
+                    //刷新列表
+                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+                } else {
+                    //查询运单信息
+                    order = updExpressForToOtherCmp(order, companyId, mailNum, mailNumNew, currUser);
+                    Sender sender = order.getSender();
+                    Reciever reciever = order.getReciever();
+                    StringBuffer fromSB = new StringBuffer();
+                    StringBuffer toSB = new StringBuffer();
+                    if (sender != null) {
+                        fromSB.append(sender.getProvince());
+                        fromSB.append(sender.getCity());
+                        fromSB.append(sender.getArea());
+                        fromSB.append(sender.getAddress());
+                    }
+                    if (reciever != null) {
+                        toSB.append(reciever.getProvince());
+                        toSB.append(reciever.getCity());
+                        toSB.append(reciever.getArea());
+                        toSB.append(reciever.getAddress());
+                    }
+                    ResultResposeDTO resposeDTO = goTo100Subscribe("", "", companyId, mailNum,
+                            fromSB.toString(), toSB.toString(), mailNumNew);
+                    if (resposeDTO != null) {
+                        String message = resposeDTO.getMessage();
+                        /*if(message.contains("重复订阅")) {//失败
+                            map.put("success", false);
+                            map.put("msg", "重复订阅");
+                            logger.info("= 转其他快递==重复订阅==="  );
+                        }else{//成功
+                            //更新运单
+                            Key<Order> r = orderService.save(order);
+                            if(r != null){
+                                map.put("success", true);//成功
+                                map.put("msg", "转运信息添加成功");//0
+                                //刷新列表
+                                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+                            }else{
+                                map.put("success", false);//失败
+                                map.put("msg", "转运信息添加失败，请稍候再试");
+                            }
+                        }*/
+                        //更新运单
+                        Key<Order> r = orderService.save(order);
+                        if (r != null) {
+                            map.put("operFlag", 1);//成功
+                            map.put("msg", "转运信息添加成功");//0
+                            //刷新列表
+                            map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
+                        } else {
+                            map.put("operFlag", 0);//失败
+                            map.put("msg", "转运信息添加失败，请稍候再试");
+                        }
+                    } else {
+                        map.put("operFlag", 0);//0:运单号不存在
+                        map.put("msg", "转运信息添加失败，请稍候再试");//0
+                    }
                 }
             }else{
-                map.put("success", false);//0:运单号不存在
-                map.put("msg", "转运信息添加失败，请稍候再试");//0
+                map.put("operFlag", 0);//0:运单号不存在
+                map.put("msg", "运单号不能为空");//0
             }
         } catch (Exception e) {
             logger.error("===转其他快递操作===出错:" + e.getMessage());
@@ -601,10 +643,10 @@ public class HandleAbnormalController {
      * @param mailNumNew
      * @return
      */
-    private Order updExpressForToOtherCmp(String companyId, String mailNum, String mailNumNew, User currUser){
+    private Order updExpressForToOtherCmp( Order order, String companyId, String mailNum, String mailNumNew, User currUser){
+
         String companyName = null;
         String companyCode = null;
-        Order order = null;
         if (StringUtils.isNoneBlank(companyId)) {
             ExpressCompany expressCompany = expressCompanyService.getExpressCompanyById(Integer.valueOf(companyId));
             if (null != expressCompany) {
@@ -612,37 +654,31 @@ public class HandleAbnormalController {
                 companyCode = expressCompany.getCompanycode();
             }
         }
-        if (StringUtils.isNotBlank(mailNum)) {
-            order = orderService.findOneByMailNum("", mailNum);
-            if (order != null) {
-                //更新状态
-                order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
-                //更新getOtherExprees字段
-                List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
-                if (otherExpressList == null || otherExpressList.isEmpty()) {
-                    otherExpressList = Lists.newArrayList();
-                }
-                OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
-                if (StringUtils.isNotBlank(mailNumNew)) {
-                    otherExpreeVO.setMailNum(mailNumNew);
-                }
-                otherExpreeVO.setCompanyname(companyName);
-                StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发【") ;
-                expRemark.append(companyName);
-                expRemark.append("】，快递单号：");
-                expRemark.append(mailNumNew);
-                otherExpreeVO.setContext(expRemark.toString());
-                otherExpreeVO.setCompanycode(companyCode);
-                otherExpreeVO.setDateUpd(new Date());
-                otherExpressList.add(otherExpreeVO);
-                order.setOtherExprees(otherExpressList);
-                order.setDateUpd(new Date());
-                //更新expresses字段
-                OrderCommon.addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
-            }
+        //更新状态
+        order.setOrderStatus(OrderStatus.TO_OTHER_EXPRESS);
+        //更新getOtherExprees字段
+        List<OtherExpreeVO> otherExpressList = order.getOtherExprees();
+        if (otherExpressList == null || otherExpressList.isEmpty()) {
+            otherExpressList = Lists.newArrayList();
         }
+        OtherExpreeVO otherExpreeVO = new OtherExpreeVO();
+        if (StringUtils.isNotBlank(mailNumNew)) {
+            otherExpreeVO.setMailNum(mailNumNew);
+        }
+        otherExpreeVO.setCompanyname(companyName);
+        StringBuffer expRemark = new StringBuffer("订单超出站点配送范围，已转发【") ;
+        expRemark.append(companyName);
+        expRemark.append("】，快递单号：");
+        expRemark.append(mailNumNew);
+        otherExpreeVO.setContext(expRemark.toString());
+        otherExpreeVO.setCompanycode(companyCode);
+        otherExpreeVO.setDateUpd(new Date());
+        otherExpressList.add(otherExpreeVO);
+        order.setOtherExprees(otherExpressList);
+        order.setDateUpd(new Date());
+        //更新expresses字段
+        OrderCommon.addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
         return order;
-
     }
 
     /**
@@ -657,7 +693,7 @@ public class HandleAbnormalController {
      * @return
      */
     public ResultResposeDTO goTo100Subscribe(String salt, String resultv2, String companyId, String mailNum,
-            String from, String to, String mailNumNew) {
+                                             String from, String to, String mailNumNew) {
 
         logger.info("向100快递 ------订阅");
         String epree100Resultv2 = "";
@@ -680,13 +716,13 @@ public class HandleAbnormalController {
                 companyCode = expressCompany.getCompanycode();
             }
         }
-           //为快递100 订阅 填充参数数据
+        //为快递100 订阅 填充参数数据
 
         Map<String, String> requestVO = new HashMap<>();//创建requestVo,用于封装订阅 快递100 的单个对象
         Expree100BodyVO expree100BodyVO = new Expree100BodyVO();//用于封装requestVO对象，封装expree100ParametersVO对象
         Expree100ParametersVO expree100ParametersVO = new Expree100ParametersVO();//用于封装parameters 对象
 
-       //填充expree100ParametersVO对象
+        //填充expree100ParametersVO对象
         expree100ParametersVO.setCallbackurl(EPREE100_CALLBACK_URL);
         expree100ParametersVO.setSalt(epree100Resultv2);
         expree100ParametersVO.setResultv2(epree100Resultv2);
@@ -735,12 +771,9 @@ public class HandleAbnormalController {
             }
         }catch (Exception e) {
 
-           e.printStackTrace();
+            e.printStackTrace();
             logger.info("[login error]"+e.getMessage());
         }
         return resultResposeDTO;
     }
-
-
-
 }
