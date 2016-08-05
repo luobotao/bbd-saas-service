@@ -174,13 +174,13 @@
 		var marker = new BMap.Marker(point);// 创建标注
 		addrMap.addOverlay(marker);             // 将标注添加到地图中
 		//console.log(address);
-		if(address.indexOf(",") > -1){
+		/*if(address.indexOf(",") > -1){
 			address = address.substr(address.indexOf(",")+1);
 		}
 		// orderNo+","+address
 		//console.log(address);
 		var label = newLabel(point,address);
-		addrMap.addOverlay(label);
+		addrMap.addOverlay(label);*/
 		return marker;
 	}
 
