@@ -113,7 +113,7 @@
 		//console.log("center==="+center);
 		addrMap.centerAndZoom(center);
 		//初始化到站时间框
-		$("#arriveBetween").daterangepicker({
+		$("#dateBetween").daterangepicker({
 			locale: {
 				applyLabel: '确定',
 				cancelLabel: '取消',
@@ -159,9 +159,9 @@
 	function initAddrMap(){
 		addrMap.enableScrollWheelZoom(true);
 		//显示订单目的地
-		<c:if test="${orderPointList != null}">
-			<c:forEach items="${orderPointList}" var="orderPoint">
-				showPoint("${orderPoint.lng}", "${orderPoint.lat}", "${orderPoint.orderNo}","${orderPoint.address}");
+		<c:if test="${dataList != null}">
+			<c:forEach items="${dataList}" var="data">
+				showPoint("${data.lng}", "${data.lat}", "${data.orderNo}","${data.address}");
 			</c:forEach>
 		</c:if>
 
@@ -173,65 +173,37 @@
 //		console.log("name==="+name+"   isSource==="+isSource);
 		var marker = new BMap.Marker(point);// 创建标注
 		addrMap.addOverlay(marker);             // 将标注添加到地图中
-		//console.log(address);
-		/*if(address.indexOf(",") > -1){
+		/*var opts = {
+			width : 250,     // 信息窗口宽度
+			height: 80,     // 信息窗口高度
+			title : "" , // 信息窗口标题
+			enableMessage:false//设置允许信息窗发送短息
+		};
+		if(address.indexOf(",") > -1){
 			address = address.substr(address.indexOf(",")+1);
 		}
+		addClickHandler(address,marker);
+		function addClickHandler(content,marker){
+			marker.addEventListener("click",function(e){
+				openInfo(content,e)}
+			);
+		}
+		function openInfo(content,e){
+			var p = e.target;
+			var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+			var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+			map.openInfoWindow(infoWindow,point); //开启信息窗口
+		}*/
+		/*
 		// orderNo+","+address
-		//console.log(address);
 		var label = newLabel(point,address);
-		addrMap.addOverlay(label);*/
+		addrMap.addOverlay(label);
+		*/
 		return marker;
 	}
 
 	/*****************************************************************************/
-	//一个站点的电子围栏，pointstr(lng_lat,lng_lat,***;lng_lat,lng_lat,***)
-	function EFenceObj(name, pointStrs, siteLng, siteLat){
-		this.name = name;
-		this.pointStrs = pointStrs;
-		this.siteLng = siteLng;
-		this.siteLat = siteLat;
-		this.pointArray = [];
-		this.loadData = function(){
-			if(this.pointStrs == null || this.pointStrs == ""){
-				return;
-			}
-			var pointArray = this.pointStrs.split(";");
-			for (var i = 0; i < pointArray.length; i++) {
-				var arr = pointArray[i].split(",");
-				var barr = [];
-				for (var j = 0; j < arr.length; j++) {
-					var tmp = arr[j].split("_");
-					barr.push(new BMap.Point(tmp[0], tmp[1]));
-				}
-				this.pointArray.push(barr);
-			}
-		}
-		this.show = function(){
-			if(this.pointArray == null || this.pointArray == ""){
-				return;
-			}
-			var name = this.name;
-			this.pointArray.forEach(function(e){
-				var myPolygon = new BMap.Polygon(e);
-				addrMap.addOverlay(myPolygon);
-				//在多边形中心点显示站点名称
-				var bounds = myPolygon.getBounds();
-				var poi = bounds.getCenter();
-				var efencelabel = newLabel(poi, name);
-				addrMap.addOverlay(efencelabel);
-				/*var myIcon = new BMap.Icon("${ctx}/resources/images/b_marker.png", new BMap.Size(39,50));
-				 var marker = new BMap.Marker(poi,{icon:myIcon});  // 创建标注
-				 addrMap.addOverlay(marker);               // 将标注添加到地图中*/
-			});
 
-		}
-		this.loadDataAndShow = function(isEdit){
-			this.loadData();
-			this.show(isEdit);
-		}
-
-	}
 	function newLabel(point, name){
 		var opts = null;
 		opts = {
@@ -250,28 +222,45 @@
 	}
 	/*****************************************************************************/
 	/************************************ S 修正位置 *****************************************/
-	function getData(){
-		var url = "<c:url value='/geoMailManage/getDataList?${_csrf.parameterName}=${_csrf.token}'/>";
+	function getData(pageIndex){
+		if(pageIndex == null){
+			pageIndex = 0;
+		}
+		var url = "<c:url value='/geoMailManage/getDataList'/>";
 		$.ajax({
 			url: url,
-			type: 'POST',
+			type: 'GET',
 			cache: false,
 			data: {
+				"pageIndex" : pageIndex,
 				"prov" : $("#addr_control .prov").val(),
 				"city" :  $("#addr_control .city").val(),
 				"area" :  $("#addr_control .dist").val(),
 				"dateBetween" : $("#dateBetween").val()
 			},
-			success: function(dataList){
-				//清除所有覆盖物
-				addrMap.clearOverlays();
-				//地图中心点
-				var addr = $("#addr_control .prov").val()+$("#addr_control .city").val()+$("#addr_control .dist").val();
-				if(addr == "" || addr == null){
-					addr = center;
+			success: function(dataMap){
+				console.log(dataMap);
+				if(pageIndex == 0){//第一次请求的时候，清空地图覆盖物，并设置地图中心点
+					console.log("第一次请求的时候，清空地图覆盖物，并设置地图中心点");
+					//清除所有覆盖物
+					addrMap.clearOverlays();
+					//地图中心点
+					var addr = $("#addr_control .prov").val()+$("#addr_control .city").val()+$("#addr_control .dist").val();
+					if(addr == "" || addr == null){
+						addr = center;
+					}
+					addrMap.centerAndZoom(addr);
+					//多个Ajax同时请求其他剩余的数据
+					var totalPages = dataMap.totalPages;
+					if(totalPages > 1){
+						for(var i = 1; i < totalPages; i++){
+							getData(i);
+						}
+					}
 				}
-				addrMap.centerAndZoom(addr);
+				var dataList = dataMap.dataList;
 				//显示点
+				console.log("pageIndex===" + pageIndex + "   len==="+dataList.length);
 				if(dataList != null && dataList.length > 0){
 					for(var i = 0; i < dataList.length; i++){
 						showPoint(dataList[i].lng, dataList[i].lat, dataList[i].orderNo,dataList[i].address);

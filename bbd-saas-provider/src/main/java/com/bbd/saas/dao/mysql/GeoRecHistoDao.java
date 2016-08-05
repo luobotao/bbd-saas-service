@@ -13,10 +13,27 @@ public interface GeoRecHistoDao {
     GeoRecHisto findOneByOrderNo(String orderNo);
 
     /**
-     * 根据时间范围查询
+     * 根据地址和时间范围分页查询
+     * @param prov 省
+     * @param city 市
+     * @param area 区|县
      * @param startDate 开始时间
      * @param endDate 结束时间
+     * @param skip 跳过的条数
+     * @param step 查询的条数
      * @return 符合条件的列表数据
      */
-    List<GeoRecHisto> selectByAddrAndDates(@Param("prov")String prov, @Param("city")String city, @Param("area")String area, @Param("startDate")String startDate, @Param("endDate")String endDate);
+    List<GeoRecHisto> selectPageByAddrAndDates(@Param("prov")String prov, @Param("city")String city, @Param("area")String area, @Param("startDate")String startDate, @Param("endDate")String endDate, @Param("skip")int skip, @Param("step")int step);
+    /**
+     * 根据地址和时间范围查询数据条数
+     * @param prov 省
+     * @param city 市
+     * @param area 区|县
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return 符合条件的数据条数
+     */
+    int selectCountByAddrAndDates(@Param("prov")String prov, @Param("city")String city, @Param("area")String area, @Param("startDate")String startDate, @Param("endDate")String endDate);
+
+
 }

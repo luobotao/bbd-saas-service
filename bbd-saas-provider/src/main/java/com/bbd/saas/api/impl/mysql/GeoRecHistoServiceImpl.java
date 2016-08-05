@@ -39,8 +39,12 @@ public class GeoRecHistoServiceImpl implements GeoRecHistoService {
     }
 
     @Override
-    public List<GeoRecHisto> findByDates(String prov, String city, String area, String startDate, String endDate) {
-        return geoRecHistoDao.selectByAddrAndDates(prov, city, area, startDate, endDate);
+    public List<GeoRecHisto> findByAddrAndDates(String prov, String city, String area, String startDate, String endDate, Integer pageIndex, Integer pageSize) {
+        return geoRecHistoDao.selectPageByAddrAndDates(prov, city, area, startDate, endDate, pageIndex*pageSize, pageSize);
     }
 
+    @Override
+    public int findCountByAddrAndDates(String prov, String city, String area, String startDate, String endDate) {
+        return geoRecHistoDao.selectCountByAddrAndDates(prov, city, area, startDate, endDate);
+    }
 }

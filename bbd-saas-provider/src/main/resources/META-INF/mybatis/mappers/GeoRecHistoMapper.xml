@@ -35,25 +35,47 @@
         <include refid="baseColumnList"/>
         FROM `geo_rec_histo` where #{orderNo,jdbcType=VARCHAR} = orderNo
     </select>
-    <!--根据订单号查询-->
-    <select id="selectByAddrAndDates" resultMap="baseResultMap">
+    <!--根据地址和时间范围分页查询 start-->
+    <select id="selectPageByAddrAndDates" resultMap="baseResultMap">
         SELECT  orderNo, address, lat, lng
         FROM `geo_rec_histo`
         <where>
             <if test="prov != null ">
-                province like CONCAT('%',#{prov},'%' )
+                province like CONCAT(#{prov},'%' )
             </if>
             <if test="city != null ">
-                and city like CONCAT('%',#{city},'%' )
+                and city like CONCAT(#{city},'%' )
             </if>
             <if test="area != null ">
-                and area like CONCAT('%',#{area},'%' )
+                and area like CONCAT(#{area},'%' )
             </if>
             <if test="startDate != null and startDate != ''">
                  and `dateAdd` BETWEEN #{startDate} and #{endDate}
             </if>
         </where>
-
+        <if test="step > 0" >
+            limit #{skip} , #{step}
+        </if>
     </select>
-
+    <!--根据地址和时间范围分页查询 end-->
+    <!--根据地址和时间范围查询数据条数 start-->
+    <select id="selectCountByAddrAndDates" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        from `geo_rec_histo`
+        <where>
+            <if test="prov != null ">
+                province like CONCAT(#{prov},'%' )
+            </if>
+            <if test="city != null ">
+                and city like CONCAT(#{city},'%' )
+            </if>
+            <if test="area != null ">
+                and area like CONCAT(#{area},'%' )
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and `dateAdd` BETWEEN #{startDate} and #{endDate}
+            </if>
+        </where>
+    </select>
+    <!--根据地址和时间范围查询数据条数 end-->
 </mapper>

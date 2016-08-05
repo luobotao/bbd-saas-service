@@ -98,6 +98,8 @@ public class Constants {
     public static int NO_TOSITE_PERMISSION = 0;
     //派件员有到站权限 -- MYSQL库
     public static int POSTMAN_HAVE_TOSITE_PERMISSION = 5;
+    //地图分多次查询点
+    public static int PAGESIZE_MAP = 1000;
 
 
 }
