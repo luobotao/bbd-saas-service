@@ -176,6 +176,8 @@ public class HandleAbnormalController {
             Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
             if (order == null) {//运单不存在,与站点无关--正常情况不会执行
                 map.put("operFlag", -1);//0:运单号不存在
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             } else if(OrderStatus.RETENTION  != order.getOrderStatus() && OrderStatus.REJECTION != order.getOrderStatus()){
                 User courier1 = userService.findOne(order.getUserId());
                 map.put("courierName", courier1 != null ? courier1.getRealName() : "");
@@ -374,6 +376,8 @@ public class HandleAbnormalController {
             Order order = orderService.findOneByMailNum(mailNum);
             if (order == null) {//运单不存在,与站点无关--正常情况不会执行
                 map.put("operFlag", -1);//0:运单号不存在
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             } else if(!currUser.getSite().getAreaCode().equals(order.getAreaCode())){
                 Site site = siteService.findSiteByAreaCode(order.getAreaCode());
                 map.put("siteName", site != null ? site.getName() : "");//已转其他站点
@@ -478,6 +482,8 @@ public class HandleAbnormalController {
             Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
             if(order == null){
                 map.put("operFlag", -1);//-1:运单号不存在
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             }else if(order.getOrderStatus() == OrderStatus.APPLY_RETURN){//已申请退货
                 map.put("operFlag", 2);//此运单已经申请退货啦
                 //刷新列表
@@ -629,7 +635,7 @@ public class HandleAbnormalController {
                     }
                 }
             }else{
-                map.put("operFlag", 0);//0:运单号不存在
+                map.put("operFlag", -1);//0:运单号不存在
                 map.put("msg", "运单号不能为空");//0
             }
         } catch (Exception e) {
