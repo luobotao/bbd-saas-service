@@ -561,8 +561,10 @@ public class HandleAbnormalController {
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
                 } else if (order.getOrderStatus() == OrderStatus.TO_OTHER_EXPRESS) {//已转其他快递
-                    Site site = siteService.findSiteByAreaCode(order.getAreaCode());
-                    map.put("companyName", site != null ? site.getCompanyName() : "");//已转其他快递
+                    List<OtherExpreeVO> expreeVOList = order.getOtherExprees();
+                    if(expreeVOList != null && expreeVOList.size() > 0){
+                        map.put("companyName", expreeVOList.get(expreeVOList.size()-1).getCompanyname());//已转其他快递
+                    }
                     map.put("operFlag", 2);//已转其他快递
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
