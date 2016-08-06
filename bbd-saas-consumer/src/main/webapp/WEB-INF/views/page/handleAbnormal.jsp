@@ -462,10 +462,15 @@
 
 			success : function(data) {//返回数据根据结果进行相应的处理
 				if(data.operFlag == 1){
+					//ioutDiv("重新分派成功");
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
 				}else if(data.operFlag == 2){//已分派过了
 					ioutDiv("此运单已被" + data.courierName + "领取啦");
+					//分派成功，刷新列表！
+					refreshTable(data.orderPage);
+				}else if(data.operFlag == -1){//运单不存在
+					ioutDiv("运单不存在");
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
 				}else{
@@ -567,6 +572,10 @@
 					refreshTable(data.orderPage);
 				}else if(data.operFlag == 3){
 					ioutDiv("只有滞留或者拒收的运单才能转其他站点");
+					//分派成功，刷新列表！
+					refreshTable(data.orderPage);
+				}else if(data.operFlag == -1){
+					ioutDiv("运单不存在");
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
 				}else{
