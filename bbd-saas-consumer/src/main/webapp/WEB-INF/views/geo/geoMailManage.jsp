@@ -107,7 +107,7 @@
 	var center = "${prov}${city}${area}";
 	var zoom = 16;
 	// 百度地图API功能
-	var addrMap = new BMap.Map("addrMap", {enableMapClick:false,minZoom:13});
+	var addrMap = new BMap.Map("addrMap", {enableMapClick:false,minZoom:10});
 	var goalMarker = null;//目标marker,用于拖动到目标位置的图标
 	$(document).ready(function() {
 		//console.log("center==="+center);
@@ -241,7 +241,6 @@
 			success: function(dataMap){
 				console.log(dataMap);
 				if(pageIndex == 0){//第一次请求的时候，清空地图覆盖物，并设置地图中心点
-					console.log("第一次请求的时候，清空地图覆盖物，并设置地图中心点");
 					//清除所有覆盖物
 					addrMap.clearOverlays();
 					//地图中心点
@@ -249,26 +248,46 @@
 					if(addr == "" || addr == null){
 						addr = center;
 					}
-					addrMap.centerAndZoom(addr);
-					//多个Ajax同时请求其他剩余的数据
-					var totalPages = dataMap.totalPages;
-					if(totalPages > 1){
-						for(var i = 1; i < totalPages; i++){
-							getData(i);
+					console.log("第一次请求的时候，清空地图覆盖物，并设置地图中心点===22==addr==="+addr);
+					addrMap.centerAndZoom(addr.replace("null", ""));
+					window.setTimeout(function(){
+						if(dataMap != null){
+							var dataList = dataMap.dataList;
+							//显示点
+							if(dataList != null && dataList.length > 0){
+								console.log("pageIndex===" + pageIndex + "   len==="+dataList.length);
+								for(var i = 0; i < dataList.length; i++){
+									showPoint(dataList[i].lng, dataList[i].lat, dataList[i].orderNo,dataList[i].address);
+								}
+							}
+						}
+						//多个Ajax同时请求其他剩余的数据
+						var totalPages = dataMap.totalPages;
+						if(totalPages > 1){
+							for(var i = 1; i < totalPages; i++){
+								getData(i);
+							}
+						}
+					}, 500);
+				}else{
+					if(dataMap != null){
+						var dataList = dataMap.dataList;
+						//显示点
+						if(dataList != null && dataList.length > 0){
+							console.log("pageIndex===" + pageIndex + "   len==="+dataList.length);
+							for(var i = 0; i < dataList.length; i++){
+								showPoint(dataList[i].lng, dataList[i].lat, dataList[i].orderNo,dataList[i].address);
+							}
 						}
 					}
 				}
-				var dataList = dataMap.dataList;
-				//显示点
-				console.log("pageIndex===" + pageIndex + "   len==="+dataList.length);
-				if(dataList != null && dataList.length > 0){
-					for(var i = 0; i < dataList.length; i++){
-						showPoint(dataList[i].lng, dataList[i].lat, dataList[i].orderNo,dataList[i].address);
-					}
-				}
+				/*window.setTimeout(function(){
+
+				}, 500);*/
+
 			},
 			error: function(){
-				outDiv('修正失败');
+				//outDiv('');
 			}
 		});
 	}
