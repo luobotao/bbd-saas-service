@@ -462,15 +462,11 @@
 
 			success : function(data) {//返回数据根据结果进行相应的处理
 				if(data.operFlag == 1){
-					//ioutDiv("重新分派成功");
+					ioutDiv("重新分派成功");
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
-				}else if(data.operFlag == 2){//已分派过了
-					ioutDiv("此运单已被" + data.courierName + "领取啦");
-					//分派成功，刷新列表！
-					refreshTable(data.orderPage);
-				}else if(data.operFlag == -1){//运单不存在
-					ioutDiv("运单不存在");
+				}else if(data.operFlag == 2 || data.operFlag == -1){//出错信息提示并刷新列表
+					ioutDiv(data.msg);
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
 				}else{
@@ -564,18 +560,11 @@
 			},//数据，这里使用的是Json格式进行传输
 			success : function(data) {//返回数据根据结果进行相应的处理
 				if(data.operFlag == 1){
+					ioutDiv("转其他站点成功");
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
-				}else if(data.operFlag == 2){
-					ioutDiv("此运单已经转到"+data.siteName+"啦");
-					//分派成功，刷新列表！
-					refreshTable(data.orderPage);
-				}else if(data.operFlag == 3){
-					ioutDiv("只有滞留或者拒收的运单才能转其他站点");
-					//分派成功，刷新列表！
-					refreshTable(data.orderPage);
-				}else if(data.operFlag == -1){
-					ioutDiv("运单不存在");
+				}else if(data.operFlag == 2 || data.operFlag == -1){//出错信息提示并刷新列表
+					ioutDiv(data.msg);
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
 				}else{
@@ -663,21 +652,14 @@
 				if(data.operFlag == 1){
 					ioutDiv("申请退货成功");
 					refreshTable(data.orderPage);
-				}else if(data.operFlag == 2){
-					ioutDiv("此运单已经申请退货啦");
-					//刷新列表！
-					refreshTable(data.orderPage);
-				}else if(data.operFlag == -1){
-					ioutDiv("运单不存在");
-					//刷新列表！
-					refreshTable(data.orderPage);
-				}else if(data.operFlag == 3){
-					ioutDiv("只有滞留或者拒收的运单才能申请退货");
-					//刷新列表！
+				}else if(data.operFlag == 2 || data.operFlag == -1){//出错信息提示并刷新列表
+					ioutDiv(data.msg);
+					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
 				}else{
 					ioutDiv("申请退货失败，请稍候再试");
 				}
+
 				/*ioutDiv(data.msg);
 				 if(data.success){//分派成功，刷新列表！
 				 refreshTable(data.orderPage);
@@ -807,23 +789,10 @@
 				"arriveBetween": $("#arriveBetween").val()
 			},//数据，这里使用的是Json格式进行传输
 			success: function (data) {//返回数据根据结果进行相应的处理
-				if(data.operFlag == 1){//转快递成功
-					ioutDiv(data.msg);
-					refreshTable(data.orderPage);
-				}else if(data.operFlag == 2){
-					ioutDiv("此运单已经转到"+data.companyName+"啦");
+				ioutDiv(data.msg);
+				if(data.operFlag != 0){//非失败就刷新列表
 					//分派成功，刷新列表！
 					refreshTable(data.orderPage);
-				}else if(data.operFlag == -1){
-					ioutDiv("运单不存在");
-					//分派成功，刷新列表！
-					refreshTable(data.orderPage);
-				}else if(data.operFlag == 3){
-					ioutDiv("只有滞留或者拒收的运单才能转其他快递");
-					//分派成功，刷新列表！
-					refreshTable(data.orderPage);
-				}else{
-					ioutDiv(data.msg);
 				}
 			},
 			error: function () {

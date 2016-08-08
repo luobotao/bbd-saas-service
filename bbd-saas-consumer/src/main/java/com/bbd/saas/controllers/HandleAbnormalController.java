@@ -172,19 +172,15 @@ public class HandleAbnormalController {
             map = new HashMap<String, Object>();
             //当前登录的用户信息
             User currUser = adminService.get(UserSession.get(request));
+            String selfAreaCode = null;
             //查询运单信息
-            Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
-            if (order == null) {//运单不存在,与站点无关--正常情况不会执行
-                map.put("operFlag", -1);//0:运单号不存在
+            Order order = orderService.findOneByMailNum(mailNum);
+            if(order == null){
+                map.put("operFlag", -1);//-1:运单号不存在
+                map.put("msg","运单不存在");
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else if(OrderStatus.RETENTION  != order.getOrderStatus() && OrderStatus.REJECTION != order.getOrderStatus()){
-                User courier1 = userService.findOne(order.getUserId());
-                map.put("courierName", courier1 != null ? courier1.getRealName() : "");
-                map.put("operFlag", 2);//2:此运单已分派过了
-                //刷新列表
-                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else{//运单存在
+            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
                 //查询派件员
                 User courier = userService.findOne(userId);
                 order.setUserId(userId);
@@ -222,14 +218,45 @@ public class HandleAbnormalController {
                 } else {
                     map.put("operFlag", 0);//0:分派失败
                 }
-
+            }else{
+                checkOrderStatus(order, selfAreaCode, map);
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             }
+
         } catch (Exception e) {
             logger.error("===运单重新分派===出错:" + e.getMessage());
         }
         return map;
     }
-
+    //空的话，状态是正确的
+    private Map<String, Object> checkOrderStatus(Order order, String selfAreaCode, Map<String, Object> map){
+        String msg = null;
+        if(order.getOrderStatus() == OrderStatus.TO_OTHER_EXPRESS){//转其他快递
+            List<OtherExpreeVO> expreeVOList = order.getOtherExprees();
+            if(expreeVOList != null && expreeVOList.size() > 0){//已转其他快递
+                msg = "此运单已经转到"+ expreeVOList.get(expreeVOList.size()-1).getCompanyname() +"啦";
+            }else{
+                msg = "此运单已经转其他快递啦";
+            }
+        }else if(!selfAreaCode.equals(order.getAreaCode())){//转站
+            Site site = siteService.findSiteByAreaCode(order.getAreaCode());
+            msg = "此运单已经转到" + site != null ? site.getName() : "" + "啦";
+        }else if(order.getOrderStatus() == OrderStatus.DISPATCHED){//已分派
+            User courier1 = userService.findOne(order.getUserId());
+            msg = "此运单已被" + courier1 != null ? courier1.getRealName() : "" + "领取啦";
+        }else if(order.getOrderStatus() == OrderStatus.APPLY_RETURN){//退货
+            msg = "此运单已经申请退货啦";
+        }
+        if(msg == null){//通过检查
+            map.put("operFlag", 2);//0:分派失败
+            map.put("msg", "该订单"+order.getOrderStatusMsg()+"啦");//0:分派失败
+        }else{
+            map.put("operFlag", 2);//0:分派失败
+            map.put("msg", msg);//0:分派失败
+        }
+        return map;
+    }
     /**
      * Description: 运单号不存在，则添加一条记录；存在，则更新派件员postManId和staffId
      * @param order
@@ -371,24 +398,16 @@ public class HandleAbnormalController {
             map = new HashMap<String, Object>();
             //当前登录的用户信息
             User currUser = adminService.get(UserSession.get(request));
+            String selfAreaCode = currUser.getSite().getAreaCode();
             //查询运单信息
             //Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
             Order order = orderService.findOneByMailNum(mailNum);
-            if (order == null) {//运单不存在,与站点无关--正常情况不会执行
-                map.put("operFlag", -1);//0:运单号不存在
+            if(order == null){
+                map.put("operFlag", -1);//-1:运单号不存在
+                map.put("msg","运单不存在");
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else if(!currUser.getSite().getAreaCode().equals(order.getAreaCode())){
-                Site site = siteService.findSiteByAreaCode(order.getAreaCode());
-                map.put("siteName", site != null ? site.getName() : "");//已转其他站点
-                map.put("operFlag", 2);//已转其他站点
-                //刷新列表
-                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else if(OrderStatus.RETENTION  != order.getOrderStatus() && OrderStatus.REJECTION != order.getOrderStatus()){
-                map.put("operFlag", 3);//只有滞留||拒收的才能转其他站点
-                //刷新列表
-                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else {//运单存在
+            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
                 String fromAreaCode = order.getAreaCode();
                 Site site = siteService.findSite(siteId);
                 //更新运单字段
@@ -428,6 +447,10 @@ public class HandleAbnormalController {
                 } else {
                     map.put("operFlag", 0);//0:失败
                 }
+            }else{
+                checkOrderStatus(order, selfAreaCode, map);
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             }
         } catch (Exception e) {
             logger.error("===转其他站点===出错:" + e.getMessage());
@@ -478,21 +501,15 @@ public class HandleAbnormalController {
         try {
             //当前登录的用户信息
             User currUser = adminService.get(UserSession.get(request));
+            String selfAreaCode = currUser.getSite().getAreaCode();
             //查询运单信息
-            Order order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
+            Order order = orderService.findOneByMailNum(mailNum);
             if(order == null){
                 map.put("operFlag", -1);//-1:运单号不存在
+                map.put("msg","运单不存在");
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            }else if(order.getOrderStatus() == OrderStatus.APPLY_RETURN){//已申请退货
-                map.put("operFlag", 2);//此运单已经申请退货啦
-                //刷新列表
-                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            } else if(order.getOrderStatus() != OrderStatus.RETENTION && order.getOrderStatus() != OrderStatus.REJECTION){
-                map.put("operFlag", 3);//只有滞留或者拒收的运单才能申请退货
-                //刷新列表
-                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            }else{
+            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
                 ReturnReason reason = returnReasonService.findOneByStatus(rtnReason);
                 order.setRtnReason(reason.getMessage());//退货原因
                 order.setRtnRemark(rtnRemark);//退货备注
@@ -519,6 +536,10 @@ public class HandleAbnormalController {
                 }else{
                     map.put("operFlag", 0);//失败
                 }
+            }else{
+                checkOrderStatus(order, selfAreaCode, map);
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             }
         } catch (Exception e) {
             logger.error("===退货===出错:" + e.getMessage());
@@ -561,24 +582,15 @@ public class HandleAbnormalController {
             User currUser = adminService.get(UserSession.get(request));
             Order order = null;
             if (StringUtils.isNotBlank(mailNum)) {
-                order = orderService.findOneByMailNum(currUser.getSite().getAreaCode(), mailNum);
-                if (order == null) {//运单不存在,与站点无关--正常情况不会执行
+                String selfAreaCode = currUser.getSite().getAreaCode();
+                //查询运单信息
+                order = orderService.findOneByMailNum(mailNum);
+                if(order == null){
                     map.put("operFlag", -1);//-1:运单号不存在
+                    map.put("msg","运单不存在");
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                } else if (order.getOrderStatus() == OrderStatus.TO_OTHER_EXPRESS) {//已转其他快递
-                    List<OtherExpreeVO> expreeVOList = order.getOtherExprees();
-                    if(expreeVOList != null && expreeVOList.size() > 0){
-                        map.put("companyName", expreeVOList.get(expreeVOList.size()-1).getCompanyname());//已转其他快递
-                    }
-                    map.put("operFlag", 2);//已转其他快递
-                    //刷新列表
-                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                } else if (order.getOrderStatus() != OrderStatus.RETENTION && order.getOrderStatus() != OrderStatus.REJECTION) {
-                    map.put("operFlag", 3);//只有滞留或者拒收的运单才能转其他快递
-                    //刷新列表
-                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                } else {
+                }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
                     //查询运单信息
                     order = updExpressForToOtherCmp(order, companyId, mailNum, mailNumNew, currUser);
                     Sender sender = order.getSender();
@@ -633,10 +645,16 @@ public class HandleAbnormalController {
                         map.put("operFlag", 0);//0:运单号不存在
                         map.put("msg", "转运信息添加失败，请稍候再试");//0
                     }
+                }else{//状态冲突
+                    checkOrderStatus(order, selfAreaCode, map);
+                    //刷新列表
+                    map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
                 }
             }else{
                 map.put("operFlag", -1);//0:运单号不存在
                 map.put("msg", "运单号不能为空");//0
+                //刷新列表
+                map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             }
         } catch (Exception e) {
             logger.error("===转其他快递操作===出错:" + e.getMessage());
