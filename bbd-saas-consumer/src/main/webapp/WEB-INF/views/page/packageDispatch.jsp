@@ -364,9 +364,11 @@ function dispatch() {
 				ioutDiv("重复扫描，此运单已经分派过啦！");
 		    }else if(data.operFlag == 3){
 		    	ioutDiv($("#mailNum").val() + "运单分派失败，请重试！");
-		    }else{
+		    }else if(data.operFlag == 4){
 		    	ioutDiv("只有状态为未分派、滞留的运单才能分派！");
-		    }
+		    }else{
+				ioutDiv("分派失败，请检查运单状态是否正确");
+			}
 		},
 		error : function() {  
 			gotoLoginPage();

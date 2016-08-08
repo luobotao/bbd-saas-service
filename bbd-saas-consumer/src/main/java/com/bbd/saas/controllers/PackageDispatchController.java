@@ -245,17 +245,21 @@ public class PackageDispatchController {
 			postDelivery.setReceiver_province(order.getReciever().getProvince());
 			postDelivery.setReceiver_city(order.getReciever().getCity());
 			postDelivery.setReceiver_district(order.getReciever().getArea());
-			postDelivery.setReceiver_address(order.getReciever().getAddress());
+			int len = order.getReciever().getAddress().length() >127 ? 127 : order.getReciever().getAddress().length();
+			postDelivery.setReceiver_address(order.getReciever().getAddress().substring(0, len));
 			postDelivery.setReceiver_company_name("");
-			postDelivery.setReceiver_name(order.getReciever().getName());
+			len = order.getReciever().getName().length() >15 ? 15 : order.getReciever().getName().length();
+			postDelivery.setReceiver_name(order.getReciever().getName().substring(0, len));
 			postDelivery.setReceiver_phone(order.getReciever().getPhone());
 			postDelivery.setReceiver_province(order.getReciever().getProvince());
 			postDelivery.setSender_company_name(order.getSrcMessage());
 			Sender sender = order.getSender();
 			if(sender!=null){
-				postDelivery.setSender_address(order.getSender().getAddress());
+				len = order.getSender().getAddress().length() >127 ? 127 : order.getSender().getAddress().length();
+				postDelivery.setSender_address(order.getSender().getAddress().substring(0, len));
 				postDelivery.setSender_city(order.getSender().getCity());
-				postDelivery.setSender_name(order.getSender().getName());
+				len = order.getSender().getAddress().length() > 15 ? 15 : order.getSender().getAddress().length();
+				postDelivery.setSender_name(order.getSender().getName().substring(0, len));
 				postDelivery.setSender_phone(order.getSender().getPhone());
 				postDelivery.setSender_province(order.getSender().getProvince());
 			}else{
