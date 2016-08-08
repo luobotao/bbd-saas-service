@@ -172,7 +172,7 @@ public class HandleAbnormalController {
             map = new HashMap<String, Object>();
             //当前登录的用户信息
             User currUser = adminService.get(UserSession.get(request));
-            String selfAreaCode = null;
+            String selfAreaCode = currUser.getSite().getAreaCode();
             //查询运单信息
             Order order = orderService.findOneByMailNum(mailNum);
             if(order == null){
@@ -180,7 +180,7 @@ public class HandleAbnormalController {
                 map.put("msg","运单不存在");
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
+            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  == order.getOrderStatus() || OrderStatus.REJECTION == order.getOrderStatus())){
                 //查询派件员
                 User courier = userService.findOne(userId);
                 order.setUserId(userId);
@@ -235,16 +235,16 @@ public class HandleAbnormalController {
         if(order.getOrderStatus() == OrderStatus.TO_OTHER_EXPRESS){//转其他快递
             List<OtherExpreeVO> expreeVOList = order.getOtherExprees();
             if(expreeVOList != null && expreeVOList.size() > 0){//已转其他快递
-                msg = "此运单已经转到"+ expreeVOList.get(expreeVOList.size()-1).getCompanyname() +"啦";
+                msg = "此运单已经转到"+ (expreeVOList.get(expreeVOList.size()-1).getCompanyname()) +"啦";
             }else{
                 msg = "此运单已经转其他快递啦";
             }
         }else if(!selfAreaCode.equals(order.getAreaCode())){//转站
             Site site = siteService.findSiteByAreaCode(order.getAreaCode());
-            msg = "此运单已经转到" + site != null ? site.getName() : "" + "啦";
+            msg = "此运单已经转到" + (site != null ? site.getName() : "") + "啦";
         }else if(order.getOrderStatus() == OrderStatus.DISPATCHED){//已分派
             User courier1 = userService.findOne(order.getUserId());
-            msg = "此运单已被" + courier1 != null ? courier1.getRealName() : "" + "领取啦";
+            msg = "此运单已被" + (courier1 != null ? courier1.getRealName() : "" )+ "领取啦";
         }else if(order.getOrderStatus() == OrderStatus.APPLY_RETURN){//退货
             msg = "此运单已经申请退货啦";
         }
@@ -407,7 +407,7 @@ public class HandleAbnormalController {
                 map.put("msg","运单不存在");
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
+            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  == order.getOrderStatus() || OrderStatus.REJECTION == order.getOrderStatus())){
                 String fromAreaCode = order.getAreaCode();
                 Site site = siteService.findSite(siteId);
                 //更新运单字段
@@ -509,7 +509,7 @@ public class HandleAbnormalController {
                 map.put("msg","运单不存在");
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
+            }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  == order.getOrderStatus() || OrderStatus.REJECTION == order.getOrderStatus())){
                 ReturnReason reason = returnReasonService.findOneByStatus(rtnReason);
                 order.setRtnReason(reason.getMessage());//退货原因
                 order.setRtnRemark(rtnRemark);//退货备注
@@ -590,7 +590,7 @@ public class HandleAbnormalController {
                     map.put("msg","运单不存在");
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
-                }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  != order.getOrderStatus() || OrderStatus.REJECTION != order.getOrderStatus())){
+                }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  == order.getOrderStatus() || OrderStatus.REJECTION == order.getOrderStatus())){
                     //查询运单信息
                     order = updExpressForToOtherCmp(order, companyId, mailNum, mailNumNew, currUser);
                     Sender sender = order.getSender();
