@@ -258,7 +258,7 @@ public class PackageDispatchController {
 				len = order.getSender().getAddress().length() >127 ? 127 : order.getSender().getAddress().length();
 				postDelivery.setSender_address(order.getSender().getAddress().substring(0, len));
 				postDelivery.setSender_city(order.getSender().getCity());
-				len = order.getSender().getAddress().length() > 15 ? 15 : order.getSender().getAddress().length();
+				len = order.getSender().getName().length() > 15 ? 15 : order.getSender().getName().length();
 				postDelivery.setSender_name(order.getSender().getName().substring(0, len));
 				postDelivery.setSender_phone(order.getSender().getPhone());
 				postDelivery.setSender_province(order.getSender().getProvince());
