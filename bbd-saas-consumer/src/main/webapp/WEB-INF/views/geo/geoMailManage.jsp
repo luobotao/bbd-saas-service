@@ -239,7 +239,7 @@
 				"dateBetween" : $("#dateBetween").val()
 			},
 			success: function(dataMap){
-				console.log(dataMap);
+				//console.log(dataMap);
 				if(pageIndex == 0){//第一次请求的时候，清空地图覆盖物，并设置地图中心点
 					//清除所有覆盖物
 					addrMap.clearOverlays();
@@ -248,20 +248,22 @@
 					if(addr == "" || addr == null){
 						addr = center;
 					}
-					console.log("第一次请求的时候，清空地图覆盖物，并设置地图中心点===22==addr==="+addr);
+					console.log("第一次请求的时候，清空地图覆盖物，并设置地图中心点===addr==="+addr);
 					addrMap.centerAndZoom(addr.replace("null", ""));
 					window.setTimeout(function(){
+						//显示点
 						if(dataMap != null){
 							var dataList = dataMap.dataList;
-							//显示点
 							if(dataList != null && dataList.length > 0){
-								console.log("pageIndex===" + pageIndex + "   len==="+dataList.length);
+								console.log("pageIndex==" + pageIndex + "   len==="+dataList.length);
 								for(var i = 0; i < dataList.length; i++){
 									showPoint(dataList[i].lng, dataList[i].lat, dataList[i].orderNo,dataList[i].address);
 								}
 							}
 						}
-						//多个Ajax同时请求其他剩余的数据
+					},100);
+					//多个Ajax同时请求其他剩余的数据
+					window.setTimeout(function(){
 						var totalPages = dataMap.totalPages;
 						if(totalPages > 1){
 							for(var i = 1; i < totalPages; i++){
@@ -269,21 +271,21 @@
 							}
 						}
 					}, 500);
+
+
 				}else{
 					if(dataMap != null){
 						var dataList = dataMap.dataList;
 						//显示点
 						if(dataList != null && dataList.length > 0){
-							console.log("pageIndex===" + pageIndex + "   len==="+dataList.length);
+							//console.log("pageIndex=222==" + pageIndex + "   len==="+dataList.length);
 							for(var i = 0; i < dataList.length; i++){
 								showPoint(dataList[i].lng, dataList[i].lat, dataList[i].orderNo,dataList[i].address);
 							}
 						}
 					}
 				}
-				/*window.setTimeout(function(){
 
-				}, 500);*/
 
 			},
 			error: function(){
