@@ -46,6 +46,22 @@ folder instead of downloading all of them to reduce the load. -->
 
 	<!-- jQuery 2.1.3 -->
 	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
+	<!–[if IE]>
+	<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery-1.12.4.min.js"/>"></script>
+	<script>
+		(function() {
+			if (!
+						/*@cc_on!@*/
+							0) return;
+			var e = "abbr, article, aside, audio, canvas, datalist, details, dialog, eventsource, figure, footer, header, hgroup, mark, menu, meter, nav, output, progress, section, time, video".split(', ');
+			var i= e.length;
+			while (i--){
+				document.createElement(e[i])
+			}
+		})()
+	</script>
+	<![endif]–>
+
 	<!-- jQuery UI 1.11.2 -->
 	<script src="<c:url value="/resources/adminLTE/plugins/src/jquery-ui.min.js" />"> </script>
 	<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -91,10 +107,14 @@ folder instead of downloading all of them to reduce the load. -->
 	<script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
 	<!-- alertify -->
 	<script src="<c:url value="/resources/adminLTE/plugins/alertify/alertify.js" />"> </script>
+
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
 	<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js?_123" />" ></script>
+
+	<!-- 解决 ie8 不识别 mediaQuery 问题 -->
+	<script src="<c:url value="/resources/javascripts/respond.js" />"> </script>
 </head>
 <body>
 <!--S 提示信息-->
