@@ -31,8 +31,8 @@ public class SmsInfoServiceImpl implements SmsInfoService {
         String args = code;
         String tpl_id = "";
         if (StringUtils.isBlank(type) || "1".equals(type)) {
-            args = "#company#=棒棒糖&#code#=" + code;
-            tpl_id = "1";
+            args = "#code#=" + code;
+            tpl_id = "1510158";
             type = "1";
         } else {
             type = "3";

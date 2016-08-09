@@ -50,7 +50,7 @@ public class OrderToOtherCompanyTest {
 
     @Test
     public void testReadExcel() throws Exception {
-//		readOrderInfo(0);//sheet0
+		readOrderInfo(0);//sheet0
         readOrderInfoToStat(0);//sheet0
     }
 
