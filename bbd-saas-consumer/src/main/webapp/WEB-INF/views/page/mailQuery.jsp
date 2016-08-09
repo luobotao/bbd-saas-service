@@ -4,6 +4,7 @@
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
+<%@ page import="com.bbd.saas.enums.SiteStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -34,7 +35,72 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<div class="row" >
-							<jsp:include page="../control/siteControl.jsp" flush="true" />
+							<div id="addr_control" class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<div class="form-group pb20">
+									<label>　省：</label>
+									<select name="prov" class="prov form-control form-con-new " style="min-width: 120px;">
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label id="cityLable" hidden>　市：</label>
+									<select  class="city form-control form-con-new" disabled="disabled"  style="min-width: 160px;">
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label id="distLable" hidden>　区：</label>
+									<select name="dist" class="dist form-control form-con-new"  disabled="disabled"  style="min-width: 160px;">
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label>站点状态：</label>
+									<select id="siteStatus" name="status" class="form-control form-con-new" style="min-width: 120px;">
+										<%=SiteStatus.Stas2HTML2(-1)%>
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label>　配送区域状态：</label>
+									<select id="areaFlag" name="areaFlag" class="form-control form-con-new" style="min-width: 120px;">
+										<option value="-1">全部</option>
+										<option value="1">有效</option>
+										<option value="0">无效</option>
+									</select>
+								</div>
+								<div class="form-group pb20">
+									<label class="ml16">站点：</label>
+									<div class="crt-s w400">
+										<div class="c-sel j-sel-input2">
+											<span class="show-ele j-empty">请选择</span>
+											<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
+										</div>
+										<div class="all-area all-area2 pm-dn">
+											<!-- S 1 -->
+											<div class="pv-bg clearfix">
+												<input id="areaCode" type="text" class="sel-input" placeholder="请输入站点名称" />
+												<div class="l-sel-p">
+													<ul class="pv-part" id="optionList">
+														<li>
+															<label class="f12 linputC">
+																<input type="checkbox" name="codeOpt" value="" isAll="1"><b>全部</b>
+															</label>
+														</li>
+														<c:if test="${not empty siteList}">
+															<c:forEach var="option" items="${siteList}">
+																<li>
+																	<label class="f12 linputC">
+																		<input type="checkbox" name="codeOpt" value="${option.code}" isAll="0"><b>${option.name}</b>
+																	</label>
+																</li>
+															</c:forEach>
+														</c:if>
+													</ul>
+												</div>
+											</div>
+											<!-- E 1 -->
+										</div>
+
+									</div>
+								</div>
+							</div>
 						</div>
 	  					<div class="row">
 	  						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -249,11 +315,11 @@
 <!-- E footer -->
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-	var  siteUrl = "<c:url value="/site/getSiteList"/>";
-	var  inputName = null;
+	var siteUrl = "<c:url value="/site/getQuerySiteList"/>";
+	var inputName = null;
 	var isSiteId = false;
 </script>
-<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<script src="<c:url value="/resources/javascripts/siteStatusControl.js" />"> </script>
 <%--<script src="<c:url value="/resources/javascripts/statusControl.js" />"> </script>--%>
 <!-- E 省市区站点选择控件  -->
 <script type="text/javascript">
@@ -274,12 +340,15 @@ $(document).ready(function() {
 		},
 		format: 'YYYY/MM/DD'
 	});
+
 });
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
 	/*var areaCodeStr = getAreaCodeStr();
 	console.log(areaCodeStr);*/
+	console.log("siteStatus==="+$("#siteStatus").val());
+	console.log("areaFlag==="+$("#areaFlag").val());
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -289,11 +358,13 @@ function gotoPage(pageIndex) {
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
+			"siteStatus" : $("#siteStatus").val(),//站点状态
+			"areaFlag" : $("#areaFlag").val(),//配送区域
 			"areaCodeStr" : getAreaCodeStr(),//站点编号集合
             "statusStr" : getAreaCodeStr("statusOpts"),
             "arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
-        },//数据，这里使用的是Json格式进行传输  
+        },//数据，这里使用的是Json格式进行传输
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             var tbody = $("#dataList");
             var dataList = dataObject.datas;

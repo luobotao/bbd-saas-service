@@ -60,32 +60,29 @@ public class MailQueryController {
      * @return page
      */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String index(Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request, Model model) {
+	public String index(Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, Integer siteStatus, Integer areaFlag, final HttpServletRequest request, Model model) {
 		try {
+			siteStatus = Numbers.defaultIfNull(siteStatus, -1);
+			areaFlag = Numbers.defaultIfNull(areaFlag, -1);
 			if(mailNum != null){
 				mailNum = mailNum.trim();
 			}
 			//到站时间
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
-			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, statusStr, arriveBetween, mailNum, request);
+			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, statusStr, arriveBetween, mailNum, siteStatus, areaFlag, request);
 			if(orderPage != null && orderPage.getDatas() != null){
-				/*for(Order order : orderPage.getDatas()){
-					String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
-					order.setParcelCode(parcelCodeTemp);//设置包裹号
-				}*/
 				//当前登录的用户信息
 				User currUser = adminService.get(UserSession.get(request));
 				logger.info("=====运单查询页面列表===" + orderPage);
 				model.addAttribute("orderPage", orderPage);
-				model.addAttribute("arriveBetween", arriveBetween);
 				//查询登录用户的公司下的所有站点
-				model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId()));
-				return "page/mailQuery";
+				model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId(), siteStatus, areaFlag));
 			}else{
 				orderPage = new PageModel<Order>();
 				model.addAttribute("orderPage", orderPage);
 			}
+			model.addAttribute("arriveBetween", arriveBetween);
 		} catch (Exception e) {
 			logger.error("===跳转到运单查询页面==出错 :" + e.getMessage());
 		}
@@ -106,14 +103,16 @@ public class MailQueryController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<Order> getList(String prov, String city, String area, Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, final HttpServletRequest request) {
+	public PageModel<Order> getList(String prov, String city, String area, Integer pageIndex, String areaCodeStr, String statusStr, String arriveBetween, String mailNum, Integer siteStatus, Integer areaFlag, final HttpServletRequest request) {
+		siteStatus = Numbers.defaultIfNull(siteStatus, -1);
+		areaFlag = Numbers.defaultIfNull(areaFlag, -1);
 		//查询数据
 		PageModel<Order> orderPage = new PageModel<Order>();
 		try {
 			//参数为空时，默认值设置
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, arriveBetween,mailNum, orderQueryVO);
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, arriveBetween,mailNum, orderQueryVO, siteStatus, areaFlag);
 			//查询数据
 			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
 				orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
@@ -143,7 +142,7 @@ public class MailQueryController {
 		}
 		return orderPage;		
 	}
-	private Map<String, String> getOrderQueryAndSiteMap( final HttpServletRequest request, String prov, String city, String area, String areaCodeStr, String statusStr,String arriveBetween, String mailNum, OrderQueryVO orderQueryVO){
+	private Map<String, String> getOrderQueryAndSiteMap( final HttpServletRequest request, String prov, String city, String area, String areaCodeStr, String statusStr,String arriveBetween, String mailNum, OrderQueryVO orderQueryVO, Integer siteStatus, Integer areaFlag){
 		if(mailNum != null){
 			mailNum = mailNum.trim();
 		}
@@ -153,7 +152,7 @@ public class MailQueryController {
 		if(orderQueryVO == null){
 			orderQueryVO = new OrderQueryVO();
 		}
-		orderQueryVO.arriveStatus=1;//已到站 2.6.1版本后将未到站去掉了
+		//orderQueryVO.arriveStatus=1;//已到站 2.6.1版本后将未到站去掉了
 		orderQueryVO.arriveBetween = arriveBetween;
 		if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
 			String [] statusS = statusStr.split(",");
@@ -168,9 +167,13 @@ public class MailQueryController {
 		//areaCodeList查询
 		if(StringUtils.isBlank(areaCodeStr)){//全部(公司下的全部|省市区下的全部)
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
-			statusList.add(SiteStatus.APPROVE);
-			statusList.add(SiteStatus.INVALID);
-			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList);
+			if(siteStatus == null || siteStatus == -1){//全部（有效||无效）
+				statusList.add(SiteStatus.APPROVE);
+				statusList.add(SiteStatus.INVALID);
+			}else{
+				statusList.add(SiteStatus.status2Obj(siteStatus));
+			}
+			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList, areaFlag);
 		}else{//部分站点
 			String [] areaCodes = areaCodeStr.split(",");
 			optionList = siteService.findByAreaCodes(areaCodes);
@@ -225,11 +228,13 @@ public class MailQueryController {
 	 * 2016年4月15日下午4:30:41
 	 */
 	@RequestMapping(value="/exportToExcel", method=RequestMethod.GET)
-	public void exportData(String prov, String city, String area, String areaCodeStr, String statusStr, String arriveBetween_expt, String mailNum,
-			final HttpServletRequest request, final HttpServletResponse response) {
+	public void exportData(String prov, String city, String area, String areaCodeStr, String statusStr, String arriveBetween_expt, String mailNum,Integer siteStatus, Integer areaFlag,
+						   final HttpServletRequest request, final HttpServletResponse response) {
 		try {
+			siteStatus = Numbers.defaultIfNull(siteStatus, -1);
+			areaFlag = Numbers.defaultIfNull(areaFlag, -1);
 			OrderQueryVO orderQueryVO = new OrderQueryVO();
-			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, arriveBetween_expt,mailNum, orderQueryVO);
+			Map<String, String> siteMap = getOrderQueryAndSiteMap(request, prov, city, area, areaCodeStr, statusStr, arriveBetween_expt,mailNum, orderQueryVO, siteStatus, areaFlag);
 			//查询数据
 			List<Order> orderList = null;
 			if(orderQueryVO.areaCodeList != null  && orderQueryVO.areaCodeList.size() > 0){
