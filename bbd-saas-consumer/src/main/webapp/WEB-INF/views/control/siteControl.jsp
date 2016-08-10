@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%--<%@ page import="com.bbd.saas.enums.SiteStatus" %>--%>
 <html>
 <head>
 </head>
@@ -7,19 +8,33 @@
 <div id="addr_control" class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	<div class="form-group pb20">
 		<label>　省：</label>
-		<select name="prov" class="prov form-control form-con-new">
+		<select name="prov" class="prov form-control form-con-new " style="min-width: 120px;">
 		</select>
 	</div>
 	<div class="form-group pb20">
 		<label id="cityLable" hidden>　市：</label>
-		<select  class="city form-control form-con-new" disabled="disabled">
+		<select  class="city form-control form-con-new" disabled="disabled"  style="min-width: 160px;">
 		</select>
 	</div>
 	<div class="form-group pb20">
 		<label id="distLable" hidden>　区：</label>
-		<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+		<select name="dist" class="dist form-control form-con-new"  disabled="disabled"  style="min-width: 160px;">
 		</select>
 	</div>
+	<%--<div class="form-group pb20">
+		<label>站点状态：</label>
+		<select id="status" name="status" class="form-control form-con-new" style="min-width: 120px;">
+			<%=SiteStatus.Stas2HTML2(-1)%>
+		</select>
+	</div>
+	<div class="form-group pb20">
+		<label>　配送区域状态：</label>
+		<select id="areaFlag" name="areaFlag" class="form-control form-con-new" style="min-width: 120px;">
+			<option value="-1">全部</option>
+			<option value="1">有效</option>
+			<option value="0">无效</option>
+		</select>
+	</div>--%>
 	<div class="form-group pb20">
 		<label class="ml16">站点：</label>
 		<div class="crt-s w400">
@@ -55,10 +70,6 @@
 
 		</div>
 	</div>
-
-
-
-
 </div>
 <script type="text/javascript">
 	var isSiteId = false;
