@@ -202,7 +202,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @return 站点集合
      */
     public List<Option> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag) {
-        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+        Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
         if(StringUtils.isNotBlank(siteName)){
             query.and(query.criteria("name").containsIgnoreCase(siteName));
         }

@@ -59,6 +59,8 @@
 						<input id="prov_expt" name="prov" type="hidden" />
 						<input id="city_expt" name="city" type="hidden" />
 						<input id="area_expt" name="area" type="hidden" />
+						<input id="siteStatus_expt" name="siteStatus" type="hidden" />
+						<input id="areaFlag_expt" name="areaFlag" type="hidden" />
 						<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
 					</c:if>
 					<input id="time_expt" name="time" type="hidden" />
@@ -75,9 +77,9 @@
 								</c:if>
   								<th>未到站订单数</th>
 								<th>已到站订单数</th>
-								<th>正在派送订单数</th>
 								<th>未分派</th>
 								<th>已分派</th>
+								<th>正在派送</th>
 								<th>签收</th>
 								<th>滞留</th>
 								<th>拒收</th>
@@ -234,6 +236,8 @@ function exportData() {
 		$("#prov_expt").val($("#addr_control .prov").val());
 		$("#city_expt").val($("#addr_control .city").val());
 		$("#area_expt").val($("#addr_control .dist").val());
+		$("#siteStatus_expt").val($("#siteStatus").val());
+		$("#areaFlag_expt").val($("#areaFlag").val());
 		$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
 	</c:if>
 	$("#time_expt").val($("#time").val());

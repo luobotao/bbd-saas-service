@@ -85,8 +85,10 @@
 					<input id="prov_expt" name="prov" type="hidden" />
 					<input id="city_expt" name="city" type="hidden" />
 					<input id="area_expt" name="area" type="hidden" />
-					<input id="status_expt" name="statusStr" type="hidden" />
+					<input id="siteStatus_expt" name="siteStatus" type="hidden" />
+					<input id="areaFlag_expt" name="areaFlag" type="hidden" />
 					<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
+					<input id="status_expt" name="statusStr" type="hidden" />
 					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
@@ -394,8 +396,10 @@ function exportData() {
 	$("#prov_expt").val($("#addr_control .prov").val());
 	$("#city_expt").val($("#addr_control .city").val());
 	$("#area_expt").val($("#addr_control .dist").val());
-	$("#status_expt").val(getAreaCodeStr("statusOpts"));
+	$("#siteStatus_expt").val($("#siteStatus").val());
+	$("#areaFlag_expt").val($("#areaFlag").val());
 	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
+	$("#status_expt").val(getAreaCodeStr("statusOpts"));
 	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();

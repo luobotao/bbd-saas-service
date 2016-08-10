@@ -60,7 +60,7 @@ public class MailStatisticController {
 	public String index(Integer pageIndex, String areaCodeStr, String time, Integer siteStatus, Integer areaFlag, final HttpServletRequest request, Model model) {
 		try {
 			//设置默认查询条件 -- 当天
-			time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD));
+			time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD));
 			//查询数据
 			PageModel<MailStatisticVO> pageModel = getList(null, null, null, pageIndex, areaCodeStr, time, siteStatus, areaFlag, request);
 			//当前登录的用户信息
@@ -100,7 +100,7 @@ public class MailStatisticController {
 			pageIndex = Numbers.defaultIfNull(pageIndex, 0);
 			pageModel.setPageNo(pageIndex);
 			//设置默认查询条件 -- 当天
-			time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD));
+			time = StringUtil.initStr(time, Dates.dateToString(new Date(), Constants.DATE_PATTERN_YMD));
 			if(currUser.getRole() == UserRole.COMPANY){//公司角色
 				//设置默认查询条件
 				//areaCode = StringUtil.initStr(areaCode, "141725-001");
@@ -114,7 +114,7 @@ public class MailStatisticController {
 				}else{
 					statusList.add(SiteStatus.status2Obj(siteStatus));
 				}
-				List<String> areaCodeList = getAreaCodeAndStatusList(currUser.getCompanyId(), prov, city, area, areaCodeStr, statusList, areaFlag);
+				List<String> areaCodeList = this.getAreaCodeAndStatusList(currUser.getCompanyId(), prov, city, area, areaCodeStr, statusList, areaFlag);
 				//分页查询
 				sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), areaCodeList, statusList, areaFlag);
 				pageModel.setTotalCount(sitePageModel.getTotalCount());
@@ -156,13 +156,11 @@ public class MailStatisticController {
 	private List<String> getAreaCodeAndStatusList(String companyId, String prov, String city, String area, String areaCodeStr, List<SiteStatus> statusList, Integer areaFlag){
 		List<String> areaCodeList = null;
 		if(StringUtils.isBlank(areaCodeStr)){//全部(公司下的全部areaCodeList == null|省市区下的全部 areaCodeList.isEmpty)
-			if(StringUtils.isNotBlank(prov)){//某个省市区下的全部站点
-				List<Option> optionList = siteService.findOptByCompanyIdAndAddress(companyId, prov, city, area, null, statusList, areaFlag);
-				areaCodeList = new ArrayList<String>();
-				if(optionList != null && !optionList.isEmpty()){
-					for(Option option : optionList){
-						areaCodeList.add(option.getCode());
-					}
+			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(companyId, prov, city, area, null, statusList, areaFlag);
+			areaCodeList = new ArrayList<String>();
+			if(optionList != null && !optionList.isEmpty()){
+				for(Option option : optionList){
+					areaCodeList.add(option.getCode());
 				}
 			}
 		}else{//部分站点
@@ -183,20 +181,30 @@ public class MailStatisticController {
 		if(areaCodeList != null){//查询全部 -- 同一个公司的所有站点
 			//缺少历史未到站 && 已到站订单数 && 转其他站点的订单数
 			summary = orderService.findSummaryByAreaCodesAndTime(areaCodeList, time);
-			//转其他站点的订单数
-			summary.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodesAndTime(areaCodeList, time));
-			//历史未到站 && 已到站订单数
-			OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(areaCodeList, time);
-			//dataArrived=time && toOtherSite
-			summary.setNoArrive((int) orderNumVO.getNoArriveHis());
-			summary.setArrived((int)orderNumVO.getArrived() + summary.getToOtherSite());
-			summary.setTotalDispatched(summary.getArrived() - summary.getNoDispatch());//所有已分派的
+			setNoArrArrToOtherSite(summary, areaCodeList, time);
 		}
 		if(summary == null){
 			summary = new MailStatisticVO();
 		}
 		summary.setSiteName("总计");
 		return summary;
+	}
+
+	/**
+	 * 设置历史未到站 && 已到站订单数 && 转其他站点的订单数
+	 * @param summary 汇总行
+	 * @param areaCodeList 站点编号集合
+	 * @param time 日期
+     */
+	private void setNoArrArrToOtherSite(MailStatisticVO summary, List<String> areaCodeList, String time){
+		//转其他站点的订单数
+		summary.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodesAndTime(areaCodeList, time));
+		//历史未到站 && 已到站订单数
+		OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(areaCodeList, time);
+		//dataArrived=time && toOtherSite
+		summary.setNoArrive((int) orderNumVO.getNoArriveHis());
+		summary.setArrived((int)orderNumVO.getArrived() + summary.getToOtherSite());
+		summary.setTotalDispatched(summary.getArrived() - summary.getNoDispatch());//所有已分派的
 	}
 
 	/**
@@ -222,16 +230,15 @@ public class MailStatisticController {
 			mailStatisticVO = siteMSVMap.get(option.getCode());
 			if(mailStatisticVO == null){
 				mailStatisticVO = new MailStatisticVO();
-			}else{
-				//转其他站点的订单数
-				mailStatisticVO.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodeAndTime(option.getCode(), time));
-				//历史未到站 && 已到站订单数
-				OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(option.getCode(), time);
-				//dataArrived=time && toOtherSite
-				mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
-				mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
-				mailStatisticVO.setTotalDispatched(mailStatisticVO.getArrived() - mailStatisticVO.getNoDispatch());//所有已分派的
 			}
+			//转其他站点的订单数
+			mailStatisticVO.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodeAndTime(option.getCode(), time));
+			//历史未到站 && 已到站订单数
+			OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(option.getCode(), time);
+			//dataArrived=time && toOtherSite
+			mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
+			mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
+			mailStatisticVO.setTotalDispatched(mailStatisticVO.getArrived() - mailStatisticVO.getNoDispatch());//所有已分派的
 			mailStatisticVO.setSiteName(option.getName());
 			dataList.add(mailStatisticVO);
 		}
@@ -297,7 +304,9 @@ public class MailStatisticController {
 						areaCodeList.add(option.getCode());
 					}
 					essMap = orderService.sumWithAreaCodesAndOrderStatus(time, areaCodeList);
+					//缺少历史未到站 && 已到站订单数 && 转其他站点的订单数
 					summary = orderService.findSummaryByAreaCodesAndTime(areaCodeList, time);
+					setNoArrArrToOtherSite(summary, areaCodeList, time);
 					dataList = toRowDatas(optionList, currUser.getCompanyId(), time, essMap);
 					if(summary == null){
 						summary = new MailStatisticVO();

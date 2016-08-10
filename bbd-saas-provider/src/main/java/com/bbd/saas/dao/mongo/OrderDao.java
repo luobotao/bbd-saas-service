@@ -382,7 +382,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("orderStatus", OrderStatus.NOTARR);
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        orderNumVO.setArrived(selectArrivedByQuery(query, dateArrived));//已到站
+        orderNumVO.setArrived(selectArrivedByQuery(queryArrive, dateArrived));//已到站
         return orderNumVO;
     }
     /**
