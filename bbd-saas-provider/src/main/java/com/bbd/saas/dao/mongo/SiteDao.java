@@ -66,7 +66,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param statusList
      * @return
      */
-    public PageModel<Option> findSites(PageModel<Option> pageModel,String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
+    public PageModel<Option> findSites(PageModel<Option> pageModel,String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag) {
         Query<Site> query = createQuery().retrievedFields(true, "areaCode", "name");
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
@@ -76,6 +76,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         }
         if(statusList != null){
             query.filter("status in", statusList);
+        }
+        if(areaFlag != null && areaFlag != -1){
+            query.filter("areaFlag", areaFlag);
         }
         query.order("areaCode");
         List<Site> siteList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();

@@ -1,18 +1,17 @@
 package com.bbd.saas.controllers;
 
 import com.bbd.saas.Services.AdminService;
-import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.api.mongo.ToOtherSiteLogService;
+import com.bbd.saas.api.mysql.ExpressStatStationService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserRole;
+import com.bbd.saas.models.ExpressStatStation;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
-import com.bbd.saas.vo.MailStatisticVO;
 import com.bbd.saas.vo.Option;
-import com.bbd.saas.vo.OrderNumVO;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,18 +31,16 @@ import java.util.*;
  * 统计汇总
  */
 @Controller
-@RequestMapping("/mailStatistic")
-public class MailStatisticController {
+@RequestMapping("/mailStatistic2")
+public class MailStatisticController2 {
 
-	public static final Logger logger = LoggerFactory.getLogger(MailStatisticController.class);
+	public static final Logger logger = LoggerFactory.getLogger(MailStatisticController2.class);
 	@Autowired
 	AdminService adminService;
 	@Autowired
 	SiteService siteService;
 	@Autowired
-	OrderService orderService;
-	@Autowired
-	ToOtherSiteLogService toOtherSiteLogService;
+	ExpressStatStationService expressStatStationService;
 
 	/**
 	 * Description: 跳转到统计汇总页面
@@ -62,7 +59,7 @@ public class MailStatisticController {
 			//设置默认查询条件 -- 当天
 			time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD));
 			//查询数据
-			PageModel<MailStatisticVO> pageModel = getList(null, null, null, pageIndex, areaCodeStr, time, siteStatus, areaFlag, request);
+			PageModel<ExpressStatStation> pageModel = getList(null, null, null, pageIndex, areaCodeStr, time, siteStatus, areaFlag, request);
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
@@ -88,11 +85,11 @@ public class MailStatisticController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getList", method=RequestMethod.GET)
-	public PageModel<MailStatisticVO> getList(String prov, String city, String area, Integer pageIndex, String areaCodeStr, String time, Integer siteStatus, Integer areaFlag, final HttpServletRequest request) {
+	public PageModel<ExpressStatStation> getList(String prov, String city, String area, Integer pageIndex, String areaCodeStr, String time, Integer siteStatus, Integer areaFlag, final HttpServletRequest request) {
 		siteStatus = Numbers.defaultIfNull(siteStatus, -1);
 		areaFlag = Numbers.defaultIfNull(areaFlag, -1);
 		//查询数据
-		PageModel<MailStatisticVO> pageModel = new PageModel<MailStatisticVO>();
+		PageModel<ExpressStatStation> pageModel = new PageModel<ExpressStatStation>();
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
@@ -120,10 +117,10 @@ public class MailStatisticController {
 				pageModel.setTotalCount(sitePageModel.getTotalCount());
 				List<Option> siteList = sitePageModel.getDatas();
 				if(siteList != null && siteList.size() > 0){
-					List<MailStatisticVO> dataList = getCurrPageDataList(siteList, currUser.getCompanyId(), time);
+					List<ExpressStatStation> dataList = getCurrPageDataList(siteList, currUser.getCompanyId(), time);
 					//最后一页 -- 需要显示汇总行
 					if((pageModel.getPageNo() + 1) == pageModel.getTotalPages()){
-						MailStatisticVO summary = this.getSummaryRow(areaCodeList, time);
+						ExpressStatStation summary = getSummaryRow(areaCodeList, currUser.getCompanyId(), time);
 						dataList.add(summary);
 					}
 					pageModel.setDatas(dataList);
@@ -132,7 +129,7 @@ public class MailStatisticController {
 				if(currUser.getSite() != null){
 					areaCodeStr = currUser.getSite().getAreaCode();
 					//列表数据
-					List<MailStatisticVO> dataList = findOneSiteData(areaCodeStr, time);
+					List<ExpressStatStation> dataList = findOneSiteData(areaCodeStr, time);
 					pageModel.setTotalCount(1);
 					pageModel.setDatas(dataList);
 				}
@@ -175,27 +172,21 @@ public class MailStatisticController {
 	/**
 	 * 查询汇总行数据，只有最后一页才会有汇总行
 	 * @param areaCodeList 站点编码集合
+	 * @param companyId 公司Id
 	 * @param time 日期
      * @return 汇总行
      */
-	private MailStatisticVO getSummaryRow(List<String> areaCodeList, String time){
-		MailStatisticVO summary = null;
-		if(areaCodeList != null){//查询全部 -- 同一个公司的所有站点
-			//缺少历史未到站 && 已到站订单数 && 转其他站点的订单数
-			summary = orderService.findSummaryByAreaCodesAndTime(areaCodeList, time);
-			//转其他站点的订单数
-			summary.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodesAndTime(areaCodeList, time));
-			//历史未到站 && 已到站订单数
-			OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(areaCodeList, time);
-			//dataArrived=time && toOtherSite
-			summary.setNoArrive((int) orderNumVO.getNoArriveHis());
-			summary.setArrived((int)orderNumVO.getArrived() + summary.getToOtherSite());
-			summary.setTotalDispatched(summary.getArrived() - summary.getNoDispatch());//所有已分派的
+	private ExpressStatStation getSummaryRow(List<String> areaCodeList, String companyId, String time){
+		ExpressStatStation summary = null;
+		if(areaCodeList == null){//查询全部 -- 同一个公司的所有站点
+			summary = expressStatStationService.findSummaryByCompanyIdAndTime(companyId, time);
+		}else{//部分站点
+			summary = expressStatStationService.findSummaryByAreaCodesAndTime(areaCodeList, time);
 		}
 		if(summary == null){
-			summary = new MailStatisticVO();
+			summary = new ExpressStatStation(companyId, null, null, null);
 		}
-		summary.setSiteName("总计");
+		summary.setSitename("总计");
 		return summary;
 	}
 
@@ -204,52 +195,36 @@ public class MailStatisticController {
 	 * @param siteList
 	 * @param companyId 公司Id
 	 * @param time 日期
-	 * @return List<MailStatisticVO> dataList
+	 * @return List<ExpressStatStation> dataList
      */
-	private List<MailStatisticVO> getCurrPageDataList(List<Option> siteList, String companyId, String time){
+	private List<ExpressStatStation> getCurrPageDataList(List<Option> siteList, String companyId, String time){
 		List<String> areaCodeList = new ArrayList<String>();
 		for(Option option : siteList){
 			areaCodeList.add(option.getCode());
 		}
-		//缺少历史未到站 && 已到站订单数 && 转其他站点的订单数
-		Map<String, MailStatisticVO> siteMSVMap = orderService.sumWithAreaCodesAndOrderStatus(time, areaCodeList);
-		return toRowDatas(siteList, companyId, time, siteMSVMap);
+		Map<String, ExpressStatStation> essMap = expressStatStationService.findByAreaCodeListAndTime(areaCodeList, time);
+		return toRowDatas(siteList, companyId, time, essMap);
 	}
-	private List<MailStatisticVO> toRowDatas(List<Option> siteList, String companyId, String time, Map<String, MailStatisticVO> siteMSVMap){
-		List<MailStatisticVO> dataList = new ArrayList<MailStatisticVO>();
-		MailStatisticVO mailStatisticVO = null;
+	private List<ExpressStatStation> toRowDatas(List<Option> siteList, String companyId, String time, Map<String, ExpressStatStation> essMap){
+		List<ExpressStatStation> dataList = new ArrayList<ExpressStatStation>();
+		ExpressStatStation ess = null;
 		for(Option option : siteList){
-			mailStatisticVO = siteMSVMap.get(option.getCode());
-			if(mailStatisticVO == null){
-				mailStatisticVO = new MailStatisticVO();
-			}else{
-				//转其他站点的订单数
-				mailStatisticVO.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodeAndTime(option.getCode(), time));
-				//历史未到站 && 已到站订单数
-				OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(option.getCode(), time);
-				//dataArrived=time && toOtherSite
-				mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
-				mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
-				mailStatisticVO.setTotalDispatched(mailStatisticVO.getArrived() - mailStatisticVO.getNoDispatch());//所有已分派的
+			ess = essMap.get(option.getCode());
+			if(ess == null){
+				ess = new ExpressStatStation(companyId, option.getId(), option.getName(),time);
+				ess.setSitename(option.getName());
 			}
-			mailStatisticVO.setSiteName(option.getName());
-			dataList.add(mailStatisticVO);
+			dataList.add(ess);
 		}
 		return dataList;
 	}
-	private List<MailStatisticVO> findOneSiteData(String areaCode, String time){
-		MailStatisticVO mailStatisticVO = orderService.sumWithAreaCodeAndOrderStatus(time, areaCode);
-		//转其他站点的订单数
-		mailStatisticVO.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodeAndTime(areaCode, time));
-		//历史未到站 && 已到站订单数
-		OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(areaCode, time);
-		//dataArrived=time && toOtherSite
-		mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
-		mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
-		mailStatisticVO.setTotalDispatched(mailStatisticVO.getArrived() - mailStatisticVO.getNoDispatch());//所有已分派的
-		List<MailStatisticVO> dataList = Lists.newArrayList();
-		//Site site = siteService.findSiteByAreaCode(areaCode);
-		dataList.add(mailStatisticVO);
+	private List<ExpressStatStation> findOneSiteData(String areaCode, String time){
+		List<ExpressStatStation> dataList = expressStatStationService.findByAreaCodeAndTime(areaCode, time);
+		Site site = siteService.findSiteByAreaCode(areaCode);
+		if(dataList == null || dataList.size() == 0){
+			dataList = new ArrayList<ExpressStatStation>();
+			dataList.add(new ExpressStatStation(site.getCompanyId(), areaCode, site.getName(), time));
+		}
 		return dataList;
 	}
 	/**
@@ -263,12 +238,12 @@ public class MailStatisticController {
 	 * 2016年5月10日下午4:30:41
 	 */
 	@RequestMapping(value="/exportToExcel", method=RequestMethod.GET)
-	public void exportData(String prov, String city, String area, String areaCodeStr, String time,Integer siteStatus, Integer areaFlag,
+	public void exportData(String prov, String city, String area, String areaCodeStr, String time,
 						   final HttpServletRequest request, final HttpServletResponse response) {
 		//设置默认查询条件 -- 当天
 		time = StringUtil.initStr(time, Dates.dateToString(Dates.addDays(new Date(), -1), Constants.DATE_PATTERN_YMD2));
 		try {
-			List<MailStatisticVO> dataList = null;
+			List<ExpressStatStation> dataList = null;
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			String[] titles = null;
@@ -277,36 +252,37 @@ public class MailStatisticController {
 			if(currUser.getRole() == UserRole.COMPANY){//公司角色
 				List<Option> optionList = null;
 				if(StringUtils.isBlank(areaCodeStr)){//全部(公司下的全部||省市区下的全部 )
-					List<SiteStatus> statusList = Lists.newArrayList();
-					if(siteStatus == null || siteStatus == -1){//全部（有效||无效）
-						statusList.add(SiteStatus.APPROVE);
-						statusList.add(SiteStatus.INVALID);
-					}else{
-						statusList.add(SiteStatus.status2Obj(siteStatus));
-					}
-					optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList, areaFlag);
+					List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+					statusList.add(SiteStatus.APPROVE);
+					statusList.add(SiteStatus.INVALID);
+					optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList);
 				}else{//部分站点
 					String [] areaCodes = areaCodeStr.split(",");
 					optionList = siteService.findByAreaCodes(areaCodes);
 				}
 				if(optionList != null && !optionList.isEmpty()){
-					Map<String, MailStatisticVO> essMap = null;
-					MailStatisticVO summary = null;
-					List<String> areaCodeList = new ArrayList<String>();
-					for(Option option : optionList){
-						areaCodeList.add(option.getCode());
+					Map<String, ExpressStatStation> essMap = null;
+					ExpressStatStation summary = null;
+					if(StringUtils.isBlank(areaCodeStr) && StringUtils.isBlank(prov)){//公司下的全部站点
+						essMap = expressStatStationService.findMapByCompanyIdAndTime(currUser.getCompanyId(), time);
+						summary = expressStatStationService.findSummaryByCompanyIdAndTime(currUser.getCompanyId(), time);
+					}else{//多个站点
+						List<String> areaCodeList = new ArrayList<String>();
+						for(Option option : optionList){
+							areaCodeList.add(option.getCode());
+						}
+						essMap = expressStatStationService.findByAreaCodeListAndTime(areaCodeList, time);
+						summary = expressStatStationService.findSummaryByAreaCodesAndTime(areaCodeList, time);
 					}
-					essMap = orderService.sumWithAreaCodesAndOrderStatus(time, areaCodeList);
-					summary = orderService.findSummaryByAreaCodesAndTime(areaCodeList, time);
 					dataList = toRowDatas(optionList, currUser.getCompanyId(), time, essMap);
 					if(summary == null){
-						summary = new MailStatisticVO();
+						summary = new ExpressStatStation(currUser.getCompanyId(), null, null, null);
 					}
-					summary.setSiteName("总计");
+					summary.setSitename("总计");
 					dataList.add(summary);
 				}
 				//表头 "未到站订单数",  3000,
-				titles = new String[]{"站点",  "未到站订单数", "已到站订单数", "未分派", "已分派", "正在派送", "签收", "滞留", "拒收", "转站", "转其他快递"};
+				titles = new String[]{"站点",  "未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
 				colWidths = new int[] {13000,  3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
 				isShowSite = true;
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//站长角色
@@ -316,7 +292,7 @@ public class MailStatisticController {
 					dataList = findOneSiteData(areaCode, time);
 				}
 				//表头 "未到站订单数",  3000,
-				titles = new String[]{"未到站订单数", "已到站订单数", "未分派", "已分派", "正在派送", "签收", "滞留", "拒收", "转站", "转其他快递"};
+				titles = new String[]{"未到站订单数", "已到站订单数", "已分派", "签收", "滞留", "拒收", "转站", "转其他快递"};
 				colWidths = new int[] {3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
 				isShowSite = false;
 			}
@@ -329,26 +305,24 @@ public class MailStatisticController {
 		}
 	}
 
-	private List<List<String>> objectToTable(List<MailStatisticVO> dataList, boolean isShowSite){
+	private List<List<String>> objectToTable(List<ExpressStatStation> dataList, boolean isShowSite){
 		if(dataList == null){
 			return null;
 		}
 		List<List<String>> rowList = new ArrayList<List<String>>();
-		for(MailStatisticVO mailStatisticVO : dataList){
+		for(ExpressStatStation expressStatStation : dataList){
 			List<String> row = new ArrayList<String>();
 			if(isShowSite){
-				row.add(mailStatisticVO.getSiteName());
+				row.add(expressStatStation.getSitename());
 			}
-			row.add(mailStatisticVO.getNoArrive()+"");
-			row.add(mailStatisticVO.getArrived()+"");
-			row.add(mailStatisticVO.getNoDispatch()+"");
-			row.add(mailStatisticVO.getTotalDispatched()+"");
-			row.add(mailStatisticVO.getDispatched()+"");
-			row.add(mailStatisticVO.getSigned()+"");
-			row.add(mailStatisticVO.getRetention()+"");
-			row.add(mailStatisticVO.getRejection()+"");
-			row.add(mailStatisticVO.getToOtherSite()+"");
-			row.add(mailStatisticVO.getToOtherExpress()+"");
+			row.add(expressStatStation.getNostationcnt()+"");
+			row.add(expressStatStation.getStationcnt()+"");
+			row.add(expressStatStation.getDeliverycnt()+"");
+			row.add(expressStatStation.getSuccesscnt()+"");
+			row.add(expressStatStation.getDailycnt()+"");
+			row.add(expressStatStation.getRefusecnt()+"");
+			row.add(expressStatStation.getChangestationcnt()+"");
+			row.add(expressStatStation.getChangeexpresscnt()+"");
 			rowList.add(row);
 		}
 		return  rowList;

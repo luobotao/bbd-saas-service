@@ -1,5 +1,5 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="com.bbd.saas.models.ExpressStatStation" %>
+<%@ page import="com.bbd.saas.vo.MailStatisticVO" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.UserRole" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -38,7 +38,7 @@
 					<div class="search-area">
 						<c:if test="${role == UserRole.COMPANY}">
 	  						<div class="row">
-								<jsp:include page="../control/siteControl.jsp" flush="true" />
+								<jsp:include page="../control/siteStatusControl.jsp" flush="true" />
 	  						</div>
 						</c:if>
 	  					<div class="row pb20">
@@ -75,6 +75,8 @@
 								</c:if>
   								<th>未到站订单数</th>
 								<th>已到站订单数</th>
+								<th>正在派送订单数</th>
+								<th>未分派</th>
 								<th>已分派</th>
 								<th>签收</th>
 								<th>滞留</th>
@@ -85,7 +87,7 @@
   						</thead>
   						<tbody id="dataList">
   							<%
-								PageModel<ExpressStatStation> pageModel = (PageModel<ExpressStatStation>)request.getAttribute("pageModel");
+								PageModel<MailStatisticVO> pageModel = (PageModel<MailStatisticVO>)request.getAttribute("pageModel");
 								if(pageModel==null || pageModel.getDatas() == null || pageModel.getDatas().size() == 0){
 							%>
 								<tr>
@@ -93,20 +95,22 @@
 								</tr>
 							<%
 								}else{
-									for(ExpressStatStation ess : pageModel.getDatas()){
+									for(MailStatisticVO mailStatisticVO : pageModel.getDatas()){
 							%>
 								<tr>
 									<c:if test="${role == UserRole.COMPANY}">
-										<td><%=ess.getSitename()%></td>
+										<td><%=mailStatisticVO.getSiteName()%></td>
 									</c:if>
-									<td><%=ess.getNostationcnt()%></td>
-									<td><%=ess.getStationcnt()%></td>
-									<td><%=ess.getDeliverycnt()%></td>
-									<td><%=ess.getSuccesscnt()%></td>
-									<td><%=ess.getDailycnt()%></td>
-									<td><%=ess.getRefusecnt()%></td>
-									<td><%=ess.getChangestationcnt()%></td>
-									<td><%=ess.getChangeexpresscnt()%></td>
+									<td><%=mailStatisticVO.getNoArrive()%></td>
+									<td><%=mailStatisticVO.getArrived()%></td>
+									<td><%=mailStatisticVO.getNoDispatch()%></td>
+									<td><%=mailStatisticVO.getTotalDispatched()%></td>
+									<td><%=mailStatisticVO.getDispatched()%></td>
+									<td><%=mailStatisticVO.getSigned()%></td>
+									<td><%=mailStatisticVO.getRetention()%></td>
+									<td><%=mailStatisticVO.getRejection()%></td>
+									<td><%=mailStatisticVO.getToOtherSite()%></td>
+									<td><%=mailStatisticVO.getToOtherExpress()%></td>
 								</tr>
 							<%
 								}//for
@@ -136,11 +140,12 @@
 <!-- E footer -->
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-	var  siteUrl = "<c:url value="/site/getSiteList"/>";
-	var  inputName = null;
+	var siteUrl = "<c:url value="/site/getQuerySiteList"/>";
+	var inputName = null;
 	var isSiteId = false;
 </script>
-<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<script src="<c:url value="/resources/javascripts/siteStatusControl.js" />"> </script>
+<%--<script src="<c:url value="/resources/javascripts/statusControl.js" />"> </script>--%>
 <!-- E 省市区站点选择控件  -->
 <script type="text/javascript">
 
@@ -173,6 +178,8 @@ function gotoPage(pageIndex) {
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
+			"siteStatus" : $("#siteStatus").val(),//站点状态
+			"areaFlag" : $("#areaFlag").val(),//配送区域
 			"areaCodeStr" : areaCodeStr,
             "time" : $("#time").val(),
         },//数据，这里使用的是Json格式进行传输
@@ -205,20 +212,21 @@ function gotoPage(pageIndex) {
 function getRowHtml(data){
 	var row = "<tr>";
 	<c:if test="${role == UserRole.COMPANY}">
-		row += "<td>" + data.sitename + "</td>";
+		row += "<td>" + data.siteName + "</td>";
 	</c:if>
-	row += "<td>" + data.nostationcnt + "</td>";
-	row += "<td>" + data.stationcnt + "</td>";
-	row += "<td>" + data.deliverycnt + "</td>";
-	row += "<td>" + data.successcnt + "</td>";
-	row += "<td>" + data.dailycnt + "</td>";
-	row += "<td>" + data.refusecnt + "</td>";
-	row += "<td>" + data.changestationcnt + "</td>";
-	row += "<td>" + data.changeexpresscnt + "</td>";
+	row += "<td>" + data.noArrive + "</td>";
+	row += "<td>" + data.arrived + "</td>";
+	row += "<td>" + data.noDispatch + "</td>";
+	row += "<td>" + data.totalDispatched + "</td>";
+	row += "<td>" + data.dispatched + "</td>";
+	row += "<td>" + data.signed + "</td>";
+	row += "<td>" + data.retention + "</td>";
+	row += "<td>" + data.rejection + "</td>";
+	row += "<td>" + data.toOtherSite + "</td>";
+	row += "<td>" + data.toOtherExpress + "</td>";
 	row += "</tr>";
 	return row;
 }
-
 
 //导出数据
 function exportData() {

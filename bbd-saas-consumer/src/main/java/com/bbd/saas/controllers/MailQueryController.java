@@ -15,6 +15,7 @@ import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.UserVO;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,7 +167,7 @@ public class MailQueryController {
 		List<Option> optionList = null;
 		//areaCodeList查询
 		if(StringUtils.isBlank(areaCodeStr)){//全部(公司下的全部|省市区下的全部)
-			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+			List<SiteStatus> statusList = Lists.newArrayList();
 			if(siteStatus == null || siteStatus == -1){//全部（有效||无效）
 				statusList.add(SiteStatus.APPROVE);
 				statusList.add(SiteStatus.INVALID);
