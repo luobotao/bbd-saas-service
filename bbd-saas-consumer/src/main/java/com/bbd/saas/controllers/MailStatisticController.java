@@ -316,7 +316,7 @@ public class MailStatisticController {
 				}
 				//表头 "未到站订单数",  3000,
 				titles = new String[]{"站点",  "未到站订单数", "已到站订单数", "未分派", "已分派", "正在派送", "签收", "滞留", "拒收", "转站", "转其他快递"};
-				colWidths = new int[] {13000,  3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
+				colWidths = new int[] {13000,  3500, 3500, 3000, 3000, 3000, 3000, 3000, 3000, 3500};
 				isShowSite = true;
 			}else if(currUser.getRole() == UserRole.SITEMASTER){//站长角色
 				if(currUser.getSite() != null){
@@ -326,7 +326,7 @@ public class MailStatisticController {
 				}
 				//表头 "未到站订单数",  3000,
 				titles = new String[]{"未到站订单数", "已到站订单数", "未分派", "已分派", "正在派送", "签收", "滞留", "拒收", "转站", "转其他快递"};
-				colWidths = new int[] {3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000, 3000};
+				colWidths = new int[] {3500, 3500, 3000, 3000, 3000, 3000, 3000, 3000, 3500};
 				isShowSite = false;
 			}
 			//导出==数据写到Excel中并写入response下载
