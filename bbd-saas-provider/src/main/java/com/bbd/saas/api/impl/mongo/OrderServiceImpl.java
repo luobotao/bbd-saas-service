@@ -15,14 +15,15 @@ import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.models.SiteMySql;
+import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.ParcelStatus;
+import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
-import com.bbd.saas.vo.Reciever;
+import com.bbd.saas.vo.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
@@ -247,8 +248,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public long getDispatchedNums(String areaCode, String betweenTime) {
-		return  orderDao.getDispatchedNums(areaCode, betweenTime);
+	public OrderNumVO findHistoryNoArrivedAndArrivedNums(String areaCode, String dateArrived) {
+		return  orderDao.selectHistoryNoArrivedAndArrivedNums(areaCode, dateArrived);
+	}
+
+	@Override
+	public OrderNumVO findHistoryNoArrivedAndArrivedNums(List<String> areaCodeList, String dateArrived) {
+		return  orderDao.selectHistoryNoArrivedAndArrivedNums(areaCodeList, dateArrived);
 	}
 
 	@Override
@@ -265,6 +271,7 @@ public class OrderServiceImpl implements OrderService {
 	public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, ObjectId uId, String keyword) {
 		PageModel<Order> pageModel = new PageModel<Order>();
 		pageModel.setPageNo(pageIndex);
+		pageModel.setPageSize(20);
 		return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
 	}
 
@@ -677,5 +684,20 @@ public class OrderServiceImpl implements OrderService {
 			return null;
 		}
 		return orderDao.selectByAreaCodeAndMailNums(areaCode, mailNumList);
+	}
+
+	@Override
+	public Map<String,MailStatisticVO> sumWithAreaCodesAndOrderStatus(String dateArrived, List<String> areaCodeList) {
+		return orderDao.sumWithAreaCodesAndOrderStatus(dateArrived, areaCodeList);
+	}
+
+	@Override
+	public MailStatisticVO sumWithAreaCodeAndOrderStatus(String dateArrived, String areaCode) {
+		return orderDao.sumWithAreaCodeAndOrderStatus(dateArrived, areaCode);
+	}
+
+	@Override
+	public MailStatisticVO findSummaryByAreaCodesAndTime(List<String> areaCodeList, String dateArrived) {
+		return orderDao.selectSummaryByAreaCodesAndTime(areaCodeList, dateArrived);
 	}
 }

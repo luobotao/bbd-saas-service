@@ -45,11 +45,12 @@ public class User implements Serializable {
     private Integer balanceId;      //资金账号ID(针对商户有用)
     private String pwdFlag;      //0修改过密码 1未修改过密码
 
-    public String appKey;               //平台授权key
-    public String sessionKey;           //平台授权sessionkey
-    public String secret;               //平台加密月
-    public String printCode;            //打印机编码
+    private String appKey;               //平台授权key
+    private String sessionKey;           //平台授权sessionkey
+    private String secret;               //平台加密月
+    private String printCode;            //打印机编码
     private int dispatchPermsn; //是否有到站权限。0：无; 1: 有。
+    private String solutionFlag;            //是否购买过解决方案 为ICP使用
     @Transient
     private String roleMessage;//存放角色信息
     @Transient
@@ -281,5 +282,13 @@ public class User implements Serializable {
 
     public void setDispatchPermsn(int dispatchPermsn) {
         this.dispatchPermsn = dispatchPermsn;
+    }
+
+    public String getSolutionFlag() {
+        return solutionFlag;
+    }
+
+    public void setSolutionFlag(String solutionFlag) {
+        this.solutionFlag = solutionFlag;
     }
 }
