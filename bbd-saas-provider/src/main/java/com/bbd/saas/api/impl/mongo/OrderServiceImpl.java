@@ -259,6 +259,7 @@ public class OrderServiceImpl implements OrderService {
 	public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, ObjectId uId, String keyword) {
 		PageModel<Order> pageModel = new PageModel<Order>();
 		pageModel.setPageNo(pageIndex);
+		pageModel.setPageSize(20);
 		return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
 	}
 
