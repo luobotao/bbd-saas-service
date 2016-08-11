@@ -14,10 +14,10 @@ public class ExpressStatStation implements Serializable {
 	private String areacode;//站点区域码
 	private String sitename;//站点名称
 	private Integer nostationcnt;//未到站数量
+	private Integer stationcnt;//到站数量
 	private Integer successcnt;//签收数量
 	private Integer dailycnt;//滞留数量
 	private Integer refusecnt;//拒收数量
-	private Integer stationcnt;//到站数量
 	private Integer deliverycnt;//派件数量
 	private Integer changestationcnt;//转其他站点数量
 	private Integer changeexpresscnt;//转其他快递数量

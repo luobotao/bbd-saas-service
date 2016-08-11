@@ -4,6 +4,8 @@ import com.bbd.saas.enums.*;
 import com.bbd.saas.vo.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
@@ -539,5 +541,8 @@ public class Order implements Serializable {
         orderVo.setDisAreaCode(disAreaCode);//分拨中心Code
         orderVo.setSiteTimes(siteTimes);//揽件时间的集合
         return orderVo;
+    }
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);//      return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE).append("xml", xml).toString();
     }
 }

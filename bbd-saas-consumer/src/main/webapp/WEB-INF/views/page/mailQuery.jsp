@@ -4,7 +4,6 @@
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
-<%@ page import="com.bbd.saas.enums.SiteStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -35,72 +34,7 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<div class="row" >
-							<div id="addr_control" class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<div class="form-group pb20">
-									<label>　省：</label>
-									<select name="prov" class="prov form-control form-con-new " style="min-width: 120px;">
-									</select>
-								</div>
-								<div class="form-group pb20">
-									<label id="cityLable" hidden>　市：</label>
-									<select  class="city form-control form-con-new" disabled="disabled"  style="min-width: 160px;">
-									</select>
-								</div>
-								<div class="form-group pb20">
-									<label id="distLable" hidden>　区：</label>
-									<select name="dist" class="dist form-control form-con-new"  disabled="disabled"  style="min-width: 160px;">
-									</select>
-								</div>
-								<div class="form-group pb20">
-									<label>站点状态：</label>
-									<select id="siteStatus" name="status" class="form-control form-con-new" style="min-width: 120px;">
-										<%=SiteStatus.Stas2HTML2(-1)%>
-									</select>
-								</div>
-								<div class="form-group pb20">
-									<label>　配送区域状态：</label>
-									<select id="areaFlag" name="areaFlag" class="form-control form-con-new" style="min-width: 120px;">
-										<option value="-1">全部</option>
-										<option value="1">有效</option>
-										<option value="0">无效</option>
-									</select>
-								</div>
-								<div class="form-group pb20">
-									<label class="ml16">站点：</label>
-									<div class="crt-s w400">
-										<div class="c-sel j-sel-input2">
-											<span class="show-ele j-empty">请选择</span>
-											<div class='showA'><ul class='c-show cityshow' id="options"></ul></div>
-										</div>
-										<div class="all-area all-area2 pm-dn">
-											<!-- S 1 -->
-											<div class="pv-bg clearfix">
-												<input id="areaCode" type="text" class="sel-input" placeholder="请输入站点名称" />
-												<div class="l-sel-p">
-													<ul class="pv-part" id="optionList">
-														<li>
-															<label class="f12 linputC">
-																<input type="checkbox" name="codeOpt" value="" isAll="1"><b>全部</b>
-															</label>
-														</li>
-														<c:if test="${not empty siteList}">
-															<c:forEach var="option" items="${siteList}">
-																<li>
-																	<label class="f12 linputC">
-																		<input type="checkbox" name="codeOpt" value="${option.code}" isAll="0"><b>${option.name}</b>
-																	</label>
-																</li>
-															</c:forEach>
-														</c:if>
-													</ul>
-												</div>
-											</div>
-											<!-- E 1 -->
-										</div>
-
-									</div>
-								</div>
-							</div>
+							<jsp:include page="../control/siteStatusControl.jsp" flush="true" />
 						</div>
 	  					<div class="row">
 	  						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -151,8 +85,10 @@
 					<input id="prov_expt" name="prov" type="hidden" />
 					<input id="city_expt" name="city" type="hidden" />
 					<input id="area_expt" name="area" type="hidden" />
-					<input id="status_expt" name="statusStr" type="hidden" />
+					<input id="siteStatus_expt" name="siteStatus" type="hidden" />
+					<input id="areaFlag_expt" name="areaFlag" type="hidden" />
 					<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
+					<input id="status_expt" name="statusStr" type="hidden" />
 					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
@@ -347,8 +283,8 @@ $(document).ready(function() {
 function gotoPage(pageIndex) {
 	/*var areaCodeStr = getAreaCodeStr();
 	console.log(areaCodeStr);*/
-	console.log("siteStatus==="+$("#siteStatus").val());
-	console.log("areaFlag==="+$("#areaFlag").val());
+	/*console.log("siteStatus==="+$("#siteStatus").val());
+	console.log("areaFlag==="+$("#areaFlag").val());*/
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -460,8 +396,10 @@ function exportData() {
 	$("#prov_expt").val($("#addr_control .prov").val());
 	$("#city_expt").val($("#addr_control .city").val());
 	$("#area_expt").val($("#addr_control .dist").val());
-	$("#status_expt").val(getAreaCodeStr("statusOpts"));
+	$("#siteStatus_expt").val($("#siteStatus").val());
+	$("#areaFlag_expt").val($("#areaFlag").val());
 	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
+	$("#status_expt").val(getAreaCodeStr("statusOpts"));
 	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();

@@ -6,17 +6,22 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.PrintStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.OrderGroup;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.MailStatisticVO;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
 import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.aggregation.Accumulator;
+import org.mongodb.morphia.aggregation.AggregationPipeline;
+import org.mongodb.morphia.aggregation.Sort;
 import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
@@ -25,10 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+
+import static org.mongodb.morphia.aggregation.Group.*;
 
 
 /**
@@ -103,10 +107,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public OrderNumVO getOrderNumVO(String areaCode) {
         OrderNumVO orderNumVO = new OrderNumVO();
         Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.filter("orderStatus", OrderStatus.NOTARR);
         orderNumVO.setNoArriveHis(count(query));//历史未到站
 
+        Query<Order> queryArrive = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -367,31 +371,42 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     /**
-     * 根据站点编码和时间获取该站点已分派的订单数
+     * 根据站点编码获取该站点历史未到站订单数||某天已到站
      * @param areaCode 站点编号
-     * @param betweenTime 查询时间范围
-     * @return
+     * @param dateArrived 到站日期
+     * @return 订单条数
      */
-    public long getDispatchedNums(String areaCode, String betweenTime) {
+    public OrderNumVO selectHistoryNoArrivedAndArrivedNums(String areaCode, String dateArrived)  {
         OrderNumVO orderNumVO = new OrderNumVO();
-        Query<Order> query = createQuery().filter("areaCode",areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        //
-        if(StringUtils.isNotBlank(betweenTime)){
-            DateBetween dateBetween = new DateBetween(betweenTime);
-            //expressQuery.criteria("expresses.dateAdd").greaterThanOrEq(dateBetween.getStart());
-            //expressQuery.criteria("expresses.dateAdd").lessThanOrEq(dateBetween.getEnd());
-            //物流状态--模糊查询
-            /*expressQuery.and(query.criteria("expresses.remark").contains("正在派送"),
-                    query.criteria("expresses.dateAdd").greaterThanOrEq(dateBetween.getStart()),
-                    query.criteria("expresses.dateAdd").lessThanOrEq(dateBetween.getEnd())
-            );*/
-            //String  expressQuery =" {'dateAdd' : {'$gte' : {'$date' :'2016-04-27T16:00:00.000Z'}}} , {'dateAdd' : {'$lte' : {'$date' :'2016-05-09T15:59:59.000Z'}}}";
-            BasicDBObject expressQuery = new BasicDBObject();
-            expressQuery.put("remark", new BasicDBObject("$regex", "正在派送"));
-            expressQuery.put("dateAdd", new BasicDBObject("$gte",  dateBetween.getStart())
-                    .append("$lte", dateBetween.getEnd()));  // i.e.   start <= dateAdd <= end
-            query.filter("expresses elem", expressQuery);
-        }
+        Query<Order> query = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.filter("orderStatus", OrderStatus.NOTARR);
+        orderNumVO.setNoArriveHis(count(query));//历史未到站
+        Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        orderNumVO.setArrived(selectArrivedByQuery(queryArrive, dateArrived));//已到站
+        return orderNumVO;
+    }
+    /**
+     * 根据站点编码获取该站点历史未到站订单数||某天已到站
+     * @param areaCodeList 站点编号集合
+     * @param dateArrived 到站日期
+     * @return 订单条数
+     */
+    public OrderNumVO selectHistoryNoArrivedAndArrivedNums(List<String> areaCodeList, String dateArrived)  {
+        OrderNumVO orderNumVO = new OrderNumVO();
+        Query<Order> query = createQuery().filter("areaCode in",areaCodeList).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.filter("orderStatus", OrderStatus.NOTARR);
+        orderNumVO.setNoArriveHis(count(query));//历史未到站
+        Query<Order> queryArrive = createQuery().filter("areaCode in",areaCodeList).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        orderNumVO.setArrived(selectArrivedByQuery(queryArrive, dateArrived));//已到站
+        return orderNumVO;
+    }
+    //查询已到站的订单数目
+    private long selectArrivedByQuery(Query<Order> query, String dateArrived){
+        Date date = Dates.parseDate(dateArrived);
+        Date startDate = Dates.getBeginOfDay(date);
+        Date endDate = Dates.getEndOfDay(date);
+        query.filter("dateArrived >=", startDate).filter("dateArrived <=", endDate);
+        query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
         return count(query);
     }
 
@@ -632,9 +647,142 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         return find(query).asList();
     }
+    /**
+     * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数) -- 多个站点
+     * @param dateArrived 到站时间
+     * @param areaCodeList 站点编号集合
+     * @return Map<areaCode, MailStatisticVO>
+     */
+    public Map<String,MailStatisticVO> sumWithAreaCodesAndOrderStatus(String dateArrived, List<String> areaCodeList) {
+        //Query<Order> query = this.getDatastore().getQueryFactory().createQuery(this.getDatastore());
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(dateArrived)){
+            Date date = Dates.parseDate(dateArrived);
+            Date startDate = Dates.getBeginOfDay(date);
+            Date endDate = Dates.getEndOfDay(date);
+            query.filter("dateArrived >=", startDate).filter("dateArrived <=", endDate);
+        }
+        if(areaCodeList != null && areaCodeList.size() > 0){
+            query.filter("areaCode in", areaCodeList);
+        }
+        query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
+        //select areaCode as abc , orderStatus as orderStatus, count(*) as countAll from order where dateArrived >= startDate and dateArrived <= endDate
+        // and areaCode in areaCodeList and orderStatus <> OrderStatus.NOTARR and orderStatus <> null group by areaCode,orderStatus order by abc asc;
+        AggregationPipeline pipeline = this.getDatastore().createAggregation(Order.class).match(query).group(id(grouping("areaCode"), grouping("orderStatus")), grouping("abc", first("areaCode")), grouping("orderStatus", first("orderStatus")), grouping("countAll", new Accumulator("$sum", 1))).sort(Sort.ascending("abc"));
+        Iterator<OrderGroup> iterator = pipeline.aggregate(OrderGroup.class);
+        //System.out.println(iterator.hasNext());
+        Map<String,MailStatisticVO> map = new HashedMap<String,MailStatisticVO>();
+        OrderGroup orderGroup = null;
+        while (iterator.hasNext()) {
+            orderGroup = iterator.next();
+            System.out.println(orderGroup.getAbc());
+            MailStatisticVO mailStatisticVO = map.get(orderGroup.getAbc());
+            if(mailStatisticVO == null){
+                mailStatisticVO = new MailStatisticVO();
+            }
+            map.put(orderGroup.getAbc(), OrderGroup2MailStatisticVO(mailStatisticVO, orderGroup));
+        }
+        return map;
+    }
+    private MailStatisticVO OrderGroup2MailStatisticVO(MailStatisticVO expressStatStation, OrderGroup orderGroup){
+        if(orderGroup != null){
+            switch (orderGroup.getOrderStatus().getStatus()){
+                /*case 0 : //未到站
+                    expressStatStation.setNostationcnt(orderGroup.getCountAll());
+                    break;*/
+                case 1 :  //未分派
+                    expressStatStation.setNoDispatch(orderGroup.getCountAll());
+                    break;
+                case 2 :  //已分派
+                    expressStatStation.setDispatched(orderGroup.getCountAll());
+                    break;
+                case 3 :  //滞留
+                    expressStatStation.setRetention(orderGroup.getCountAll());
+                    break;
+                case 4 :  //拒收
+                    expressStatStation.setRejection(orderGroup.getCountAll());
+                    break;
+                case 5 :  //已签收
+                    expressStatStation.setSigned(orderGroup.getCountAll());
+                    break;
+                case 6 :  //已转其他快递
+                    expressStatStation.setToOtherExpress(orderGroup.getCountAll());
+                    break;
+                /*case 7 :  //申请退货
+                    expressStatStation(orderGroup.getCountAll());
+                    break;
+                case 8 :  //退货完成
+                    expressStatStation(orderGroup.getCountAll());
+                    break;*/
+            }
+            return expressStatStation;
+        }
 
 
+        return  expressStatStation;
+    }
 
+    /**
+     * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)--单个站点
+     * @param dateArrived 到站时间
+     * @param areaCode 站点编号
+     * @return MailStatisticVO
+     */
+    public MailStatisticVO sumWithAreaCodeAndOrderStatus(String dateArrived, String areaCode) {
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(dateArrived)){
+            Date date = Dates.parseDate(dateArrived);
+            Date startDate = Dates.getBeginOfDay(date);
+            Date endDate = Dates.getEndOfDay(date);
+            query.filter("dateArrived >=", startDate).filter("dateArrived <=", endDate);
+        }
+        if(StringUtils.isNotBlank(areaCode)){
+            query.filter("areaCode", areaCode);
+        }
+        query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
+        //select areaCode as abc , orderStatus as orderStatus, count(*) as countAll from order where dateArrived >= startDate and dateArrived <= endDate
+        // and areaCode = areaCode and orderStatus <> OrderStatus.NOTARR and orderStatus <> null group by areaCode,orderStatus order by abc asc;
+        AggregationPipeline pipeline = this.getDatastore().createAggregation(Order.class).match(query).group(id(grouping("areaCode"), grouping("orderStatus")), grouping("abc", first("areaCode")), grouping("orderStatus", first("orderStatus")), grouping("countAll", new Accumulator("$sum", 1))).sort(Sort.ascending("abc"));
+        Iterator<OrderGroup> iterator = pipeline.aggregate(OrderGroup.class);
+        System.out.println(iterator.hasNext());
+        MailStatisticVO expressStatStation = new MailStatisticVO();
+        while (iterator.hasNext()) {
+            OrderGroup orderGroup = iterator.next();
+            System.out.println(orderGroup);
+            OrderGroup2MailStatisticVO(expressStatStation, orderGroup);
+        }
+        return expressStatStation;
+    }
+    /**
+     * 根据站点编号集合和时间查询各个站点的不同状态的运单的汇总信息(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)
+     * @param areaCodeList 站点编号集合
+     * @param dateArrived 到站时间
+     * @return 不同状态的运单的汇总信息
+     */
+    public MailStatisticVO selectSummaryByAreaCodesAndTime(List<String> areaCodeList, String dateArrived){
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(dateArrived)){
+            Date date = Dates.parseDate(dateArrived);
+            Date startDate = Dates.getBeginOfDay(date);
+            Date endDate = Dates.getEndOfDay(date);
+            query.filter("dateArrived >=", startDate).filter("dateArrived <=", endDate);
+        }
+        if(areaCodeList != null && !areaCodeList.isEmpty()){
+            query.filter("areaCode in", areaCodeList);
+        }
+        query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
+        //select orderStatus as orderStatus, count(*) as countAll from order where dateArrived >= startDate and dateArrived <= endDate
+        // and areaCode in areaCodeList and orderStatus <> OrderStatus.NOTARR and orderStatus <> null group by orderStatus;
+        AggregationPipeline pipeline = this.getDatastore().createAggregation(Order.class).match(query).group(id(grouping("orderStatus")), grouping("orderStatus", first("orderStatus")), grouping("countAll", new Accumulator("$sum", 1)));
+        Iterator<OrderGroup> iterator = pipeline.aggregate(OrderGroup.class);
+        //System.out.println(iterator.hasNext());
+        MailStatisticVO expressStatStation = new MailStatisticVO();
+        while (iterator.hasNext()) {
+            OrderGroup orderGroup = iterator.next();
+            OrderGroup2MailStatisticVO(expressStatStation, orderGroup);
+        }
+        return expressStatStation;
+    }
 
 
 }

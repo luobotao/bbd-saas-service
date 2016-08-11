@@ -85,8 +85,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
-        return siteDao.findSites(pageModel, companyId, areaCodeList, statusList);
+    public PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag) {
+        return siteDao.findSites(pageModel, companyId, areaCodeList, statusList, areaFlag);
     }
 
     /**
