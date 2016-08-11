@@ -675,7 +675,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         OrderGroup orderGroup = null;
         while (iterator.hasNext()) {
             orderGroup = iterator.next();
-            System.out.println(orderGroup.getAbc());
+            //System.out.println(orderGroup);
             MailStatisticVO mailStatisticVO = map.get(orderGroup.getAbc());
             if(mailStatisticVO == null){
                 mailStatisticVO = new MailStatisticVO();
