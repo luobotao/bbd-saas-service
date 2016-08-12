@@ -214,7 +214,7 @@ public class MailStatisticController {
 		//dataArrived=time && toOtherSite
 		mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
 		mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
-		mailStatisticVO.setTotalDispatched((int) orderNumVO.getTotalDispatched());//所有已分派的
+		mailStatisticVO.setTotalDispatched((int) orderNumVO.getTotalDispatched() + mailStatisticVO.getToOtherSite());//所有已分派的
 	}
 
 	/**
