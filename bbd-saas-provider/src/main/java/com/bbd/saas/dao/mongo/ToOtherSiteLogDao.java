@@ -55,7 +55,8 @@ public class ToOtherSiteLogDao extends BaseDAO<ToOtherSiteLog, ObjectId> {
             Date date = Dates.parseDate(between);
             Date startDate = Dates.getBeginOfDay(date);
             Date endDate = Dates.getEndOfDay(date);
-            query.filter("dateArrived >=", startDate).filter("dateArrived <=", endDate);
+            //query.filter("dateArrived >=", startDate).filter("dateArrived <=", endDate);
+            query.filter("operTime >=", startDate).filter("operTime <=", endDate);
         }
         return  count(query);
     }
