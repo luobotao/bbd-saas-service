@@ -4,7 +4,8 @@ import com.bbd.saas.api.mongo.ToOtherSiteLogService;
 import com.bbd.saas.dao.mongo.ToOtherSiteLogDao;
 import com.bbd.saas.mongoModels.ToOtherSiteLog;
 import org.mongodb.morphia.Key;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by luobotao on 2016/4/1.
@@ -29,5 +30,10 @@ public class ToOtherSiteLogServiceImpl implements ToOtherSiteLogService {
 	@Override
 	public Key<ToOtherSiteLog> save(ToOtherSiteLog toOtherSiteLog) {
 		return toOtherSiteLogDao.save(toOtherSiteLog);
+	}
+
+	@Override
+	public long countByFromAreaCodesAndTime(List<String> fromAreaCodeList, String between) {
+		return toOtherSiteLogDao.countByFromAreaCodesAndTime(fromAreaCodeList, between);
 	}
 }

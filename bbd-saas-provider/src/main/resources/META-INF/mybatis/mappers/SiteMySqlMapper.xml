@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.SiteDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.SiteMySql">
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="areaCode" property="areaCode" jdbcType="VARCHAR"/>
+        <result column="companyName" property="companyName" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="siteid" property="siteid" jdbcType="VARCHAR"/>
+        <result column="dateadd" property="dateadd" jdbcType="TIMESTAMP"/>
+        <result column="companyid" property="companyid" jdbcType="VARCHAR"/>
+        <result column="sitestatus" property="sitestatus" jdbcType="VARCHAR"/>
+        <result column="upperlimit" property="upperlimit" jdbcType="INTEGER"/>
+        <result column="lowerlimit" property="lowerlimit" jdbcType="INTEGER"/>
+        <result column="daycnt" property="daycnt" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	name,
+    	province,
+    	city,
+        area,
+        address,
+        areaCode,
+        companyName,
+        username,
+        siteid,
+        dateadd,
+        companyid,
+        sitestatus,
+        upperlimit,
+        lowerlimit,
+        daycnt
+    </sql>
+    
+	<select id="selectIdBySiteId" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `site` where siteid = #{siteid}
+    </select>
+
+    <update id="updateSiteDayCntBySiteId" >
+        update site set daycnt = daycnt+1  where  siteid = #{siteid}
+    </update>
+
+</mapper>

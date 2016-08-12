@@ -14,10 +14,7 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.ExportUtil;
-import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.Option;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -425,6 +422,36 @@ public class SiteController {
 				statusList.add(SiteStatus.INVALID);
 			}
 			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList);
+		}
+		return null;
+	}
+	/**
+	 * 根据省市区查询站点集合--select下拉框
+	 * @param prov 省
+	 * @param city 市
+	 * @param area 区
+	 * @param request 请求
+	 * @return siteList(name,areaCode)
+	 */
+	@ResponseBody
+	@RequestMapping(value="/getQuerySiteList", method=RequestMethod.GET)
+	public List<Option> getQuerySiteListByAddr(String prov, String city, String area, String siteName, Integer siteStatus, Integer areaFlag, final HttpServletRequest request) {
+		String userId = UserSession.get(request);
+		if(userId != null && !"".equals(userId)) {
+			//当前登录的用户信息
+			User currUser = adminService.get(userId);
+			List<SiteStatus> statusList = null;
+			if(siteStatus == null || siteStatus == -1){//全部
+				//查询登录用户的公司下的所有站点
+				statusList = new ArrayList<SiteStatus>();
+				statusList.add(SiteStatus.APPROVE);
+				statusList.add(SiteStatus.INVALID);
+			}else{
+				statusList = new ArrayList<SiteStatus>();
+				statusList.add(SiteStatus.status2Obj(siteStatus));
+			}
+			areaFlag = Numbers.defaultIfNull(areaFlag, -1);
+			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList, areaFlag);
 		}
 		return null;
 	}

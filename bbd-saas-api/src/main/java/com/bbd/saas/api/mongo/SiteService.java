@@ -83,7 +83,7 @@ public interface SiteService {
      * @param statusList 站点状态集合
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList);
+    PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag);
 
     /**
      * 删除站点
@@ -152,6 +152,18 @@ public interface SiteService {
      * @return 站点集合
      */
     List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList);
+
+    /**
+     * 查询指定公司的不同地区的特定站点状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param  statusList 站点状态
+     * @param  areaFlag 配送区域状态
+     * @return 站点集合
+     */
+    List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag);
 
     /**
      * 根据站点编号数组查询

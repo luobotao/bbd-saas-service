@@ -1,6 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%--<%@ page import="com.bbd.saas.enums.SiteStatus" %>--%>
+<%@ page import="com.bbd.saas.enums.SiteStatus" %>
 <html>
 <head>
 </head>
@@ -21,9 +21,9 @@
 		<select name="dist" class="dist form-control form-con-new"  disabled="disabled"  style="min-width: 160px;">
 		</select>
 	</div>
-	<%--<div class="form-group pb20">
+	<div class="form-group pb20">
 		<label>站点状态：</label>
-		<select id="status" name="status" class="form-control form-con-new" style="min-width: 120px;">
+		<select id="siteStatus" name="status" class="form-control form-con-new" style="min-width: 120px;">
 			<%=SiteStatus.Stas2HTML2(-1)%>
 		</select>
 	</div>
@@ -34,7 +34,7 @@
 			<option value="1">有效</option>
 			<option value="0">无效</option>
 		</select>
-	</div>--%>
+	</div>
 	<div class="form-group pb20">
 		<label class="ml16">站点：</label>
 		<div class="crt-s w400">
@@ -71,8 +71,6 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
-	var isSiteId = false;
-</script>
+
 </body>
 </html>

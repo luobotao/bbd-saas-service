@@ -15,7 +15,10 @@ import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.*;
+import com.bbd.saas.utils.Dates;
+import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.OrderCommon;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.mongodb.BasicDBList;
@@ -51,6 +54,9 @@ public class PackageToSiteController {
 	ExpressExchangeService expressExchangeService;
 	@Autowired
 	PostDeliveryService postDeliveryService;
+	/*@Autowired
+	ToOtherSiteLogService toOtherSiteLogService;
+	*/
 	/**
 	 * description: 跳转到包裹到站页面
 	 * 2016年4月1日下午6:13:46
@@ -74,6 +80,8 @@ public class PackageToSiteController {
 		String between =start+" - "+end;
 		User user = adminService.get(UserSession.get(request));
 		OrderNumVO orderNumVO = orderService.getOrderNumVO(user.getSite().getAreaCode());
+		//今天转站的，也要包含在已到站订单里
+		//orderNumVO.setArrived(orderNumVO.getArrived() + (int)toOtherSiteLogService.countByFromAreaCodeAndTime(user.getSite().getAreaCode(), Dates.formatSimpleDate(new Date())));
 
 		PageModel<Order> orderPage = getOrderPage(request,0, -1,between,"","");
 

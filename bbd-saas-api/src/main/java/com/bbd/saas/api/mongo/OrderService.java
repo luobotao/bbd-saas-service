@@ -6,6 +6,7 @@ import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.MailStatisticVO;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
 import com.bbd.saas.vo.OrderUpdateVO;
@@ -15,6 +16,7 @@ import org.mongodb.morphia.Key;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by luobotao on 2016/4/8.
@@ -132,13 +134,19 @@ public interface OrderService {
 	int updateOrder(OrderUpdateVO orderUpdateVO, OrderQueryVO orderQueryVO);
 
 	/**
-	 * 根据站点编码和到站时间获取该站点已分派的订单数 -- 暂时没有用到（接口实现还有问题）
+	 * 根据站点编码获取历史未到站订单数目||某天已到站
 	 * @param areaCode 站点编号
-	 * @param betweenTime 查询时间范围
+	 * @param dateArrived 到站日期
 	 * @return 订单条数
 	 */
-	public long getDispatchedNums(String areaCode, String betweenTime);
-
+	public OrderNumVO findHistoryNoArrivedAndArrivedNums(String areaCode, String dateArrived);
+	/**
+	 * 根据站点编码获取历史未到站订单数目||某天已到站
+	 * @param areaCodeList 站点编号集合
+	 * @param dateArrived 到站日期
+	 * @return 订单条数
+	 */
+	public OrderNumVO findHistoryNoArrivedAndArrivedNums(List<String> areaCodeList, String dateArrived);
 	/**
 	 * 得到指定站点当天(昨天)更新的所有订单 -- 把物流信息同步到mysql中时用到
 	 * @param areaCode 站点编号
@@ -215,6 +223,32 @@ public interface OrderService {
      * @return
      */
 	public List<Order> findByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList);
+
+
+	/**
+	 * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数) -- 多个站点
+	 * @param dateArrived 到站时间
+	 * @param areaCodeList 站点编号集合
+     * @return Map<areaCode, MailStatisticVO>
+     */
+	public Map<String, MailStatisticVO> sumWithAreaCodesAndOrderStatus(String dateArrived, List<String> areaCodeList);
+
+	/**
+	 * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)--单个站点
+	 * @param dateArrived 到站时间
+	 * @param areaCode 站点编号
+	 * @return MailStatisticVO
+	 */
+	public MailStatisticVO sumWithAreaCodeAndOrderStatus(String dateArrived, String areaCode);
+
+	/**
+	 * 根据站点编号集合和时间查询各个站点的不同状态的运单的汇总信息(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)
+	 * @param areaCodeList 站点编号集合
+	 * @param dateArrived 到站时间
+	 * @return 不同状态的运单的汇总信息
+	 */
+	public MailStatisticVO findSummaryByAreaCodesAndTime(List<String> areaCodeList, String dateArrived);
+
 
 
 }

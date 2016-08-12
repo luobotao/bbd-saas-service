@@ -69,6 +69,12 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostmanUserDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+
+    <bean id="siteDaoMySql" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.SiteDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+
     <bean id="postDeliveryDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PostDeliveryDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>

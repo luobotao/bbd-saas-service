@@ -34,12 +34,12 @@
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
 						<div class="row" >
-							<jsp:include page="../control/siteControl.jsp" flush="true" />
+							<jsp:include page="../control/siteStatusControl.jsp" flush="true" />
 						</div>
 	  					<div class="row">
 	  						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 								<div class="form-group pb20">
-									<label>状态：</label>
+									<label>运单状态：</label>
 									<div class="crt-s w400">
 										<div class="c-sel j-sel-input">
 											<span class="show-ele j-empty">请选择</span>
@@ -48,7 +48,7 @@
 										<div class="all-area all-area1 pm-dn">
 											<!-- S 1 -->
 											<div class="pv-bg clearfix">
-												<%--<input id="statusName" type="text" class="sel-input" placeholder="请输入状态" />--%>
+												<%--<input id="statusName" type="text" class="sel-input" placeholder="请输入运单状态" />--%>
 												<div class="l-sel-p">
 													<ul class="pv-part" id="optionList2">
 														<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
@@ -85,8 +85,10 @@
 					<input id="prov_expt" name="prov" type="hidden" />
 					<input id="city_expt" name="city" type="hidden" />
 					<input id="area_expt" name="area" type="hidden" />
-					<input id="status_expt" name="statusStr" type="hidden" />
+					<input id="siteStatus_expt" name="siteStatus" type="hidden" />
+					<input id="areaFlag_expt" name="areaFlag" type="hidden" />
 					<input id="areaCode_expt" name="areaCodeStr" type="hidden" />
+					<input id="status_expt" name="statusStr" type="hidden" />
 					<input id="arriveBetween_expt" name="arriveBetween_expt" type="hidden" />
 					<input id="mailNum_expt" name="mailNum" type="hidden" />
 				</form>				
@@ -99,7 +101,7 @@
   							<tr>
 								<th>站点名称</th>
 								<th>运单号</th>
-								<th>收货人</th>
+								<th width="7%">收货人</th>
 								<th>收货人电话</th>
 								<th width="15%">收货人地址</th>
 								<th>司机取货时间</th>
@@ -108,7 +110,7 @@
 								<th>签收时间</th>
 								<th>派送员</th>
 								<th>派送员手机</th>
-								<th>状态</th>
+								<th>运单状态</th>
 								<th>操作</th>
   							</tr>
   						</thead>
@@ -249,11 +251,11 @@
 <!-- E footer -->
 <!-- S 省市区站点选择控件 -->
 <script type="text/javascript">
-	var  siteUrl = "<c:url value="/site/getSiteList"/>";
-	var  inputName = null;
+	var siteUrl = "<c:url value="/site/getQuerySiteList"/>";
+	var inputName = null;
 	var isSiteId = false;
 </script>
-<script src="<c:url value="/resources/javascripts/siteControl.js" />"> </script>
+<script src="<c:url value="/resources/javascripts/siteStatusControl.js" />"> </script>
 <%--<script src="<c:url value="/resources/javascripts/statusControl.js" />"> </script>--%>
 <!-- E 省市区站点选择控件  -->
 <script type="text/javascript">
@@ -274,12 +276,15 @@ $(document).ready(function() {
 		},
 		format: 'YYYY/MM/DD'
 	});
+
 });
 
 //加载带有查询条件的指定页的数据
 function gotoPage(pageIndex) {
 	/*var areaCodeStr = getAreaCodeStr();
 	console.log(areaCodeStr);*/
+	/*console.log("siteStatus==="+$("#siteStatus").val());
+	console.log("areaFlag==="+$("#areaFlag").val());*/
 	//查询所有派件员
 	$.ajax({
 		type : "GET",  //提交方式  
@@ -289,11 +294,13 @@ function gotoPage(pageIndex) {
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
             "pageIndex" : pageIndex,
+			"siteStatus" : $("#siteStatus").val(),//站点状态
+			"areaFlag" : $("#areaFlag").val(),//配送区域
 			"areaCodeStr" : getAreaCodeStr(),//站点编号集合
             "statusStr" : getAreaCodeStr("statusOpts"),
             "arriveBetween" : $("#arriveBetween").val(),
             "mailNum" : $("#mailNum").val() 
-        },//数据，这里使用的是Json格式进行传输  
+        },//数据，这里使用的是Json格式进行传输
         success : function(dataObject) {//返回数据根据结果进行相应的处理 
             var tbody = $("#dataList");
             var dataList = dataObject.datas;
@@ -384,8 +391,10 @@ function exportData() {
 	$("#prov_expt").val($("#addr_control .prov").val());
 	$("#city_expt").val($("#addr_control .city").val());
 	$("#area_expt").val($("#addr_control .dist").val());
-	$("#status_expt").val(getAreaCodeStr("statusOpts"));
+	$("#siteStatus_expt").val($("#siteStatus").val());
+	$("#areaFlag_expt").val($("#areaFlag").val());
 	$("#areaCode_expt").val(getAreaCodeStr());//站点编号集合
+	$("#status_expt").val(getAreaCodeStr("statusOpts"));
 	$("#arriveBetween_expt").val($("#arriveBetween").val());
 	$("#mailNum_expt").val($("#mailNum").val());
 	$("#exptForm").submit();

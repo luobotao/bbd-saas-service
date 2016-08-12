@@ -41,6 +41,23 @@ public enum SiteStatus {
         }
         return sb.toString();
     }
+    //显示有效的和无效的
+    public static String Stas2HTML2(Integer id) {
+        StringBuilder sb = new StringBuilder();
+        SiteStatus[] srcs = SiteStatus.values();
+        sb.append(Htmls.generateOption(-1, "全部"));
+        for (SiteStatus s : srcs) {
+            if(s.getStatus()== WAIT.getStatus() || s.getStatus() == TURNDOWN.getStatus()){
+                continue;
+            }
+            if (id == s.status) {
+                sb.append(Htmls.generateSelectedOption(s.status, s.message));
+            } else {
+                sb.append(Htmls.generateOption(s.status, s.message));
+            }
+        }
+        return sb.toString();
+    }
 
     public static SiteStatus status2Obj(int value) {
         SiteStatus[] stas = SiteStatus.values();

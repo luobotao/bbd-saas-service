@@ -85,8 +85,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
-        return siteDao.findSites(pageModel, companyId, areaCodeList, statusList);
+    public PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag) {
+        return siteDao.findSites(pageModel, companyId, areaCodeList, statusList, areaFlag);
     }
 
     /**
@@ -313,7 +313,12 @@ public class SiteServiceImpl implements SiteService {
 
     @Override
     public List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList) {
-        return this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, siteName, statusList);
+        return this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, siteName, statusList, null);
+    }
+
+    @Override
+    public List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag) {
+        return this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, siteName, statusList, areaFlag);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param statusList
      * @return
      */
-    public PageModel<Option> findSites(PageModel<Option> pageModel,String companyId, List<String> areaCodeList, List<SiteStatus> statusList) {
+    public PageModel<Option> findSites(PageModel<Option> pageModel,String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag) {
         Query<Site> query = createQuery().retrievedFields(true, "areaCode", "name");
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
@@ -76,6 +76,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         }
         if(statusList != null){
             query.filter("status in", statusList);
+        }
+        if(areaFlag != null && areaFlag != -1){
+            query.filter("areaFlag", areaFlag);
         }
         query.order("areaCode");
         List<Site> siteList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
@@ -195,18 +198,23 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param city 市
      * @param area 区
      * @param statusList 站点状态集合
+     * @param areaFlag 配送区域状态
      * @return 站点集合
      */
-    public List<Option> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList) {
-        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+    public List<Option> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag) {
+        Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
         if(StringUtils.isNotBlank(siteName)){
             query.and(query.criteria("name").containsIgnoreCase(siteName));
         }
         if(statusList != null){
             query.filter("status in", statusList);
         }
+        if(areaFlag != null && areaFlag != -1){
+            query.filter("areaFlag", areaFlag);
+        }
         return  selectAndToOptionList(query);
     }
+
     private Query<Site> getQueryByAddr(String companyId, String prov, String city, String area){
         Query<Site> query = createQuery().order("areaCode");
         if(StringUtils.isNotBlank(companyId)){

@@ -57,9 +57,6 @@ public enum OrderStatus {
         OrderStatus[] orderEnum = OrderStatus.values();
         sb.append(Htmls.generateMultiSelectedOptionAll("statusOpt", -1, "全部"));
         for (OrderStatus ps : orderEnum) {
-            if(ps.getStatus()==NOTARR.getStatus()){
-                continue;
-            }
             if (Arrays.asList(status).contains(ps.status)) {
                 sb.append(Htmls.generateMultiSelectedOption("statusOpt",ps.status,ps.message));
             } else {
