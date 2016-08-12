@@ -263,7 +263,6 @@ function selectS(selectSp){
 			$(".cityshow li:last-child").removeClass("padR6").siblings().addClass("padR6");
 		}
 		// 默认提示文字
-		// 默认提示文字
 		var csel=$(selectSp).siblings(".c-sel");
 		var clen=csel.find(".cityshow li").length;
 		if(clen == 0){
