@@ -76,7 +76,7 @@ public class DataQueryController {
 			//到站时间
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
-			PageModel<Order> orderPage = getList(pageIndex, statusStr, arriveBetween, mailNum, request);
+			PageModel<Order> orderPage = this.getList(pageIndex, statusStr, arriveBetween, mailNum, request);
 			/*for(Order order : orderPage.getDatas()){
 				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
@@ -120,7 +120,6 @@ public class DataQueryController {
 			orderQueryVO.arriveBetween = arriveBetween;
 			orderQueryVO.mailNum = mailNum;
 			orderQueryVO.areaCode = user.getSite().getAreaCode();
-			orderQueryVO.arriveStatus = 1;
 			//状态集合
 			if(StringUtils.isNotBlank(statusStr) && !"-1".equals(statusStr)){
 				String [] statusS = statusStr.split(",");

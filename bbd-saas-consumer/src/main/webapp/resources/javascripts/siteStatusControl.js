@@ -172,6 +172,8 @@ function selectS(selectSp){
 		var site = this.value;
 		var curP=$(this).parents('.l-sel-p').parent().index();
 		var shA=$(this).parents(selectSp).siblings(".c-sel").find(".showA");
+		var searchObj = $(this).parents('.l-sel-p').siblings("input");
+
 		//全选 -- 取消全选
 		var isAll = $(this).attr("isAll");
 		var showNameUlObj = shA.eq(curP).find(".cityshow");//$("#options");
@@ -180,7 +182,11 @@ function selectS(selectSp){
 			$("input[name='" + this.name + "']").prop("checked", this.checked);
 			//上边框中显示的值
 			if(this.checked == true){//选中
-				if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+				if(searchObj.hasClass("sel-input")){//有搜索框
+					if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+						showNameUlObj.html("<li site='' class='lisite'>全部</li>");
+					}
+				}else{//无搜索框
 					showNameUlObj.html("<li site='' class='lisite'>全部</li>");
 				}
 			}else{//取消选中
@@ -192,19 +198,33 @@ function selectS(selectSp){
 			//console.log("checkedCount==11="+checkedCount+"  itemCount==="+itemCount);
 			//上边框中显示的值
 			if(this.checked == true){//选中
-				if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+				if(searchObj.hasClass("sel-input")){//有搜索框
+					if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部
+						if(checkedCount == itemCount ){//全部选中
+							//全选checkbox选中
+							$("input[name='" + this.name + "'][isAll='1']").prop("checked", this.checked);
+							//上边框中显示的值
+
+							showNameUlObj.html("<li site='' class='licity'>全部</li>");
+						}else{//不是全部选中
+							//上边框中添加此元素
+							showNameUlObj.append('<li class="licity" site='+site+'>'+test+'</li>');
+						}
+					}else{//手动搜索，不显示全部
+						//上边框中添加此元素
+						showNameUlObj.append('<li class="licity" site='+site+'>'+test+'</li>');
+					}
+				}else{//无搜索框
 					if(checkedCount == itemCount ){//全部选中
 						//全选checkbox选中
 						$("input[name='" + this.name + "'][isAll='1']").prop("checked", this.checked);
 						//上边框中显示的值
+
 						showNameUlObj.html("<li site='' class='licity'>全部</li>");
 					}else{//不是全部选中
 						//上边框中添加此元素
 						showNameUlObj.append('<li class="licity" site='+site+'>'+test+'</li>');
 					}
-				}else{//手动搜索，不显示全部
-					//上边框中添加此元素
-					showNameUlObj.append('<li class="licity" site='+site+'>'+test+'</li>');
 				}
 			}else{//取消选中
 				//上边框中有值的话，移除

@@ -39,7 +39,7 @@
 	  					<div class="row">
 	  						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 								<div class="form-group pb20">
-									<label>状态：</label>
+									<label>运单状态：</label>
 									<div class="crt-s w400">
 										<div class="c-sel j-sel-input">
 											<span class="show-ele j-empty">请选择</span>
@@ -48,7 +48,7 @@
 										<div class="all-area all-area1 pm-dn">
 											<!-- S 1 -->
 											<div class="pv-bg clearfix">
-												<%--<input id="statusName" type="text" class="sel-input" placeholder="请输入状态" />--%>
+												<%--<input id="statusName" type="text" class="sel-input" placeholder="请输入运单状态" />--%>
 												<div class="l-sel-p">
 													<ul class="pv-part" id="optionList2">
 														<%=OrderStatus.Srcs2MultiHTML(new Integer[] {-1})%>
@@ -101,7 +101,7 @@
   							<tr>
 								<th>站点名称</th>
 								<th>运单号</th>
-								<th>收货人</th>
+								<th width="7%">收货人</th>
 								<th>收货人电话</th>
 								<th width="15%">收货人地址</th>
 								<th>司机取货时间</th>
@@ -110,7 +110,7 @@
 								<th>签收时间</th>
 								<th>派送员</th>
 								<th>派送员手机</th>
-								<th>状态</th>
+								<th>运单状态</th>
 								<th>操作</th>
   							</tr>
   						</thead>
