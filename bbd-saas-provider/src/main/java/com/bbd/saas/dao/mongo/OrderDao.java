@@ -383,6 +383,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         orderNumVO.setArrived(selectArrivedByQuery(queryArrive, dateArrived));//已到站
+        queryArrive.filter("userId <>", null).filter("userId <>", "");//已分派的
+        orderNumVO.setTotalDispatched(count(queryArrive));//所有已分派的
         return orderNumVO;
     }
     /**
@@ -398,6 +400,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         Query<Order> queryArrive = createQuery().filter("areaCode in",areaCodeList).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         orderNumVO.setArrived(selectArrivedByQuery(queryArrive, dateArrived));//已到站
+        queryArrive.filter("userId <>", null).filter("userId <>", "");//已分派的
+        orderNumVO.setTotalDispatched(count(queryArrive));//所有已分派的
         return orderNumVO;
     }
     //查询已到站的订单数目
