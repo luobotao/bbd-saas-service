@@ -39,11 +39,6 @@ public class ToOtherSiteLogDao extends BaseDAO<ToOtherSiteLog, ObjectId> {
     	query.filter("fromAreaCode", fromAreaCode);
         return  selectCountByQuery(query, between);
     }
-
-    /**
-     * 转站运单数统计
-     * @return long 转站运单数
-     */
     /**
      * 根据转站站点编号集合和转站时间统计转站运单数
      * @param fromAreaCodeList 转站源站点编号集合
@@ -60,7 +55,7 @@ public class ToOtherSiteLogDao extends BaseDAO<ToOtherSiteLog, ObjectId> {
             Date date = Dates.parseDate(between);
             Date startDate = Dates.getBeginOfDay(date);
             Date endDate = Dates.getEndOfDay(date);
-            query.filter("operTime >=", startDate).filter("operTime <=", endDate);
+            query.filter("dateArrived >=", startDate).filter("dateArrived <=", endDate);
         }
         return  count(query);
     }

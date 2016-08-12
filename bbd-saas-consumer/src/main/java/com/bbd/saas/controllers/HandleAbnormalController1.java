@@ -387,6 +387,7 @@ public class HandleAbnormalController1 {
                 //刷新列表
                 map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
             } else {//运单存在
+                Date dateArrived = order.getDateArrived();
                 String fromAreaCode = order.getAreaCode();
                 Site site = siteService.findSite(siteId);
                 //更新运单字段
@@ -416,6 +417,7 @@ public class HandleAbnormalController1 {
                     toOtherSiteLog.setMailNum(order.getMailNum());
                     toOtherSiteLog.setFromAreaCode(fromAreaCode);
                     toOtherSiteLog.setToAreaCode(site.getAreaCode());
+                    toOtherSiteLog.setDateArrived(dateArrived);
                     toOtherSiteLog.setOperTime(new Date());
                     toOtherSiteLogService.save(toOtherSiteLog);
                     //更新到mysql 删除一条记录
