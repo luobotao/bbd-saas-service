@@ -17,6 +17,7 @@
         <result column="upperlimit" property="upperlimit" jdbcType="INTEGER"/>
         <result column="lowerlimit" property="lowerlimit" jdbcType="INTEGER"/>
         <result column="daycnt" property="daycnt" jdbcType="INTEGER"/>
+        <result column="sitetype" property="sitetype" jdbcType="INTEGER"/>
     </resultMap>
     
     <sql id="baseColumnList">
@@ -34,7 +35,8 @@
         sitestatus,
         upperlimit,
         lowerlimit,
-        daycnt
+        daycnt,
+        sitetype
     </sql>
     
 	<select id="selectIdBySiteId" resultMap="baseResultMap">

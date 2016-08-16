@@ -428,7 +428,39 @@ public class OrderServiceImpl implements OrderService {
 		try {
 			List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
 			logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId List size:" + areaCodeList.size());
+			//虚拟站点集合
+			Map<String, SiteMySql> mapSitesFictitious = new HashMap<String, SiteMySql>();
 			if (areaCodeList != null && areaCodeList.size() > 0) {
+				for (String siteId : areaCodeList) {
+					SiteMySql siteMySql = siteMysqlService.selectIdBySiteId(siteId);
+					if (siteMySql != null) {
+						//虚拟站点
+						if(siteMySql.getSitetype() == 2){
+							if(siteMySql.getDaycnt()<siteMySql.getUpperlimit()) {
+								mapSitesFictitious.put(siteId, siteMySql);
+							}
+						}
+					}
+				}
+				if(mapSitesFictitious.size()>0){
+					Map<String, Integer> mapSiteCnts = new TreeMap<String, Integer>();
+					for (Map.Entry<String, SiteMySql> entry : mapSitesFictitious.entrySet()) {
+						//siteid:daycnt
+						mapSiteCnts.put(entry.getKey(), entry.getValue().getDaycnt());
+					}
+
+					List<Map.Entry<String, Integer>> listcnts = new ArrayList<Map.Entry<String, Integer>>(mapSiteCnts.entrySet());
+					//然后通过比较器来实现排序
+					Collections.sort(listcnts, new Comparator<Map.Entry<String, Integer>>() {
+						//升序排序
+						public int compare(Map.Entry<String, Integer> o1,
+										   Map.Entry<String, Integer> o2) {
+							return o1.getValue().compareTo(o2.getValue());
+						}
+					});
+					//得到查询量 最少的站点ID
+					resultAreaCode = listcnts.get(0).getKey();
+			}else{
 				if (areaCodeList.size() > 1) {
 					//没达到下限的
 					Map<String, SiteMySql> mapSitesNoLowerlimit = new HashMap<String, SiteMySql>();
@@ -489,7 +521,7 @@ public class OrderServiceImpl implements OrderService {
 						resultAreaCode = listcnts.get(0).getKey();
 
 
-					} else {//如果全部都达到了下限 走该逻辑
+					}else {//如果全部都达到了下限 走该逻辑
 						try {
 							//通过积分获取优选区域码
 							MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
@@ -550,11 +582,12 @@ public class OrderServiceImpl implements OrderService {
 							resultAreaCode = areaCodeList.get(0);
 						}
 					}
-				} else {
+				}else {
 					//通过积分获取优选区域码，暂时用第一个
 					resultAreaCode = areaCodeList.get(0);
 				}
 			}
+		}
 			logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId:" + resultAreaCode);
 			siteMysqlService.updateSiteDayCntBySiteId(resultAreaCode);
 		}catch (Exception e){
