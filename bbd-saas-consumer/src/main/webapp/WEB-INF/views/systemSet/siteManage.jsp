@@ -58,7 +58,7 @@
                             <div class="form-group ml6 pb20">
                                 <a href="javascript:void(0)" onclick=" gotoPage(0);" class="ser-btn l"><i
                                         class="b-icon p-query p-ser"></i>查询</a>
-                                <a href="javascript:void(0)" class="ser-btn d ml6 " data-toggle='modal' data-target='#siteModal' onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
+                                <a href="javascript:void(0)" class="ser-btn d ml6 " onclick="createSite();"><i class="num-add mr10">＋</i><em>新建</em></a>
 
                             </div>
 
@@ -125,7 +125,7 @@
                                     <%
                                         }else if (SiteStatus.APPROVE == site.getStatus()) {
                                     %>
-                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
+                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')"
                                            class="orange j-siteM cp">修改</span>
                                         <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableSite', '确认停用站点吗？')" data-toggle='modal' data-target='#confirmModal'>停用站点</span>
                                         <%
@@ -142,7 +142,7 @@
                                     <%
                                         }else if (SiteStatus.INVALID == site.getStatus()) {
                                     %>
-                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')" data-toggle='modal' data-target='#siteModal'
+                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')"
                                            class="orange j-siteM cp">修改</span>
                                         <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableSite', '确认启用站点吗？')" data-toggle='modal' data-target='#confirmModal'>启用站点</span>
                                         <%--<span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除?')" data-toggle='modal' data-target='#confirmModal'>删除</span>--%>
@@ -205,10 +205,10 @@
                     <c:if test="${companyId == Constants.BBD_COMPANYID}">
                     <%--<c:if test="${companyId == '99'}">--%>
                         <li class="filter clearfix">
-                            <i>站点类型：</i>
-                            <input type="radio" class="pt6" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
-                            <input type="radio" class="pt6" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/>社会化运力
-                            <input type="radio" class="pt6" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/>快递柜
+                            <i class="pad0">站点类型：</i>
+                            <label><input type="radio" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
+                            <label><input type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>
+                            <label><input type="radio" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/> 快递柜</label>
                         </li>
                     </c:if>
                     <li class="filter">
@@ -466,7 +466,7 @@
             row += "<span  onclick=\"getTurnDownMessage('"+data.turnDownReasson+"','"+data.turnDownMessage+"','"+data.otherMessage+"')\" class='orange ml6 cp' data-toggle='modal' data-target='#messageModal'>查看驳回原因</span>";
         }
         if(data.status=="<%=SiteStatus.APPROVE%>" ){
-            row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp' data-toggle='modal' data-target='#siteModal'>修改</span> ";
+            row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp'>修改</span> ";
             row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableSite', '确认停用站点吗？')\" class='orange cp'>停用站点</span>";
             if(data.areaFlag == 1 ){
                 row += "<span  onclick=\"showConfirmDiv('"+data.areaCode+"', 'disableArea', '确认停用配送区域吗？')\" class='orange cp ml16' data-toggle='modal' data-target='#confirmModal'>停用配送区域</span> ";
@@ -475,7 +475,7 @@
             }
         }
         if(data.status=="<%=SiteStatus.INVALID%>" ){
-            row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp'  data-toggle='modal' data-target='#siteModal'>修改</span> ";
+            row += "<span  onclick=\"getSiteByAreaCode('"+data.areaCode+"')\" class='orange j-siteM cp' >修改</span> ";
             row += "<span  data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'enableSite', '确认启用站点吗？')\" class='orange cp'>启用站点</span> ";
 //            row += "<span data-toggle='modal' data-target='#confirmModal' onclick=\"showConfirmDiv('"+data.areaCode+"', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除？')\" class='orange cp'>删除</span>";
         }
@@ -740,6 +740,10 @@
     }
 
 function createSite(){
+    $(".j-siteM-pop").addClass("in").show();
+    $("#mask").show();
+    $("#mask").css({left:"16%"})
+    $('.j-siteM-pop').css({top:$(parent.window).scrollTop()});
     yscroll();
     $(".y-scroll").animate({scrollTop:0},0);
     $('#titleName').html("新建");
@@ -762,6 +766,12 @@ function createSite(){
 }
     //设置修改form表单的值
     function getSiteByAreaCode(areaCode) {
+        $(".j-siteM-pop").addClass("in").show();
+        $("#mask").show();
+        $("#mask").css({left:"16%"})
+        $('.j-siteM-pop').css({top:$(parent.window).scrollTop()});
+        yscroll();
+        $(".y-scroll").animate({scrollTop:0},0);
         $('#titleName').html("修改");
         $('#areaCodeForModal').val(areaCode);
         $.ajax({

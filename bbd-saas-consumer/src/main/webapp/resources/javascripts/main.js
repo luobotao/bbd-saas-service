@@ -227,14 +227,14 @@ $(function () {
     // S 站点管理新建
     // 新建
 
-    $(".j-siteM").on("click", function (e) {
-        e.stopPropagation();
-        $(".j-siteM-pop").addClass("in").show();
-        $("#mask").show();
-        $("#mask").css({left:"16%"})
-        $('.j-siteM-pop').css({top:$(parent.window).scrollTop()});
-        parentD.addClass("modal-open").css({paddingRight:"17px"});
-    })
+    //$(".j-siteM").on("click", function (e) {
+    //    e.stopPropagation();
+    //    $(".j-siteM-pop").addClass("in").show();
+    //    $("#mask").show();
+    //    $("#mask").css({left:"16%"})
+    //    $('.j-siteM-pop').css({top:$(parent.window).scrollTop()});
+    //    parentD.addClass("modal-open").css({paddingRight:"17px"});
+    //})
 
     $(".j-f-close").on("click",function(){
         $(this).parent().parent().parent().parent().parent().hide();
@@ -247,7 +247,7 @@ $(function () {
 
     yscroll();
     $(".i-hei").css({height:winhei-146});
-    $(".all-area").scrollUnique();
+    $(".all-area,.y-scroll").scrollUnique();
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
 var mailNumreg=/^[0-9A-Za-z]{10,20}$/;
@@ -393,12 +393,17 @@ $.fn.scrollUnique = function() {
 };
 // E 子元素scroll父元素容器不跟随滚动JS实现
 
+// S 超出显示滚动条
 function yscroll(){
+    var yhei=$(".y-scroll").height();
     if(window.screen.availHeight<800){
-        $(".y-scroll").css({maxHeight:"200px"})
-        $(".y-scroll").animate({scrollTop:0},0);
+        if(yhei>=200){
+            $(".y-scroll").css({height:"200px",overflowY:"scroll"})
+        }
     }else{
-        $(".y-scroll").css({maxHeight:"300px"})
-        $(".y-scroll").animate({scrollTop:0},0);
+        if(yhei>=300){
+            $(".y-scroll").css({height:"300px",overflowY:"scroll"})
+        }
     }
-};
+}
+// E 超出显示滚动条
