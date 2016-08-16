@@ -201,8 +201,8 @@
                             <input type="radio" class="" name="sitetype" readonly checked/>普通
                         </c:otherwise>
                     </c:choose>--%>
-                    <%--<c:if test="${companyId == Constants.BBD_COMPANYID}">--%>
-                    <c:if test="${companyId == '99'}">
+                    <c:if test="${companyId == Constants.BBD_COMPANYID}">
+                    <%--<c:if test="${companyId == '99'}">--%>
                         <li class="filter clearfix">
                             <i>站点类型：</i>
                             <input type="radio" class="" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
@@ -745,7 +745,9 @@ function createSite(){
     document.getElementById("siteForm").reset();
     $('#areaCode').val('');
     $('#areaCodeForModal').val('');
-    $("input[name='sitetype'][value='ORDERNARY']").attr("checked",true);
+    <c:if test="${companyId == Constants.BBD_COMPANYID}">
+        $("input[name='sitetype'][value='ORDERNARY']").attr("checked",true);
+    </c:if>
     var defprov = "北京";
     var defcity = "北京";
     var defdist = "朝阳区";
@@ -771,7 +773,9 @@ function createSite(){
             success: function (data) {
                 if (data != null) {
                     document.getElementById("siteForm").reset();
-                    $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
+                    <c:if test="${companyId == Constants.BBD_COMPANYID}">
+                        $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
+                    </c:if>
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
                     $("#responser").val(data.responser);
