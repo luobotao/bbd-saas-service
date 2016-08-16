@@ -2,6 +2,7 @@
 <%@ page import="com.bbd.saas.mongoModels.Site" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.SiteStatus" %>
+<%@ page import="com.bbd.saas.enums.SiteType" %>
 <%@ page import="com.bbd.saas.enums.SiteTurnDownReasson" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
@@ -190,7 +191,26 @@
             </div>
             <div class="modal-body b-modal-body">
                 <ul class="b-n-crt b-n-crt-new form-inline-n  y-scroll">
-                    <li class="filter clearfix">
+                    <%--<c:choose>
+                        <c:when test="${companyId == '99'}">
+                            <input type="radio" class="" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
+                            <input type="radio" class="" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/>社会化运力
+                            <input type="radio" class="" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/>快递柜
+                        </c:when>
+                        <c:otherwise>
+                            <input type="radio" class="" name="sitetype" readonly checked/>普通
+                        </c:otherwise>
+                    </c:choose>--%>
+                    <%--<c:if test="${companyId == Constants.BBD_COMPANYID}">--%>
+                    <c:if test="${companyId == '99'}">
+                        <li class="filter clearfix">
+                            <i>站点类型：</i>
+                            <input type="radio" class="" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
+                            <input type="radio" class="" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/>社会化运力
+                            <input type="radio" class="" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/>快递柜
+                        </li>
+                    </c:if>
+                    <li class="filter">
                         <i>站点名称：</i>
                         <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
                     </li>
@@ -719,10 +739,13 @@
     }
 
 function createSite(){
+    yscroll();
+    $(".y-scroll").animate({scrollTop:0},0);
     $('#titleName').html("新建");
     document.getElementById("siteForm").reset();
     $('#areaCode').val('');
     $('#areaCodeForModal').val('');
+    $("input[name='sitetype'][value='ORDERNARY']").attr("checked",true);
     var defprov = "北京";
     var defcity = "北京";
     var defdist = "朝阳区";
@@ -734,6 +757,7 @@ function createSite(){
         nodata: "none"
     });
 }
+    //设置修改form表单的值
     function getSiteByAreaCode(areaCode) {
         $('#titleName').html("修改");
         $('#areaCodeForModal').val(areaCode);
@@ -747,6 +771,7 @@ function createSite(){
             success: function (data) {
                 if (data != null) {
                     document.getElementById("siteForm").reset();
+                    $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
                     $("#responser").val(data.responser);
@@ -758,6 +783,7 @@ function createSite(){
                     $("#area").val(data.area);
                     $("#address").val(data.address);
                     $("#phone").val(data.username);
+
                     defprov = $("#province").val();
                     defcity = $("#city").val();
                     defdist = $("#area").val();

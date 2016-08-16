@@ -1,9 +1,10 @@
 package com.bbd.saas.form;
 
+import com.bbd.saas.enums.SiteType;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class SiteForm {
-	
+	private SiteType sitetype;
 	@NotEmpty
 	private String phone;    //用户的登录手机号
 	@NotEmpty
@@ -23,6 +24,14 @@ public class SiteForm {
 	private String area;         //区
 	@NotEmpty
 	private String address;      //详细地址
+
+	public SiteType getSitetype() {
+		return sitetype;
+	}
+
+	public void setSitetype(SiteType sitetype) {
+		this.sitetype = sitetype;
+	}
 
 	public String getPhone() {
 		return phone;

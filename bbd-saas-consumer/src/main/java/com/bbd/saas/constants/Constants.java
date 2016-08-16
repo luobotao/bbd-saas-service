@@ -100,6 +100,7 @@ public class Constants {
     public static int POSTMAN_HAVE_TOSITE_PERMISSION = 5;
     //地图分多次查询点
     public static int PAGESIZE_MAP = 1000;
+    public static String BBD_COMPANYID = "8";
 
 
 }

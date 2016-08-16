@@ -245,11 +245,7 @@ $(function () {
     
     $(".n-re-con").css({minHeight:winhei-152});
 
-    if(window.screen.availHeight<800){
-        $(".y-scroll").css({maxHeight:"200px"})
-    }else{
-        $(".y-scroll").css({maxHeight:"300px"})
-    }
+    yscroll();
     $(".i-hei").css({height:winhei-146});
     $(".all-area").scrollUnique();
 })
@@ -396,3 +392,13 @@ $.fn.scrollUnique = function() {
     });
 };
 // E 子元素scroll父元素容器不跟随滚动JS实现
+
+function yscroll(){
+    if(window.screen.availHeight<800){
+        $(".y-scroll").css({maxHeight:"200px"})
+        $(".y-scroll").animate({scrollTop:0},0);
+    }else{
+        $(".y-scroll").css({maxHeight:"300px"})
+        $(".y-scroll").animate({scrollTop:0},0);
+    }
+};
