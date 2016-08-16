@@ -292,6 +292,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
 
     public void selectByQuery(OrderQueryVO orderQueryVO){
         Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(orderQueryVO.areaCode)){
+            query.filter("areaCode", orderQueryVO.areaCode);
+        }
         this.getOrderStatusQuery(query, orderQueryVO);
         System.out.println(count(query));
         //List<Order> orderList = find(query).asList();

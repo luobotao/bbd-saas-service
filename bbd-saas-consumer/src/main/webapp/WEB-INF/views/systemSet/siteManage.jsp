@@ -3,6 +3,7 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.SiteStatus" %>
 <%@ page import="com.bbd.saas.enums.SiteType" %>
+<%@ page import="com.bbd.saas.constants.Constants" %>
 <%@ page import="com.bbd.saas.enums.SiteTurnDownReasson" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
@@ -205,9 +206,9 @@
                     <%--<c:if test="${companyId == '99'}">--%>
                         <li class="filter clearfix">
                             <i>站点类型：</i>
-                            <input type="radio" class="" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
-                            <input type="radio" class="" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/>社会化运力
-                            <input type="radio" class="" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/>快递柜
+                            <input type="radio" class="pt6" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
+                            <input type="radio" class="pt6" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/>社会化运力
+                            <input type="radio" class="pt6" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/>快递柜
                         </li>
                     </c:if>
                     <li class="filter">
