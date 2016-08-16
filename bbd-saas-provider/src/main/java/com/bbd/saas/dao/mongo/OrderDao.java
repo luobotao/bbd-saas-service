@@ -236,15 +236,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0
                         query.filter("orderStatus", OrderStatus.NOTARR);
                     }else{//已到站
-                        if(orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()){//已签收--OrderStatus=5
-                            query.filter("orderStatus", OrderStatus.SIGNED);
-                            // otherExprees == null || Size(otherExprees)==0
-                            query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
-                        }else if(orderQueryVO.orderStatus == OrderStatus.TO_OTHER_EXPRESS.getStatus()){//转其他快递--OrderStatus=6
-                            query.filter("otherExprees <>", null).filter("otherExprees size >", 0);
-                        }else{
-                            query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
-                        }
+                        this.getOrderStatusQuery(query, orderQueryVO);//单个状态
                         //到站时间，只有已到站的订单才会有到站时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                         query.filter("dateArrived >=",dateBetween.getStart());
@@ -278,7 +270,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
-                        query.filter("orderStatus in", orderQueryVO.orderStatusList);
                     }
                 }else {//orderQueryVO.orderStatus == null, orderQueryVO.orderStatusList == null 全部
                     //到站的运单，根据时间查询；未到站，时间为空
@@ -299,19 +290,25 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     	return query;
     }
 
+    public void selectByQuery(OrderQueryVO orderQueryVO){
+        Query<Order> query = createQuery();
+        this.getOrderStatusQuery(query, orderQueryVO);
+        System.out.println(count(query));
+        //List<Order> orderList = find(query).asList();
+    }
     /**
      * 查询单个状态的Query
      * @param query
      * @param orderQueryVO
      * @return
      */
-    private Query<Order> getOrderStatusQuery(Query<Order> query, OrderQueryVO orderQueryVO){
+    public Query<Order> getOrderStatusQuery(Query<Order> query, OrderQueryVO orderQueryVO){
         if(orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()){//已签收--OrderStatus=5
             query.filter("orderStatus", OrderStatus.SIGNED);
             // otherExprees == null || Size(otherExprees)==0
             query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
         }else if(orderQueryVO.orderStatus == OrderStatus.TO_OTHER_EXPRESS.getStatus()){//转其他快递--OrderStatus=6
-            query.filter("otherExprees <>", null).filter("otherExprees size >", 0);
+            query.filter("otherExprees <>", null);
         }else{//单个状态
             query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
         }
