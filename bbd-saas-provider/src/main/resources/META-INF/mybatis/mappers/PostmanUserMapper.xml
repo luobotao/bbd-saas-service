@@ -223,6 +223,19 @@
         and sta = 1
     </select>
 
+    <select id="findById" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `postmanuser` where id = #{id}
+    </select>
+
+    <select id="findByToken" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `postmanuser` where token = #{token}
+    </select>
+
+
     <resultMap type="java.util.HashMap" id="statResultMap" >
         <result column="userscore" property="userscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result column="timescore" property="timescore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
