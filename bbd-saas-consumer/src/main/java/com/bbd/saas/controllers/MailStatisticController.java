@@ -181,7 +181,7 @@ public class MailStatisticController {
 		if(areaCodeList != null){//查询全部 -- 同一个公司的所有站点
 			//缺少历史未到站 && 已到站订单数 && 转其他站点的订单数
 			summary = orderService.findSummaryByAreaCodesAndTime(areaCodeList, time);
-			setNoArrArrToOtherSite(summary, areaCodeList, time);
+			this.setNoArrArrToOtherSite(summary, areaCodeList, time);
 		}
 		if(summary == null){
 			summary = new MailStatisticVO();
@@ -202,9 +202,19 @@ public class MailStatisticController {
 		//历史未到站 && 已到站订单数
 		OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(areaCodeList, time);
 		//dataArrived=time && toOtherSite
-		summary.setNoArrive((int) orderNumVO.getNoArriveHis());
-		summary.setArrived((int)orderNumVO.getArrived() + summary.getToOtherSite());
-		summary.setTotalDispatched(summary.getArrived() - summary.getNoDispatch());//所有已分派的
+		this.setOtherValue(summary, orderNumVO);
+	}
+
+	/**
+	 * 历史未到站 && 已到站 && 已分派订单数
+	 * @param mailStatisticVO 统计对象
+	 * @param orderNumVO 携带统计数据值
+     */
+	private void setOtherValue(MailStatisticVO mailStatisticVO, OrderNumVO orderNumVO){
+		//dataArrived=time && toOtherSite
+		mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
+		mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
+		mailStatisticVO.setTotalDispatched((int) orderNumVO.getTotalDispatched() + mailStatisticVO.getToOtherSite());//所有已分派的
 	}
 
 	/**
@@ -235,10 +245,8 @@ public class MailStatisticController {
 			mailStatisticVO.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodeAndTime(option.getCode(), time));
 			//历史未到站 && 已到站订单数
 			OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(option.getCode(), time);
-			//dataArrived=time && toOtherSite
-			mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
-			mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
-			mailStatisticVO.setTotalDispatched(mailStatisticVO.getArrived() - mailStatisticVO.getNoDispatch());//所有已分派的
+			//历史未到站 && 已到站 && 已分派订单数
+			this.setOtherValue(mailStatisticVO, orderNumVO);
 			mailStatisticVO.setSiteName(option.getName());
 			dataList.add(mailStatisticVO);
 		}
@@ -250,10 +258,8 @@ public class MailStatisticController {
 		mailStatisticVO.setToOtherSite((int)toOtherSiteLogService.countByFromAreaCodeAndTime(areaCode, time));
 		//历史未到站 && 已到站订单数
 		OrderNumVO orderNumVO = orderService.findHistoryNoArrivedAndArrivedNums(areaCode, time);
-		//dataArrived=time && toOtherSite
-		mailStatisticVO.setNoArrive((int) orderNumVO.getNoArriveHis());
-		mailStatisticVO.setArrived((int)orderNumVO.getArrived() + mailStatisticVO.getToOtherSite());
-		mailStatisticVO.setTotalDispatched(mailStatisticVO.getArrived() - mailStatisticVO.getNoDispatch());//所有已分派的
+		//历史未到站 && 已到站 && 已分派订单数
+		this.setOtherValue(mailStatisticVO, orderNumVO);
 		List<MailStatisticVO> dataList = Lists.newArrayList();
 		//Site site = siteService.findSiteByAreaCode(areaCode);
 		dataList.add(mailStatisticVO);
@@ -306,7 +312,7 @@ public class MailStatisticController {
 					essMap = orderService.sumWithAreaCodesAndOrderStatus(time, areaCodeList);
 					//缺少历史未到站 && 已到站订单数 && 转其他站点的订单数
 					summary = orderService.findSummaryByAreaCodesAndTime(areaCodeList, time);
-					setNoArrArrToOtherSite(summary, areaCodeList, time);
+					this.setNoArrArrToOtherSite(summary, areaCodeList, time);
 					dataList = toRowDatas(optionList, currUser.getCompanyId(), time, essMap);
 					if(summary == null){
 						summary = new MailStatisticVO();
