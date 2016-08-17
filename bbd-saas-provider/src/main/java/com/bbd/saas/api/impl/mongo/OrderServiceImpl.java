@@ -750,4 +750,15 @@ public class OrderServiceImpl implements OrderService {
     public MailStatisticVO findSummaryByAreaCodesAndTime(List<String> areaCodeList, String dateArrived) {
         return orderDao.selectSummaryByAreaCodesAndTime(areaCodeList, dateArrived);
     }
+
+
+    /**
+     * 获取一个站点下,未进行打包的订单集合
+     * @param areaCode
+     * @return
+     */
+    @Override
+    public List<Order> findNotDispatchOrdersWithAreaCode(String areaCode) {
+        return orderDao.findNotDispatchOrdersWithAreaCode(areaCode);
+    }
 }

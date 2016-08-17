@@ -249,6 +249,11 @@ public interface OrderService {
 	 */
 	public MailStatisticVO findSummaryByAreaCodesAndTime(List<String> areaCodeList, String dateArrived);
 
-
+	/**
+	 * 获取一个站点下,未进行打包的订单集合
+	 * @param areaCode
+	 * @return
+	 */
+	public List<Order> findNotDispatchOrdersWithAreaCode(String areaCode);
 
 }

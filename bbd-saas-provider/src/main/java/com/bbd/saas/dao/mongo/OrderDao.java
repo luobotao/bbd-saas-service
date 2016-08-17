@@ -837,4 +837,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
 
+    public List<Order> findNotDispatchOrdersWithAreaCode(String areaCode) {
+        Query<Order> query = createQuery();
+        query.filter("areaCode",areaCode);
+        query.or(query.criteria("expressStatus").equal(ExpressStatus.Suspense), query.criteria("expressStatus").equal(ExpressStatus.Separating));
+        return find(query).asList();
+    }
 }
