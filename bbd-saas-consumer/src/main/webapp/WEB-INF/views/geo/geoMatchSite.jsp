@@ -249,7 +249,7 @@
 			}
 			var name = this.name;
 			this.pointArray.forEach(function(e){
-				var myPolygon = new BMap.Polygon(e);
+				var myPolygon = new BMap.Polygon(e, {fillOpacity:0.35});
 				addrMap.addOverlay(myPolygon);
 				//在多边形中心点显示站点名称
 				var bounds = myPolygon.getBounds();
