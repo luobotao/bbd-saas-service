@@ -161,6 +161,7 @@
 	var goalMarker = null;//目标marker,用于拖动到目标位置的图标
 	function initAddrMap(){
 		addrMap.enableScrollWheelZoom(true);
+		addrMap.addControl(new BMap.NavigationControl());
 		//设置地图中心点和放大级别
 		//显示目标位置
 		<c:choose>
