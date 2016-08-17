@@ -16,6 +16,13 @@ public interface PostmanUserDao {
      * @return
      */
     List<PostmanUser> selectAll();
+
+    /**
+     * 根据用户ID获取此用户
+     * @param id
+     * @return
+     */
+    PostmanUser findById(@Param("id")Integer id);
     /**
      * 根据phone获取对应的postmanUser
      * @param phone
@@ -101,4 +108,10 @@ public interface PostmanUserDao {
      */
     int updateSubstationBySiteId(@Param("siteid") String siteid, @Param("siteName") String siteName);
 
+    /**
+     * 根据用户token获取此用户
+     * @param token
+     * @return
+     */
+    PostmanUser findByToken(@Param("token") String token);
 }

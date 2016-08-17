@@ -20,6 +20,7 @@ public class SiteMySql implements Serializable {
     private Integer upperlimit;
     private Integer lowerlimit;
     private Integer daycnt;
+    private int sitetype;
 
 
     public String getName() {
@@ -140,5 +141,13 @@ public class SiteMySql implements Serializable {
 
     public void setDaycnt(Integer daycnt) {
         this.daycnt = daycnt;
+    }
+
+    public int getSitetype() {
+        return sitetype;
+    }
+
+    public void setSitetype(int sitetype) {
+        this.sitetype = sitetype;
     }
 }

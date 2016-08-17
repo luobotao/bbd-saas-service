@@ -18,6 +18,19 @@ public interface PostmanUserService {
      */
     List<PostmanUser> selectAll();
     /**
+     * 根据用户ID获取此用户
+     * @param uid
+     * @return
+     */
+    PostmanUser findById(Integer uid);
+    /**
+     * 根据用户token获取此用户
+     * @param token
+     * @return
+     */
+    PostmanUser findByToken(String token);
+
+    /**
      * 保存postmanUser
      * @param postmanUser 派件员对象
      * @return  派件员对象

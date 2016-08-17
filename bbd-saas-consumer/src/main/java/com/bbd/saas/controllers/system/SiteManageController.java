@@ -79,6 +79,7 @@ public class SiteManageController {
 		//查询登录用户的公司下的所有站点
 		List<Option> optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, null);
 		model.addAttribute("siteList", optionList);
+		model.addAttribute("companyId", currUser.getCompanyId());
 		return "systemSet/siteManage";
 	}
 

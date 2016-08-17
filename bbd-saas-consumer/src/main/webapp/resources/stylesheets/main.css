@@ -2144,7 +2144,9 @@ input.spe-input{
   right:45px;
   bottom:15px
 }
-
+.pt6 {
+  padding-top: 6px;
+}
 /* E 模拟select */
 
 /* S 左右间距 */

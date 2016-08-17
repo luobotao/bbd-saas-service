@@ -48,6 +48,26 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	public List<PostmanUser> selectAll() {
 		return postmanUserDao.selectAll();
 	}
+
+	/**
+	 * 根据用户ID获取此用户
+	 * @param uid
+	 * @return
+	 */
+	@Override
+	public PostmanUser findById(Integer uid){
+		return postmanUserDao.findById(uid);
+	}
+	/**
+	 * 根据用户token获取此用户
+	 * @param token
+	 * @return
+	 */
+	@Override
+	public PostmanUser findByToken(String token) {
+		return postmanUserDao.findByToken(token);
+	}
+
 	/**
      * 根据phone获取对应的postmanUser
      * @param phone
