@@ -532,13 +532,12 @@
 		},
 		loadMyOverlay: function(){
 			var map = this.map;
-			for(var i=0; i< this.myOverlay.length; i++){
-				myPolygon = new BMap.Polygon(this.myOverlay[i], this.styleOptions);
+			this.clearAll();
+			this.myOverlay.forEach(function(e){
+				myPolygon = new BMap.Polygon(e, this.styleOptions);
 				this.myPolygon = myPolygon;
-				try{
-					myPolygon.enableEditing();
-					myPolygon.enableMassClear();
-				}catch(e){}
+				try{myPolygon.enableEditing();
+					myPolygon.enableMassClear();}catch(e){}
 				myPolygon.addEventListener("lineupdate",function(e){
 					bmap.showLatLon(e.currentTarget.ro);
 				});
@@ -549,7 +548,7 @@
 				});
 				bmap.overlays.push(myPolygon);
 				map.addOverlay(myPolygon);
-			}
+			})
 		},
 		showLatLon: function(a){
 			var len = a.length;
