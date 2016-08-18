@@ -3,6 +3,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="Access-Control-Allow-Origin" content="*">
 	<meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
@@ -41,13 +42,12 @@ folder instead of downloading all of them to reduce the load. -->
 	<!-- alertify -->
 	<link href="<c:url value="/resources/adminLTE/plugins/alertify/alertify.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/adminLTE/plugins/alertify/bootstrap.css" />" rel="stylesheet"  type="text/css" />
-	<link href="<c:url value="/resources/stylesheets/main.css?_1" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
+	<link href="<c:url value="/resources/stylesheets/main.css?_123" />" rel="stylesheet"  type="text/css" /><!--自定义css-->
 
 
-	<!-- jQuery 2.1.3 -->
-	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
-	<!–[if IE]>
+	<!-- jQuery 1.12.4 -->
 	<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery-1.12.4.min.js"/>"></script>
+	<!–[if IE]>
 	<script>
 		(function() {
 			if (!
@@ -119,7 +119,7 @@ folder instead of downloading all of them to reduce the load. -->
 <body>
 <!--S 提示信息-->
 <div class="b-prompt">
-	<i class="b-prompt-txt"></i>
+	<div class="b-prompt-txt"><i></i></div>
 </div>
 <!--E 提示信息-->
 <!-- S alert -->

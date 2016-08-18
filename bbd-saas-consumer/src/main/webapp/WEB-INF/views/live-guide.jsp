@@ -2,11 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="main.jsp"%>
-<html>
-	<head></head>
-</html>
-<bobdy>
 	<div class="modal-header b-modal-header">
 		<button type="button" class="close j-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 		<h4 class="modal-title tc">设置站点配送区域</h4>
@@ -678,5 +673,3 @@
 		}
 
 	</script>
-</bobdy>
-</html>

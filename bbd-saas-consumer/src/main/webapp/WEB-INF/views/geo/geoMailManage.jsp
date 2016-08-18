@@ -14,6 +14,7 @@
 			margin-bottom:0;
 			border-radius:4px;
 			padding:6px !important;
+			background:#000\9;
 		}
 		.capacity-map .BMapLabel:after {
 			content: '';
@@ -101,7 +102,7 @@
 <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
 --%>
 
-<script type="application/javascript">
+<script type="text/javascript">
 	var defaultPoint = new BMap.Point(116.404, 39.915);
 
 	var center = "${prov}${city}${area}";

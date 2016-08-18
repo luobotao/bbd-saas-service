@@ -18,6 +18,7 @@
 			margin-bottom:0;
 			border-radius:4px;
 			padding:6px !important;
+			background:#000\9;
 		}
 		.capacity-map .BMapLabel:after {
 			content: '';
@@ -354,7 +355,7 @@
 <!--加载检索信息窗口-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
-<script type="application/javascript">
+<script type="text/javascript">
 	var defaultCenter = new BMap.Point(${centerPoint.lng}, ${centerPoint.lat});
 	var defaultZoom = 11;
 	/************************ 配送区域 ************* start **************************/
@@ -1402,7 +1403,8 @@
 	var winhei2=parentE.height();
 	var inithei=$("#fenceMap").height();
 	var winwid=window.screen.availWidth;
-	var initwid=$(".b-map").width();
+	var bbd3=parentE.find(".bbd-md-3").width();
+	var initwid=winwid-bbd3-108;
 	$(".j-full-btn").on("click",function(){
 		var parentD=$('#psrE',window.parent.document);
 		if($(this).hasClass("b-forward-full")){

@@ -1,13 +1,16 @@
 $(function () {
 	
     // S sidebar\
-    var winhei = $(window).height();
+    var inithei = $(window).height();
     var dochei = $(document).height();
 
     function counthei() {
+        var winhei = $(window).height();
+        var winhei = $(window).height();
         $(".b-branch").css({minHeight: winhei - 60});
         $(".b-detail").css({minHeight: winhei});
-
+        $(".b-sidebar").css({height: winhei - 60,overflow:"auto"});
+        $(".i-hei").css({height:winhei-146});
     };
     counthei();
     $(".b-sidebar .lv1").click(function () {
@@ -242,11 +245,30 @@ $(function () {
         $(".j-siteM-pop").hide().removeClass("in");
         parentD.removeClass("modal-open").css({paddingRight:"0"});
     })
-    
-    $(".n-re-con").css({minHeight:winhei-152});
+
+    $(".n-re-con").css({minHeight:inithei-152});
+
 
     yscroll();
-    $(".i-hei").css({height:winhei-146});
+    // S 最后一个元素去掉间距
+    tap0(".navbar-nav > li:last-child a");
+    // E 最后一个元素去掉间距
+
+    // S 判断是 ie8/9 的话 就给 input 设置 value
+    //if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/8./i)=="8." || navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/9./i)=="9.") {
+    //    $("input").each(function(){
+    //        var plh=$(this).attr("placeholder");
+    //        if($(this).val() == "" || $(this).val() == undefined ){
+    //            if(plh != "" &&  plh != undefined ){
+    //                $(this).attr("value",plh)
+    //            }
+    //
+    //        }
+    //
+    //    })
+    //}
+    // E 判断是 ie8/9 的话 就给 input 设置 value
+
     $(".all-area,.y-scroll").scrollUnique();
 })
 var pwdreg=/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
@@ -392,6 +414,12 @@ $.fn.scrollUnique = function() {
     });
 };
 // E 子元素scroll父元素容器不跟随滚动JS实现
+
+// S 最后一个元素去掉间距
+function tap0(tapEle){
+    $(tapEle).css({paddingRight:0})
+}
+// E 最后一个元素去掉间距
 
 // S 超出显示滚动条
 function yscroll(){
