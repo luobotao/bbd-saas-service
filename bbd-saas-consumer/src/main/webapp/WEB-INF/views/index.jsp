@@ -10,6 +10,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>棒棒达快递</title>
 	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>

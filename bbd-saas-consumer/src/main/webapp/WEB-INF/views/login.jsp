@@ -8,6 +8,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>棒棒达快递</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link rel="bookmark" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
