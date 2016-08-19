@@ -198,4 +198,10 @@ public interface SiteService {
      */
     Site findSiteByName(String name);
 
+    /**
+     * 获取热门公司列表
+     * @return
+     */
+    List<Site> findSiteList(String companyId);
+
 }

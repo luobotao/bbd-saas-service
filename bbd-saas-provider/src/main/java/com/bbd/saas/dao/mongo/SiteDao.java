@@ -38,6 +38,17 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
     }
 
     /**
+     * 获取热门公司列表
+     * @return
+     */
+    public List<Site> findSiteList(String companyId) {
+        Query<Site> query = createQuery();
+        query.filter("companyId", companyId);
+        query.filter("status", SiteStatus.APPROVE);
+        return  find(query).asList();
+    }
+
+    /**
      * 带查询条件去检索订单
      * @param pageModel
      * @param status
