@@ -8,6 +8,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>棒棒达快递</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link rel="bookmark" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
@@ -16,8 +18,25 @@
 	<!-- iCheck -->
 	<link href="<c:url value="/resources/adminLTE/plugins/iCheck/flat/blue.css" />" rel="stylesheet"  type="text/css" />
 	<link href="<c:url value="/resources/adminLTE/plugins/iCheck/square/blue.css" />" rel="stylesheet"  type="text/css" />
-	
-	<script src="<c:url value="/resources/adminLTE/plugins/jQuery/jQuery-2.1.3.min.js" />"> </script>
+
+	<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery-1.12.4.min.js"/>"></script>
+	<!–[if IE]>
+	<script>
+		(function() {
+			if (!
+						/*@cc_on!@*/
+							0) return;
+			var e = "abbr, article, aside, audio, canvas, datalist, details, dialog, eventsource, figure, footer, header, hgroup, mark, menu, meter, nav, output, progress, section, time, video".split(', ');
+			var i= e.length;
+			while (i--){
+				document.createElement(e[i])
+			}
+		})()
+	</script>
+	<![endif]–>
+	<!-- 解决 ie8 不识别 mediaQuery 问题 -->
+	<script src="<c:url value="/resources/javascripts/respond.js" />"> </script>
+
 	<script src="<c:url value="/resources/bootstrap/js/bootstrap.min.js" />" type="text/javascript"></script>
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
@@ -25,6 +44,7 @@
 	<script src="<c:url value="/resources/bootstrap/js/fileinput_locale_zh.js" />" type="text/javascript"></script>
 	<!-- iCheck -->
 	<script src="<c:url value="/resources/adminLTE/plugins/iCheck/icheck.min.js" />" type="text/javascript"></script>
+
 </head>
 <body>
 <!-- S nav -->
@@ -150,7 +170,7 @@
 			<li class="b-grid">
 				<img src="<c:url value="/resources/images/qf.png" />" alt="清风" />
 			</li>
-			<li class="b-grid col-sm-6">
+			<li class="b-grid">
 				<img src="<c:url value="/resources/images/hyx.png" />" alt="恒源祥" />
 			</li>
 		</ul>
