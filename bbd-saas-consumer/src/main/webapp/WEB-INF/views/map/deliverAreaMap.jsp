@@ -152,7 +152,7 @@
 										<div id="areaMap" style="height: 533px;"></div>
 										<div class="draw-btn" id="areaTool">
 											<div class="bg-alpha" id="areaTool_bg"></div>
-											<a href="javascript:void(0);" class="ser-btn l ml12" id="saveSiteBtn">　保存　</a>
+											<a href="javascript:void(0);" class="ser-btn l ml12" id="saveSiteBtn">保存</a>
 										</div>
 									</div>
 								</div>

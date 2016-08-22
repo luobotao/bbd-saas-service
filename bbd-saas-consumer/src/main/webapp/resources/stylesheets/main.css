@@ -532,8 +532,10 @@ footer {
 /* E footer */
 /* S banner */
 .b-banner {
-  background: url(../images/banner.png) repeat-x center top;
-  min-height: 688px;
+  background: url(../images/banner.png) repeat-x;
+  background-position:center top;
+  height: 663px;
+  overflow:hidden;
 }
 .banner-txt{
     position:relative;
