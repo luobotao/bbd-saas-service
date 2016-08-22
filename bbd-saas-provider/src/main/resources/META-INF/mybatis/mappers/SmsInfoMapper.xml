@@ -38,4 +38,13 @@
         #{dateUpd,jdbcType=TIMESTAMP}
         )
     </insert>
+
+
+    <parameterMap type="map" id="checkSmsMap">
+        <parameter property="phone" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="ip" jdbcType="VARCHAR" mode="IN"/>
+    </parameterMap>
+    <select id="checkToSendsms" parameterMap="checkSmsMap" statementType="CALLABLE" resultType="String">
+        {call sp_check_sendsms(?,?)}
+    </select>
 </mapper>

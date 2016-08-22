@@ -111,6 +111,9 @@ folder instead of downloading all of them to reduce the load. -->
 	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/encode/aes.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/encode/sha1.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/encode/encodeTool.js" />"> </script>
 	<script type="text/javascript" src="<c:url value="/resources/javascripts/jquery.cityselect.js?_123" />" ></script>
 
 	<!-- 解决 ie8 不识别 mediaQuery 问题 -->
