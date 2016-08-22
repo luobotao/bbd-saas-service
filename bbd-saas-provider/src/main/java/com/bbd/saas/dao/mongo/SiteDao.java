@@ -310,4 +310,18 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         }
         return  find(query).asList();
     }
+    /**
+     * 查询公司id为companyId,但是站点编号不为areaCode的站点个数
+     * @return 符合条件的站点个数
+     */
+    public long selectOtherSiteCount(String companyId, String areaCode){
+        Query<Site> query = createQuery();
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(StringUtils.isNotBlank(areaCode)){
+            query.filter("areaCode <>", areaCode);
+        }
+        return  count(query);
+    }
 }

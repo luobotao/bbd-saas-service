@@ -176,4 +176,11 @@
 		FROM `postdelivery` where mail_num = #{mailNum}
 	</select>
 	<!-- 通过运单号查询记录  结束  -->
+	<!-- 通过id查询记录  开始  -->
+	<select id="selectOneById" resultMap="baseResultMap">
+		SELECT
+		<include refid="baseColumnList"/>
+		FROM `postdelivery` where id = #{id}
+	</select>
+	<!-- 通过id查询记录  结束  -->
 </mapper>

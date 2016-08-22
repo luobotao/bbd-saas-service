@@ -348,4 +348,9 @@ public class SiteServiceImpl implements SiteService {
     public List<Site> findSiteList(String companyId){
         return siteDao.findSiteList(companyId);
     }
+
+    @Override
+    public long findOtherSiteCount(String companyId, String areaCode) {
+        return this.siteDao.selectOtherSiteCount(companyId, areaCode);
+    }
 }

@@ -20,6 +20,12 @@ public interface PostcompanyDao {
      * @return
      */
     Postcompany selectPostmancompanyById(Integer id);
+    /* *
+     * 根据公司编号获取公司信息
+     * @param companycode 公司编号
+     * @return 公司
+     */
+    Postcompany selectOneByCode(String companycode);
     /**
      * 插入一条新公司
      * @param postcompany

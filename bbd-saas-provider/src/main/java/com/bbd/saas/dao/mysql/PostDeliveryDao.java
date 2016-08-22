@@ -72,5 +72,11 @@ public interface PostDeliveryDao {
 	 * @return 记录集合
      */
 	List<PostDelivery> selectListByMailNum(@Param("mailNum")String mailNum);
+	/**
+	 * 根据id查询
+	 * @param id 编号
+	 * @return 实体
+	 */
+	public PostDelivery selectOneById(@Param("id")Integer id);
 
 }

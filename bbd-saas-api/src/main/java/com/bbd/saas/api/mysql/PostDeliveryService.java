@@ -56,4 +56,11 @@ public interface PostDeliveryService {
 	 * @param resultMsg
 	 */
 	void updatePostDeliveryStatus(String mailNum, String sta,String remark,String resultMsg);
+
+	/**
+	 * 根据id查询
+	 * @param id 编号
+	 * @return 实体
+     */
+	public PostDelivery findOneById(Integer id);
 }

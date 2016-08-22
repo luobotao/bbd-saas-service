@@ -1,15 +1,13 @@
 package com.bbd.saas.api.impl.mysql;
 
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.dao.mysql.PostDeliveryDao;
 import com.bbd.saas.models.PostDelivery;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * Description: 快递员派送运单信息Service实现
@@ -65,5 +63,10 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	@Override
 	public void updatePostDeliveryStatus(String mailNum, String sta,String remark,String resultMsg){
 		postDeliveryDao.updatePostDeliveryStatus(mailNum,sta,remark,resultMsg);
+	}
+
+	@Override
+	public PostDelivery findOneById(Integer id) {
+		return this.postDeliveryDao.selectOneById(id);
 	}
 }

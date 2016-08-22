@@ -27,7 +27,13 @@ public interface PostcompanyService {
      * @param id 公司ID
      * @return 公司
      */
-    Postcompany selectPostmancompanyById(Integer id);
+    Postcompany selectPostmancompanyById(Integer id);/**
+     /* *
+     * 根据公司编号获取公司信息
+     * @param companycode 公司编号
+     * @return 公司
+     */
+    Postcompany findOneByCode(String companycode);
     /**
      * 插入一条新公司
      * @param postcompany 公司
