@@ -25,6 +25,19 @@ import java.util.Map;
 public interface OrderService {
 
 	/**
+	 * 根据id查询运单
+	 * @param id order._id
+	 * @return 运单信息
+     */
+	Order findOneById(String id);
+	/**
+	 * 根据id查询运单
+	 * @param id order._id
+	 * @return 运单信息
+	 */
+	Order findOneByObjectId(ObjectId id);
+
+	/**
 	 * 根据站点和运单号查询单个订单信息
 	 * @param areaCode 站点编码（可为空，为空则所有站点）
 	 * @param mailNum 运单号
@@ -251,9 +264,19 @@ public interface OrderService {
 
 	/**
 	 * 获取一个站点下,未进行打包的订单集合
-	 * @param areaCode
-	 * @return
+	 * @param areaCode 站点编号
+	 * @return 订单集合
 	 */
 	public List<Order> findNotDispatchOrdersWithAreaCode(String areaCode);
+
+	/**
+	 * 根据站点编号和物流状态分页查询
+	 * @param areaCode  站点编号
+	 * @param expressStatus 物流状态
+	 * @param startNum 跳过的条数
+	 * @param pageSize 查询的条数
+     * @return 分页数据
+     */
+	public PageModel<Order> findPageByAreaCodeAndExpressStatus(String areaCode,ExpressStatus expressStatus,Integer startNum, Integer pageSize);
 
 }

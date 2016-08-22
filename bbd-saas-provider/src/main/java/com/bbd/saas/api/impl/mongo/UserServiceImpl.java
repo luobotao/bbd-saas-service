@@ -269,4 +269,8 @@ public class UserServiceImpl implements UserService {
         return userDao.findByAppkeyAndSessionkey(appKey, sessionKey);
     }
 
+    @Override
+    public List<User> findPageUser(Site site, UserRole role, int lastindex, int pagesize) {
+        return this.userDao.selectPageUser(site, role, lastindex, pagesize);
+    }
 }

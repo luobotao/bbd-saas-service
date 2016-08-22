@@ -5,6 +5,7 @@ import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.ParcelStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderParcel;
+import com.bbd.saas.utils.PageModel;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
@@ -119,5 +120,34 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
         query.filter("areaCode",areaCode);
         query.filter("status",parcelStatus);
         return find(query).asList();
+    }
+    /**
+     * APP端获取包裹到站列表
+     * @param uid 站长id
+     * @param offset  跳过的条数
+     * @param pagesize 查询的数据条数
+     * @return 包裹列表
+     */
+    public List<OrderParcel> findStagionParcelList(String uid, int offset, int pagesize){
+        Query<OrderParcel> query = createQuery().order("-dateUpd");
+        query.filter("station_uid", uid);
+        query.filter("status <>", ParcelStatus.ArriveStation);
+        if(offset > -1){
+            //分页信息
+            query.offset(offset).limit(pagesize);
+        }
+        return find(query).asList();
+    }
+
+    PageModel<OrderParcel> findStagionParcelPage(String uid, int offset, int pagesize){
+        PageModel<OrderParcel> pageModel = new PageModel<OrderParcel>();
+        Query<OrderParcel> query = createQuery().order("-dateUpd");
+        query.filter("station_uid", uid);
+        query.filter("status <>", ParcelStatus.ArriveStation);
+        //分页信息
+        query.offset(offset).limit(pagesize);
+        pageModel.setDatas(find(query).asList());
+        pageModel.setTotalCount(count(query));
+        return pageModel;
     }
 }
