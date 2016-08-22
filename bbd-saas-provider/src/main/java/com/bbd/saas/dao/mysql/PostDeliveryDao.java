@@ -1,10 +1,10 @@
 package com.bbd.saas.dao.mysql;
 
-import java.util.Date;
-
+import com.bbd.saas.models.PostDelivery;
 import org.apache.ibatis.annotations.Param;
 
-import com.bbd.saas.models.PostDelivery;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -65,4 +65,12 @@ public interface PostDeliveryDao {
 	 * @param resultMsg
 	 */
 	void updatePostDeliveryStatus(@Param("mailNum")String mailNum,@Param("sta") String sta,@Param("remark") String remark,@Param("resultMsg") String resultMsg);
+
+	/**
+	 * 根据运单号查询
+	 * @param mailNum 运单号
+	 * @return 记录集合
+     */
+	List<PostDelivery> selectListByMailNum(@Param("mailNum")String mailNum);
+
 }

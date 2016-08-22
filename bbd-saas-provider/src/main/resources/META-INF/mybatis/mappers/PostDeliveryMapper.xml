@@ -167,5 +167,13 @@
     <delete id="deleteByMailNum">
     	DELETE FROM  `postdelivery` WHERE mail_num = #{mailNum} 
     </delete>
-    <!-- 通过运单号删除一条记录  结束  --> 
+    <!-- 通过运单号删除一条记录  结束  -->
+
+	<!-- 通过运单号查询记录  开始  -->
+	<select id="selectListByMailNum" resultMap="baseResultMap">
+		SELECT
+		<include refid="baseColumnList"/>
+		FROM `postdelivery` where mail_num = #{mailNum}
+	</select>
+	<!-- 通过运单号查询记录  结束  -->
 </mapper>
