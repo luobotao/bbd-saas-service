@@ -3,8 +3,8 @@ package com.bbd.saas.api.impl.mongo;
 
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
+import com.bbd.saas.enums.ParcelStatus;
 import com.bbd.saas.mongoModels.OrderParcel;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -22,6 +22,11 @@ public class OrderParcelServiceImpl implements OrderParcelService {
 
 	public void setOrderParcelDao(OrderParcelDao orderParcelDao) {
 		this.orderParcelDao = orderParcelDao;
+	}
+
+	@Override
+	public OrderParcel findById(String id) {
+		return orderParcelDao.findOne("_id", new org.bson.types.ObjectId(id));
 	}
 
 	/**
@@ -56,6 +61,16 @@ public class OrderParcelServiceImpl implements OrderParcelService {
 	}
 
 	/**
+	 * 根据订单的运单号查询该运单号所处的包裹
+	 * @param mailNum
+	 * @return
+	 */
+	@Override
+	public OrderParcel findOrderParcelByMailNum(String mailNum) {
+		return orderParcelDao.findOrderParcelByMailNum(mailNum);
+	}
+
+	/**
 	 * 保存包裹
 	 * @param orderParcel
      */
@@ -71,7 +86,21 @@ public class OrderParcelServiceImpl implements OrderParcelService {
      */
 	@Override
 	public List<OrderParcel> findOrderParcelListByTrackCode(String trackNo) {
-		List<OrderParcel> orderParcelList =  orderParcelDao.findOrderParcelListByTrackCode(trackNo);
-		return orderParcelList;
+		return  orderParcelDao.findOrderParcelListByTrackCode(trackNo);
+	}
+	/**
+	 * 根据站点编码和包裹状态获取包裹列表
+	 * @param areaCode
+	 * @param parcelStatus
+	 * @return
+	 */
+	@Override
+	public List<OrderParcel> findOrderParcelsByAreaCodeAndStatus(String areaCode, ParcelStatus parcelStatus) {
+		return  orderParcelDao.findOrderParcelsByAreaCodeAndStatus(areaCode,parcelStatus);
+	}
+
+	@Override
+	public List<OrderParcel> findStagionParcelList(String uid, int offset, int pagesize) {
+		return orderParcelDao.findStagionParcelList(uid, offset, pagesize);
 	}
 }
