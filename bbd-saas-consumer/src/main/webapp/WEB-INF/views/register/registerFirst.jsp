@@ -148,12 +148,14 @@
 					$("#usernameFlag").val(1);
 					if(typeof($("#sendVerifyCode").attr("disabled"))=="undefined" ){
 						time();
+						var aesPhone = getAES(phone);
+						console.log(aesPhone);
 						$.ajax({
-							url: "<c:url value="/sendVerifyCode?phone=" />" + getAES(phone),
-							type: 'GET',
+							url: "<c:url value="/sendVerifyCode" />",
+							type: 'POST',
 							cache: false,
 							dataType: "json",
-							data: {},
+							data: { "phone": aesPhone},
 							success: function (response) {
 								if (response != "" && response != null && response.status == "1") {
 									alert_mine("成功", "发送成功");

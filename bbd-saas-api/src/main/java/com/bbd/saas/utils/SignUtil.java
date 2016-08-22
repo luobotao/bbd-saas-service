@@ -260,9 +260,9 @@ public class SignUtil {
         String decryptResult = decryptAES(encryptResult, password);
         System.out.println("解密后：" + decryptResult);
 
-        String pwd = "15912345678";
+        String pwd = "18612119583";
         String epwd = Encrypt(pwd, "0807060504030201");
         System.out.println(epwd);
-        System.out.println(Decrypt("DCVoMlvQEm3qFtkMc1WTnA==", "0807060504030201"));
+        System.out.println(Decrypt("gYL12aXFxLsVB5CkNyX1A==", "0807060504030201"));
     }
 }

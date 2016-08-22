@@ -5,15 +5,13 @@ function getAesString(dataTemp,keyTemp,ivTemp){//加密
     var key  =  CryptoJS.enc.Utf8.parse(keyTemp);
     var iv   =  CryptoJS.enc.Utf8.parse(ivTemp);
     var data   =  CryptoJS.enc.Utf8.parse(dataTemp);
-    console.log(key+"key");
-    console.log(iv+"QQQQQQQQ");
     var encrypted = CryptoJS.AES.encrypt(data,key,
         {
             iv:iv,
             mode:CryptoJS.mode.CBC,
             padding:CryptoJS.pad.Pkcs7
         });
-    return encrypted;
+    return encrypted.toString();
 }
 function getDAesString(dataTemp,keyTemp,ivTemp){//解密
     var key  =  CryptoJS.enc.Utf8.parse(keyTemp);

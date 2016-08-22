@@ -131,7 +131,7 @@ public class IndexController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.GET)
+    @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.POST)
     public Object sendVerifyCode(@RequestParam(value = "phone", required = true) String phone) {
         String ip=StringUtil.getIpAddr(request);
         logger.info(phone+"====传入的手机号====="+ip);
