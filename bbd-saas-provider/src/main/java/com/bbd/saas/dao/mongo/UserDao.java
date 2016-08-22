@@ -287,7 +287,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
      * @param pagesize 要查询的条数
      * @return 小件员列表
      */
-    public List<User> selectPageUser(Site site, UserRole role, int lastindex, int pagesize){
+    public PageModel<User> selectPageUser(Site site, UserRole role, UserStatus userStatus, int lastindex, int pagesize){
         Query<User> query = createQuery().order("loginName");
         //站点
         if(site != null){
@@ -297,10 +297,17 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         if(role != null){
             query.filter("role", role);
         }
+        //用户状态
+        if(userStatus != null){
+            query.filter("userStatus", userStatus);
+        }
+        PageModel<User> userPageModel = new PageModel<User>();
+        userPageModel.setTotalCount(count(query));
         //分页
         if(lastindex > -1 && pagesize > 0){
             query.offset(lastindex).limit(pagesize);
         }
-        return find(query).asList();
+        userPageModel.setDatas(find(query).asList());
+        return userPageModel;
     }
 }

@@ -185,5 +185,5 @@ public interface UserService {
      * @param pagesize 要查询的条数
      * @return 小件员列表
      */
-    public List<User> findPageUser(Site site, UserRole role, int lastindex, int pagesize);
+    public PageModel<User> findPageUser(Site site, UserRole role, UserStatus userStatus, int lastindex, int pagesize);
 }

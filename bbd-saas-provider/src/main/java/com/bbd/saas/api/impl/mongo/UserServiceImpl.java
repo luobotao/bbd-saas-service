@@ -270,7 +270,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findPageUser(Site site, UserRole role, int lastindex, int pagesize) {
-        return this.userDao.selectPageUser(site, role, lastindex, pagesize);
+    public PageModel<User> findPageUser(Site site, UserRole role, UserStatus userStatus, int lastindex, int pagesize) {
+        return this.userDao.selectPageUser(site, role, userStatus, lastindex, pagesize);
     }
 }
