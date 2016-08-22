@@ -133,7 +133,8 @@ public class IndexController {
     @ResponseBody
     @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.GET)
     public Object sendVerifyCode(@RequestParam(value = "phone", required = true) String phone) {
-        logger.info(phone+"====传入的手机号=====");
+        String ip=StringUtil.getIpAddr(request);
+        logger.info(phone+"====传入的手机号====="+ip);
         phone = SignUtil.Decrypt(phone,"0807060504030201");
         logger.info(phone+"=====解密后的手机号====");
         Map<String, Object> result = new ConcurrentReaderHashMap();
@@ -149,9 +150,8 @@ public class IndexController {
             result.put("msg", ErrorCode.getErrorMsg("global.verifyTimeError"));
             return result;
         }
-        String ip=StringUtil.getIpAddr(request);
         String checkResult = smsInfoService.checkToSendsms(phone,ip);
-        logger.info(ip+"========"+checkResult);
+        logger.info("====验证结果===="+checkResult);
         if("1".equals(checkResult)){
             String code = redisService.get(Constants.BBD_SAAS_VERIFY_CODE + phone);
             if (StringUtils.isBlank(code)) {
