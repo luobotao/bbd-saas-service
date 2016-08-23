@@ -306,6 +306,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @return
      */
     public Query<Order> getOrderStatusQuery(Query<Order> query, OrderQueryVO orderQueryVO){
+        if(orderQueryVO.orderStatus == 0){
+            query.or(query.criteria("orderStatus").equal(null), query.criteria("orderStatus").equal(OrderStatus.status2Obj(orderQueryVO.orderStatus)));
+            return query;
+        }
         if(orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()){//已签收--OrderStatus=5
             query.filter("orderStatus", OrderStatus.SIGNED);
             // otherExprees == null || Size(otherExprees)==0

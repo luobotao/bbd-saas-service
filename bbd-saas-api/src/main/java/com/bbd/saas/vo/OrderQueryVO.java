@@ -20,7 +20,7 @@ public class OrderQueryVO implements Serializable{
 	public Integer dispatchStatus;//运单分派状态，-1全部, 1-未分派,2-已分派
 	public String arriveBetween;//到站时间
 	public Integer abnormalStatus;//订单异常状态，-1全部 3-滞留,4-拒收
-	public Integer orderStatus;//订单状态，-1全部, 0-未到站,1-未分派,2-已分派,3-滞留,4-拒收,5-已签收,6-已转其他快递,7-申请退货,8-退货完成;
+	public Integer orderStatus;//订单状态，-1全部, 0-未到站(特别处理下),1-未分派,2-已分派,3-滞留,4-拒收,5-已签收,6-已转其他快递,7-申请退货,8-退货完成;
 	public List<String> areaCodeList;//公司Id
 	public List<OrderStatus> orderStatusList;
 }
