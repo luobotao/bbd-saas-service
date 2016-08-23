@@ -324,15 +324,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param orderQueryVO
      * @return
      */
-    private Query<Order> getOrderStatusListQuery(Query<Order> query, OrderQueryVO orderQueryVO){
-        if(orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)){
-            query.filter("orderStatus in", orderQueryVO.orderStatusList);
-            query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
-        }else if(orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS) && !orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED)){
-            query.or(query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList), query.criteria("otherExprees").notEqual(null));
-        }else{//查询多个状态
-            query.filter("orderStatus in", orderQueryVO.orderStatusList);
+    private Query<Order> getOrderStatusListQuery(Query<Order> query, OrderQueryVO orderQueryVO) {
+        if (orderQueryVO.orderStatusList != null && orderQueryVO.orderStatusList.size() > 0) {
+            if (orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)) {
+                query.filter("orderStatus in", orderQueryVO.orderStatusList);
+                query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
+            } else if (orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS) && !orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED)) {
+                query.or(query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList), query.criteria("otherExprees").notEqual(null));
+            } else {//查询多个状态
+                query.filter("orderStatus in", orderQueryVO.orderStatusList);
+            }
         }
+
         return query;
     }
     /**
