@@ -100,7 +100,7 @@
 								<th>运单号</th>
 								<th>订单号</th>
 								<th>来源</th>
-								<th>收货人</th>
+								<th width="6%">收货人</th>
 								<th>收货人电话</th>
 								<th width="10%">地址</th>
 								<th>预计到站时间</th>
