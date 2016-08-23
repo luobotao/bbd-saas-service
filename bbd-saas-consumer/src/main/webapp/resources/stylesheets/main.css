@@ -782,6 +782,7 @@ footer {
   padding-left: 24px;
   color: #141e35;
   font-size: 18px;
+  margin-left: -3px;
 }
 .b-sidebar li a:hover,
 .sub-sidebar li a:hover,
