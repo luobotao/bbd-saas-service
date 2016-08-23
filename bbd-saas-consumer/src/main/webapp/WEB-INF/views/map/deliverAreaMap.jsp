@@ -999,6 +999,7 @@
 	});
 	function eFenceMapChangeSite(siteId, selectId){
 		$.ajax({
+			cache:false,
 			type : "GET",  //提交方式
 			url : "${ctx}/deliverArea/getFence",//路径
 			data : {

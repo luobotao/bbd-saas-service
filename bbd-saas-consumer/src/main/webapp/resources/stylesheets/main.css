@@ -1401,7 +1401,12 @@ footer {
 	padding-right:40px;
     padding-right: 0\9;
 }
-
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .has-sel-icon select,input.c-disable,.form-inline-n select.form-control {
+    background:#fff url(../images/sel_bg.png) no-repeat center right;
+    padding-right:40px;
+  }
+}
 input.c-disable{
 	min-width:244px !important;
 }
@@ -1431,9 +1436,8 @@ select.form-control::-ms-expand { display: none; }
 .pl20 {
     padding-left: 20px;
 }
-@media screen and (-webkit-min-device-pixel-ratio:0){.daterangepicker{width:670px;}}{} /* safari(Chrome) 有效 */
 .daterangepicker .calendar{
-  max-width:238px !important;;
+  max-width:300px !important;;
 }
 /* E 修改 */
 /* 循环加载 开始*/
