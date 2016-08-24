@@ -279,5 +279,35 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         query.filter("sessionKey", sessionKey);
         return findOne(query);
     }
-
+    /**
+     * app端-根据站点查询小件员列表
+     * @param site 站点
+     * @param role 角色
+     * @param lastindex 分页跳过的条数
+     * @param pagesize 要查询的条数
+     * @return 小件员列表
+     */
+    public PageModel<User> selectPageUser(Site site, UserRole role, UserStatus userStatus, int lastindex, int pagesize){
+        Query<User> query = createQuery().order("loginName");
+        //站点
+        if(site != null){
+            query.filter("site", site);
+        }
+        //角色
+        if(role != null){
+            query.filter("role", role);
+        }
+        //用户状态
+        if(userStatus != null){
+            query.filter("userStatus", userStatus);
+        }
+        PageModel<User> userPageModel = new PageModel<User>();
+        userPageModel.setTotalCount(count(query));
+        //分页
+        if(lastindex > -1 && pagesize > 0){
+            query.offset(lastindex).limit(pagesize);
+        }
+        userPageModel.setDatas(find(query).asList());
+        return userPageModel;
+    }
 }

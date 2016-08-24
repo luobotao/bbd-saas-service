@@ -55,6 +55,13 @@
         FROM `postcompany` where <![CDATA[ id = #{id,jdbcType=INTEGER}]]>
     </select>
 
+    <!--根据公司code查询公司-->
+    <select id="selectOneByCode" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `postcompany` where companycode = #{companycode}
+    </select>
+
     <!--查询所有公司-->
     <select id="selectAll" resultMap="baseResultMap">
         SELECT

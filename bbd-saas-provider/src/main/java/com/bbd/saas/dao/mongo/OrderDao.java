@@ -253,7 +253,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         orderQueryVO.orderStatusList.remove(OrderStatus.NOTARR);//移除未到站状态
                         //多个状态
                         Criteria arrivedCS = null;
-                        if(orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)){
+                        if(orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)){//app到站
                             Criteria statusC = query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList);
                             Criteria otherExpC = query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
                             arrivedCS = query.and(statusC, otherExpC);
@@ -306,6 +306,10 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @return
      */
     public Query<Order> getOrderStatusQuery(Query<Order> query, OrderQueryVO orderQueryVO){
+        if(orderQueryVO.orderStatus == 0){
+            query.or(query.criteria("orderStatus").equal(null), query.criteria("orderStatus").equal(OrderStatus.status2Obj(orderQueryVO.orderStatus)));
+            return query;
+        }
         if(orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()){//已签收--OrderStatus=5
             query.filter("orderStatus", OrderStatus.SIGNED);
             // otherExprees == null || Size(otherExprees)==0
@@ -324,15 +328,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @param orderQueryVO
      * @return
      */
-    private Query<Order> getOrderStatusListQuery(Query<Order> query, OrderQueryVO orderQueryVO){
-        if(orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)){
-            query.filter("orderStatus in", orderQueryVO.orderStatusList);
-            query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
-        }else if(orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS) && !orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED)){
-            query.or(query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList), query.criteria("otherExprees").notEqual(null));
-        }else{//查询多个状态
-            query.filter("orderStatus in", orderQueryVO.orderStatusList);
+    private Query<Order> getOrderStatusListQuery(Query<Order> query, OrderQueryVO orderQueryVO) {
+        if (orderQueryVO.orderStatusList != null && orderQueryVO.orderStatusList.size() > 0) {
+            if (orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)) {
+                query.filter("orderStatus in", orderQueryVO.orderStatusList);
+                query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
+            } else if (orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS) && !orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED)) {
+                query.or(query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList), query.criteria("otherExprees").notEqual(null));
+            } else {//查询多个状态
+                query.filter("orderStatus in", orderQueryVO.orderStatusList);
+            }
         }
+
         return query;
     }
     /**
@@ -836,11 +843,43 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return expressStatStation;
     }
 
-
+    /**
+     * 获取一个站点下,未进行打包的订单集合
+     * @param areaCode 站点编号
+     * @return 订单集合
+     */
     public List<Order> findNotDispatchOrdersWithAreaCode(String areaCode) {
         Query<Order> query = createQuery();
         query.filter("areaCode",areaCode);
         query.or(query.criteria("expressStatus").equal(ExpressStatus.Suspense), query.criteria("expressStatus").equal(ExpressStatus.Separating));
         return find(query).asList();
+    }
+    /**
+     * 根据站点编号和物流状态分页查询
+     * @param areaCode  站点编号
+     * @param expressStatus 物流状态
+     * @param startNum 跳过的条数
+     * @param pageSize 查询的条数
+     * @return 分页数据
+     */
+    public PageModel<Order> selectPageByAreaCodeAndExpressStatus(String areaCode,ExpressStatus expressStatus, Integer startNum, Integer pageSize){
+        Query<Order> query = createQuery().order("-dateUpd");
+        query.filter("areaCode",areaCode);
+        if(expressStatus  == ExpressStatus.Separating){
+           query.or(query.criteria("expressStatus").equal(ExpressStatus.Separating), query.criteria("expressStatus").equal(ExpressStatus.Suspense));
+        }else{
+            query.filter("expressStatus",expressStatus);
+        }
+        query.filter("printStatus", "printed");
+        query.filter("isRemoved <>", 1);
+        logger.info(query.toString());
+        //分页信息
+        if(startNum > -1 && pageSize > 0){
+            query.offset(startNum).limit(pageSize);
+        }
+        PageModel<Order> pageModel = new PageModel<Order>();
+        pageModel.setDatas(find(query).asList());
+        pageModel.setTotalCount(count(query));
+        return  pageModel;
     }
 }

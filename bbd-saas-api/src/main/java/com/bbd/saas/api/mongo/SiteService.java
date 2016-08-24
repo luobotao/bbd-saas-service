@@ -198,4 +198,16 @@ public interface SiteService {
      */
     Site findSiteByName(String name);
 
+    /**
+     * 获取热门公司列表
+     * @return
+     */
+    List<Site> findSiteList(String companyId);
+
+    /**
+     * 查询公司id为companyId,但是站点编号不为areaCode的站点个数
+     * @return 符合条件的站点个数
+     */
+    long findOtherSiteCount(String companyId, String areaCode);
+
 }

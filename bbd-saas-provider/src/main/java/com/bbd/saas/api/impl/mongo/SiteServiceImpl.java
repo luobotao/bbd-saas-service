@@ -340,4 +340,17 @@ public class SiteServiceImpl implements SiteService {
     public Site findSiteByName(String name) {
         return siteDao.findOne("name", name);
     }
+
+    /**
+     * 获取热门公司列表
+     * @return
+     */
+    public List<Site> findSiteList(String companyId){
+        return siteDao.findSiteList(companyId);
+    }
+
+    @Override
+    public long findOtherSiteCount(String companyId, String areaCode) {
+        return this.siteDao.selectOtherSiteCount(companyId, areaCode);
+    }
 }

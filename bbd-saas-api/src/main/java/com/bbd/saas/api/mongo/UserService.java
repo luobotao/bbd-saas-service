@@ -176,4 +176,14 @@ public interface UserService {
    * 查找指定的用户
    */
     public User findByAppkeyAndSessionkey(String appKey, String sessionKey);
+
+    /**
+     * app端-根据站点查询小件员列表
+     * @param site 站点
+     * @param role 角色
+     * @param lastindex 分页跳过的条数
+     * @param pagesize 要查询的条数
+     * @return 小件员列表
+     */
+    public PageModel<User> findPageUser(Site site, UserRole role, UserStatus userStatus, int lastindex, int pagesize);
 }

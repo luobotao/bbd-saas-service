@@ -56,6 +56,12 @@ public class PostcompanyServiceImpl implements PostcompanyService {
 		return postcompanyDao.selectPostmancompanyById(id);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public Postcompany findOneByCode(String companycode) {
+		return this.postcompanyDao.selectOneByCode(companycode);
+	}
+
 	/**
 	 * 插入一条新公司
 	 * @param postcompany

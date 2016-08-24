@@ -15,7 +15,7 @@ public interface PostDeliveryService {
 	 * @author: liyanlei
 	 * 2016年4月20日下午2:36:25
 	 */
-	int insert(PostDelivery postDelivery);
+	public int insert(PostDelivery postDelivery);
 
 	/**
 	 * 通过运单号更新派件员信息、运单状态、站点公司号
@@ -28,7 +28,7 @@ public interface PostDeliveryService {
 	 * @author liyanlei
 	 * 2016年4月22日上午11:56:46
 	 */
-	int updatePostAndStatusAndCompany(String mailNum, Integer postManId, String staffId, String status, String company_code);
+	public int updatePostAndStatusAndCompany(String mailNum, Integer postManId, String staffId, String status, String company_code);
 
 	/**
 	 * 查询指定运单号的记录的条数
@@ -37,7 +37,7 @@ public interface PostDeliveryService {
 	 * @author: liyanlei
 	 * 2016年4月21日上午10:39:51
 	 */
-	int findCountByMailNum(String mailNum);
+	public int findCountByMailNum(String mailNum);
 
 	/**
 	 * 根据运单号删除记录
@@ -46,7 +46,7 @@ public interface PostDeliveryService {
 	 * @author liyanlei
 	 * 2016年4月23日上午11:18:12
 	 */
-	int deleteByMailNum(String mailNum);
+	public int deleteByMailNum(String mailNum);
 
 	/**
 	 * 修改运单的状态
@@ -55,5 +55,25 @@ public interface PostDeliveryService {
 	 * @param remark
 	 * @param resultMsg
 	 */
-	void updatePostDeliveryStatus(String mailNum, String sta,String remark,String resultMsg);
+	public void updatePostDeliveryStatus(String mailNum, String sta,String remark,String resultMsg);
+
+	/**
+	 * 根据id查询
+	 * @param id 编号
+	 * @return 实体
+     */
+	public PostDelivery findOneById(Integer id);
+
+	/**
+	 * 更新
+	 * @param postDelivery  快递员派送运单
+	 * @return  快递员派送运单
+	 */
+	public PostDelivery updateOne(PostDelivery postDelivery);
+	/**
+	 * 数据详情
+	 * @param siteId,tim
+	 * @return
+	 */
+	public int getDeliveryCnt(String siteId, String tim);
 }

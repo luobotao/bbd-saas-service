@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
@@ -20,6 +21,7 @@
 			margin-bottom:0;
 			border-radius:4px;
 			padding:6px !important;
+			background:#000\9;
 		}
 		.capacity-map .BMapLabel:after {
 			content: '';
@@ -44,7 +46,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- S sidebar -->
-			<div class="col-xs-12 col-sm-12 bbd-md-3" style="opacity:0;">
+			<div class="col-xs-12 col-sm-12 bbd-md-3" style="visibility: hidden;">
 				<ul class="sub-sidebar">
 				</ul>
 			</div>
@@ -54,7 +56,7 @@
 				<!-- S 搜索区域 -->
 				<form class="form-inline form-inline-n">
 					<div class="search-area">
-						<div class="row pb20">
+						<div class="row">
 							<div id="addr_control" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 								<div class="form-group pb20">
 									<label>省：　</label>
@@ -166,7 +168,7 @@
 </script>
 <script src="<c:url value="/resources/javascripts/capacitySiteControl.js" />"> </script>
 <!-- E 省市区站点选择控件  -->
-<script type="application/javascript">
+<script type="text/javascript">
 	// 百度地图API功能
 	var capamap = new BMap.Map("capamap", {enableMapClick:false,minZoom:8});
 	//显示全部站点 -- 地图中心为公司经纬度

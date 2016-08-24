@@ -422,11 +422,12 @@ public class HandleAbnormalController {
                 order.setAreaRemark(remark.toString());//站点的具体地址
                 order.setOrderStatus(OrderStatus.NOTARR);//状态--为未到站
                 order.setUserId("");//未分派
+                order.setParcelCode("");//将包裹号至成空
                 order.setDateUpd(new Date());//更新时间
                 //更新物流信息
                 //订单已由【A站点】出库，正在转送到【B站点】进行配送
                 String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
-                OrderCommon.addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
+                OrderCommon.addOrderExpress(ExpressStatus.DriverGeted, order, currUser, expRemark);
                 //更新预计到站时间
                 order.setDateMayArrive(Dates.addDays(new Date(), 1));
                 order.setDateArrived(null);

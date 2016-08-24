@@ -13,6 +13,7 @@
 			margin-bottom:0;
 			border-radius:4px;
 			padding:6px !important;
+			background:#000\9;
 		}
 		.capacity-map .BMapLabel:after {
 			content: '';
@@ -95,7 +96,7 @@
 										<div id="allmapPs" style="height: 533px;"></div>
 										<div class="draw-btn">
 											<div class="bg-alpha"></div>
-											<a href="javascript:void(0);" class="ser-btn l ml12" id="saveSiteBtn">　保存　</a>
+											<a href="javascript:void(0);" class="ser-btn l ml12" id="saveSiteBtn">保存</a>
 										</div>
 									</div>
 								</div>
@@ -255,7 +256,7 @@
 <!--加载检索信息窗口-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
-<script type="application/javascript">
+<script type="text/javascript">
 	// 导入文件
 	$(".import-file").on("change",function(){
 		$(".j-import-pop").modal();
@@ -267,7 +268,7 @@
 		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
 	}).on('ifChecked', function() {
 		$("input[type='checkbox']", "#dis-table").iCheck("check");
-	});;
+	});
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
 		var radiusVal = $("#radius option:selected").val();
@@ -509,6 +510,7 @@
 				},
 				polygonOptions: styleOptions, //多边形的样式
 			});
+
 			//添加鼠标绘制工具监听事件，用于获取绘制结果
 			this.drawingManager.addEventListener('overlaycomplete', bmap.overlaycomplete);
 			/*加载一个已有的多边形*/
@@ -686,7 +688,8 @@
 	parentE=$('#psrE',window.parent.document);
 	var winhei2=parentE.height();
 	var winwid=window.screen.availWidth;
-	var initwid=$(".b-map").width();
+	var bbd3=parentE.find(".bbd-md-3").width();
+	var initwid=winwid-bbd3-108;
 	var inithei=$("#allmap").height();
 
 	$(".j-full-btn").on("click",function(){

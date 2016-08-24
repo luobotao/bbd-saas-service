@@ -14,6 +14,7 @@
 			margin-bottom:0;
 			border-radius:4px;
 			padding:6px !important;
+			background:#000\9;
 		}
 		.capacity-map .BMapLabel:after {
 			content: '';
@@ -152,7 +153,7 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
 --%>
-<script type="application/javascript">
+<script type="text/javascript">
 	var defaultPoint = new BMap.Point(116.404, 39.915);
 	var center = null;
 	var zoom = 16;
@@ -161,6 +162,7 @@
 	var goalMarker = null;//目标marker,用于拖动到目标位置的图标
 	function initAddrMap(){
 		addrMap.enableScrollWheelZoom(true);
+		addrMap.addControl(new BMap.NavigationControl());
 		//设置地图中心点和放大级别
 		//显示目标位置
 		<c:choose>

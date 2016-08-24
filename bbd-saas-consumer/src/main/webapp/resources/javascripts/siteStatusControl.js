@@ -144,16 +144,21 @@ $(".c-sel").append("<sub class='c-dot'>&hellip;</sub>")
 function inputS(clickWho,showWho){
 	$(clickWho).on("click",function(e){
 		e.stopPropagation();
-		$(showWho).toggle();
+		if($(showWho).hasClass("pm-dn")){
+			$(showWho).removeClass("pm-dn");
+		}else{
+			$(showWho).addClass("pm-dn");
+		}
+
 		$(clickWho).toggleClass("bc");
-		$(clickWho).parents(".row").siblings().find(".all-area").hide();
+		$(clickWho).parents(".row").siblings().find(".all-area").addClass("pm-dn");
 		$(clickWho).parents(".row").siblings().find(".c-sel").removeClass("bc");
 	});
 	$(showWho).on("click",function(e){
 		e.stopPropagation();
 	});
 	$(document).on("click",function(){
-		$(showWho).hide();
+		$(showWho).addClass("pm-dn");
 		$(clickWho).removeClass("bc");
 	});
 }

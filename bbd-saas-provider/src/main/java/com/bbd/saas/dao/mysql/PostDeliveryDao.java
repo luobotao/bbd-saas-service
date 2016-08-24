@@ -1,10 +1,10 @@
 package com.bbd.saas.dao.mysql;
 
-import java.util.Date;
-
+import com.bbd.saas.models.PostDelivery;
 import org.apache.ibatis.annotations.Param;
 
-import com.bbd.saas.models.PostDelivery;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -65,4 +65,37 @@ public interface PostDeliveryDao {
 	 * @param resultMsg
 	 */
 	void updatePostDeliveryStatus(@Param("mailNum")String mailNum,@Param("sta") String sta,@Param("remark") String remark,@Param("resultMsg") String resultMsg);
+
+	/**
+	 * 根据运单号查询
+	 * @param mailNum 运单号
+	 * @return 记录集合
+     */
+	List<PostDelivery> selectListByMailNum(@Param("mailNum")String mailNum);
+	/**
+	 * 根据id查询
+	 * @param id 编号
+	 * @return 实体
+	 */
+	public PostDelivery selectOneById(@Param("id")Integer id);
+
+	/**
+	 * Description: 更新一条记录
+	 * @param postDelivery 快递配送实体类
+	 * @author: liyanlei
+	 */
+	void updateOne(PostDelivery postDelivery);
+
+	/**
+	 * 数据详情
+	 * @param siteId,tim
+	 * @return
+	 */
+	/**
+	 * 根据站点和时间查询记录条数
+	 * @param siteId 站点id
+	 * @param tim 日期
+     * @return 符合条件的记录数
+     */
+	public int selectCountBySiteIdAndTim(@Param("siteId")String siteId, @Param("tim")String tim);
 }

@@ -13,12 +13,11 @@ import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
-import com.bbd.saas.enums.*;
-import com.bbd.saas.models.SiteMySql;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.ParcelStatus;
 import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.models.SiteMySql;
 import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.utils.PageModel;
@@ -101,6 +100,16 @@ public class OrderServiceImpl implements OrderService {
 
     public void setSiteService(SiteService siteService) {
         this.siteService = siteService;
+    }
+
+    @Override
+    public Order findOneById(String id) {
+        return orderDao.findOne("_id", new ObjectId(id));
+    }
+
+    @Override
+    public Order findOneByObjectId(ObjectId id) {
+        return orderDao.findOne("_id", id);
     }
 
     /**
@@ -760,5 +769,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findNotDispatchOrdersWithAreaCode(String areaCode) {
         return orderDao.findNotDispatchOrdersWithAreaCode(areaCode);
+    }
+
+    @Override
+    public PageModel<Order> findPageByAreaCodeAndExpressStatus(String areaCode, ExpressStatus expressStatus, Integer startNum, Integer pageSize) {
+        return this.orderDao.selectPageByAreaCodeAndExpressStatus(areaCode, expressStatus, startNum, pageSize);
     }
 }
