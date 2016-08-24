@@ -427,7 +427,7 @@ public class HandleAbnormalController {
                 //更新物流信息
                 //订单已由【A站点】出库，正在转送到【B站点】进行配送
                 String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
-                OrderCommon.addOrderExpress(ExpressStatus.Packed, order, currUser, expRemark);
+                OrderCommon.addOrderExpress(ExpressStatus.DriverGeted, order, currUser, expRemark);
                 //更新预计到站时间
                 order.setDateMayArrive(Dates.addDays(new Date(), 1));
                 order.setDateArrived(null);
