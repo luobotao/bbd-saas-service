@@ -253,7 +253,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         orderQueryVO.orderStatusList.remove(OrderStatus.NOTARR);//移除未到站状态
                         //多个状态
                         Criteria arrivedCS = null;
-                        if(orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)){
+                        if(orderQueryVO.orderStatusList.contains(OrderStatus.SIGNED) && !orderQueryVO.orderStatusList.contains(OrderStatus.TO_OTHER_EXPRESS)){//app到站
                             Criteria statusC = query.criteria("orderStatus").hasAnyOf(orderQueryVO.orderStatusList);
                             Criteria otherExpC = query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
                             arrivedCS = query.and(statusC, otherExpC);

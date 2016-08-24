@@ -69,4 +69,15 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	public PostDelivery findOneById(Integer id) {
 		return this.postDeliveryDao.selectOneById(id);
 	}
+
+	@Override
+	public PostDelivery updateOne(PostDelivery postDelivery) {
+		postDeliveryDao.updateOne(postDelivery);
+		return postDelivery;
+	}
+
+	@Override
+	public int getDeliveryCnt(String siteId, String tim) {
+		return this.postDeliveryDao.selectCountBySiteIdAndTim(siteId, tim);
+	}
 }

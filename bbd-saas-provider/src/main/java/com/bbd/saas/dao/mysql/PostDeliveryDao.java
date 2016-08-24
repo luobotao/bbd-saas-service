@@ -79,4 +79,23 @@ public interface PostDeliveryDao {
 	 */
 	public PostDelivery selectOneById(@Param("id")Integer id);
 
+	/**
+	 * Description: 更新一条记录
+	 * @param postDelivery 快递配送实体类
+	 * @author: liyanlei
+	 */
+	void updateOne(PostDelivery postDelivery);
+
+	/**
+	 * 数据详情
+	 * @param siteId,tim
+	 * @return
+	 */
+	/**
+	 * 根据站点和时间查询记录条数
+	 * @param siteId 站点id
+	 * @param tim 日期
+     * @return 符合条件的记录数
+     */
+	public int selectCountBySiteIdAndTim(@Param("siteId")String siteId, @Param("tim")String tim);
 }
