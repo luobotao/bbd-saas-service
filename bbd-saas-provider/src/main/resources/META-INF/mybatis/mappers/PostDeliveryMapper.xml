@@ -187,123 +187,125 @@
 
 	<!-- 通过id更新记录 -->
 	<update id="updateOne" >
-		UPDATE `postdelivery` SET
-		<if test="postman_id != null ">
-			postman_id = #{postman_id},
-		</if>
-		<if test="company_code != null ">
-			company_code = #{company_code},
-		</if>
-		<if test="out_trade_no != null ">
-			out_trade_no = #{out_trade_no},
-		</if>
-		<if test="mail_num != null ">
-			mail_num = #{mail_num},
-		</if>
-		<if test="staffid != null ">
-			staffid = #{staffid},
-		</if>
-		<if test="merchant_code != null ">
-			merchant_code = #{merchant_code},
-		</if>
-		<if test="need_pay != null ">
-			need_pay = #{need_pay},
-		</if>
-		<if test="sender_name != null ">
-			sender_name = #{sender_name},
-		</if>
-		<if test="sender_phone != null ">
-			sender_phone = #{sender_phone},
-		</if>
-		<if test="sender_telphone != null ">
-			sender_telphone = #{sender_telphone},
-		</if>
-		<if test="sender_province != null ">
-			sender_province = #{sender_province},
-		</if>
-		<if test="sender_city != null ">
-			sender_city = #{sender_city},
-		</if>
-		<if test="sender_district != null ">
-			sender_district = #{sender_district},
-		</if>
-		<if test="sender_address != null ">
-			sender_address = #{sender_address},
-		</if>
-		<if test="sender_company_name != null ">
-			sender_company_name = #{sender_company_name},
-		</if>
-		<if test="sender_region_code != null ">
-			sender_region_code = #{sender_region_code},
-		</if>
-		<if test="receiver_name != null ">
-			receiver_name = #{receiver_name},
-		</if>
-		<if test="receiver_phone != null ">
-			receiver_phone = #{receiver_phone},
-		</if>
-		<if test="receiver_telphone != null ">
-			receiver_telphone = #{receiver_telphone},
-		</if>
-		<if test="receiver_province != null ">
-			receiver_province = #{receiver_province},
-		</if>
-		<if test="receiver_city != null ">
-			receiver_city = #{receiver_city},
-		</if>
+		UPDATE `postdelivery`
+		<set>
+			<if test="postman_id != null ">
+				postman_id = #{postman_id},
+			</if>
+			<if test="company_code != null ">
+				company_code = #{company_code},
+			</if>
+			<if test="out_trade_no != null ">
+				out_trade_no = #{out_trade_no},
+			</if>
+			<if test="mail_num != null ">
+				mail_num = #{mail_num},
+			</if>
+			<if test="staffid != null ">
+				staffid = #{staffid},
+			</if>
+			<if test="merchant_code != null ">
+				merchant_code = #{merchant_code},
+			</if>
+			<if test="need_pay != null ">
+				need_pay = #{need_pay},
+			</if>
+			<if test="sender_name != null ">
+				sender_name = #{sender_name},
+			</if>
+			<if test="sender_phone != null ">
+				sender_phone = #{sender_phone},
+			</if>
+			<if test="sender_telphone != null ">
+				sender_telphone = #{sender_telphone},
+			</if>
+			<if test="sender_province != null ">
+				sender_province = #{sender_province},
+			</if>
+			<if test="sender_city != null ">
+				sender_city = #{sender_city},
+			</if>
+			<if test="sender_district != null ">
+				sender_district = #{sender_district},
+			</if>
+			<if test="sender_address != null ">
+				sender_address = #{sender_address},
+			</if>
+			<if test="sender_company_name != null ">
+				sender_company_name = #{sender_company_name},
+			</if>
+			<if test="sender_region_code != null ">
+				sender_region_code = #{sender_region_code},
+			</if>
+			<if test="receiver_name != null ">
+				receiver_name = #{receiver_name},
+			</if>
+			<if test="receiver_phone != null ">
+				receiver_phone = #{receiver_phone},
+			</if>
+			<if test="receiver_telphone != null ">
+				receiver_telphone = #{receiver_telphone},
+			</if>
+			<if test="receiver_province != null ">
+				receiver_province = #{receiver_province},
+			</if>
+			<if test="receiver_city != null ">
+				receiver_city = #{receiver_city},
+			</if>
 
-		<if test="receiver_district != null ">
-			receiver_district = #{receiver_district},
-		</if>
-		<if test="receiver_address != null ">
-			receiver_address = #{receiver_address},
-		</if>
-		<if test="receiver_company_name != null ">
-			receiver_company_name = #{receiver_company_name},
-		</if>
-		<if test="receiver_region_code != null ">
-			receiver_region_code = #{receiver_region_code},
-		</if>
+			<if test="receiver_district != null ">
+				receiver_district = #{receiver_district},
+			</if>
+			<if test="receiver_address != null ">
+				receiver_address = #{receiver_address},
+			</if>
+			<if test="receiver_company_name != null ">
+				receiver_company_name = #{receiver_company_name},
+			</if>
+			<if test="receiver_region_code != null ">
+				receiver_region_code = #{receiver_region_code},
+			</if>
 
-		<if test="goods_fee != null ">
-			goods_fee = #{goods_fee},
-		</if>
-		<if test="goods_number != null ">
-			goods_number = #{goods_number},
-		</if>
-		<if test="remark != null ">
-			remark = #{remark},
-		</if>
-		<if test="pay_status != null ">
-			pay_status = #{pay_status},
-		</if>
-		<if test="pay_mode != null ">
-			pay_mode = #{pay_mode},
-		</if>
-		<if test="resultmsg != null ">
-			resultmsg = #{resultmsg},
-		</if>
-		<if test="typ != null ">
-			typ = #{typ},
-		</if>
-		<if test="flg != null ">
-			flg = #{flg},
-		</if>
-		<if test="sta != null ">
-			sta = #{sta},
-		</if>
-		<if test="islooked != null ">
-			islooked = #{islooked},
-		</if>
-		<if test="iscommont != null ">
-			iscommont = #{iscommont},
-		</if>
-		<if test="dateNew != null ">
-			dateNew = #{dateNew},
-		</if>
-		<if test="dateUpd != null">
-			dateUpd = #{dateUpd},
-		</if>
+			<if test="goods_fee != null ">
+				goods_fee = #{goods_fee},
+			</if>
+			<if test="goods_number != null ">
+				goods_number = #{goods_number},
+			</if>
+			<if test="remark != null ">
+				remark = #{remark},
+			</if>
+			<if test="pay_status != null ">
+				pay_status = #{pay_status},
+			</if>
+			<if test="pay_mode != null ">
+				pay_mode = #{pay_mode},
+			</if>
+			<if test="resultmsg != null ">
+				resultmsg = #{resultmsg},
+			</if>
+			<if test="typ != null ">
+				typ = #{typ},
+			</if>
+			<if test="flg != null ">
+				flg = #{flg},
+			</if>
+			<if test="sta != null ">
+				sta = #{sta},
+			</if>
+			<if test="islooked != null ">
+				islooked = #{islooked},
+			</if>
+			<if test="iscommont != null ">
+				iscommont = #{iscommont},
+			</if>
+			<if test="dateNew != null ">
+				date_new = #{dateNew},
+			</if>
+			<if test="dateUpd != null">
+				date_upd = #{dateUpd}
+			</if>
+		</set>
 		WHERE id = #{id}
 	</update>
 
