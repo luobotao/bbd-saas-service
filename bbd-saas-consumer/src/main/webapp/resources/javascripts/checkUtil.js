@@ -38,3 +38,17 @@ function checkPhone(phone){
         return false;
     }
 }
+
+/**
+ * 验证是否为正整数
+ * @param digital
+ * @returns {boolean}
+ */
+function checkInteger(digital){
+    var re = /^[1-9]\d*$/;
+    if(re.test(digital)){
+        return true;
+    }else{
+        return false;
+    }
+}

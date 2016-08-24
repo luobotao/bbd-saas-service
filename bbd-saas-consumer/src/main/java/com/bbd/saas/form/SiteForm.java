@@ -25,6 +25,9 @@ public class SiteForm {
 	@NotEmpty
 	private String address;      //详细地址
 
+	private Integer upperlimit;     //上线单量,必须为整数
+	private Integer lowerlimit;     //下线单量，必须为整数
+
 	public SiteType getSitetype() {
 		return sitetype;
 	}
@@ -135,5 +138,21 @@ public class SiteForm {
 
 	public void setFrom(String from) {
 		this.from = from;
+	}
+
+	public Integer getUpperlimit() {
+		return upperlimit;
+	}
+
+	public void setUpperlimit(Integer upperlimit) {
+		this.upperlimit = upperlimit;
+	}
+
+	public Integer getLowerlimit() {
+		return lowerlimit;
+	}
+
+	public void setLowerlimit(Integer lowerlimit) {
+		this.lowerlimit = lowerlimit;
 	}
 }

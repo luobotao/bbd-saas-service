@@ -8,6 +8,7 @@ import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mongo.WayService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.api.mysql.SiteMySqlService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.SiteTurnDownReasson;
@@ -16,6 +17,7 @@ import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.form.SiteForm;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.models.PostmanUser;
+import com.bbd.saas.models.SiteMySql;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Numbers;
@@ -65,6 +67,8 @@ public class SiteManageController {
 	SitePoiApi sitePoiApi;
 	@Autowired
 	WayService wayService;
+	@Autowired
+	SiteMySqlService siteMySqlService;
 	/**
 	 * 获取某一公司下的站点列表信息
 	 * @param
@@ -195,7 +199,6 @@ public class SiteManageController {
 		PostmanUser postmanUser = new PostmanUser();
 		String newPhone = siteForm.getPhone();
 		String oldPhone = "";
-
 		if (StringUtils.isNotBlank(siteForm.getAreaCode())) {//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
@@ -260,8 +263,22 @@ public class SiteManageController {
 		setLatAndLng(siteKey.getId().toString());//设置经纬度
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		//向用户表插入登录用户
-		addUser(user, site, postmanUser, siteForm, newPhone, oldPhone);
+		this.addUser(user, site, postmanUser, siteForm, newPhone, oldPhone);
+		SiteMySql siteMySql = this.siteToSiteMySql(site);
+		siteMySql.setSiteid(site.getId().toString());
+		//更新mysql中的site表
+		this.siteMySqlService.save(siteMySql);
 		return true;
+	}
+	private SiteMySql siteToSiteMySql(Site site){
+		SiteMySql siteMySql = new SiteMySql();
+		BeanUtils.copyProperties(site, siteMySql);
+		siteMySql.setSiteid(site.getId().toString());
+		siteMySql.setDateadd(site.getDateAdd());
+		siteMySql.setCompanyid(site.getCompanyId());
+		siteMySql.setSitestatus(site.getStatus().toString());
+		siteMySql.setSitetype(site.getSitetype() == null ? 0 : site.getSitetype().getStatus());
+		return siteMySql;
 	}
 	private void setSiteCompany(Site site, String companyId){
 		Postcompany postcompany = postcompanyService.selectPostmancompanyById(Numbers.parseInt(companyId, 0));//当前登录公司用户的公司ID

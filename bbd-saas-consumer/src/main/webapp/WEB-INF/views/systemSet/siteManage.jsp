@@ -203,7 +203,6 @@
                         </c:otherwise>
                     </c:choose>--%>
                     <c:if test="${companyId == Constants.BBD_COMPANYID}">
-                    <%--<c:if test="${companyId == '99'}">--%>
                         <li class="filter clearfix">
                             <i class="pad0">站点类型：</i>
                             <label><input type="radio" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
@@ -215,6 +214,7 @@
                         <i>站点名称：</i>
                         <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
                     </li>
+
                     <li class="filter" id="city_4">
                         <i>站点地址：</i>
                         <em class="wp25">
@@ -253,6 +253,14 @@
                     <li class="filter">
                         <i>确认密码：</i>
                         <input type="password" class="form-control form-bod wp80 j-cf-pwd" id="passwordConfirm" name="passwordConfirm"/>
+                    </li>
+                    <li class="filter">
+                        <i>上线单量：</i>
+                        <input type="text" class="form-control form-bod wp80" id="upperlimit" name="upperlimit"/>
+                    </li>
+                    <li class="filter">
+                        <i>下线单量：</i>
+                        <input type="text" class="form-control form-bod wp80" id="lowerlimit" name="lowerlimit"/>
                     </li>
                 </ul>
                 <div class="clearfix mt20">
@@ -519,6 +527,15 @@
     //保存站点（新建）
     $("#saveSiteBtn").click(function () {
 
+        var upperlimit = $.trim($("#upperlimit").val());
+        console.log(upperlimit);
+        if (upperlimit == "" ) {
+            ioutDiv("请输入上线单量");
+            return false;
+        }else if(checkInteger(upperlimit)==false){
+            ioutDiv("上线单量必须为正整数");
+            return false;
+        }
         var name = $.trim($("#name").val());
         if (name == "" ) {
             ioutDiv("请输入站点名称");
@@ -598,6 +615,22 @@
                                         return false;
                                     }
                                 }
+                                var upperlimit = $.trim($("#upperlimit").val());
+                                if (upperlimit == "" ) {
+                                    ioutDiv("请输入上线单量");
+                                    return false;
+                                }else if(checkInteger(upperlimit)==false){
+                                    ioutDiv("上线单量必须为正整数");
+                                    return false;
+                                }
+                                var lowerlimit = $.trim($("#lowerlimit").val());
+                                if (lowerlimit == "" ) {
+                                    ioutDiv("请输入下线单量");
+                                    return false;
+                                }else if(checkInteger(lowerlimit)==false){
+                                    ioutDiv("下线单量必须为正整数");
+                                    return false;
+                                }
 
                                 $("#siteForm").ajaxSubmit({
                                     success: function(data){
@@ -622,12 +655,9 @@
                         }
                     });
                 }
-
             }
         }
-
-
-    })
+    });
 
     $("#conFirmForValidBtn").click(function(){
         $.ajax({
@@ -798,6 +828,8 @@ function createSite(){
                     $("#area").val(data.area);
                     $("#address").val(data.address);
                     $("#phone").val(data.username);
+                    $("#upperlimit").val(data.upperlimit);
+                    $("#lowerlimit").val(data.lowerlimit);
 
                     defprov = $("#province").val();
                     defcity = $("#city").val();

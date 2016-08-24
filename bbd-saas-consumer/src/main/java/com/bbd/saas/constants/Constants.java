@@ -101,6 +101,7 @@ public class Constants {
     //地图分多次查询点
     public static int PAGESIZE_MAP = 1000;
     public static String BBD_COMPANYID = "8";
+    //public static String BBD_COMPANYID = "99";
 
 
 }
