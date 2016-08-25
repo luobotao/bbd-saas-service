@@ -12,8 +12,8 @@
 
 
     <!--生产环境外网IP-->
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
-     <!--<dubbo:registry address="zookeeper://10.172.222.209:2181"/>-->
+    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
+     <dubbo:registry address="zookeeper://10.172.222.209:2181"/>
     <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
 
     <dubbo:reference id="adminUserService" interface="com.bbd.saas.api.mongo.AdminUserService"/>
@@ -55,6 +55,7 @@
     <dubbo:reference id="orderLogService" interface="com.bbd.saas.api.mysql.OrderLogService"/>
     <dubbo:reference id="incomeService" interface="com.bbd.saas.api.mysql.IncomeService"/>
     <dubbo:reference id="expressStatStationService" interface="com.bbd.saas.api.mysql.ExpressStatStationService"/>
+    <dubbo:reference id="siteMySqlService" interface="com.bbd.saas.api.mysql.SiteMySqlService"/>
 
      <!--转为其他快递    获取所有的快递公司-->
     <dubbo:reference id="expressCompanyService" interface="com.bbd.saas.api.mysql.ExpressCompanyService"/>

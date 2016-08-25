@@ -470,3 +470,10 @@ if ( !Array.prototype.forEach ) {
     };
 }
 //E 解决 ie8 不支持foreach
+
+// S 选中文本框的值
+function selectInputTxt(id){
+    //console.log("id==="+id);
+    $("#"+id).focus();
+    $("#"+id).select();
+}

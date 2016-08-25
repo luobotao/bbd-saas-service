@@ -9,8 +9,8 @@
     <dubbo:application name="bbd-saas-provider" owner="bbd-saas-provider" organization="com.bbd"/>
 
     <!--生产环境外网IP-->
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
-    <!--<dubbo:registry address="zookeeper://10.172.222.209:2181"/>-->
+    <!--<dubbo:registry address="zookeeper://127.0.0.1:2181"/>-->
+    <dubbo:registry address="zookeeper://10.172.222.209:2181"/>
     <!--<dubbo:registry address="zookeeper://182.92.227.140:2181"/>-->
 
     <!-- 	启动时不检查提供者 	-->
@@ -49,6 +49,7 @@
     <dubbo:service interface="com.bbd.saas.api.mysql.SmsInfoService" ref="smsInfoService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.IncomeService" ref="incomeService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.ExpressStatStationService" ref="expressStatStationService" />
+    <dubbo:service interface="com.bbd.saas.api.mysql.SiteMySqlService" ref="siteMySqlService" />
 
     <!--转为其他快递    获取所有的快递公司-->
     <dubbo:service interface="com.bbd.saas.api.mysql.ExpressCompanyService" ref="expressCompanyService" />
