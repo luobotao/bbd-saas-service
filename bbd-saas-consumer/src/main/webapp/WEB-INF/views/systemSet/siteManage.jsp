@@ -211,6 +211,12 @@
                         </li>
                     </c:if>
                     <li class="filter">
+                        <i>上限单量：</i>
+                        <input type="text" class="wp25 form-control form-bod" id="upperlimit" name="upperlimit"/>
+                        <span style="font-size:16px;margin-left: 50px;">下限单量：</span>
+                        <input type="text" class="wp25 form-control form-bod" id="lowerlimit" name="lowerlimit"/>
+                    </li>
+                    <li class="filter">
                         <i>站点名称：</i>
                         <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
                     </li>
@@ -253,14 +259,6 @@
                     <li class="filter">
                         <i>确认密码：</i>
                         <input type="password" class="form-control form-bod wp80 j-cf-pwd" id="passwordConfirm" name="passwordConfirm"/>
-                    </li>
-                    <li class="filter">
-                        <i>上线单量：</i>
-                        <input type="text" class="form-control form-bod wp80" id="upperlimit" name="upperlimit"/>
-                    </li>
-                    <li class="filter">
-                        <i>下线单量：</i>
-                        <input type="text" class="form-control form-bod wp80" id="lowerlimit" name="lowerlimit"/>
                     </li>
                 </ul>
                 <div class="clearfix mt20">
@@ -526,14 +524,20 @@
     }
     //保存站点（新建）
     $("#saveSiteBtn").click(function () {
-
         var upperlimit = $.trim($("#upperlimit").val());
-        console.log(upperlimit);
         if (upperlimit == "" ) {
-            ioutDiv("请输入上线单量");
+            ioutDiv("请输入上限单量");
             return false;
         }else if(checkInteger(upperlimit)==false){
-            ioutDiv("上线单量必须为正整数");
+            ioutDiv("上限单量必须为0-9999的整数");
+            return false;
+        }
+        var lowerlimit = $.trim($("#lowerlimit").val());
+        if (lowerlimit == "" ) {
+            ioutDiv("请输入下限单量");
+            return false;
+        }else if(checkInteger(lowerlimit)==false){
+            ioutDiv("下限单量必须为0-9999的整数");
             return false;
         }
         var name = $.trim($("#name").val());
@@ -614,22 +618,6 @@
                                         ioutDiv("邮箱格式不正确");
                                         return false;
                                     }
-                                }
-                                var upperlimit = $.trim($("#upperlimit").val());
-                                if (upperlimit == "" ) {
-                                    ioutDiv("请输入上线单量");
-                                    return false;
-                                }else if(checkInteger(upperlimit)==false){
-                                    ioutDiv("上线单量必须为正整数");
-                                    return false;
-                                }
-                                var lowerlimit = $.trim($("#lowerlimit").val());
-                                if (lowerlimit == "" ) {
-                                    ioutDiv("请输入下线单量");
-                                    return false;
-                                }else if(checkInteger(lowerlimit)==false){
-                                    ioutDiv("下线单量必须为正整数");
-                                    return false;
                                 }
 
                                 $("#siteForm").ajaxSubmit({
@@ -817,6 +805,8 @@ function createSite(){
                     <c:if test="${companyId == Constants.BBD_COMPANYID}">
                         $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
                     </c:if>
+                    $("#upperlimit").val(data.upperlimit);
+                    $("#lowerlimit").val(data.lowerlimit);
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
                     $("#responser").val(data.responser);
@@ -828,8 +818,6 @@ function createSite(){
                     $("#area").val(data.area);
                     $("#address").val(data.address);
                     $("#phone").val(data.username);
-                    $("#upperlimit").val(data.upperlimit);
-                    $("#lowerlimit").val(data.lowerlimit);
 
                     defprov = $("#province").val();
                     defcity = $("#city").val();
