@@ -154,7 +154,11 @@
             <ref bean="expressCompanyDao"/>
         </property>
     </bean>
-
+    <bean id="siteMySqlService" class="com.bbd.saas.api.impl.mysql.SiteMySqlServiceImpl">
+        <property name="siteDaoMySql">
+            <ref bean="siteDaoMySql"/>
+        </property>
+    </bean>
 
     <bean id="balanceService" class="com.bbd.saas.api.impl.mysql.BalanceServiceImpl">
         <property name="balanceDao">

@@ -49,4 +49,94 @@
         update site set daycnt = daycnt+1  where  siteid = #{siteid}
     </update>
 
+    <!-- 插入一条记录  开始  -->
+    <insert id="insert" parameterType="com.bbd.saas.models.SiteMySql" >
+        INSERT INTO `site`(
+        <include refid="baseColumnList"/>
+        )
+        VALUES (
+            #{name},
+            #{province},
+            #{city},
+            #{area},
+            #{address},
+            #{areaCode},
+            #{companyName},
+            #{username},
+            #{siteid},
+            #{dateadd},
+            #{companyid},
+            #{sitestatus},
+            #{upperlimit},
+            #{lowerlimit},
+            #{daycnt},
+            #{sitetype}
+        )
+    </insert>
+    <!-- 插入一条记录  结束  -->
+    <!-- 更新一条记录  开始  -->
+    <update id="update" >
+        UPDATE `site`
+        <set>
+            <if test="name != null ">
+                name = #{name},
+            </if>
+            <if test="province != null ">
+                province = #{province},
+            </if>
+            <if test="city != null ">
+                city = #{city},
+            </if>
+            <if test="area != null ">
+                area = #{area},
+            </if>
+            <if test="address != null ">
+                address = #{address},
+            </if>
+            <if test="areaCode != null ">
+                areaCode = #{areaCode},
+            </if>
+            <if test="companyName != null ">
+                companyName = #{companyName},
+            </if>
+            <if test="username != null ">
+                username = #{username},
+            </if>
+            <if test="dateadd != null ">
+                dateadd = #{dateadd},
+            </if>
+            <if test="companyid != null ">
+                companyid = #{companyid},
+            </if>
+            <if test="sitestatus != null ">
+                sitestatus = #{sitestatus},
+            </if>
+            <if test="upperlimit != null ">
+                upperlimit = #{upperlimit},
+            </if>
+            <if test="lowerlimit != null ">
+                lowerlimit = #{lowerlimit},
+            </if>
+            <if test="daycnt != null and daycnt != 0">
+                daycnt = #{daycnt},
+            </if>
+            <if test="sitetype != null ">
+                sitetype = #{sitetype}
+            </if>
+        </set>
+        WHERE siteid = #{siteid}
+    </update>
+    <!-- 更新一条记录  结束  -->
+
+    <!--根据siteid查询站点记录条数 start-->
+    <select id="selectCountBySiteId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        from `site`
+        <where>
+            <if test="siteid != null ">
+                siteid = #{siteid}
+            </if>
+        </where>
+    </select>
+    <!--根据siteid查询站点记录条数 end-->
 </mapper>
