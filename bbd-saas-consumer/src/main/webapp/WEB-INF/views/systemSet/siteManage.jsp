@@ -400,7 +400,29 @@
     //显示分页条
     var pageStr = paginNav(<%=sitePage.getPageNo()%>, <%=sitePage.getTotalPages()%>, <%=sitePage.getTotalCount()%>);
     $("#pagin").html(pageStr);
+    $(document).ready(function() {
+        $("#upperlimit").blur(function(){
+            var limit = $.trim(this.value);
+            if(!checkLimit(limit, "上限")){
+                this.focus();
+            }else{
+                var lowerlimit = $.trim($("#lowerlimit").val());
+                if(!checkLimit(lowerlimit, "下限")){
+                    $("#lowerlimit").focus();
+                }else if(parseInt(lowerlimit) > parseInt(limit)){
+                    ioutDiv("下限单量不能大于上限单量");
+                    return false;
+                }
+            }
+        });
+        $("#lowerlimit").blur(function(){
+            var limit = $.trim(this.value);
+            if(!checkLimit(limit, "下限")){
+                this.focus();
+            }
+        });
 
+    });
 
     //加载带有查询条件的指定页的数据
     function gotoPage(pageIndex) {
@@ -529,25 +551,31 @@
     function closeEditDiv(){
         isCheckPhone = false;
     }
+    function checkLimit(limit, title){
+        if (limit == "" ) {
+            ioutDiv("请输入" + title + "单量");
+            return false;
+        }else if(checkInteger(limit)==false){
+            ioutDiv(title + "单量必须为0-9999的正整数");
+            return false;
+        }
+        return true;
+    }
     //保存站点（新建）
     $("#saveSiteBtn").click(function () {
         <c:if test="${companyId == Constants.BBD_COMPANYID}">
             var sitetype = $('input[name="sitetype"]:checked ').val();
             if(sitetype == "SOCIAL_CAPACITY"){//社会化运力显示单量上下限
                 var upperlimit = $.trim($("#upperlimit").val());
-                if (upperlimit == "" ) {
-                    ioutDiv("请输入上限单量");
-                    return false;
-                }else if(checkInteger(upperlimit)==false){
-                    ioutDiv("上限单量必须为0-9999的正整数");
+                if(!checkLimit(upperlimit, "上限")){
                     return false;
                 }
                 var lowerlimit = $.trim($("#lowerlimit").val());
-                if (lowerlimit == "" ) {
-                    ioutDiv("请输入下限单量");
+                if(!checkLimit(lowerlimit, "下限")){
                     return false;
-                }else if(checkInteger(lowerlimit)==false){
-                    ioutDiv("下限单量必须为0-9999的正整数");
+                }
+                if(parseInt(lowerlimit) > parseInt(upperlimit)){
+                    ioutDiv("下限单量不能大于上限单量");
                     return false;
                 }
             }

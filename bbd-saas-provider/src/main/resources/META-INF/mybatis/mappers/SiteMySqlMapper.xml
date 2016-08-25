@@ -117,7 +117,7 @@
             <if test="lowerlimit != null ">
                 lowerlimit = #{lowerlimit},
             </if>
-            <if test="daycnt != null ">
+            <if test="daycnt != null and daycnt != 0">
                 daycnt = #{daycnt},
             </if>
             <if test="sitetype != null ">

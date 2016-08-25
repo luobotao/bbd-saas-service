@@ -280,6 +280,7 @@ public class SiteManageController {
 		siteMySql.setCompanyid(site.getCompanyId());
 		siteMySql.setSitestatus(site.getStatus().toString());
 		siteMySql.setSitetype(site.getSitetype() == null ? 0 : site.getSitetype().getStatus());
+		siteMySql.setDaycnt(0);
 		return siteMySql;
 	}
 	private void setSiteCompany(Site site, String companyId){
