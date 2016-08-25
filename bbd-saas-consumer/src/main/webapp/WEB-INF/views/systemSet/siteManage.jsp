@@ -213,7 +213,7 @@
                     <li class="filter">
                         <i>上限单量：</i>
                         <input type="text" class="wp25 form-control form-bod" id="upperlimit" name="upperlimit"/>
-                        <span style="font-size:16px;margin-left: 50px;">下限单量：</span>
+                        <span style="font-size:16px;margin-left: 30px;">下限单量：</span>
                         <input type="text" class="wp25 form-control form-bod" id="lowerlimit" name="lowerlimit"/>
                     </li>
                     <li class="filter">
