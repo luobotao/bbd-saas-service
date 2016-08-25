@@ -7,13 +7,11 @@ import com.bbd.saas.enums.PrintStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderGroup;
+import com.bbd.saas.utils.Constants;
 import com.bbd.saas.utils.DateBetween;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.MailStatisticVO;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
+import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -881,5 +879,63 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         pageModel.setDatas(find(query).asList());
         pageModel.setTotalCount(count(query));
         return  pageModel;
+    }
+
+    public PageModel<Order> selectPageByAppOrderQuery(AppOrderQueryVO appOrderQueryVO, String orderStr, Integer startNum, Integer pageSize){
+        Query<Order> query = this.getAppQuery(appOrderQueryVO);
+        logger.info("OrderDao.selectPageByAppOrderQuery().query="+query.toString());
+        PageModel<Order> pageModel = new PageModel<Order>();
+        pageModel.setTotalCount(count(query));
+        //排序
+        if(StringUtils.isNotBlank(orderStr)){
+            query.order(orderStr);
+        }else{
+            query.order("-dateUpd");
+        }
+        //分页信息
+        if(startNum > -1 && pageSize > 0){
+            query.offset(startNum).limit(pageSize);
+        }
+        pageModel.setDatas(find(query).asList());
+        return  pageModel;
+    }
+    private Query<Order> getAppQuery(AppOrderQueryVO appOrderQueryVO){
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(appOrderQueryVO.areaCode)){
+            query.filter("areaCode", appOrderQueryVO.areaCode);
+        }
+        if(StringUtils.isNotBlank(appOrderQueryVO.mailNum)){
+            query.filter("mailNum", appOrderQueryVO.mailNum);
+        }
+        if(StringUtils.isNotBlank(appOrderQueryVO.userId)){
+            query.filter("userId", appOrderQueryVO.userId);
+        }
+        if(appOrderQueryVO.isArrived == 1){//
+            query.filter("userId <>", null);
+        }else {
+            if(StringUtils.isNotBlank(appOrderQueryVO.dateArrived_min)){
+                query.filter("dateArrived >=", Dates.parseDate(appOrderQueryVO.dateArrived_min+" 00:00:00", Constants.DATE_PATTERN_YMDT2));
+            }
+        }
+        if(StringUtils.isNotBlank(appOrderQueryVO.dateUpd_min)){
+            query.filter("dateUpd >=", Dates.parseDate(appOrderQueryVO.dateUpd_min+" 00:00:00", Constants.DATE_PATTERN_YMDT2));
+        }
+        return query;
+    }
+    public List<Order> selectListByAppOrderQuery(AppOrderQueryVO appOrderQueryVO, String orderStr){
+        Query<Order> query = this.getAppQuery(appOrderQueryVO);
+        logger.info("OrderDao.selectPageByAppOrderQuery().query="+query.toString());
+        //排序
+        if(StringUtils.isNotBlank(orderStr)){
+            query.order(orderStr);
+        }else{
+            query.order("-dateUpd");
+        }
+        return  find(query).asList();
+    }
+    public long selectCountByAppOrderQuery(AppOrderQueryVO appOrderQueryVO){
+        Query<Order> query = this.getAppQuery(appOrderQueryVO);
+        logger.info("OrderDao.selectCountByAppOrderQuery().query="+query.toString());
+        return  count(query);
     }
 }

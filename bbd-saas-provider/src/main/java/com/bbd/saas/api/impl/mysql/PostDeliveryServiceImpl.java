@@ -3,11 +3,14 @@ package com.bbd.saas.api.impl.mysql;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.dao.mysql.PostDeliveryDao;
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.vo.PostDeliveryQueryVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description: 快递员派送运单信息Service实现
@@ -79,5 +82,10 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	@Override
 	public int getDeliveryCnt(String siteId, String tim) {
 		return this.postDeliveryDao.selectCountBySiteIdAndTim(siteId, tim);
+	}
+
+	@Override
+	public List<Map<String, Object>> findListByQuery(PostDeliveryQueryVO postDeliveryQueryVO) {
+		return this.postDeliveryDao.selectListByQuery(postDeliveryQueryVO);
 	}
 }

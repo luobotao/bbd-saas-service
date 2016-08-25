@@ -315,4 +315,27 @@
 		WHERE d.postman_id = u.id AND u.siteid = #{siteId} AND d.date_upd > #{tim}
 	</select>
 	<!-- 查询指定运单号的记录的条数  结束   -->
+
+	<!-- 根据查询条件查询数据  开始   -->
+	<select id="selectListByQuery" resultType="java.util.HashMap">
+		SELECT p.postman_id as id,pu.nickname,pu.phone,COUNT(p.id) AS ordercnt
+		FROM postdelivery p,postmanuser pu
+		<where>
+			p.postman_id = pu.id
+			<if test="time != null and time != ''" >
+				and p.date_upd > #{time}
+			</if>
+			<if test="siteId != null and siteId != ''" >
+				and pu.siteid = #{siteId}
+			</if>
+			<if test="companyid != null and companyid != ''" >
+				and pu.companyid= #{companyid}
+			</if>
+			<if test="subStation != null and subStation != ''" >
+				and pu.substation = #{subStation}
+			</if>
+			GROUP BY p.postman_id
+		</where>
+	</select>
+	<!-- 根据查询条件查询数据  结束   -->
 </mapper>

@@ -775,4 +775,19 @@ public class OrderServiceImpl implements OrderService {
     public PageModel<Order> findPageByAreaCodeAndExpressStatus(String areaCode, ExpressStatus expressStatus, Integer startNum, Integer pageSize) {
         return this.orderDao.selectPageByAreaCodeAndExpressStatus(areaCode, expressStatus, startNum, pageSize);
     }
+
+    @Override
+    public PageModel<Order> findPageByAppOrderQuery(AppOrderQueryVO appOrderQueryVO, String orderStr, Integer startNum, Integer pageSize) throws Exception {
+        return this.orderDao.selectPageByAppOrderQuery(appOrderQueryVO, orderStr, startNum, pageSize);
+    }
+
+    @Override
+    public List<Order> findListByAppOrderQuery(AppOrderQueryVO appOrderQueryVO, String orderStr) throws Exception {
+        return this.orderDao.selectListByAppOrderQuery(appOrderQueryVO, orderStr);
+    }
+
+    @Override
+    public long findCountByAppOrderQuery(AppOrderQueryVO appOrderQueryVO) throws Exception {
+        return this.orderDao.selectCountByAppOrderQuery(appOrderQueryVO);
+    }
 }

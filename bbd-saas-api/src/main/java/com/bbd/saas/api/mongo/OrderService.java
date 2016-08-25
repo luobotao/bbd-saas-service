@@ -6,10 +6,7 @@ import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.MailStatisticVO;
-import com.bbd.saas.vo.OrderNumVO;
-import com.bbd.saas.vo.OrderQueryVO;
-import com.bbd.saas.vo.OrderUpdateVO;
+import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -278,5 +275,29 @@ public interface OrderService {
      * @return 分页数据
      */
 	public PageModel<Order> findPageByAreaCodeAndExpressStatus(String areaCode,ExpressStatus expressStatus,Integer startNum, Integer pageSize);
+
+	/**
+	 * 根据查询条件分页查询数据
+	 * @param appOrderQueryVO 查询条件
+	 * @param startNum 跳过的条数
+	 * @param pageSize 查询的条数
+     * @return 分页数据
+     */
+	public PageModel<Order> findPageByAppOrderQuery(AppOrderQueryVO appOrderQueryVO, String orderStr, Integer startNum, Integer pageSize) throws Exception;
+
+	/**
+	 * 根据查询条件查询数据
+	 * @param appOrderQueryVO 查询条件
+	 * @return 符合条件的数据
+     */
+	public List<Order> findListByAppOrderQuery(AppOrderQueryVO appOrderQueryVO, String orderStr) throws Exception;
+
+	/**
+	 * 查询符合条件的数据的条数
+	 * @param appOrderQueryVO 查询条件
+	 * @return 符合条件的数据的条数
+	 */
+	public long findCountByAppOrderQuery(AppOrderQueryVO appOrderQueryVO) throws Exception;
+
 
 }
