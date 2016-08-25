@@ -103,11 +103,11 @@
                                     <%
                                         if (site.getAreaFlag() == 1) {
                                     %>
-                                        有效
+                                    有效
                                     <%
-                                        }else{
+                                    }else{
                                     %>
-                                        无效
+                                    无效
                                     <%
                                         }
                                     %>
@@ -116,36 +116,36 @@
                                     <%
                                         if (SiteStatus.WAIT == site.getStatus()) {
                                     %>
-                                        <span onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange cp" data-toggle='modal' data-target='#validModal'>通过</span>
-                                        <span onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange ml6 j-reject cp">驳回</span>
+                                    <span onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange cp" data-toggle='modal' data-target='#validModal'>通过</span>
+                                    <span onclick="setPhone('<%=site.getUsername() %>','<%=site.getName() %>')" class="orange ml6 j-reject cp">驳回</span>
                                     <%
-                                        }else if (SiteStatus.TURNDOWN == site.getStatus()) {
+                                    }else if (SiteStatus.TURNDOWN == site.getStatus()) {
                                     %>
-                                        <span  onclick="getTurnDownMessage('<%=site.getTurnDownReasson() %>','<%=site.getTurnDownReasson().getMessage() %>','<%=site.getOtherMessage() %>')" class="orange ml6 cp" data-toggle='modal' data-target='#messageModal'>查看驳回原因</span>
+                                    <span  onclick="getTurnDownMessage('<%=site.getTurnDownReasson() %>','<%=site.getTurnDownReasson().getMessage() %>','<%=site.getOtherMessage() %>')" class="orange ml6 cp" data-toggle='modal' data-target='#messageModal'>查看驳回原因</span>
                                     <%
-                                        }else if (SiteStatus.APPROVE == site.getStatus()) {
+                                    }else if (SiteStatus.APPROVE == site.getStatus()) {
                                     %>
-                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')"
-                                           class="orange j-siteM cp">修改</span>
-                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableSite', '确认停用站点吗？')" data-toggle='modal' data-target='#confirmModal'>停用站点</span>
-                                        <%
-                                            if (site.getAreaFlag() == 1) {
-                                        %>
-                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableArea', '确认停用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>停用配送区域</span>
-                                        <%
-                                            }else{
-                                        %>
-                                            <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableArea', '确认启用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>启用配送区域</span>
-                                        <%
-                                            }
-                                        %>
+                                    <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')"
+                                          class="orange j-siteM cp">修改</span>
+                                    <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableSite', '确认停用站点吗？')" data-toggle='modal' data-target='#confirmModal'>停用站点</span>
                                     <%
-                                        }else if (SiteStatus.INVALID == site.getStatus()) {
+                                        if (site.getAreaFlag() == 1) {
                                     %>
-                                        <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')"
-                                           class="orange j-siteM cp">修改</span>
-                                        <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableSite', '确认启用站点吗？')" data-toggle='modal' data-target='#confirmModal'>启用站点</span>
-                                        <%--<span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除?')" data-toggle='modal' data-target='#confirmModal'>删除</span>--%>
+                                    <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'disableArea', '确认停用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>停用配送区域</span>
+                                    <%
+                                    }else{
+                                    %>
+                                    <span  class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableArea', '确认启用配送区域吗？')" data-toggle='modal' data-target='#confirmModal'>启用配送区域</span>
+                                    <%
+                                        }
+                                    %>
+                                    <%
+                                    }else if (SiteStatus.INVALID == site.getStatus()) {
+                                    %>
+                                    <span onclick="getSiteByAreaCode('<%=site.getAreaCode() %>')"
+                                          class="orange j-siteM cp">修改</span>
+                                    <span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'enableSite', '确认启用站点吗？')" data-toggle='modal' data-target='#confirmModal'>启用站点</span>
+                                    <%--<span class="orange cp" onclick="showConfirmDiv('<%=site.getAreaCode() %>', 'delSite', '确认删除？删除站点将会将该站点下的所有用户删除?')" data-toggle='modal' data-target='#confirmModal'>删除</span>--%>
                                     <%
                                         }
                                     %>
@@ -183,84 +183,91 @@
 <div class="j-siteM-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="siteModal">
     <div class="modal-dialog b-modal-dialog b-guide-dialog" role="document">
         <div class="modal-content">
-        <c:url var="actionUrl" value="/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
-        <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
-            <input type="hidden" id="areaCode" name="areaCode" value=""/>
-            <div class="modal-header b-modal-header">
-                <button type="button" onclick="closeEditDiv()" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
-            </div>
-            <div class="modal-body b-modal-body">
-                <ul class="b-n-crt b-n-crt-new form-inline-n  y-scroll">
-                    <%--<c:choose>
-                        <c:when test="${companyId == '99'}">
-                            <input type="radio" class="" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
-                            <input type="radio" class="" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/>社会化运力
-                            <input type="radio" class="" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/>快递柜
-                        </c:when>
-                        <c:otherwise>
-                            <input type="radio" class="" name="sitetype" readonly checked/>普通
-                        </c:otherwise>
-                    </c:choose>--%>
-                    <c:if test="${companyId == Constants.BBD_COMPANYID}">
-                    <%--<c:if test="${companyId == '99'}">--%>
-                        <li class="filter clearfix">
-                            <i class="pad0">站点类型：</i>
-                            <label><input type="radio" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
-                            <label><input type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>
-                            <label><input type="radio" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/> 快递柜</label>
-                        </li>
-                    </c:if>
-                    <li class="filter">
-                        <i>站点名称：</i>
-                        <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
-                    </li>
-                    <li class="filter" id="city_4">
-                        <i>站点地址：</i>
-                        <em class="wp25">
-                        <select class="form-control form-bod w150 prov" name="prov"></select>
-                    </em>
-                        <em class="wp25">
-                            <select class="form-control form-bod w150 city" disabled="disabled"></select>
-                        </em>
-                        <em class="wp25">
-                            <select class="form-control form-bod w150 dist" name="dist" disabled="disabled"></select>
-                        </em>
-                        <input id="province" name="province" type="hidden" class="form-control"/>
-                        <input id="city" name="city" type="hidden" class="form-control"/>
-                        <input id="area" name="area" type="hidden" class="form-control"/>
-                        <input type="text" class="form-control form-bod wp80 input-d" id="address" name="address" placeholder="请输入详细地址"/>
-                    </li>
-                    <li class="filter">
-                        <i>站长姓名：</i>
-                        <input type="text" class="form-control form-bod wp80" id="responser" name="responser">
-                    </li>
-                    <li class="filter">
-                        <i>站长手机号：</i>
-                        <input type="text" class="form-control form-bod wp80" id="phone" name="phone" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="checkSiteWithUsername(this.value)">
-                        <input type="text" class="form-control" id="phoneFlag" name="phoneFlag" value="1" style="display:none;">
-                        <em class="tip-info-g">保存成功后站长可使用手机号登录系统</em>
-                    </li>
-                    <li class="filter">
-                        <i>邮 箱：</i>
-                        <input type="text" class="form-control form-bod wp80" id="email" name="email"
-                               onkeyup="value=value.replace(/[^a-zA-Z\-_@@\.0-9]/g,'')">
-                    </li>
-                    <li class="filter">
-                        <i>登录密码：</i>
-                        <input type="password" class="form-control form-bod wp80 j-nf-pwd" id="password" name="password"/>
-                    </li>
-                    <li class="filter">
-                        <i>确认密码：</i>
-                        <input type="password" class="form-control form-bod wp80 j-cf-pwd" id="passwordConfirm" name="passwordConfirm"/>
-                    </li>
-                </ul>
-                <div class="clearfix mt20">
-                    <a href="javascript:void(0);" class="ser-btn l fl input-d" id="saveSiteBtn">保存</a>
+            <c:url var="actionUrl" value="/siteManage/saveSite?${_csrf.parameterName}=${_csrf.token}"/>
+            <form role="form" action="${actionUrl}" method="post" id="siteForm" enctype="multipart/form-data" class="form-inline form-inline-n">
+                <input type="hidden" id="areaCode" name="areaCode" value=""/>
+                <div class="modal-header b-modal-header">
+                    <button type="button" onclick="closeEditDiv()" class="close j-f-close" data-dismiss="modal" aria-label="Close" id="closeButton"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title tc j-cg-txt" id="titleName">新建</h4>
                 </div>
+                <div class="modal-body b-modal-body">
+                    <ul class="b-n-crt b-n-crt-new form-inline-n  y-scroll">
+                        <%--<c:choose>
+                            <c:when test="${companyId == '99'}">
+                                <input type="radio" class="" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/>普通
+                                <input type="radio" class="" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/>社会化运力
+                                <input type="radio" class="" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/>快递柜
+                            </c:when>
+                            <c:otherwise>
+                                <input type="radio" class="" name="sitetype" readonly checked/>普通
+                            </c:otherwise>
+                        </c:choose>--%>
+                        <c:if test="${companyId == Constants.BBD_COMPANYID}">
+                            <li class="filter clearfix">
+                                <i class="pad0">站点类型：</i>
+                                <label><input onclick="changeSitetype(false)" type="radio" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
+                                <label><input onclick="changeSitetype(true)" type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>
+                                <label><input onclick="changeSitetype(false)" type="radio" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/> 快递柜</label>
+                            </li>
+                            <li class="filter limit" hidden>
+                                <i>下限单量：</i>
+                                <input type="text" class="wp25 form-control form-bod" id="lowerlimit" value="50" name="lowerlimit"/>
+                                <span style="font-size:16px;margin-left: 16px;">上限单量：</span>
+                                <input type="text" class="wp25 form-control form-bod" id="upperlimit" value="300" name="upperlimit"/>
+                            </li>
+                        </c:if>
+                        <li class="filter">
+                            <i>站点名称：</i>
+                            <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
+                        </li>
 
-            </div>
-        </form>
+                        <li class="filter" id="city_4">
+                            <i>站点地址：</i>
+                            <em class="wp25">
+                                <select class="form-control form-bod w150 prov" name="prov"></select>
+                            </em>
+                            <em class="wp25">
+                                <select class="form-control form-bod w150 city" disabled="disabled"></select>
+                            </em>
+                            <em class="wp25">
+                                <select class="form-control form-bod w150 dist" name="dist" disabled="disabled"></select>
+                            </em>
+                            <input id="province" name="province" type="hidden" class="form-control"/>
+                            <input id="city" name="city" type="hidden" class="form-control"/>
+                            <input id="area" name="area" type="hidden" class="form-control"/>
+                            <input type="text" class="form-control form-bod wp80 input-d" id="address" name="address" placeholder="请输入详细地址"/>
+                        </li>
+                        <li class="filter">
+                            <i>站长姓名：</i>
+                            <input type="text" class="form-control form-bod wp80" id="responser" name="responser">
+                        </li>
+                        <li class="filter">
+                            <i>站长手机号：</i>
+                            <input type="text" class="form-control form-bod wp80" id="phone" name="phone" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" onblur="checkSiteWithUsername(this.value)">
+                            <input type="text" class="form-control" id="phoneFlag" name="phoneFlag" value="1" style="display:none;">
+                            <em class="tip-info-g">保存成功后站长可使用手机号登录系统</em>
+                        </li>
+                        <li class="filter">
+                            <i>邮 箱：</i>
+                            <input type="text" class="form-control form-bod wp80" id="email" name="email"
+                                   onkeyup="value=value.replace(/[^a-zA-Z\-_@@\.0-9]/g,'')">
+                        </li>
+                        <li class="filter">
+                            <i>登录密码：</i>
+                            <input type="password" class="form-control form-bod wp80 j-nf-pwd" id="password" name="password"/>
+                        </li>
+                        <li class="filter">
+                            <i>确认密码：</i>
+                            <input type="password" class="form-control form-bod wp80 j-cf-pwd" id="passwordConfirm" name="passwordConfirm"/>
+                        </li>
+
+                    </ul>
+                    <div class="clearfix mt20">
+                        <a href="javascript:void(0);" class="ser-btn l fl input-d" id="saveSiteBtn">保存</a>
+                    </div>
+
+                </div>
+            </form>
         </div>
 
     </div>
@@ -363,10 +370,10 @@
                 </div>
                 <div class="modal-footer tc">
                     <%--<div class="row mt20">--%>
-						<span class="col-md-6">
+                    <span class="col-md-6">
 							<button type="button" class="ser-btn g wp80" data-dismiss="modal" class="close">取消</button>
 						</span>
-						<span class="col-md-6">
+                    <span class="col-md-6">
 							<button  type="button" class="ser-btn l wp80" onclick="doOperation()">确认</button>
 						</span>
                     <%--</div>--%>
@@ -393,7 +400,29 @@
     //显示分页条
     var pageStr = paginNav(<%=sitePage.getPageNo()%>, <%=sitePage.getTotalPages()%>, <%=sitePage.getTotalCount()%>);
     $("#pagin").html(pageStr);
+    $(document).ready(function() {
+        $("#upperlimit").blur(function(){
+            var limit = $.trim(this.value);
+            if(!checkLimit(limit, "上限")){
+                this.focus();
+            }else{
+                var lowerlimit = $.trim($("#lowerlimit").val());
+                if(!checkLimit(lowerlimit, "下限")){
+                    $("#lowerlimit").focus();
+                }else if(parseInt(lowerlimit) > parseInt(limit)){
+                    ioutDiv("下限单量不能大于上限单量");
+                    return false;
+                }
+            }
+        });
+        $("#lowerlimit").blur(function(){
+            var limit = $.trim(this.value);
+            if(!checkLimit(limit, "下限")){
+                this.focus();
+            }
+        });
 
+    });
 
     //加载带有查询条件的指定页的数据
     function gotoPage(pageIndex) {
@@ -512,13 +541,45 @@
             }
         },500);
     }
-
+    function changeSitetype(isShow){
+        if(isShow){
+            $(".limit").show();
+        }else{
+            $(".limit").hide();
+        }
+    }
     function closeEditDiv(){
         isCheckPhone = false;
     }
+    function checkLimit(limit, title){
+        if (limit == "" ) {
+            ioutDiv("请输入" + title + "单量");
+            return false;
+        }else if(checkInteger(limit)==false){
+            ioutDiv(title + "单量必须为0-9999的正整数");
+            return false;
+        }
+        return true;
+    }
     //保存站点（新建）
     $("#saveSiteBtn").click(function () {
-
+        <c:if test="${companyId == Constants.BBD_COMPANYID}">
+        var sitetype = $('input[name="sitetype"]:checked ').val();
+        if(sitetype == "SOCIAL_CAPACITY"){//社会化运力显示单量上下限
+            var upperlimit = $.trim($("#upperlimit").val());
+            if(!checkLimit(upperlimit, "上限")){
+                return false;
+            }
+            var lowerlimit = $.trim($("#lowerlimit").val());
+            if(!checkLimit(lowerlimit, "下限")){
+                return false;
+            }
+            if(parseInt(lowerlimit) > parseInt(upperlimit)){
+                ioutDiv("下限单量不能大于上限单量");
+                return false;
+            }
+        }
+        </c:if>
         var name = $.trim($("#name").val());
         if (name == "" ) {
             ioutDiv("请输入站点名称");
@@ -622,12 +683,9 @@
                         }
                     });
                 }
-
             }
         }
-
-
-    })
+    });
 
     $("#conFirmForValidBtn").click(function(){
         $.ajax({
@@ -739,31 +797,32 @@
         }
     }
 
-function createSite(){
-    $(".j-siteM-pop").addClass("in").show();
-    $("#mask").show();
-    $("#mask").css({left:"16%"})
-    $('.j-siteM-pop').css({top:$(parent.window).scrollTop()});
-    yscroll();
-    $(".y-scroll").animate({scrollTop:0},0);
-    $('#titleName').html("新建");
-    document.getElementById("siteForm").reset();
-    $('#areaCode').val('');
-    $('#areaCodeForModal').val('');
-    <c:if test="${companyId == Constants.BBD_COMPANYID}">
+    function createSite(){
+        $(".j-siteM-pop").addClass("in").show();
+        $("#mask").show();
+        $("#mask").css({left:"16%"})
+        $('.j-siteM-pop').css({top:$(parent.window).scrollTop()});
+        yscroll();
+        $(".y-scroll").animate({scrollTop:0},0);
+        $('#titleName').html("新建");
+        document.getElementById("siteForm").reset();
+        $('#areaCode').val('');
+        $('#areaCodeForModal').val('');
+        <c:if test="${companyId == Constants.BBD_COMPANYID}">
         $("input[name='sitetype'][value='ORDERNARY']").attr("checked",true);
-    </c:if>
-    var defprov = "北京";
-    var defcity = "北京";
-    var defdist = "朝阳区";
+        changeSitetype(false);
+        </c:if>
+        var defprov = "北京";
+        var defcity = "北京";
+        var defdist = "朝阳区";
 
-    $("#city_4").citySelect({
-        prov: defprov,
-        city: defcity,
-        dist: defdist,
-        nodata: "none"
-    });
-}
+        $("#city_4").citySelect({
+            prov: defprov,
+            city: defcity,
+            dist: defdist,
+            nodata: "none"
+        });
+    }
     //设置修改form表单的值
     function getSiteByAreaCode(areaCode) {
         $(".j-siteM-pop").addClass("in").show();
@@ -785,7 +844,14 @@ function createSite(){
                 if (data != null) {
                     document.getElementById("siteForm").reset();
                     <c:if test="${companyId == Constants.BBD_COMPANYID}">
-                        $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
+                    $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
+                    if(data.sitetype == "SOCIAL_CAPACITY"){//社会化运力显示单量上下限
+                        $("#upperlimit").val(data.upperlimit == null ? 0 : data.upperlimit);
+                        $("#lowerlimit").val(data.lowerlimit == null ? 0 : data.lowerlimit);
+                        changeSitetype(true);
+                    }else{
+                        changeSitetype(false);
+                    }
                     </c:if>
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
@@ -820,7 +886,7 @@ function createSite(){
     }
 
 
-/******************************************************** 配送区域操作 *****************************************************************/
+    /******************************************************** 配送区域操作 *****************************************************************/
     //显示操作提示框
     function showConfirmDiv(siteIdStr, operType, info, title) {
         areaCode = siteIdStr;
@@ -874,7 +940,7 @@ function createSite(){
         });
         $("#confirmModal").modal("hide");
     }
-/********************************************************** 配送区域操作 **************************************************************/
+    /********************************************************** 配送区域操作 **************************************************************/
 
 </script>
 </body>
