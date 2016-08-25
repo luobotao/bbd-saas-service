@@ -26,6 +26,7 @@
 				<value>/subscribe/subscribeback</value>
 				<value>/handleAbnormal</value>
 				<value>register</value>
+				<value>sendVerifyCode</value>
 				<value>main</value>
 			</list>
 		</property>

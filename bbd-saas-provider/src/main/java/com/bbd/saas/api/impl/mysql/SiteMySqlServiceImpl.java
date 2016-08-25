@@ -3,7 +3,6 @@ package com.bbd.saas.api.impl.mysql;
 import com.bbd.saas.api.mysql.SiteMySqlService;
 import com.bbd.saas.dao.mysql.SiteDao;
 import com.bbd.saas.models.SiteMySql;
-import com.bbd.saas.models.SiteMySql;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,14 @@ public class SiteMySqlServiceImpl implements SiteMySqlService {
 	@Resource
 	private SiteDao siteDaoMySql;
 
+	public SiteDao getSiteDaoMySql() {
+		return siteDaoMySql;
+	}
+
+	public void setSiteDaoMySql(SiteDao siteDaoMySql) {
+		this.siteDaoMySql = siteDaoMySql;
+	}
+
 	/**
      *根据siteid查询站点记录
      * @param 
@@ -30,7 +37,6 @@ public class SiteMySqlServiceImpl implements SiteMySqlService {
 	@Override
 	@Transactional(readOnly = true)
 	public SiteMySql selectIdBySiteId(String siteid) {
-
 		return siteDaoMySql.selectIdBySiteId(siteid);
 	}
 
@@ -41,5 +47,14 @@ public class SiteMySqlServiceImpl implements SiteMySqlService {
 	public int updateSiteDayCntBySiteId(String siteid){
 		return siteDaoMySql.updateSiteDayCntBySiteId(siteid);
 	}
-
+	@Transactional
+	@Override
+	public int save(SiteMySql siteMySql) {
+		int count = this.siteDaoMySql.selectCountBySiteId(siteMySql.getSiteid());
+		if(count == 0){//不存在，插入
+			return this.siteDaoMySql.insert(siteMySql);
+		}else{
+			return this.siteDaoMySql.update(siteMySql);
+		}
+	}
 }

@@ -38,3 +38,21 @@ function checkPhone(phone){
         return false;
     }
 }
+
+/**
+ * 验证是否为正整数
+ * @param digital
+ * @returns {boolean}
+ */
+function checkInteger(digital){
+    var re = /^[1-9]\d{0,3}$/;//不包括0
+    if(re.test(digital)){
+        return true;
+    }else{
+        //console.log("ddd==="+digital);
+        if(digital == "0"){//判断是否为0
+            return true;
+        }
+        return false;
+    }
+}

@@ -14,10 +14,7 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.ErrorCode;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.common.ConcurrentReaderHashMap;
 import org.slf4j.Logger;
@@ -29,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Security;
 import java.util.List;
 import java.util.Map;
 
@@ -133,31 +131,45 @@ public class IndexController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.GET)
+    @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.POST)
     public Object sendVerifyCode(@RequestParam(value = "phone", required = true) String phone) {
+        String ip=StringUtil.getIpAddr(request);
+        logger.info(phone+"====传入的手机号====="+ip);
+        phone = SignUtil.Decrypt(phone,"0807060504030201");
+        logger.info(phone+"=====解密后的手机号====");
         Map<String, Object> result = new ConcurrentReaderHashMap();
         if (StringUtils.isBlank(phone) || !StringUtil.checkPhone(phone)) {//手机号码不正确
             result.put("status", ErrorCode.getErrorCode("global.phoneError"));
             result.put("msg", ErrorCode.getErrorMsg("global.phoneError"));
             return result;
         }
+
         String codeTemp = redisService.get(Constants.BBD_SAAS_VERIFY_CODE_TIME + phone);
         if(StringUtils.isNotBlank(codeTemp)){//60秒内刚发过
             result.put("status", ErrorCode.getErrorCode("global.verifyTimeError"));
             result.put("msg", ErrorCode.getErrorMsg("global.verifyTimeError"));
             return result;
         }
-        String code = redisService.get(Constants.BBD_SAAS_VERIFY_CODE + phone);
-        if (StringUtils.isBlank(code)) {
-            code = StringUtil.genRandomCode(4);//生成四位随机数
+        String checkResult = smsInfoService.checkToSendsms(phone,ip);
+        logger.info("====验证结果===="+checkResult);
+        if("1".equals(checkResult)){
+            String code = redisService.get(Constants.BBD_SAAS_VERIFY_CODE + phone);
+            if (StringUtils.isBlank(code)) {
+                code = StringUtil.genRandomCode(4);//生成四位随机数
+            }
+            redisService.set(Constants.BBD_SAAS_VERIFY_CODE + phone, code, 60 * 30);//写入redis 半小时内有效
+            redisService.set(Constants.BBD_SAAS_VERIFY_CODE_TIME + phone, code, 60 );//写入redis 一分钟有效
+            smsInfoService.saveVerify(phone, code, "1");//写入短信表 1注册
+            result.put("status", "1");
+            result.put("msg", "发送成功");
+            logger.info("手机号："+ phone + ",验证码 ：" + code);
+            return result;
+        }else {
+            result.put("status", ErrorCode.getErrorCode("global.requestError"));
+            result.put("msg", ErrorCode.getErrorMsg("global.requestError"));
+            return result;
         }
-        redisService.set(Constants.BBD_SAAS_VERIFY_CODE + phone, code, 60 * 30);//写入redis 半小时内有效
-        redisService.set(Constants.BBD_SAAS_VERIFY_CODE_TIME + phone, code, 60 );//写入redis 一分钟有效
-        smsInfoService.saveVerify(phone, code, "1");//写入短信表 1注册
-        result.put("status", "1");
-        result.put("msg", "发送成功");
-        logger.info("手机号："+ phone + ",验证码 ：" + code);
-        return result;
+
     }
 
     private String dealSitePoints(List<List<MapPoint>> sitePoints) {

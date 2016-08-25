@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 发送短信Service
@@ -18,6 +20,14 @@ public class SmsInfoServiceImpl implements SmsInfoService {
     public final Logger logger = LoggerFactory.getLogger(SmsInfoServiceImpl.class);
     @Resource
     SmsInfoDao smsInfoDao;
+
+    @Override
+    public String checkToSendsms(String phone, String ip) {
+        Map<String, Object> parms = new HashMap<String, Object>();
+        parms.put("phone", phone);
+        parms.put("ip", ip);
+        return smsInfoDao.checkToSendsms(parms);
+    }
 
     /**
      * 发送验证码
