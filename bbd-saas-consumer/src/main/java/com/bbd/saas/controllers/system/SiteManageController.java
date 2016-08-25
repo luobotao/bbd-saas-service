@@ -9,11 +9,9 @@ import com.bbd.saas.api.mongo.WayService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.api.mysql.SiteMySqlService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.SiteStatus;
-import com.bbd.saas.enums.SiteTurnDownReasson;
-import com.bbd.saas.enums.UserRole;
-import com.bbd.saas.enums.UserStatus;
+import com.bbd.saas.enums.*;
 import com.bbd.saas.form.SiteForm;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.models.PostmanUser;
@@ -190,6 +188,10 @@ public class SiteManageController {
 	@ResponseBody
 	@RequestMapping(value="/saveSite",method=RequestMethod.POST)
 	public boolean saveSite(HttpServletRequest request, @Valid SiteForm siteForm, BindingResult result) throws IOException {
+		if(siteForm.getSitetype() == null || siteForm.getSitetype() != SiteType.SOCIAL_CAPACITY){
+			siteForm.setLowerlimit(Constants.LOWERLIMIT);
+			siteForm.setUpperlimit(Constants.UPPERLIMIT);
+		}
 		User userNow = adminService.get(UserSession.get(request));
 		if (result.hasErrors()) {
 			return false;

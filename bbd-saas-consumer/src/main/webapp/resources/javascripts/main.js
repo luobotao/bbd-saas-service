@@ -407,3 +407,11 @@ function yscroll(){
     }
 }
 // E 超出显示滚动条
+
+// S 选中文本框的值
+function selectInputTxt(id){
+    //console.log("id==="+id);
+    $("#"+id).focus();
+    $("#"+id).select();
+}
+// E 选中文本框的值

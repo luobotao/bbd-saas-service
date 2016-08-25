@@ -345,11 +345,15 @@
 			if($("#mailNum").val()!=null && $("#mailNum").val()!=""){
 				$("#parcelCode").val("");
 				checkOrderByMailNum($("#mailNum").val());
+				selectInputTxt("mailNum");
 			}
 			if($("#parcelCode").val()!=null && $("#parcelCode").val()!=""){
 				checkOrderParcelByParcelCode($("#parcelCode").val());
+				selectInputTxt("parcelCode");
 			}
+
 		}
+
 	}
 
 	var isBatchToSite = false; //单个运单到站

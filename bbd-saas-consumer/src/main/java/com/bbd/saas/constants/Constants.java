@@ -102,6 +102,9 @@ public class Constants {
     public static int PAGESIZE_MAP = 1000;
     public static String BBD_COMPANYID = "8";
     //public static String BBD_COMPANYID = "99";
+    public static int UPPERLIMIT = 300;
+    public static int LOWERLIMIT = 50;
+
 
 
 }

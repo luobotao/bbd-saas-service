@@ -373,6 +373,7 @@ function dispatch() {
 		error : function() {  
 		}
     });
+	selectInputTxt("mailNum");
 }  
 //加载带有查询条件的指定页的数据
 function queryData(pageIndex) {
