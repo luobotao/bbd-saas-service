@@ -2,7 +2,6 @@ package com.bbt.demo.provider;
 
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.models.PostDelivery;
-import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.PostDeliveryQueryVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
-public class PostDeliveryTest {
+public class EnumTest {
 	@Autowired
 	private PostDeliveryService postDeliveryService;
 
@@ -64,16 +63,6 @@ public class PostDeliveryTest {
 		postDeliveryQueryVO.siteId = "577f45c21e06c8875c4771ed";
 		postDeliveryQueryVO.dateUpd = "2016-08-25";
 		List<Map<String, Object>> list =  postDeliveryService.findListByQuery(postDeliveryQueryVO);
-		Assert.isTrue(true);//无用
-
-	}
-
-	@Test
-	public void testSelectListByQuery1() throws Exception{
-		PostDeliveryQueryVO postDeliveryQueryVO = new PostDeliveryQueryVO();
-		postDeliveryQueryVO.dateUpd = "2016-08-25";
-		postDeliveryQueryVO.postman_id = 9437;
-		PageModel<PostDelivery> postDeliveryPageModel = postDeliveryService.findPageByQuery(postDeliveryQueryVO, 0, 0);
 		Assert.isTrue(true);//无用
 
 	}

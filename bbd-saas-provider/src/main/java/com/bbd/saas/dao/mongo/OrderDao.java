@@ -920,6 +920,20 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(StringUtils.isNotBlank(appOrderQueryVO.dateUpd_min)){
             query.filter("dateUpd >=", Dates.parseDate(appOrderQueryVO.dateUpd_min+" 00:00:00", Constants.DATE_PATTERN_YMDT2));
         }
+        if(appOrderQueryVO.src != null){
+            query.filter("src", appOrderQueryVO.src);
+        }
+        if(appOrderQueryVO.expressStatus  == ExpressStatus.Separating){
+            query.or(query.criteria("expressStatus").equal(ExpressStatus.Separating), query.criteria("expressStatus").equal(ExpressStatus.Suspense));
+        }else{
+            query.filter("expressStatus", appOrderQueryVO.expressStatus);
+        }
+        if(appOrderQueryVO.printStatus != null){
+            query.filter("printStatus", appOrderQueryVO.printStatus);
+        }
+        if(appOrderQueryVO.isRemoved != -1){
+            query.filter("isRemoved", appOrderQueryVO.isRemoved);
+        }
         return query;
     }
     public List<Order> selectListByAppOrderQuery(AppOrderQueryVO appOrderQueryVO, String orderStr){

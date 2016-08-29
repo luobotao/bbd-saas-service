@@ -102,4 +102,22 @@ public interface PostDeliveryDao {
 	 * @return 符合条件的数据
 	 */
 	public List<Map<String, Object>> selectListByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
+
+	/**
+	 * 根据查询条件查询数据条数
+	 * @param postDeliveryQueryVO 查询条件
+	 * @return 符合条件的数据条数
+	 */
+	public int selectCountByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
+
+	/**
+	 * 根据查询条件分页查询数据
+	 * @param postDeliveryQueryVO 查询条件
+	 * @param startNum  跳过的条数
+	 * @param pageSize 查询的条数
+	 * @return 分页数据
+	 */
+	public List<PostDelivery> selectPageByQuery(@Param("queryVo")PostDeliveryQueryVO postDeliveryQueryVO, @Param("startNum")Integer startNum, @Param("pageSize")Integer pageSize) throws Exception;
+
+
 }

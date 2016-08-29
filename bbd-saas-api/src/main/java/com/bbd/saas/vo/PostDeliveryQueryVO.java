@@ -14,4 +14,8 @@ public class PostDeliveryQueryVO implements Serializable{
 	public String siteId;
 	public String subStation;
 	public String time;
+	public Integer postman_id;//派送员唯一 ID
+	public String dateUpd;
+	public String dateUpd_min;//
+	public String dateUpd_max;
 }

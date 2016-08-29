@@ -1,6 +1,7 @@
 package com.bbd.saas.api.mysql;
 
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.PostDeliveryQueryVO;
 
 import java.util.List;
@@ -87,4 +88,22 @@ public interface PostDeliveryService {
 	 * @return 符合条件的数据
      */
 	public List<Map<String, Object>> findListByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
+	/**
+	 * 根据查询条件查询数据条数
+	 * @param postDeliveryQueryVO 查询条件
+	 * @return 符合条件的数据条数
+	 */
+	public int findCountByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
+
+
+	/**
+	 * 根据查询条件分页查询数据
+	 * @param postDeliveryQueryVO 查询条件
+	 * @param startNum  跳过的条数
+	 * @param pageSize 查询的条数
+     * @return 分页数据
+     */
+	public PageModel<PostDelivery> findPageByQuery(PostDeliveryQueryVO postDeliveryQueryVO, Integer startNum, Integer pageSize) throws Exception;
+
+
 }

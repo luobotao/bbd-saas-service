@@ -3,6 +3,7 @@ package com.bbd.saas.api.impl.mysql;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.dao.mysql.PostDeliveryDao;
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.PostDeliveryQueryVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,5 +88,19 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	@Override
 	public List<Map<String, Object>> findListByQuery(PostDeliveryQueryVO postDeliveryQueryVO) {
 		return this.postDeliveryDao.selectListByQuery(postDeliveryQueryVO);
+	}
+
+	@Override
+	public int findCountByQuery(PostDeliveryQueryVO postDeliveryQueryVO) {
+		return this.postDeliveryDao.selectCountByQuery(postDeliveryQueryVO);
+	}
+
+	@Override
+	public PageModel<PostDelivery> findPageByQuery(PostDeliveryQueryVO postDeliveryQueryVO, Integer startNum, Integer pageSize)throws Exception {
+		PageModel<PostDelivery> pageModel = new PageModel<PostDelivery>();
+		List<PostDelivery> dataList = this.postDeliveryDao.selectPageByQuery(postDeliveryQueryVO, startNum, pageSize);
+		pageModel.setDatas(dataList);
+		pageModel.setTotalCount(this.postDeliveryDao.selectCountByQuery(postDeliveryQueryVO));
+		return pageModel;
 	}
 }
