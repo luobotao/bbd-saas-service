@@ -1,11 +1,18 @@
 package com.bbd.saas.controllers.subscribeback;
 
 import com.alibaba.dubbo.common.json.JSON;
+import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderService;
+import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.BalanceService;
+import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
+import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.models.Balance;
+import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.LastResultVO;
@@ -38,7 +45,10 @@ public class SubscribeBackController {
     OrderService orderService;
     @Autowired
     BalanceService balanceService;
-
+    @Autowired
+    UserService userService;
+    @Autowired
+    ExpressExchangeService expressExchangeService;
     /**
      * @param param json格式的body，快递100 传来的的json 数据
      * @param sign  字符串，签名=MD5(param+salt)
@@ -59,10 +69,10 @@ public class SubscribeBackController {
 
             if (StringUtils.isNotBlank(param)) {
                /* param = new String(param.getBytes("ISO-8859-1"), "UTF-8");*/
-               // 把请求数据转化成restRequestDTO对象
+                // 把请求数据转化成restRequestDTO对象
                 restRequestDTO = JSON.parse(param, RestRequestDTO.class);
 
-               //从请求参数restRequestDTO 中获取数据
+                //从请求参数restRequestDTO 中获取数据
                 if (null != restRequestDTO) {
                     LastResultVO lastResult = restRequestDTO.getLastResult();//获取最新内容对象
                     if (null != lastResult) {
@@ -71,11 +81,79 @@ public class SubscribeBackController {
                             String mailNum = lastResult.getNu();//获取新运单号
                             if (StringUtils.isNotBlank(mailNum)) {
                                 List<Order> orderList = orderService.findOneByNewMailNum(mailNum);//根据其他快递的运单号查询订单
-                                if(orderList != null && orderList.size() > 0){
-                                    //进行数据反转
-                                    Collections.reverse(data);
-                                    for(Order order: orderList){
-                                        handleOneOrder(order, state, status, message, data, lastResult, restRequestDTO);
+                                if (orderList != null && orderList.size()>0) {
+                                    for(Order order : orderList){
+                                        //如果order 有expressList  ,从order中取出，没有new 一个新的
+                                        List<Express> expressList = order.getExpresses();
+                                        if (expressList == null || expressList.isEmpty()) {
+                                            expressList = Lists.newArrayList();
+                                        }
+                                        //进行数据反转
+                                        Collections.reverse(data);
+
+                                        List <Express> newExpressList =new ArrayList<Express>();
+                                        Map<String,Express> expressMap = new LinkedHashMap<String,Express>();
+
+                                        //从把从快递100返回的结果填充到expressList中
+                                        for (HashMap<String, String> newContext : data) {
+                                            Express express = new Express();
+                                            express.setRemark(newContext.get("context"));
+                                       /* express.setDateAdd(new Date());*/
+                                            express.setDateAdd(Dates.parseFullDate(newContext.get("time")));
+                                            expressList.add(express);
+
+                                        }
+                                        //进行去重数据操作
+                                        for (Express  express : expressList) {
+                                            expressMap.put(express.getRemark(),express);
+                                        }
+
+                                        Set<Map.Entry<String, Express>> entryExpressMap = expressMap.entrySet();
+
+                                        for(Map.Entry<String, Express> entryExpress:entryExpressMap ){
+                                            Express express = entryExpress.getValue();
+                                            newExpressList.add(express);
+                                        }
+
+                                        //填充order
+                                        order.setExpresses(newExpressList);
+
+                                        //根据lastResult中的，监控状态，订单状态，监控状态信息进行判断
+                                        state = lastResult.getState();//订单状态
+                                        status = restRequestDTO.getStatus();//监控状态
+                                        message = restRequestDTO.getMessage(); //监控状态信息
+
+                                        //Status：当快递单本身为已签收时，status=shutdown，即监控结束，表示此单的生命周期已结束；
+                                        if (StringUtils.isNotBlank(status) && state != null) {
+                                        /*state 快递单当前签收状态，包括0在途中、1已揽收、2疑难、3已签收、4退签、5同城派送中、6退回、7转单等7个状态，*/
+                                            if ("shutdown".equals(status) && ("3".equals(state) || "4".equals(state))) {
+                                                //更改订单为签收状态
+                                                order.setOrderStatus(OrderStatus.SIGNED);
+                                                order.setExpressStatus(ExpressStatus.Success);
+                                            }
+                                        }
+                                        // 当message为“3天查询无记录”或“60天无变化时”，status= abort，即监控中止。
+                                        if (StringUtils.isNotBlank(message) && StringUtils.isNotBlank(status)) {
+                                            if (("3天查询无记录".equals(message) && "abort".equals(status))
+                                                    || ("60天无变化时".equals(message) && "abort".equals(status))) {
+                                                //更改订单为签收状态
+                                                order.setOrderStatus(OrderStatus.SIGNED);
+                                                order.setExpressStatus(ExpressStatus.Success);
+                                            }
+                                        }
+                                        order.setDateUpd(new Date());
+                                        if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
+                                            User user = userService.findUserByLoginName("18699999999");
+                                            ExpressExchange expressExchange=new ExpressExchange();
+                                            expressExchange.setOperator(user.getRealName());
+                                            expressExchange.setStatus(ExpressExchangeStatus.waiting);
+                                            expressExchange.setPhone(user.getLoginName());
+                                            expressExchange.setOrder(order.coverOrderVo());
+                                            expressExchange.setDateAdd(new Date());
+                                            expressExchangeService.save(expressExchange);
+                                        }
+                                        //保存数据
+                                        orderService.save(order);
                                     }
                                 }
                             }
@@ -116,67 +194,4 @@ public class SubscribeBackController {
         return resultResposeDTO;
     }
 
-    void handleOneOrder(Order order,  String state, String status, String message, List<HashMap<String, String>> data, LastResultVO lastResult, RestRequestDTO restRequestDTO){
-        if (order != null) {
-            //如果order 有expressList  ,从order中取出，没有new 一个新的
-            List<Express> expressList = order.getExpresses();
-            if (expressList == null || expressList.isEmpty()) {
-                expressList = Lists.newArrayList();
-            }
-            List <Express> newExpressList =new ArrayList<Express>();
-            Map<String,Express> expressMap = new LinkedHashMap<String,Express>();
-
-            //从把从快递100返回的结果填充到expressList中
-            for (HashMap<String, String> newContext : data) {
-                Express express = new Express();
-                express.setRemark(newContext.get("context"));
-                                       /* express.setDateAdd(new Date());*/
-                express.setDateAdd(Dates.parseFullDate(newContext.get("time")));
-                expressList.add(express);
-
-            }
-            //进行去重数据操作
-            for (Express  express : expressList) {
-                expressMap.put(express.getRemark(),express);
-            }
-
-            Set<Map.Entry<String, Express>> entryExpressMap = expressMap.entrySet();
-
-            for(Map.Entry<String, Express> entryExpress:entryExpressMap ){
-                Express express = entryExpress.getValue();
-                newExpressList.add(express);
-            }
-
-            //填充order
-            order.setExpresses(newExpressList);
-
-            //根据lastResult中的，监控状态，订单状态，监控状态信息进行判断
-            state = lastResult.getState();//订单状态
-            status = restRequestDTO.getStatus();//监控状态
-            message = restRequestDTO.getMessage(); //监控状态信息
-
-            //Status：当快递单本身为已签收时，status=shutdown，即监控结束，表示此单的生命周期已结束；
-            if (StringUtils.isNotBlank(status) && state != null) {
-                                        /*state 快递单当前签收状态，包括0在途中、1已揽收、2疑难、3已签收、4退签、5同城派送中、6退回、7转单等7个状态，*/
-                if ("shutdown".equals(status) && ("3".equals(state) || "4".equals(state))) {
-                    //更改订单为签收状态
-                    order.setOrderStatus(OrderStatus.SIGNED);
-                    order.setExpressStatus(ExpressStatus.Success);
-                }
-            }
-            // 当message为“3天查询无记录”或“60天无变化时”，status= abort，即监控中止。
-            if (StringUtils.isNotBlank(message) && StringUtils.isNotBlank(status)) {
-                if (("3天查询无记录".equals(message) && "abort".equals(status))
-                        || ("60天无变化时".equals(message) && "abort".equals(status))) {
-                    //更改订单为签收状态
-                    order.setOrderStatus(OrderStatus.SIGNED);
-                    order.setExpressStatus(ExpressStatus.Success);
-                }
-            }
-            order.setDateUpd(new Date());
-
-            //保存数据
-            orderService.save(order);
-        }
-    }
 }
