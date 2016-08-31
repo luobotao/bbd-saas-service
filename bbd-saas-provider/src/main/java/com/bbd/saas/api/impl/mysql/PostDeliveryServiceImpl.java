@@ -75,6 +75,11 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	}
 
 	@Override
+	public PostDelivery findOneByMailNum(String mailNum) {
+		return this.postDeliveryDao.selectOneByMailNum(mailNum);
+	}
+
+	@Override
 	public PostDelivery updateOne(PostDelivery postDelivery) {
 		postDeliveryDao.updateOne(postDelivery);
 		return postDelivery;
@@ -102,5 +107,10 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 		pageModel.setDatas(dataList);
 		pageModel.setTotalCount(this.postDeliveryDao.selectCountByQuery(postDeliveryQueryVO));
 		return pageModel;
+	}
+
+	@Override
+	public List<Map<String, Object>> findListByPmanIdAndTime(Integer postmanid, String tim) {
+		return this.postDeliveryDao.selectListByPmanIdAndTime(postmanid, tim);
 	}
 }

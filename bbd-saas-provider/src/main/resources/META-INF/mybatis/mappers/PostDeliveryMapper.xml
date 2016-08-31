@@ -183,7 +183,11 @@
 		FROM `postdelivery` where id = #{id}
 	</select>
 	<!-- 通过id查询记录  结束  -->
-
+	<!-- 通过运单号查询记录  开始  -->
+	<select id="selectOneByMailNum" resultMap="baseResultMap">
+		SELECT * FROM `postdelivery` where mail_num = #{mailNum}
+	</select>
+	<!-- 通过运单号查询记录  结束  -->
 
 	<!-- 通过id更新记录 -->
 	<update id="updateOne" >
@@ -376,4 +380,12 @@
 		</if>
 	</select>
 	<!-- 根据查询条件分页查询数据  开始  -->
+
+	<!-- 查询派件员日期大于tim的每天的派件量  开始   -->
+	<select id="selectListByPmanIdAndTime" resultType="java.util.HashMap">
+		SELECT DATE_FORMAT(date_upd,'%Y-%m-%d') as tim,COUNT(p.id) AS ordercnt FROM postdelivery p
+		WHERE p.postman_id= #{postmanid} AND p.date_upd > #{tim} AND <![CDATA[ p.date_upd < DATE_FORMAT(now(),'%Y-%m-%d') ]]>
+		GROUP BY DATE_FORMAT(date_upd,'%Y-%m-%d') order by DATE_FORMAT(date_upd,'%Y-%m-%d') desc
+	</select>
+	<!-- 查询派件员日期大于tim的每天的派件量  结束   -->
 </mapper>

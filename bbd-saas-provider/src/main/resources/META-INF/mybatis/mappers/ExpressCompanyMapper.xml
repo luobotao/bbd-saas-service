@@ -22,15 +22,13 @@
 
     <!--查询所有公司-->
     <select id="getExpressCompany" resultMap="baseResultMap">
-        SELECT
-        <include refid="baseColumnList"/>
-        FROM `expresscompany`
+        SELECT * FROM `expresscompany` WHERE sta='1' ORDER BY id
     </select>
 
     <!--根据公司ID查询公司-->
     <select id="getExpressCompanyById" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
-        FROM `expresscompany` where <![CDATA[ id = #{ecompanyId,jdbcType=INTEGER}]]>
+        FROM `expresscompany` where id = #{ecompanyId}
     </select>
 </mapper>

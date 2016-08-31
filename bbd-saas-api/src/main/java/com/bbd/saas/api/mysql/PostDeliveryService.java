@@ -70,6 +70,13 @@ public interface PostDeliveryService {
 	public PostDelivery findOneById(Integer id);
 
 	/**
+	 * 根据运单号查询
+	 * @param mailNum 运单号
+	 * @return 实体
+	 */
+	public PostDelivery findOneByMailNum(String mailNum);
+
+	/**
 	 * 更新
 	 * @param postDelivery  快递员派送运单
 	 * @return  快递员派送运单
@@ -105,5 +112,12 @@ public interface PostDeliveryService {
      */
 	public PageModel<PostDelivery> findPageByQuery(PostDeliveryQueryVO postDeliveryQueryVO, Integer startNum, Integer pageSize) throws Exception;
 
+	/**
+	 * 查询派件员日期大于tim的每天的派件量
+	 * @param postmanid 派件员id
+	 * @param tim 日期
+	 * @return {{tim,ordercnt}，{tim,ordercnt}，{tim,ordercnt}---}
+	 */
+	public List<Map<String, Object>> findListByPmanIdAndTime(Integer postmanid, String tim);
 
 }

@@ -910,7 +910,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(StringUtils.isNotBlank(appOrderQueryVO.userId)){
             query.filter("userId", appOrderQueryVO.userId);
         }
-        if(appOrderQueryVO.isArrived == 1){//
+        if(appOrderQueryVO.isArrived != null && appOrderQueryVO.isArrived == 1){//
             query.filter("userId <>", null);
         }else {
             if(StringUtils.isNotBlank(appOrderQueryVO.dateArrived_min)){
@@ -933,6 +933,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         if(appOrderQueryVO.isRemoved != -1){
             query.filter("isRemoved", appOrderQueryVO.isRemoved);
+        }
+        //app端异常订单查询
+        if(appOrderQueryVO.errorStatus != null){
+            if(appOrderQueryVO.errorStatus == -1){//全部（8-滞留，9-拒收）
+                query.or(query.criteria("expressStatus").equal(ExpressStatus.Delay), query.criteria("expressStatus").equal(ExpressStatus.Refuse));
+            }else{
+                query.filter("expressStatus", ExpressStatus.status2Obj(appOrderQueryVO.errorStatus));
+            }
         }
         return query;
     }
