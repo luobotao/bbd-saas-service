@@ -31,4 +31,9 @@
         <include refid="baseColumnList"/>
         FROM `expresscompany` where id = #{ecompanyId}
     </select>
+
+    <!--app端查询所有的快递公司-->
+    <select id="selectCompanyList" resultType="java.util.HashMap">
+        SELECT companyname,companycode FROM expresscompany WHERE sta='1' ORDER BY id
+    </select>
 </mapper>

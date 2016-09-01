@@ -304,18 +304,20 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @return
      */
     public Query<Order> getOrderStatusQuery(Query<Order> query, OrderQueryVO orderQueryVO){
-        if(orderQueryVO.orderStatus == 0){
-            query.or(query.criteria("orderStatus").equal(null), query.criteria("orderStatus").equal(OrderStatus.status2Obj(orderQueryVO.orderStatus)));
-            return query;
-        }
-        if(orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()){//已签收--OrderStatus=5
-            query.filter("orderStatus", OrderStatus.SIGNED);
-            // otherExprees == null || Size(otherExprees)==0
-            query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
-        }else if(orderQueryVO.orderStatus == OrderStatus.TO_OTHER_EXPRESS.getStatus()){//转其他快递--OrderStatus=6
-            query.filter("otherExprees <>", null);
-        }else{//单个状态
-            query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+        if(orderQueryVO.orderStatus != null){
+            if(orderQueryVO.orderStatus == 0){
+                query.or(query.criteria("orderStatus").equal(null), query.criteria("orderStatus").equal(OrderStatus.status2Obj(orderQueryVO.orderStatus)));
+                return query;
+            }
+            if(orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()){//已签收--OrderStatus=5
+                query.filter("orderStatus", OrderStatus.SIGNED);
+                // otherExprees == null || Size(otherExprees)==0
+                query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
+            }else if(orderQueryVO.orderStatus == OrderStatus.TO_OTHER_EXPRESS.getStatus()){//转其他快递--OrderStatus=6
+                query.filter("otherExprees <>", null);
+            }else{//单个状态
+                query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+            }
         }
         return query;
     }
@@ -923,11 +925,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(appOrderQueryVO.src != null){
             query.filter("src", appOrderQueryVO.src);
         }
-        if(appOrderQueryVO.expressStatus  == ExpressStatus.Separating){
-            query.or(query.criteria("expressStatus").equal(ExpressStatus.Separating), query.criteria("expressStatus").equal(ExpressStatus.Suspense));
-        }else{
-            query.filter("expressStatus", appOrderQueryVO.expressStatus);
+        if(appOrderQueryVO.expressStatus != null){
+            if(appOrderQueryVO.expressStatus  == ExpressStatus.Separating){
+                query.or(query.criteria("expressStatus").equal(ExpressStatus.Separating), query.criteria("expressStatus").equal(ExpressStatus.Suspense));
+            }else{
+                query.filter("expressStatus", appOrderQueryVO.expressStatus);
+            }
         }
+
         if(appOrderQueryVO.printStatus != null){
             query.filter("printStatus", appOrderQueryVO.printStatus);
         }

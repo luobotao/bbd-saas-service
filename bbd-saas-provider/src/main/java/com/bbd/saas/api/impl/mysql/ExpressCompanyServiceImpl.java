@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by huozhijie on 2016/5/30.
@@ -41,5 +42,10 @@ public class ExpressCompanyServiceImpl implements ExpressCompanyService {
     public ExpressCompany getExpressCompanyById(Integer ecompanyId) {
         ExpressCompany expressCompany=  expressCompanyDao.getExpressCompanyById(ecompanyId);
         return expressCompany;
+    }
+
+    @Override
+    public List<Map<String, String>> findCompanyList() {
+        return this.expressCompanyDao.selectCompanyList();
     }
 }
