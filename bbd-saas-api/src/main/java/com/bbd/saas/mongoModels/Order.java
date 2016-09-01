@@ -69,6 +69,7 @@ public class Order implements Serializable {
     private String embraceId;//揽件员id
     private String disAreaCode;//分拨中心Code
     private List<SiteTime> siteTimes;//揽件时间的集合
+    private ComplaintStatus complaintStatus;//投诉状态
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
