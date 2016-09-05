@@ -10,6 +10,7 @@
 	<title>棒棒达快递</title>
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<a href="http://webscan.360.cn/index/checkwebsite/url/saas.bangbangda.cn"><img border="0" src="http://img.webscan.360.cn/status/pai/hash/36a8870eac6402a35fc6df53bec999e1"/></a>
 	<link rel="shortcut icon" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link rel="bookmark" href="<c:url value="/resources/images/favicon.ico" />"/>
 	<link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet"  type="text/css" />
