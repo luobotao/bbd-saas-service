@@ -803,7 +803,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         // and areaCode = areaCode and orderStatus <> OrderStatus.NOTARR and orderStatus <> null group by areaCode,orderStatus order by abc asc;
         AggregationPipeline pipeline = this.getDatastore().createAggregation(Order.class).match(query).group(id(grouping("areaCode"), grouping("orderStatus")), grouping("abc", first("areaCode")), grouping("orderStatus", first("orderStatus")), grouping("countAll", new Accumulator("$sum", 1))).sort(Sort.ascending("abc"));
         Iterator<OrderGroup> iterator = pipeline.aggregate(OrderGroup.class);
-        System.out.println(iterator.hasNext());
         MailStatisticVO expressStatStation = new MailStatisticVO();
         while (iterator.hasNext()) {
             OrderGroup orderGroup = iterator.next();
