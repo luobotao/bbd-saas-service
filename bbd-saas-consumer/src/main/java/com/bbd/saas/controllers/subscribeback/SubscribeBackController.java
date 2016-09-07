@@ -142,7 +142,7 @@ public class SubscribeBackController {
                                             }
                                         }
                                         order.setDateUpd(new Date());
-                                        if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())){
+                                        if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
                                             User user = userService.findUserByLoginName("18699999999");
                                             ExpressExchange expressExchange=new ExpressExchange();
                                             expressExchange.setOperator(user.getRealName());
