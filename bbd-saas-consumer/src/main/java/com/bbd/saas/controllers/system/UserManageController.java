@@ -216,8 +216,8 @@ public class UserManageController {
 				postmanuserId = userMysqlService.insertUser(postmanUser).getId();//插入数据
 			}else{//存在的话，覆盖掉
 				postmanuserId = postmanUser.getId();
-				postmanUser = getPostManUser(currUser, userForm);//拼装一些默认值
-				userMysqlService.updateByPhone(postmanUser);
+				postmanUser = this.getPostManUser(currUser, userForm);//拼装一些默认值
+				userMysqlService.updateByPhone(postmanUser, userForm.getLoginName());
 			}
 			if(postmanuserId > 0){//保存成功
 				User user = getUserByUserForm(currUser, userForm);
@@ -385,10 +385,10 @@ public class UserManageController {
 				postmanUser.setNickname(userForm.getRealName().replaceAll(" ", ""));
 				setPostRole(user.getRole(), postmanUser);
 				//修改手机号
-				postmanUser.setStaffid(userForm.getLoginName());
 				postmanUser.setAreaCode(user.getSite().getAreaCode());
-				postmanUser.setPhone(userForm.getOldLoginName());
-				int i = userMysqlService.updateByPhone(postmanUser);
+				postmanUser.setStaffid(userForm.getLoginName());
+				postmanUser.setPhone(userForm.getLoginName());
+				int i = userMysqlService.updateByPhone(postmanUser, userForm.getOldLoginName());
 				returnResult(i, map);
 			}else{//不存在，添加
 				postmanUser = getPostManUser(currentUser, userForm);//拼装一些默认值

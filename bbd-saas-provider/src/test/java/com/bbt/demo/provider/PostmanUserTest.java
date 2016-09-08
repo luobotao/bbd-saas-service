@@ -1,6 +1,7 @@
 package com.bbt.demo.provider;
 
 import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.models.PostmanUser;
 import com.bbd.saas.vo.UserVO;
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -47,5 +49,16 @@ public class PostmanUserTest {
 		Assert.isTrue(true);//无用
 	}
 
+	@Test
+	public void testUpdateByPhone() throws Exception{
+		String oldPhone = "15001067777";
+		//原有手机号
+		PostmanUser postmanUser = postmanUserService.selectPostmanUserByPhone(oldPhone, 0);
+		if (postmanUser != null) {//存在修改
+			postmanUser.setDateUpd(new Date());
+			int i = postmanUserService.updateByPhone(postmanUser, oldPhone);
+		}
+		Assert.isTrue(true);//无用
+	}
 
 }

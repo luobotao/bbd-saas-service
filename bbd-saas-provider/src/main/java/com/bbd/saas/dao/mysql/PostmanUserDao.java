@@ -47,7 +47,7 @@ public interface PostmanUserDao {
      * @param postmanUser phone =oldPhone; staffid = newPhone
      * @return 
      */
-    int updateByPhone(PostmanUser postmanUser);
+    int updateByPhone(@Param("pm")PostmanUser postmanUser, @Param("oldPhone")String oldPhone);
     
     /**
      * 删除postmanUser
