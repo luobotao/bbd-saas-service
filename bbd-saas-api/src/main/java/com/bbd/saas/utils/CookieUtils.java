@@ -111,7 +111,7 @@ public class CookieUtils {
 	}
 
 	/**
-	 * 获得客户端IP地址
+	 * 获得客户端真实IP地址
 	 * @param request 请求
 	 * @return ip地址
      */
