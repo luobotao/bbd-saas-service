@@ -163,23 +163,24 @@
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
 							<div class="col-md-12 pb10" id="fenceAddr">
-								<label>显示站点名称：　</label>
-								<select id="showSiteName" class="form-control" style="min-width: 100px;">
-									<option value="1">是</option>
-									<option value="0">否</option>
-								</select>
-								<%--<label><input type="checkbox"  id="showSiteNameCkB" name="showSiteNameCkB" class="j-sel-all" checked/>显示站点名称　</label>--%>
-								<label>省：　</label>
-								<select name="prov" class="prov form-control form-con-new">
+								<label>显示站点名称：<input type="checkbox"  id="showSiteNameCkB" name="showSiteNameCkB" class="j-sel-all" checked/></label>
+								<label>　省：</label>
+								<select name="prov" class="prov form-control form-con-new" style="min-width: 120px;">
 								</select>
 								<label class="cityLable" hidden>　市：</label>
-								<select  class="city form-control form-con-new" disabled="disabled">
+								<select  class="city form-control form-con-new" disabled="disabled" style="min-width: 150px;">
 								</select>
 								<label class="distLable" hidden>　区：</label>
-								<select name="dist" class="dist form-control form-con-new"  disabled="disabled">
+								<select name="dist" class="dist form-control form-con-new"  disabled="disabled" style="min-width: 150px;">
 								</select>
-								<label>　站点：　</label>
-								<select id="fenceSiteId" class="form-control form-con-new">
+								<label>　配送区域状态：</label>
+								<select id="areaFlag" class="form-control" style="min-width: 100px;">
+									<option value="-1">全部</option>
+									<option value="1">有效</option>
+									<option value="0">无效</option>
+								</select>
+								<label>　站点：</label>
+								<select id="fenceSiteId" class="form-control form-con-new" style="min-width: 150px;">
 									<option value="">请选择</option>
 									<c:if test="${not empty siteList}">
 										<c:forEach var="site" items="${siteList}">
@@ -950,11 +951,16 @@
 				var poi = bounds.getCenter();
 				var efencelabel = newEFenceLabel(poi, name);
 				fenceObj.map.addOverlay(efencelabel);
-				if($("#showSiteName").val() == "0"){
+				//console.log(2666+$("#showSiteNameCkB").is(':checked'));
+				//console.log($("#showSiteNameCkB").is(':checked'));
+				if(!$("#showSiteNameCkB").is(':checked')){
 					efencelabel.hide();
 				}
 				//显示站点名称
-				myPolygon.addEventListener("click",function(e){
+				myPolygon.addEventListener("mouseover",function(e){//mouseover || click
+					/*if(fenceObj.map.getZoom() <= 15){
+						fenceObj.map.setZoom(15);
+					}*/
 					showSiteName(0);
 					efencelabel.show();
 				});
@@ -1007,6 +1013,11 @@
 		eFenceMapChangeSite(null, "fenceSiteId");
 	}) ;
 
+	// 站点状态改变
+	$('#areaFlag').change(function(){
+		//站点列表和站点地图更新
+		eFenceMapChangeSite(null, "fenceSiteId");
+	});
 
 	//配送范围-- 绘制电子地图-- 隐藏绘制-保存按钮 -- 默认全部，需要隐藏
 	//绘制电子围栏 -- 更改站点
@@ -1023,6 +1034,7 @@
 				"prov" : $("#fenceAddr .prov").val(),
 				"city" :  $("#fenceAddr .city").val(),
 				"area" :  $("#fenceAddr .dist").val(),
+				"areaFlag" :  $("#areaFlag").val(),
 				"siteId" : siteId
 			},//数据，这里使用的是Json格式进行传输
 			success : function(dataObject) {//返回数据
@@ -1051,7 +1063,7 @@
 					fenceObj.map.centerAndZoom(center, zoom);
 					//显示站点和围栏
 					fenceObj.loadOneSite(site.name, site.lng, site.lat);
-					//加载电子围栏f
+					//加载电子围栏
 					var efenceObj = new EFenceObj(site.name, site.eFence, site.lng, site.lat);
 					efenceObj.loadDataAndShow(true);
 				}
@@ -1167,8 +1179,10 @@
 		areaMap.reset();
 	}, 300);
 	//绘制电子围栏 -- 显示站点名称
-	$('#showSiteName').change(function(){
-		showSiteName(this.value);
+	$("#showSiteNameCkB").on('ifUnchecked', function() {//未选中--隐藏站点名称
+		showSiteName(0);
+	}).on('ifChecked', function() {//选中--显示站点名称
+		showSiteName(1);
 	});
 	//显示||隐藏站点名称 flag=0-隐藏；flag=1-显示
 	function showSiteName(flag){
@@ -1187,16 +1201,6 @@
 			}
 		}
 	}
-
-	/*$("#showSiteNameCkB").on('ifUnchecked', function() {//未选中--隐藏站点名称
-		console.log("123");
-	}).on('ifChecked', function() {//选中--显示站点名称
-		console.log("456");
-	});*/
-//	if($("#showSiteNameCkB").on('ifChecked')){
-//		console.log(222);
-//	}
-
 	/************************ 绘制电子围栏 ************* end **************************/
 
 	/************************ 导入地址关键词 ************* start **************************/
@@ -1288,9 +1292,7 @@
 	});
 
 
-	$("input[type='checkbox']").iCheck({
-		checkboxClass : 'icheckbox_square-blue'
-	});
+
 	$("#selectAll").on('ifUnchecked', function() {
 		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
 	}).on('ifChecked', function() {

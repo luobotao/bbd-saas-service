@@ -138,9 +138,10 @@ public interface SiteService {
      * @param city 市
      * @param area 区
      * @param status 站点状态
+     * @param areaFlag 配送区域状态
      * @return 站点集合
      */
-    List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status);
+    List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status, int areaFlag);
 
     /**
      * 查询指定公司的不同地区的特定站点状态的站点集合
