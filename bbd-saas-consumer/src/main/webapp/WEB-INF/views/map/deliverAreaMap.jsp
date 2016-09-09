@@ -163,6 +163,12 @@
 						<!-- S 绘制电子围栏 -->
 						<div class="row tab-pane fade" id="draw-map">
 							<div class="col-md-12 pb10" id="fenceAddr">
+								<label>显示站点名称：　</label>
+								<select id="showSiteName" class="form-control" style="min-width: 100px;">
+									<option value="1">是</option>
+									<option value="0">否</option>
+								</select>
+								<%--<label><input type="checkbox"  id="showSiteNameCkB" name="showSiteNameCkB" class="j-sel-all" checked/>显示站点名称　</label>--%>
 								<label>省：　</label>
 								<select name="prov" class="prov form-control form-con-new">
 								</select>
@@ -675,6 +681,9 @@
 	/************************ 配送区域 ************* end **************************/
 
 	/************************ 绘制电子围栏 ************* start **************************/
+	$("input[type='checkbox']").iCheck({
+		checkboxClass : 'icheckbox_square-blue'
+	});
 	var fenceArray = [];
 	//初始化电子围栏一个站点的数据
 	function addOneEFenceData(efence){
@@ -941,6 +950,14 @@
 				var poi = bounds.getCenter();
 				var efencelabel = newEFenceLabel(poi, name);
 				fenceObj.map.addOverlay(efencelabel);
+				if($("#showSiteName").val() == "0"){
+					efencelabel.hide();
+				}
+				//显示站点名称
+				myPolygon.addEventListener("click",function(e){
+					showSiteName(0);
+					efencelabel.show();
+				});
 
 				//站点不在多边形中，在多边形中心点显示站点名称
 				/*var iscontain = bounds.containsPoint(new BMap.Point(lng, lat));//不起作用
@@ -1149,9 +1166,36 @@
 	window.setTimeout(function(){
 		areaMap.reset();
 	}, 300);
+	//绘制电子围栏 -- 显示站点名称
+	$('#showSiteName').change(function(){
+		showSiteName(this.value);
+	});
+	//显示||隐藏站点名称 flag=0-隐藏；flag=1-显示
+	function showSiteName(flag){
+		var allOverlay = fenceObj.map.getOverlays();
+		if(flag == 1){//选中--显示站点名称
+			for (var i = 0; i < allOverlay.length ; i++) {
+				if(allOverlay[i].toString()=="[object Label]") {//BMap.
+					allOverlay[i].show(); //显示
+				}
+			}
+		}else{//未选中--隐藏站点名称
+			for (var i = 0; i < allOverlay.length ; i++) {
+				if(allOverlay[i].toString()=="[object Label]") {//BMap.
+					allOverlay[i].hide(); //隐藏
+				}
+			}
+		}
+	}
 
-
-
+	/*$("#showSiteNameCkB").on('ifUnchecked', function() {//未选中--隐藏站点名称
+		console.log("123");
+	}).on('ifChecked', function() {//选中--显示站点名称
+		console.log("456");
+	});*/
+//	if($("#showSiteNameCkB").on('ifChecked')){
+//		console.log(222);
+//	}
 
 	/************************ 绘制电子围栏 ************* end **************************/
 
