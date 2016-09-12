@@ -26,6 +26,8 @@ import java.util.Map;
 public class ExpressStatStationServiceImpl implements ExpressStatStationService {
 	@Resource
 	private ExpressStatStationDao expressStatStationDao;
+	@Resource
+	private SiteDao siteDao;
 
 	public ExpressStatStationDao getExpressStatStationDao() {
 		return expressStatStationDao;
@@ -33,6 +35,14 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 
 	public void setExpressStatStationDao(ExpressStatStationDao expressStatStationDao) {
 		this.expressStatStationDao = expressStatStationDao;
+	}
+
+	public SiteDao getSiteDao() {
+		return siteDao;
+	}
+
+	public void setSiteDao(SiteDao siteDao) {
+		this.siteDao = siteDao;
 	}
 
 	@Override
