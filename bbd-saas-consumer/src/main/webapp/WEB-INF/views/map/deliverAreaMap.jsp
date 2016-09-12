@@ -957,7 +957,7 @@
 					efencelabel.hide();
 				}
 				//显示站点名称
-				myPolygon.addEventListener("mouseover",function(e){//mouseover || click
+				myPolygon.addEventListener("click",function(e){//mouseover || click
 					/*if(fenceObj.map.getZoom() <= 15){
 						fenceObj.map.setZoom(15);
 					}*/
