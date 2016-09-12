@@ -193,14 +193,10 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param city 市
      * @param area 区
      * @param status 站点状态
-     * @param areaFlag 配送区域状态
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status, int areaFlag) {
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
         Query<Site> query = getQueryByAddr(companyId, prov, city, area);
-        if(areaFlag >= 0){
-            query.filter("areaFlag", areaFlag);
-        }
         if(status != null){
             query.filter("status", status);
         }

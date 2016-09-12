@@ -244,7 +244,7 @@ public class ExcelUtil2007 {
 	 * 对读取Excel表格标题测试
 	 * @param excelReader
 	 * @throws FileNotFoundException
-     */
+	 */
 	private void testReadTitle(ExcelUtil2007 excelReader, InputStream is) throws FileNotFoundException {
 		String[] title = excelReader.readExcelTitle(is);
 		System.out.println("获得Excel表格的标题:");
@@ -257,7 +257,7 @@ public class ExcelUtil2007 {
 	 * 对读取Excel表格内容测试
 	 * @param excelReader
 	 * @throws FileNotFoundException
-     */
+	 */
 	private void testReadBody(ExcelUtil2007 excelReader, InputStream is) throws FileNotFoundException {
 		Map<Integer, String> map = excelReader.readExcelContent33(is);
 		System.out.println("获得Excel表格的内容:");

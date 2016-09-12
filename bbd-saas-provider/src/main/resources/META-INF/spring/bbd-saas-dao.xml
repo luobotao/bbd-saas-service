@@ -42,6 +42,10 @@
     <bean id="tradeDao" class="com.bbd.saas.dao.mongo.TradeDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- tradePush DAO-->
+    <bean id="tradePushDao" class="com.bbd.saas.dao.mongo.TradePushDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
     <!-- constant DAO-->
     <bean id="constantDao" class="com.bbd.saas.dao.mongo.ConstantDao">
         <constructor-arg ref="datastore"/>
@@ -97,6 +101,10 @@
     </bean>
     <bean id="incomeDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.IncomeDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+    <bean id="pushDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.PushDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
     <bean id="expressStatStationDao" class="org.mybatis.spring.mapper.MapperFactoryBean">

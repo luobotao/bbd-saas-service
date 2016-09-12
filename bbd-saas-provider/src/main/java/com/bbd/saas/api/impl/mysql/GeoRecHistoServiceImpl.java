@@ -23,7 +23,6 @@ public class GeoRecHistoServiceImpl implements GeoRecHistoService {
         return geoRecHistoDao;
     }
 
-
     public void setGeoRecHistoDao(GeoRecHistoDao geoRecHistoDao) {
         this.geoRecHistoDao = geoRecHistoDao;
     }

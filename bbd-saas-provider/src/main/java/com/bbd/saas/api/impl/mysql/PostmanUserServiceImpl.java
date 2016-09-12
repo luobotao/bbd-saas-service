@@ -176,8 +176,8 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		map.put("areaCode", areaCode);
 		map.put("phone", phone);
 		//取得返回的结果集
-		List<Map<String, Object>> results  = postmanUserDao.getIntegral(map);
 		logger.info("[站点积分] 站点区域码："+areaCode+"，站长手机号："+phone);
+		List<Map<String, Object>> results  = postmanUserDao.getIntegral(map);
 		Map<String, Object> result = new HashMap<>();
 		if(results!=null&&results.size()>0) {
 			//第一条结果集 总数量

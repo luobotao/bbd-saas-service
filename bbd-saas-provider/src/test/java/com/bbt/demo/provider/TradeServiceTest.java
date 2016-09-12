@@ -7,13 +7,11 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderSnap;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.Goods;
-import com.bbd.saas.vo.Reciever;
-import com.bbd.saas.vo.Sender;
-import com.bbd.saas.vo.TradeQueryVO;
+import com.bbd.saas.vo.*;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -28,6 +26,8 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
 public class TradeServiceTest {
+	public static final org.slf4j.Logger logger = LoggerFactory.getLogger(TradeServiceTest.class);
+
 	@Autowired
 	private TradeService tradeService;
 	@Autowired
@@ -74,11 +74,17 @@ public class TradeServiceTest {
 		}
 		trade.setDateAdd(new Date());
 		trade.setDateUpd(new Date());
-		trade.setOrderSnaps(getOrderSnapList(format, trade.getTradeNo()));
+		List<OrderSnap> orderSnapList = getOrderSnapList(format, trade.getTradeNo());
+		trade.setOrderSnaps(orderSnapList);
+		trade.setSender(getSender());
+		trade.setOrdercnt(orderSnapList.size());
+		if(status == TradeStatus.GETED){
+			trade.setPostmanId(9318);
+		}
 		return trade;
 	}
 
-	private List<OrderSnap > getOrderSnapList(SimpleDateFormat format, String tradeNo){
+	private List<OrderSnap> getOrderSnapList(SimpleDateFormat format, String tradeNo){
 		List<OrderSnap > orderSnapList = new ArrayList<OrderSnap>();
 		//商品
 		String[] pro = new String[]{"红富士","花生","红薯","桃子","梨"};
@@ -93,7 +99,7 @@ public class TradeServiceTest {
 		//收件人详细地址
 		String[] address = new String[]{"双井","胜利东街","五路居","北京站","汽车客运站"};
 		int rand = 0;
-		for(int i = 0; i<1; i++){
+		for(int i = 0; i<8; i++){
 			OrderSnap orderSnap = new OrderSnap();
 			orderSnap.setMailNum("BBD" + tradeNo + i);
 			orderSnap.setOrderNo("O" + format.format(new Date()) + i);
@@ -133,14 +139,7 @@ public class TradeServiceTest {
 		order.setuId(new ObjectId("573c5f421e06c8275c08183c"));
 		order.setOrderNo(orderSnap.getOrderNo());
 		order.setMailNum(orderSnap.getMailNum());
-		Sender sender = new Sender();
-		sender.setName("安迪");
-		sender.setPhone("13255555555");
-		sender.setProvince("北京");
-		sender.setCity("北京市");
-		sender.setArea("朝阳区");
-		sender.setAddress("欢乐颂小区");
-		order.setSender(sender);
+		order.setSender(getSender());
 		order.setReciever(orderSnap.getReciever());
 		order.setSrc(orderSnap.getSrc());
 		order.setGoods(orderSnap.getGoods());
@@ -150,6 +149,18 @@ public class TradeServiceTest {
 		order.setDateAdd(orderSnap.getDateAdd());
 		order.setDateUpd(orderSnap.getDateUpd());
 		orderService.save(order);
+	}
+	private Sender getSender(){
+		Sender sender = new Sender();
+		sender.setName("安迪");
+		sender.setPhone("13255555555");
+		sender.setProvince("北京");
+		sender.setCity("北京市");
+		sender.setArea("朝阳区");
+		sender.setAddress("欢乐颂小区");
+		sender.setLat("39.26358");
+		sender.setLon("116.8954");
+		return sender;
 	}
 
 	@Test
@@ -166,5 +177,28 @@ public class TradeServiceTest {
 		PageModel<Trade> tradePage = tradeService.findTradePage(0, tradeQueryVO);
 		Assert.isTrue(true);//无用
 	}
+
+
+	@Test
+	public void testElemMatch() throws Exception{
+		//设置查询条件
+		OrderQueryVO tradeQueryVO = new OrderQueryVO();
+		/*tradeQueryVO.uId = uId;
+		tradeQueryVO.tradeStatus = -1;
+		tradeQueryVO.noLike = null;
+		tradeQueryVO.rcvKeyword = "奎文";
+		tradeQueryVO.dateAddStart = "2016-06-21";
+		tradeQueryVO.dateAddEnd = "2016-06-21";
+		//若此方法超时，则把设置快件数量、揽件员、订单状态提到controller中
+		PageModel<Order> tradePage = orderService.findOrders();*/
+		List<Trade> tradeList = tradeService.findByOrderSnapNo("O201606301735490", "BBDT2016063017354900");
+		if(tradeList != null){
+			for (Trade trade : tradeList){
+				System.out.println(trade.toString());
+			}
+		}
+		Assert.isTrue(true);//无用
+	}
+
 
 }

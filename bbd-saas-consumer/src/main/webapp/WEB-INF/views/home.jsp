@@ -43,7 +43,6 @@
 	<script src="<c:url value="/resources/javascripts/respond.js" />"> </script>
 </head>
 <body>
-
 <!-- S alert -->
 <div class="j-alert-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="margin-left: -110px">
 	<div class="modal-dialog b-modal-dialog middleS" role="document">
@@ -120,6 +119,14 @@ User user = (User)request.getAttribute("user");
 							<div class="b-status-card">
 								<span><img src="<c:url value="/resources/images/error.png" />" alt="异常件处理" /></span>
 								<h3>异常件处理</h3>
+							</div>
+						</a>
+					</li>
+					<li class="b-status col-xs-12 col-sm-6 col-md-4 col-lg-4">
+						<a href="<c:url value="/?typ=tostore" />">
+							<div class="b-status-card">
+								<span><img src="<c:url value="/resources/images/storage.png" />" alt="揽件入库" /></span>
+								<h3>揽件入库</h3>
 							</div>
 						</a>
 					</li>

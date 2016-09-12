@@ -18,6 +18,7 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.vo.Reciever;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
@@ -50,13 +51,14 @@ public class BbdExpressApiController {
 	@Autowired
 	Geo geo;
 	@Autowired
-	private GeoRecHistoService geoRecHistoService;
-	@Autowired
 	private PostmanUserService userMysqlService;
+	@Autowired
+	private GeoRecHistoService geoRecHistoService;
 	@Autowired
 	private PostmanUserService postmanUserService;
 	@Autowired
 	private PostmanPoiApi postmanPoiApi;
+
 	/**
 	 * description: 推送站点信息接口
 	 * 2016年4月14日下午4:05:01
@@ -145,6 +147,7 @@ public class BbdExpressApiController {
 		return str;
 	}
 
+
 	@RequestMapping(value="/getDistance")
 	@ResponseBody
 	public String getDistance(String city, String start, String ends) throws IOException {
@@ -173,7 +176,6 @@ public class BbdExpressApiController {
 				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
 				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
 
-				String city="北京";
 				MapPoint mapPoint = geo.getGeoInfo(str);//起点地址
 				if (areaCodeList != null && areaCodeList.size() > 0) {
 					//通过积分获取优选区域码
@@ -186,7 +188,6 @@ public class BbdExpressApiController {
 							long length = geo.getDistance(city, mapPoint, mapPointList, false);*/
 							//获取当前位置到站点的距离，
 							double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
-
 							//获取站点的日均积分
 							Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
 							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
@@ -343,6 +344,62 @@ public class BbdExpressApiController {
 		}
 	}
 
+	@RequestMapping(value="/geoMatchSite", method=RequestMethod.GET)
+	public String geoMatchSite(Model model, HttpServletRequest request ) {
+		String keyword = request.getParameter("keyword");	//订单号或包裹号
+		String address = request.getParameter("address");
+		if(StringUtils.isNotBlank(keyword)){
+			//根据订单号查询
+			Order order = orderService.findByOrderNoOrMailNum(keyword);
+			if(order!=null){
+				Reciever reciever = order.getReciever();
+				if(reciever!=null) {
+					address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
+				}
+			}
+		}
+		List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
+		MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
+		model.addAttribute("keyword",keyword);//当前查询的地址
+		model.addAttribute("address",address);//当前查询的地址
+		model.addAttribute("mapPoint",mapPoint);//当前查询的地址坐标
+		List<Site> siteList = Lists.newArrayList();
+		if (areaCodeList != null && areaCodeList.size() > 0) {
+			//通过积分获取优选区域码
+			for (String siteId: areaCodeList) {
+				Site site = siteService.findSite(siteId);
+				if(site!=null) {
+					//获取当前位置到站点的距离，
+					double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
+					//获取站点的日均积分
+					Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
+					//int integral = userMysqlService.getIntegral("101010-016","17710174098");
+					logger.info("积分："+result.toString());
+					int integral = 0;
+					if(result.containsKey("totalscore")) {
+						 integral = (int) result.get("totalscore");
+					}
+					int integralVal = 0;
+					//根据地址到站点的距离计算积分
+					if (length < 3000) {
+						integralVal = integral + 5;
+					} else if (length < 5000) {
+						integralVal = integral + 3;
+					} else {
+						integralVal = integral + 2;
+					}
+					//保存站点和积分，按照积分进行排序
+					StringBuffer sb = new StringBuffer();
+					sb.append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(result.get("timscore")).append("\t").append(result.get("perscore")).append("\t").append(result.get("deliveryscore")).append("\t").append(result.get("userscore")).append("\t").append(integral).append("\t").append(integralVal).append("\n");
+					site.setIntegralInfo(sb.toString());
+				}
+				siteList.add(site);
+			}
+		}
+		model.addAttribute("siteList",siteList);//当前查询的地址坐标
+		return "geo/geoMatchSite";
+	}
+
 	@RequestMapping(value="/postmanEfence", method=RequestMethod.GET)
 	public String postmanEfence(Model model, HttpServletRequest request ) {
 		String phone = request.getParameter("phone");
@@ -382,43 +439,6 @@ public class BbdExpressApiController {
 		return sb.toString();
 	}
 
-
-
-	@RequestMapping(value="/geoMatchSite", method=RequestMethod.GET)
-	public String geoMatchSite(Model model, HttpServletRequest request ) {
-		String keyword = request.getParameter("keyword");	//订单号或包裹号
-		String address = request.getParameter("address");
-		if(StringUtils.isNotBlank(keyword)){
-			//根据订单号查询
-			Order order = orderService.findByOrderNoOrMailNum(keyword);
-			if(order!=null){
-				Reciever reciever = order.getReciever();
-				if(reciever!=null) {
-					address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
-				}
-			}
-		}
-		//address = "北京北京市西城区中国北京北京市西城区复兴门内大街2号民生银行";
-		if(StringUtils.isNotBlank(address)){
-			Result result = sitePoiApi.searchSiteByAddressDirect(address);
-			MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
-
-			Map<String, Object> data = (Map<String, Object>)result.data;
-			Map<String, String> efenceMap = new HashMap<String, String>();
-			if(data != null && data.get("efences") != null){
-				Map<String ,List<List<MapPoint>>> efMap = (Map<String ,List<List<MapPoint>>>)data.get("efences");
-				for (Map.Entry<String ,List<List<MapPoint>>> entry : efMap.entrySet()) {
-					efenceMap.put(entry.getKey(), dealPostmanUserPoints(entry.getValue()));
-				}
-				data.remove("efences");
-				model.addAttribute("efenceMap", efenceMap);//当前查询的地址坐标
-			}
-			model.addAttribute("data",data);//当前查询的地址坐标
-		}
-		model.addAttribute("keyword",keyword);//当前查询的地址
-		model.addAttribute("address",address);//当前查询的地址
-		return "geo/geoMatchSite";
-	}
 	@ResponseBody
 	@RequestMapping(value="/fixAddress", method=RequestMethod.POST)
 	public Result fixAddress(String address, String source, String lng, String lat) {

@@ -30,7 +30,7 @@
         <result column="src" property="src" jdbcType="VARCHAR"/>
         <result column="areaCode" property="areaCode" jdbcType="VARCHAR"/>
     </resultMap>
-    
+
     <sql id="baseColumnList">
     	id,
     	staffid,
@@ -60,7 +60,7 @@
         src,
         areaCode
     </sql>
-    
+
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.PostmanUser">
         INSERT INTO `postmanuser`(
         <include refid="baseColumnList"/>
@@ -87,7 +87,7 @@
         #{sta,jdbcType=VARCHAR},
         #{spreadticket,jdbcType=VARCHAR},
         #{poststatus,jdbcType=INTEGER},
-        #{postrole,jdbcType=INTEGER},  
+        #{postrole,jdbcType=INTEGER},
         #{dateNew,jdbcType=TIMESTAMP},
         #{dateUpd,jdbcType=TIMESTAMP},
         #{siteid,jdbcType=VARCHAR},
@@ -95,8 +95,8 @@
         #{areaCode,jdbcType=VARCHAR}
         )
     </insert>
-    
-	<select id="selectPostmanUserByPhone" resultMap="baseResultMap">
+
+    <select id="selectPostmanUserByPhone" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postmanuser` where phone = #{phone}
@@ -104,111 +104,112 @@
             and id != #{id}
         </if>
     </select>
-    
+
     <update id="updateByPhone" parameterType="com.bbd.saas.models.PostmanUser">
         UPDATE `postmanuser`
-        	<set>
-	        	<if test="staffid != null">
-	        	staffid = #{staffid,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="nickname != null">
-	        	nickname = #{nickname,jdbcType=VARCHAR},
-	        	</if>
-                <if test="phone != null">
-                    phone = #{staffid,jdbcType=VARCHAR},
-                </if>
-	        	<if test="headicon != null">
-	        	headicon = #{headicon,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="companyname != null">
-	        	companyname = #{companyname,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="cardidno != null">
-	        	cardidno = #{cardidno,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="substation != null">
-	        	substation = #{substation,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="companyid != null">
-	        	companyid = #{companyid,jdbcType=INTEGER},
-	        	</if>
-	        	<if test="alipayAccount != null">
-	        	alipay_account = #{alipayAccount,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="token != null">
-	        	token = #{token,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="bbttoken != null">
-	        	bbttoken = #{bbttoken,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="lat != null">
-	        	lat = #{lat,jdbcType=DOUBLE},
-	        	</if>
-	        	<if test="lon != null">
-	        	lon = #{lon,jdbcType=DOUBLE},
-	        	</if>
-	        	<if test="height != null">
-	        	height = #{height,jdbcType=DOUBLE},
-	        	</if>
-	        	<if test="addr != null">
-	        	addr = #{addr,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="addrdes != null">
-	        	addrdes = #{addrdes,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="shopurl != null">
-	        	shopurl = #{shopurl,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="sta != null">
-	        	sta = #{sta,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="spreadticket != null">
-	        	spreadticket= #{spreadticket,jdbcType=VARCHAR},
-	        	</if>
-	        	<if test="poststatus != null">
-	        	poststatus = #{poststatus,jdbcType=INTEGER},
-	        	</if>
-	        	<if test="postrole != null">
-	        	postrole = #{postrole,jdbcType=INTEGER},  
-	        	</if>
-	        	<if test="dateNew != null">
-	        	date_new = #{dateNew,jdbcType=TIMESTAMP},
-	        	</if>
-	        	<if test="dateUpd != null">
-	        	date_upd = #{dateUpd,jdbcType=TIMESTAMP},
-	        	</if>
-	        	<if test="siteid != null">
-                    siteid = #{siteid,jdbcType=VARCHAR},
-	        	</if>
-                <if test="areaCode != null">
-                    areaCode = #{areaCode,jdbcType=VARCHAR}
-                </if>
-        	</set>
-        	WHERE phone = #{phone,jdbcType=INTEGER}
+        <set>
+            <if test="staffid != null">
+                staffid = #{staffid,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{staffid,jdbcType=VARCHAR},
+            </if>
+            <if test="headicon != null">
+                headicon = #{headicon,jdbcType=VARCHAR},
+            </if>
+            <if test="companyname != null">
+                companyname = #{companyname,jdbcType=VARCHAR},
+            </if>
+            <if test="cardidno != null">
+                cardidno = #{cardidno,jdbcType=VARCHAR},
+            </if>
+            <if test="substation != null">
+                substation = #{substation,jdbcType=VARCHAR},
+            </if>
+            <if test="companyid != null">
+                companyid = #{companyid,jdbcType=INTEGER},
+            </if>
+            <if test="alipayAccount != null">
+                alipay_account = #{alipayAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="token != null">
+                token = #{token,jdbcType=VARCHAR},
+            </if>
+            <if test="bbttoken != null">
+                bbttoken = #{bbttoken,jdbcType=VARCHAR},
+            </if>
+            <if test="lat != null">
+                lat = #{lat,jdbcType=DOUBLE},
+            </if>
+            <if test="lon != null">
+                lon = #{lon,jdbcType=DOUBLE},
+            </if>
+            <if test="height != null">
+                height = #{height,jdbcType=DOUBLE},
+            </if>
+            <if test="addr != null">
+                addr = #{addr,jdbcType=VARCHAR},
+            </if>
+            <if test="addrdes != null">
+                addrdes = #{addrdes,jdbcType=VARCHAR},
+            </if>
+            <if test="shopurl != null">
+                shopurl = #{shopurl,jdbcType=VARCHAR},
+            </if>
+            <if test="sta != null">
+                sta = #{sta,jdbcType=VARCHAR},
+            </if>
+            <if test="spreadticket != null">
+                spreadticket= #{spreadticket,jdbcType=VARCHAR},
+            </if>
+            <if test="poststatus != null">
+                poststatus = #{poststatus,jdbcType=INTEGER},
+            </if>
+            <if test="postrole != null">
+                postrole = #{postrole,jdbcType=INTEGER},
+            </if>
+            <if test="dateNew != null">
+                date_new = #{dateNew,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dateUpd != null">
+                date_upd = #{dateUpd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="siteid != null">
+                siteid = #{siteid,jdbcType=VARCHAR},
+            </if>
+            <if test="areaCode != null">
+                areaCode = #{areaCode,jdbcType=VARCHAR}
+            </if>
+        </set>
+        WHERE phone = #{phone,jdbcType=INTEGER}
     </update>
-    
+
     <delete id="deleteById">
         delete from postmanuser where id = #{id,jdbcType=INTEGER}
     </delete>
-    
-    <update id="updateById" >
+
+    <update id="updateById">
         update postmanuser set sta = #{sta,jdbcType=INTEGER}  where id = #{id,jdbcType=INTEGER}
     </update>
-    
-    <update id="updatePostmanUserById" >
+
+    <update id="updatePostmanUserById">
         update postmanuser set nickname = #{nickname,jdbcType=VARCHAR}  
         where id = #{id,jdbcType=INTEGER}
     </update>
-    
+
     <select id="selectAll" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postmanuser`
     </select>
-    
+
     <select id="selectIdByPhone" resultType="int">
         SELECT id
-        FROM `postmanuser` where <![CDATA[ phone = #{phone,jdbcType=VARCHAR}]]>
+        FROM `postmanuser` where <![CDATA[ phone = #{phone,jdbcType=VARCHAR}
+        ]]>
     </select>
     <select id="selectLatAndLngByCompanyId" resultType="java.util.HashMap">
         SELECT id, phone, nickname, lat, lon
@@ -216,7 +217,7 @@
     </select>
     <select id="selectLatAndLngByIds" resultType="java.util.HashMap">
         SELECT nickname, lat, lon
-        FROM `postmanuser`  WHERE id in
+        FROM `postmanuser` WHERE id in
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -236,7 +237,7 @@
     </select>
 
 
-    <resultMap type="java.util.HashMap" id="statResultMap" >
+    <resultMap type="java.util.HashMap" id="statResultMap">
         <result column="userscore" property="userscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result column="timescore" property="timescore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
         <result column="deliveryscore" property="deliveryscore" javaType="java.lang.Integer" jdbcType="INTEGER"/>
@@ -248,14 +249,26 @@
         {call sp_postman_station_score(#{areaCode,mode=IN,jdbcType=VARCHAR},#{phone,mode=IN,jdbcType=VARCHAR})}
     </select>
 
-    <update id="updateRoleByPhone" >
+    <select id="findPostmanUsers" parameterType="String" resultMap="baseResultMap">
+        ${value}
+    </select>
+    <update id="updateRoleByPhone">
         update postmanuser set postrole = #{postrole}  where  phone = #{phone}
     </update>
     <delete id="deleteByPhoneAndId">
         delete from postmanuser where phone = #{phone} and id != #{id}
     </delete>
 
-    <update id="updateSubstationBySiteId" >
+    <update id="updateSubstationBySiteId">
          update postmanuser set substation = #{siteName}  where  siteid = #{siteid}
+    </update>
+
+    <parameterMap type="map" id="pushBbdTradeMap">
+        <parameter property="id" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="typ" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="trade" jdbcType="VARCHAR" mode="IN"/>
+    </parameterMap>
+    <update id="pushBbdTrade" parameterMap="pushBbdTradeMap" statementType="CALLABLE">
+        {call sp_postman_bbdpush_trade(?,?,?)}
     </update>
 </mapper>

@@ -76,6 +76,10 @@
 <div class="b-banner mb120">
 	<div class="container">
 		<div class="clearfix banner-txt">
+			<div class="fl l-txt">
+				<i>扫一扫下载棒棒达快递员App</i>
+				<em><img src="<c:url value="/resources/images/banner_code.png" />" /></em>
+			</div>
 			<div class="fr">
 				<div class="login-area">
 					<div class="l-bg"></div>
@@ -347,16 +351,15 @@
 				url: linkUrl,
 				type: 'GET',
 				cache: false,
-				dataType: "text",
 				data: {},
 				success: function(response){
-					if(response=="false"){
-						$("#usernameFlag").val(0);
-						$("#usernameP").html("手机号已存在");
-						$("#usernameP").attr("style","color:red");
-					}else{
+					if(response.success){
 						$("#usernameFlag").val(1);
 						$("#usernameP").attr("style","display:none");
+					}else{
+						$("#usernameFlag").val(0);
+						$("#usernameP").html(response.success);
+						$("#usernameP").attr("style","color:red");
 					}
 				},
 				error: function(){

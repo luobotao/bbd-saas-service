@@ -48,6 +48,7 @@
 	<dubbo:service interface="com.bbd.saas.api.mysql.OrderLogService" ref="orderLogService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.SmsInfoService" ref="smsInfoService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.IncomeService" ref="incomeService" />
+    <dubbo:service interface="com.bbd.saas.api.mysql.PushService" ref="pushService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.ExpressStatStationService" ref="expressStatStationService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.SiteMySqlService" ref="siteMySqlService" />
 
@@ -56,6 +57,5 @@
 
     <dubbo:service interface="com.bbd.saas.api.mysql.BalanceService" ref="balanceService" />
     <dubbo:service interface="com.bbd.saas.api.mysql.GeoRecHistoService" ref="geoRecHistoService" />
-
 
 </beans>

@@ -53,11 +53,12 @@ public class OrderParcelServiceImpl implements OrderParcelService {
 	/**
 	 * 根据订单ID获取此订单所处的包裹信息
 	 * @param orderId
+	 * @param parceltyp 包裹类型 0：配件包裹（默认） 1：集包
 	 * @return
      */
 	@Override
-	public OrderParcel findOrderParcelByOrderId(String orderId) {
-		return orderParcelDao.findOrderParcelByOrderId(orderId);
+	public OrderParcel findOrderParcelByOrderIdAndParcelType(String orderId,String parceltyp) {
+		return orderParcelDao.findOrderParcelByOrderIdAndParcelType(orderId,parceltyp);
 	}
 
 	/**

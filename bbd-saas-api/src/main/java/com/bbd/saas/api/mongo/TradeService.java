@@ -89,4 +89,25 @@ public interface TradeService {
     public long findCountByUidAndStatus(ObjectId uId, TradeStatus tradeStatus);
 
     public String reduceTradeNo();
+
+    List<Trade> findTradeListByPushJob();
+
+    public List<Trade> findTradesByEmbraceId(ObjectId embraceId,String type);
+
+    void doJobWithAllPushTrade();
+
+    /**
+     * 分拔站点根据城市与状态
+     * @param city
+     * @param type
+     * @return
+     */
+    List<Trade> findTradesBySenderCity(String city, String type);
+    /**
+     * 根据运单号和订单号查询
+     * @param orderNo 订单号
+     * @param mailNum 运单号
+     * @return 订单集合
+     */
+    public List<Trade> findByOrderSnapNo(String orderNo, String mailNum);
 }

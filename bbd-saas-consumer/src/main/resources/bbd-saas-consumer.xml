@@ -54,6 +54,7 @@
     <dubbo:reference id="smsInfoService" interface="com.bbd.saas.api.mysql.SmsInfoService"/>
     <dubbo:reference id="orderLogService" interface="com.bbd.saas.api.mysql.OrderLogService"/>
     <dubbo:reference id="incomeService" interface="com.bbd.saas.api.mysql.IncomeService"/>
+    <dubbo:reference id="pushService" interface="com.bbd.saas.api.mysql.PushService"/>
     <dubbo:reference id="expressStatStationService" interface="com.bbd.saas.api.mysql.ExpressStatStationService"/>
     <dubbo:reference id="siteMySqlService" interface="com.bbd.saas.api.mysql.SiteMySqlService"/>
 

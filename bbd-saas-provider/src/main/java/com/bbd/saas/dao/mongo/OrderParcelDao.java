@@ -71,10 +71,11 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
     /**
      * 根据订单ID获取此订单所处的包裹信息
      * @param orderId
+     * @param parceltyp 包裹类型 0：配件包裹（默认） 1：集包
      * @return
      */
-    public OrderParcel findOrderParcelByOrderId(String orderId) {
-        return findOne(createQuery().filter("orderList._id",new ObjectId(orderId)));
+    public OrderParcel findOrderParcelByOrderIdAndParcelType(String orderId,String parceltyp) {
+        return findOne(createQuery().filter("orderList._id",new ObjectId(orderId)).filter("parceltyp",parceltyp));
     }
     /**
      * 根据订单的运单号查询该运单号所处的包裹

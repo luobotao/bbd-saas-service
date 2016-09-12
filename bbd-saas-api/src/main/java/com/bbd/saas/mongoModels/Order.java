@@ -318,6 +318,7 @@ public class Order implements Serializable {
     public String getSrcMessage() {
         return src != null ? src.getMessage() : "";
     }
+
     public UserVO getUserVO() {
         return userVO;
     }
@@ -407,26 +408,26 @@ public class Order implements Serializable {
     }
 
     public String getExpressStatusMsg() {
-        if(this.orderStatus != null && this.orderStatus != OrderStatus.NOTARR){//快件状态从orderStatus中取得
-            if(this.orderStatus == OrderStatus.NOTDISPATCH){
+        if (this.orderStatus != null && this.orderStatus != OrderStatus.NOTARR) {//快件状态从orderStatus中取得
+            if (this.orderStatus == OrderStatus.NOTDISPATCH) {
                 this.expressStatusMsg = "已到达配送点";
-            }else if(this.orderStatus == OrderStatus.DISPATCHED){
+            } else if (this.orderStatus == OrderStatus.DISPATCHED) {
                 this.expressStatusMsg = "正在配送";
-            }else{
+            } else {
                 this.expressStatusMsg = this.orderStatus != null ? this.orderStatus.getMessage() : "";
             }
-        }else{//快件状态从orderSetStatus中取得
-            if(this.orderSetStatus == OrderSetStatus.WAITTOIN){
+        } else {//快件状态从orderSetStatus中取得
+            if (this.orderSetStatus == OrderSetStatus.WAITTOIN) {
                 this.expressStatusMsg = this.orderSetStatus.getMessage();
-            }else if(this.orderSetStatus == OrderSetStatus.WAITSET){
+            } else if (this.orderSetStatus == OrderSetStatus.WAITSET) {
                 this.expressStatusMsg = "已入库";
-            }else if(this.orderSetStatus == OrderSetStatus.WAITDRIVERGETED || this.orderSetStatus == OrderSetStatus.DRIVERGETED){
+            } else if (this.orderSetStatus == OrderSetStatus.WAITDRIVERGETED || this.orderSetStatus == OrderSetStatus.DRIVERGETED) {
                 this.expressStatusMsg = "前往分拨中心";
-            }else if(this.orderSetStatus == OrderSetStatus.ARRIVEDISPATCH || this.orderSetStatus == OrderSetStatus.WAITDRIVERTOSEND){
+            } else if (this.orderSetStatus == OrderSetStatus.ARRIVEDISPATCH || this.orderSetStatus == OrderSetStatus.WAITDRIVERTOSEND) {
                 this.expressStatusMsg = "已到达分拨中心";
-            }else if(this.orderSetStatus == OrderSetStatus.DRIVERSENDING){
+            } else if (this.orderSetStatus == OrderSetStatus.DRIVERSENDING) {
                 this.expressStatusMsg = "前往配送点";
-            }else{
+            } else {
                 this.expressStatusMsg = this.orderSetStatus != null ? this.orderSetStatus.getMessage() : "";
             }
         }
@@ -437,9 +438,9 @@ public class Order implements Serializable {
         this.expressStatusMsg = expressStatusMsg;
     }
 
-    public static String getExpressList(List<Express> expressList) throws JsonProcessingException{
+    public static String getExpressList(List<Express> expressList) throws JsonProcessingException {
 
-        if(expressList == null){
+        if (expressList == null) {
             return "";
         }
         ObjectMapper mapper = new ObjectMapper();
@@ -543,6 +544,7 @@ public class Order implements Serializable {
         orderVo.setSiteTimes(siteTimes);//揽件时间的集合
         return orderVo;
     }
+
     public String toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);//      return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE).append("xml", xml).toString();
     }

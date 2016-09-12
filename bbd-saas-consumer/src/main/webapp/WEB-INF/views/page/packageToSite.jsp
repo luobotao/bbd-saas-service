@@ -3,9 +3,10 @@
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.ArriveStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
-<%@ page import="com.bbd.saas.constants.Constants" %>
+<%@ page import="com.bbd.saas.utils.Constants" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.ExpressStatus" %>
+<%@ page import="com.bbd.saas.enums.OrderSetStatus" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -29,22 +30,19 @@
 					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4" >
 						<dl class="arrive-status  c1" onclick="todayNotArri();" style="cursor: pointer">
 							<dt class="b-order" id="non_arrival_num">${non_arrival_num}</dt>
-							<dd>今日未到站 </dd>
-							<dd>订单数</dd>
+							<dd>今日未到站订单数</dd>
 						</dl>
 					</li>
 					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4" >
 						<dl class="arrive-status c2" onclick="historyNotArri();" style="cursor: pointer">
 							<dt class="b-order" id="history_non_arrival_num">${history_non_arrival_num}</dt>
-							<dd>历史未到站 </dd>
-							<dd>订单数</dd>
+							<dd>历史未到站订单数</dd>
 						</dl>
 					</li>
 					<li class="b-board-card col-xs-12 col-sm-6 col-md-4 col-lg-4" >
 						<dl class="arrive-status c3" onclick="todayArri();" style="cursor: pointer">
 							<dt class="b-order"id="arrived_num">${arrived_num}</dt>
-							<dd>今日已到站 </dd>
-							<dd>订单数</dd>
+							<dd>今日已到站订单数</dd>
 						</dl>
 					</li>
 				</ul>
@@ -372,13 +370,18 @@
 							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 							$("#mailNumP").attr("style","color:red");
 						}else{
-							if(response.expressStatus != null && response.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
-								$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
-								$("#toSitePrompt").modal("show");
-								isBatchToSite = false;//单个运单执行到站
+							if(response.orderSetStatus!=null && (response.orderSetStatus != "<%=OrderSetStatus.DRIVERSENDING%>" && response.orderSetStatus != "<%=OrderSetStatus.ARRIVED%>")){
+								$("#mailNumP").html("请进行揽件入库操作");
+								$("#mailNumP").attr("style","color:red");
 							}else{
-								isBatchToSite = false;//单个运单执行到站
-								doToSite();
+								if(response.expressStatus != null && response.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
+									$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
+									$("#toSitePrompt").modal("show");
+									isBatchToSite = false;//单个运单执行到站
+								}else{
+									isBatchToSite = false;//单个运单执行到站
+									doToSite();
+								}
 							}
 						}
 					}else{
@@ -435,11 +438,15 @@
 				url: '<%=request.getContextPath()%>/packageToSite/checkOrderParcelByParcelCode?parcelCode='+parcelCode,
 				type: 'GET',
 				cache: false,
-				dataType: "text",
+				dataType: "json",
 				data: {},
 				success: function(response){
-					if(response=="false"){
+
+					if(response==null){
 						$("#parcelCodeP").html("【异常扫描】包裹号不存在") ;
+						$("#parcelCodeP").attr("style","color:red");
+					}else if(response.parceltyp=="1"){
+						$("#parcelCodeP").html("【异常扫描】请进行揽件入库操作") ;
 						$("#parcelCodeP").attr("style","color:red");
 					}else{
 						$("#parcelCodeP").html("扫描成功，请扫描运单号");
@@ -448,7 +455,7 @@
 					}
 				},
 				error: function(){
-					$("#parcelCodeP").html("【异常扫描】不存在此包裹号");
+					$("#parcelCodeP").html("【异常扫描】包裹号不存在");
 					$("#parcelCodeP").attr("style","color:red");
 				}
 			});

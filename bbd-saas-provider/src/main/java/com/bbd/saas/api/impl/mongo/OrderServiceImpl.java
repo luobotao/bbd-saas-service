@@ -4,19 +4,14 @@ package com.bbd.saas.api.impl.mongo;
 import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
-import com.bbd.saas.api.mongo.OrderService;
-import com.bbd.saas.api.mongo.SiteService;
-import com.bbd.saas.api.mongo.WayService;
+import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.api.mysql.SiteMySqlService;
 import com.bbd.saas.dao.mongo.OrderDao;
 import com.bbd.saas.dao.mongo.OrderNumDao;
 import com.bbd.saas.dao.mongo.OrderParcelDao;
 import com.bbd.saas.dao.mongo.UserDao;
-import com.bbd.saas.enums.ExpressStatus;
-import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.ParcelStatus;
-import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.enums.*;
 import com.bbd.saas.models.SiteMySql;
 import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.GeoUtil;
@@ -46,20 +41,23 @@ public class OrderServiceImpl implements OrderService {
     private OrderNumDao orderNumDao;
     private OrderParcelDao orderParcelDao;
     private UserDao userDao;
+
     @Autowired
-    private SitePoiApi sitePoiApi;
+    private SiteMySqlService siteMysqlService;
+    @Autowired
+    private WayService wayService;
+	@Autowired
+	private SitePoiApi sitePoiApi;
     @Autowired
     Geo geo;
     @Autowired
-    private SiteMySqlService siteMysqlService;
-
-    @Autowired
     private PostmanUserService userMysqlService;
-
     @Autowired
     private SiteService siteService;
     @Autowired
-    private WayService wayService;
+    private TradeService tradeService;
+    @Autowired
+    private UserService userService;
 
 
     public UserDao getUserDao() {
@@ -102,14 +100,28 @@ public class OrderServiceImpl implements OrderService {
         this.siteService = siteService;
     }
 
-    @Override
-    public Order findOneById(String id) {
-        return orderDao.findOne("_id", new ObjectId(id));
+    public SitePoiApi getSitePoiApi() {
+        return sitePoiApi;
     }
 
-    @Override
-    public Order findOneByObjectId(ObjectId id) {
-        return orderDao.findOne("_id", id);
+    public void setSitePoiApi(SitePoiApi sitePoiApi) {
+        this.sitePoiApi = sitePoiApi;
+    }
+
+    public TradeService getTradeService() {
+        return tradeService;
+    }
+
+    public void setTradeService(TradeService tradeService) {
+        this.tradeService = tradeService;
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     /**
@@ -146,6 +158,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Override
+    public Order findOne(String id) {
+        return orderDao.get(new ObjectId(id));
+    }
+
+    @Override
+    public Order findOneById(String id) {
+        return orderDao.findOne("_id", new ObjectId(id));
+    }
+
+    @Override
+    public Order findOneByObjectId(ObjectId id) {
+        return orderDao.findOne("_id", id);
+    }
     /**
      * Description: 根据运单号查询订单信息
      *
@@ -159,16 +185,6 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.findOneByMailNum(areaCode, mailNum);
     }
 
-    /**
-     * 揽件入库
-     * 根据运单号查询
-     *
-     * @param mailNum
-     * @return
-     */
-    public Order findOneByMailNum(String mailNum) {
-        return orderDao.findOneByMailNum(mailNum);
-    }
 
     /**
      * 根据其他快递的运单号查询订单
@@ -215,14 +231,39 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getOrderNumVO(areaCode);
     }
 
-    /**
-     * 更新订单状态
-     * 此处需要再加上包裹下的订单的状态更新
-     *
-     * @param mailNum        运单号
-     * @param orderStatusOld 可为null,若为null则不检验旧状态否则须旧状态满足才可更新
-     * @param orderStatusNew
-     */
+
+	@Override
+	public List<String> reduceMailNum(String quantity) {
+		OrderNum one = orderNumDao.findOrderNum();
+		long startNum = Long.parseLong(one.num);
+		long quantityLon = Long.parseLong(quantity);
+		one.num = (startNum + quantityLon) + "";
+		orderNumDao.updateOrderNum("num",one.num);
+		List<String> mailNumList = Lists.newArrayList();
+		for (long i = 0; i < quantityLon; i++){
+			startNum = startNum+1;
+			mailNumList.add(String.valueOf(startNum));
+		}
+		return mailNumList;
+	}
+
+	@Override
+	public Site getSiteWithAddress(String address) {
+		try {
+			List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
+			logger.info("[address]:" + address + " [search poi result] :" + areaCodeList.size() + "");
+			if (areaCodeList != null && areaCodeList.size() > 0) {
+				//通过积分获取优选区域码，暂时用第一个
+				String siteId = findBestSiteWithAddress(address);
+				Site site = siteService.findSite(siteId);
+				return site;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
     @Override
     public void updateOrderOrderStatu(String mailNum, OrderStatus orderStatusOld, OrderStatus orderStatusNew) {
         orderDao.updateOrderOrderStatu(mailNum, orderStatusOld, orderStatusNew);//修改订单表里的状态
@@ -284,22 +325,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, ObjectId uId, String keyword) {
-        PageModel<Order> pageModel = new PageModel<Order>();
-        pageModel.setPageNo(pageIndex);
-        pageModel.setPageSize(20);
+    public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, ObjectId uId, String keyword) {
         return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
     }
 
     @Override
-    public long findCountByTradeNo(String tradeNo) {
-        return orderDao.findCountByTradeNo(tradeNo);
+    public long findCountByTradeNo(String tradeNo, Integer removeStatus) {
+        return orderDao.findCountByTradeNo(tradeNo, removeStatus);
     }
 
     @Override
     public Order afterImportDealWithOrder(Order order) {
-        order = reduceAreaCodeWithOrder(order);
-        order = reduceMailNumWithOrder(order);
+        try {
+            order = reduceAreaCodeWithOrder(order);
+            order = reduceMailNumWithOrder(order);
+        }catch(Exception e){
+            e.printStackTrace();
+            logger.info("[afterImportDealWithOrder exception] orderNo :"+order.getOrderNo());
+        }
         return order;
     }
 
@@ -416,6 +459,7 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findAllByTradeNo(String tradeNo) {
         return orderDao.findAllByTradeNo(tradeNo);
     }
+
 
     private Order updateOrderWithAreaCode(Order order) {
         orderDao.updateOrderWithAreaCode(order.getOrderNo(), order.getAreaCode(), order.getAreaRemark(), order.getPrintStatus());//修改订单表里的状态
@@ -612,58 +656,6 @@ public class OrderServiceImpl implements OrderService {
             e.printStackTrace();
         }
         return resultAreaCode;
-
-        //改动 测试V2
-//		Result<Map<String,List<String>>> areaCodeList = sitePoiApi.searchSiteByAddressV2("",address);
-//		logger.info("[findBestSiteWithAddress]request address:"+address+", response siteId List size:"+ areaCodeList.data.size());
-//		String resultAreaCode = "";
-//		if(areaCodeList!=null && areaCodeList.data.size()>0){
-//			if(areaCodeList.data.get("siteIds").size()>0 && areaCodeList.data.get("containerIds").size()>0) {
-//				try {
-//					//通过积分获取优选区域码
-//					MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
-//					Map<String, Integer> map = new TreeMap<String, Integer>();
-//
-//					for (String siteId : areaCodeList.data.get("siteIds")) {
-//						ToScore(siteId,mapPoint,address,map);
-//					}
-//
-//					//通过积分获取优选区域码
-//					Map<String, Integer> map2 = new TreeMap<String, Integer>();
-//					for (String siteId2 : areaCodeList.data.get("containerIds")) {
-//						ToScore(siteId2,mapPoint,address,map2);
-//					}
-////合并2个map
-//					map.putAll(map2);
-//
-//					//这里将map.entrySet()转换成list
-//					List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(map.entrySet());
-//					//然后通过比较器来实现排序
-//					Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-//						//降序排序
-//						public int compare(Map.Entry<String, Integer> o1,
-//										   Map.Entry<String, Integer> o2) {
-//							return o2.getValue().compareTo(o1.getValue());
-//						}
-//					});
-//					resultAreaCode = list.get(0).getKey();
-//				}catch(Exception e){
-//					e.printStackTrace();
-//					logger.info("[findBestSiteWithAddress] address:"+address+" exception");
-//					resultAreaCode = areaCodeList.data.get("siteIds").get(0);
-//				}
-//			}else{
-//				//通过积分获取优选区域码，暂时用第一个
-//				if(areaCodeList.data.get("siteIds").size()>0) {
-//					resultAreaCode = areaCodeList.data.get("siteIds").get(0);
-//				}
-//				if(areaCodeList.data.get("containerIds").size()>0) {
-//					resultAreaCode = areaCodeList.data.get("containerIds").get(0);
-//				}
-//			}
-//		}
-//		logger.info("[findBestSiteWithAddress]request address:"+address+", response siteId:"+resultAreaCode);
-//		return resultAreaCode;
     }
 
     public void ToScore(String siteId, MapPoint mapPoint, String address, Map<String, Integer> map) {
@@ -699,25 +691,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Override
-    public Site getSiteWithAddress(String address) {
-        try {
-            //通过积分获取优选区域码，暂时用第一个
-            String siteId = findBestSiteWithAddress(address);
-            if (!"".equals(siteId)) {
-                Site site = siteService.findSite(siteId);
-                return site;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public List<Order> findByDateAdd(Date dateAdd) {
-        return orderDao.findByDateAdd(dateAdd);
-    }
 
     @Override
     public String findWayNameBySite(Site site) {
@@ -732,10 +705,6 @@ public class OrderServiceImpl implements OrderService {
         return wayName;
     }
 
-    @Override
-    public Order findByOrderNoOrMailNum(String keyword) {
-        return orderDao.findByOrderNoOrMailNum(keyword);
-    }
 
     @Override
     public List<Order> findByAreaCodeAndMailNums(String areaCode, BasicDBList mailNumList) {
@@ -774,5 +743,142 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageModel<Order> findPageByAreaCodeAndExpressStatus(String areaCode, ExpressStatus expressStatus, Integer startNum, Integer pageSize) {
         return this.orderDao.selectPageByAreaCodeAndExpressStatus(areaCode, expressStatus, startNum, pageSize);
+    }
+
+    /**
+     * 揽件入库
+     * 根据相关条件查询出所有揽件入库的订单
+     *
+     * @param pageIndex
+     * @param orderQueryVO
+     * @return
+     */
+    @Override
+    public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex,  OrderQueryVO orderQueryVO) {
+
+        if (orderQueryVO == null) {
+            return null;
+        }
+
+        //根据站点查询出订单的 收货人相关信息
+        PageModel<Order> pageOrders = new PageModel<Order>();
+        pageOrders.setPageNo(pageIndex);
+        pageOrders = orderDao.findPageOrdersForHoldToStore(pageOrders, orderQueryVO);
+        List<Order> datas = pageOrders.getDatas();
+
+        // 封装一个新的入库VorderHoldToStoreList
+        List<OrderHoldToStoreVo> orderHoldToStoreList = new ArrayList<>();
+
+        //组装一个全新的揽件入库orderHoldToStoreList数据，
+        for (Order order : datas) {
+            OrderHoldToStoreVo orderHoldToStoreVo = new OrderHoldToStoreVo();//全新的揽件入库Vo
+            //从order中查询出，address ,mailNum ,name ,phone等收件人相关信息，
+            String address = order.getReciever().getProvince() + "-" + order.getReciever().getCity() + "-" + order.getReciever().getArea() + "-" + order.getReciever().getAddress();
+            String mailNum = order.getMailNum();
+            String name = order.getReciever().getName();
+            String phone = order.getReciever().getPhone();
+
+            //获取Trade对象
+            String tradeNo = order.getTradeNo();
+            OrderSetStatus orderSetStatus = order.getOrderSetStatus();
+            Trade oneByTradeNo = tradeService.findOneByTradeNo(tradeNo);
+            if(oneByTradeNo!=null && oneByTradeNo.getEmbraceId()!=null){
+                //通过Trade对象，获取到揽件员相关信息
+                ObjectId embraceId = oneByTradeNo.getEmbraceId();
+                User user = userService.findOne(embraceId.toString());
+                String realName = user.getRealName();
+                String loginName = user.getLoginName();
+                orderHoldToStoreVo.setUserName(realName);
+                orderHoldToStoreVo.setPhone(loginName);
+            }else{
+                orderHoldToStoreVo.setUserName("");
+                orderHoldToStoreVo.setPhone("");
+            }
+
+
+            //把收件人相关信息，和揽件员相关信息从新封装到orderHoldToStoreVo 中
+            orderHoldToStoreVo.setMailNum(mailNum);
+            orderHoldToStoreVo.setRecieverName(name);
+            orderHoldToStoreVo.setRecieverPhone(phone);
+            orderHoldToStoreVo.setRecieverAddress(address);
+
+            orderHoldToStoreVo.setOrderSetStatus(orderSetStatus);
+            orderHoldToStoreVo.setAreaCode(order.getAreaCode());
+            orderHoldToStoreList.add(orderHoldToStoreVo);
+        }
+        //设置分页操作
+        PageModel<OrderHoldToStoreVo> pageModel = new PageModel<OrderHoldToStoreVo>();
+        pageModel.setPageNo(pageOrders.getPageNo());
+        pageModel.setTotalCount(pageOrders.getTotalCount());
+        pageModel.setDatas(orderHoldToStoreList);
+        return pageModel;
+
+    }
+
+    /**
+     * 揽件入库
+     * 根据站点下的用户列表获取该站点 揽件的订单数量
+     *
+     * @param user 当前用户
+     * @return
+     */
+    public OrderHoldToStoreNumVO getOrderHoldToStoreNum(User user){
+        return orderDao.getOrderHoldToStoreNum(user);
+    }
+
+
+    /**
+     * 揽件入库
+     * 根据运单号查询
+     *
+     * @param mailNum
+     * @return
+     */
+    public Order findOneByMailNum(String mailNum) {
+        return orderDao.findOneByMailNum(mailNum);
+    }
+
+
+    /**
+     * 此商户订单号下的所有已入库的运单
+     * @param tradeNo
+     * @return
+     */
+    @Override
+    public long findArrCountByTradeNo(String tradeNo) {
+        return orderDao.findArrCountByTradeNo(tradeNo);
+    }
+
+    @Override
+    public PageModel<Order> findPageOrdersByExpress(PageModel<Order> pageModel, String remark, String startDate, String endDate) {
+        //设置分页操作
+        /*pageModel.setPageNo(pageOrders.getPageNo());
+        pageModel.setTotalCount(pageOrders.getTotalCount());
+        pageModel.setDatas(orderHoldToStoreList);*/
+        return pageModel;
+    }
+
+
+
+    /**
+     */
+    @Override
+    public List<Order> findByDateAdd(Date dateAdd) {
+        return orderDao.findByDateAdd(dateAdd);
+    }
+
+    @Override
+    public Order findByOrderNoOrMailNum(String keyword) {
+        return  orderDao.findByOrderNoOrMailNum(keyword);
+    }
+
+    @Override
+    public Order findOneByMailNumLike(String mailNum) {
+        return orderDao.findOneByMailNumLike(mailNum);
+    }
+
+    @Override
+    public long getDispatchedNums(String areaCode, String betweenTime) {
+        return 0;
     }
 }

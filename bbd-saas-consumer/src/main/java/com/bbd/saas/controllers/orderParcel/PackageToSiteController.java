@@ -19,8 +19,10 @@ import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.OrderCommon;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang3.StringUtils;
@@ -128,13 +130,9 @@ public class PackageToSiteController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/checkOrderParcelByParcelCode", method=RequestMethod.GET)
-	public boolean checkOrderParcelByParcelCode(HttpServletRequest request,@RequestParam(value = "parcelCode", required = true) String parcelCode) {
+	public OrderParcel checkOrderParcelByParcelCode(HttpServletRequest request,@RequestParam(value = "parcelCode", required = true) String parcelCode) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-		OrderParcel orderParcel =  orderParcelService.findOrderParcelByParcelCode(user.getSite().getAreaCode(),parcelCode);
-		if(orderParcel==null)
-			return false;
-		else
-			return true;
+		return  orderParcelService.findOrderParcelByParcelCode(user.getSite().getAreaCode(),parcelCode);
 	}
 
 	/**
@@ -209,7 +207,6 @@ public class PackageToSiteController {
 			if(order !=null && (order.getOrderStatus() == OrderStatus.NOTARR || order.getOrderStatus() == null)){//只有未到站的才做到站处理
 				orderToSite(order,user);
 			}
-//			orderService.updateOrderOrderStatu(mailNum.toString(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);
 		}
 		return true;
 	}
@@ -221,10 +218,16 @@ public class PackageToSiteController {
 	public void orderToSite(Order order,User user ) {
 		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
 		order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
-		//增加物流信息
-		OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
-		orderService.save(order);
+
         if(order != null){
+			//增加物流信息
+			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
+
+			order.setDateUpd(new Date());
+			order.setDateArrived(new Date());
+			order.setOrderSetStatus(OrderSetStatus.ARRIVED);
+			orderService.save(order);
+			//包裹到站后物流信息推送
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
 				ExpressExchange expressExchange=new ExpressExchange();
 				expressExchange.setOperator(user.getRealName());
@@ -234,7 +237,7 @@ public class PackageToSiteController {
 				expressExchange.setDateAdd(new Date());
 				expressExchangeService.save(expressExchange);
 			}
-			orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+			orderParcleStatusChange(order.getId().toHexString(),"0");//检查是否需要更新包裹状态 包裹类型 0：配件包裹（默认） 1：集包
 		}
 
 	}
@@ -265,7 +268,7 @@ public class PackageToSiteController {
 				//（[0:全部，服务器查询逻辑],1：未完成，2：已签收，3：已滞留，4：已拒绝，5：已退单 8：丢失
 				orderService.save(order);
 				postDeliveryService.updatePostDeliveryStatus(mailNum, "3","订单已被滞留，滞留原因：超出配送范围。","滞留原因：超出配送范围");
-				orderParcleStatusChange(order.getId().toHexString());//检查是否需要更新包裹状态
+				orderParcleStatusChange(order.getId().toHexString(),"0");//检查是否需要更新包裹状态
 				map.put("success", true);
 			}else{
 				map.put("success", false);
@@ -275,6 +278,7 @@ public class PackageToSiteController {
 		}else{
 			map.put("success", false);
 			map.put("msg", "运单不存在或者不属于本站点");
+
 		}
 		return map;
 	}
@@ -326,9 +330,10 @@ public class PackageToSiteController {
 	/**
 	 * 检查是否需要更新包裹状态
 	 * @param orderId
-     */
-	private void orderParcleStatusChange(String orderId){
-		OrderParcel orderParcel = orderParcelService.findOrderParcelByOrderId(orderId);
+	 * @param parceType 包裹类型 0：配件包裹（默认） 1：集包
+	 */
+	private void orderParcleStatusChange(String orderId,String parceType){
+		OrderParcel orderParcel = orderParcelService.findOrderParcelByOrderIdAndParcelType(orderId,parceType);
 		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
 			for (Order orderTemp : orderParcel.getOrderList()) {
