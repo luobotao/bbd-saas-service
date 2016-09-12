@@ -252,7 +252,7 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE);
+				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE, -1);
 				map.put("siteList", siteVOList);
 			}
 		}
@@ -261,15 +261,20 @@ public class DeliverAreaController {
 
 	/**
 	 * 获取站点电子围栏
+	 * @param prov 省
+	 * @param city 市
+	 * @param area 区
 	 * @param siteId 站点Id
+	 * @param areaFlag 配送区域
 	 * @param request 请求
-	 * @return
-	 */
+     * @return
+     */
 	@ResponseBody
 	@RequestMapping(value="/getFence", method=RequestMethod.GET)
-	public Map<String, Object> getFenceBySiteId(String prov, String city, String area, String siteId, final HttpServletRequest request) {
+	public Map<String, Object> getFenceBySiteId(String prov, String city, String area, String siteId, Integer areaFlag, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
+		areaFlag = Numbers.defaultIfNull(areaFlag, -1);
 		if(siteId != null && !"".equals(siteId)){//只查询一个站点
 			//获取用户站点信息
 			Site site = siteService.findSite(siteId);
@@ -289,7 +294,7 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE);
+				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE, areaFlag);
 				//设置电子围栏
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){

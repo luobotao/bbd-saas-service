@@ -306,8 +306,8 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
-    public List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
-        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status);
+    public List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status, int areaFlag) {
+        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status, areaFlag);
         return siteListToSiteVO(siteList);
     }
 
