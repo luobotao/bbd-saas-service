@@ -961,8 +961,10 @@
 					/*if(fenceObj.map.getZoom() <= 15){
 						fenceObj.map.setZoom(15);
 					}*/
-					showSiteName(0);
-					efencelabel.show();
+					if(!$("#showSiteNameCkB").is(':checked')){//未选中
+						showAllSiteName(0);//移除所有label
+						efencelabel.show();//显示单个label
+					}
 				});
 
 				//站点不在多边形中，在多边形中心点显示站点名称
@@ -1180,12 +1182,12 @@
 	}, 300);
 	//绘制电子围栏 -- 显示站点名称
 	$("#showSiteNameCkB").on('ifUnchecked', function() {//未选中--隐藏站点名称
-		showSiteName(0);
+		showAllSiteName(0);
 	}).on('ifChecked', function() {//选中--显示站点名称
-		showSiteName(1);
+		showAllSiteName(1);
 	});
 	//显示||隐藏站点名称 flag=0-隐藏；flag=1-显示
-	function showSiteName(flag){
+	function showAllSiteName(flag){
 		var allOverlay = fenceObj.map.getOverlays();
 		if(flag == 1){//选中--显示站点名称
 			for (var i = 0; i < allOverlay.length ; i++) {
