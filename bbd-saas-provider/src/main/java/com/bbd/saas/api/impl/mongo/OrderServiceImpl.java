@@ -444,7 +444,14 @@ public class OrderServiceImpl implements OrderService {
     public String findBestSiteWithAddress(String address) {
         String resultAreaCode = "";
         try {
+            long startTimesearchSiteByAddress = System.currentTimeMillis();   //获取开始时间
+
             List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
+
+            long endTimesearchSiteByAddress = System.currentTimeMillis(); //获取结束时间
+
+            logger.info("sass调用searchSiteByAddress运行时间： " + (endTimesearchSiteByAddress - startTimesearchSiteByAddress) + "ms");
+
             logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId List size:" + areaCodeList.size());
             //虚拟站点集合
             Map<String, SiteMySql> mapSitesFictitious = new HashMap<String, SiteMySql>();
@@ -462,6 +469,8 @@ public class OrderServiceImpl implements OrderService {
                         }
                     }
                     if (mapSitesFictitious.size() > 0) {
+                        long startTimemapSitesFictitious = System.currentTimeMillis();   //获取开始时间
+
                         Map<String, Integer> mapSiteCnts = new TreeMap<String, Integer>();
                         for (Map.Entry<String, SiteMySql> entry : mapSitesFictitious.entrySet()) {
                             //siteid:daycnt
@@ -480,7 +489,14 @@ public class OrderServiceImpl implements OrderService {
 
                         //得到查询量 最少的站点ID
                         resultAreaCode = listcnts.get(0).getKey();
+
+                        long endTimemapSitesFictitious = System.currentTimeMillis(); //获取结束时间
+
+                        logger.info("虚拟站点整理运行时间： " + (endTimemapSitesFictitious - startTimemapSitesFictitious) + "ms");
                     } else {
+
+                        long startTimeSX = System.currentTimeMillis();   //获取开始时间
+
                         //没达到下限的
                         Map<String, SiteMySql> mapSitesNoLowerlimit = new HashMap<String, SiteMySql>();
                         //达到下限的 且 小于 上限
@@ -539,7 +555,8 @@ public class OrderServiceImpl implements OrderService {
                             //得到查询量 最少的站点ID
                             resultAreaCode = listcnts.get(0).getKey();
 
-                        } else {//如果全部都达到了下限 走该逻辑
+                        } else {
+                            //如果全部都达到了下限 走该逻辑
                             try {
                                 //通过积分获取优选区域码
                                 MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
@@ -554,10 +571,23 @@ public class OrderServiceImpl implements OrderService {
                                 for (String siteId : areaCodeListnew) {
                                     Site site = siteService.findSite(siteId);
                                     if (site != null) {
+                                        long startTimegetDistance=System.currentTimeMillis();   //获取开始时间
+
                                         //获取当前位置到站点的距离，
                                         double length = GeoUtil.getDistance(mapPoint.getLng(), mapPoint.getLat(), Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())) * 1000;
+
+                                        long endTimegetDistance = System.currentTimeMillis(); //获取结束时间
+
+                                        logger.info("getDistance运行时间： "+(endTimegetDistance-startTimegetDistance)+"ms");
+
+                                        long startTimegetIntegral=System.currentTimeMillis();   //获取开始时间
                                         //获取站点的日均积分
                                         Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
+
+                                        long endTimegetIntegral = System.currentTimeMillis(); //获取结束时间
+
+                                        logger.info("getIntegral运行时间： "+(endTimegetIntegral-startTimegetIntegral)+"ms");
+
                                         //int integral = userMysqlService.getIntegral("101010-016","17710174098");
                                         logger.info("匹配站点" + siteId + "获取积分：" + result.toString());
                                         int integral = 0;
@@ -594,6 +624,11 @@ public class OrderServiceImpl implements OrderService {
                                     }
                                 });
                                 resultAreaCode = list.get(0).getKey();
+
+                                long endTimemapSX = System.currentTimeMillis(); //获取结束时间
+
+                                logger.info("加入上下限逻辑后运行时间： " + (endTimemapSX - startTimeSX) + "ms");
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 logger.info("[findBestSiteWithAddress] address:" + address + " exception");
@@ -763,6 +798,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 获取一个站点下,未进行打包的订单集合
+     *
      * @param areaCode
      * @return
      */
