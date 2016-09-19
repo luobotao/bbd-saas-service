@@ -426,23 +426,22 @@ public class SiteManageController {
 	private void setLatAndLng(String siteId) {
 		//设置经纬度
 		Site site = siteService.findSite(siteId);
-		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
+		String siteAddress = site.getProvince() + site.getCity() + site.getArea() + site.getAddress();
 		logger.info(site.getId().toString());
 		try {
-			Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),site.getCompanyId(),site.getName(),siteAddress,0);
+			Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(), site.getCompanyId(), site.getName(), siteAddress, 0, site.getSitetype() != null ? site.getSitetype().getStatus() : 0);
 			//更新站点的经度和纬度
-			logger.info("[addSitePOI]result :"+result.toString());
-			if(result.code==0&&result.data!=null) {
+			logger.info("[addSitePOI]result :" + result.toString());
+			if (result.code == 0 && result.data != null) {
 				double[] data = result.data;
 				site.setLng(data[0] + "");    //经度
 				site.setLat(data[1] + "");    //纬度
 				site.setDeliveryArea("0");
 				siteService.save(site);
 			}
-		}catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
