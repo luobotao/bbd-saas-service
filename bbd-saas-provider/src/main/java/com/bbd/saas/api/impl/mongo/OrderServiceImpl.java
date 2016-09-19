@@ -467,8 +467,9 @@ public class OrderServiceImpl implements OrderService {
                     long startTimeGuiZi = System.currentTimeMillis();   //获取开始时间
 
                     //快递柜逻辑
-                    areaCodeList = areaCodeList1.data.get("containerIds");
-                    for (String siteId : areaCodeList) {
+                    List<String> areaCodeLisContainer = new ArrayList<String>();
+                    areaCodeLisContainer = areaCodeList1.data.get("containerIds");
+                    for (String siteId : areaCodeLisContainer) {
                         SiteMySql siteMySql = siteMysqlService.selectIdBySiteId(siteId);
                         if (siteMySql != null) {
                             //快递柜站点
