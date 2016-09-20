@@ -4,6 +4,7 @@ package com.bbd.saas.api.impl.mongo;
 import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.SitePoiApi;
 import com.bbd.poi.api.vo.MapPoint;
+import com.bbd.poi.api.vo.Result;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.WayService;
@@ -26,6 +27,7 @@ import com.bbd.saas.vo.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -443,102 +445,78 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String findBestSiteWithAddress(String address) {
         String resultAreaCode = "";
+        List<String> areaCodeList = new ArrayList<String>();
+        List<String> mapGuiZiSitesFictitious = new ArrayList<String>();
         try {
             long startTimesearchSiteByAddress = System.currentTimeMillis();   //获取开始时间
 
-            List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
+//            List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
+            //改动 测试V2
+            Result<Map<String, List<String>>> areaCodeList1 = sitePoiApi.searchSiteByAddressV2("", address);
+            logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId List size:" + areaCodeList1.data.size());
 
             long endTimesearchSiteByAddress = System.currentTimeMillis(); //获取结束时间
 
             logger.info("sass调用searchSiteByAddress运行时间： " + (endTimesearchSiteByAddress - startTimesearchSiteByAddress) + "ms");
 
-            logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId List size:" + areaCodeList.size());
-            //虚拟站点集合
-            Map<String, SiteMySql> mapSitesFictitious = new HashMap<String, SiteMySql>();
-            if (areaCodeList != null && areaCodeList.size() > 0) {
-                if (areaCodeList.size() > 1) {
-                    for (String siteId : areaCodeList) {
+//            logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId List size:" + areaCodeList.size());
+            if (areaCodeList1 != null && areaCodeList1.data.size() > 0) {
+
+                if (areaCodeList1.data.get("containerIds") != null && areaCodeList1.data.get("containerIds").size() > 0) {
+
+                    long startTimeGuiZi = System.currentTimeMillis();   //获取开始时间
+
+                    //快递柜逻辑
+                    List<String> areaCodeLisContainer = new ArrayList<String>();
+                    areaCodeLisContainer = areaCodeList1.data.get("containerIds");
+                    for (String siteId : areaCodeLisContainer) {
                         SiteMySql siteMySql = siteMysqlService.selectIdBySiteId(siteId);
                         if (siteMySql != null) {
-                            //虚拟站点
-                            if (siteMySql.getSitetype() == 2) {
-                                if (siteMySql.getDaycnt() < siteMySql.getUpperlimit()) {
-                                    mapSitesFictitious.put(siteId, siteMySql);
-                                }
+                            //快递柜站点
+                            if (siteMySql.getDaycnt() < siteMySql.getUpperlimit()) {
+                                logger.info("快递柜没有达到上限,加入快递柜集合:" + siteId);
+                                mapGuiZiSitesFictitious.add(siteId);
                             }
                         }
                     }
-                    if (mapSitesFictitious.size() > 0) {
-                        long startTimemapSitesFictitious = System.currentTimeMillis();   //获取开始时间
+                }
 
-                        Map<String, Integer> mapSiteCnts = new TreeMap<String, Integer>();
-                        for (Map.Entry<String, SiteMySql> entry : mapSitesFictitious.entrySet()) {
-                            //siteid:daycnt
-                            mapSiteCnts.put(entry.getKey(), entry.getValue().getDaycnt());
-                        }
+                long endTimeGuiZi = System.currentTimeMillis();
+                logger.info("快递柜运行时间： " + (endTimesearchSiteByAddress - startTimesearchSiteByAddress) + "ms");
 
-                        List<Map.Entry<String, Integer>> listcnts = new ArrayList<Map.Entry<String, Integer>>(mapSiteCnts.entrySet());
-                        //然后通过比较器来实现排序
-                        Collections.sort(listcnts, new Comparator<Map.Entry<String, Integer>>() {
-                            //升序排序
-                            public int compare(Map.Entry<String, Integer> o1,
-                                               Map.Entry<String, Integer> o2) {
-                                return o1.getValue().compareTo(o2.getValue());
-                            }
-                        });
+                if (mapGuiZiSitesFictitious.size() > 0) {
+                    logger.info("快递柜没有达到上限,返回快递柜集合中的第一个:" + mapGuiZiSitesFictitious.get(0));
+                    siteMysqlService.updateSiteDayCntBySiteId(mapGuiZiSitesFictitious.get(0));
+                    return mapGuiZiSitesFictitious.get(0);
+                }
 
-                        //得到查询量 最少的站点ID
-                        resultAreaCode = listcnts.get(0).getKey();
 
-                        long endTimemapSitesFictitious = System.currentTimeMillis(); //获取结束时间
+                //说明柜子都达到了上限  走老逻辑
+                if (areaCodeList1.data.get("siteIds") != null && areaCodeList1.data.get("siteIds").size() > 0 && mapGuiZiSitesFictitious.size() == 0) {
+                    //老逻辑
+                    areaCodeList = areaCodeList1.data.get("siteIds");
+                }
 
-                        logger.info("虚拟站点整理运行时间： " + (endTimemapSitesFictitious - startTimemapSitesFictitious) + "ms");
-                    } else {
-
-                        long startTimeSX = System.currentTimeMillis();   //获取开始时间
-
-                        //没达到下限的
-                        Map<String, SiteMySql> mapSitesNoLowerlimit = new HashMap<String, SiteMySql>();
-                        //达到下限的 且 小于 上限
-                        List<String> areaCodeListLowerlimitNoUpper = new ArrayList<String>();
-                        //达到下限的 且 大于等于 上限
-                        List<String> areaCodeListLowerlimitUpper = new ArrayList<String>();
-
-                        List<String> areaCodeListnew = new ArrayList<String>();
-
-                        //每个站点增加匹配的上限和下限
-                        for (String oneSiteId : areaCodeList) {
-                            SiteMySql siteMySql = siteMysqlService.selectIdBySiteId(oneSiteId);
+                //虚拟站点集合
+                Map<String, SiteMySql> mapSitesFictitious = new HashMap<String, SiteMySql>();
+                if (areaCodeList != null && areaCodeList.size() > 0) {
+                    if (areaCodeList.size() > 1) {
+                        for (String siteId : areaCodeList) {
+                            SiteMySql siteMySql = siteMysqlService.selectIdBySiteId(siteId);
                             if (siteMySql != null) {
-                                //上限
-                                int upperlimit = siteMySql.getUpperlimit();
-                                //下限
-                                int lowerlimit = siteMySql.getLowerlimit();
-                                //订单查询量
-                                int daycnt = siteMySql.getDaycnt();
-
-                                //大于 下限 小于上限
-                                if (daycnt >= lowerlimit && daycnt < upperlimit) {
-                                    areaCodeListLowerlimitNoUpper.add(oneSiteId);
+                                //虚拟站点
+                                if (siteMySql.getSitetype() == 2) {
+                                    if (siteMySql.getDaycnt() < siteMySql.getUpperlimit()) {
+                                        mapSitesFictitious.put(siteId, siteMySql);
+                                    }
                                 }
-                                //大于 下限 大于上限
-                                if (daycnt >= lowerlimit && daycnt >= upperlimit) {
-                                    areaCodeListLowerlimitUpper.add(oneSiteId);
-                                }
-
-                                //小于下限
-                                if (daycnt < lowerlimit) {
-                                    mapSitesNoLowerlimit.put(oneSiteId, siteMySql);
-                                }
-                            } else {
-                                logger.info("Mongo的site中存在siteid,Mysql中的site表中没有该siteid!!!");
-                                areaCodeListLowerlimitUpper.add(oneSiteId);
                             }
                         }
-                        //如果其中的站点 有1个没有达到下限 则走该逻辑
-                        if (mapSitesNoLowerlimit.size() > 0) {
+                        if (mapSitesFictitious.size() > 0) {
+                            long startTimemapSitesFictitious = System.currentTimeMillis();   //获取开始时间
+
                             Map<String, Integer> mapSiteCnts = new TreeMap<String, Integer>();
-                            for (Map.Entry<String, SiteMySql> entry : mapSitesNoLowerlimit.entrySet()) {
+                            for (Map.Entry<String, SiteMySql> entry : mapSitesFictitious.entrySet()) {
                                 //siteid:daycnt
                                 mapSiteCnts.put(entry.getKey(), entry.getValue().getDaycnt());
                             }
@@ -552,96 +530,163 @@ public class OrderServiceImpl implements OrderService {
                                     return o1.getValue().compareTo(o2.getValue());
                                 }
                             });
+
                             //得到查询量 最少的站点ID
                             resultAreaCode = listcnts.get(0).getKey();
 
+                            long endTimemapSitesFictitious = System.currentTimeMillis(); //获取结束时间
+
+                            logger.info("虚拟站点整理运行时间： " + (endTimemapSitesFictitious - startTimemapSitesFictitious) + "ms");
                         } else {
-                            //如果全部都达到了下限 走该逻辑
-                            try {
-                                //通过积分获取优选区域码
-                                MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
-                                Map<String, Integer> map = new TreeMap<String, Integer>();
-//						for (String siteId : areaCodeList) {
-                                //全是 大于下限 大于上限的情况
-                                if (areaCodeListLowerlimitUpper.size() > 0 && areaCodeListLowerlimitNoUpper.size() == 0) {
-                                    areaCodeListnew = areaCodeListLowerlimitUpper;
-                                } else {
-                                    areaCodeListnew = areaCodeListLowerlimitNoUpper;
-                                }
-                                for (String siteId : areaCodeListnew) {
-                                    Site site = siteService.findSite(siteId);
-                                    if (site != null) {
-                                        long startTimegetDistance=System.currentTimeMillis();   //获取开始时间
 
-                                        //获取当前位置到站点的距离，
-                                        double length = GeoUtil.getDistance(mapPoint.getLng(), mapPoint.getLat(), Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())) * 1000;
+                            long startTimeSX = System.currentTimeMillis();   //获取开始时间
 
-                                        long endTimegetDistance = System.currentTimeMillis(); //获取结束时间
+                            //没达到下限的
+                            Map<String, SiteMySql> mapSitesNoLowerlimit = new HashMap<String, SiteMySql>();
+                            //达到下限的 且 小于 上限
+                            List<String> areaCodeListLowerlimitNoUpper = new ArrayList<String>();
+                            //达到下限的 且 大于等于 上限
+                            List<String> areaCodeListLowerlimitUpper = new ArrayList<String>();
 
-                                        logger.info("getDistance运行时间： "+(endTimegetDistance-startTimegetDistance)+"ms");
+                            List<String> areaCodeListnew = new ArrayList<String>();
 
-                                        long startTimegetIntegral=System.currentTimeMillis();   //获取开始时间
-                                        //获取站点的日均积分
-                                        Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
+                            //每个站点增加匹配的上限和下限
+                            for (String oneSiteId : areaCodeList) {
+                                SiteMySql siteMySql = siteMysqlService.selectIdBySiteId(oneSiteId);
+                                if (siteMySql != null) {
+                                    //上限
+                                    int upperlimit = siteMySql.getUpperlimit();
+                                    //下限
+                                    int lowerlimit = siteMySql.getLowerlimit();
+                                    //订单查询量
+                                    int daycnt = siteMySql.getDaycnt();
 
-                                        long endTimegetIntegral = System.currentTimeMillis(); //获取结束时间
-
-                                        logger.info("getIntegral运行时间： "+(endTimegetIntegral-startTimegetIntegral)+"ms");
-
-                                        //int integral = userMysqlService.getIntegral("101010-016","17710174098");
-                                        logger.info("匹配站点" + siteId + "获取积分：" + result.toString());
-                                        int integral = 0;
-                                        if (result.containsKey("totalscore")) {
-                                            integral = (int) result.get("totalscore");
-                                        }
-                                        int integralVal = 0;
-                                        //根据地址到站点的距离计算积分
-                                        if (length < 3000) {
-                                            integralVal = integral + 5;
-                                            logger.info("站点" + siteId + "增加距离" + length + "匹配积分后，积分由" + integral + "增加为" + integralVal);
-                                        } else if (length < 5000) {
-                                            integralVal = integral + 3;
-                                            logger.info("站点" + siteId + "增加距离" + length + "匹配积分后，积分由" + integral + "增加为" + integralVal);
-                                        } else {
-                                            integralVal = integral + 2;
-                                            logger.info("站点" + siteId + "增加距离" + length + "匹配积分后，积分由" + integral + "增加为" + integralVal);
-                                        }
-                                        logger.info("地址：" + address + "匹配到的站点：" + siteId + "最终积分：" + integralVal);
-                                        //保存站点和积分，按照积分进行排序
-                                        map.put(siteId, integralVal);
-                                    } else {
-                                        map.put(siteId, 0);
+                                    //大于 下限 小于上限
+                                    if (daycnt >= lowerlimit && daycnt < upperlimit) {
+                                        areaCodeListLowerlimitNoUpper.add(oneSiteId);
                                     }
+                                    //大于 下限 大于上限
+                                    if (daycnt >= lowerlimit && daycnt >= upperlimit) {
+                                        areaCodeListLowerlimitUpper.add(oneSiteId);
+                                    }
+
+                                    //小于下限
+                                    if (daycnt < lowerlimit) {
+                                        mapSitesNoLowerlimit.put(oneSiteId, siteMySql);
+                                    }
+                                } else {
+                                    logger.info("Mongo的site中存在siteid,Mysql中的site表中没有该siteid!!!");
+                                    areaCodeListLowerlimitUpper.add(oneSiteId);
                                 }
-                                //这里将map.entrySet()转换成list
-                                List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(map.entrySet());
+                            }
+                            //如果其中的站点 有1个没有达到下限 则走该逻辑
+                            if (mapSitesNoLowerlimit.size() > 0) {
+                                Map<String, Integer> mapSiteCnts = new TreeMap<String, Integer>();
+                                for (Map.Entry<String, SiteMySql> entry : mapSitesNoLowerlimit.entrySet()) {
+                                    //siteid:daycnt
+                                    mapSiteCnts.put(entry.getKey(), entry.getValue().getDaycnt());
+                                }
+
+                                List<Map.Entry<String, Integer>> listcnts = new ArrayList<Map.Entry<String, Integer>>(mapSiteCnts.entrySet());
                                 //然后通过比较器来实现排序
-                                Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-                                    //降序排序
+                                Collections.sort(listcnts, new Comparator<Map.Entry<String, Integer>>() {
+                                    //升序排序
                                     public int compare(Map.Entry<String, Integer> o1,
                                                        Map.Entry<String, Integer> o2) {
-                                        return o2.getValue().compareTo(o1.getValue());
+                                        return o1.getValue().compareTo(o2.getValue());
                                     }
                                 });
-                                resultAreaCode = list.get(0).getKey();
+                                //得到查询量 最少的站点ID
+                                resultAreaCode = listcnts.get(0).getKey();
 
-                                long endTimemapSX = System.currentTimeMillis(); //获取结束时间
+                            } else {
+                                //如果全部都达到了下限 走该逻辑
+                                try {
+                                    //通过积分获取优选区域码
+                                    MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
+                                    Map<String, Integer> map = new TreeMap<String, Integer>();
+//						for (String siteId : areaCodeList) {
+                                    //全是 大于下限 大于上限的情况
+                                    if (areaCodeListLowerlimitUpper.size() > 0 && areaCodeListLowerlimitNoUpper.size() == 0) {
+                                        areaCodeListnew = areaCodeListLowerlimitUpper;
+                                    } else {
+                                        areaCodeListnew = areaCodeListLowerlimitNoUpper;
+                                    }
+                                    for (String siteId : areaCodeListnew) {
+                                        Site site = siteService.findSite(siteId);
+                                        if (site != null) {
+                                            long startTimegetDistance = System.currentTimeMillis();   //获取开始时间
 
-                                logger.info("加入上下限逻辑后运行时间： " + (endTimemapSX - startTimeSX) + "ms");
+                                            //获取当前位置到站点的距离，
+                                            double length = GeoUtil.getDistance(mapPoint.getLng(), mapPoint.getLat(), Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())) * 1000;
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                logger.info("[findBestSiteWithAddress] address:" + address + " exception");
-                                resultAreaCode = areaCodeList.get(0);
+                                            long endTimegetDistance = System.currentTimeMillis(); //获取结束时间
+
+                                            logger.info("getDistance运行时间： " + (endTimegetDistance - startTimegetDistance) + "ms");
+
+                                            long startTimegetIntegral = System.currentTimeMillis();   //获取开始时间
+                                            //获取站点的日均积分
+                                            Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
+
+                                            long endTimegetIntegral = System.currentTimeMillis(); //获取结束时间
+
+                                            logger.info("getIntegral运行时间： " + (endTimegetIntegral - startTimegetIntegral) + "ms");
+
+                                            //int integral = userMysqlService.getIntegral("101010-016","17710174098");
+                                            logger.info("匹配站点" + siteId + "获取积分：" + result.toString());
+                                            int integral = 0;
+                                            if (result.containsKey("totalscore")) {
+                                                integral = (int) result.get("totalscore");
+                                            }
+                                            int integralVal = 0;
+                                            //根据地址到站点的距离计算积分
+                                            if (length < 3000) {
+                                                integralVal = integral + 5;
+                                                logger.info("站点" + siteId + "增加距离" + length + "匹配积分后，积分由" + integral + "增加为" + integralVal);
+                                            } else if (length < 5000) {
+                                                integralVal = integral + 3;
+                                                logger.info("站点" + siteId + "增加距离" + length + "匹配积分后，积分由" + integral + "增加为" + integralVal);
+                                            } else {
+                                                integralVal = integral + 2;
+                                                logger.info("站点" + siteId + "增加距离" + length + "匹配积分后，积分由" + integral + "增加为" + integralVal);
+                                            }
+                                            logger.info("地址：" + address + "匹配到的站点：" + siteId + "最终积分：" + integralVal);
+                                            //保存站点和积分，按照积分进行排序
+                                            map.put(siteId, integralVal);
+                                        } else {
+                                            map.put(siteId, 0);
+                                        }
+                                    }
+                                    //这里将map.entrySet()转换成list
+                                    List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(map.entrySet());
+                                    //然后通过比较器来实现排序
+                                    Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                                        //降序排序
+                                        public int compare(Map.Entry<String, Integer> o1,
+                                                           Map.Entry<String, Integer> o2) {
+                                            return o2.getValue().compareTo(o1.getValue());
+                                        }
+                                    });
+                                    resultAreaCode = list.get(0).getKey();
+
+                                    long endTimemapSX = System.currentTimeMillis(); //获取结束时间
+
+                                    logger.info("加入上下限逻辑后运行时间： " + (endTimemapSX - startTimeSX) + "ms");
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    logger.info("[findBestSiteWithAddress] address:" + address + " exception");
+                                    resultAreaCode = areaCodeList.get(0);
+                                }
                             }
                         }
+                    } else {
+                        //通过积分获取优选区域码，暂时用第一个
+                        resultAreaCode = areaCodeList.get(0);
                     }
-                } else {
-                    //通过积分获取优选区域码，暂时用第一个
-                    resultAreaCode = areaCodeList.get(0);
+                    logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId:" + resultAreaCode);
+                    siteMysqlService.updateSiteDayCntBySiteId(resultAreaCode);
                 }
-                logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId:" + resultAreaCode);
-                siteMysqlService.updateSiteDayCntBySiteId(resultAreaCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
