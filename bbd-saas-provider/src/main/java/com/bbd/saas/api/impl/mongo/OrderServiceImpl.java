@@ -486,7 +486,7 @@ public class OrderServiceImpl implements OrderService {
 
                 if (mapGuiZiSitesFictitious.size() > 0) {
                     logger.info("快递柜没有达到上限,返回快递柜集合中的第一个:" + mapGuiZiSitesFictitious.get(0));
-                    siteMysqlService.updateSiteDayCntBySiteId(resultAreaCode);
+                    siteMysqlService.updateSiteDayCntBySiteId(mapGuiZiSitesFictitious.get(0));
                     return mapGuiZiSitesFictitious.get(0);
                 }
 
