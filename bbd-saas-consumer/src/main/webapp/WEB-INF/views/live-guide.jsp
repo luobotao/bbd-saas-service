@@ -2,7 +2,27 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
-	<div class="modal-header b-modal-header">
+<%--<%@ include file="main.jsp"%>--%>
+<!-- Date Picker  Daterange picker -->
+<%--
+<link href="<c:url value="/resources/bootstrap/css/bootstrap-datetimepicker.min.css" />" rel="stylesheet"  type="text/css" />
+<script src="<c:url value="/resources/bootstrap/js/bootstrap-datetimepicker.js" />" type="text/javascript"></script>
+<script src="<c:url value="/resources/bootstrap/js/bootstrap-datetimepicker.zh-CN.js" />" type="text/javascript"></script>
+--%>
+<!-- Date Picker  Daterange picker -->
+<%--
+<link href="<c:url value="/resources/adminLTE/plugins/datepicker/datepicker3.css" />" rel="stylesheet"  type="text/css" />
+<link href="<c:url value="/resources/adminLTE/plugins/daterangepicker/daterangepicker-bs3.css" />" rel="stylesheet"  type="text/css" />
+<script src="<c:url value="/resources/adminLTE/plugins/daterangepicker/daterangepicker.js" />" type="text/javascript"></script>
+<script src="<c:url value="/resources/adminLTE/plugins/datepicker/bootstrap-datepicker.js" />" type="text/javascript"></script>
+--%>
+<!-- iCheck -->
+<link href="<c:url value="/resources/adminLTE/plugins/iCheck/flat/blue.css" />" rel="stylesheet"  type="text/css" />
+<link href="<c:url value="/resources/adminLTE/plugins/iCheck/square/blue.css" />" rel="stylesheet"  type="text/css" />
+<!-- iCheck -->
+<script src="<c:url value="/resources/adminLTE/plugins/iCheck/icheck.min.js" />" type="text/javascript"></script>
+
+<div class="modal-header b-modal-header">
 		<button type="button" class="close j-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 		<h4 class="modal-title tc">设置站点配送区域</h4>
 	</div>
