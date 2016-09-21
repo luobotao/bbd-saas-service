@@ -54,7 +54,7 @@
 
 
         <!-- 是否主从分离(读取从库)，默认为false，读写都在主库 -->
-        <property name="readSecondary" value="false"/>
+        <property name="readSecondary" value="true"/>
 
         <!-- 设定写策略，默认为WriteConcern.SAFE，优先级高于mongoOptions中的safe -->
         <property name="writeConcern" value="SAFE"/>
