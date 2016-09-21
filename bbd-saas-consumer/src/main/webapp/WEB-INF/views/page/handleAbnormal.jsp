@@ -719,6 +719,7 @@
 	//显示其他快递公司div
 	function showExpressCompanyDiv(mailNumStr) {
 		$("#mailNum").val("");
+		$("#otherExpsAmount").val("");
 		mailNum = mailNumStr;
 		if(expressCompanysList != null){
 			loadExpressCompanys(expressCompanysList);
@@ -793,7 +794,7 @@
 						if(num > 0){
 							ioutDiv("此运单号已填写过了，转快递金额只能填写0");
 							//setTimeout("alert('5 seconds!')",5000)
-							$("#otherExpsAmount").val(0.00);
+							//$("#otherExpsAmount").val(0.00);
 						}
 					}
 				},
