@@ -217,14 +217,18 @@
 			<div class="modal-body b-modal-body form-inline form-inline-n">
 				<ul class="txt-complex f16">
 					<li class="pb20">
-						<i>快递公司：</i>
+						<i>　快递公司：</i>
 						<select id="express_select" name="companyname" class="form-control form-bod">
 							<option>请选择快递公司</option>
 						</select>
 					</li>
-					<li>
-						<i>　运单号：</i>
+					<li class="pb20">
+						<i>　　运单号：</i>
 						<input id="mailNum" name="mailNum"  onkeyup="this.value=this.value.replace(/^ +| +$/g,'')" class="form-control form-bod" type="text" placeholder="请输入运单号" />
+					</li>
+					<li>
+						<i>转快递金额：</i>
+						<input id="otherExpsAmount" name="otherExpsAmount"   onblur="checkAmount(this.value)" class="form-control form-bod" type="text" placeholder="请输入快递金额" />
 					</li>
 				</ul>
 				<div class="row mt20">
@@ -746,13 +750,60 @@
 			}
 		}
 	}
+
 	//隐藏转其他快递公司div
 	function hideExpressCompanyDiv() {
 		mailNum = null;
 		//$(".j-site-pop").modal("hide");
 		$("#chooseOtherExpress_div").modal("hide");
 	}
-
+	//快递金额校验
+	function checkAmount(num){
+		console.log(num);
+		var mailNum = $("#mailNum").val(); //运单号
+		if (mailNum == "" || mailNum == null) {
+			ioutDiv("请输入运单号");
+			$("#mailNum").focus();
+			return false;
+		}
+		var reg=/^((\d{1,2})\.?\d{1,2})|(0)|(\d{1,2})$/;//验证正数,支持两位小数
+		if (num == "" || num == null) {
+			ioutDiv("请输入转快递金额");
+			$("#otherExpsAmount").focus();
+			return false;
+		}else if(!reg.test(num) || num < 0){
+			ioutDiv("请输入0-25内的数值,最多包含两位小数");
+			$("#otherExpsAmount").focus();
+			return false;
+		}else if(num > 25){
+			ioutDiv("转快递金额不能超过25元");
+			$("#otherExpsAmount").focus();
+			return false;
+		}else{
+			//是否多个快递合并为一个
+			$.ajax({
+				type: "POST",  //提交方式
+				async: false,//同步
+				url: "<%=path%>/handleAbnormal/getNewMailNumCount",//路径
+				data: {
+					"newMailNum": $("#mailNum").val() //运单号
+				},//数据，这里使用的是Json格式进行传输
+				success: function (data) {//返回数据根据结果进行相应的处理
+					if(data > 0){//存在相同的运单号
+						if(num > 0){
+							ioutDiv("此运单号已填写过了，转快递金额只能填写0");
+							//setTimeout("alert('5 seconds!')",5000)
+							$("#otherExpsAmount").val(0.00);
+						}
+					}
+				},
+				error: function () {
+					ioutDiv("服务器繁忙，请稍后再试！");
+				}
+			});
+			return true;
+		}
+	}
 
 	//转其他快递公司
 	function toOtherExpressCompanys() {
@@ -773,6 +824,11 @@
 				return false;
 			}
 		}
+		//金额校验
+		var otherExpsAmount = $("#otherExpsAmount").val();
+		if(!checkAmount(otherExpsAmount)){
+			return false;
+		}
 		//获取当前页
 		var pageIndex = getCurrPage();
 
@@ -784,6 +840,7 @@
 				"mailNum": mailNum, //运单号
 				"companyId": companyId,
 				"mailNumNew": mailNumNew,//输入的运单号
+				"otherExpsAmount": otherExpsAmount,//输入的运单号
 				"pageIndex": pageIndex,//更新列表
 				"status": $("#status").val(),
 				"arriveBetween": $("#arriveBetween").val()

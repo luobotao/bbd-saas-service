@@ -56,3 +56,14 @@ function checkInteger(digital){
         return false;
     }
 }
+/**
+ * 验证正数,支持两位小数
+ * @returns {boolean}
+ */
+function checkPNum(num){
+    var reg=/^(\d*)\.?\d{1,2}$/;
+    if(reg.test(num)){
+        return true;
+    }
+    return false;
+}

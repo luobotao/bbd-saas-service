@@ -27,7 +27,6 @@ import com.bbd.saas.vo.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
-import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -181,6 +180,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findOneByNewMailNum(String newMailNum) {
         return orderDao.findOneByNewMailNum(newMailNum);
+    }
+
+    @Override
+    public long findCountByNewMailNum(String newMailNum) {
+        return orderDao.selectCountByNewMailNum(newMailNum);
     }
 
     @Override

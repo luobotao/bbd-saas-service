@@ -29,6 +29,19 @@ function getMonthdiff(beginDate, endDate){
     iMonths = Month2 - Month1;    
     return iMonths;      
 }
+/**
+ * 计算两个日期之间相差几个天数，向下取整（不足一天为0天）
+ */
+function getDayDiff(startStr) {
+    //开始时间
+    startStr = (startStr).replace(/-/g, "/");//一般得到的时间的格式都是：yyyy-MM-dd hh24:mi:ss，所以我就用了这个做例子，是/的格式，就不用replace了。
+    var start_date = new Date(startStr);
+    //结束时间
+    var end_date = new Date();//将字符串转化为时间
+    var num = (end_date - start_date) / (1000 * 3600 * 24);//求出两个时间的时间差，这个是天数
+    return parseInt(num);//转化为整天（小于零的话不用转了），向下取整（不足一天为0天）
+    return parseInt(Math.ceil(num));//转化为整天（小于零的话不用转了），向上取整（不足一天为1天）
+}
 
 /**
  * 时间转换时间戳

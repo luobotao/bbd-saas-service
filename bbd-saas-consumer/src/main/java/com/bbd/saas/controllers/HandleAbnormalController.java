@@ -7,6 +7,7 @@ import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.AuditStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.ExpressCompany;
@@ -566,6 +567,17 @@ public class HandleAbnormalController {
     }
 
     /**
+     * 获取转快递运单号输入的次数（多个快递同用一个运单）
+     * @param newMailNum 转快递运单号
+     * @return 输入的次数
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getNewMailNumCount", method = RequestMethod.POST)
+    public Long checkNewMailNum(String newMailNum) {
+       return orderService.findCountByNewMailNum(newMailNum);
+    }
+
+    /**
      * 转其他快递
      * @param mailNum 原有的运单号
      * @param companyId 要转到的快递公司Id
@@ -578,7 +590,7 @@ public class HandleAbnormalController {
      */
     @ResponseBody
     @RequestMapping(value = "/toOtherExpressCompanys", method = RequestMethod.POST)
-    public Map<String, Object> toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+    public Map<String, Object> toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew, Double otherExpsAmount,Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             //当前登录的用户信息
@@ -633,6 +645,11 @@ public class HandleAbnormalController {
                                 map.put("msg", "转运信息添加失败，请稍候再试");
                             }
                         }*/
+                        if(otherExpsAmount == null){
+                            otherExpsAmount = 0.00;
+                        }
+                        order.setOtherExpsAmount(otherExpsAmount);
+                        order.setAuditStatus(AuditStatus.WAIT);
                         //更新运单
                         Key<Order> r = orderService.save(order);
                         if (r != null) {

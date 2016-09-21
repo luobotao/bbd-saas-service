@@ -64,6 +64,12 @@ public interface OrderService {
 	List<Order> findOneByNewMailNum(String newMailNum);
 
 	/**
+	 * 根据其他快递的运单号查询订单数目
+	 * @param newMailNum 新运单号
+	 * @return 订单数目
+	 */
+	public long findCountByNewMailNum(String newMailNum);
+	 /* *
 	 * 根据订单号查询订单
 	 * @param orderNO
 	 * @return
