@@ -590,7 +590,7 @@ public class HandleAbnormalController {
      */
     @ResponseBody
     @RequestMapping(value = "/toOtherExpressCompanys", method = RequestMethod.POST)
-    public Map<String, Object> toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew, Integer otherExpsAmount,Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+    public Map<String, Object> toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew, Double otherExpsAmount,Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             //当前登录的用户信息
@@ -646,7 +646,7 @@ public class HandleAbnormalController {
                             }
                         }*/
                         if(otherExpsAmount == null){
-                            otherExpsAmount = 0;
+                            otherExpsAmount = 0.00;
                         }
                         order.setOtherExpsAmount(otherExpsAmount*100);
                         order.setAuditStatus(AuditStatus.WAIT);
