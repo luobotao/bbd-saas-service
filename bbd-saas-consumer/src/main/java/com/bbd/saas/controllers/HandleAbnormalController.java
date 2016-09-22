@@ -36,7 +36,7 @@ import java.util.*;
 @RequestMapping("/handleAbnormal")
 public class HandleAbnormalController {
 
-    public static final Logger logger = LoggerFactory.getLogger(HandleAbnormalController1.class);
+    public static final Logger logger = LoggerFactory.getLogger(HandleAbnormalController.class);
 
     @Autowired
     OrderService orderService;
@@ -607,7 +607,7 @@ public class HandleAbnormalController {
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
                 }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  == order.getOrderStatus() || OrderStatus.REJECTION == order.getOrderStatus())){
                     //查询运单信息
-                    order = updExpressForToOtherCmp(order, companyId, mailNum, mailNumNew, currUser);
+                    order = updExpressForToOtherCmp(order, companyId, mailNumNew, otherExpsAmount, currUser);
                     Sender sender = order.getSender();
                     Reciever reciever = order.getReciever();
                     StringBuffer fromSB = new StringBuffer();
@@ -648,8 +648,7 @@ public class HandleAbnormalController {
                         if(otherExpsAmount == null){
                             otherExpsAmount = 0.00;
                         }
-                        order.setOtherExpsAmount(otherExpsAmount*100);
-                        order.setAuditStatus(AuditStatus.WAIT);
+
                         //更新运单
                         Key<Order> r = orderService.save(order);
                         if (r != null) {
@@ -684,12 +683,14 @@ public class HandleAbnormalController {
 
     /**
      * 转其他快递物流信息
+     * @param order 订单信息
      * @param companyId 要转到的快递公司的Id
-     * @param mailNum
-     * @param mailNumNew
-     * @return
+     * @param mailNumNew 新运单号
+     * @param otherExpsAmount 转快递金额
+     * @param currUser 当前登录用户
+     * @return 更新后的order
      */
-    private Order updExpressForToOtherCmp( Order order, String companyId, String mailNum, String mailNumNew, User currUser){
+    private Order updExpressForToOtherCmp(Order order, String companyId, String mailNumNew, double otherExpsAmount, User currUser){
 
         String companyName = null;
         String companyCode = null;
@@ -718,6 +719,8 @@ public class HandleAbnormalController {
         expRemark.append(mailNumNew);
         otherExpreeVO.setContext(expRemark.toString());
         otherExpreeVO.setCompanycode(companyCode);
+        otherExpreeVO.setOtherExpsAmount(otherExpsAmount*100);
+        otherExpreeVO.setAuditStatus(AuditStatus.WAIT);
         otherExpreeVO.setDateUpd(new Date());
         otherExpressList.add(otherExpreeVO);
         order.setOtherExprees(otherExpressList);

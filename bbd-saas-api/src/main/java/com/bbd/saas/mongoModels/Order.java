@@ -46,8 +46,6 @@ public class Order implements Serializable {
     private List<Goods> goods;
     private List<Express> expresses;
     private List<OtherExpreeVO> otherExprees;
-    private double otherExpsAmount;//转其他快递金额
-    private AuditStatus auditStatus;//转其他快递金额审核状态
     private String rtnReason;//退货原因
     private String rtnRemark;//退货原因备注（退货原因为其他时，此字段不为空）
     private Date dateAplyRtn;//申请退货时间
@@ -82,22 +80,6 @@ public class Order implements Serializable {
     private String expressStatusMsg;//快件状态
     @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
-
-    public double getOtherExpsAmount() {
-        return otherExpsAmount;
-    }
-
-    public void setOtherExpsAmount(double otherExpsAmount) {
-        this.otherExpsAmount = otherExpsAmount;
-    }
-
-    public AuditStatus getAuditStatus() {
-        return auditStatus;
-    }
-
-    public void setAuditStatus(AuditStatus auditStatus) {
-        this.auditStatus = auditStatus;
-    }
 
     public ComplaintStatus getComplaintStatus() {
         return complaintStatus;

@@ -1,5 +1,7 @@
 package com.bbd.saas.vo;
 
+import com.bbd.saas.enums.AuditStatus;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,7 +14,8 @@ public class OtherExpreeVO implements Serializable {
     private String companyname;
     private String companycode;
     private String mailNum;//运单号
-    private Date dateUpd;
+    private double otherExpsAmount;//转其他快递金额
+    private AuditStatus auditStatus;//转其他快递金额审核状态
     private String turnDownReason; //驳回理由
     private String status;/*本数据元对应的签收状态。只有在开通签收状态服务
         且在订阅接口中提交resultv2标记后才会出现*/
@@ -22,13 +25,29 @@ public class OtherExpreeVO implements Serializable {
 
     private String  areaName;/*本数据元对应的行政区域的名称，开通签收状态服务
          且在订阅接口中提交resultv2标记后才会出现*/
-
+    private Date dateUpd;
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public double getOtherExpsAmount() {
+        return otherExpsAmount;
+    }
+
+    public void setOtherExpsAmount(double otherExpsAmount) {
+        this.otherExpsAmount = otherExpsAmount;
+    }
+
+    public AuditStatus getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(AuditStatus auditStatus) {
+        this.auditStatus = auditStatus;
     }
 
     public String getContext() {
