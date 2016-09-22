@@ -13,6 +13,7 @@ public class OtherExpreeVO implements Serializable {
     private String companycode;
     private String mailNum;//运单号
     private Date dateUpd;
+    private String turnDownReason; //驳回理由
     private String status;/*本数据元对应的签收状态。只有在开通签收状态服务
         且在订阅接口中提交resultv2标记后才会出现*/
 
@@ -84,6 +85,14 @@ public class OtherExpreeVO implements Serializable {
 
     public void setAreaName(String areaName) {
         this.areaName = areaName;
+    }
+
+    public String getTurnDownReason() {
+        return turnDownReason;
+    }
+
+    public void setTurnDownReason(String turnDownReason) {
+        this.turnDownReason = turnDownReason;
     }
 
     public Date getDateUpd() {
