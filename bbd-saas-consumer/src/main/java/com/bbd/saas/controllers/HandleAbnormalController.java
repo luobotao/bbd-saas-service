@@ -721,6 +721,7 @@ public class HandleAbnormalController {
         otherExpreeVO.setCompanycode(companyCode);
         otherExpreeVO.setOtherExpsAmount(otherExpsAmount*100);
         otherExpreeVO.setAuditStatus(AuditStatus.WAIT);
+        otherExpreeVO.setDateAdd(new Date());
         otherExpreeVO.setDateUpd(new Date());
         otherExpressList.add(otherExpreeVO);
         order.setOtherExprees(otherExpressList);

@@ -228,7 +228,7 @@
 					</li>
 					<li>
 						<i>转快递金额：</i>
-						<input id="otherExpsAmount" name="otherExpsAmount" <%--onblur="checkAmount(this.value)" --%> class="form-control form-bod" type="text" placeholder="请输入快递金额" />元
+						<input id="otherExpsAmount" name="otherExpsAmount" <%--onblur="checkAmount(this.value)" --%> class="form-control form-bod" type="text" placeholder="请输入快递金额" />&nbsp;元
 					</li>
 				</ul>
 				<div class="row mt20">
