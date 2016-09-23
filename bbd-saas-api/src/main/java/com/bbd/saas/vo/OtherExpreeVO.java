@@ -14,7 +14,7 @@ public class OtherExpreeVO implements Serializable {
     private String companyname;
     private String companycode;
     private String mailNum;//运单号
-    private double otherExpsAmount;//转其他快递金额
+    private int otherExpsAmount;//转其他快递金额
     private AuditStatus auditStatus;//转其他快递金额审核状态
     private String turnDownReason; //驳回理由
     private String status;/*本数据元对应的签收状态。只有在开通签收状态服务
@@ -35,11 +35,11 @@ public class OtherExpreeVO implements Serializable {
         this.id = id;
     }
 
-    public double getOtherExpsAmount() {
+    public int getOtherExpsAmount() {
         return otherExpsAmount;
     }
 
-    public void setOtherExpsAmount(double otherExpsAmount) {
+    public void setOtherExpsAmount(int otherExpsAmount) {
         this.otherExpsAmount = otherExpsAmount;
     }
 
