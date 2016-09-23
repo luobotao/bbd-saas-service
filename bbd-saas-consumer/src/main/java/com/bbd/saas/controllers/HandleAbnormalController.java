@@ -719,7 +719,7 @@ public class HandleAbnormalController {
         expRemark.append(mailNumNew);
         otherExpreeVO.setContext(expRemark.toString());
         otherExpreeVO.setCompanycode(companyCode);
-        otherExpreeVO.setOtherExpsAmount((int)otherExpsAmount*100);
+        otherExpreeVO.setOtherExpsAmount((int)(otherExpsAmount*100));
         otherExpreeVO.setAuditStatus(AuditStatus.WAIT);
         otherExpreeVO.setDateAdd(new Date());
         otherExpreeVO.setDateUpd(new Date());
