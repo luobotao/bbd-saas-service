@@ -8,8 +8,8 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum AuditStatus {
     WAIT(0, "待审核"),
-    PASS(1, "通过"),
-    TURNDOWN(2, "驳回");
+    PASS(1, "已审核"),
+    TURNDOWN(2, "被驳回");
     private int status;
     private String message;
 
