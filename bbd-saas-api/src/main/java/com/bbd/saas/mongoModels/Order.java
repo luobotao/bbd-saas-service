@@ -81,6 +81,13 @@ public class Order implements Serializable {
     @Transient
     private UserVO userVO;//传递jsp页面快递员姓名和电话
 
+    public ComplaintStatus getComplaintStatus() {
+        return complaintStatus;
+    }
+
+    public void setComplaintStatus(ComplaintStatus complaintStatus) {
+        this.complaintStatus = complaintStatus;
+    }
 
     public List<OtherExpreeVO> getOtherExprees() {
         return otherExprees;

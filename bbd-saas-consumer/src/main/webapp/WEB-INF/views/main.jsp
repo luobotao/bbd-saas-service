@@ -109,9 +109,9 @@ folder instead of downloading all of them to reduce the load. -->
 	<!-- alertify -->
 	<script src="<c:url value="/resources/adminLTE/plugins/alertify/alertify.js" />"> </script>
 
-	<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
-	<script src="<c:url value="/resources/javascripts/checkUtil.js" />"> </script>
-	<script src="<c:url value="/resources/javascripts/timeUtil.js" />"> </script>
+	<script src="<c:url value="/resources/javascripts/main.js?_123" />"> </script>
+	<script src="<c:url value="/resources/javascripts/checkUtil.js?_123" />"> </script>
+	<script src="<c:url value="/resources/javascripts/timeUtil.js?_123" />"> </script>
 	<script src="<c:url value="/resources/javascripts/encode/aes.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/encode/sha1.js" />"> </script>
 	<script src="<c:url value="/resources/javascripts/encode/encodeTool.js" />"> </script>

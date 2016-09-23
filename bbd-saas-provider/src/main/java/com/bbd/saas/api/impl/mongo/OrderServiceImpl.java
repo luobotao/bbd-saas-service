@@ -27,7 +27,6 @@ import com.bbd.saas.vo.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
-import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -181,6 +180,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findOneByNewMailNum(String newMailNum) {
         return orderDao.findOneByNewMailNum(newMailNum);
+    }
+
+    @Override
+    public long findCountByNewMailNum(String newMailNum) {
+        return orderDao.selectCountByNewMailNum(newMailNum);
     }
 
     @Override
@@ -535,7 +539,6 @@ public class OrderServiceImpl implements OrderService {
                             resultAreaCode = listcnts.get(0).getKey();
 
                             long endTimemapSitesFictitious = System.currentTimeMillis(); //获取结束时间
-
                             logger.info("虚拟站点整理运行时间： " + (endTimemapSitesFictitious - startTimemapSitesFictitious) + "ms");
                         } else {
 
@@ -627,9 +630,7 @@ public class OrderServiceImpl implements OrderService {
                                             long startTimegetIntegral = System.currentTimeMillis();   //获取开始时间
                                             //获取站点的日均积分
                                             Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
-
                                             long endTimegetIntegral = System.currentTimeMillis(); //获取结束时间
-
                                             logger.info("getIntegral运行时间： " + (endTimegetIntegral - startTimegetIntegral) + "ms");
 
                                             //int integral = userMysqlService.getIntegral("101010-016","17710174098");

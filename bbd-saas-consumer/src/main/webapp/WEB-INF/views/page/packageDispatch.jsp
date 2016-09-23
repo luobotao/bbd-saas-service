@@ -1,10 +1,10 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="com.bbd.saas.mongoModels.Order" %>
-<%@ page import="com.bbd.saas.utils.PageModel" %>
-<%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.enums.DispatchStatus" %>
-<%@ page import="com.bbd.saas.constants.Constants" %>
+<%@ page import="com.bbd.saas.enums.OrderStatus" %>
+<%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
+<%@ page import="com.bbd.saas.utils.PageModel" %>
+<%@ page import="java.util.Date" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -82,7 +82,7 @@
 									<c:otherwise><th width="4%"></th></c:otherwise>
 								</c:choose>
 								<th>运单号</th>
-								<th>收货人</th>
+								<th width="6%">收货人</th>
 								<th width="20%">收货人地址</th>
 								<th>到站时间</th>
 								<th>派送员姓名</th>
@@ -103,18 +103,33 @@
 							}else{
 								for(Order order : orderPage.getDatas()){
 						%>
-							<tr>
-								<%
-									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){//未分派
-								%>
-									<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
-								<%
-									}else{
-								%>
-									<td></td>
-								<%
-									}
-								%>
+						<%
+							if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){//未分派
+						%>
+							<%
+								long arriveDays = Dates.daysBetween(order.getDateArrived(), new Date());
+								if(arriveDays <= 0){//不足一天
+							%>
+								<tr>
+							<%
+								}else if(arriveDays == 1){//超过一天
+							%>
+								<tr class="bg-yellow">
+							<%
+								}else{//超过2天
+							%>
+								<tr class="bg-pink">
+							<%
+								}
+							%>
+							<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
+						<%
+							}else{//已分派
+						%>
+						<tr><td></td>
+						<%
+							}
+						%>
 								<td><%=order.getMailNum()%></td>
 								<td><%=order.getReciever().getName()%></td>
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
@@ -439,11 +454,19 @@ function refreshTable(dataObject){
 }
 //封装一行的数据
 function getRowHtml(data){
-	var row = "<tr>";
+	var row = "";
 	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){
+		var arriveDays = getDayDiff(getDate1(data.dateArrived));
+		if(arriveDays <= 0){//不足一天
+			row += "<tr>";
+		}else if(arriveDays == 1){//超过一天
+			row += "<tr class='bg-yellow'>";
+		}else{//超过2天
+			row += "<tr class='bg-pink'>";
+		}
 		row +=  "<td><input type='checkbox' value='" + data.mailNum + "' name='id'></td>";
 	}else{
-		row +=  "<td></td>";
+		row +=  "<tr><td></td>";
 	}
 	row +=  "<td>" + data.mailNum + "</td>";
 	row += "<td>" + data.reciever.name + "</td>";

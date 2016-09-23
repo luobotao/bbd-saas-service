@@ -7,6 +7,7 @@ import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.AuditStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.ExpressCompany;
@@ -35,7 +36,7 @@ import java.util.*;
 @RequestMapping("/handleAbnormal")
 public class HandleAbnormalController {
 
-    public static final Logger logger = LoggerFactory.getLogger(HandleAbnormalController1.class);
+    public static final Logger logger = LoggerFactory.getLogger(HandleAbnormalController.class);
 
     @Autowired
     OrderService orderService;
@@ -566,6 +567,17 @@ public class HandleAbnormalController {
     }
 
     /**
+     * 获取转快递运单号输入的次数（多个快递同用一个运单）
+     * @param newMailNum 转快递运单号
+     * @return 输入的次数
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getNewMailNumCount", method = RequestMethod.POST)
+    public Long checkNewMailNum(String newMailNum) {
+       return orderService.findCountByNewMailNum(newMailNum);
+    }
+
+    /**
      * 转其他快递
      * @param mailNum 原有的运单号
      * @param companyId 要转到的快递公司Id
@@ -578,7 +590,7 @@ public class HandleAbnormalController {
      */
     @ResponseBody
     @RequestMapping(value = "/toOtherExpressCompanys", method = RequestMethod.POST)
-    public Map<String, Object> toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew, Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
+    public Map<String, Object> toOtherExpressCompanys(String mailNum, String companyId, String mailNumNew, Double otherExpsAmount,Integer status, Integer pageIndex, String arriveBetween, final HttpServletRequest request) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             //当前登录的用户信息
@@ -595,7 +607,7 @@ public class HandleAbnormalController {
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
                 }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  == order.getOrderStatus() || OrderStatus.REJECTION == order.getOrderStatus())){
                     //查询运单信息
-                    order = updExpressForToOtherCmp(order, companyId, mailNum, mailNumNew, currUser);
+                    order = updExpressForToOtherCmp(order, companyId, mailNumNew, otherExpsAmount, currUser);
                     Sender sender = order.getSender();
                     Reciever reciever = order.getReciever();
                     StringBuffer fromSB = new StringBuffer();
@@ -633,6 +645,10 @@ public class HandleAbnormalController {
                                 map.put("msg", "转运信息添加失败，请稍候再试");
                             }
                         }*/
+                        if(otherExpsAmount == null){
+                            otherExpsAmount = 0.00;
+                        }
+
                         //更新运单
                         Key<Order> r = orderService.save(order);
                         if (r != null) {
@@ -667,12 +683,14 @@ public class HandleAbnormalController {
 
     /**
      * 转其他快递物流信息
+     * @param order 订单信息
      * @param companyId 要转到的快递公司的Id
-     * @param mailNum
-     * @param mailNumNew
-     * @return
+     * @param mailNumNew 新运单号
+     * @param otherExpsAmount 转快递金额
+     * @param currUser 当前登录用户
+     * @return 更新后的order
      */
-    private Order updExpressForToOtherCmp( Order order, String companyId, String mailNum, String mailNumNew, User currUser){
+    private Order updExpressForToOtherCmp(Order order, String companyId, String mailNumNew, double otherExpsAmount, User currUser){
 
         String companyName = null;
         String companyCode = null;
@@ -701,10 +719,14 @@ public class HandleAbnormalController {
         expRemark.append(mailNumNew);
         otherExpreeVO.setContext(expRemark.toString());
         otherExpreeVO.setCompanycode(companyCode);
+        otherExpreeVO.setOtherExpsAmount((int)(otherExpsAmount*100));
+        otherExpreeVO.setAuditStatus(AuditStatus.WAIT);
+        otherExpreeVO.setDateAdd(new Date());
         otherExpreeVO.setDateUpd(new Date());
         otherExpressList.add(otherExpreeVO);
         order.setOtherExprees(otherExpressList);
         order.setDateUpd(new Date());
+
         //更新expresses字段
         OrderCommon.addOrderExpress(ExpressStatus.TO_OTHER_EXPRESS, order, currUser, expRemark.toString());
         return order;

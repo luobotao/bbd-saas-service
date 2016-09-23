@@ -72,7 +72,8 @@ public class Dates {
             return "";
         }
         return CHINESE_DATE_TIME_FORMAT_NEW.format(date);
-    } /**
+    }
+    /**
      * yyyy/MM/dd HH:mm:ss
      * @param date
      * @return
@@ -1105,21 +1106,18 @@ public class Dates {
 	 *            较小的时间
 	 * @param bdate
 	 *            较大的时间
-	 * @return 相差天数
+	 * @return 相差天数,向下取整（不足一天为0天）
 	 * @throws ParseException
 	 */
-	public static int daysBetween(Date smdate, Date bdate) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		smdate = sdf.parse(sdf.format(smdate));
-		bdate = sdf.parse(sdf.format(bdate));
+	public static long daysBetween(Date smdate, Date bdate) throws ParseException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(smdate);
 		long time1 = cal.getTimeInMillis();
 		cal.setTime(bdate);
 		long time2 = cal.getTimeInMillis();
-		long between_days = (time2 - time1) / (1000 * 3600 * 24);
-
-		return Integer.parseInt(String.valueOf(between_days));
+		long between_days = (time2 - time1) /(1000*3600*24);
+        //System.out.println("days=="+between_days);
+        return between_days;
 	}
 
 	/**
@@ -1374,7 +1372,11 @@ public class Dates {
         return c.getTime();
     }
 
-    public static void main(String[] args) {
-        System.out.println(Dates.getNextDay(new Date(),-1));
+    public static void main(String[] args) throws Exception {
+        //System.out.println(Dates.getNextDay(new Date(),-1));
+
+        System.out.println(Dates.daysBetween(stringToDate("2016-09-18 14:07:34", "yyyy-MM-dd HH:mm:ss"),new Date()));
+
+
     }
 }

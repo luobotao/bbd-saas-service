@@ -349,7 +349,7 @@ a.orange {
   vertical-align: middle;
   font-size:16px;
 }
-.table tr:nth-child(2n) td {
+.table tr:nth-child(2n) {
   background: #f4f4fb;
 }
 .table .l-count {
@@ -2189,3 +2189,10 @@ input.spe-input{
   padding:0 15px 20px;
 }
 /* E 左右间距 */
+
+.bg-yellow {
+  background: #fcf9ea !important;
+}
+.bg-pink {
+  background: #ffebe5 !important;
+}

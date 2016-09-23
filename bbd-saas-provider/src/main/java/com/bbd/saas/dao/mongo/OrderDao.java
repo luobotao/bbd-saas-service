@@ -507,6 +507,18 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     }
 
     /**
+     * 根据其他快递的运单号查询订单数目
+     * @param newMailNum 新运单号
+     * @return 订单数目
+     */
+    public long selectCountByNewMailNum(String newMailNum) {
+        Query<Order> query = createQuery();
+        if(StringUtils.isNotBlank(newMailNum))
+            query.filter("otherExprees.mailNum",newMailNum);
+        return count(query);
+    }
+
+    /**
      * 查询指定mailNum集合的订单中物流状态不为expressStatus的订单的条数
      * @param mailNumList mailNum集合
      * @param expressStatus 物流状态
