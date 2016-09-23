@@ -328,7 +328,13 @@ public class OrderServiceImpl implements OrderService {
     public PageModel<Order> findPageOrders(PageModel<Order> pageModel, String tradeNo, ObjectId uId, String keyword) {
         return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
     }
-
+    @Override
+    public PageModel<Order> findPageOrders(Integer pageIndex, String tradeNo, ObjectId uId, String keyword) {
+        PageModel<Order> pageModel = new PageModel<Order>();
+        pageModel.setPageNo(pageIndex);
+        pageModel.setPageSize(20);
+        return orderDao.findPageOrders(pageModel, tradeNo, uId, keyword);
+    }
     @Override
     public long findCountByTradeNo(String tradeNo, Integer removeStatus) {
         return orderDao.findCountByTradeNo(tradeNo, removeStatus);
