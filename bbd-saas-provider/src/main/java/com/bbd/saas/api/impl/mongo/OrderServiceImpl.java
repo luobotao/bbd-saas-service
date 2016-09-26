@@ -222,8 +222,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 更新订单状态
-     * 此处需要再加上包裹下的订单的状态更新
+     * 更新订单所处包裹的状态
      *
      * @param mailNum        运单号
      * @param orderStatusOld 可为null,若为null则不检验旧状态否则须旧状态满足才可更新
@@ -231,7 +230,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void updateOrderOrderStatu(String mailNum, OrderStatus orderStatusOld, OrderStatus orderStatusNew) {
-        orderDao.updateOrderOrderStatu(mailNum, orderStatusOld, orderStatusNew);//修改订单表里的状态
+        //orderDao.updateOrderOrderStatu(mailNum, orderStatusOld, orderStatusNew);//修改订单表里的状态
         orderParcelDao.updateOrderOrderStatu(mailNum, orderStatusOld, orderStatusNew);//修改包裹表里的订单的状态
     }
 
