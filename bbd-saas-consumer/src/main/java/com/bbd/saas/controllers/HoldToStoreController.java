@@ -35,11 +35,6 @@ import java.util.Map;
 
 /**
  * 揽件入库
- * Created by huozhijie on 2016/6/25.
- */
-
-/**
- * 揽件入库
  */
 @Controller
 @RequestMapping("/holdToStoreController")
@@ -299,8 +294,36 @@ public class HoldToStoreController {
                 trade.setDateUpd(new Date());
                 tradeService.save(trade);
                 User embrace = userService.findOne(trade.getEmbraceId().toHexString());
-                if(embrace!=null)
-                    pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());
+                if(embrace!=null){
+                    User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+                    if(user!=null && user.getSite()!=null && user.getSite().equals(embrace.getSite()) ){
+                        pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());//推送消息给揽件员
+                    }
+                }
+            }
+
+
+            List<OrderParcel> parcelCursor =orderParcelService.findOrderParcelsByAreaCodeAndStatusAndSrc(order.getAreaCode(),Srcs.BBT.toString(), ParcelStatus.Suspense);
+            if(parcelCursor.size()<=0){
+                Site sitearea = siteService.findSiteByAreaCode(order.getAreaCode());
+                if (sitearea != null) {
+                    OrderParcel orderParcel = new OrderParcel();
+                    orderParcel.setProvince(sitearea.getProvince());
+                    orderParcel.setCity(sitearea.getCity());
+                    orderParcel.setArea(sitearea.getArea());
+                    orderParcel.setAreaName(sitearea.getName());
+                    orderParcel.setAreaCode(sitearea.getAreaCode());
+                    orderParcel.setAreaRemark(sitearea.getName());
+                    orderParcel.setParcelCode("");
+                    orderParcel.setSort_uid("");
+                    orderParcel.setStation_address(sitearea.getAddress());
+                    orderParcel.setDateAdd(new Date());
+                    orderParcel.setDateUpd(new Date());
+                    orderParcel.setStatus(ParcelStatus.Suspense);
+                    orderParcel.setParceltyp("0");
+                    orderParcel.setSrc(Srcs.BBT.toString());
+                    orderParcelService.saveOrderParcel(orderParcel);
+                }
             }
         }
     }

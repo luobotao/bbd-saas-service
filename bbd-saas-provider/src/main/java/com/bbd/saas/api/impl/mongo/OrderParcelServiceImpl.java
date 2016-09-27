@@ -99,6 +99,17 @@ public class OrderParcelServiceImpl implements OrderParcelService {
 	public List<OrderParcel> findOrderParcelsByAreaCodeAndStatus(String areaCode, ParcelStatus parcelStatus) {
 		return  orderParcelDao.findOrderParcelsByAreaCodeAndStatus(areaCode,parcelStatus);
 	}
+	/**
+	 * 根据来源、站点编码和包裹状态获取包裹列表
+	 * @param areaCode
+	 * @param src
+	 * @param parcelStatus
+	 * @return
+	 */
+	@Override
+	public List<OrderParcel> findOrderParcelsByAreaCodeAndStatusAndSrc(String areaCode, String src,ParcelStatus parcelStatus) {
+		return  orderParcelDao.findOrderParcelsByAreaCodeAndStatusAndSrc(areaCode,src,parcelStatus);
+	}
 
 	@Override
 	public List<OrderParcel> findStagionParcelList(String uid, int offset, int pagesize) {

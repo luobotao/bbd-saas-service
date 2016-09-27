@@ -151,4 +151,19 @@ public class OrderParcelDao extends BaseDAO<OrderParcel, ObjectId> {
         pageModel.setTotalCount(count(query));
         return pageModel;
     }
+
+    /**
+     * 根据来源、站点编码和包裹状态获取包裹列表
+     * @param areaCode
+     * @param src
+     * @param parcelStatus
+     * @return
+     */
+    public List<OrderParcel> findOrderParcelsByAreaCodeAndStatusAndSrc(String areaCode, String src, ParcelStatus parcelStatus) {
+        Query<OrderParcel> query = createQuery();
+        query.filter("src",src);
+        query.filter("areaCode",areaCode);
+        query.filter("status",parcelStatus);
+        return find(query).asList();
+    }
 }

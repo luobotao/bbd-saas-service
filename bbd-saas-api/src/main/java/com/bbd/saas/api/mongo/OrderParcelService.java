@@ -55,6 +55,14 @@ public interface OrderParcelService {
 	 */
 	List<OrderParcel> findOrderParcelsByAreaCodeAndStatus(String areaCode, ParcelStatus parcelStatus);
 	/**
+	 * 根据来源、站点编码和包裹状态获取包裹列表
+	 * @param areaCode
+	 * @param src
+	 * @param parcelStatus
+	 * @return
+	 */
+	List<OrderParcel> findOrderParcelsByAreaCodeAndStatusAndSrc(String areaCode, String src,ParcelStatus parcelStatus);
+	/**
 	 * 保存包裹
 	 * @param orderParcel 包裹对象
 	 */
