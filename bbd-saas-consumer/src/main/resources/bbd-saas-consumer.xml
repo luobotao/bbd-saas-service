@@ -25,6 +25,8 @@
     <dubbo:reference id="siteService" interface="com.bbd.saas.api.mongo.SiteService" />
     <!--orderPacel Service-->
     <dubbo:reference id="orderParcelService" interface="com.bbd.saas.api.mongo.OrderParcelService"/>
+    <!--Complaint Service-->
+    <dubbo:reference id="complaintService" interface="com.bbd.saas.api.mongo.ComplaintService"/>
     <!--sitePoiApi Service-->
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
     <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />

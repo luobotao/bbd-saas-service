@@ -32,6 +32,7 @@
     <dubbo:service interface="com.bbd.saas.api.mongo.UserService" ref="userService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.SiteService" ref="siteService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.OrderParcelService" ref="orderPacelService" />
+    <dubbo:service interface="com.bbd.saas.api.mongo.ComplaintService" ref="complaintService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.ToOtherSiteLogService" ref="toOtherSiteLogService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.ReturnReasonService" ref="returnReasonService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.TradeService" ref="tradeService" />

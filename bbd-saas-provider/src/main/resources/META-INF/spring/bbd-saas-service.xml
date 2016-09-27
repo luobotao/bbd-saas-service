@@ -42,6 +42,12 @@
             <ref bean="orderParcelDao"/>
         </property>
     </bean>
+    <!-- complaint Service-->
+    <bean id="complaintService" class="com.bbd.saas.api.impl.mongo.ComplaintServiceImpl">
+        <property name="complaintDao">
+            <ref bean="complaintDao"/>
+        </property>
+    </bean>
     <!-- user Service-->
     <bean id="userService" class="com.bbd.saas.api.impl.mongo.UserServiceImpl">
         <property name="userDao">

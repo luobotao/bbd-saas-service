@@ -105,7 +105,7 @@
 								if(orderPage==null || orderPage.getDatas() == null){
 							%>
 								<tr>
-									<td colspan="7">没有符合查询条件的数据</td>
+									<td colspan="12">没有符合查询条件的数据</td>
 								</tr>
 							<%
 								}else{

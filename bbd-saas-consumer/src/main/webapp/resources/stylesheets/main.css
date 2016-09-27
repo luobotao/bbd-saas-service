@@ -2196,3 +2196,30 @@ input.spe-input{
 .bg-pink {
   background: #ffebe5 !important;
 }
+
+
+
+
+/* S 信息展示 */
+.b-total{
+  font-size:16px;
+  color:#333;
+}
+.b-grade{
+  font-size:30px;
+
+  padding:0 10px;
+}
+.c-greens{
+  color:#34cb65;
+}
+.b-alls{
+  color:#aeaeae;
+  padding-left:26px;
+}
+.b-tips{
+  font-size:16px;
+  color:#fc9e28;
+  margin:10px 0;
+}
+/* E 信息展示 */

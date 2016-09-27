@@ -97,7 +97,7 @@
 							if(orderPage.getDatas() == null){
 						%>
 							<tr>
-								<td colspan="7">没有符合查询条件的数据</td>
+								<td colspan="9">没有符合查询条件的数据</td>
 							</tr>
 						<%
 							}else{
@@ -435,7 +435,7 @@ function refreshTable(dataObject){
 			//datastr += getRowHtml(dataList[i]);
 		}
 	} else{
-		tbody.append("<tr><td colspan='7'>没有符合查询条件的数据</td></tr>");
+		tbody.append("<tr><td colspan='9'>没有符合查询条件的数据</td></tr>");
 		//datastr += "<tr><td colspan='7'>没有符合查询条件的数据</td></tr>";
 	}
 	//tbody.html(datastr);

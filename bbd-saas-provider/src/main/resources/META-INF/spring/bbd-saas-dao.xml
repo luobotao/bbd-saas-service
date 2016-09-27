@@ -30,6 +30,10 @@
     <bean id="orderParcelDao" class="com.bbd.saas.dao.mongo.OrderParcelDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- Complaint  DAO-->
+    <bean id="complaintDao" class="com.bbd.saas.dao.mongo.ComplaintDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
     <!-- ToOtherSiteLog DAO-->
     <bean id="toOtherSiteLogDao" class="com.bbd.saas.dao.mongo.ToOtherSiteLogDao">
         <constructor-arg ref="datastore"/>
