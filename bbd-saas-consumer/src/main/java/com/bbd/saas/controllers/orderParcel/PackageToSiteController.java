@@ -168,10 +168,10 @@ public class PackageToSiteController {
 		pageModel.setPageNo(pageIndex);
 		pageModel.setPageSize(50);
 		PageModel<Order> orderPage = orderService.findOrders(pageModel,orderQueryVO);
-		for(Order order : orderPage.getDatas()){
-			String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
-			order.setParcelCode(parcelCodeTemp);//设置包裹号
-		}
+//		for(Order order : orderPage.getDatas()){
+//			String parcelCodeTemp = orderParcelService.findParcelCodeByOrderId(order.getId().toHexString());
+//			order.setParcelCode(parcelCodeTemp);//设置包裹号
+//		}
 		return orderPage;
 	}
 	/**
