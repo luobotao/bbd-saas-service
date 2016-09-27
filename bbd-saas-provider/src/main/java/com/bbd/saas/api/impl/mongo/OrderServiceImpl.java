@@ -451,8 +451,9 @@ public class OrderServiceImpl implements OrderService {
         String resultAreaCode = "";
         List<String> areaCodeList = new ArrayList<String>();
         List<String> mapGuiZiSitesFictitious = new ArrayList<String>();
+        long totalStartTime = System.currentTimeMillis();   //获取开始时间
         try {
-            long startTimesearchSiteByAddress = System.currentTimeMillis();   //获取开始时间
+//            long startTimesearchSiteByAddress = System.currentTimeMillis();   //获取开始时间
 
 //            List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", address);
             //改动 测试V2
@@ -461,7 +462,7 @@ public class OrderServiceImpl implements OrderService {
 
             long endTimesearchSiteByAddress = System.currentTimeMillis(); //获取结束时间
 
-            logger.info("sass调用searchSiteByAddress运行时间： " + (endTimesearchSiteByAddress - startTimesearchSiteByAddress) + "ms");
+            logger.info("address:" + address +"sass调用searchSiteByAddress运行时间： " + (endTimesearchSiteByAddress - totalStartTime) + "ms");
 
 //            logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId List size:" + areaCodeList.size());
             if (areaCodeList1 != null && areaCodeList1.data.size() > 0) {
@@ -483,14 +484,17 @@ public class OrderServiceImpl implements OrderService {
                             }
                         }
                     }
+                    long endTimeGuiZi = System.currentTimeMillis();
+                    logger.info("address:" + address +"快递柜运行时间： " + (endTimesearchSiteByAddress - startTimeGuiZi) + "ms");
                 }
 
-                long endTimeGuiZi = System.currentTimeMillis();
-                logger.info("快递柜运行时间： " + (endTimesearchSiteByAddress - startTimesearchSiteByAddress) + "ms");
+
 
                 if (mapGuiZiSitesFictitious.size() > 0) {
                     logger.info("快递柜没有达到上限,返回快递柜集合中的第一个:" + mapGuiZiSitesFictitious.get(0));
                     siteMysqlService.updateSiteDayCntBySiteId(mapGuiZiSitesFictitious.get(0));
+                    long endTimeGuiZi2 = System.currentTimeMillis();
+                    logger.info("address:" + address +"只进行了快递柜逻辑运行时间： " + (endTimeGuiZi2 - totalStartTime) + "ms");
                     return mapGuiZiSitesFictitious.get(0);
                 }
 
@@ -504,6 +508,7 @@ public class OrderServiceImpl implements OrderService {
                 //虚拟站点集合
                 Map<String, SiteMySql> mapSitesFictitious = new HashMap<String, SiteMySql>();
                 if (areaCodeList != null && areaCodeList.size() > 0) {
+                    long totalSassStartTime = System.currentTimeMillis();   //获取开始时间
                     if (areaCodeList.size() > 1) {
                         for (String siteId : areaCodeList) {
                             SiteMySql siteMySql = siteMysqlService.selectIdBySiteId(siteId);
@@ -539,7 +544,7 @@ public class OrderServiceImpl implements OrderService {
                             resultAreaCode = listcnts.get(0).getKey();
 
                             long endTimemapSitesFictitious = System.currentTimeMillis(); //获取结束时间
-                            logger.info("虚拟站点整理运行时间： " + (endTimemapSitesFictitious - startTimemapSitesFictitious) + "ms");
+                            logger.info("address:" + address +"虚拟站点整理运行时间： " + (endTimemapSitesFictitious - startTimemapSitesFictitious) + "ms");
                         } else {
 
                             long startTimeSX = System.currentTimeMillis();   //获取开始时间
@@ -625,13 +630,13 @@ public class OrderServiceImpl implements OrderService {
 
                                             long endTimegetDistance = System.currentTimeMillis(); //获取结束时间
 
-                                            logger.info("getDistance运行时间： " + (endTimegetDistance - startTimegetDistance) + "ms");
+                                            logger.info("address:" + address +"getDistance运行时间： " + (endTimegetDistance - startTimegetDistance) + "ms");
 
                                             long startTimegetIntegral = System.currentTimeMillis();   //获取开始时间
                                             //获取站点的日均积分
                                             Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(), site.getUsername());
                                             long endTimegetIntegral = System.currentTimeMillis(); //获取结束时间
-                                            logger.info("getIntegral运行时间： " + (endTimegetIntegral - startTimegetIntegral) + "ms");
+                                            logger.info("address:" + address +"getIntegral运行时间： " + (endTimegetIntegral - startTimegetIntegral) + "ms");
 
                                             //int integral = userMysqlService.getIntegral("101010-016","17710174098");
                                             logger.info("匹配站点" + siteId + "获取积分：" + result.toString());
@@ -672,7 +677,7 @@ public class OrderServiceImpl implements OrderService {
 
                                     long endTimemapSX = System.currentTimeMillis(); //获取结束时间
 
-                                    logger.info("加入上下限逻辑后运行时间： " + (endTimemapSX - startTimeSX) + "ms");
+                                    logger.info("address:" + address +"加入上下限逻辑后else运行时间： " + (endTimemapSX - startTimeSX) + "ms");
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -685,6 +690,10 @@ public class OrderServiceImpl implements OrderService {
                         //通过积分获取优选区域码，暂时用第一个
                         resultAreaCode = areaCodeList.get(0);
                     }
+
+                    long totalSassEndTime = System.currentTimeMillis(); //获取结束时间
+                    logger.info("address:" + address +"老逻辑运行时间： " + (totalSassEndTime - totalSassStartTime) + "ms");
+
                     logger.info("[findBestSiteWithAddress]request address:" + address + ", response siteId:" + resultAreaCode);
                     siteMysqlService.updateSiteDayCntBySiteId(resultAreaCode);
                 }
@@ -692,6 +701,8 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        long totalEndTime = System.currentTimeMillis(); //获取结束时间
+        logger.info("address:" + address +"方法在sass端总体运行时间： " + (totalEndTime - totalStartTime) + "ms");
         return resultAreaCode;
 
         //改动 测试V2
