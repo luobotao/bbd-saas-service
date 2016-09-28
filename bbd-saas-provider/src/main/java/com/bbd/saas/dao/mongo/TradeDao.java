@@ -46,6 +46,10 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
             }else if(tradeQueryVO.tradeStatus == TradeStatus.CANCELED.getStatus()){//取消
                 query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
                         query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
+            }else if(tradeQueryVO.tradeStatus == TradeStatus.GETED.getStatus()){//已取件
+                query.or(query.criteria("tradeStatus").equal(TradeStatus.GETED),
+                        query.criteria("tradeStatus").equal(TradeStatus.ARRIVED),
+                        query.criteria("tradeStatus").equal(TradeStatus.FINISH));
             }else {
                 query.filter("tradeStatus", TradeStatus.status2Obj(tradeQueryVO.tradeStatus));
             }
@@ -148,13 +152,16 @@ public class TradeDao extends BaseDAO<Trade, ObjectId> {
             }else if(tradeStatus == TradeStatus.CANCELED){//取消
                 query.or(query.criteria("tradeStatus").equal(TradeStatus.CANCELED),
                         query.criteria("tradeStatus").equal(TradeStatus.RETURNED));
+            }else if(tradeStatus == TradeStatus.GETED){//已取件
+                query.or(query.criteria("tradeStatus").equal(TradeStatus.GETED),
+                        query.criteria("tradeStatus").equal(TradeStatus.ARRIVED),
+                        query.criteria("tradeStatus").equal(TradeStatus.FINISH));
             }else{
                 query.filter("tradeStatus", tradeStatus);
             }
         }
         return count(query);
     }
-
 
     public List<Trade> findTradeListByPushJob(int bbdTradePushCount) {
         Query<Trade> query = createQuery();
