@@ -15,5 +15,12 @@ public interface PushService {
      */
     void tradePush(int uid, String typ, String tradeNo);
 
+    /**
+     * 揽件员收益
+     * @param uid
+     * @param mailNo
+     */
+    void courierAdd(int uid, String mailNo);
+
 
 }

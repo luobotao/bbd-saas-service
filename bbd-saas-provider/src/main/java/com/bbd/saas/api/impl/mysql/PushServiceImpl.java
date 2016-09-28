@@ -40,6 +40,17 @@ public class PushServiceImpl implements PushService {
         parms.put("tradeNo", tradeNo);
         pushDao.tradePush(parms);
     }
+    /**
+     * 揽件员收益
+     * @param uid 揽件员Id
+     * @param mailNo 订单号
+     */
+    public void courierAdd(int uid, String mailNo) {
+        Map<String, Object> parms = new HashMap<String, Object>();
+        parms.put("uid", uid);
+        parms.put("mailNo", mailNo);
+        pushDao.courierAdd(parms);
+    }
 
 
 }

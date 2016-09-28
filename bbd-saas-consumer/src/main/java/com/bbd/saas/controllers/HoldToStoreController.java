@@ -298,10 +298,10 @@ public class HoldToStoreController {
                     User user = adminService.get(UserSession.get(request));//当前登录的用户信息
                     if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
                         pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());//推送消息给揽件员
+                        pushService.courierAdd(embrace.getPostmanuserId(),order.getMailNum());//揽件员收益
                     }
                 }
             }
-
 
             List<OrderParcel> parcelCursor =orderParcelService.findOrderParcelsByAreaCodeAndStatusAndSrc(order.getAreaCode(),Srcs.BBT.toString(), ParcelStatus.Suspense);
             if(parcelCursor.size()<=0){

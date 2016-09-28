@@ -10,4 +10,12 @@
         {call sp_postman_bbdpush_trade(?, ?, ?)}
     </update>
 
+    <!--揽件员收益-->
+    <parameterMap type="map" id="courierAddParameterMap">
+        <parameter property="uid" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="mailNo" jdbcType="VARCHAR" mode="IN"/>
+    </parameterMap>
+    <update id="courierAdd" parameterMap="courierAddParameterMap" statementType="CALLABLE">
+        {call sp_balance_courieradd(?, ?)}
+    </update>
 </mapper>
