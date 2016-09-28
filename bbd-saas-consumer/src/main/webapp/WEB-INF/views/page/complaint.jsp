@@ -133,7 +133,7 @@
 										}
 										if(complaint.getAppealStatus() != null){//投诉状态
 									%>
-										<td><%=complaint.getComplaintStatus().getMessage()%></td>
+										<td><%=complaint.getComplaintStatus().getMessage().replace("待处理投诉","客服处理中")%></td>
 									<%
 										}else {
 									%>
@@ -239,7 +239,7 @@ function getRowHtml(data){
 	row += "<td>" + getDate1(data.dateAdd) + "</td>";
 	row += "<td>" + data.respondent + "</td>";//被投诉人
 	row += "<td>" + data.appealStatusMsg + "</td>";//申诉状态
-	row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
+	row += "<td>" + data.complaintStatusMsg.replace("待处理投诉","客服处理中") + "</td>";//投诉状态
 	row += "<td>" + data.punishReason + "</td>";//处罚结果
 	row += "</tr>";
 	return row;

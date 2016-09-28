@@ -8,7 +8,8 @@ import com.bbd.saas.utils.Htmls;
 public enum ComplaintStatus {
     COMPLAINT_WAIT(0, "待处理投诉"),
     COMPLAINT_SUCCESS(1, "投诉成立"),
-    COMPLAINT_CLOSE(2, "投诉关闭");
+    COMPLAINT_CLOSE(2, "投诉关闭"),
+    COMPLAINT_CANCEL(3, "投诉撤销");
     private int status;
     private String message;
 
