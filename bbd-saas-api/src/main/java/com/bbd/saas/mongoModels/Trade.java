@@ -29,6 +29,8 @@ public class Trade implements Serializable {
     private Integer amountMay;//订单金额(估计) 单位分
     private Integer amountReal;//订单金额(实际) 单位分
     private Integer amountReturn;//实际退款金额 单位分(应该退的金额可以计算出来,此为实际退款金额)
+    private Integer amtMayForSm;//小件员收益(估计) 单位分
+    private Integer amtReaForSm;//小件员收益(实际) 单位分
     private TradeStatus tradeStatus;//商户订单状态
     private Integer pushRange;  //push范围 ，默认为2公里
     private Integer pushCount;  //push次数 ，默认为0次，超过2此则需要兜底操作
@@ -231,5 +233,19 @@ public class Trade implements Serializable {
         this.pushCount = pushCount;
     }
 
+    public Integer getAmtMayForSm() {
+        return amtMayForSm;
+    }
 
+    public void setAmtMayForSm(Integer amtMayForSm) {
+        this.amtMayForSm = amtMayForSm;
+    }
+
+    public Integer getAmtReaForSm() {
+        return amtReaForSm;
+    }
+
+    public void setAmtReaForSm(Integer amtReaForSm) {
+        this.amtReaForSm = amtReaForSm;
+    }
 }
