@@ -797,11 +797,11 @@
 			$("#otherExpsAmount").focus();
 			return false;
 		}else if(!reg.test(num) || num < 0){
-			ioutDiv("请输入0-30内的数值,最多包含两位小数");
+			ioutDiv("请输入0-40内的数值,最多包含两位小数");
 			$("#otherExpsAmount").focus();
 			return false;
-		}else if(num > 30){
-			ioutDiv("转快递金额不能超过30元");
+		}else if(num > 40){
+			ioutDiv("转快递金额不能超过40元");
 			$("#otherExpsAmount").focus();
 			return false;
 		}else{
