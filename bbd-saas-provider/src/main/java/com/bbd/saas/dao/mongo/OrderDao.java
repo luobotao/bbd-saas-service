@@ -57,7 +57,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             }
             if (orderQueryVO.arriveStatus != null && orderQueryVO.arriveStatus != -1) {
                 if (orderQueryVO.arriveStatus == 1) {//已到站 即只要不是未到站,待揽件,已揽件，则全为已到站
-                    query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
+                    query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);;
                     query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
 
                     if (StringUtils.isNotBlank(orderQueryVO.between)) {//到站时间
@@ -66,7 +66,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         query.filter("dateArrived <=", dateBetween.getEnd());
                     }
                 } else {//未到站
-                    query.filter("orderStatus", OrderStatus.NOTARR);
+                    query.filter("orderStatus", OrderStatus.NOTARR).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);;
                     query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
 
                     if (StringUtils.isNotBlank(orderQueryVO.between)) {//预计到站时间
@@ -76,7 +76,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 }
             } else {//全部（已到站||未到站）
-                query.filter("orderStatus <>", null);
+                query.filter("orderStatus <>", null).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);
                 query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
                 if (StringUtils.isNotBlank(orderQueryVO.between)) {//预计到站时间
                     DateBetween dateBetween = new DateBetween(orderQueryVO.between);
@@ -108,12 +108,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public OrderNumVO getOrderNumVO(String areaCode) {
         OrderNumVO orderNumVO = new OrderNumVO();
         Query<Order> query = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        query.filter("orderStatus", OrderStatus.NOTARR);
+        query.filter("orderStatus", OrderStatus.NOTARR).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);
         query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
 
         orderNumVO.setNoArriveHis(count(query));//历史未到站
 
-        Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "").filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);//运单号不能为空
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.set(Calendar.HOUR_OF_DAY, 0);

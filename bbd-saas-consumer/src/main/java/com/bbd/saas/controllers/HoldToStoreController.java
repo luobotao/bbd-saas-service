@@ -293,10 +293,10 @@ public class HoldToStoreController {
                 trade.setTradeStatus(TradeStatus.ARRIVED);
                 trade.setDateUpd(new Date());
                 tradeService.save(trade);
-                User embrace = userService.findOne(trade.getEmbraceId().toHexString());
+                User embrace = userService.findOne(trade.getEmbraceId().toHexString());//揽件员
                 if(embrace!=null){
                     User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-                    if(user!=null && user.getSite()!=null && user.getSite().equals(embrace.getSite()) ){
+                    if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
                         pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());//推送消息给揽件员
                     }
                 }

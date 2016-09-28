@@ -113,7 +113,7 @@
 							%>
 							<tr>
 								<td><input type="checkbox" value="<%=order.getMailNum()%>" name="id"></td>
-								<td><%=order.getParcelCode()%></td>
+								<td><%=order.getParcelCode()==null?"":order.getParcelCode()%></td>
 								<td><%=order.getMailNum()%></td>
 								<td><%=order.getOrderNo()%></td>
 								<td><%=order.getSrc().getMessage()%></td>
