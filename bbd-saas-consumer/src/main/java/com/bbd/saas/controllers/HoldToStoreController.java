@@ -288,11 +288,21 @@ public class HoldToStoreController {
 
             //修改司机包裹的状态
             orderParcleStatusChange(order.getId().toHexString(),"1");//parceType 包裹类型 0：配件包裹（默认） 1：集包
+
+            Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
+            User embrace = userService.findOne(trade.getEmbraceId().toHexString());//揽件员
+            if(embrace!=null){
+                User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+                if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
+                    pushService.courierAdd(embrace.getPostmanuserId(),order.getMailNum());//揽件员收益
+                }
+            }
+            
             //修改交易订单的状态
             long totalCount = orderService.findCountByTradeNo(order.getTradeNo(), 0);//此商户订单号下的所有运单(非移除的)
             long arrCount = orderService.findArrCountByTradeNo(order.getTradeNo());//此商户订单号下的所有已入库的运单
             if(totalCount==arrCount){//全部入库完成,修改trade的状态
-                Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
+
                 trade.setTradeStatus(TradeStatus.ARRIVED);
                 trade.setDateUpd(new Date());
                 String REWARD_SEND = constantService.findValueByName(Constants.REWARD_SEND);
@@ -300,12 +310,11 @@ public class HoldToStoreController {
                 trade.setAmtReaForSm(amtReaForSm.intValue());
                 trade.setOrdercnt((int)totalCount);
                 tradeService.save(trade);
-                User embrace = userService.findOne(trade.getEmbraceId().toHexString());//揽件员
+
                 if(embrace!=null){
                     User user = adminService.get(UserSession.get(request));//当前登录的用户信息
                     if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
                         pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());//推送消息给揽件员
-                        pushService.courierAdd(embrace.getPostmanuserId(),order.getMailNum());//揽件员收益
                     }
                 }
             }
