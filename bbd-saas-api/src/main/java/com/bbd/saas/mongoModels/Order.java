@@ -38,6 +38,7 @@ public class Order implements Serializable {
     private Reciever reciever;
     private String userId;//派单时的小件员ID
     private Srcs src;
+    private String srcRmk;//真实来源（揽件后需求变化所致）
     private OrderStatus orderStatus;
     private ExpressStatus expressStatus;
     private PrintStatus printStatus;
@@ -547,5 +548,13 @@ public class Order implements Serializable {
 
     public String toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);//      return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE).append("xml", xml).toString();
+    }
+
+    public String getSrcRmk() {
+        return srcRmk;
+    }
+
+    public void setSrcRmk(String srcRmk) {
+        this.srcRmk = srcRmk;
     }
 }

@@ -7,6 +7,7 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.api.mysql.PushService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.*;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +63,8 @@ public class HoldToStoreController {
     OrderTrackService orderTrackService;
     @Autowired
     IncomeService incomeService;
-
+    @Autowired
+    ConstantService constantService;
 
     public static final Logger logger = LoggerFactory.getLogger(HoldToStoreController.class);
 
@@ -292,6 +295,10 @@ public class HoldToStoreController {
                 Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
                 trade.setTradeStatus(TradeStatus.ARRIVED);
                 trade.setDateUpd(new Date());
+                String REWARD_SEND = constantService.findValueByName(Constants.REWARD_SEND);
+                BigDecimal amtReaForSm = new BigDecimal(REWARD_SEND).multiply(new BigDecimal(totalCount));
+                trade.setAmtReaForSm(amtReaForSm.intValue());
+                trade.setOrdercnt((int)totalCount);
                 tradeService.save(trade);
                 User embrace = userService.findOne(trade.getEmbraceId().toHexString());//揽件员
                 if(embrace!=null){

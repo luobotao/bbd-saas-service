@@ -22,6 +22,7 @@ public class Constant  implements Serializable {
     private String value;  //值
     private String module; //模块
     private String type; //类型
+    private String remark; //备注
     private Date dateAdd; //新增时间
     private Date dateUpd; //修改时间
 
@@ -95,5 +96,13 @@ public class Constant  implements Serializable {
 
     public void setDateUpd(Date dateUpd) {
         this.dateUpd = dateUpd;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }
