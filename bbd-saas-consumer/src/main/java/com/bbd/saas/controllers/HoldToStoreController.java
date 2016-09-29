@@ -297,7 +297,7 @@ public class HoldToStoreController {
                     pushService.courierAdd(embrace.getPostmanuserId(),order.getMailNum());//揽件员收益
                 }
             }
-            
+
             //修改交易订单的状态
             long totalCount = orderService.findCountByTradeNo(order.getTradeNo(), 0);//此商户订单号下的所有运单(非移除的)
             long arrCount = orderService.findArrCountByTradeNo(order.getTradeNo());//此商户订单号下的所有已入库的运单

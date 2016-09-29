@@ -281,7 +281,11 @@
 	function getRowHtml(data){
 		var row = "<tr>";
 		row +=  "<td><input type='checkbox' value='" + data.mailNum + "' name='id'></td>";
-		row +=  "<td>" + data.parcelCode + "</td>";
+		var pcode = "";
+		if(data.parcelCode!=null){
+			pcode = data.parcelCode;
+		}
+		row +=  "<td>" + pcode + "</td>";
 		row += "<td>" + data.mailNum + "</td>";
 		row += "<td>" + data.orderNo + "</td>";
 		row += "<td>" + data.srcMessage + "</td>";
