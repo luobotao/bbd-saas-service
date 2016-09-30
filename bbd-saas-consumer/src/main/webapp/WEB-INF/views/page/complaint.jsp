@@ -141,7 +141,7 @@
 									<%
 										}
 									%>
-									<td><%=complaint.getPunishReason()%></td>
+									<td><%=complaint.getDealResult()%></td>
 								</tr>
 							<%
 								}//for
@@ -240,7 +240,7 @@ function getRowHtml(data){
 	row += "<td>" + data.respondent + "</td>";//被投诉人
 	row += "<td>" + data.appealStatusMsg + "</td>";//申诉状态
 	row += "<td>" + data.complaintStatusMsg.replace("待处理投诉","客服处理中") + "</td>";//投诉状态
-	row += "<td>" + data.punishReason + "</td>";//处罚结果
+	row += "<td>" + data.dealResult + "</td>";//处罚结果
 	row += "</tr>";
 	return row;
 }

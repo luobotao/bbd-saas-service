@@ -21,30 +21,33 @@ import java.util.List;
 )
 public class Complaint {
     @Id
-    public ObjectId id;
-    public String mailNum;  //运单号
+    private ObjectId id;
+    private String mailNum;  //运单号
     @Transient
-    public Order order;     //订单快照
-    public ComplaintStatus complaintStatus;
-    public Date dateAdd;    //投诉时间
-    public Date dateUpd;    //更新时间
-    public ComplaintType typ;      //投诉类型
-    public String reason;   //投诉原因
-    public String memo;     //投诉备注
-    public String name;     //投诉人姓名
-    public String phone;    //投诉人手机号
-    public AppealStatus appealStatus;   //申诉状态
-    public String appealMemo;     //申诉说明
-    public List<String> appealImg;      //申诉图片凭证
-    public String appealDate;           //申诉时间
-    public String closeReason;  //关闭理由
-    public String punishReason; //处罚理由
-    public List<ComplaintDealLog> complaintDealLogList;    //处理记录
-    public String postmanPhone;    //快递员手机号
-    public String areaCode;         //站点编码
-    public String areaName;         //站点名称
-    public String complaintHandler; //投诉处理人
-    public String complaintHandlerId; //投诉处理人id
+    private Order order;     //订单快照
+    private ComplaintStatus complaintStatus;
+    private Date dateAdd;    //投诉时间
+    private Date dateUpd;    //更新时间
+    private ComplaintType typ;      //投诉类型
+    private String reason;   //投诉原因
+    private String memo;     //投诉备注
+    private String name;     //投诉人姓名
+    private String phone;    //投诉人手机号
+    private AppealStatus appealStatus;   //申诉状态
+    private String appealMemo;     //申诉说明
+    private List<String> appealImg;      //申诉图片凭证
+    private String appealDate;           //申诉时间
+    private String closeReason;  //关闭理由
+    private String punishReason; //处罚理由
+    private String dealResult; //处罚结果
+    private List<ComplaintDealLog> complaintDealLogList;    //处理记录
+    private String postmanPhone;    //快递员手机号
+    private String areaCode;         //站点编码
+    private String areaName;         //站点名称
+    private String complaintHandler; //投诉处理人
+    private String complaintHandlerId; //投诉处理人id
+
+
     public ObjectId getId() {
         return id;
     }
@@ -227,5 +230,13 @@ public class Complaint {
 
     public void setComplaintHandlerId(String complaintHandlerId) {
         this.complaintHandlerId = complaintHandlerId;
+    }
+
+    public String getDealResult() {
+        return dealResult;
+    }
+
+    public void setDealResult(String dealResult) {
+        this.dealResult = dealResult;
     }
 }

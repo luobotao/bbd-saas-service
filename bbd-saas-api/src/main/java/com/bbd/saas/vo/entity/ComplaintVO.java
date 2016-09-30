@@ -20,7 +20,7 @@ public class ComplaintVO implements Serializable {
     private String respondent ;    //被投诉人
     private AppealStatus appealStatus;   //申诉状态
     private ComplaintStatus complaintStatus; //投诉状态
-    private String punishReason; //处罚理由
+    private String dealResult; //处罚结果
     private String appealStatusMsg; //申诉状态Msg
     private String complaintStatusMsg; //投诉状态Msg
 
@@ -80,12 +80,12 @@ public class ComplaintVO implements Serializable {
         this.complaintStatus = complaintStatus;
     }
 
-    public String getPunishReason() {
-        return punishReason;
+    public String getDealResult() {
+        return dealResult;
     }
 
-    public void setPunishReason(String punishReason) {
-        this.punishReason = punishReason;
+    public void setDealResult(String dealResult) {
+        this.dealResult = dealResult;
     }
 
     public String getAppealStatusMsg() {
