@@ -131,17 +131,35 @@
 										<td></td>
 									<%
 										}
-										if(complaint.getAppealStatus() != null){//投诉状态
+										if(complaint.getComplaintStatus() != null){//投诉状态
 									%>
-										<td><%=complaint.getComplaintStatus().getMessage().replace("待处理投诉","客服处理中")%></td>
+										<%
+											if(complaint.getComplaintStatus() == ComplaintStatus.COMPLAINT_WAIT){//等待客服处理
+										%>
+											<td>客服处理中</td>
+											<td>暂无处罚</td>
+										<%
+											}else if(complaint.getComplaintStatus() == ComplaintStatus.COMPLAINT_CLOSE){//投诉关闭
+										%>
+											<td><%=complaint.getComplaintStatusMsg()%></td>
+											<td>暂无处罚</td>
+										<%
+											}else{//投诉成立+撤销
+										%>
+											<td><%=complaint.getComplaintStatusMsg()%></td>
+											<td><%=complaint.getDealResult()%></td>
+										<%
+											}
+										%>
 									<%
 										}else {
 									%>
 										<td></td>
+										<td></td>
 									<%
 										}
 									%>
-									<td><%=complaint.getDealResult()%></td>
+
 								</tr>
 							<%
 								}//for
@@ -239,8 +257,24 @@ function getRowHtml(data){
 	row += "<td>" + getDate1(data.dateAdd) + "</td>";
 	row += "<td>" + data.respondent + "</td>";//被投诉人
 	row += "<td>" + data.appealStatusMsg + "</td>";//申诉状态
-	row += "<td>" + data.complaintStatusMsg.replace("待处理投诉","客服处理中") + "</td>";//投诉状态
-	row += "<td>" + data.dealResult + "</td>";//处罚结果
+	if(data.complaintStatus != null){
+		if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_WAIT %>"){
+			row += "<td>客服处理中</td>";
+			row += "<td>暂无处罚</td>";
+		}else if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_CLOSE %>"){
+			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
+			row += "<td>暂无处罚</td>";
+		}else {
+			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
+			row += "<td>" + data.dealResult + "</td>";//处罚结果
+		}
+	}else{
+		row += "<td></td>";
+		row += "<td></td>";
+	}
+
+
+
 	row += "</tr>";
 	return row;
 }

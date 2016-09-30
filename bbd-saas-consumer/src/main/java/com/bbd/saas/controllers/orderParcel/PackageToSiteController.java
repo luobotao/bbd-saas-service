@@ -237,9 +237,9 @@ public class PackageToSiteController {
 		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//修改该订单所处包裹里的订单状态
 		//增加物流信息
 		if(isErrorSite){
-			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
-		} else {
 			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单错分，已由【" + user.getSite().getName() + "】执行到站，正在准备转寄");
+		} else {
+			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 		}
 
 		orderService.save(order);
