@@ -158,8 +158,10 @@ public class PackageToSiteController {
 					order.setAreaCode(user.getSite().getAreaCode());
 					Site site = user.getSite();
 					order.setAreaRemark(commonService.getAddress(site.getProvince(), site.getCity(), site.getArea(), site.getAddress(), ""));
+					orderToSite(order,user,true);//到站
+				}else{
+					orderToSite(order,user,false);//到站
 				}
-				orderToSite(order,user);//到站
 			}
 		}
 		if (pageIndex==null) pageIndex =0 ;
@@ -212,7 +214,7 @@ public class PackageToSiteController {
 		for (Object mailNum :idList){
 			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum.toString());
 			if(order !=null && (order.getOrderStatus() == OrderStatus.NOTARR || order.getOrderStatus() == null)){//只有未到站的才做到站处理
-				orderToSite(order,user);
+				orderToSite(order,user, false);
 			}else{
 
 			}
@@ -222,10 +224,11 @@ public class PackageToSiteController {
 	}
 	/**
 	 * 单个订单到站方法
-	 * @param order
-	 * @param user
-	 */
-	public void orderToSite(Order order,User user ) {
+	 * @param order 订单
+	 * @param user 当前用户
+	 * @param isErrorSite 是否错分(目的站点错误)
+     */
+	public void orderToSite(Order order,User user, boolean isErrorSite) {
 		if(order.getOrderStatus() == null || order.getOrderStatus() == OrderStatus.NOTARR){
 			order.setOrderStatus(OrderStatus.NOTDISPATCH);
 			order.setDateArrived(new Date());
@@ -233,7 +236,12 @@ public class PackageToSiteController {
 		order.setDateUpd(new Date());
 		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//修改该订单所处包裹里的订单状态
 		//增加物流信息
-		OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
+		if(isErrorSite){
+			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
+		} else {
+			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单错分，已由【" + user.getSite().getName() + "】执行到站，正在准备转寄");
+		}
+
 		orderService.save(order);
 		if(order != null){
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
@@ -343,9 +351,10 @@ public class PackageToSiteController {
 		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
 			for (Order orderTemp : orderParcel.getOrderList()) {
-				Order orderReal = orderService.findOneByMailNum(orderTemp.getAreaCode(),orderTemp.getMailNum());
+				Order orderReal = orderService.findOneByMailNum(orderTemp.getMailNum());//查询真实订单
 				if (orderReal==null || orderReal.getOrderStatus() == null || orderReal.getOrderStatus() == OrderStatus.NOTARR) {
 					flag = false;
+					break;
 				}
 			}
 			if (flag) {//更新包裹状态，做包裹到站操作
