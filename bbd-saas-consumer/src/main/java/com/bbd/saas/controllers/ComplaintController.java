@@ -57,7 +57,7 @@ public class ComplaintController {
             PageModel<ComplaintVO> complaintPage = this.getList(pageIndex, complaintStatus,appealStatus, reason, between,mailNum,request);
             logger.info("=====投诉管理页面列表===" + complaintPage);
             model.addAttribute("dataPage", complaintPage);
-            model.addAttribute("grade", 88);
+            model.addAttribute("grade", 100);
             model.addAttribute("between", between);
             return "page/complaint";
         } catch (Exception e) {
