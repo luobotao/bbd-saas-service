@@ -40,7 +40,7 @@ import java.util.Map;
 @RequestMapping("/bbd")
 @SessionAttributes("bbdExpress")
 public class BbdExpressApiController {
-	public static final Logger logger = LoggerFactory.getLogger("bbdpoi");
+	public static final Logger logger = LoggerFactory.getLogger(BbdExpressApiController.class);
 	@Autowired
 	SiteService siteService;
 	@Autowired
@@ -387,40 +387,41 @@ public class BbdExpressApiController {
 	@RequestMapping(value="/geoMatchSite", method=RequestMethod.GET)
 	public String geoMatchSite(Model model, HttpServletRequest request ) {
 		try {
-			String keyword = request.getParameter("keyword");	//订单号或包裹号
+			String keyword = request.getParameter("keyword");    //订单号或包裹号
 			String address = request.getParameter("address");
-			if(StringUtils.isNotBlank(keyword)){
+			if (StringUtils.isNotBlank(keyword)) {
 				//根据订单号查询
 				Order order = orderService.findByOrderNoOrMailNum(keyword);
-				if(order!=null){
+				if (order != null) {
 					Reciever reciever = order.getReciever();
-					if(reciever!=null) {
+					if (reciever != null) {
 						address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
 					}
 				}
 			}
 			//address = "北京北京市西城区中国北京北京市西城区复兴门内大街2号民生银行";
-			if(StringUtils.isNotBlank(address)){
+			if (StringUtils.isNotBlank(address)) {
 				Result result = sitePoiApi.searchSiteByAddressDirect(address);
 				MapPoint mapPoint = geo.getGeoInfo(address);//起点地址
 
-				Map<String, Object> data = (Map<String, Object>)result.data;
+				Map<String, Object> data = (Map<String, Object>) result.data;
 				Map<String, String> efenceMap = new HashMap<String, String>();
-				if(data != null && data.get("efences") != null){
-					Map<String ,List<List<MapPoint>>> efMap = (Map<String ,List<List<MapPoint>>>)data.get("efences");
-					for (Map.Entry<String ,List<List<MapPoint>>> entry : efMap.entrySet()) {
+				if (data != null && data.get("efences") != null) {
+					Map<String, List<List<MapPoint>>> efMap = (Map<String, List<List<MapPoint>>>) data.get("efences");
+					for (Map.Entry<String, List<List<MapPoint>>> entry : efMap.entrySet()) {
 						efenceMap.put(entry.getKey(), dealPostmanUserPoints(entry.getValue()));
 					}
 					data.remove("efences");
 					model.addAttribute("efenceMap", efenceMap);//当前查询的地址坐标
 				}
-				model.addAttribute("data",data);//当前查询的地址坐标
-				logger.info("message-mapData:"+data);
+				model.addAttribute("data", data);//当前查询的地址坐标
+				logger.info("geoMatchSite：data=" + data);
 			}
-			model.addAttribute("keyword",keyword);//当前查询的地址
-			model.addAttribute("address",address);//当前查询的地址
-		}catch (Exception e){
-			logger.info("message-erro:"+e.getMessage());
+			model.addAttribute("keyword", keyword);//当前查询的地址
+			model.addAttribute("address", address);//当前查询的地址
+			logger.info("geoMatchSite：  keyword=" + keyword + ",  address=" + address + ",  model=" + model);
+		} catch (Exception e) {
+			logger.info("geoMatchSite： message-erro=" + e.getMessage());
 		}
 		return "geo/geoMatchSite";
 	}
