@@ -419,12 +419,9 @@ public class BbdExpressApiController {
 			}
 			model.addAttribute("keyword", keyword);//当前查询的地址
 			model.addAttribute("address", address);//当前查询的地址
-			logger.info("BbdExpressApiController$geoMatchSite：  keyword=" + keyword );
-			logger.info("BbdExpressApiController&geoMatchSite：  address=" + address);
-			logger.info("BbdExpressApiController_geoMatchSite：  model=" + model);
-			logger.info("BbdExpressApiController#geoMatchSite：  keyword=" + keyword + ",  address=" + address + ",  model=" + model);
+			logger.info("BbdExpressApiController_geoMatchSite：  keyword=" + keyword + ",  address=" + address + ",  model=" + model);
 		} catch (Exception e) {
-			logger.info("BbdExpressApiController#geoMatchSite： message_erro=" + e.getMessage());
+			logger.info("BbdExpressApiController_geoMatchSite： message_erro=" + e.getMessage());
 		}
 		return "geo/geoMatchSite";
 	}
