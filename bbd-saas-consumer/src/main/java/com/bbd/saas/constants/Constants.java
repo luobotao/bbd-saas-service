@@ -35,9 +35,22 @@ public class Constants {
     public static int POSTMAN_HAVE_TOSITE_PERMISSION = 5;
     //地图分多次查询点
     public static int PAGESIZE_MAP = 1000;
+    //public static String BBD_COMPANYID = "8";
+    public static String BBD_COMPANYID = "99";
     public static int UPPERLIMIT = 300;
     public static int LOWERLIMIT = 50;
-
+/*
+    //派件员有到站分派权限 -- mongodb库User表
+    public static int HAVE_DISPATCH_PERMISSION = 1;
+    //派件员无到站分派权限
+    public static int NO_DISPATCH_PERMISSION = 0;
+    //派件员有到站分派权限 -- MYSQL库
+    public static int POSTMAN_HAVE_DISPATCH_PERMISSION = 4;
+    //运单移除
+    public static int ISREMOVED = 1;
+    //运单未被移除
+    public static int  ISNOTREMOVED = 0;
+*/
 
 
 }
