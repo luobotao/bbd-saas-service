@@ -415,13 +415,13 @@ public class BbdExpressApiController {
 					model.addAttribute("efenceMap", efenceMap);//当前查询的地址坐标
 				}
 				model.addAttribute("data", data);//当前查询的地址坐标
-				logger.info("BbdExpressApiController#geoMatchSite：data=" + data);
+				logger.info("Express_geoMatchSite：data=" + data);
 			}
 			model.addAttribute("keyword", keyword);//当前查询的地址
 			model.addAttribute("address", address);//当前查询的地址
-			logger.info("BbdExpressApiController_geoMatchSite：  keyword=" + keyword + ",  address=" + address + ",  model=" + model);
+			logger.info("Express_geoMatchSite：  keyword=" + keyword + ",  address=" + address + ",  model=" + model);
 		} catch (Exception e) {
-			logger.info("BbdExpressApiController_geoMatchSite： message_erro=" + e.getMessage());
+			logger.info("Express_geoMatchSite： message_erro=" + e.getMessage());
 		}
 		return "geo/geoMatchSite";
 	}
