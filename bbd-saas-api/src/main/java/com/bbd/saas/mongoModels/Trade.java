@@ -33,7 +33,7 @@ public class Trade implements Serializable {
     private Integer amtReaForSm;//小件员收益(实际) 单位分
     private TradeStatus tradeStatus;//商户订单状态
     private Integer pushRange;  //push范围 ，默认为2公里
-    private Integer pushCount;  //push次数 ，默认为0次，超过2此则需要兜底操作
+    private Integer pushCount = 0;  //push次数 ，默认为0次，超过2此则需要兜底操作
     private String rechange;    //0 已转 1未转
     private Sender sender;
     private Integer ordercnt;//运单数量

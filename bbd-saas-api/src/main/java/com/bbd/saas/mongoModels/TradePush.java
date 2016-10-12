@@ -1,15 +1,10 @@
 package com.bbd.saas.mongoModels;
 
-import com.bbd.saas.enums.Srcs;
-import com.bbd.saas.vo.Goods;
-import com.bbd.saas.vo.Reciever;
-import com.bbd.saas.vo.Sender;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 @Entity("tradePush")
 @Indexes(
         @Index(value = "tradeNo", fields = @Field("tradeNo"))
@@ -19,7 +14,7 @@ public class TradePush implements Serializable {
     private ObjectId id;
     private String tradeNo;             //商户订单号
     private Integer time;               //推送次数   默认0
-    private Integer flag;               //是否已推送 0 否 1 是
+    private Integer flag;               //是否已推送 0：否; 1：是; 2：接单； 3：未接单。
     private Integer postmanId;          //揽件员Id
     private Date dateAdd;               //添加时间
     private Date dateUpd;               //更新时间

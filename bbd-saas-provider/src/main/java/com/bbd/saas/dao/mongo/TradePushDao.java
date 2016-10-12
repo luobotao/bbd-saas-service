@@ -1,13 +1,7 @@
 package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.enums.TradeStatus;
-import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.mongoModels.TradePush;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.TradeQueryVO;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -41,11 +35,39 @@ public class TradePushDao extends BaseDAO<TradePush, ObjectId> {
         return find(query).asList();
     }
 
+    /**
+     * 获得订单最新的一条推送信息
+     * @param tradeNo
+     * @return
+     */
+    public TradePush selectLatestOneByTradeNo(String tradeNo) {
+        Query<TradePush> query = createQuery();
+        query.filter("tradeNo", tradeNo);
+        query.order("-dateAdd");
+        return findOne(query);
+    }
+
     public TradePush findTradePushWithPostmanUserId(String tradeNo, Integer postmanUserId) {
         Query<TradePush> query = createQuery();
         query.filter("tradeNo", tradeNo);
         query.filter("postmanId", postmanUserId);
         return findOne(query);
     }
-
+    public long selectCountByPMIdAndFlag(Integer postmanUserId) {
+        Query<TradePush> query = createQuery();
+        query.filter("postmanId", postmanUserId);
+        query.filter("flag", 1);//有未处理订单
+        return count(query);
+    }
+    public UpdateResults updateFlagByTradeNo(String tradeNo) {
+        Query<TradePush> updateQuery = createQuery();
+        updateQuery.filter("tradeNo", tradeNo);
+        UpdateOperations<TradePush> ops = this.getDatastore().createUpdateOperations(TradePush.class).set("flag", 0).set("dateUpd", new Date());
+        return this.update(updateQuery, ops);
+        /*UpdateResults ur = this.update(updateQuery, ops);
+        if(ur != null){
+            return ur.getUpdatedCount();
+        }
+        return 0;*/
+    }
 }

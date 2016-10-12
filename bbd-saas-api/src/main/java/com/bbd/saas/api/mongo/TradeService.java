@@ -94,7 +94,15 @@ public interface TradeService {
 
     public List<Trade> findTradesByEmbraceId(ObjectId embraceId,String type);
 
+    /**
+     * 抢单模式，（进行一轮推送，2-5公里，pushRange [2,5],step=1;pushCount [0,1],step=1最多进行2轮推送）
+     */
     void doJobWithAllPushTrade();
+
+    /**
+     * 一个快递员一个快递员的推单
+     */
+    public void doJobWithAllPushTradeOneByOne();
 
     /**
      * 分拔站点根据城市与状态

@@ -251,6 +251,32 @@ public class Dates {
 	}
 
     /**
+     * 计算两个时间差，long类型
+     * @param smallDate 较小的时间
+     * @param bigDate 较大的时间
+     * @return
+     * @throws ParseException
+     */
+    public static int calculateTimeDiff(Date smallDate, Date bigDate, int unit) throws ParseException {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(smallDate);
+        long smallTime = cal.getTimeInMillis();
+        cal.setTime(bigDate);
+        long bigTime = cal.getTimeInMillis();
+        long between_time = (bigTime - smallTime) / unit;
+        return Integer.parseInt(String.valueOf(between_time));
+    }
+    /**
+     * 计算两个日期之间相差的秒数
+     * @param smallDate 较小的时间
+     * @param bigDate 较大的时间
+     * @return 相差秒数
+     * @throws ParseException
+     */
+    public static int secondsBetween(Date smallDate, Date bigDate) throws ParseException {
+        return calculateTimeDiff(smallDate, bigDate, 1000*60);
+    }
+    /**
      * 传入一个时间获取该时间与当前时间相关的分钟数
      * @param date
      * @return

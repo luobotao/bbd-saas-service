@@ -16,15 +16,11 @@ public class TradePushJob {
     @Autowired
     TradeService tradeService;
 
-
-
-    //每隔20秒跑一次
-    @Scheduled(cron = "*/20 * * * * ?")
+    //每隔60秒跑一次
+    @Scheduled(cron = "*/60 * * * * ?")
     public void doJobWithPushAllTrade() {
         logger.info("运单数据推送给揽件员");
-        tradeService.doJobWithAllPushTrade();
-
+        tradeService.doJobWithAllPushTrade();//抢单
+        //tradeService.doJobWithAllPushTradeOneByOne();//一个一个的推单
     }
-
-
 }

@@ -1,4 +1,5 @@
 package com.bbd.saas.api.impl.mongo;
+
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.dao.mongo.*;
 import com.bbd.saas.dao.mysql.PostmanUserDao;
@@ -8,6 +9,7 @@ import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.OrderNum;
 import com.bbd.saas.mongoModels.Trade;
 import com.bbd.saas.mongoModels.TradePush;
+import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.PropertiesLoader;
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -304,7 +307,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     /**
-     * 订单推送逻辑
+     * 订单推送逻辑 -- 抢单模式
      * @param trade
      */
     public void doJobWithPushTrade(Trade trade) {
@@ -354,7 +357,7 @@ public class TradeServiceImpl implements TradeService {
             //进行推送操作之后，变更推送的次数为+1
             if(trade.getPushRange()<=bbdTradePushRangeThreshold){
                 trade.setPushRange(trade.getPushRange()+bbdTradePushRangeStep);
-            }else{
+            }else{//开始新的一轮推送（pushRange : bbdTradePushRangeInit---bbdTradePushRangeStep--->bbdTradePushRangeThreshold）
                 trade.setPushCount(trade.getPushCount()+1);
                 //若pushCount == 1,则更tradePush下 tradeNo的所有flag 为0
                 if(trade.getPushCount()<bbdTradePushCount){
@@ -378,7 +381,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     /**
-     * 获取订单配送范围内的所有快递员
+     * 获取订单配送范围内的所有快递员 -- 抢单模式
      * @param trade
      * @return
      */
@@ -398,7 +401,7 @@ public class TradeServiceImpl implements TradeService {
         String sql="SELECT u.*  FROM postmanuser"
                 + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND u.sta='1' AND token<>'' AND (u.postrole = '0' or u.postrole='99') AND u.poststatus="+poststatus+""
                 +"  AND SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) < "+i
-                + " order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc";
+                + " order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc LIMIT 0,20";
 
 
         List<PostmanUser> pulist=new ArrayList<PostmanUser>();
@@ -406,7 +409,129 @@ public class TradeServiceImpl implements TradeService {
         return pulist;
     }
 
+    @Override
+    public void doJobWithAllPushTradeOneByOne() {
+        try {
+            //获取到所有需要推送的Trade信息
+            List<Trade> tradeList = findTradeListByPushJob();
+            if(tradeList!=null&&tradeList.size()>0){
+                for (Trade trade : tradeList) {
+                    this.pushOneTradeOneByOne(trade);
+                }
+                logger.info("一波订单推送揽件员完成");
+            }else{
+                logger.info("暂无订单需要推送给揽件员");
+            }
+        } catch (Exception e) {
+            logger.error("订单推送给揽件员出错：" + e.getMessage());
+        }
+    }
 
+    /**
+     * 单个订单逐个推送给最近的快递员 -- 非抢单模式
+     * @param trade
+     */
+    public void pushOneTradeOneByOne(Trade trade) throws ParseException {
+        if(Dates.secondsBetween(trade.getDatePay(), new Date()) > 7200){//从下单到当前在2小时内,推单
+            TradePush latestPush = tradePushDao.selectLatestOneByTradeNo(trade.getTradeNo());
+            if(Dates.secondsBetween(latestPush.getDateAdd(), new Date()) > 60){//超过60秒未接单，继续推单
+                boolean isPushed = false;//是否已推送
+                int pushRange = bbdTradePushRangeInit;
+                while (!isPushed && pushRange < bbdTradePushRangeThreshold){
+                    //获取该运单发送者pushRange公里内最近的bbdTradePushPerNum（20）个揽件员列表,根据距离由近及远排序
+                    List<PostmanUser> postmanUserList = this.getNearPostmanUserList(pushRange, trade.getSender().getLat(), trade.getSender().getLon());
+                    //循环遍历揽件员
+                    for (PostmanUser postmanUser: postmanUserList) {
+                        //判断揽件员是否有未处理的订单
+                        long waitTradeNum = tradePushDao.selectCountByPMIdAndFlag(postmanUser.getId());
+                        if(waitTradeNum == 0){ //揽件员没有待处理订单（空闲），可以推单
+                            //判断揽件员是否已推送，如没有则直接进行推送操作，已推送则跳过
+                            TradePush tradePush = tradePushDao.findTradePushWithPostmanUserId(trade.getTradeNo(),postmanUser.getId());
+                            if(tradePush==null||(tradePush!=null&&tradePush.getFlag()==0)){
+                                this.doPushToPostMan(postmanUser.getId(), trade.getTradeNo(), tradePush);
+                                //如果推送成功，isPushed = 1;推送不成功，则isPushed一直为0
+                                isPushed = true;
+                                break;
+                            }
+                        }/*else{//揽件员有待处理订单(忙)，不可以推单
+                            continue;
+                        }*/
+                    }
+                    logger.info("运单："+trade.getTradeNo()+"推送完成，推送范围："+pushRange+",推送次数："+trade.getPushCount());
+                    pushRange = pushRange + bbdTradePushRangeStep;
+                }
+                //如果isPushed 为0，表明未对任何一个快递员进行推送操作 或者没有存在可以推送的快递员 或者 没有一个揽件员接单
+                //相当于推送一轮完成，此时将pushCount+1，进行新一轮推送
+                if(!isPushed){
+                    //开始新的一轮推送（pushRange : bbdTradePushRangeInit---bbdTradePushRangeStep--->bbdTradePushRangeThreshold）
+                    trade.setPushCount(trade.getPushCount()+1);//可以不要，两个小时条件取代
+                    //更改tradePush下的所有tradeNo相关的flag为0
+                    tradePushDao.updateFlagByTradeNo(trade.getTradeNo());
+                    trade.setDateUpd(new Date());
+                    tradeDao.save(trade);
+                }
+            }
+        }else{//下单超过2个小时，变为已取消，不再进行推送
+            trade.setTradeStatus(TradeStatus.LASTOPER);//CANCELED ？
+        }
+    }
+
+    /**
+     * 进行推送操作，
+     * @param postmanUserId 揽件员Id
+     * @param tradeNo 订单号
+     * @param tradePush 订单推送
+     */
+    private void doPushToPostMan(int postmanUserId, String tradeNo, TradePush tradePush){
+        //调用存储过程，记录push指令
+        //支付后客户端推送存储  call  `sp_postman_bbdpush_trade`(p_uid INT, p_typ VARCHAR (1),p_trade VARCHAR(32))
+        Map<String, Object> map = new HashMap<String,Object>();
+        map.put("id",postmanUserId);
+        map.put("typ","1");
+        map.put("trade",tradeNo);
+        postmanUserDao.pushBbdTrade(map);
+        //将此揽件员信息记录到tradePush中
+        if(tradePush==null) {
+            tradePush = new TradePush();
+            tradePush.setTradeNo(tradeNo);
+            tradePush.setPostmanId(postmanUserId);
+            tradePush.setTime(0);
+            tradePush.setDateAdd(new Date());
+        }else{
+            tradePush.setTime(tradePush.getTime()+1);
+        }
+        tradePush.setFlag(1);
+        tradePush.setDateUpd(new Date());
+        logger.info("运单："+tradeNo+"推送给小件员："+postmanUserId+"成功");
+        tradePushDao.save(tradePush);
+    }
+    /**
+     * 获取离发送者较近的快递员，按照距离排序
+     * @param range
+     * @param lat
+     * @param lng
+     * @return
+     */
+    private List<PostmanUser> getNearPostmanUserList(int range, String lat, String lng) {
+        String poststatus = "1";    //开启接单的用户
+        long meter = range * 1000;
+        double x = Numbers.parseDouble(lat, 0.0);
+        double y = Numbers.parseDouble(lng, 0.0);
+        MathContext mc = new MathContext(2, RoundingMode.HALF_DOWN);
+        double i = new BigDecimal(meter).divide(new BigDecimal(111000), mc).doubleValue();
+        double minlat = x - i;
+        double maxlat = x + i;
+        double minlong = y - i;
+        double maxlong = y + i;
+        //postrole 0 代表小件员 4 代表站长 poststatus 1 代表司机处于接单状态
+        String sql = "SELECT u.*  FROM postmanuser"
+                + " u WHERE (u.lat BETWEEN " + minlat + " AND " + maxlat + ") AND (u.lon BETWEEN " + minlong + " AND " + maxlong + ") AND u.sta='1' AND token<>'' AND (u.postrole = '0' or u.postrole='99') AND u.poststatus=" + poststatus + ""
+                + "  AND SQRT(POWER(" + x + " - u.lat, 2) + POWER(" + y + " - u.lon, 2)) < " + i
+                + " order by SQRT(POWER(" + x + " - u.lat, 2) + POWER(" + y + " - u.lon, 2)) asc LIMIT 0,"+bbdTradePushPerNum;
+        List<PostmanUser> pulist = new ArrayList<PostmanUser>();
+        pulist = postmanUserDao.findPostmanUsers(sql);
+        return pulist;
+    }
     /**
      * 分站点根据城市与状态
      * @param city
