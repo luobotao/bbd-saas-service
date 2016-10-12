@@ -1,6 +1,10 @@
 package com.bbd.saas.api.mysql;
 
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.vo.PostDeliveryQueryVO;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description: 快递员派送运单信息接口
@@ -76,4 +80,11 @@ public interface PostDeliveryService {
 	 * @return
 	 */
 	public int getDeliveryCnt(String siteId, String tim);
+
+	/**
+	 * 根据查询条件查询数据
+	 * @param postDeliveryQueryVO 查询条件
+	 * @return 符合条件的数据
+     */
+	public List<Map<String, Object>> findListByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
 }

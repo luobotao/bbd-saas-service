@@ -1,10 +1,12 @@
 package com.bbd.saas.dao.mysql;
 
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.vo.PostDeliveryQueryVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -87,15 +89,17 @@ public interface PostDeliveryDao {
 	void updateOne(PostDelivery postDelivery);
 
 	/**
-	 * 数据详情
-	 * @param siteId,tim
-	 * @return
-	 */
-	/**
 	 * 根据站点和时间查询记录条数
 	 * @param siteId 站点id
 	 * @param tim 日期
      * @return 符合条件的记录数
      */
 	public int selectCountBySiteIdAndTim(@Param("siteId")String siteId, @Param("tim")String tim);
+
+	/**
+	 * 根据查询条件查询数据
+	 * @param postDeliveryQueryVO 查询条件
+	 * @return 符合条件的数据
+	 */
+	public List<Map<String, Object>> selectListByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
 }
