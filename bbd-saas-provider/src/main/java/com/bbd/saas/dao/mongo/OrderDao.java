@@ -354,18 +354,21 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * @return
      */
     public Query<Order> getOrderStatusQuery(Query<Order> query, OrderQueryVO orderQueryVO) {
-        if (orderQueryVO.orderStatus == 0) {
-            query.or(query.criteria("orderStatus").equal(null), query.criteria("orderStatus").equal(OrderStatus.status2Obj(orderQueryVO.orderStatus)));
-            return query;
-        }
-        if (orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()) {//已签收--OrderStatus=5
-            query.filter("orderStatus", OrderStatus.SIGNED);
-            // otherExprees == null || Size(otherExprees)==0
-            query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
-        } else if (orderQueryVO.orderStatus == OrderStatus.TO_OTHER_EXPRESS.getStatus()) {//转其他快递--OrderStatus=6
-            query.filter("otherExprees <>", null);
-        } else {//单个状态
-            query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+
+        if(orderQueryVO.orderStatus != null){
+            if(orderQueryVO.orderStatus == 0){
+                query.or(query.criteria("orderStatus").equal(null), query.criteria("orderStatus").equal(OrderStatus.status2Obj(orderQueryVO.orderStatus)));
+                return query;
+            }
+            if(orderQueryVO.orderStatus == OrderStatus.SIGNED.getStatus()){//已签收--OrderStatus=5
+                query.filter("orderStatus", OrderStatus.SIGNED);
+                // otherExprees == null || Size(otherExprees)==0
+                query.or(query.criteria("otherExprees").equal(null), query.criteria("otherExprees").sizeEq(0));
+            }else if(orderQueryVO.orderStatus == OrderStatus.TO_OTHER_EXPRESS.getStatus()){//转其他快递--OrderStatus=6
+                query.filter("otherExprees <>", null);
+            }else{//单个状态
+                query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.orderStatus));
+            }
         }
         return query;
     }
@@ -1068,7 +1071,6 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         // and areaCode = areaCode and orderStatus <> OrderStatus.NOTARR and orderStatus <> null group by areaCode,orderStatus order by abc asc;
         AggregationPipeline pipeline = this.getDatastore().createAggregation(Order.class).match(query).group(id(grouping("areaCode"), grouping("orderStatus")), grouping("abc", first("areaCode")), grouping("orderStatus", first("orderStatus")), grouping("countAll", new Accumulator("$sum", 1))).sort(Sort.ascending("abc"));
         Iterator<OrderGroup> iterator = pipeline.aggregate(OrderGroup.class);
-        System.out.println(iterator.hasNext());
         MailStatisticVO expressStatStation = new MailStatisticVO();
         while (iterator.hasNext()) {
             OrderGroup orderGroup = iterator.next();
@@ -1253,7 +1255,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if(StringUtils.isNotBlank(appOrderQueryVO.userId)){
             query.filter("userId", appOrderQueryVO.userId);
         }
-        if(appOrderQueryVO.isArrived == 1){//
+        if(appOrderQueryVO.isArrived != null && appOrderQueryVO.isArrived == 1){//
             query.filter("userId <>", null);
         }else {
             if(StringUtils.isNotBlank(appOrderQueryVO.dateArrived_min)){
@@ -1262,6 +1264,31 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         }
         if(StringUtils.isNotBlank(appOrderQueryVO.dateUpd_min)){
             query.filter("dateUpd >=", Dates.parseDate(appOrderQueryVO.dateUpd_min+" 00:00:00", Constants.DATE_PATTERN_YMDT2));
+        }
+        if(appOrderQueryVO.src != null){
+            query.filter("src", appOrderQueryVO.src);
+        }
+        if(appOrderQueryVO.expressStatus != null){
+            if(appOrderQueryVO.expressStatus  == ExpressStatus.Separating){
+                query.or(query.criteria("expressStatus").equal(ExpressStatus.Separating), query.criteria("expressStatus").equal(ExpressStatus.Suspense));
+            }else{
+                query.filter("expressStatus", appOrderQueryVO.expressStatus);
+            }
+        }
+
+        if(appOrderQueryVO.printStatus != null){
+            query.filter("printStatus", appOrderQueryVO.printStatus);
+        }
+        if(appOrderQueryVO.isRemoved != -1){
+            query.filter("isRemoved", appOrderQueryVO.isRemoved);
+        }
+        //app端异常订单查询
+        if(appOrderQueryVO.errorStatus != null){
+            if(appOrderQueryVO.errorStatus == -1){//全部（8-滞留，9-拒收）
+                query.or(query.criteria("expressStatus").equal(ExpressStatus.Delay), query.criteria("expressStatus").equal(ExpressStatus.Refuse));
+            }else{
+                query.filter("expressStatus", ExpressStatus.status2Obj(appOrderQueryVO.errorStatus));
+            }
         }
         return query;
     }

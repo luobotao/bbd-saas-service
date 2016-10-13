@@ -1,13 +1,13 @@
 package com.bbd.saas.enums;
 
 import com.bbd.saas.utils.Htmls;
+import com.bbd.saas.utils.StringUtil;
 
 /**
  * 订单来源
  * Created by luobotao on 2016/4/8.
  */
 public enum Srcs {
-
     BBT(0,"棒棒达"),
     JD(1,"京东"),
     TAOBAO(2,"淘宝"),
@@ -55,5 +55,22 @@ public enum Srcs {
             }
         }
         return null;
+    }
+    public static Srcs getEnumFromString(String string){
+        if(StringUtil.isNotEmpty(string)){
+            try{
+                return Enum.valueOf(Srcs.class, string.trim());
+            }catch(IllegalArgumentException ex){
+                System.out.println("订单来源：字符串转为枚举失败");
+            }
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Srcs srcs=getEnumFromString("HANWEI");
+        if(srcs != null){
+            System.out.println(srcs.getMessage());
+        }
     }
 }

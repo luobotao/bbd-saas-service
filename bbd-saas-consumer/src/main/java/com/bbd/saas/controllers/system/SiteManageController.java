@@ -357,9 +357,8 @@ public class SiteManageController {
 		//删除mysql中与新手机号相同的手机号
 		userMysqlService.deleteByPhoneAndId(newPhone, user.getPostmanuserId());
 		if (StringUtils.isNotBlank(areaCode)) {//修改
-			postmanUser.setStaffid(newPhone);
-			postmanUser.setPhone(oldPhone);
-			userMysqlService.updateByPhone(postmanUser);
+			postmanUser.setPhone(newPhone);
+			userMysqlService.updateByPhone(postmanUser, oldPhone);
 			userMysqlService.updateSitenameBySiteId(postmanUser.getSiteid(), postmanUser.getSubstation());
 		} else {//新增
 			postmanUser = userMysqlService.insertUser(postmanUser);
@@ -428,7 +427,7 @@ public class SiteManageController {
 			postmanUser.setDateUpd(new Date());
 			postmanUser.setSiteid(user.getSite().getId().toString());
 			if(postmanUser.getId()!=null){//修改
-				userMysqlService.updateByPhone(postmanUser);
+				userMysqlService.updateByPhone(postmanUser, phone);
 			}else{//新增
 				int postmanuserId = userMysqlService.insertUser(postmanUser).getId();
 				user.setPostmanuserId(postmanuserId);

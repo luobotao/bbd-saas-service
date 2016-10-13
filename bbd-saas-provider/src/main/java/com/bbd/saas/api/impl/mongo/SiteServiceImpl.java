@@ -89,6 +89,11 @@ public class SiteServiceImpl implements SiteService {
         return siteDao.findSites(pageModel, companyId, areaCodeList, statusList, areaFlag);
     }
 
+    @Override
+    public PageModel<Site> findOtherSitesPage(String companyId, String selfAreaCode, int lastindex, int pagesize) {
+        return this.siteDao.selectOtherSitesPage(companyId, selfAreaCode, lastindex, pagesize);
+    }
+
     /**
      * 删除站点
      *

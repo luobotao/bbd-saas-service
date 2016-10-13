@@ -55,7 +55,7 @@ public interface PostmanUserService {
      * @param postmanUser 派件员
      * @return 更新条数
      */
-    int updateByPhone(PostmanUser postmanUser);
+    int updateByPhone(PostmanUser postmanUser, String oldPhone);
 
     /**
      * 删除postmanUser

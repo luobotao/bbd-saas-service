@@ -82,6 +82,12 @@ public interface PostDeliveryDao {
 	public PostDelivery selectOneById(@Param("id")Integer id);
 
 	/**
+	 * 根据运单号查询
+	 * @param mailNum 运单号
+	 * @return 实体
+	 */
+	public PostDelivery selectOneByMailNum(@Param("mailNum")String mailNum);
+	/**
 	 * Description: 更新一条记录
 	 * @param postDelivery 快递配送实体类
 	 * @author: liyanlei
@@ -102,4 +108,29 @@ public interface PostDeliveryDao {
 	 * @return 符合条件的数据
 	 */
 	public List<Map<String, Object>> selectListByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
+
+	/**
+	 * 根据查询条件查询数据条数
+	 * @param postDeliveryQueryVO 查询条件
+	 * @return 符合条件的数据条数
+	 */
+	public int selectCountByQuery(PostDeliveryQueryVO postDeliveryQueryVO);
+
+	/**
+	 * 根据查询条件分页查询数据
+	 * @param postDeliveryQueryVO 查询条件
+	 * @param startNum  跳过的条数
+	 * @param pageSize 查询的条数
+	 * @return 分页数据
+	 */
+	public List<PostDelivery> selectPageByQuery(@Param("queryVo")PostDeliveryQueryVO postDeliveryQueryVO, @Param("startNum")Integer startNum, @Param("pageSize")Integer pageSize) throws Exception;
+
+	/**
+	 * 查询派件员日期大于tim的每天的派件量
+	 * @param postmanid 派件员id
+	 * @param tim 日期
+     * @return {{tim,ordercnt}，{tim,ordercnt}，{tim,ordercnt}---}
+     */
+	public List<Map<String, Object>> selectListByPmanIdAndTime(@Param("postmanid")Integer postmanid,@Param("tim")String tim);
+
 }

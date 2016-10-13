@@ -96,7 +96,7 @@
         )
     </insert>
 
-    <select id="selectPostmanUserByPhone" resultMap="baseResultMap">
+	<select id="selectPostmanUserByPhone" resultMap="baseResultMap">
         SELECT
         <include refid="baseColumnList"/>
         FROM `postmanuser` where phone = #{phone}
@@ -107,84 +107,84 @@
 
     <update id="updateByPhone" parameterType="com.bbd.saas.models.PostmanUser">
         UPDATE `postmanuser`
-        <set>
-            <if test="staffid != null">
-                staffid = #{staffid,jdbcType=VARCHAR},
-            </if>
-            <if test="nickname != null">
-                nickname = #{nickname,jdbcType=VARCHAR},
-            </if>
-            <if test="phone != null">
-                phone = #{staffid,jdbcType=VARCHAR},
-            </if>
-            <if test="headicon != null">
-                headicon = #{headicon,jdbcType=VARCHAR},
-            </if>
-            <if test="companyname != null">
-                companyname = #{companyname,jdbcType=VARCHAR},
-            </if>
-            <if test="cardidno != null">
-                cardidno = #{cardidno,jdbcType=VARCHAR},
-            </if>
-            <if test="substation != null">
-                substation = #{substation,jdbcType=VARCHAR},
-            </if>
-            <if test="companyid != null">
-                companyid = #{companyid,jdbcType=INTEGER},
-            </if>
-            <if test="alipayAccount != null">
-                alipay_account = #{alipayAccount,jdbcType=VARCHAR},
-            </if>
-            <if test="token != null">
-                token = #{token,jdbcType=VARCHAR},
-            </if>
-            <if test="bbttoken != null">
-                bbttoken = #{bbttoken,jdbcType=VARCHAR},
-            </if>
-            <if test="lat != null">
-                lat = #{lat,jdbcType=DOUBLE},
-            </if>
-            <if test="lon != null">
-                lon = #{lon,jdbcType=DOUBLE},
-            </if>
-            <if test="height != null">
-                height = #{height,jdbcType=DOUBLE},
-            </if>
-            <if test="addr != null">
-                addr = #{addr,jdbcType=VARCHAR},
-            </if>
-            <if test="addrdes != null">
-                addrdes = #{addrdes,jdbcType=VARCHAR},
-            </if>
-            <if test="shopurl != null">
-                shopurl = #{shopurl,jdbcType=VARCHAR},
-            </if>
-            <if test="sta != null">
-                sta = #{sta,jdbcType=VARCHAR},
-            </if>
-            <if test="spreadticket != null">
-                spreadticket= #{spreadticket,jdbcType=VARCHAR},
-            </if>
-            <if test="poststatus != null">
-                poststatus = #{poststatus,jdbcType=INTEGER},
-            </if>
-            <if test="postrole != null">
-                postrole = #{postrole,jdbcType=INTEGER},
-            </if>
-            <if test="dateNew != null">
-                date_new = #{dateNew,jdbcType=TIMESTAMP},
-            </if>
-            <if test="dateUpd != null">
-                date_upd = #{dateUpd,jdbcType=TIMESTAMP},
-            </if>
-            <if test="siteid != null">
-                siteid = #{siteid,jdbcType=VARCHAR},
-            </if>
-            <if test="areaCode != null">
-                areaCode = #{areaCode,jdbcType=VARCHAR}
-            </if>
-        </set>
-        WHERE phone = #{phone,jdbcType=INTEGER}
+        	<set>
+	        	<if test="pm.staffid != null">
+	        	staffid = #{pm.staffid,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.nickname != null">
+	        	nickname = #{pm.nickname,jdbcType=VARCHAR},
+	        	</if>
+                <if test="pm.phone != null">
+                    phone = #{pm.phone,jdbcType=VARCHAR},
+                </if>
+	        	<if test="pm.headicon != null">
+	        	headicon = #{pm.headicon,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.companyname != null">
+	        	companyname = #{pm.companyname,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.cardidno != null">
+	        	cardidno = #{pm.cardidno,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.substation != null">
+	        	substation = #{pm.substation,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.companyid != null">
+	        	companyid = #{pm.companyid,jdbcType=INTEGER},
+	        	</if>
+	        	<if test="pm.alipayAccount != null">
+	        	alipay_account = #{pm.alipayAccount,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.token != null">
+	        	token = #{pm.token,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.bbttoken != null">
+	        	bbttoken = #{pm.bbttoken,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.lat != null">
+	        	lat = #{pm.lat,jdbcType=DOUBLE},
+	        	</if>
+	        	<if test="pm.lon != null">
+	        	lon = #{pm.lon,jdbcType=DOUBLE},
+	        	</if>
+	        	<if test="pm.height != null">
+	        	height = #{pm.height,jdbcType=DOUBLE},
+	        	</if>
+	        	<if test="pm.addr != null">
+	        	addr = #{pm.addr,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.addrdes != null">
+	        	addrdes = #{pm.addrdes,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.shopurl != null">
+	        	shopurl = #{pm.shopurl,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.sta != null">
+	        	sta = #{pm.sta,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.spreadticket != null">
+	        	spreadticket= #{pm.spreadticket,jdbcType=VARCHAR},
+	        	</if>
+	        	<if test="pm.poststatus != null">
+	        	poststatus = #{pm.poststatus,jdbcType=INTEGER},
+	        	</if>
+	        	<if test="pm.postrole != null">
+	        	postrole = #{pm.postrole,jdbcType=INTEGER},
+	        	</if>
+	        	<if test="pm.dateNew != null">
+	        	date_new = #{pm.dateNew,jdbcType=TIMESTAMP},
+	        	</if>
+	        	<if test="pm.dateUpd != null">
+	        	date_upd = #{pm.dateUpd,jdbcType=TIMESTAMP},
+	        	</if>
+	        	<if test="pm.siteid != null">
+                    siteid = #{pm.siteid,jdbcType=VARCHAR},
+	        	</if>
+                <if test="pm.areaCode != null">
+                    areaCode = #{pm.areaCode,jdbcType=VARCHAR}
+                </if>
+        	</set>
+        	WHERE phone = #{oldPhone,jdbcType=INTEGER}
     </update>
 
     <delete id="deleteById">

@@ -94,6 +94,16 @@ public interface SiteService {
     PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag);
 
     /**
+     * 分页查询公司下的除本站点外的其他站点 （转其他站点列表）
+     * @param companyId 公司ID
+     * @param selfAreaCode 本站地编号
+     * @param lastindex 跳过的条数
+     * @param pagesize 查询的条数
+     * @return 分页对象（分页信息和当前页的数据）
+     */
+    PageModel<Site> findOtherSitesPage(String companyId, String selfAreaCode, int lastindex,int pagesize);
+
+    /**
      * 删除站点
      * @param siteId 站点
      */
