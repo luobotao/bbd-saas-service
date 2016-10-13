@@ -2,9 +2,11 @@
 <%@ page import="com.bbd.saas.mongoModels.Site" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="com.bbd.saas.enums.SiteStatus" %>
+<%@ page import="com.bbd.saas.enums.SiteSrc" %>
 <%@ page import="com.bbd.saas.enums.SiteType" %>
 <%@ page import="com.bbd.saas.constants.Constants" %>
 <%@ page import="com.bbd.saas.enums.SiteTurnDownReasson" %>
+<%@ page import="com.bbd.saas.enums.SiteSrc" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ include file="../main.jsp"%>
@@ -216,6 +218,13 @@
                                 <input type="text" class="wp25 form-control form-bod" id="upperlimit" value="300" name="upperlimit"/>
                             </li>
                         </c:if>
+                        <li class="filter clearfix">
+                            <i>站点来源：</i>
+                            <%--<label>　站点来源：</label>--%>
+                            <select id="siteSrc" name="siteSrc" class="form-control form-con-new">
+                                <%=SiteSrc.Stas2HTML(1)%>
+                            </select>
+                        </li>
                         <li class="filter">
                             <i>站点名称：</i>
                             <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
@@ -853,6 +862,8 @@
                         changeSitetype(false);
                     }
                     </c:if>
+                    //console.log("data.siteSrc=="+data.siteSrc);
+                    $("#siteSrc").val(data.siteSrc);
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
                     $("#responser").val(data.responser);
@@ -864,7 +875,6 @@
                     $("#area").val(data.area);
                     $("#address").val(data.address);
                     $("#phone").val(data.username);
-
                     defprov = $("#province").val();
                     defcity = $("#city").val();
                     defdist = $("#area").val();
