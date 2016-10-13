@@ -74,6 +74,9 @@ public class Site implements Serializable {
     }
 
     public SiteSrc getSiteSrc() {
+        if(siteSrc == null){
+            return SiteSrc.PUBLIC;
+        }
         return siteSrc;
     }
 
