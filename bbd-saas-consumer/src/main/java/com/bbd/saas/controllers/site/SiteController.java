@@ -92,7 +92,7 @@ public class SiteController {
 		//推送站点信息给poi
 		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
 		site.setDeliveryArea(radius);
-		Result<double[]> result = sitePoiApi.updateSitePOIBaseInfo(site.getId().toString(),"",site.getName(),siteAddress, Numbers.parseInt(radius,0),site.getSitetype() == null ? 1:site.getSitetype().getStatus());
+		Result<double[]> result = sitePoiApi.updateSitePOIBaseInfo(site.getId().toString(),"",1,site.getName(),siteAddress, Numbers.parseInt(radius,0),site.getSitetype() == null ? 1:site.getSitetype().getStatus());
 		siteService.save(site);
 		System.out.println("result code:"+result.code);
 		return "success";

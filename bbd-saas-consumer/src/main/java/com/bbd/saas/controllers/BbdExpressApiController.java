@@ -71,7 +71,7 @@ public class BbdExpressApiController {
 		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
 		logger.info(site.getId().toString());
 		//siteId companyId siteName siteAddress radius
-		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getName(),siteAddress,0,site.getSitetype() == null ? 1:site.getSitetype().getStatus());
+		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",1,site.getName(),siteAddress,0,site.getSitetype() == null ? 1:site.getSitetype().getStatus());
 		//更新站点的经度和纬度
 		logger.info("[addSitePOI]result :"+result.toString());
 		if(result.code==0&&result.data!=null) {
