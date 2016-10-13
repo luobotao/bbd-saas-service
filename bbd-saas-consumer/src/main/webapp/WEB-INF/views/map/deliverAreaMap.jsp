@@ -2,6 +2,7 @@
 <%@ page import="com.bbd.saas.vo.SiteVO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
+<%@ page import="com.bbd.saas.enums.SiteSrc" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -97,7 +98,7 @@
 					<ul class="clearfix b-tab">
 						<li <c:if test="${activeNum eq '1'}"> class="tab-cur"</c:if>><a href="#send-range">配送区域</a></li>
 						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map" >绘制电子围栏</a></li>
-						<li <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
+						<li id="keywordLabel" <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
 					</ul>
 					<div class="b-tab-con form-inline form-inline-n tab-content capacity-map">
 						<!-- S 配送区域 -->
@@ -511,6 +512,7 @@
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
+					showKeywordLabel(site.siteSrc);
 					//设置地图中心点和放大级别
 					areaMap.centerAndZoom(center, zoom);
 					//显示站点和配送区域
@@ -527,6 +529,16 @@
 				ioutDiv("服务器繁忙，请稍后再试");
 			}
 		});
+	}
+	//抢鲜生活需要隐藏导入地址关键词栏
+	function showKeywordLabel(siteSrc){
+		var obj = $("#keywordLabel");
+		//console.log("siteSrc=="+siteSrc+"  display=="+obj.css("display"));
+		if(siteSrc != "<%=SiteSrc.QXSH.toString()%>"){//显示
+			obj.show();
+		}else{//隐藏
+			obj.hide();
+		}
 	}
 	function loadSiteData(selectId, siteList){
 		var obj = $("#" + selectId);
@@ -1061,6 +1073,7 @@
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
+					showKeywordLabel(site.siteSrc);
 					//设置地图中心点和放大级别
 					fenceObj.map.centerAndZoom(center, zoom);
 					//显示站点和围栏

@@ -19,6 +19,7 @@ import com.bbd.saas.vo.UserVO;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -201,12 +202,13 @@ public class CapacityDistributionController {
 
 	private SiteVO siteToSiteVO(Site site){
 		SiteVO siteVo = new SiteVO();
+		BeanUtils.copyProperties(site, siteVo);
 		siteVo.setId(site.getId().toString());
-		siteVo.setAreaCode(site.getAreaCode());
+		/*siteVo.setAreaCode(site.getAreaCode());
 		siteVo.setName(site.getName());
 		siteVo.setLng(site.getLng());
 		siteVo.setLat(site.getLat());
-		siteVo.setDeliveryArea(site.getDeliveryArea());
+		siteVo.setDeliveryArea(site.getDeliveryArea());*/
 		return siteVo;
 	}
 	private List<SiteVO> siteListToSiteVO(List<Site> siteList){
