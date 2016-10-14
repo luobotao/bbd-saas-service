@@ -207,11 +207,12 @@
                         <c:if test="${companyId == Constants.BBD_COMPANYID}">
                             <li class="filter clearfix">
                                 <i class="pad0">站点类型：</i>
-                                <label><input onclick="changeSitetype(false)" type="radio" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
-                                <label><input onclick="changeSitetype(true)" type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>
-                                <label><input onclick="changeSitetype(false)" type="radio" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/> 快递柜</label>
+                                <label><input type="radio" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
+                                <%--<label><input onclick="changeSitetype(true)" type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>--%>
+                                <label><input type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>
+                                <label><input type="radio" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/> 快递柜</label>
                             </li>
-                            <li class="filter limit" hidden>
+                            <li class="filter">
                                 <i>下限单量：</i>
                                 <input type="text" class="wp25 form-control form-bod" id="lowerlimit" value="50" name="lowerlimit"/>
                                 <span style="font-size:16px;margin-left: 16px;">上限单量：</span>
@@ -854,13 +855,8 @@
                     document.getElementById("siteForm").reset();
                     <c:if test="${companyId == Constants.BBD_COMPANYID}">
                     $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
-                    if(data.sitetype == "SOCIAL_CAPACITY"){//社会化运力显示单量上下限
-                        $("#upperlimit").val(data.upperlimit == null ? 0 : data.upperlimit);
-                        $("#lowerlimit").val(data.lowerlimit == null ? 0 : data.lowerlimit);
-                        changeSitetype(true);
-                    }else{
-                        changeSitetype(false);
-                    }
+                    $("#upperlimit").val(data.upperlimit == null ? 0 : data.upperlimit);
+                    $("#lowerlimit").val(data.lowerlimit == null ? 0 : data.lowerlimit);
                     </c:if>
                     //console.log("data.siteSrc=="+data.siteSrc);
                     $("#siteSrc").val(data.siteSrc);
