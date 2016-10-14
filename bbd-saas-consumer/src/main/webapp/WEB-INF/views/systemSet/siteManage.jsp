@@ -207,10 +207,9 @@
                         <c:if test="${companyId == Constants.BBD_COMPANYID}">
                             <li class="filter clearfix">
                                 <i class="pad0">站点类型：</i>
-                                <label><input type="radio" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
-                                <%--<label><input onclick="changeSitetype(true)" type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>--%>
-                                <label><input type="radio" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>
-                                <label><input type="radio" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/> 快递柜</label>
+                                <label><input type="radio" onclick="changeSitetype(false)" name="sitetype" value="<%=SiteType.ORDERNARY%>" checked/> 普通</label>
+                                <label><input type="radio" onclick="changeSitetype(false)" name="sitetype" value="<%=SiteType.SOCIAL_CAPACITY%>"/> 社会化运力</label>
+                                <label><input type="radio" onclick="changeSitetype(true)" name="sitetype" value="<%=SiteType.EXPRESS_CABINET%>"/> 快递柜</label>
                             </li>
                             <li class="filter">
                                 <i>下限单量：</i>
@@ -218,15 +217,15 @@
                                 <span style="font-size:16px;margin-left: 16px;">上限单量：</span>
                                 <input type="text" class="wp25 form-control form-bod" id="upperlimit" value="300" name="upperlimit"/>
                             </li>
+                            <li class="filter source" hidden>
+                                <i>站点来源：</i>
+                                <select id="siteSrc" name="siteSrc" class="form-control form-con-new">
+                                    <%=SiteSrc.Stas2HTML(1)%>
+                                </select>
+                            </li>
                         </c:if>
+
                         <li class="filter clearfix">
-                            <i>站点来源：</i>
-                            <%--<label>　站点来源：</label>--%>
-                            <select id="siteSrc" name="siteSrc" class="form-control form-con-new">
-                                <%=SiteSrc.Stas2HTML(1)%>
-                            </select>
-                        </li>
-                        <li class="filter">
                             <i>站点名称：</i>
                             <input type="text" class="form-control form-bod wp80" id="name" name="name"/>
                         </li>
@@ -553,9 +552,9 @@
     }
     function changeSitetype(isShow){
         if(isShow){
-            $(".limit").show();
+            $(".source").show();
         }else{
-            $(".limit").hide();
+            $(".source").hide();
         }
     }
     function closeEditDiv(){
@@ -736,7 +735,7 @@
         });
     });
     function disableSiteFct(){
-        console.log("停用站点");
+        //console.log("停用站点");
         $.ajax({
             type: "GET",
             url: '<c:url value="/siteManage/stopSite" />',
@@ -857,9 +856,14 @@
                     $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
                     $("#upperlimit").val(data.upperlimit == null ? 0 : data.upperlimit);
                     $("#lowerlimit").val(data.lowerlimit == null ? 0 : data.lowerlimit);
+                    if(data.sitetype == "<%=SiteType.EXPRESS_CABINET%>"){//快递柜显示站点来源
+                        $("#siteSrc").val(data.siteSrc);
+                        changeSitetype(true);
+                    }else{
+                        changeSitetype(false);
+                    }
                     </c:if>
                     //console.log("data.siteSrc=="+data.siteSrc);
-                    $("#siteSrc").val(data.siteSrc);
                     $("#areaCode").val(data.areaCode);
                     $("#name").val(data.name);
                     $("#responser").val(data.responser);
