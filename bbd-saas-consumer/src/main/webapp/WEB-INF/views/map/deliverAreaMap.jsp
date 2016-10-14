@@ -1370,11 +1370,6 @@
 			},
 			error : function() {
 				//ioutDiv("加载分页数据异常");
-				if(window.top==window.self){//不存在父页面
-					window.location.href="<c:url value="/login" />"
-				}else{
-					window.top.location.href="<c:url value="/login" />"
-				}
 			}
 		});
 		//$("#siteKeywordForm").submit();

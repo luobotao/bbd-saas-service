@@ -321,7 +321,7 @@
 				refreshTable(dataObject);
 			},
 			error : function() {
-				gotoLoginPage();
+				;
 			}
 		});
 	}
@@ -394,17 +394,9 @@
 			},
 			error : function() {
 				courierList = null;
-				gotoLoginPage();
+				;
 			}
 		});
-	}
-	//出错跳转到登录页
-	function gotoLoginPage() {
-		if(window.top==window.self){//不存在父页面
-			window.location.href="<c:url value="/login" />"
-		}else{
-			window.top.location.href="<c:url value="/login" />"
-		}
 	}
 
 	//显示选择派件员div
@@ -421,7 +413,7 @@
 					loadCouriers(dataList);
 				},
 				error : function() {
-					gotoLoginPage();
+					;
 				}
 			});
 		}
@@ -499,7 +491,7 @@
 			},
 			error : function() {
 				siteList = null;
-				gotoLoginPage();
+				;
 			}
 		});
 	}
@@ -517,7 +509,7 @@
 					loadSites(dataList);
 				},
 				error : function() {
-					gotoLoginPage();
+					;
 				}
 			});
 		}
@@ -577,7 +569,7 @@
 			},
 			error : function() {
 				ioutDiv("服务器繁忙，请稍后再试！");
-				//gotoLoginPage();
+				//;
 			}
 		});
 		//隐藏面板
@@ -610,7 +602,7 @@
 				}
 			},
 			error : function() {
-				gotoLoginPage();
+				;
 			}
 		});
 		$("#apply_return_div").modal("show");
@@ -712,7 +704,7 @@
 			},
 			error : function() {
 				expressCompanysList = null;
-				gotoLoginPage();
+				;
 			}
 		});
 	}

@@ -513,20 +513,11 @@ function initCourier() {
         },
         error : function() {  
         	courierIsLoadSuccess = 0;
-       		gotoLoginPage();
-  		}    
+  		}
     });
 }	
 
-//出错跳转到登录页
-function gotoLoginPage() {
-	if(window.top==window.self){//不存在父页面
-		window.location.href="<c:url value="/login" />"
-	}else{
-		window.top.location.href="<c:url value="/login" />"
-	}
-}
-// 添加  
+// 添加
 function col_add() {  
     var selObj = $("#mySelect");  
     var value="value";  
