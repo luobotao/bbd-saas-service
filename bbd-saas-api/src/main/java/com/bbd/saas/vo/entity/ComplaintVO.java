@@ -41,7 +41,7 @@ public class ComplaintVO implements Serializable {
     }
 
     public String getReason() {
-        return reason;
+        return reason == null ? "" : reason;
     }
 
     public void setReason(String reason) {
@@ -57,7 +57,7 @@ public class ComplaintVO implements Serializable {
     }
 
     public String getRespondent() {
-        return respondent;
+        return respondent == null ? "" : respondent;
     }
 
     public void setRespondent(String respondent) {
@@ -81,7 +81,7 @@ public class ComplaintVO implements Serializable {
     }
 
     public String getDealResult() {
-        return dealResult;
+        return dealResult == null ? "" : dealResult;
     }
 
     public void setDealResult(String dealResult) {
