@@ -12,6 +12,7 @@ import com.bbd.saas.vo.SiteVO;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -286,12 +287,13 @@ public class SiteServiceImpl implements SiteService {
 
 	private SiteVO siteToSiteVO(Site site){
 		SiteVO siteVo = new SiteVO();
-		siteVo.setId(site.getId().toString());
-		siteVo.setAreaCode(site.getAreaCode());
+		/*siteVo.setAreaCode(site.getAreaCode());
 		siteVo.setName(site.getName());
         siteVo.setLng(site.getLng());
         siteVo.setLat(site.getLat());
-        siteVo.setDeliveryArea(site.getDeliveryArea());
+        siteVo.setDeliveryArea(site.getDeliveryArea());*/
+        BeanUtils.copyProperties(site, siteVo);
+        siteVo.setId(site.getId().toString());
 		return siteVo;
 	}
     private List<SiteVO> siteListToSiteVO(List<Site> siteList){

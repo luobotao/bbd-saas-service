@@ -1,5 +1,6 @@
 package com.bbd.saas.form;
 
+import com.bbd.saas.enums.SiteSrc;
 import com.bbd.saas.enums.SiteType;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -10,7 +11,7 @@ public class SiteForm {
 	@NotEmpty
 	private String name;         //站点名称
 	private String password;         //密码
-
+	private SiteSrc siteSrc;// 站点来源
 	private String companyId;    //公司ID
 	private String companyName;    //公司名称
 	private String areaCode;    //区域码
@@ -154,5 +155,13 @@ public class SiteForm {
 
 	public void setLowerlimit(Integer lowerlimit) {
 		this.lowerlimit = lowerlimit;
+	}
+
+	public SiteSrc getSiteSrc() {
+		return siteSrc;
+	}
+
+	public void setSiteSrc(SiteSrc siteSrc) {
+		this.siteSrc = siteSrc;
 	}
 }

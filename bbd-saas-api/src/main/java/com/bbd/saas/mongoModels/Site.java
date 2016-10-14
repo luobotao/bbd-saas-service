@@ -1,5 +1,6 @@
 package com.bbd.saas.mongoModels;
 
+import com.bbd.saas.enums.SiteSrc;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.SiteTurnDownReasson;
 import com.bbd.saas.enums.SiteType;
@@ -22,6 +23,7 @@ public class Site implements Serializable {
     @Id
     private ObjectId id;
     private SiteType sitetype;         //站点类型（普通|社会化运力|快递柜）
+    private SiteSrc siteSrc = SiteSrc.PUBLIC;// 站点来源
     private String name;         //站点名称
     private String responser;    //负责人
     private String telephone;    //固定电话
@@ -54,6 +56,7 @@ public class Site implements Serializable {
     private String statusMessage;//JS展示状态
     @Transient
     private String turnDownMessage;//JS展示状态
+
     public ObjectId getId() {
         return id;
     }
@@ -68,6 +71,17 @@ public class Site implements Serializable {
 
     public void setSitetype(SiteType sitetype) {
         this.sitetype = sitetype;
+    }
+
+    public SiteSrc getSiteSrc() {
+        if(siteSrc == null){
+            return SiteSrc.PUBLIC;
+        }
+        return siteSrc;
+    }
+
+    public void setSiteSrc(SiteSrc siteSrc) {
+        this.siteSrc = siteSrc;
     }
 
     public String getName() {
@@ -307,4 +321,5 @@ public class Site implements Serializable {
     public void setLowerlimit(Integer lowerlimit) {
         this.lowerlimit = lowerlimit;
     }
+
 }

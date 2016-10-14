@@ -10,11 +10,9 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.controllers.service.CommonService;
 import com.bbd.saas.enums.*;
-import com.bbd.saas.mongoModels.ExpressExchange;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.OrderParcel;
-import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.OrderCommon;
@@ -54,6 +52,8 @@ public class PackageToSiteController {
 	ExpressExchangeService expressExchangeService;
 	@Autowired
 	PostDeliveryService postDeliveryService;
+	@Autowired
+	CommonService commonService;
 	/*@Autowired
 	ToOtherSiteLogService toOtherSiteLogService;
 	*/
@@ -105,8 +105,8 @@ public class PackageToSiteController {
 	@ResponseBody
 	@RequestMapping(value="/checkOrderByMailNum", method=RequestMethod.GET)
 	public Order checkOrderByMailNum(HttpServletRequest request,@RequestParam(value = "mailNum", required = true) String mailNum) {
-		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-		return orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum);
+		//User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+		return orderService.findOneByMailNum(mailNum);
 	}
 
 	/**
@@ -152,9 +152,16 @@ public class PackageToSiteController {
 	public PageModel<Order> getOrderPage(HttpServletRequest request,Integer pageIndex, Integer arriveStatus,String between,String parcelCode, String mailNum) {
 		User user = adminService.get(UserSession.get(request));//当前登录的用户信息
 		if(StringUtils.isNotBlank(mailNum)){//进行运单到站操作
-			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum);
+			Order order = orderService.findOneByMailNum(mailNum);
 			if(order!=null){
-				orderToSite(order,user);//到站
+				if(order.getAreaCode() != user.getSite().getAreaCode()){//跨站强制到站
+					order.setAreaCode(user.getSite().getAreaCode());
+					Site site = user.getSite();
+					order.setAreaRemark(commonService.getAddress(site.getProvince(), site.getCity(), site.getArea(), site.getAddress(), ""));
+					orderToSite(order,user,true);//到站
+				}else{
+					orderToSite(order,user,false);//到站
+				}
 			}
 		}
 		if (pageIndex==null) pageIndex =0 ;
@@ -207,7 +214,9 @@ public class PackageToSiteController {
 		for (Object mailNum :idList){
 			Order order = orderService.findOneByMailNum(user.getSite().getAreaCode(),mailNum.toString());
 			if(order !=null && (order.getOrderStatus() == OrderStatus.NOTARR || order.getOrderStatus() == null)){//只有未到站的才做到站处理
-				orderToSite(order,user);
+				orderToSite(order,user, false);
+			}else{
+
 			}
 //			orderService.updateOrderOrderStatu(mailNum.toString(),OrderStatus.NOTARR,OrderStatus.NOTDISPATCH);
 		}
@@ -215,16 +224,26 @@ public class PackageToSiteController {
 	}
 	/**
 	 * 单个订单到站方法
-	 * @param order
-	 * @param user
-	 */
-	public void orderToSite(Order order,User user ) {
-		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
-		order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
+	 * @param order 订单
+	 * @param user 当前用户
+	 * @param isErrorSite 是否错分(目的站点错误)
+     */
+	public void orderToSite(Order order,User user, boolean isErrorSite) {
+		if(order.getOrderStatus() == null || order.getOrderStatus() == OrderStatus.NOTARR){
+			order.setOrderStatus(OrderStatus.NOTDISPATCH);
+			order.setDateArrived(new Date());
+		}
+		order.setDateUpd(new Date());
+		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//修改该订单所处包裹里的订单状态
 		//增加物流信息
-		OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
+		if(isErrorSite){
+			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单错分，已由【" + user.getSite().getName() + "】执行到站，正在准备转寄");
+		} else {
+			OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
+		}
+
 		orderService.save(order);
-        if(order != null){
+		if(order != null){
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
 				ExpressExchange expressExchange=new ExpressExchange();
 				expressExchange.setOperator(user.getRealName());
@@ -332,9 +351,10 @@ public class PackageToSiteController {
 		if (orderParcel != null) {
 			Boolean flag = true;//是否可以更新包裹的状态
 			for (Order orderTemp : orderParcel.getOrderList()) {
-				Order orderReal = orderService.findOneByMailNum(orderTemp.getAreaCode(),orderTemp.getMailNum());
+				Order orderReal = orderService.findOneByMailNum(orderTemp.getMailNum());//查询真实订单
 				if (orderReal==null || orderReal.getOrderStatus() == null || orderReal.getOrderStatus() == OrderStatus.NOTARR) {
 					flag = false;
+					break;
 				}
 			}
 			if (flag) {//更新包裹状态，做包裹到站操作

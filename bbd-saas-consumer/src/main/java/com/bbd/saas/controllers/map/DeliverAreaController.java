@@ -23,6 +23,7 @@ import com.bbd.saas.vo.SiteVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -241,10 +242,11 @@ public class DeliverAreaController {
 			//--------panel 1-----------------------
 			Site site = siteService.findSite(siteId);
 			SiteVO siteVO = new SiteVO();
-			siteVO.setName(site.getName());
+			/*siteVO.setName(site.getName());
 			siteVO.setLat(site.getLat());
 			siteVO.setLng(site.getLng());
-			siteVO.setDeliveryArea(site.getDeliveryArea());
+			siteVO.setDeliveryArea(site.getDeliveryArea());*/
+			BeanUtils.copyProperties(site, siteVO);
 			map.put("site", site);
 		}else {//查询本公司下的所有站点 （全部）
 			String userId = UserSession.get(request);
@@ -279,10 +281,11 @@ public class DeliverAreaController {
 			//获取用户站点信息
 			Site site = siteService.findSite(siteId);
 			SiteVO siteVO = new SiteVO();
-			siteVO.setName(site.getName());
+			BeanUtils.copyProperties(site, siteVO);
+			/*siteVO.setName(site.getName());
 			siteVO.setLat(site.getLat());
 			siteVO.setLng(site.getLng());
-			siteVO.setDeliveryArea(site.getDeliveryArea());
+			siteVO.setDeliveryArea(site.getDeliveryArea());*/
 			//电子围栏
 			List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(siteId);
 			String eFence = dealSitePoints(sitePoints);

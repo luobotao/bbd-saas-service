@@ -72,7 +72,7 @@
 									if(orderPage.getDatas() == null){
 							%>
 							<tr>
-								<td colspan="7">没有符合查询条件的数据</td>
+								<td colspan="8">没有符合查询条件的数据</td>
 							</tr>
 							<%
 							}else{
@@ -337,7 +337,7 @@
 				tbody.append(getRowHtml(dataList[i]));
 			}
 		} else{
-			tbody.append("<tr><td colspan='7'>没有符合查询条件的数据</td></tr>");
+			tbody.append("<tr><td colspan='8'>没有符合查询条件的数据</td></tr>");
 		}
 		//更新分页条
 		var pageStr = paginNav(dataObject.pageNo, dataObject.totalPages, dataObject.totalCount);

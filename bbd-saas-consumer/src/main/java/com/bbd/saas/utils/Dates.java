@@ -401,6 +401,25 @@ public class Dates {
 		return getBetweenTime(datestr, Constants.DATE_PATTERN_YMD, diff);
 		 
 	}
+
+    /**
+     * 以当前日期往前|后推diffMonth月的日期
+     * @param diffMonth 相差的月份，正数往后推，负数往前推
+     * @return （diffMonth= 1， 2016/08/25 - 2016/09/25）
+     */
+    public static String getBeforeMonthBetweenTime(int diffMonth){
+        StringBuffer timeSB = new StringBuffer();
+        Date dateNow = new Date();
+        String todayStr = DATE_FORMAT.format(dateNow);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateNow);
+        cal.add(Calendar.MONTH, diffMonth);
+        dateNow = cal.getTime();
+        timeSB.append(DATE_FORMAT.format(dateNow));
+        timeSB.append(" - ");
+        timeSB.append(todayStr);
+        return timeSB.toString();
+    }
 	/**
 	 * 将日期按指定格式转换成字符串
 	 *

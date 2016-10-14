@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@ page import="com.bbd.saas.utils.Dates" %>
+<%@ page import="com.bbd.saas.enums.SiteSrc" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -69,7 +70,9 @@
 					<ul class="clearfix b-tab">
 						<li <c:if test="${activeNum eq '1'}"> class="tab-cur"</c:if>><a href="#send-range">配送区域</a></li>
 						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map" >绘制电子围栏</a></li>
-						<li <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
+						<c:if test="${site.siteSrc != SiteSrc.QXSH}">
+							<li <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
+						</c:if>
 					</ul>
 					<div class="b-tab-con form-inline form-inline-n tab-content capacity-map">
 						<!-- S 配送区域 -->

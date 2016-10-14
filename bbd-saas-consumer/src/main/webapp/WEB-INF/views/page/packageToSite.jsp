@@ -205,6 +205,7 @@
 <jsp:include page="superArea.jsp" flush="true" />
 
 <script type="text/javascript">
+	var areaCode = "${areaCode}";
 	//var flag = true;
 	$("#between").daterangepicker({
 		locale: {
@@ -366,21 +367,33 @@
 				cache: false,
 				dataType: "json",
 				data: {},
-				success: function(response){
-					if(response!=null &&  response!=""){
-						if(response.orderStatus != "<%=OrderStatus.NOTARR%>" && response.orderStatus!=null){
-							$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
-							$("#mailNumP").attr("style","color:red");
-						}else{
-							if(response.expressStatus != null && response.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
-								$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
+				success: function(order){
+					if(order!=null &&  order!=""){
+						if(order.areaCode == areaCode){//本站点的订单
+							if(order.orderStatus!=null && order.orderStatus != "<%=OrderStatus.NOTARR%>"){
+								$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
+								$("#mailNumP").attr("style","color:red");
+							}else{
+								if(order.expressStatus != null && order.expressStatus != "<%=ExpressStatus.DriverGeted%>"){
+									$("#popContent").html("确认进行此操作？<br>运单未进行分拣、司机取货等操作，该操作会把订单设置为已到站。");
+									$("#toSitePrompt").modal("show");
+									isBatchToSite = false;//单个运单执行到站
+								}else{
+									isBatchToSite = false;//单个运单执行到站
+									doToSite();
+								}
+							}
+						}else{//跨站强制到站
+							if(order.expressStatus != null && order.expressStatus == "<%=ExpressStatus.DriverGeted%>"){
+								$("#popContent").html("此订单不属于您的站点，确定扫描吗？");
 								$("#toSitePrompt").modal("show");
 								isBatchToSite = false;//单个运单执行到站
 							}else{
-								isBatchToSite = false;//单个运单执行到站
-								doToSite();
+								$("#mailNumP").html("【异常扫描】不存在此运单号") ;
+								$("#mailNumP").attr("style","color:red");
 							}
 						}
+
 					}else{
 						$("#mailNumP").html("【异常扫描】不存在此运单号") ;
 						$("#mailNumP").attr("style","color:red");

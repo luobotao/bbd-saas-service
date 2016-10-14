@@ -8,7 +8,8 @@ import com.bbd.saas.utils.Htmls;
 public enum ComplaintStatus {
     COMPLAINT_WAIT(0, "待处理投诉"),
     COMPLAINT_SUCCESS(1, "投诉成立"),
-    COMPLAINT_CLOSE(2, "投诉关闭");
+    COMPLAINT_CLOSE(2, "投诉关闭"),
+    COMPLAINT_CANCEL(3, "投诉撤销");
     private int status;
     private String message;
 
@@ -25,10 +26,10 @@ public enum ComplaintStatus {
         return status;
     }
 
-    public static String statuts2HTML(Integer id) {
+    public static String Srcs2HTML(Integer id) {
         StringBuilder sb = new StringBuilder();
         ComplaintStatus[] orderEnum = ComplaintStatus.values();
-        sb.append(Htmls.generateOption(-1, "全部"));
+        sb.append(Htmls.generateOption(-1, "请选择"));
         for (ComplaintStatus ps : orderEnum) {
             if (id == ps.status) {
                 sb.append(Htmls.generateSelectedOption(ps.status, ps.message));

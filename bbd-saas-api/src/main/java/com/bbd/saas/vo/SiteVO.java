@@ -1,5 +1,7 @@
 package com.bbd.saas.vo;
 
+import com.bbd.saas.enums.SiteSrc;
+
 import java.io.Serializable;
 
 
@@ -18,7 +20,8 @@ public class SiteVO implements Serializable{
 	private String lng;//经度
 	private String deliveryArea;//配送范围
 	private String eFence; //电子围栏
-     
+	private SiteSrc siteSrc; //站点来源
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -75,5 +78,13 @@ public class SiteVO implements Serializable{
 
 	public void seteFence(String eFence) {
 		this.eFence = eFence;
+	}
+
+	public SiteSrc getSiteSrc() {
+		return siteSrc;
+	}
+
+	public void setSiteSrc(SiteSrc siteSrc) {
+		this.siteSrc = siteSrc;
 	}
 }

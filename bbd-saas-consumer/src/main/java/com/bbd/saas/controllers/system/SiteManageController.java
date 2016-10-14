@@ -9,7 +9,6 @@ import com.bbd.saas.api.mongo.WayService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.api.mysql.SiteMySqlService;
-import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.form.SiteForm;
@@ -188,10 +187,9 @@ public class SiteManageController {
 	@ResponseBody
 	@RequestMapping(value="/saveSite",method=RequestMethod.POST)
 	public boolean saveSite(HttpServletRequest request, @Valid SiteForm siteForm, BindingResult result) throws IOException {
-		if(siteForm.getSitetype() == null || siteForm.getSitetype() != SiteType.SOCIAL_CAPACITY){
-			siteForm.setLowerlimit(Constants.LOWERLIMIT);
-			siteForm.setUpperlimit(Constants.UPPERLIMIT);
-		}
+		/*if(siteForm.getSitetype() == null || siteForm.getSitetype() != SiteType.EXPRESS_CABINET){
+			siteForm.setSiteSrc(null);
+		}*/
 		User userNow = adminService.get(UserSession.get(request));
 		if (result.hasErrors()) {
 			return false;
@@ -205,6 +203,9 @@ public class SiteManageController {
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
 			BeanUtils.copyProperties(siteForm, site);
+			/*if(siteForm.getSitetype() == null || siteForm.getSitetype() != SiteType.EXPRESS_CABINET){
+				site.setSiteSrc(null);
+			}*/
 			user = userService.findUserByLoginName(site.getUsername());
 			user.setLoginName(newPhone);
 			postmanUser = userMysqlService.selectPostmanUserByPhone(site.getUsername(), 0);
@@ -429,7 +430,7 @@ public class SiteManageController {
 		String siteAddress = site.getProvince() + site.getCity() + site.getArea() + site.getAddress();
 		logger.info(site.getId().toString());
 		try {
-			Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(), site.getCompanyId(), site.getName(), siteAddress, 0, site.getSitetype() != null ? site.getSitetype().getStatus() : 1);
+			Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(), site.getCompanyId(), site.getSiteSrc().getStatus(), site.getName(), siteAddress, 0, site.getSitetype() != null ? site.getSitetype().getStatus() : 1);
 			//更新站点的经度和纬度
 			logger.info("[addSitePOI]result :" + result.toString());
 			if (result.code == 0 && result.data != null) {
