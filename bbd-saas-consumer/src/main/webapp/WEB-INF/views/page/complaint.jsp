@@ -33,7 +33,7 @@
 			<!-- S detail -->
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 信息展示 -->
-				<div class="b-total">
+				<%--<div class="b-total">
 					本月分数
 					<c:choose>
 						<c:when test="${grade >= 80}">
@@ -46,7 +46,7 @@
 					<fmt:formatNumber type="number" value="${grade}" pattern="0.0" maxFractionDigits="1"/></span>
 					分
 					<span class="b-alls">总分100分</span>
-				</div>
+				</div>--%>
 				<!-- E 信息展示 -->
 
 				<!-- S 搜索区域 -->
