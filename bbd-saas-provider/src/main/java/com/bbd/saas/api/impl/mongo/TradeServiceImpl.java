@@ -1,14 +1,12 @@
 package com.bbd.saas.api.impl.mongo;
 
+import com.bbd.saas.api.mongo.RelationService;
 import com.bbd.saas.api.mongo.TradeService;
 import com.bbd.saas.dao.mongo.*;
 import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.enums.TradeStatus;
 import com.bbd.saas.models.PostmanUser;
-import com.bbd.saas.mongoModels.Order;
-import com.bbd.saas.mongoModels.OrderNum;
-import com.bbd.saas.mongoModels.Trade;
-import com.bbd.saas.mongoModels.TradePush;
+import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
@@ -21,6 +19,7 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -41,6 +40,8 @@ public class TradeServiceImpl implements TradeService {
     private UserDao userDao;
     private OrderNumDao orderNumDao;
     private PostmanUserDao postmanUserDao;
+    @Autowired
+    private RelationService relationService;
 
     PropertiesLoader propertiesLoader = new PropertiesLoader("config.properties");
     private int bbdTradePushCount = Numbers.parseInt(propertiesLoader.getProperty("bbd.trade.push.count"),2);
@@ -285,17 +286,22 @@ public class TradeServiceImpl implements TradeService {
             List<Trade> tradeList = findTradeListByPushJob();
             if(tradeList!=null&&tradeList.size()>0){
                 for (Trade trade : tradeList) {
-                    //设置推送范围
-                    if(trade.getPushRange()==null||trade.getPushRange()<=0){
-                        //设置默认推送次数
-                        if(trade.getPushCount()==null||trade.getPushCount()<=0){
-                            trade.setPushCount(0);
+                    Relation relation = this.relationService.findByMechId(trade.getuId().toString());
+                    if(relation == null || relation.getEmbraceIdList() == null || relation.getEmbraceIdList().isEmpty()){//未给商家配置揽件员，给附近的揽件员推单
+                        //设置推送范围
+                        if(trade.getPushRange()==null||trade.getPushRange()<=0){
+                            //设置默认推送次数
+                            if(trade.getPushCount()==null||trade.getPushCount()<=0){
+                                trade.setPushCount(0);
+                            }
+                            trade.setPushRange(bbdTradePushRangeInit);
+                            trade.setDateUpd(new Date());
+                            tradeDao.save(trade);
                         }
-                        trade.setPushRange(bbdTradePushRangeInit);
-                        trade.setDateUpd(new Date());
-                        tradeDao.save(trade);
+                        this.doJobWithPushTrade(trade);
+                    }else{//给绑定的所有揽件员推单
+                        this.pushTradeToPostmanUsers(trade, relation.getEmbraceIdList());
                     }
-                    doJobWithPushTrade(trade);
                 }
                 logger.info("一波订单推送揽件员完成");
             }else{
@@ -305,7 +311,27 @@ public class TradeServiceImpl implements TradeService {
             logger.error("把订单物流状态同步到mysql库出错：" + e.getMessage());
         }
     }
+    /**
+     * 订单推送逻辑 -- 订单推送给商家绑定的揽件员
+     * @param trade
+     */
+    public void pushTradeToPostmanUsers(Trade trade, List<Integer> pmUserIds) {
+        if(trade.getPushCount()> bbdTradePushCount){//推送了bbdTradePushCount+1次
+            //若pushCount >= 2,则对trade进行兜底处理，变更tradeStatus，不再进行推送
+            trade.setTradeStatus(TradeStatus.LASTOPER);
+        }else{//开始新的一轮推送
 
+            //循环遍历揽件员
+            for (Integer userId : pmUserIds) {
+                //判断揽件员是否已推送，如没有则直接进行推送操作，已推送则跳过
+                TradePush tradePush = tradePushDao.findTradePushWithPostmanUserId(trade.getTradeNo(),userId);
+                this.doPushToPostMan(userId, trade.getTradeNo(), tradePush);
+            }
+            trade.setPushCount(trade.getPushCount()+1);//推送次数+1
+        }
+        trade.setDateUpd(new Date());
+        tradeDao.save(trade);
+    }
     /**
      * 订单推送逻辑 -- 抢单模式
      * @param trade
@@ -460,7 +486,7 @@ public class TradeServiceImpl implements TradeService {
                     logger.info("运单："+trade.getTradeNo()+"推送完成，推送范围："+pushRange+",推送次数："+trade.getPushCount());
                     pushRange = pushRange + bbdTradePushRangeStep;
                 }
-                //如果isPushed 为0，表明未对任何一个快递员进行推送操作 或者没有存在可以推送的快递员 或者 没有一个揽件员接单
+                //如果isPushed 为false，表明未对任何一个快递员进行推送操作 或者没有存在可以推送的快递员 或者 没有一个揽件员接单
                 //相当于推送一轮完成，此时将pushCount+1，进行新一轮推送
                 if(!isPushed){
                     //开始新的一轮推送（pushRange : bbdTradePushRangeInit---bbdTradePushRangeStep--->bbdTradePushRangeThreshold）

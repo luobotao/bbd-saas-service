@@ -19,7 +19,7 @@ public class ExpressExchange implements Serializable {
     @Id
     private ObjectId id;
 
-    public String url;                                  //请求url
+    private String url;                                  //请求url
     private String operator;                             //操作人       （初始必填）
     private String phone;                                //手机号       （初始必填）
     private OrderVO order;                                 //订单         （初始必填）

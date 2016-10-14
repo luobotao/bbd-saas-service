@@ -113,6 +113,11 @@
             <ref bean="wayDao"/>
         </property>
     </bean>
+    <bean id="relationService" class="com.bbd.saas.api.impl.mongo.RelationServiceImpl">
+        <property name="relationDao">
+            <ref bean="relationDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->
