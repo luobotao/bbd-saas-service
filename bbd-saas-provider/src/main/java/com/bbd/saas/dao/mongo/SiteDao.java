@@ -193,14 +193,10 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param city 市
      * @param area 区
      * @param status 站点状态
-     * @param areaFlag 配送区域状态
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status, int areaFlag) {
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
         Query<Site> query = getQueryByAddr(companyId, prov, city, area);
-        if(areaFlag >= 0){
-            query.filter("areaFlag", areaFlag);
-        }
         if(status != null){
             query.filter("status", status);
         }
@@ -327,5 +323,36 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
             query.filter("areaCode <>", areaCode);
         }
         return  count(query);
+    }
+
+    /**
+     * 分页查询公司下的除本站点外的其他站点 （转其他站点列表）
+     * @param companyId 公司ID
+     * @param selfAreaCode 本站地编号
+     * @param lastindex 跳过的条数
+     * @param pagesize 查询的条数
+     * @return 分页对象（分页信息和当前页的数据）
+     */
+    public PageModel<Site> selectOtherSitesPage(String companyId, String selfAreaCode, int lastindex,int pagesize) {
+
+        Query<Site> query = createQuery();
+        if(StringUtils.isNotBlank(companyId)){
+            query.filter("companyId", companyId);
+        }
+        if(StringUtils.isNotBlank(selfAreaCode)){
+            query.filter("areaCode <>", selfAreaCode);
+        }
+        query.filter("status", SiteStatus.APPROVE);
+
+        PageModel<Site> pageModel = new PageModel<Site>();
+        pageModel.setTotalCount(count(query));
+        //分页
+        if(lastindex >= 0 && pagesize > 0){
+            query.offset(lastindex).limit(pagesize);
+        }
+        //排序
+        query.order("name");
+        pageModel.setDatas(find(query).asList());
+        return pageModel;
     }
 }

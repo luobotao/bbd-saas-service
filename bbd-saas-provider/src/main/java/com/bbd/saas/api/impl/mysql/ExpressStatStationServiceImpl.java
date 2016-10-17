@@ -1,13 +1,17 @@
 package com.bbd.saas.api.impl.mysql;
 
 import com.bbd.saas.api.mysql.ExpressStatStationService;
+import com.bbd.saas.dao.mongo.SiteDao;
 import com.bbd.saas.dao.mysql.ExpressStatStationDao;
+import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.models.ExpressStatStation;
+import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,8 @@ import java.util.Map;
 public class ExpressStatStationServiceImpl implements ExpressStatStationService {
 	@Resource
 	private ExpressStatStationDao expressStatStationDao;
+	@Resource
+	private SiteDao siteDao;
 
 	public ExpressStatStationDao getExpressStatStationDao() {
 		return expressStatStationDao;
@@ -29,6 +35,14 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 
 	public void setExpressStatStationDao(ExpressStatStationDao expressStatStationDao) {
 		this.expressStatStationDao = expressStatStationDao;
+	}
+
+	public SiteDao getSiteDao() {
+		return siteDao;
+	}
+
+	public void setSiteDao(SiteDao siteDao) {
+		this.siteDao = siteDao;
 	}
 
 	@Override
@@ -95,10 +109,46 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 		return expressStatStationDao.selectSummaryByAreaCodesAndTime(areaCodeList, tim);
 	}
 
-	@Override
-	public Map<String, ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String time) {
-		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByAreaCodeListAndTime(areaCodeList, time);
-		return getEssMap(expressStatStationList);
+	public PageModel<ExpressStatStation> findPageByCompanyIdAndTime(Integer pageIndex, String companyId, String time) {
+		PageModel<ExpressStatStation> pageModel = new PageModel<ExpressStatStation>();
+		//查询登录用户的公司下的所有站点
+		List<SiteStatus> statusList = new ArrayList<SiteStatus>();
+		statusList.add(SiteStatus.APPROVE);
+		statusList.add(SiteStatus.INVALID);
+		//查询登录用户的公司下的所有站点
+		PageModel<Site> sitePageModel = new PageModel<Site>();
+		sitePageModel.setPageNo(pageIndex);
+//		sitePageModel = siteDao.findSites(sitePageModel, companyId, statusList,2,-1);
+		pageModel.setTotalCount(sitePageModel.getTotalCount());
+		List<Site> siteList = sitePageModel.getDatas();
+		if(siteList != null && siteList.size() > 0){
+			List<String> areaCodeList = new ArrayList<String>();
+			for(Site site : siteList){
+				areaCodeList.add(site.getAreaCode());
+			}
+			List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByAreaCodeListAndTime(areaCodeList, time);
+			Map<String, ExpressStatStation> essMap = getEssMap(expressStatStationList);
+			List<ExpressStatStation> dataList = new ArrayList<ExpressStatStation>();
+			ExpressStatStation ess = null;
+			for(Site site : siteList){
+				ess = essMap.get(site.getAreaCode());
+				if(ess == null){
+					ess = new ExpressStatStation(site.getCompanyId(), site.getAreaCode(), site.getName(),time);
+					ess.setSitename(site.getName());
+				}
+				dataList.add(ess);
+			}
+			if((pageModel.getPageNo() + 1) == pageModel.getTotalPages()){//最后一页 -- 需要显示汇总行
+				ExpressStatStation summary = expressStatStationDao.selectSummaryByCompanyIdAndTime(Integer.parseInt(companyId), time);
+				if(summary == null){
+					summary = new ExpressStatStation(companyId, null, null, null);
+				}
+				summary.setSitename("总计");
+				dataList.add(summary);
+			}
+			pageModel.setDatas(dataList);
+		}
+		return pageModel;
 	}
 
 	private Map<String, ExpressStatStation> getEssMap(List<ExpressStatStation> expressStatStationList){
@@ -113,6 +163,13 @@ public class ExpressStatStationServiceImpl implements ExpressStatStationService 
 	@Override
 	public Map<String, ExpressStatStation> findMapByCompanyIdAndTime(String companyId, String tim) {
 		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByCompanyIdAndTime(companyId, tim);
+		return getEssMap(expressStatStationList);
+	}
+
+
+	@Override
+	public Map<String, ExpressStatStation> findByAreaCodeListAndTime(List<String> areaCodeList, String time) {
+		List<ExpressStatStation> expressStatStationList = expressStatStationDao.selectByAreaCodeListAndTime(areaCodeList, time);
 		return getEssMap(expressStatStationList);
 	}
 }

@@ -3,6 +3,7 @@ package com.bbd.saas.api.impl.mysql;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.dao.mysql.PostmanUserDao;
 import com.bbd.saas.models.PostmanUser;
+import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -99,8 +100,11 @@ public class PostmanUserServiceImpl implements PostmanUserService {
      * @param postmanUser
      * @return 
      */
-	public int updateByPhone(PostmanUser postmanUser){
-		return postmanUserDao.updateByPhone(postmanUser);
+	public int updateByPhone(PostmanUser postmanUser, String oldPhone){
+		if(StringUtil.isEmpty(oldPhone)){//旧手机号和新手机好相同 == 手机号没有更改
+			oldPhone = postmanUser.getPhone();
+		}
+		return postmanUserDao.updateByPhone(postmanUser, oldPhone);
 	}
 	
 	/**
@@ -176,8 +180,8 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		map.put("areaCode", areaCode);
 		map.put("phone", phone);
 		//取得返回的结果集
-		List<Map<String, Object>> results  = postmanUserDao.getIntegral(map);
 		logger.info("[站点积分] 站点区域码："+areaCode+"，站长手机号："+phone);
+		List<Map<String, Object>> results  = postmanUserDao.getIntegral(map);
 		Map<String, Object> result = new HashMap<>();
 		if(results!=null&&results.size()>0) {
 			//第一条结果集 总数量

@@ -90,6 +90,11 @@ public class SiteServiceImpl implements SiteService {
         return siteDao.findSites(pageModel, companyId, areaCodeList, statusList, areaFlag);
     }
 
+    @Override
+    public PageModel<Site> findOtherSitesPage(String companyId, String selfAreaCode, int lastindex, int pagesize) {
+        return this.siteDao.selectOtherSitesPage(companyId, selfAreaCode, lastindex, pagesize);
+    }
+
     /**
      * 删除站点
      *
@@ -309,7 +314,7 @@ public class SiteServiceImpl implements SiteService {
 
     @Override
     public List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status, int areaFlag) {
-        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status, areaFlag);
+        List<Site> siteList = this.siteDao.selectByCompanyIdAndAddress(companyId, prov, city, area, status);
         return siteListToSiteVO(siteList);
     }
 

@@ -11,8 +11,9 @@ public class DateBetween {
 
 	private Date start = new Date();
 	private Date end = new Date();
-	public DateBetween() {
-
+	public DateBetween(Date start,Date end) {
+		setStart(start);
+		setEnd(end);
 	}
 
 	public DateBetween(String between) {

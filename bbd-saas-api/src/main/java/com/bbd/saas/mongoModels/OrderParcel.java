@@ -42,7 +42,6 @@ public class OrderParcel implements Serializable {
     private String station_address;
     //订单列表
     private List<Order> orderList;
-
     private Date dateAdd;
     private Date dateUpd;
     //包裹类型 0：配件包裹（默认） 1：集包
@@ -251,4 +250,5 @@ public class OrderParcel implements Serializable {
     public void setWayname(String wayname) {
         this.wayname = wayname;
     }
+
 }

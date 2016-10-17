@@ -35,5 +35,4 @@ public interface GeoRecHistoDao {
      */
     int selectCountByAddrAndDates(@Param("prov")String prov, @Param("city")String city, @Param("area")String area, @Param("startDate")String startDate, @Param("endDate")String endDate);
 
-
 }

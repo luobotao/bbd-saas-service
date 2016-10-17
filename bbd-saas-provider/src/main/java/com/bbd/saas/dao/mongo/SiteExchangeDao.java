@@ -1,9 +1,8 @@
 package com.bbd.saas.dao.mongo;
 
 import com.bbd.db.morphia.BaseDAO;
-import com.bbd.saas.mongoModels.ExpressExchange;
-import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.SiteExchange;
+import com.bbd.saas.utils.StringUtil;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
@@ -27,12 +26,25 @@ public class SiteExchangeDao extends BaseDAO<SiteExchange, ObjectId> {
 
     public SiteExchange findSiteExchangeByCodeAndTyp(String code, String typ) {
         Query<SiteExchange> query = createQuery();
-        if(code!=null){//旧状态不为空，则需要加入旧状态的判断
+        if(StringUtil.isNotEmpty(code)){//旧状态不为空，则需要加入旧状态的判断
             query.or(query.criteria("areaCode").equal(code),query.criteria("exchangeCode").equal(code));
         }
-        query.filter("exchangeType", typ);
+        if(StringUtil.isNotEmpty(typ)){//类型
+            query.filter("exchangeType", typ);
+        }
         query.filter("status", "1");
         return findOne(query);
-
+    }
+    /**
+     * 根据areaCode查找一个expressExchange对象
+     * @param areaCode 站点编号
+     * @return expressExchange对象
+     */
+    public SiteExchange selectOneByAreaCode(String areaCode){
+        Query<SiteExchange> query = createQuery();
+        if(StringUtil.isNotEmpty(areaCode)){
+            query.filter("areaCode", areaCode);
+        }
+        return findOne(query);
     }
 }

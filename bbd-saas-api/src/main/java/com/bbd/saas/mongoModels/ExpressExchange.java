@@ -1,10 +1,10 @@
 package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.ExpressExchangeStatus;
-import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.vo.OrderVO;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.*;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -34,6 +34,14 @@ public class ExpressExchange implements Serializable {
     public Date dateAdd;                                //添加时间      （初始必填）
     public Date dateUpd;                                //更新时间
 
+    public int getTimeInterval() {
+        return timeInterval;
+    }
+
+    public void setTimeInterval(int timeInterval) {
+        this.timeInterval = timeInterval;
+    }
+
     public ObjectId getId() {
         return id;
     }
@@ -56,6 +64,14 @@ public class ExpressExchange implements Serializable {
 
     public void setOperator(String operator) {
         this.operator = operator;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public OrderVO getOrder() {
@@ -106,14 +122,6 @@ public class ExpressExchange implements Serializable {
         this.status = status;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public List<String> getMemo() {
         return memo;
     }
@@ -128,14 +136,6 @@ public class ExpressExchange implements Serializable {
 
     public void setPushCount(int pushCount) {
         this.pushCount = pushCount;
-    }
-
-    public int getTimeInterval() {
-        return timeInterval;
-    }
-
-    public void setTimeInterval(int timeInterval) {
-        this.timeInterval = timeInterval;
     }
 
     public Date getDateAdd() {

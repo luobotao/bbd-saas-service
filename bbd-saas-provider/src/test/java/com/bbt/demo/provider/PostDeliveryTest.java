@@ -2,6 +2,8 @@ package com.bbt.demo.provider;
 
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.PostDeliveryQueryVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -53,4 +57,24 @@ public class PostDeliveryTest {
 		return postdelivery;
 	}
 
+
+	@Test
+	public void testSelectListByQuery() throws Exception{
+		PostDeliveryQueryVO postDeliveryQueryVO = new PostDeliveryQueryVO();
+		postDeliveryQueryVO.siteId = "577f45c21e06c8875c4771ed";
+		postDeliveryQueryVO.dateUpd = "2016-08-25";
+		List<Map<String, Object>> list =  postDeliveryService.findListByQuery(postDeliveryQueryVO);
+		Assert.isTrue(true);//无用
+
+	}
+
+	@Test
+	public void testSelectListByQuery1() throws Exception{
+		PostDeliveryQueryVO postDeliveryQueryVO = new PostDeliveryQueryVO();
+		postDeliveryQueryVO.dateUpd = "2016-08-25";
+		postDeliveryQueryVO.postman_id = 9437;
+		PageModel<PostDelivery> postDeliveryPageModel = postDeliveryService.findPageByQuery(postDeliveryQueryVO, 0, 0);
+		Assert.isTrue(true);//无用
+
+	}
 }

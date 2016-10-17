@@ -55,6 +55,14 @@ public interface SiteService {
      * @return 站点
      */
     Site findSiteByUserName(String phone);
+
+    /**
+     * 根据name查找站点
+     * @param name
+     * @return 站点
+     */
+    Site findSiteByName(String name);
+
     /**
      * 查询同一公司下除当前站点selfSite的其他所有站点的VO对象
      * @param selfSite 当前站点
@@ -84,6 +92,16 @@ public interface SiteService {
      * @return 分页对象（分页信息和当前页的数据）
      */
     PageModel<Option> getSitePage(PageModel<Option> pageModel, String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag);
+
+    /**
+     * 分页查询公司下的除本站点外的其他站点 （转其他站点列表）
+     * @param companyId 公司ID
+     * @param selfAreaCode 本站地编号
+     * @param lastindex 跳过的条数
+     * @param pagesize 查询的条数
+     * @return 分页对象（分页信息和当前页的数据）
+     */
+    PageModel<Site> findOtherSitesPage(String companyId, String selfAreaCode, int lastindex,int pagesize);
 
     /**
      * 删除站点
@@ -192,12 +210,6 @@ public interface SiteService {
      */
     List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
 
-    /**
-     * 根据name查找站点
-     * @param name
-     * @return 站点
-     */
-    Site findSiteByName(String name);
 
     /**
      * 获取热门公司列表
@@ -210,5 +222,6 @@ public interface SiteService {
      * @return 符合条件的站点个数
      */
     long findOtherSiteCount(String companyId, String areaCode);
+
 
 }

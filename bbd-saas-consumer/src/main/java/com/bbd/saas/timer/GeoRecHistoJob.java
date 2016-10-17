@@ -31,22 +31,24 @@ public class GeoRecHistoJob {
     Geo geo;
     @Autowired
     private GeoRecHistoService geoRecHistoService;
-    //每天凌晨跑一次
+
+    //每天凌晨（12点半）跑一次
     @Scheduled(cron = "0 30 0 * * ?")
     public void doJobWithPushAllTrade() {
-        Date date = Dates.getNextDay(new Date(),-1);
-        logger.info("定时处理收件人信息"+date);
-        logger.info("当前处理时间："+Dates.formatDate(date));
+        Date date = Dates.getNextDay(new Date(), -1);
+        logger.info("定时处理收件人信息" + date);
+        logger.info("当前处理时间：" + Dates.formatDate(date));
         //data 的格式为yyyy-MM-dd
-        if(date != null){
+        if (date != null) {
             List<Order> orderList = orderService.findByDateAdd(date);
-            logger.info(String.format("日期：%s 处理订单数：%s",Dates.formatDate2(date),orderList.size()));
+            logger.info(String.format("日期：%s 处理订单数：%s", Dates.formatDate2(date), orderList.size()));
             dealGeoRecWithOrder(orderList);
         }
-        logger.info("geo deal date:"+date+"cover Reciver address to geo finish");
+        logger.info("geo deal date:" + date + "cover Reciver address to geo finish");
         logger.info(" reduceGeoRecHisto success");
         logger.info("cover Reciver address to geo finish");
     }
+
     private void dealGeoRecWithOrder(List<Order> orderList) {
         for (Order order : orderList) {
             try {
@@ -74,7 +76,7 @@ public class GeoRecHistoJob {
                         }
                     }
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 logger.info("[error]订单：" + order.getOrderNo() + "收件人地址转换异常");
                 continue;

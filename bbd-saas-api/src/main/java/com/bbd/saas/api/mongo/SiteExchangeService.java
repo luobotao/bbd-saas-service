@@ -12,4 +12,11 @@ public interface SiteExchangeService {
      * @return
      */
     SiteExchange findSiteExchangeByCodeAndTyp(String code, String typ);
+
+    /**
+     * 根据areaCode查找一个expressExchange对象
+     * @param areaCode 站点编号
+     * @return expressExchange对象
+     */
+    SiteExchange findOneByAreaCode(String areaCode);
 }

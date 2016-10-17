@@ -35,9 +35,10 @@ public interface OrderParcelService {
 	/**
 	 * 根据订单ID获取此订单所处的包裹信息
 	 * @param orderId 订单ID
+	 * @param parceltyp 包裹类型 0：配件包裹（默认） 1：集包
 	 * @return 包裹
 	 */
-	OrderParcel findOrderParcelByOrderId(String orderId);
+	OrderParcel findOrderParcelByOrderIdAndParcelType(String orderId,String parceltyp);
 
 	/**
 	 * 根据订单的运单号查询该运单号所处的包裹
@@ -53,6 +54,14 @@ public interface OrderParcelService {
 	 * @return
 	 */
 	List<OrderParcel> findOrderParcelsByAreaCodeAndStatus(String areaCode, ParcelStatus parcelStatus);
+	/**
+	 * 根据来源、站点编码和包裹状态获取包裹列表
+	 * @param areaCode
+	 * @param src
+	 * @param parcelStatus
+	 * @return
+	 */
+	List<OrderParcel> findOrderParcelsByAreaCodeAndStatusAndSrc(String areaCode, String src,ParcelStatus parcelStatus);
 	/**
 	 * 保存包裹
 	 * @param orderParcel 包裹对象

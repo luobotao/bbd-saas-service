@@ -516,14 +516,16 @@ a.orange {
 /* E 导航条 */
 /* S footer */
 footer {
-  padding: 30px 0;
+  padding: 33px 0;
 }
 .pos-footer {
   position: absolute;
-  width: 100%;
-  bottom: 30px;
-  padding: 0;
+  width: 84%;
+  bottom: 0;
+  left:16%;
+  background:#fff;
   z-index: 6;
+  margin-left: -18px;
 }
 .b-copy {
   font-size: 12px;
@@ -539,7 +541,23 @@ footer {
 }
 .banner-txt{
     position:relative;
-    background:url(../images/banner_txt.png) no-repeat left 98px;
+    background:url(../images/banner_txt.png) no-repeat left 63px;
+}
+.l-txt i,.l-txt em{
+  display:inline-block;
+  position:absolute;
+}
+.l-txt i{
+  font-size:24px;
+  color:#3d3838;
+  line-height:1.1;
+  left:58px;
+  top:321px;
+
+}
+.l-txt em{
+  left:408px;
+  top:284px;
 }
 .banner-cloud{
     position:absolute;
@@ -703,7 +721,7 @@ footer {
 /* S 系统配送首页*/
 .b-con {
   min-height: 836px;
-  padding-top: 130px;
+  padding: 130px 0;
   background: #8ddaf6;
   background-image: -ms-linear-gradient(top, #46c6ee, #e8f4ff);
   background-image: -moz-linear-gradient(top, #46c6ee, #e8f4ff);
@@ -753,13 +771,7 @@ footer {
 }
 .b-branch,
 .fbg {
-  background: #f0f0f7;
-  background-image: -ms-linear-gradient(left, #ececf4, #fff);
-  background-image: -moz-linear-gradient(left, #ececf4, #fff);
-  background-image: -webkit-gradient(linear, left top, right top, from(#ececf4), to(#fff));
-  background-image: -webkit-linear-gradient(left, #ececf4, #fff);
-  background-image: -o-linear-gradient(left, #ececf4, #fff);
-  background-image: linear-gradient(left, #ececf4, #fff);
+  background: #f1f0f8;
 }
 .dn {
   display: none;
@@ -867,19 +879,22 @@ footer {
 .arrive-status {
   color: #fff;
   font-size: 18px;
-  padding: 20px 20px;
+  padding: 20px 5px;
   margin-bottom: 0;
   font-weight:bold;
+  text-align:center;
 }
 .arrive-status .b-order {
   font-size: 44px;
-  float: left;
-  margin: -10px 20px 0 0;
+  display:inline-block;
+  margin: 0 14px 0 0;
 }
 .arrive-status dd {
+  display:inline-block;
+  width:100px;
   text-align: left;
-  margin-bottom: -4px;
   color: #ffd1ca;
+  line-height:20px;
 }
 .b-board-card {
   margin-bottom: 20px;
@@ -2031,6 +2046,15 @@ input.spe-input{
 .l-green{
   color:#17c7c5;
 }
+.orange-a{
+  color:#fdb50a;
+}
+.blue-d{
+  color:#0688ed;
+}
+.green-f{
+  color:#138c7f;
+}
 /* E color */
 /* E sass 2.0 */
 
@@ -2223,3 +2247,10 @@ input.spe-input{
   margin:10px 0;
 }
 /* E 信息展示 */
+/* E saas2.1 */
+
+/* S 揽件入库 */
+.p-store{
+  background-position:0 -222px;
+}
+/* E 揽件入库 */

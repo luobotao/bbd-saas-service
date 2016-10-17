@@ -20,29 +20,58 @@ public enum OrderSetStatus {
     REMOVED(11, "已移除");
     private int status;
     private String message;
+
     private OrderSetStatus(int status, String message) {
         this.status = status;
         this.message = message;
     }
+
     public String getMessage() {
         return message;
     }
+
     public int getStatus() {
         return status;
     }
+
     public static String Srcs2HTML(Integer id) {
         StringBuilder sb = new StringBuilder();
         OrderSetStatus[] orderEnum = OrderSetStatus.values();
         sb.append(Htmls.generateOption(-1, "默认全部"));
         for (OrderSetStatus ps : orderEnum) {
             if (id == ps.status) {
-                sb.append(Htmls.generateSelectedOption(ps.status,ps.message));
+                sb.append(Htmls.generateSelectedOption(ps.status, ps.message));
             } else {
                 sb.append(Htmls.generateOption(ps.status, ps.message));
             }
         }
         return sb.toString();
     }
+
+    /**
+     * 去掉待 取件的状态
+     * @param id
+     * @return
+     */
+    public static String Srcs2HTMLExcNOEMBRACE(Integer id) {
+        StringBuilder sb = new StringBuilder();
+        OrderSetStatus[] orderEnum = OrderSetStatus.values();
+        sb.append(Htmls.generateOption(-1, "默认全部"));
+        for (OrderSetStatus ps : orderEnum) {
+            if(ps == OrderSetStatus.NOEMBRACE || ps ==OrderSetStatus.REMOVED){
+                continue;
+            }else{
+                if (id == ps.status) {
+                    sb.append(Htmls.generateSelectedOption(ps.status, ps.message));
+                } else {
+                    sb.append(Htmls.generateOption(ps.status, ps.message));
+                }
+            }
+
+        }
+        return sb.toString();
+    }
+
     public static OrderSetStatus status2Obj(int value) {
         OrderSetStatus[] status = OrderSetStatus.values();
         for (OrderSetStatus ps : status) {
@@ -52,5 +81,5 @@ public enum OrderSetStatus {
         }
         return null;
     }
-    
+
 }

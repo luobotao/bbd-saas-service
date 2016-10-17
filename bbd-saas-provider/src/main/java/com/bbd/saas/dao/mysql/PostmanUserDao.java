@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public interface PostmanUserDao {
+ public interface PostmanUserDao {
     
 	
 	/**
@@ -47,7 +47,7 @@ public interface PostmanUserDao {
      * @param postmanUser phone =oldPhone; staffid = newPhone
      * @return 
      */
-    int updateByPhone(PostmanUser postmanUser);
+    int updateByPhone(@Param("pm")PostmanUser postmanUser, @Param("oldPhone")String oldPhone);
     
     /**
      * 删除postmanUser
@@ -83,23 +83,23 @@ public interface PostmanUserDao {
      * @param companyId 公司Id
      * @return
      */
-    public List<Map<String, Object>> selectLatAndLngByCompanyId(@Param("companyId") String companyId);
+     List<Map<String, Object>> selectLatAndLngByCompanyId(@Param("companyId") String companyId);
 
     /**
      * 根据Id集合查询所有派件员的经纬度
      * @param ids id的集合
      * @return
      */
-    public List<Map<String, Object>> selectLatAndLngByIds(@Param("ids") List<Integer> ids);
+     List<Map<String, Object>> selectLatAndLngByIds(@Param("ids") List<Integer> ids);
 
-    public List<Map<String, Object>> getIntegral(Map<String, Object> map);
+     List<Map<String, Object>> getIntegral(Map<String, Object> map);
 
     /**
      * 删除电话为phone,id不为id的postmanUser
      * @param phone
      * @param id
      */
-    public int deleteByPhoneAndId(@Param("phone")String phone, @Param("id")int id);
+     int deleteByPhoneAndId(@Param("phone")String phone, @Param("id")int id);
     /**
      * 根据站点Id更新站点名称（substation）
      * @param siteid 站点id
@@ -114,4 +114,7 @@ public interface PostmanUserDao {
      * @return
      */
     PostmanUser findByToken(@Param("token") String token);
+    List<PostmanUser> findPostmanUsers(String sql);
+
+    void pushBbdTrade(Map<String, Object> map);
 }

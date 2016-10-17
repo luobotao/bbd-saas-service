@@ -1118,25 +1118,43 @@ public class Dates {
 		return 0;
 	}
 
-	/**
-	 * 计算两个日期之间相差的天数
-	 *
-	 * @param smdate
-	 *            较小的时间
-	 * @param bdate
-	 *            较大的时间
-	 * @return 相差天数,向下取整（不足一天为0天）
-	 * @throws ParseException
-	 */
-	public static long daysBetween(Date smdate, Date bdate) throws ParseException {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(smdate);
-		long time1 = cal.getTimeInMillis();
-		cal.setTime(bdate);
-		long time2 = cal.getTimeInMillis();
-		long between_days = (time2 - time1) /(1000*3600*24);
-        //System.out.println("days=="+between_days);
-        return between_days;
+
+    /**
+     * 计算两个时间差，long类型
+     * @param smallDate 较小的时间
+     * @param bigDate 较大的时间
+     * @return
+     * @throws ParseException
+     */
+    public static int calculateTimeDiff(Date smallDate, Date bigDate, int unit) throws ParseException {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(smallDate);
+        long smallTime = cal.getTimeInMillis();
+        cal.setTime(bigDate);
+        long bigTime = cal.getTimeInMillis();
+        long between_time = (bigTime - smallTime) / unit;
+        return Integer.parseInt(String.valueOf(between_time));
+    }
+    /**
+     * 计算两个日期之间相差的秒数
+     * @param smallDate 较小的时间
+     * @param bigDate 较大的时间
+     * @return 相差秒数
+     * @throws ParseException
+     */
+    public static int secondsBetween(Date smallDate, Date bigDate) throws ParseException {
+        return calculateTimeDiff(smallDate, bigDate, 1000*60);
+    }
+
+    /**
+     * 计算两个日期之间相差的天数
+     * @param smallDate 较小的时间
+     * @param bigDate 较大的时间
+     * @return 相差天数
+     * @throws ParseException
+     */
+	public static int daysBetween(Date smallDate, Date bigDate) throws ParseException {
+        return calculateTimeDiff(smallDate, bigDate, 1000 * 3600 * 24);
 	}
 
 	/**
@@ -1144,14 +1162,7 @@ public class Dates {
 	 */
 	public static int daysBetween(String smdate, String bdate) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(sdf.parse(smdate));
-		long time1 = cal.getTimeInMillis();
-		cal.setTime(sdf.parse(bdate));
-		long time2 = cal.getTimeInMillis();
-		long between_days = (time2 - time1) / (1000 * 3600 * 24);
-
-		return Integer.parseInt(String.valueOf(between_days));
+        return calculateTimeDiff(sdf.parse(smdate), sdf.parse(bdate), 1000 * 3600 * 24);
 	}
 	/**
 	 * 计算两个日期相差的月数
@@ -1190,53 +1201,6 @@ public class Dates {
 		c2.setTime(sdf.parse(bdate));
 		result =(c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR)) * 12 + c2.get(Calendar.MONTH)- c1.get(Calendar.MONTH);
 		return Math.abs(result)+1;
-	}
-	
-	/**
-	 * 得到指定日期的（周一至周日）日期
-	 *
-	 * @return yyyy-MM-dd至yyyy-MM-dd
-	 */
-	public static  String getWeekDayByDate(Date date) {
-		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		int day_of_week = c.get(Calendar.DAY_OF_WEEK) - 1;
-		if (day_of_week == 0)
-			day_of_week = 7;
-		c.add(Calendar.DATE, -day_of_week + 1);
-		String monday=df2.format(c.getTime());
-		c.add(Calendar.DATE,  6);
-		String sunday=df2.format(c.getTime());
-		//System.out.println("周一====周日========"+monday+"至"+sunday);
-		return monday+"至"+sunday;
-	}
-	
-	/**
-	 * Description:  获取指定时间周格式              12-29至01-04<br />第1周
-	 * @param nowDay
-	 * @return
-	 * @throws Exception
-	 * @author: liyanlei
-	 * 2016年4月18日下午4:22:27
-	 */
-	public  static String getWeek(Date nowDay)throws Exception{
-		SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd");
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(nowDay);
-		// 判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了
-		int dayWeek = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
-		if (1 == dayWeek) {
-			cal.add(Calendar.DAY_OF_MONTH, -1);
-		}
-		cal.setFirstDayOfWeek(Calendar.MONDAY);// 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一
-		int day = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
-		cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - day);// 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值
-		String imptimeBegin = sdf1.format(cal.getTime());
-		cal.add(Calendar.DATE, 6);
-		String imptimeEnd = sdf1.format(cal.getTime());
-		int week_of_year = cal.get(Calendar.WEEK_OF_YEAR);
-		return imptimeBegin+"至"+imptimeEnd+"<br />第"+week_of_year+"周";
 	}
 
 	/**
@@ -1392,10 +1356,6 @@ public class Dates {
     }
 
     public static void main(String[] args) throws Exception {
-        //System.out.println(Dates.getNextDay(new Date(),-1));
-
-        System.out.println(Dates.daysBetween(stringToDate("2016-09-18 14:07:34", "yyyy-MM-dd HH:mm:ss"),new Date()));
-
 
     }
 }

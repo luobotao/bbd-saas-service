@@ -183,7 +183,11 @@
 		FROM `postdelivery` where id = #{id}
 	</select>
 	<!-- 通过id查询记录  结束  -->
-
+	<!-- 通过运单号查询记录  开始  -->
+	<select id="selectOneByMailNum" resultMap="baseResultMap">
+		SELECT * FROM `postdelivery` where mail_num = #{mailNum}
+	</select>
+	<!-- 通过运单号查询记录  结束  -->
 
 	<!-- 通过id更新记录 -->
 	<update id="updateOne" >
@@ -315,4 +319,73 @@
 		WHERE d.postman_id = u.id AND u.siteid = #{siteId} AND d.date_upd > #{tim}
 	</select>
 	<!-- 查询指定运单号的记录的条数  结束   -->
+
+	<!-- 根据查询条件查询数据  开始   -->
+	<select id="selectListByQuery" parameterType="com.bbd.saas.vo.PostDeliveryQueryVO" resultType="java.util.HashMap">
+		SELECT p.postman_id as id,pu.nickname,pu.phone,COUNT(p.id) AS ordercnt
+		FROM postdelivery p,postmanuser pu
+		<where>
+			p.postman_id = pu.id
+			<if test="dateUpd_min != null and dateUpd_min != ''" >
+				and p.date_upd > #{dateUpd_min}
+			</if>
+			<if test="siteId != null and siteId != ''" >
+				and pu.siteid = #{siteId}
+			</if>
+			<if test="companyid != null and companyid != ''" >
+				and pu.companyid= #{companyid}
+			</if>
+			<if test="subStation != null and subStation != ''" >
+				and pu.substation = #{subStation}
+			</if>
+			GROUP BY p.postman_id
+		</where>
+	</select>
+	<!-- 根据查询条件查询数据  结束   -->
+
+	<!-- 根据查询条件查询数据条数  start   -->
+	<select id="selectCountByQuery" parameterType="com.bbd.saas.vo.PostDeliveryQueryVO" resultType="java.lang.Integer"> <!-- resultType="_int" -->
+		SELECT count(id) as cnt FROM postdelivery
+		<where>
+			<if test="dateUpd_min != null and dateUpd_min != ''" >
+				and date_upd > #{dateUpd_min}
+			</if>
+			<if test="postman_id != null and postman_id != ''" >
+				and postman_id = #{postman_id}
+			</if>
+			<if test="dateUpd != null and dateUpd != ''" >
+				and DATE_FORMAT(date_upd,'%Y-%m-%d')= #{dateUpd}
+			</if>
+		</where>
+	</select>
+	<!-- 根据查询条件查询数据条数  end   -->
+
+	<!-- 根据查询条件分页查询数据  开始  -->
+	<select id="selectPageByQuery"  resultMap="baseResultMap">
+		SELECT * FROM `postdelivery`
+		<where>
+			<if test="queryVo.postman_id != null and queryVo.postman_id > 0" >
+				and postman_id = #{queryVo.postman_id}
+			</if>
+			<if test="queryVo.dateUpd_min != null and queryVo.dateUpd_min != ''" >
+				and date_upd > #{queryVo.dateUpd_min}
+			</if>
+			<if test="queryVo.dateUpd != null and queryVo.dateUpd != ''" >
+				and DATE_FORMAT(date_upd,'%Y-%m-%d')= #{queryVo.dateUpd}
+			</if>
+		</where>
+		order by date_upd desc
+		<if test="pageSize > 0" >
+			limit #{startNum} , #{pageSize}
+		</if>
+	</select>
+	<!-- 根据查询条件分页查询数据  开始  -->
+
+	<!-- 查询派件员日期大于tim的每天的派件量  开始   -->
+	<select id="selectListByPmanIdAndTime" resultType="java.util.HashMap">
+		SELECT DATE_FORMAT(date_upd,'%Y-%m-%d') as tim,COUNT(p.id) AS ordercnt FROM postdelivery p
+		WHERE p.postman_id= #{postmanid} AND p.date_upd > #{tim} AND <![CDATA[ p.date_upd < DATE_FORMAT(now(),'%Y-%m-%d') ]]>
+		GROUP BY DATE_FORMAT(date_upd,'%Y-%m-%d') order by DATE_FORMAT(date_upd,'%Y-%m-%d') desc
+	</select>
+	<!-- 查询派件员日期大于tim的每天的派件量  结束   -->
 </mapper>

@@ -24,14 +24,16 @@ public class Trade implements Serializable {
     @Id
     private ObjectId id;
     private ObjectId uId;//用户ID,网站端进行改版加入账号体系,数据将从User里获取
-    private ObjectId embraceId;//揽件员Id
+    private ObjectId embraceId;//f揽件员Id
     private String tradeNo;//商户订单号
     private Integer amountMay;//订单金额(估计) 单位分
     private Integer amountReal;//订单金额(实际) 单位分
     private Integer amountReturn;//实际退款金额 单位分(应该退的金额可以计算出来,此为实际退款金额)
+    private Integer amtMayForSm;//小件员收益(估计) 单位分
+    private Integer amtReaForSm;//小件员收益(实际) 单位分
     private TradeStatus tradeStatus;//商户订单状态
     private Integer pushRange;  //push范围 ，默认为2公里
-    private Integer pushCount;  //push次数 ，默认为0次，超过2此则需要兜底操作
+    private Integer pushCount = 0;  //push次数 ，默认为0次，超过2此则需要兜底操作
     private String rechange;    //0 已转 1未转
     private Sender sender;
     private Integer ordercnt;//运单数量
@@ -43,11 +45,8 @@ public class Trade implements Serializable {
     private Date dateGeted;      //取件时间
 
     private List<OrderSnap> orderSnaps; //订单快照，此交易单下的订单快照
-
     @Transient
     private User embrace;//揽件员
-    @Transient
-    private long totalMail;//快件数量
     @Transient
     private String statusMsg;//商户订单状态 -- tradeStatus.message
 
@@ -165,16 +164,13 @@ public class Trade implements Serializable {
         this.embrace = embrace;
     }
 
-    public long getTotalMail() {
-        return totalMail;
-    }
-
-    public void setTotalMail(long totalMail) {
-        this.totalMail = totalMail;
-    }
 
     public String getStatusMsg() {
-        return this.tradeStatus != null ? this.tradeStatus.getMessage() : "";
+        if(this.tradeStatus == TradeStatus.GETED || this.tradeStatus == TradeStatus.ARRIVED){
+            return "已取件";
+        }else{
+            return this.tradeStatus != null ? this.tradeStatus.getMessage() : "";
+        }
     }
 
     public void setStatusMsg(String statusMsg) {
@@ -237,5 +233,19 @@ public class Trade implements Serializable {
         this.pushCount = pushCount;
     }
 
+    public Integer getAmtMayForSm() {
+        return amtMayForSm;
+    }
 
+    public void setAmtMayForSm(Integer amtMayForSm) {
+        this.amtMayForSm = amtMayForSm;
+    }
+
+    public Integer getAmtReaForSm() {
+        return amtReaForSm;
+    }
+
+    public void setAmtReaForSm(Integer amtReaForSm) {
+        this.amtReaForSm = amtReaForSm;
+    }
 }

@@ -3,11 +3,15 @@ package com.bbd.saas.api.impl.mysql;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.dao.mysql.PostDeliveryDao;
 import com.bbd.saas.models.PostDelivery;
+import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.vo.PostDeliveryQueryVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description: 快递员派送运单信息Service实现
@@ -71,6 +75,11 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	}
 
 	@Override
+	public PostDelivery findOneByMailNum(String mailNum) {
+		return this.postDeliveryDao.selectOneByMailNum(mailNum);
+	}
+
+	@Override
 	public PostDelivery updateOne(PostDelivery postDelivery) {
 		postDeliveryDao.updateOne(postDelivery);
 		return postDelivery;
@@ -79,5 +88,29 @@ public class PostDeliveryServiceImpl implements PostDeliveryService {
 	@Override
 	public int getDeliveryCnt(String siteId, String tim) {
 		return this.postDeliveryDao.selectCountBySiteIdAndTim(siteId, tim);
+	}
+
+	@Override
+	public List<Map<String, Object>> findListByQuery(PostDeliveryQueryVO postDeliveryQueryVO) {
+		return this.postDeliveryDao.selectListByQuery(postDeliveryQueryVO);
+	}
+
+	@Override
+	public int findCountByQuery(PostDeliveryQueryVO postDeliveryQueryVO) {
+		return this.postDeliveryDao.selectCountByQuery(postDeliveryQueryVO);
+	}
+
+	@Override
+	public PageModel<PostDelivery> findPageByQuery(PostDeliveryQueryVO postDeliveryQueryVO, Integer startNum, Integer pageSize)throws Exception {
+		PageModel<PostDelivery> pageModel = new PageModel<PostDelivery>();
+		List<PostDelivery> dataList = this.postDeliveryDao.selectPageByQuery(postDeliveryQueryVO, startNum, pageSize);
+		pageModel.setDatas(dataList);
+		pageModel.setTotalCount(this.postDeliveryDao.selectCountByQuery(postDeliveryQueryVO));
+		return pageModel;
+	}
+
+	@Override
+	public List<Map<String, Object>> findListByPmanIdAndTime(Integer postmanid, String tim) {
+		return this.postDeliveryDao.selectListByPmanIdAndTime(postmanid, tim);
 	}
 }

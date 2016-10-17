@@ -1,7 +1,6 @@
 package com.bbd.saas.vo;
 
 import com.bbd.saas.enums.AuditStatus;
-
 import java.io.Serializable;
 import java.util.Date;
 

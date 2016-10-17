@@ -50,13 +50,14 @@ public class BbdExpressApiController {
 	@Autowired
 	Geo geo;
 	@Autowired
-	private GeoRecHistoService geoRecHistoService;
-	@Autowired
 	private PostmanUserService userMysqlService;
+	@Autowired
+	private GeoRecHistoService geoRecHistoService;
 	@Autowired
 	private PostmanUserService postmanUserService;
 	@Autowired
 	private PostmanPoiApi postmanPoiApi;
+
 	/**
 	 * description: 推送站点信息接口
 	 * 2016年4月14日下午4:05:01
@@ -145,6 +146,7 @@ public class BbdExpressApiController {
 		return str;
 	}
 
+
 	@RequestMapping(value="/getDistance")
 	@ResponseBody
 	public String getDistance(String city, String start, String ends) throws IOException {
@@ -173,7 +175,6 @@ public class BbdExpressApiController {
 				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
 				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
 
-				String city="北京";
 				MapPoint mapPoint = geo.getGeoInfo(str);//起点地址
 				if (areaCodeList != null && areaCodeList.size() > 0) {
 					//通过积分获取优选区域码
@@ -186,7 +187,6 @@ public class BbdExpressApiController {
 							long length = geo.getDistance(city, mapPoint, mapPointList, false);*/
 							//获取当前位置到站点的距离，
 							double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
-
 							//获取站点的日均积分
 							Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
 							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
@@ -342,6 +342,8 @@ public class BbdExpressApiController {
 			}
 		}
 	}
+
+
 
 	@RequestMapping(value="/postmanEfence", method=RequestMethod.GET)
 	public String postmanEfence(Model model, HttpServletRequest request ) {

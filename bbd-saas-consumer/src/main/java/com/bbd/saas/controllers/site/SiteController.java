@@ -307,6 +307,7 @@ public class SiteController {
 			logger.info("保存电子围栏结果：" + result.code + "，"+result.toString());
 		}catch (Exception e){
 			result.code=-1;
+			result.msg = "抱歉，电子围栏暂不支持交叉绘制";
 			logger.info("保存电子围栏异常：" + e.toString());
 		}
 		return result;

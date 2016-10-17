@@ -29,9 +29,6 @@
         <property name="userDao">
             <ref bean="userDao"/>
         </property>
-        <!--<property name="sitePoiApi">
-            <ref bean="sitePoiApi"/>
-        </property>-->
         <property name="siteService">
             <ref bean="siteService"/>
         </property>
@@ -83,6 +80,9 @@
         <property name="tradeDao">
             <ref bean="tradeDao"/>
         </property>
+        <property name="tradePushDao">
+            <ref bean="tradePushDao"/>
+        </property>
         <property name="orderDao">
             <ref bean="orderDao"/>
         </property>
@@ -91,6 +91,9 @@
         </property>
         <property name="orderNumDao">
             <ref bean="orderNumDao"/>
+        </property>
+        <property name="postmanUserDao">
+            <ref bean="postmanUserDao"/>
         </property>
     </bean>
     <!-- Constant Service-->
@@ -114,6 +117,11 @@
     <bean id="wayService" class="com.bbd.saas.api.impl.mongo.WayServiceImpl">
         <property name="wayDao">
             <ref bean="wayDao"/>
+        </property>
+    </bean>
+    <bean id="relationService" class="com.bbd.saas.api.impl.mongo.RelationServiceImpl">
+        <property name="relationDao">
+            <ref bean="relationDao"/>
         </property>
     </bean>
     <!--   end mongodb services    -->
@@ -154,6 +162,11 @@
             <ref bean="incomeDao"/>
         </property>
     </bean>
+    <bean id="pushService" class="com.bbd.saas.api.impl.mysql.PushServiceImpl">
+        <property name="pushDao">
+            <ref bean="pushDao"/>
+        </property>
+    </bean>
 
     <bean id="expressCompanyService" class="com.bbd.saas.api.impl.mysql.ExpressCompanyServiceImpl">
         <property name="expressCompanyDao">
@@ -179,6 +192,9 @@
     <bean id="expressStatStationService" class="com.bbd.saas.api.impl.mysql.ExpressStatStationServiceImpl">
         <property name="expressStatStationDao">
             <ref bean="expressStatStationDao"/>
+        </property>
+        <property name="siteDao">
+            <ref bean="siteDao"/>
         </property>
     </bean>
     <!--    end mysql services   -->
