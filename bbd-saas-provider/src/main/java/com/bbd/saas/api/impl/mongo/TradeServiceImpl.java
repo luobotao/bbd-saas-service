@@ -286,22 +286,18 @@ public class TradeServiceImpl implements TradeService {
             List<Trade> tradeList = findTradeListByPushJob();
             if(tradeList!=null&&tradeList.size()>0){
                 for (Trade trade : tradeList) {
-                    Relation relation = this.relationService.findByMechId(trade.getuId().toString());
-                    if(relation == null || relation.getEmbraceIdList() == null || relation.getEmbraceIdList().isEmpty()){//未给商家配置揽件员，给附近的揽件员推单
-                        //设置推送范围
-                        if(trade.getPushRange()==null||trade.getPushRange()<=0){
-                            //设置默认推送次数
-                            if(trade.getPushCount()==null||trade.getPushCount()<=0){
-                                trade.setPushCount(0);
-                            }
-                            trade.setPushRange(bbdTradePushRangeInit);
-                            trade.setDateUpd(new Date());
-                            tradeDao.save(trade);
+                    //设置推送范围
+                    if(trade.getPushRange()==null||trade.getPushRange()<=0){
+                        //设置默认推送次数
+                        if(trade.getPushCount()==null||trade.getPushCount()<=0){
+                            trade.setPushCount(0);
                         }
-                        this.doJobWithPushTrade(trade);
-                    }else{//给绑定的所有揽件员推单
-                        this.pushTradeToPostmanUsers(trade, relation.getEmbraceIdList());
+                        trade.setPushRange(bbdTradePushRangeInit);
+                        trade.setDateUpd(new Date());
+                        tradeDao.save(trade);
                     }
+                    this.doJobWithPushTrade(trade);
+                    //this.pushTradeToPostmanUsers(trade, relation.getEmbraceIdList());//给绑定的所有揽件员推单
                 }
                 logger.info("一波订单推送揽件员完成");
             }else{
@@ -320,7 +316,6 @@ public class TradeServiceImpl implements TradeService {
             //若pushCount >= 2,则对trade进行兜底处理，变更tradeStatus，不再进行推送
             trade.setTradeStatus(TradeStatus.LASTOPER);
         }else{//开始新的一轮推送
-
             //循环遍历揽件员
             for (Integer userId : pmUserIds) {
                 //判断揽件员是否已推送，如没有则直接进行推送操作，已推送则跳过
@@ -422,16 +417,26 @@ public class TradeServiceImpl implements TradeService {
         double maxlat=x+i;
         double minlong=y-i;
         double maxlong=y+i;
-
         //postrole 0 代表小件员 4 代表站长 poststatus 1 代表司机处于接单状态
-        String sql="SELECT u.*  FROM postmanuser"
-                + " u WHERE (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND u.sta='1' AND token<>'' AND (u.postrole = '0' or u.postrole='99') AND u.poststatus="+poststatus+""
-                +"  AND SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) < "+i
-                + " order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc LIMIT 0,20";
-
-
-        List<PostmanUser> pulist=new ArrayList<PostmanUser>();
-        pulist = postmanUserDao.findPostmanUsers(sql);
+        StringBuffer sqlSB = new StringBuffer("SELECT u.*  FROM postmanuser u WHERE ");
+        //若商家配置揽件员，则只给附近绑定的揽件员推单
+        Relation relation = this.relationService.findByMechId(trade.getuId().toString());
+        if(relation != null && relation.getEmbraceIdList() != null && !relation.getEmbraceIdList().isEmpty()){//商家配置揽件员，只给给附近绑定的揽件员推单
+            List<Integer> idList = relation.getEmbraceIdList();
+            sqlSB.append(" u.id in (");
+            for(int n=0; n < idList.size(); n++){
+                if(n != 0){
+                    sqlSB.append(",");
+                }
+                sqlSB.append(idList.get(n));
+            }
+            sqlSB.append(") and ");
+        }
+        sqlSB.append(" (u.lat BETWEEN "+minlat+" AND "+maxlat+") AND (u.lon BETWEEN "+minlong+" AND "+maxlong+") AND u.sta='1' AND token<>'' AND (u.postrole = '0' or u.postrole='99') AND u.poststatus="+poststatus);
+        sqlSB.append("  AND SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) < "+i);
+        sqlSB.append(" order by SQRT(POWER("+x+" - u.lat, 2) + POWER("+y+" - u.lon, 2)) asc LIMIT 0,20");
+        List<PostmanUser> pulist = new ArrayList<PostmanUser>();
+        pulist = postmanUserDao.findPostmanUsers(sqlSB.toString());
         return pulist;
     }
 
