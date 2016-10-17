@@ -76,6 +76,10 @@
 <div class="b-banner mb120">
 	<div class="container">
 		<div class="clearfix banner-txt">
+			<div class="fl l-txt">
+				<i>扫一扫下载棒棒达快递员App</i>
+				<em><img src="<c:url value="/resources/images/banner_code.png" />" /></em>
+			</div>
 			<div class="fr">
 				<div class="login-area">
 					<div class="l-bg"></div>
