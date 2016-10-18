@@ -229,6 +229,7 @@ public class PackageToSiteController {
 		if(order.getOrderStatus() == null || order.getOrderStatus() == OrderStatus.NOTARR){
 			order.setOrderStatus(OrderStatus.NOTDISPATCH);
 			order.setDateArrived(new Date());
+			order.setOrderSetStatus(OrderSetStatus.ARRIVED);
 		}
 		order.setDateUpd(new Date());
 		orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//修改该订单所处包裹里的订单状态
