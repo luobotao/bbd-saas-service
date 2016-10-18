@@ -376,7 +376,7 @@
 								$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 								$("#mailNumP").attr("style", "color:red");
 							} else {
-								if (response.orderSetStatus != null && (response.orderSetStatus != "<%=OrderSetStatus.DRIVERSENDING%>" && response.orderSetStatus != "<%=OrderSetStatus.ARRIVED%>")) {
+								if (order.orderSetStatus != null && (order.orderSetStatus != "<%=OrderSetStatus.DRIVERSENDING%>" && order.orderSetStatus != "<%=OrderSetStatus.ARRIVED%>")) {
 									$("#mailNumP").html("请进行揽件入库操作");
 									$("#mailNumP").attr("style", "color:red");
 								} else {
