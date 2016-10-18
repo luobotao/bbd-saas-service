@@ -71,6 +71,11 @@ public class Order implements Serializable {
     private String disAreaCode;//分拨中心Code
     private List<SiteTime> siteTimes;//揽件时间的集合
     private ComplaintStatus complaintStatus;//投诉状态
+    private String memo;     //运单备注
+    private String billIncomeId;
+    private IncomeStatus billIncomeStatus;
+    private Date dateSigned;//签收时间
+
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -563,5 +568,37 @@ public class Order implements Serializable {
 
     public void setSrcRmk(String srcRmk) {
         this.srcRmk = srcRmk;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public String getBillIncomeId() {
+        return billIncomeId;
+    }
+
+    public void setBillIncomeId(String billIncomeId) {
+        this.billIncomeId = billIncomeId;
+    }
+
+    public IncomeStatus getBillIncomeStatus() {
+        return billIncomeStatus;
+    }
+
+    public void setBillIncomeStatus(IncomeStatus billIncomeStatus) {
+        this.billIncomeStatus = billIncomeStatus;
+    }
+
+    public Date getDateSigned() {
+        return dateSigned;
+    }
+
+    public void setDateSigned(Date dateSigned) {
+        this.dateSigned = dateSigned;
     }
 }
