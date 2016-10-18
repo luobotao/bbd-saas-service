@@ -8,11 +8,6 @@ import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
-import com.bbd.saas.utils.Constants;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.*;
 import com.mongodb.BasicDBList;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -710,7 +705,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         //创建查询条件
         Query<Order> query = createQuery();
         query.filter("orderNo", orderNO);
-        query.filter("src", srcs);
+        query.filter("srcRmk", srcs);
         return findOne(query);
     }
 
