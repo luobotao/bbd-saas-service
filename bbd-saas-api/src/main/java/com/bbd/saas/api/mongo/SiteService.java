@@ -81,7 +81,7 @@ public interface SiteService {
      * @param keyword 站点名称/站⻓姓名/⼿机号
      * @return 分页对象（分页信息和当前页的数据）
      */
-    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword);
+    PageModel<Site> getSitePage(PageModel<Site> pageModel, String companyId, String group, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword);
 
     /**
      * 根据站点状态进行站点分页查询
@@ -142,7 +142,7 @@ public interface SiteService {
      * @param status 特定站点状态
      * @return 站点VO集合
      */
-    List<SiteVO> findAllSiteVOByCompanyId(String companyId, SiteStatus status);
+    List<SiteVO> findAllSiteVOByCompanyId(String companyId, String group, SiteStatus status);
 
     /**
      * 查询所有站点
@@ -159,7 +159,7 @@ public interface SiteService {
      * @param areaFlag 配送区域状态
      * @return 站点集合
      */
-    List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status, int areaFlag);
+    List<SiteVO> findSiteVOByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, SiteStatus status, int areaFlag);
 
     /**
      * 查询指定公司的不同地区的特定站点状态的站点集合
@@ -170,7 +170,7 @@ public interface SiteService {
      * @param statusList 站点状态集合
      * @return 站点集合
      */
-    List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList);
+    List<Option> findOptByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, String siteName, List<SiteStatus> statusList);
 
     /**
      * 查询指定公司的不同地区的特定站点状态的站点集合
@@ -182,7 +182,7 @@ public interface SiteService {
      * @param  areaFlag 配送区域状态
      * @return 站点集合
      */
-    List<Option> findOptByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag);
+    List<Option> findOptByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag);
 
     /**
      * 根据站点编号数组查询
@@ -208,7 +208,7 @@ public interface SiteService {
      * @param statusList 站点状态集合
      * @return 站点集合
      */
-    List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
+    List<Site> findByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
 
 
     /**

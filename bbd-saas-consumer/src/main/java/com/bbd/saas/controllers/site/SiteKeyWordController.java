@@ -77,7 +77,7 @@ public class SiteKeyWordController {
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), currUser.getGroup(), SiteStatus.APPROVE);
 			List<String> siteOptionList = null;
 			if(siteVOList != null && siteVOList.size() > 0){
 				siteOptionList = new ArrayList<String>();
@@ -107,7 +107,7 @@ public class SiteKeyWordController {
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
 		//查询登录用户的公司下的所有站点
-		List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+		List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), currUser.getGroup(), SiteStatus.APPROVE);
 		//火狐浏览器没有扩展名
 		response.setContentType("application/binary;charset=ISO8859_1");
 		//扩展名.xlsx

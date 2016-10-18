@@ -55,12 +55,15 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param keyword
      * @return
      */
-    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword) {
+    public PageModel<Site> findSites(PageModel<Site> pageModel,String companyId, String group,List<ObjectId> siteIdList, Integer status, Integer areaFlag, String keyword) {
         SiteQueryVO queryVO = new SiteQueryVO();
         queryVO.companyId = companyId;
         queryVO.status = SiteStatus.status2Obj(status);
         queryVO.keyword = keyword;
         Query<Site> query = getQuerys(queryVO);
+        if(StringUtils.isNotBlank(group)){
+            query.filter("group", group);
+        }
         if(areaFlag != null && areaFlag != -1){//配送区域
             query.filter("areaFlag", areaFlag);
         }
@@ -155,10 +158,13 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param companyId
      * @return
      */
-    public List<Site> selectByCompanyId(String companyId, SiteStatus status) {
+    public List<Site> selectByCompanyId(String companyId, String group, SiteStatus status) {
         Query<Site> query = createQuery().order("areaCode");
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
+        }
+        if(StringUtils.isNotBlank(group)){
+            query.filter("group", group);
         }
         if(status != null){
             query.filter("status", status);
@@ -195,8 +201,8 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param status 站点状态
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
-        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, SiteStatus status) {
+        Query<Site> query = this.getQueryByAddr(companyId, group, prov, city, area);
         if(status != null){
             query.filter("status", status);
         }
@@ -212,8 +218,8 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param areaFlag 配送区域状态
      * @return 站点集合
      */
-    public List<Option> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag) {
-        Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
+    public List<Option> selectByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, String siteName, List<SiteStatus> statusList, Integer areaFlag) {
+        Query<Site> query = this.getQueryByAddr(companyId, group, prov, city, area);
         if(StringUtils.isNotBlank(siteName)){
             query.and(query.criteria("name").containsIgnoreCase(siteName));
         }
@@ -226,10 +232,13 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         return  selectAndToOptionList(query);
     }
 
-    private Query<Site> getQueryByAddr(String companyId, String prov, String city, String area){
+    private Query<Site> getQueryByAddr(String companyId, String group, String prov, String city, String area){
         Query<Site> query = createQuery().order("areaCode");
         if(StringUtils.isNotBlank(companyId)){
             query.filter("companyId", companyId);
+        }
+        if(StringUtils.isNotBlank(group)){
+            query.filter("group", group);
         }
         if(StringUtils.isNotBlank(prov)){
             query.filter("province", prov);
@@ -283,8 +292,8 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param status 站点状态
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, SiteStatus status) {
-        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, List<ObjectId> siteIdList, SiteStatus status) {
+        Query<Site> query = this.getQueryByAddr(companyId, group, prov, city, area);
         if(status != null){
             query.filter("status", status);
         }
@@ -300,8 +309,8 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param statusList 站点状态集合
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
-        Query<Site> query = getQueryByAddr(companyId, prov, city, area);
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
+        Query<Site> query = this.getQueryByAddr(companyId, group, prov, city, area);
         if(siteIdList != null && !siteIdList.isEmpty()){
             query.filter("_id in", siteIdList);
         }

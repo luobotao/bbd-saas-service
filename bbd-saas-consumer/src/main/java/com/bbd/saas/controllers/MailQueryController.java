@@ -72,17 +72,15 @@ public class MailQueryController {
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, statusStr, arriveBetween, mailNum, siteStatus, areaFlag, request);
-			if(orderPage != null && orderPage.getDatas() != null){
-				//当前登录的用户信息
-				User currUser = adminService.get(UserSession.get(request));
-				logger.info("=====运单查询页面列表===" + orderPage);
-				model.addAttribute("orderPage", orderPage);
-				//查询登录用户的公司下的所有站点
-				model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId(), siteStatus, areaFlag));
-			}else{
+			//当前登录的用户信息
+			User currUser = adminService.get(UserSession.get(request));
+			if(orderPage == null || orderPage.getDatas() == null){
 				orderPage = new PageModel<Order>();
-				model.addAttribute("orderPage", orderPage);
 			}
+			logger.info("=====运单查询页面列表===" + orderPage);
+			model.addAttribute("orderPage", orderPage);
+			//查询登录用户的公司下的所有站点
+			model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId(), currUser.getGroup(), siteStatus, areaFlag));
 			model.addAttribute("arriveBetween", arriveBetween);
 		} catch (Exception e) {
 			logger.error("===跳转到运单查询页面==出错 :" + e.getMessage());
@@ -174,7 +172,10 @@ public class MailQueryController {
 			}else{
 				statusList.add(SiteStatus.status2Obj(siteStatus));
 			}
-			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList, areaFlag);
+			if(currUser.getGroup() != null){//
+
+			}
+			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, null, statusList, areaFlag);
 		}else{//部分站点
 			String [] areaCodes = areaCodeStr.split(",");
 			optionList = siteService.findByAreaCodes(areaCodes);

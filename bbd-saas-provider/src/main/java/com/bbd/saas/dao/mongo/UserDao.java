@@ -82,6 +82,9 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         //设置排序
         query.order("-dateUpdate");
         if(userQueryVO!=null){
+            if(StringUtils.isNotBlank(userQueryVO.group)){//公司用户
+                query.filter("group", userQueryVO.group);
+            }
             if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
                 query.filter("companyId", userQueryVO.companyId);
             }
