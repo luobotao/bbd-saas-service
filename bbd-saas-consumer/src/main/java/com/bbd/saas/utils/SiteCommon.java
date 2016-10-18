@@ -17,11 +17,11 @@ public class SiteCommon {
      * @param companyId 公司Id
      * @return 站点下拉列表数据（List<areaCode,name>）
      */
-    public static  List<Option> getSiteOptions(SiteService siteService, String companyId){
+    public static  List<Option> getSiteOptions(SiteService siteService, String companyId, String group){
         List<SiteStatus> statusList = new ArrayList<SiteStatus>();
         statusList.add(SiteStatus.APPROVE);
         statusList.add(SiteStatus.INVALID);
-        return siteService.findOptByCompanyIdAndAddress(companyId, null, null, null, null, statusList);
+        return siteService.findOptByCompanyIdAndAddress(companyId, group, null, null, null, null, statusList);
     }
     /**
      * 获取站点下拉列表数据
@@ -29,7 +29,7 @@ public class SiteCommon {
      * @param companyId 公司Id
      * @return 站点下拉列表数据（List<areaCode,name>）
      */
-    public static  List<Option> getSiteOptions(SiteService siteService, String companyId, Integer siteStatus, Integer areaFlag){
+    public static  List<Option> getSiteOptions(SiteService siteService, String companyId, String group, Integer siteStatus, Integer areaFlag){
         List<SiteStatus> statusList = new ArrayList<SiteStatus>();
         if(siteStatus == null || siteStatus == -1){//全部（有效||无效）
             statusList.add(SiteStatus.APPROVE);
@@ -37,6 +37,6 @@ public class SiteCommon {
         }else{
             statusList.add(SiteStatus.status2Obj(siteStatus));
         }
-        return siteService.findOptByCompanyIdAndAddress(companyId, null, null, null, null, statusList, areaFlag);
+        return siteService.findOptByCompanyIdAndAddress(companyId, group, null, null, null, null, statusList, areaFlag);
     }
 }

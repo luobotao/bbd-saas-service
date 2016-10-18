@@ -77,7 +77,7 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), currUser.getGroup(), SiteStatus.APPROVE);
 				getCompanyAndMapCenter(currUser.getCompanyId(), model);
 				/******************配送范围*****************end****************/
 				/******************绘制电子围栏*****************start****************/
@@ -252,7 +252,7 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE, -1);
+				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, SiteStatus.APPROVE, -1);
 				map.put("siteList", siteVOList);
 			}
 		}
@@ -294,7 +294,7 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, SiteStatus.APPROVE, areaFlag);
+				List<SiteVO> siteVOList = siteService.findSiteVOByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, SiteStatus.APPROVE, areaFlag);
 				//设置电子围栏
 				if(siteVOList != null && siteVOList.size() > 0){
 					for (SiteVO siteVO : siteVOList){

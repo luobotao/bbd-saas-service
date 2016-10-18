@@ -422,7 +422,7 @@ public class SiteController {
 				statusList.add(SiteStatus.APPROVE);
 				statusList.add(SiteStatus.INVALID);
 			}
-			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList);
+			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, siteName, statusList);
 		}
 		return null;
 	}
@@ -452,7 +452,7 @@ public class SiteController {
 				statusList.add(SiteStatus.status2Obj(siteStatus));
 			}
 			areaFlag = Numbers.defaultIfNull(areaFlag, -1);
-			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteName, statusList, areaFlag);
+			return siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, siteName, statusList, areaFlag);
 		}
 		return null;
 	}

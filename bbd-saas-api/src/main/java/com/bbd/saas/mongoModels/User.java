@@ -29,6 +29,7 @@ public class User implements Serializable {
     private String realName;
     private String email;
     private UserRole role;
+    private String group;
     @Reference("site")
     private Site site;
     @Embedded
@@ -98,6 +99,14 @@ public class User implements Serializable {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public Site getSite() {

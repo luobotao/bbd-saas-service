@@ -69,7 +69,7 @@ public class MailStatisticController {
 			logger.info("=====统计汇总页面列表===" + pageModel);
 			model.addAttribute("pageModel", pageModel);
 			model.addAttribute("time", time);
-			model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, currUser.getCompanyId()));
+			model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, currUser.getCompanyId(), currUser.getGroup()));
 			model.addAttribute("role", currUser.getRole());
 			return "page/mailStatistic";
 		} catch (Exception e) {
@@ -114,7 +114,7 @@ public class MailStatisticController {
 				}else{
 					statusList.add(SiteStatus.status2Obj(siteStatus));
 				}
-				List<String> areaCodeList = this.getAreaCodeAndStatusList(currUser.getCompanyId(), prov, city, area, areaCodeStr, statusList, areaFlag);
+				List<String> areaCodeList = this.getAreaCodeAndStatusList(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, areaCodeStr, statusList, areaFlag);
 				//分页查询
 				sitePageModel = siteService.getSitePage(sitePageModel, currUser.getCompanyId(), areaCodeList, statusList, areaFlag);
 				pageModel.setTotalCount(sitePageModel.getTotalCount());
@@ -153,10 +153,10 @@ public class MailStatisticController {
 	 * @param statusList 状态集合
      * @return 站点编码集合 areaCodeList
      */
-	private List<String> getAreaCodeAndStatusList(String companyId, String prov, String city, String area, String areaCodeStr, List<SiteStatus> statusList, Integer areaFlag){
+	private List<String> getAreaCodeAndStatusList(String companyId, String group, String prov, String city, String area, String areaCodeStr, List<SiteStatus> statusList, Integer areaFlag){
 		List<String> areaCodeList = null;
 		if(StringUtils.isBlank(areaCodeStr)){//全部(公司下的全部areaCodeList == null|省市区下的全部 areaCodeList.isEmpty)
-			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(companyId, prov, city, area, null, statusList, areaFlag);
+			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(companyId, group, prov, city, area, null, statusList, areaFlag);
 			areaCodeList = new ArrayList<String>();
 			if(optionList != null && !optionList.isEmpty()){
 				for(Option option : optionList){
@@ -297,7 +297,7 @@ public class MailStatisticController {
 					}else{
 						statusList.add(SiteStatus.status2Obj(siteStatus));
 					}
-					optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList, areaFlag);
+					optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, null, statusList, areaFlag);
 				}else{//部分站点
 					String [] areaCodes = areaCodeStr.split(",");
 					optionList = siteService.findByAreaCodes(areaCodes);

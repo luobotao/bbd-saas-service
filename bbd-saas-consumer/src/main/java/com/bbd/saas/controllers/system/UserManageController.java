@@ -78,12 +78,12 @@ public class UserManageController {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
 		if(userNow.getRole()== UserRole.COMPANY){
 			//查询登录用户的公司下的所有站点
-			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(userNow.getCompanyId(), null, null, null, null, null);
+			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(userNow.getCompanyId(), userNow.getGroup(), null, null, null, null, null);
 			model.addAttribute("siteList", optionList);
 		}
 		PageModel<User> userPage = getPageUser(request, null, null, null, null, 0, null, null, null);
 
-		model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, userNow.getCompanyId()));
+		model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, userNow.getCompanyId(), userNow.getGroup()));
 		model.addAttribute("userNow", userNow);
 		model.addAttribute("userPage", userPage);
 		return "systemSet/userManage";
@@ -114,6 +114,7 @@ public class UserManageController {
 		PageModel<User> userPage = new PageModel<>();
 		if(UserRole.COMPANY==userNow.getRole()){//公司用户
 			userQueryVO.companyId=userNow.getCompanyId();
+			userQueryVO.group=userNow.getGroup();
 			List<Site> siteList = null;
 			List<String> areaCodeList = null;
 			if(StringUtils.isNotBlank(areaCodeStr)){//部分站点
@@ -122,7 +123,7 @@ public class UserManageController {
 				siteList = siteService.findSiteListByAreaCodes(areaCodeList);
 			}else {//全部(公司下的全部|省市区下的全部)
 				if(StringUtils.isNotBlank(prov)){//某个省市区下的全部站点
-					siteList = siteService.findByCompanyIdAndAddress(userNow.getCompanyId(), prov, city, area, null, null);
+					siteList = siteService.findByCompanyIdAndAddress(userNow.getCompanyId(), userNow.getGroup(), prov, city, area, null, null);
 				}
 			}
 			userPage = userService.findPageUser(pageModel,userQueryVO, siteList);

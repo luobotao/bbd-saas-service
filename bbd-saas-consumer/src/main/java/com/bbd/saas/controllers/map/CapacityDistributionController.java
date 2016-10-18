@@ -19,6 +19,7 @@ import com.bbd.saas.vo.UserVO;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,7 +62,7 @@ public class CapacityDistributionController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), currUser.getGroup(), SiteStatus.APPROVE);
 			//查询登录用户的公司下的所有派件员信息
 			List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
 			//设置站点名称
@@ -177,7 +178,7 @@ public class CapacityDistributionController {
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 			statusList.add(SiteStatus.APPROVE);
 			//查询登录用户的公司下的所有站点
-			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
+			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, siteIdList, statusList);
 			if(siteList != null && !siteList.isEmpty()){
 				List<User> userList = userService.findUsersBySite(siteList, null, UserStatus.VALID);//所有小件员
 				if (userList != null && userList.size() >0){
@@ -198,23 +199,16 @@ public class CapacityDistributionController {
 		}
 		return map;
 	}
-
-	private SiteVO siteToSiteVO(Site site){
-		SiteVO siteVo = new SiteVO();
-		siteVo.setId(site.getId().toString());
-		siteVo.setAreaCode(site.getAreaCode());
-		siteVo.setName(site.getName());
-		siteVo.setLng(site.getLng());
-		siteVo.setLat(site.getLat());
-		siteVo.setDeliveryArea(site.getDeliveryArea());
-		return siteVo;
-	}
+	
 	private List<SiteVO> siteListToSiteVO(List<Site> siteList){
 		List<SiteVO> siteVoList = null;
 		if(siteList != null && siteList.size() > 0){
 			siteVoList = new ArrayList<SiteVO>();
 			for(Site site : siteList){
-				siteVoList.add(siteToSiteVO(site));
+				SiteVO siteVo = new SiteVO();
+				BeanUtils.copyProperties(site, siteVo);
+				siteVo.setId(site.getId().toString());
+				siteVoList.add(siteVo);
 			}
 		}
 		return siteVoList;
