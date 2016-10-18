@@ -19,6 +19,7 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.common.ConcurrentReaderHashMap;
@@ -389,6 +390,7 @@ public class SiteManageController {
 	@RequestMapping(value = "/validSite", method = RequestMethod.GET)
 	public boolean validSite(HttpServletRequest request, String phone) {
 		Site site = siteService.findSiteByUserName(phone);
+		logger.info("审核通过站点：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
 		siteService.validSite(site.getId().toHexString());//审核通过站点
 		setLatAndLng(site.getId().toHexString());//设置经纬度
 
@@ -487,7 +489,7 @@ public class SiteManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/stopSite", method = RequestMethod.GET)
-	public boolean stopSite(String areaCode) {
+	public boolean stopSite(String areaCode,HttpServletRequest request) {
 		Site site = siteService.findSiteByAreaCode(areaCode);
 		site.setStatus(SiteStatus.INVALID);
 		site.setDateUpd(new Date());
@@ -501,7 +503,7 @@ public class SiteManageController {
 		Integer areaFlag = 0;
 		int operCount = 0;
 		while (areaFlag != 1 && operCount < 3){
-			areaFlag = updateArea(areaCode,  0);
+			areaFlag = updateArea(areaCode,  0,request);
 			operCount ++;
 		}
 		return true;
@@ -513,8 +515,9 @@ public class SiteManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/startSite", method = RequestMethod.GET)
-	public boolean startSite(String areaCode) {
+	public boolean startSite(String areaCode,HttpServletRequest request) {
 		Site site = siteService.findSiteByAreaCode(areaCode);
+		logger.info("启用站点：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
 		site.setStatus(SiteStatus.APPROVE);
 		site.setDateUpd(new Date());
 		siteService.save(site);
@@ -533,8 +536,9 @@ public class SiteManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/delSite", method = RequestMethod.GET)
-	public boolean delSite(String areaCode) {
+	public boolean delSite(String areaCode,HttpServletRequest request) {
 		Site site = siteService.findSiteByAreaCode(areaCode);
+		logger.info("删除站点：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
 		userService.delUsersBySiteId(site.getId().toHexString());//删除此站点下的所有用户
 		siteService.delSiteBySiteId(site.getId().toHexString());//删除站点信息
 		return true;
@@ -548,7 +552,7 @@ public class SiteManageController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/updateArea", method = RequestMethod.POST)
-	public Integer updateArea(String areaCode, Integer  areaFlag) {
+	public Integer updateArea(String areaCode, Integer  areaFlag,HttpServletRequest request) {
 		Site site = siteService.findSiteByAreaCode(areaCode);
 		if(site != null){
 			if(areaFlag == 1){//启用配送区域,查询是否有路线经过此站点
@@ -566,10 +570,10 @@ public class SiteManageController {
 					Result result = null;
 					if(areaFlag == 1){//启用配送区域
 						result =  sitePoiApi.enableSite(site.getId().toString());
-						logger.info("配送区域启用：" + result);
+						logger.info("配送区域启用：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
 					}else{//停用配送区域
 						result = sitePoiApi.disableSite(site.getId().toString());
-						logger.info("配送区域停用：" + result);
+						logger.info("配送区域停用：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
 					}
 					if(result != null && result.code == 0){
 						return 1;
@@ -578,7 +582,7 @@ public class SiteManageController {
 						setLatAndLng(site.getId().toString());
 						if(areaFlag == 0){//停用需要更新一下状态
 							result = sitePoiApi.disableSite(site.getId().toString());
-							logger.info("配送区域停用：" + result);
+							logger.info("配送区域停用：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
 							if(result != null && result.code == 0){
 								return 1;
 							}else{
