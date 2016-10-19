@@ -240,7 +240,6 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getOrderNumVO(areaCode);
     }
 
-Order
 	@Override
 	public List<String> reduceMailNum(String quantity) {
 		OrderNum one = orderNumDao.findOrderNum();
@@ -369,6 +368,14 @@ Order
             order.setMailNum("BBD" + orderNum);
             order.setDatePrint(new Date());
             logger.info("create mailNum:" + order.getMailNum());
+            Reciever reciever = order.getReciever();
+            String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
+            MapPoint mapPoint = geo.getGeoInfo(address);
+            if(mapPoint!=null) {
+                reciever.setLon(mapPoint.getLng());
+                reciever.setLat(mapPoint.getLat());
+                order.setReciever(reciever);
+            }
             orderDao.updateOrderWithMailNum(order);
         }
         return order;
@@ -400,12 +407,6 @@ Order
                     order.setAreaCode("9999-999");
                     order.setAreaRemark("no match areacode");
                     logger.info("订单:" + order.getOrderNo() + "，匹配的站点区域码失败");
-                }
-                MapPoint mapPoint = geo.getGeoInfo(address);
-                if(mapPoint!=null) {
-                    reciever.setLon(mapPoint.getLng());
-                    reciever.setLat(mapPoint.getLat());
-                    order.setReciever(reciever);
                 }
             } catch (Exception e) {
                 order.setAreaCode("9999-999");

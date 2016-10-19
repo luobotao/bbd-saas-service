@@ -75,7 +75,8 @@ public class Order implements Serializable {
     private String billIncomeId;
     private IncomeStatus billIncomeStatus;
     private Date dateSigned;//签收时间
-
+    @Embedded
+    private List<OtherInfo> otherInfo;//订单其他信息集合，快递柜信息集合
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -600,5 +601,13 @@ public class Order implements Serializable {
 
     public void setDateSigned(Date dateSigned) {
         this.dateSigned = dateSigned;
+    }
+
+    public List<OtherInfo> getOtherInfo() {
+        return otherInfo;
+    }
+
+    public void setOtherInfo(List<OtherInfo> otherInfo) {
+        this.otherInfo = otherInfo;
     }
 }
