@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private SitePoiApi sitePoiApi;
     @Autowired
-    Geo geo;
+    private Geo geo;
     @Autowired
     private PostmanUserService userMysqlService;
     @Autowired
@@ -240,7 +240,6 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getOrderNumVO(areaCode);
     }
 
-
 	@Override
 	public List<String> reduceMailNum(String quantity) {
 		OrderNum one = orderNumDao.findOrderNum();
@@ -354,6 +353,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             order = reduceAreaCodeWithOrder(order);
             order = reduceMailNumWithOrder(order);
+            //
         }catch(Exception e){
             e.printStackTrace();
             logger.info("[afterImportDealWithOrder exception] orderNo :"+order.getOrderNo());
@@ -368,6 +368,14 @@ public class OrderServiceImpl implements OrderService {
             order.setMailNum("BBD" + orderNum);
             order.setDatePrint(new Date());
             logger.info("create mailNum:" + order.getMailNum());
+            Reciever reciever = order.getReciever();
+            String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
+            MapPoint mapPoint = geo.getGeoInfo(address);
+            if(mapPoint!=null) {
+                reciever.setLon(mapPoint.getLng());
+                reciever.setLat(mapPoint.getLat());
+                order.setReciever(reciever);
+            }
             orderDao.updateOrderWithMailNum(order);
         }
         return order;
