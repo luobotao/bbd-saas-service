@@ -8,6 +8,7 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum ExpressStatus {
     Suspense(0, "待发货"),
+    OutHouse(14, "揽件出仓"),
     Separating(1, "分拣中"),
     Packed(2, "已打包"),
     DriverGeted(3, "司机已取货"),
@@ -25,7 +26,7 @@ public enum ExpressStatus {
     private int status;
     private String message;
 
-    private ExpressStatus(int status, String message) {
+    ExpressStatus(int status, String message) {
         this.message = message;
         this.status = status;
     }
