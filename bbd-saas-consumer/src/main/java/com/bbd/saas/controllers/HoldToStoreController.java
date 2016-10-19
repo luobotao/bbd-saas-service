@@ -11,10 +11,7 @@ import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.*;
-import com.bbd.saas.utils.DateBetween;
-import com.bbd.saas.utils.Dates;
-import com.bbd.saas.utils.Numbers;
-import com.bbd.saas.utils.PageModel;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -282,7 +279,13 @@ public class HoldToStoreController {
     private void doToStore(HttpServletRequest request, Order order) {
         if (order != null) {
             //入库
+            order.setOrderStatus(OrderStatus.NOTDISPATCH);
+            order.setDateArrived(new Date());
+            order.setOrderSetStatus(OrderSetStatus.ARRIVED);
             order.setDateUpd(new Date());
+            //增加物流信息
+            User user = adminService.get(UserSession.get(request));//当前登录的用户信息
+            OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 
             orderService.save(order);
 
@@ -292,7 +295,6 @@ public class HoldToStoreController {
             Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
             User embrace = userService.findOne(trade.getEmbraceId().toHexString());//揽件员
             if(embrace!=null){
-                User user = adminService.get(UserSession.get(request));//当前登录的用户信息
                 if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
                     pushService.courierAdd(embrace.getPostmanuserId(),order.getMailNum());//揽件员收益
                 }
@@ -312,7 +314,6 @@ public class HoldToStoreController {
                 tradeService.save(trade);
 
                 if(embrace!=null){
-                    User user = adminService.get(UserSession.get(request));//当前登录的用户信息
                     if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
                         pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());//推送消息给揽件员
                     }
