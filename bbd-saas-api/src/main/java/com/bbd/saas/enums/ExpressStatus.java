@@ -8,20 +8,20 @@ import com.bbd.saas.utils.Htmls;
  */
 public enum ExpressStatus {
     Suspense(0, "待发货"),
-    OutHouse(14, "揽件出仓"),
-    Separating(1, "分拣中"),
-    Packed(2, "已打包"),
-    DriverGeted(3, "司机已取货"),
-    ArriveStation(4, "已到达站点"),
-    Delivering(5, "正在派送"),
-    Success(6, "已签收"),
-    Cancel(7, "已取消"),
-    Delay(8, "已滞留"),
-    Refuse(9, "已拒收"),
-    LOST(10, "已丢失"),
-    APPLY_RETURN(11, "申请退货"),
+    OutHouse(1, "揽件出仓"),
+    Separating(2, "分拣中"),
+    Packed(3, "已打包"),
+    DriverGeted(4, "司机已取货"),
+    ArriveStation(5, "已到达站点"),
+    Delivering(6, "正在派送"),
+    Success(7, "已签收"),
+    Cancel(8, "已取消"),
+    Delay(9, "已滞留"),
+    Refuse(10, "已拒收"),
+    LOST(11, "已丢失"),
+    APPLY_RETURN(12, "申请退货"),
     TO_OTHER_EXPRESS(13, "已转其他快递"),
-    RETURNED(12, "退货完成");
+    RETURNED(14, "退货完成");
 
     private int status;
     private String message;
