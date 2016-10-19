@@ -240,24 +240,18 @@ public class HoldToStoreController {
      * @param user
      */
     public Order orderToSite(Order order, User user) {
-        orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//先更新订单本身状态同时会修改该订单所处包裹里的订单状态
-        order = orderService.findOneByMailNum(user.getSite().getAreaCode(), order.getMailNum().toString());
-        Express express = new Express();
-        express.setDateAdd(new Date());
-        express.setLat(user.getSite().getLat());
-        express.setLon(user.getSite().getLng());
-        express.setRemark("订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
-        List<Express> expressList = order.getExpresses();
-        if (expressList == null)
-            expressList = Lists.newArrayList();
-        expressList.add(express);//增加一条物流信息
-        order.setExpressStatus(ExpressStatus.ArriveStation);
-        order.setExpresses(expressList);
+        if (order.getOrderStatus() == null || order.getOrderStatus() == OrderStatus.NOTARR) {
+            order.setOrderStatus(OrderStatus.NOTDISPATCH);
+            order.setDateArrived(new Date());
+            order.setOrderSetStatus(OrderSetStatus.ARRIVED);
+        }
         order.setDateUpd(new Date());
+        orderService.updateOrderOrderStatu(order.getMailNum(), OrderStatus.NOTARR, OrderStatus.NOTDISPATCH);//修改该订单所处包裹里的订单状态
+        //增加物流信息
+        OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
         orderService.save(order);
-
         if (order != null) {
-            if (Srcs.DANGDANG.equals(order.getSrc()) || Srcs.PINHAOHUO.equals(order.getSrc())) {
+            if (Srcs.DANGDANG.equals(order.getSrc()) || Srcs.PINHAOHUO.equals(order.getSrc()) || Srcs.DDKY.equals(order.getSrc())) {
                 ExpressExchange expressExchange = new ExpressExchange();
                 expressExchange.setOperator(user.getRealName());
                 expressExchange.setStatus(ExpressExchangeStatus.waiting);
@@ -266,8 +260,8 @@ public class HoldToStoreController {
                 expressExchange.setDateAdd(new Date());
                 expressExchangeService.save(expressExchange);
             }
+            orderParcleStatusChange(order.getId().toHexString(), "0");//检查是否需要更新包裹状态 包裹类型 0：配件包裹（默认） 1：集包
         }
-        orderParcleStatusChange(order.getId().toHexString(),"0");//parceType 包裹类型 0：配件包裹（默认） 1：集包
         return order;
     }
 
@@ -279,13 +273,7 @@ public class HoldToStoreController {
     private void doToStore(HttpServletRequest request, Order order) {
         if (order != null) {
             //入库
-            order.setOrderStatus(OrderStatus.NOTDISPATCH);
-            order.setDateArrived(new Date());
-            order.setOrderSetStatus(OrderSetStatus.ARRIVED);
             order.setDateUpd(new Date());
-            //增加物流信息
-            User user = adminService.get(UserSession.get(request));//当前登录的用户信息
-            OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, user, "订单已送达【" + user.getSite().getName() + "】，正在分派配送员");
 
             orderService.save(order);
 
@@ -295,6 +283,7 @@ public class HoldToStoreController {
             Trade trade = tradeService.findOneByTradeNo(order.getTradeNo());
             User embrace = userService.findOne(trade.getEmbraceId().toHexString());//揽件员
             if(embrace!=null){
+                User user = adminService.get(UserSession.get(request));//当前登录的用户信息
                 if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
                     pushService.courierAdd(embrace.getPostmanuserId(),order.getMailNum());//揽件员收益
                 }
@@ -314,6 +303,7 @@ public class HoldToStoreController {
                 tradeService.save(trade);
 
                 if(embrace!=null){
+                    User user = adminService.get(UserSession.get(request));//当前登录的用户信息
                     if(user!=null && user.getSite()!=null && embrace.getSite()!=null && user.getSite().getId().toHexString().equals(embrace.getSite().getId().toHexString()) ){
                         pushService.tradePush(embrace.getPostmanuserId(),"2",trade.getTradeNo());//推送消息给揽件员
                     }
