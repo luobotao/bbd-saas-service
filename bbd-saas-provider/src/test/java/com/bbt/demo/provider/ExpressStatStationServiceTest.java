@@ -41,7 +41,7 @@ public class ExpressStatStationServiceTest {
 	public void testSave() throws Exception{
 		String companyIds [] = new String[]{"8", "99"};
 		for(String companyId : companyIds){
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(companyId, null, SiteStatus.APPROVE);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(companyId, SiteStatus.APPROVE);
 			for (SiteVO siteVO : siteVOList){
 				ExpressStatStation ess = new ExpressStatStation();
 				//System.out.println(companyId);

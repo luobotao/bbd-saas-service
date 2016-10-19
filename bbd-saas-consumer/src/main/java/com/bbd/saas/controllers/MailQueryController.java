@@ -80,7 +80,7 @@ public class MailQueryController {
 			logger.info("=====运单查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			//查询登录用户的公司下的所有站点
-			model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId(), currUser.getGroup(), siteStatus, areaFlag));
+			model.addAttribute("siteList",  SiteCommon.getSiteOptions(siteService, currUser.getCompanyId(), siteStatus, areaFlag));
 			model.addAttribute("arriveBetween", arriveBetween);
 		} catch (Exception e) {
 			logger.error("===跳转到运单查询页面==出错 :" + e.getMessage());
@@ -175,7 +175,7 @@ public class MailQueryController {
 			if(currUser.getGroup() != null){//
 
 			}
-			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, null, statusList, areaFlag);
+			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList, areaFlag);
 		}else{//部分站点
 			String [] areaCodes = areaCodeStr.split(",");
 			optionList = siteService.findByAreaCodes(areaCodes);

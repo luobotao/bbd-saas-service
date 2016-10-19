@@ -86,7 +86,7 @@ public class UserDao extends BaseDAO<User, ObjectId> {
                 query.filter("group", userQueryVO.group);
             }
             if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
-                query.filter("companyId", userQueryVO.companyId);
+                query.or(query.criteria("companyId").equal(userQueryVO.companyId), query.criteria("group").equal(userQueryVO.companyId));
             }
             query.filter("role <>", UserRole.COMPANY);
             if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){

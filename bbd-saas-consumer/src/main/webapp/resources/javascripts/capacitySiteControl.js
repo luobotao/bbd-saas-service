@@ -193,7 +193,7 @@ function selectS(selectSp){
 		}else{//某个具体项
 			var checkedCount = $("input[name='" + this.name + "'][isAll='0']:checked").length;//选中的checkbox个数
 			var itemCount = $(selectSp).find(".pv-part li").length -1 ;//所有li个数（减去全部）
-			console.log("checkedCount==11="+checkedCount+"  itemCount==="+itemCount);
+			//console.log("checkedCount==11="+checkedCount+"  itemCount==="+itemCount);
 			//上边框中显示的值
 			if(this.checked == true){//选中
 				if($("#"+inputName).val() == null || $("#"+inputName).val() == ""){//未手动搜索，需要显示全部

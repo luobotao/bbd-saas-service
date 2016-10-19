@@ -124,7 +124,7 @@ public class SiteManageController {
 				}
 			}
 		}
-		PageModel<Site> sitePage = siteService.getSitePage(pageModel,currUser.getCompanyId(), currUser.getGroup(), siteIdList, status, areaFlag, keyword);
+		PageModel<Site> sitePage = siteService.getSitePage(pageModel,currUser.getCompanyId(), siteIdList, status, areaFlag, keyword);
 		for(Site site :sitePage.getDatas()){
 			site.setTurnDownMessage(site.getTurnDownReasson() == null ? "" : site.getTurnDownReasson().getMessage());
 		}
