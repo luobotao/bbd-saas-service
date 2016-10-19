@@ -227,7 +227,14 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     }
                 }
             }
-
+            //订单异常状态
+            if(orderQueryVO.abnormalStatus != null){
+                if(orderQueryVO.abnormalStatus == -1){//全部（3-滞留，4-拒收）
+                    query.or(query.criteria("orderStatus").equal(OrderStatus.RETENTION), query.criteria("orderStatus").equal(OrderStatus.REJECTION));
+                }else{
+                    query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
+                }
+            }
             //到站时间和状态
             if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){//根据到站时间查询
                 if(orderQueryVO.orderStatus != null){//单个状态
