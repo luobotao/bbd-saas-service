@@ -62,7 +62,7 @@ public class CapacityDistributionController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			//查询登录用户的公司下的所有站点
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), currUser.getGroup(), SiteStatus.APPROVE);
+			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 			//查询登录用户的公司下的所有派件员信息
 			List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
 			//设置站点名称
@@ -178,7 +178,7 @@ public class CapacityDistributionController {
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 			statusList.add(SiteStatus.APPROVE);
 			//查询登录用户的公司下的所有站点
-			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, siteIdList, statusList);
+			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
 			if(siteList != null && !siteList.isEmpty()){
 				List<User> userList = userService.findUsersBySite(siteList, null, UserStatus.VALID);//所有小件员
 				if (userList != null && userList.size() >0){

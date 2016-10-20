@@ -5,6 +5,7 @@ import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.Constants;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.UserQueryVO;
 import com.bbd.saas.vo.UserQueryVO2;
@@ -82,11 +83,8 @@ public class UserDao extends BaseDAO<User, ObjectId> {
         //设置排序
         query.order("-dateUpdate");
         if(userQueryVO!=null){
-            if(StringUtils.isNotBlank(userQueryVO.group)){//公司用户
-                query.filter("group", userQueryVO.group);
-            }
-            if(StringUtils.isNotBlank(userQueryVO.companyId)){//公司用户
-                query.filter("companyId", userQueryVO.companyId);
+            if(StringUtils.isNotBlank(userQueryVO.companyId) && !Constants.BBD_COMPANYID.equals(userQueryVO.companyId)){//公司用户
+                query.or(query.criteria("companyId").equal(userQueryVO.companyId), query.criteria("group").equal(userQueryVO.companyId));
             }
             query.filter("role <>", UserRole.COMPANY);
             if(StringUtils.isNotBlank(userQueryVO.roleId) && !"-1".equals(userQueryVO.roleId)){

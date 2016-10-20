@@ -78,7 +78,7 @@ public class DeliverAreaController {
 				//当前登录的用户信息
 				User currUser = adminService.get(userId);
 				//查询登录用户的公司下的所有站点
-				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), currUser.getGroup(), SiteStatus.APPROVE);
+				List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
 				getCompanyAndMapCenter(currUser.getCompanyId(), model);
 				/******************配送范围*****************end****************/
 				/******************绘制电子围栏*****************start****************/
@@ -167,6 +167,9 @@ public class DeliverAreaController {
 		model.addAttribute("centerPoint", centerPoint);
 	}
 	private void getDefaultCompany(Postcompany company){
+		if(company == null){
+			company = new Postcompany();
+		}
 		company.setCompanycode(StringUtil.initStr(company.getCompanycode(), "BBD"));
 		company.setCompanyname(StringUtil.initStr(company.getCompanyname(), "北京棒棒达快递有限公司"));
 		company.setProvince(StringUtil.initStr(company.getProvince(), "北京"));

@@ -9,6 +9,7 @@ import com.bbd.saas.api.mysql.IncomeService;
 import com.bbd.saas.api.mysql.PushService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.controllers.service.CommonService;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.mongoModels.*;
 import com.bbd.saas.utils.DateBetween;
@@ -62,9 +63,11 @@ public class HoldToStoreController {
     @Autowired
     OrderTrackService orderTrackService;
     @Autowired
-    IncomeService incomeService;
+    CommonService commonService;
     @Autowired
     ConstantService constantService;
+    @Autowired
+    IncomeService incomeService;
 
     public static final Logger logger = LoggerFactory.getLogger(HoldToStoreController.class);
 
@@ -261,13 +264,7 @@ public class HoldToStoreController {
 
         if (order != null) {
             if (Srcs.DANGDANG.equals(order.getSrc()) || Srcs.PINHAOHUO.equals(order.getSrc())) {
-                ExpressExchange expressExchange = new ExpressExchange();
-                expressExchange.setOperator(user.getRealName());
-                expressExchange.setStatus(ExpressExchangeStatus.waiting);
-                expressExchange.setPhone(user.getLoginName());
-                expressExchange.setOrder(order.coverOrderVo());
-                expressExchange.setDateAdd(new Date());
-                expressExchangeService.save(expressExchange);
+                commonService.doSaveExpressExChange(order, user.getRealName(), user.getLoginName());
             }
         }
         orderParcleStatusChange(order.getId().toHexString(),"0");//parceType 包裹类型 0：配件包裹（默认） 1：集包
