@@ -82,7 +82,7 @@ public class SiteManageController {
 		//当前登录的用户信息
 		User currUser = adminService.get(UserSession.get(request));
 		//查询登录用户的公司下的所有站点
-		List<Option> optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), null, null, null, null, null);
+		List<Option> optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), null, null, null, null, null);
 		model.addAttribute("siteList", optionList);
 		model.addAttribute("companyId", currUser.getCompanyId());
 		return "systemSet/siteManage";
@@ -117,7 +117,7 @@ public class SiteManageController {
 		}else {//全部
 			if(StringUtils.isNotBlank(prov)){//不是公司下的全部站点，是某个省市区下的全部站点
 				siteIdList = new ArrayList<ObjectId>();
-				List<Option> optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), currUser.getGroup(), prov, city, area, null, null);
+				List<Option> optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, null);
 				if(optionList != null && !optionList.isEmpty()){
 					for(Option option : optionList){
 						siteIdList.add(new ObjectId(option.getId()));

@@ -78,7 +78,7 @@ public class UserManageController {
 		User userNow = adminService.get(UserSession.get(request));//当前登录用户
 		if(userNow.getRole()== UserRole.COMPANY){
 			//查询登录用户的公司下的所有站点
-			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(userNow.getCompanyId(), userNow.getGroup(), null, null, null, null, null);
+			List<Option> optionList = siteService.findOptByCompanyIdAndAddress(userNow.getCompanyId(), null, null, null, null, null);
 			model.addAttribute("siteList", optionList);
 		}
 		PageModel<User> userPage = getPageUser(request, null, null, null, null, 0, null, null, null);
@@ -114,7 +114,6 @@ public class UserManageController {
 		PageModel<User> userPage = new PageModel<>();
 		if(UserRole.COMPANY==userNow.getRole()){//公司用户
 			userQueryVO.companyId=userNow.getCompanyId();
-			userQueryVO.group=userNow.getGroup();
 			List<Site> siteList = null;
 			List<String> areaCodeList = null;
 			if(StringUtils.isNotBlank(areaCodeStr)){//部分站点

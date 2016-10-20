@@ -196,7 +196,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param status 站点状态
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String group, String prov, String city, String area, SiteStatus status) {
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, SiteStatus status) {
         Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
         if(status != null){
             query.filter("status", status);

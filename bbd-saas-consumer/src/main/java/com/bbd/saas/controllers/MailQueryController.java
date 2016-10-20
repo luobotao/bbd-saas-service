@@ -172,9 +172,6 @@ public class MailQueryController {
 			}else{
 				statusList.add(SiteStatus.status2Obj(siteStatus));
 			}
-			if(currUser.getGroup() != null){//
-
-			}
 			optionList = siteService.findOptByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, null, statusList, areaFlag);
 		}else{//部分站点
 			String [] areaCodes = areaCodeStr.split(",");
