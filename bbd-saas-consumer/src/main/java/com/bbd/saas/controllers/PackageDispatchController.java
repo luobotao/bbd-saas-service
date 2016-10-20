@@ -7,12 +7,11 @@ import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
 import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.UserSession;
-import com.bbd.saas.enums.ExpressExchangeStatus;
+import com.bbd.saas.controllers.service.CommonService;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.models.PostDelivery;
-import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +58,8 @@ public class PackageDispatchController {
 	ExpressExchangeService expressExchangeService;
 	@Autowired
 	SmsInfoService smsInfoService;
+	@Autowired
+	CommonService commonService;
 	@Value("${bbd.contact}")
 	private String contact;
 
@@ -192,14 +194,8 @@ public class PackageDispatchController {
 		if(r != null){
 			saveOneOrUpdatePost(order, user);
 			smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
-			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
-				ExpressExchange expressExchange=new ExpressExchange();
-				expressExchange.setOperator(user.getRealName());
-				expressExchange.setStatus(ExpressExchangeStatus.waiting);
-				expressExchange.setPhone(user.getLoginName());
-				expressExchange.setOrder(order.coverOrderVo());
-				expressExchange.setDateAdd(new Date());
-				expressExchangeService.save(expressExchange);
+			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())||Srcs.QIANGXIANSH.equals(order.getSrc())){
+				commonService.doSaveExpressExChange(order, user.getRealName(), user.getLoginName());
 			}
 			return 1;//1:分派成功
 		}else{

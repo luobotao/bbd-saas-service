@@ -17,10 +17,8 @@ import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.OrderCommon;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.vo.Express;
 import com.bbd.saas.vo.OrderNumVO;
 import com.bbd.saas.vo.OrderQueryVO;
-import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import com.mongodb.util.JSON;
 import org.apache.commons.lang3.StringUtils;
@@ -242,15 +240,7 @@ public class PackageToSiteController {
 
 		orderService.save(order);
 		if(order != null){
-			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())){
-				ExpressExchange expressExchange=new ExpressExchange();
-				expressExchange.setOperator(user.getRealName());
-				expressExchange.setStatus(ExpressExchangeStatus.waiting);
-				expressExchange.setPhone(user.getLoginName());
-				expressExchange.setOrder(order.coverOrderVo());
-				expressExchange.setDateAdd(new Date());
-				expressExchangeService.save(expressExchange);
-			}
+			commonService.saveExpressExChange(order, user.getRealName(), user.getLoginName());
 			orderParcleStatusChange(order.getId().toHexString(),"0");//检查是否需要更新包裹状态 包裹类型 0：配件包裹（默认） 1：集包
 		}
 
