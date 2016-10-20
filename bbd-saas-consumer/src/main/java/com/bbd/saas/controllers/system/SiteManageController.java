@@ -215,15 +215,14 @@ public class SiteManageController {
 		if (StringUtils.isNotBlank(siteForm.getAreaCode())) {//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
-			String companyId = null;
 			if(Constants.BBD_COMPANYID.equals(userNow.getCompanyId())){//棒棒达公司账号登录，不要修改站点所属的公司信息
-				companyId = site.getCompanyId();
+				siteForm.setCompanyId(site.getCompanyId());
 			}else{
-				companyId = userNow.getCompanyId();
+				siteForm.setCompanyId(userNow.getCompanyId());
 			}
 			BeanUtils.copyProperties(siteForm, site);
 			//当前登录公司用户的公司ID
-			this.setSiteCompany(site, companyId);
+			this.setSiteCompany(site, siteForm.getCompanyId());
 			user = userService.findUserByLoginName(site.getUsername());
 			if(user == null){//原始站长被删除了
 				List<User> userList = userService.findUsersBySite(site,UserRole.SITEMASTER,null);
