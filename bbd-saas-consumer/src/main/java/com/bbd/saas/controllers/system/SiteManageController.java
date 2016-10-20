@@ -215,18 +215,15 @@ public class SiteManageController {
 		if (StringUtils.isNotBlank(siteForm.getAreaCode())) {//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
-			if(Constants.BBD_COMPANYID.equals(userNow.getCompanyId())){//当前登录用户是棒棒哒的公司账号，不要修改站点所属的公司
-				siteForm.setCompanyId(site.getCompanyId());
-				siteForm.setCompanyName(site.getCompanyName());
-				BeanUtils.copyProperties(siteForm, site);
+			String companyId = null;
+			if(Constants.BBD_COMPANYID.equals(userNow.getCompanyId())){//棒棒达公司账号登录，不要修改站点所属的公司信息
+				companyId = site.getCompanyId();
 			}else{
-				BeanUtils.copyProperties(siteForm, site);
-				//当前登录公司用户的公司ID,更新为最新的公司信息
-				setSiteCompany(site, userNow.getCompanyId());
+				companyId = userNow.getCompanyId();
 			}
-			/*if(siteForm.getSitetype() == null || siteForm.getSitetype() != SiteType.EXPRESS_CABINET){
-				site.setSiteSrc(null);
-			}*/
+			BeanUtils.copyProperties(siteForm, site);
+			//当前登录公司用户的公司ID
+			this.setSiteCompany(site, companyId);
 			user = userService.findUserByLoginName(site.getUsername());
 			if(user == null){//原始站长被删除了
 				List<User> userList = userService.findUsersBySite(site,UserRole.SITEMASTER,null);
@@ -242,6 +239,7 @@ public class SiteManageController {
 				postmanUser = new PostmanUser();
 			}
 			site.setUsername(newPhone);
+
 			user.setPassWord(siteForm.getPassword());
 			user.setUserStatus(UserStatus.VALID);//公司修改设置为有效
 		} else {
@@ -251,14 +249,8 @@ public class SiteManageController {
 					site = siteTemp;
 				}
 				oldPhone = site.getUsername();//newPhone == oldPhone
-				if(Constants.BBD_COMPANYID.equals(userNow.getCompanyId())){//当前登录用户是棒棒哒的公司账号，不要修改站点所属的公司
-					siteForm.setCompanyId(site.getCompanyId());
-					siteForm.setCompanyName(site.getCompanyName());
-					BeanUtils.copyProperties(siteForm, site);
-				}else{
-					BeanUtils.copyProperties(siteForm, site);
-					setSiteCompany(site, siteForm.getCompanyId());
-				}
+				BeanUtils.copyProperties(siteForm, site);
+				setSiteCompany(site, siteForm.getCompanyId());
 				postmanUser = userMysqlService.selectPostmanUserByPhone(siteForm.getPhone(), 0);
 				if (postmanUser == null)
 					postmanUser = new PostmanUser();
