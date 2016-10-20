@@ -3,6 +3,7 @@ package com.bbd.saas.dao.mongo;
 import com.bbd.db.morphia.BaseDAO;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.mongoModels.Site;
+import com.bbd.saas.utils.Constants;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Option;
 import com.bbd.saas.vo.SiteQueryVO;
@@ -79,7 +80,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      */
     public PageModel<Option> findSites(PageModel<Option> pageModel,String companyId, List<String> areaCodeList, List<SiteStatus> statusList, Integer areaFlag) {
         Query<Site> query = createQuery().retrievedFields(true, "areaCode", "name");
-        if(StringUtils.isNotBlank(companyId)){
+        if(StringUtils.isNotBlank(companyId) && !Constants.BBD_COMPANYID.equals(companyId)){
             query.or(query.criteria("companyId").equal(companyId), query.criteria("group").equal(companyId));
         }
         if(areaCodeList != null){//站点编号集合(areaCodeList.isEmpty():省市区下没有站点，但是选择了全部)
@@ -110,7 +111,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(StringUtils.isNotBlank(siteQueryVO.name)){
             query.filter("name", siteQueryVO.name);
         }
-        if(StringUtils.isNotBlank(siteQueryVO.companyId)){
+        if(StringUtils.isNotBlank(siteQueryVO.companyId) && !Constants.BBD_COMPANYID.equals(siteQueryVO.companyId)){
             query.or(query.criteria("companyId").equal(siteQueryVO.companyId), query.criteria("group").equal(siteQueryVO.companyId));
         }
         if(StringUtils.isNotBlank(siteQueryVO.companyCode)){
@@ -141,7 +142,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      */
     public List<Site> selectByCompanyId(String companyId, List<SiteStatus> statusList) {
         Query<Site> query = createQuery().order("areaCode");
-        if(StringUtils.isNotBlank(companyId)){
+        if(StringUtils.isNotBlank(companyId) && !Constants.BBD_COMPANYID.equals(companyId)){
             query.or(query.criteria("companyId").equal(companyId), query.criteria("group").equal(companyId));
         }
         if(statusList != null){
@@ -157,7 +158,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      */
     public List<Site> selectByCompanyId(String companyId, SiteStatus status) {
         Query<Site> query = createQuery().order("areaCode");
-        if(StringUtils.isNotBlank(companyId)){
+        if(StringUtils.isNotBlank(companyId) && !Constants.BBD_COMPANYID.equals(companyId)){
             query.or(query.criteria("companyId").equal(companyId), query.criteria("group").equal(companyId));
         }
         if(status != null){
@@ -228,7 +229,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
 
     private Query<Site> getQueryByAddr(String companyId, String prov, String city, String area){
         Query<Site> query = createQuery().order("areaCode");
-        if(StringUtils.isNotBlank(companyId)){
+        if(StringUtils.isNotBlank(companyId) && !Constants.BBD_COMPANYID.equals(companyId)){
             query.or(query.criteria("companyId").equal(companyId), query.criteria("group").equal(companyId));
         }
         if(StringUtils.isNotBlank(prov)){
