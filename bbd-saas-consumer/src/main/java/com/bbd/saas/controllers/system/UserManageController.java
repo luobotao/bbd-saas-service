@@ -83,7 +83,7 @@ public class UserManageController {
 		}
 		PageModel<User> userPage = getPageUser(request, null, null, null, null, 0, null, null, null);
 
-		model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, userNow.getCompanyId(), userNow.getGroup()));
+		model.addAttribute("siteList", SiteCommon.getSiteOptions(siteService, userNow.getCompanyId()));
 		model.addAttribute("userNow", userNow);
 		model.addAttribute("userPage", userPage);
 		return "systemSet/userManage";
@@ -123,7 +123,7 @@ public class UserManageController {
 				siteList = siteService.findSiteListByAreaCodes(areaCodeList);
 			}else {//全部(公司下的全部|省市区下的全部)
 				if(StringUtils.isNotBlank(prov)){//某个省市区下的全部站点
-					siteList = siteService.findByCompanyIdAndAddress(userNow.getCompanyId(), userNow.getGroup(), prov, city, area, null, null);
+					siteList = siteService.findByCompanyIdAndAddress(userNow.getCompanyId(), prov, city, area, null, null);
 				}
 			}
 			userPage = userService.findPageUser(pageModel,userQueryVO, siteList);

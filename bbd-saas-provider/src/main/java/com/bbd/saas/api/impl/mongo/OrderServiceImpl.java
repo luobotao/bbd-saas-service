@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private SitePoiApi sitePoiApi;
     @Autowired
-    Geo geo;
+    private Geo geo;
     @Autowired
     private PostmanUserService userMysqlService;
     @Autowired
@@ -240,7 +240,6 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getOrderNumVO(areaCode);
     }
 
-
 	@Override
 	public List<String> reduceMailNum(String quantity) {
 		OrderNum one = orderNumDao.findOrderNum();
@@ -354,6 +353,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             order = reduceAreaCodeWithOrder(order);
             order = reduceMailNumWithOrder(order);
+            //
         }catch(Exception e){
             e.printStackTrace();
             logger.info("[afterImportDealWithOrder exception] orderNo :"+order.getOrderNo());
@@ -368,6 +368,14 @@ public class OrderServiceImpl implements OrderService {
             order.setMailNum("BBD" + orderNum);
             order.setDatePrint(new Date());
             logger.info("create mailNum:" + order.getMailNum());
+            Reciever reciever = order.getReciever();
+            String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
+            MapPoint mapPoint = geo.getGeoInfo(address);
+            if(mapPoint!=null) {
+                reciever.setLon(mapPoint.getLng());
+                reciever.setLat(mapPoint.getLat());
+                order.setReciever(reciever);
+            }
             orderDao.updateOrderWithMailNum(order);
         }
         return order;
@@ -386,8 +394,16 @@ public class OrderServiceImpl implements OrderService {
                 Reciever reciever = order.getReciever();
                 String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
                 address = StringUtil.filterString(address);
-                //通过积分获取优选区域码，
-                String siteId = findBestSiteWithAddress(address);
+                String siteId = "";
+                if(order.getSrc()==Srcs.QIANGXIANSH){
+                    List<String> siteIds =  sitePoiApi.searchQxshSiteByAddress("",address);
+                    if(siteIds!=null&&siteIds.size()>0){
+                        siteId = siteIds.get(0);
+                    }
+                }else {
+                    //通过积分获取优选区域码，
+                    siteId = findBestSiteWithAddress(address);
+                }
                 if (!"".equals(siteId)) {
                     logger.info("订单:" + order.getOrderNo() + "，匹配的站点Id为" + siteId);
                     //根据站点id获取site信息，更新areacode, areaRemark

@@ -122,19 +122,29 @@ public class CommonService {
     /**
      * 物流同步
      * @param order 订单
-     * @param nickName 派件员姓名
+     * @param realName 派件员姓名
      * @param phone 派件员电话
      */
-    public void saveExpressExChange(Order order, String nickName, String phone){
+    public void saveExpressExChange(Order order, String realName, String phone){
         if (order.getSrc() == Srcs.PINHAOHUO || order.getSrc() == Srcs.DANGDANG || order.getSrc() == Srcs.DDKY) {
-            ExpressExchange expressExchange = new ExpressExchange();
-            expressExchange.operator = nickName;
-            expressExchange.phone = phone;
-            expressExchange.order = order.coverOrderVo();
-            expressExchange.status = ExpressExchangeStatus.waiting;
-            expressExchange.dateAdd = new Date();
-            expressExchangeService.save(expressExchange);
+            this.doSaveExpressExChange(order, realName, phone);
         }
+    }
+
+    /**
+     * 物流同步
+     * @param order 订单
+     * @param realName 派件员姓名
+     * @param phone 派件员电话
+     */
+    public void doSaveExpressExChange(Order order, String realName, String phone){
+        ExpressExchange expressExchange = new ExpressExchange();
+        expressExchange.setOperator(realName);
+        expressExchange.setPhone(phone);
+        expressExchange.setOrder(order.coverOrderVo());
+        expressExchange.setStatus(ExpressExchangeStatus.waiting);
+        expressExchange.setDateAdd(new Date());
+        expressExchangeService.save(expressExchange);
     }
 
     /**

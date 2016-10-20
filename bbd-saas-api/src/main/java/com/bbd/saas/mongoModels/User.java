@@ -86,7 +86,7 @@ public class User implements Serializable {
     }
 
     public String getRealName() {
-        return realName;
+        return realName == null ? "" : realName;
     }
 
     public void setRealName(String realName) {

@@ -13,6 +13,8 @@ public class Reciever implements Serializable {
     private String city;
     private String area;
     private String address;
+    private double lon;       //经度
+    private double lat;       //纬度
 
     public String getName() {
         return name;
@@ -60,5 +62,21 @@ public class Reciever implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public double getLon() {
+        return lon;
+    }
+
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
     }
 }

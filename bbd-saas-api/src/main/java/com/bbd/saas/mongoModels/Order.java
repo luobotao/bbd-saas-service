@@ -12,6 +12,7 @@ import org.mongodb.morphia.annotations.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Order
@@ -75,7 +76,7 @@ public class Order implements Serializable {
     private String billIncomeId;
     private IncomeStatus billIncomeStatus;
     private Date dateSigned;//签收时间
-
+    private Map<String,Object> otherInfo;//订单其他信息集合，快递柜信息集合
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -600,5 +601,13 @@ public class Order implements Serializable {
 
     public void setDateSigned(Date dateSigned) {
         this.dateSigned = dateSigned;
+    }
+
+    public Map<String, Object> getOtherInfo() {
+        return otherInfo;
+    }
+
+    public void setOtherInfo(Map<String, Object> otherInfo) {
+        this.otherInfo = otherInfo;
     }
 }

@@ -189,11 +189,9 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 } else {//未到站
                     query.filter("orderStatus", OrderStatus.NOTARR);
                     query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(null));
-
                 }
             } else {
                 query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
-
             }
             //预计到站时间
             if (StringUtils.isNotBlank(orderQueryVO.between)) {
@@ -453,6 +451,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         OrderNumVO orderNumVO = new OrderNumVO();
         Query<Order> query = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.filter("orderStatus", OrderStatus.NOTARR);
+        //集包
+        query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(null));
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         Query<Order> queryArrive = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         orderNumVO.setArrived(selectArrivedByQuery(queryArrive, dateArrived));//已到站
@@ -472,6 +472,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         OrderNumVO orderNumVO = new OrderNumVO();
         Query<Order> query = createQuery().filter("areaCode in", areaCodeList).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         query.filter("orderStatus", OrderStatus.NOTARR);
+        query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(null));
         orderNumVO.setNoArriveHis(count(query));//历史未到站
         Query<Order> queryArrive = createQuery().filter("areaCode in", areaCodeList).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
         orderNumVO.setArrived(selectArrivedByQuery(queryArrive, dateArrived));//已到站
@@ -962,6 +963,8 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         if (areaCodeList != null && areaCodeList.size() > 0) {
             query.filter("areaCode in", areaCodeList);
         }
+        //集包
+        query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
         query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null);
         //select areaCode as abc , orderStatus as orderStatus, count(*) as countAll from order where dateArrived >= startDate and dateArrived <= endDate
         // and areaCode in areaCodeList and orderStatus <> OrderStatus.NOTARR and orderStatus <> null group by areaCode,orderStatus order by abc asc;
