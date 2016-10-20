@@ -100,7 +100,7 @@
                                 <td><%=site.getResponser()%></td>
                                 <td><%=site.getUsername()%></td>
                                 <td><%=site.getEmail()%></td>
-                                <td><%=site.getStatus().getMessage()%></td>
+                                <td><%=site.getStatus()==null?"":site.getStatus().getMessage()%></td>
                                 <td>
                                     <%
                                         if (site.getAreaFlag() == 1) {
