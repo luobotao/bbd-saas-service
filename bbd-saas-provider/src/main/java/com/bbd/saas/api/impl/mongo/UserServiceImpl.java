@@ -232,7 +232,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<Long, String> findUserSiteMap(List<Long> postManIdList, String companyId) {
+    public Map<Long, String> findUserSiteMap(List<Integer> postManIdList, String companyId) {
         UserQueryVO2 query = new UserQueryVO2();
         query.postManIdList = postManIdList;
         query.companyId = companyId;

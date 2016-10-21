@@ -306,6 +306,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      */
     public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
         Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
+        query.retrievedFields(true,"areaCode", "name", "lat", "lng", "deliveryArea", "siteSrc");
         if(siteIdList != null && !siteIdList.isEmpty()){
             query.filter("_id in", siteIdList);
         }

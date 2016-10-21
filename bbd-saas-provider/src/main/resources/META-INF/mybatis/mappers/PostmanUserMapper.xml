@@ -216,7 +216,7 @@
         FROM `postmanuser`  WHERE companyid = #{companyId} and sta = 1
     </select>
     <select id="selectLatAndLngByIds" resultType="java.util.HashMap">
-        SELECT nickname, lat, lon
+        SELECT id, lat, lon
         FROM `postmanuser` WHERE id in
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
