@@ -63,7 +63,12 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         queryVO.keyword = keyword;
         Query<Site> query = getQuerys(queryVO);
         if(areaFlag != null && areaFlag != -1){//配送区域
-            query.filter("areaFlag", areaFlag);
+            if(areaFlag == 1){//有效
+                query.filter("areaFlag", areaFlag);
+            }else{//无效
+                query.or(query.criteria("areaFlag").equal(areaFlag), query.criteria("areaFlag").equal(null));
+            }
+            //query.filter("areaFlag", areaFlag);
         }
         if(siteIdList != null){//站点id集合(siteIdList.isEmpty():省市区下没有站点，但是选择了全部)
             query.filter("_id in", siteIdList);
@@ -90,7 +95,12 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
             query.filter("status in", statusList);
         }
         if(areaFlag != null && areaFlag != -1){
-            query.filter("areaFlag", areaFlag);
+            if(areaFlag == 1){//有效
+                query.filter("areaFlag", areaFlag);
+            }else{//无效
+                query.or(query.criteria("areaFlag").equal(areaFlag), query.criteria("areaFlag").equal(null));
+            }
+            //query.filter("areaFlag", areaFlag);
         }
         query.order("areaCode");
         List<Site> siteList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
@@ -202,7 +212,12 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
             query.filter("status", status);
         }
         if(areaFlag != -1){
-            query.filter("areaFlag", areaFlag);
+            if(areaFlag == 1){//有效
+                query.filter("areaFlag", areaFlag);
+            }else{//无效
+                query.or(query.criteria("areaFlag").equal(areaFlag), query.criteria("areaFlag").equal(null));
+            }
+            //query.filter("areaFlag", areaFlag);
         }
         return  find(query).asList();
     }
@@ -225,7 +240,12 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
             query.filter("status in", statusList);
         }
         if(areaFlag != null && areaFlag != -1){
-            query.filter("areaFlag", areaFlag);
+            if(areaFlag == 1){//有效
+                query.filter("areaFlag", areaFlag);
+            }else{
+                query.or(query.criteria("areaFlag").equal(areaFlag), query.criteria("areaFlag").equal(null));
+            }
+
         }
         return  selectAndToOptionList(query);
     }
@@ -304,7 +324,27 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param statusList 站点状态集合
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
+    public long selectCountByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
+        Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
+        if(siteIdList != null && !siteIdList.isEmpty()){
+            query.filter("_id in", siteIdList);
+        }
+        if(statusList != null && !statusList.isEmpty()){
+            query.filter("status in", statusList);
+        }
+        return  count(query);
+    }
+    /**
+     * 根据公司ID、地区获取该公司下的指定状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param siteIdList 站点Id集合
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList, Integer start) {
         Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
         query.retrievedFields(true,"areaCode", "name", "lat", "lng", "deliveryArea", "siteSrc");
         if(siteIdList != null && !siteIdList.isEmpty()){
@@ -312,6 +352,9 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         }
         if(statusList != null && !statusList.isEmpty()){
             query.filter("status in", statusList);
+        }
+        if(start != null && start > -1){
+            //query.offset(start).limit();
         }
         return  find(query).asList();
     }

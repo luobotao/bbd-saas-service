@@ -113,7 +113,10 @@ function getSiteIdStr(ulId){
 	return siteIds.join(",");
 }
 
-function getSiteAndUserList(){
+function getSiteAndUserList(start){
+	if(start == null){
+		start == 0;
+	}
 	$.ajax({
 		type : "GET",  //提交方式
 		url : mapDataUrl,//路径
@@ -122,9 +125,11 @@ function getSiteAndUserList(){
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
 			"siteIdStr" :  getSiteIdStr(),//站点id集合
+			"start" :  start//
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据
 			capamap.clearOverlays();
+			console.log("hello");
 			if($("#addr_control .prov").val() == null || $("#addr_control .prov").val() == ""){
 				capamap.centerAndZoom(defaultPoint, 8);
 			}

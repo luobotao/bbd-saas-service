@@ -14,6 +14,7 @@ import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
@@ -67,7 +68,7 @@ public class CapacityDistributionController {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			if(!Constants.BBD_COMPANYID.equals(currUser.getCompanyId())){//棒棒达公司的默认不显示所有站点的所有数据，只有点击的时候才会显示
-				Map<String, Object> map = this.getAllSiteAndCourier(null, null, null,null, request);
+				Map<String, Object> map = this.getAllSiteAndCourier(null, null, null,null, null, request);
 				if(map != null && map.size() > 0){
 					model.addAttribute("siteList", map.get("siteList"));
 					model.addAttribute("userList", map.get("userList"));
@@ -139,10 +140,14 @@ public class CapacityDistributionController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getSiteAndCourierList", method=RequestMethod.GET)
-	public Map<String, Object> getAllSiteAndCourier(String prov, String city, String area, String siteIdStr, final HttpServletRequest request) {
+	public Map<String, Object> getAllSiteAndCourier(String prov, String city, String area, String siteIdStr, Integer start, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
+			start = Numbers.defaultIfNull(start, -1);
+			/*if(){
+
+			}*/
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			List<ObjectId> siteIdList = null;
@@ -158,7 +163,7 @@ public class CapacityDistributionController {
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 			statusList.add(SiteStatus.APPROVE);
 			//查询登录用户的公司下的所有站点
-			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
+			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList, start);
 			if(siteList != null && !siteList.isEmpty()){
 				List<UserVO> userVOList = Lists.newArrayList();
 				int siteSize = siteList.size();

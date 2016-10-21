@@ -208,7 +208,7 @@ public interface SiteService {
      * @param statusList 站点状态集合
      * @return 站点集合
      */
-    List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
+    List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList, Integer start);
 
 
     /**
