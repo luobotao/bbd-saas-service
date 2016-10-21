@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -217,8 +218,9 @@ public class CapacityDistributionController {
 		userVO.setLoginName(user.getLoginName());
 		userVO.setRealName(user.getRealName());
 		userVO.setSiteName(user.getSite().getName());
+		BigDecimal temp = new BigDecimal(0.000000);
 		//设置经纬度
-		if(userVO2 == null || userVO2.getLat() == null || userVO2.getLng() == null || "0.000000".equals(userVO2.getLat())|| "0.000000".equals(userVO2.getLng())){//默认为站点的经纬度
+		if(userVO2 == null || userVO2.getLat() == null || userVO2.getLng() == null || userVO2.getLat() == temp || userVO2.getLng() == temp){//默认为站点的经纬度
 			userVO.setLat(MathEval.stringToBigDecimal(user.getSite().getLat()));
 			userVO.setLng(MathEval.stringToBigDecimal(user.getSite().getLng()));
 		}else{
