@@ -14,6 +14,7 @@ import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.MathEval;
 import com.bbd.saas.utils.Numbers;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.SiteVO;
@@ -218,8 +219,8 @@ public class CapacityDistributionController {
 		userVO.setSiteName(user.getSite().getName());
 		//设置经纬度
 		if(userVO2 == null || userVO2.getLat() == null || userVO2.getLng() == null || "0.000000".equals(userVO2.getLat())|| "0.000000".equals(userVO2.getLng())){//默认为站点的经纬度
-			userVO.setLat(user.getSite().getLat());
-			userVO.setLng(user.getSite().getLng());
+			userVO.setLat(MathEval.stringToBigDecimal(user.getSite().getLat()));
+			userVO.setLng(MathEval.stringToBigDecimal(user.getSite().getLng()));
 		}else{
 			userVO.setLat(userVO2.getLat());
 			userVO.setLng(userVO2.getLng());

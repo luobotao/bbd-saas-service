@@ -154,8 +154,8 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 			for (Map<String, Object> postmanMap : postmanList){
 				UserVO userVO = new UserVO();
 				userVO.setPostManId(((Long) postmanMap.get("id")).intValue());
-				userVO.setLat(((BigDecimal) postmanMap.get("lat")).toString());
-				userVO.setLng(((BigDecimal) postmanMap.get("lon")).toString());
+				userVO.setLat((BigDecimal) postmanMap.get("lat"));
+				userVO.setLng((BigDecimal) postmanMap.get("lon"));
 				userVOMap.put(userVO.getPostManId(), userVO);
 			}
 		}
@@ -171,8 +171,8 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 			userVO.setPostManId(((Long) map.get("id")).intValue());
 			userVO.setLoginName((String) map.get("phone"));
 			userVO.setRealName((String) map.get("nickname"));
-			userVO.setLat(((BigDecimal) map.get("lat")).toString());
-			userVO.setLng(((BigDecimal) map.get("lon")).toString());
+			userVO.setLat((BigDecimal) map.get("lat"));
+			userVO.setLng((BigDecimal) map.get("lon"));
 			userVOList.add(userVO);
 		}
 		return userVOList;
