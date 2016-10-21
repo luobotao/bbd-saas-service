@@ -394,8 +394,16 @@ public class OrderServiceImpl implements OrderService {
                 Reciever reciever = order.getReciever();
                 String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
                 address = StringUtil.filterString(address);
-                //通过积分获取优选区域码，
-                String siteId = findBestSiteWithAddress(address);
+                String siteId = "";
+                if(order.getSrc()==Srcs.QIANGXIANSH){
+                    List<String> siteIds =  sitePoiApi.searchQxshSiteByAddress("",address);
+                    if(siteIds!=null&&siteIds.size()>0){
+                        siteId = siteIds.get(0);
+                    }
+                }else {
+                    //通过积分获取优选区域码，
+                    siteId = findBestSiteWithAddress(address);
+                }
                 if (!"".equals(siteId)) {
                     logger.info("订单:" + order.getOrderNo() + "，匹配的站点Id为" + siteId);
                     //根据站点id获取site信息，更新areacode, areaRemark

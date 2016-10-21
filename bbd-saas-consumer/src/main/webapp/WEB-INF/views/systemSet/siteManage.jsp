@@ -573,20 +573,17 @@
     //保存站点（新建）
     $("#saveSiteBtn").click(function () {
         <c:if test="${companyId == Constants.BBD_COMPANYID}">
-        var sitetype = $('input[name="sitetype"]:checked ').val();
-        if(sitetype == "SOCIAL_CAPACITY"){//社会化运力显示单量上下限
-            var upperlimit = $.trim($("#upperlimit").val());
-            if(!checkLimit(upperlimit, "上限")){
-                return false;
-            }
-            var lowerlimit = $.trim($("#lowerlimit").val());
-            if(!checkLimit(lowerlimit, "下限")){
-                return false;
-            }
-            if(parseInt(lowerlimit) > parseInt(upperlimit)){
-                ioutDiv("下限单量不能大于上限单量");
-                return false;
-            }
+        var upperlimit = $.trim($("#upperlimit").val());
+        if(!checkLimit(upperlimit, "上限")){
+            return false;
+        }
+        var lowerlimit = $.trim($("#lowerlimit").val());
+        if(!checkLimit(lowerlimit, "下限")){
+            return false;
+        }
+        if(parseInt(lowerlimit) > parseInt(upperlimit)){
+            ioutDiv("下限单量不能大于上限单量");
+            return false;
         }
         </c:if>
         var name = $.trim($("#name").val());
@@ -630,7 +627,7 @@
                         cache: false,
                         data: {},
                         success: function(response){
-                            console.log(response);
+                            //console.log(response);
                             if(!response.success){
                                 $("#phoneFlag").val(0);
                                 ioutDiv(response.msg);
