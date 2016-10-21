@@ -129,7 +129,7 @@ function getSiteAndUserList(start){
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据
 			capamap.clearOverlays();
-			console.log("hello");
+			//console.log("hello");
 			if($("#addr_control .prov").val() == null || $("#addr_control .prov").val() == ""){
 				capamap.centerAndZoom(defaultPoint, 8);
 			}
