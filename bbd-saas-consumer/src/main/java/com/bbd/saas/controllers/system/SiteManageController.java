@@ -9,6 +9,7 @@ import com.bbd.saas.api.mongo.WayService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.api.mysql.SiteMySqlService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.*;
 import com.bbd.saas.form.SiteForm;
@@ -214,10 +215,14 @@ public class SiteManageController {
 		if (StringUtils.isNotBlank(siteForm.getAreaCode())) {//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
+			if(Constants.BBD_COMPANYID.equals(userNow.getCompanyId())){//棒棒达公司账号登录，不要修改站点所属的公司信息
+				siteForm.setCompanyId(site.getCompanyId());
+			}else{
+				siteForm.setCompanyId(userNow.getCompanyId());
+			}
 			BeanUtils.copyProperties(siteForm, site);
-			/*if(siteForm.getSitetype() == null || siteForm.getSitetype() != SiteType.EXPRESS_CABINET){
-				site.setSiteSrc(null);
-			}*/
+			//当前登录公司用户的公司ID
+			this.setSiteCompany(site, siteForm.getCompanyId());
 			user = userService.findUserByLoginName(site.getUsername());
 			if(user == null){//原始站长被删除了
 				List<User> userList = userService.findUsersBySite(site,UserRole.SITEMASTER,null);
@@ -233,8 +238,7 @@ public class SiteManageController {
 				postmanUser = new PostmanUser();
 			}
 			site.setUsername(newPhone);
-			//当前登录公司用户的公司ID
-			setSiteCompany(site, userNow.getCompanyId());
+
 			user.setPassWord(siteForm.getPassword());
 			user.setUserStatus(UserStatus.VALID);//公司修改设置为有效
 		} else {
