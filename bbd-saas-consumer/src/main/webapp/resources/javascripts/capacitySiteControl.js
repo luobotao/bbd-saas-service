@@ -145,9 +145,9 @@ function getSiteAndUserList(pageNo){
 			if(pageNo == 1){
 				var pageCount = data.pageCount;
 				var pageNo = data.pageNo;
-				//console.log(pageNo+","+pageCount);
+				console.log(pageNo+","+pageCount);
 				while(pageNo < pageCount){
-					window.setTimeout("getSiteAndUserList(" + pageNo + ")", 600*pageNo);
+					window.setTimeout("getSiteAndUserList(" + pageNo + ")", 350*pageNo);
 					pageNo++;
 				}
 			}

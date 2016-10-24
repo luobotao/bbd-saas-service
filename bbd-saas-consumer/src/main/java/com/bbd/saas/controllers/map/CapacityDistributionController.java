@@ -173,7 +173,7 @@ public class CapacityDistributionController {
 				List<UserVO> userVOList = Lists.newArrayList();
 				int siteSize = pageModel.getDatas().size();
 				logger.info("getSiteAndCourierList : siteSize =" + siteSize);
-				int index = 0, step = 200, max = 0;
+				int index = 0, step = 100, max = 0;
 				while (index < siteSize){//一次查询step条站点的派件员
 					max = index + step;
 					if(max > siteSize){

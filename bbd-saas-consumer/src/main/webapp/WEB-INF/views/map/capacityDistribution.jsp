@@ -182,7 +182,7 @@
 		//console.log(pageCount + ",pageNo = " + pageNo);
 		while(pageNo < pageCount){
 			//console.log("load:"+pageNo);
-			window.setTimeout("getSiteAndUserList(" + pageNo + ")", 500*pageNo);
+			window.setTimeout("getSiteAndUserList(" + pageNo + ")", 350*pageNo);
 			pageNo++;
 		}
 	});
