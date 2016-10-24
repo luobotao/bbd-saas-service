@@ -12,7 +12,7 @@
 
     <!-- [公共Appender] -->
     <appender name="DEFAULT-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/data/logs/saas-provider.log" />
+        <param name="File" value="/data/logs/saas/saas-provider.log" />
         <param name="Append" value="true" />
         <param name="encoding" value="UTF-8" />
         <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
@@ -23,7 +23,7 @@
 
     <!-- [错误日志APPENDER] -->
     <appender name="ERROR-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/data/logs/saas-provider-error.log" />
+        <param name="File" value="/data/logs/saas/saas-provider-error.log" />
         <param name="Append" value="true" />
         <param name="encoding" value="UTF-8" />
         <param name="threshold" value="error" />
@@ -36,7 +36,7 @@
     <!-- [controller日志APPENDER] -->
     <appender name="SERVICE-APPENDER"
               class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/data/logs/saas-provider-service.log" />
+        <param name="File" value="/data/logs/saas/saas-provider-service.log" />
         <param name="Append" value="true" />
         <param name="encoding" value="UTF-8" />
         <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
@@ -46,13 +46,12 @@
     </appender>
 
     <appender name="all" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="/data/logs/saas-provider-system.log" />
+        <param name="File" value="/data/logs/saas/saas-provider-system.log" />
         <param name="Append" value="true" />
-        <param name="MaxFileSize" value="10MB" />
-        <param name="MaxBackupIndex" value="99" />
+        <param name="encoding" value="UTF-8" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern"
-                   value="%d{yyyy-MM-dd HH:mm:ss,SSS} [%t] [%c:%L] [%p] - %m%n" />
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %d %-5p %c{2} - %m%n" />
         </layout>
     </appender>
 
