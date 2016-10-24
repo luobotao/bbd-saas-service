@@ -16,6 +16,7 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.MathEval;
 import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
@@ -74,6 +75,8 @@ public class CapacityDistributionController {
 				if(map != null && map.size() > 0){
 					model.addAttribute("siteList", map.get("siteList"));
 					model.addAttribute("userList", map.get("userList"));
+					model.addAttribute("pageNo", map.get("pageNo"));//当前页
+					model.addAttribute("pageCount", map.get("pageCount"));//总页数
 				}
 			}
 			//logger.info("=====运力分布站点===" + map);
@@ -142,14 +145,11 @@ public class CapacityDistributionController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getSiteAndCourierList", method=RequestMethod.GET)
-	public Map<String, Object> getAllSiteAndCourier(String prov, String city, String area, String siteIdStr, Integer start, final HttpServletRequest request) {
+	public Map<String, Object> getAllSiteAndCourier(String prov, String city, String area, String siteIdStr, Integer pageNo, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			start = Numbers.defaultIfNull(start, -1);
-			/*if(){
-
-			}*/
+			pageNo = Numbers.defaultIfNull(pageNo, 0);
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			List<ObjectId> siteIdList = null;
@@ -165,10 +165,13 @@ public class CapacityDistributionController {
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 			statusList.add(SiteStatus.APPROVE);
 			//查询登录用户的公司下的所有站点
-			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList, start);
-			if(siteList != null && !siteList.isEmpty()){
+			PageModel<Site> pageModel = new PageModel<Site>();
+			pageModel.setPageNo(pageNo);
+			pageModel.setPageSize(Constants.PAGESIZE_CAPACITY);
+			pageModel = siteService.findPageByCompanyIdAndAddress(pageModel,currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
+			if(pageModel.getDatas() != null && !pageModel.getDatas().isEmpty()){
 				List<UserVO> userVOList = Lists.newArrayList();
-				int siteSize = siteList.size();
+				int siteSize = pageModel.getDatas().size();
 				logger.info("getSiteAndCourierList : siteSize =" + siteSize);
 				int index = 0, step = 100, max = 0;
 				while (index < siteSize){//一次查询step条站点的派件员
@@ -177,7 +180,7 @@ public class CapacityDistributionController {
 						max = siteSize;
 					}
 					logger.info("getSiteAndCourierList : index =" + index +", max="+max);
-					List<Site> subSiteList = siteList.subList(index, max);//一次处理step个站点
+					List<Site> subSiteList = pageModel.getDatas().subList(index, max);//一次处理step个站点
 					List<User> userList = userService.findUsersBySite(subSiteList, null, UserStatus.VALID);//所有小件员
 					if (userList != null && userList.size() >0){
 						List<Integer> postmanIdList = new ArrayList<Integer>();
@@ -198,8 +201,10 @@ public class CapacityDistributionController {
 					index += step;
 				}
 				map.put("userList", userVOList);
-				map.put("siteList", siteListToSiteVO(siteList));
+				map.put("siteList", siteListToSiteVO(pageModel.getDatas()));
 			}
+			map.put("pageNo", pageNo + 1);//当前页
+			map.put("pageCount", pageModel.getTotalPages());//总页数
 		} catch (Exception e) {
 			logger.error("===ajax查询所有站点和派件员经纬度===出错:" + e.getMessage());
 		}

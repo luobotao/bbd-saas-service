@@ -110,7 +110,7 @@
 									<%-- 站点多选控件 E --%>
 								</div>
 								<div class="form-group pb20">
-									<span onclick=" getSiteAndUserList();" class="ser-btn l"><i
+									<span onclick=" getSiteAndUserList(0);" class="ser-btn l"><i
 											class="b-icon p-query p-ser"></i>查询</span>
 								</div>
 
@@ -176,6 +176,15 @@
 	$(document).ready(function() {
 		//显示站点和派件员信息
 		initMap();
+		//分页加载数据
+		var pageCount = "${pageCount}";
+		var pageNo = "${pageNo}";
+		//console.log(pageCount + ",pageNo = " + pageNo);
+		while(pageNo < pageCount){
+			//console.log("load:"+pageNo);
+			window.setTimeout("getSiteAndUserList(" + pageNo + ")", 500*pageNo);
+			pageNo++;
+		}
 	});
 	//默认展示全部站点和所有派件员
 	function initMap(){

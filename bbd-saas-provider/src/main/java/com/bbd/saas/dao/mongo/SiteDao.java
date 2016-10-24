@@ -344,7 +344,7 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
      * @param statusList 站点状态集合
      * @return 站点集合
      */
-    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList, Integer start) {
+    public List<Site> selectByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
         Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
         query.retrievedFields(true,"areaCode", "name", "lat", "lng", "deliveryArea", "siteSrc");
         if(siteIdList != null && !siteIdList.isEmpty()){
@@ -353,11 +353,44 @@ public class SiteDao extends BaseDAO<Site, ObjectId> {
         if(statusList != null && !statusList.isEmpty()){
             query.filter("status in", statusList);
         }
-        if(start != null && start > -1){
-            //query.offset(start).limit();
-        }
         return  find(query).asList();
     }
+
+    /**
+     * 根据公司ID、地区分页获取该公司下的指定状态的站点集合
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param siteIdList 站点Id集合
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    public PageModel<Site> selectPageByCompanyIdAndAddress(PageModel<Site> pageModel, String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList) {
+        if(pageModel == null){
+            pageModel = new PageModel<Site>();
+        }
+        Query<Site> query = this.getQueryByAddr(companyId, prov, city, area);
+        if(siteIdList != null && !siteIdList.isEmpty()){
+            query.filter("_id in", siteIdList);
+        }
+        if(statusList != null && !statusList.isEmpty()){
+            query.filter("status in", statusList);
+        }
+        //总条数
+        pageModel.setTotalCount(count(query));
+        /*if(pageModel.getPageNo() == 0){
+            pageModel.setTotalCount(count(query));
+        }*/
+        query.retrievedFields(true,"areaCode", "name", "lat", "lng", "deliveryArea", "siteSrc");
+        if(pageModel.getPageNo() >= 0){
+            query.offset(pageModel.getPageNo()*pageModel.getPageSize()).limit(pageModel.getPageSize());
+        }
+        //数据
+        pageModel.setDatas(find(query).asList());
+        return  pageModel;
+    }
+
     /**
      * 查询公司id为companyId,但是站点编号不为areaCode的站点个数
      * @return 符合条件的站点个数
