@@ -142,9 +142,9 @@ function getSiteAndUserList(pageNo){
 				showSiteAndUsers(data.siteList, data.userList);
 			}
 			//console.log(pageNo);
-			var pageCount = data.pageCount;
-			console.log(pageNo+","+pageCount);
 			if(pageNo == 1){
+				var pageCount = data.pageCount;
+				//console.log(pageNo+","+pageCount);
 				while(pageNo < pageCount){
 					window.setTimeout("getSiteAndUserList(" + pageNo + ")", 350*pageNo);
 					pageNo++;
