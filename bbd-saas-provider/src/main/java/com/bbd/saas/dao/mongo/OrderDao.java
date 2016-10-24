@@ -572,6 +572,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.filter("orderNo", order.getOrderNo());
         UpdateOperations<Order> ops = createUpdateOperations().set("mailNum", order.getMailNum());
         ops.set("dateUpd", new Date());
+        ops.set("reciever", order.getReciever());
         return update(query, ops);
     }
 
