@@ -40,7 +40,7 @@ public class Constants {
     public static int UPPERLIMIT = 300;
     public static int LOWERLIMIT = 50;
     //运力分布每次查询站点的数量
-    public static int PAGESIZE_CAPACITY = 200;
+    public static int PAGESIZE_CAPACITY = 600;
 
 /*
     //派件员有到站分派权限 -- mongodb库User表
