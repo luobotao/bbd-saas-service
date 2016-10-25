@@ -116,4 +116,6 @@ public interface PostmanUserService {
      * @return
      */
     int updateSitenameBySiteId(String siteid, String siteName);
+
+    List<PostmanUser> findAllByAreaCode(String areaCode);
 }

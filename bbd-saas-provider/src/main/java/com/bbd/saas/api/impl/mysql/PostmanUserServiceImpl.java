@@ -225,4 +225,9 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	public int updateSitenameBySiteId(String siteid, String siteName) {
 		return postmanUserDao.updateSubstationBySiteId(siteid, siteName);
 	}
+
+	@Override
+	public List<PostmanUser> findAllByAreaCode(String areaCode) {
+		return postmanUserDao.findAllByAreaCode(areaCode);
+	}
 }
