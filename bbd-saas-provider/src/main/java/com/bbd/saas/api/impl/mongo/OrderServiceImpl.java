@@ -371,6 +371,7 @@ public class OrderServiceImpl implements OrderService {
             Reciever reciever = order.getReciever();
             String address = reciever.getProvince() + reciever.getCity() + reciever.getArea() + reciever.getAddress();
             MapPoint mapPoint = geo.getGeoInfo(address);
+            logger.info(String.format("地址%s查询坐标信息%s",address,mapPoint.getLat()+mapPoint.getLng()));
             if(mapPoint!=null) {
                 reciever.setLon(mapPoint.getLng());
                 reciever.setLat(mapPoint.getLat());
