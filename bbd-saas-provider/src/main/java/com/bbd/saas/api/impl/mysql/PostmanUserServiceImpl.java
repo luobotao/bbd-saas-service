@@ -145,11 +145,21 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	/**
 	 * 根据派件员id集合查询所有派件员的经纬度
 	 * @param ids 派件员id(id1,id2,id3---)
-	 * @return
+	 * @return Map<id, UserVo{id, lat, lon}>
 	 */
-	public List<UserVO> findLatAndLngByIds(List<Integer> ids){
+	public Map<Integer, UserVO>  findLatAndLngByIds(List<Integer> ids){
+		Map<Integer, UserVO> userVOMap = new HashMap<Integer, UserVO>();
 		List<Map<String, Object>> postmanList = postmanUserDao.selectLatAndLngByIds(ids);
-		return toUserVOList(postmanList);
+		if (postmanList != null){
+			for (Map<String, Object> postmanMap : postmanList){
+				UserVO userVO = new UserVO();
+				userVO.setPostManId(((Long) postmanMap.get("id")).intValue());
+				userVO.setLat((BigDecimal) postmanMap.get("lat"));
+				userVO.setLng((BigDecimal) postmanMap.get("lon"));
+				userVOMap.put(userVO.getPostManId(), userVO);
+			}
+		}
+		return userVOMap;
 	}
 	private List<UserVO> toUserVOList(List<Map<String, Object>> postmanList){
 		if (postmanList == null){
@@ -158,7 +168,7 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 		List<UserVO> userVOList = new ArrayList<UserVO>();
 		for (Map<String, Object> map : postmanList){
 			UserVO userVO = new UserVO();
-			userVO.setPostManId((Long) map.get("id"));
+			userVO.setPostManId(((Long) map.get("id")).intValue());
 			userVO.setLoginName((String) map.get("phone"));
 			userVO.setRealName((String) map.get("nickname"));
 			userVO.setLat((BigDecimal) map.get("lat"));
@@ -214,5 +224,10 @@ public class PostmanUserServiceImpl implements PostmanUserService {
 	@Override
 	public int updateSitenameBySiteId(String siteid, String siteName) {
 		return postmanUserDao.updateSubstationBySiteId(siteid, siteName);
+	}
+
+	@Override
+	public List<PostmanUser> findAllByAreaCode(String areaCode) {
+		return postmanUserDao.findAllByAreaCode(areaCode);
 	}
 }

@@ -216,7 +216,7 @@
         FROM `postmanuser`  WHERE companyid = #{companyId} and sta = 1
     </select>
     <select id="selectLatAndLngByIds" resultType="java.util.HashMap">
-        SELECT nickname, lat, lon
+        SELECT id, lat, lon
         FROM `postmanuser` WHERE id in
         <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
             #{item}
@@ -271,4 +271,10 @@
     <update id="pushBbdTrade" parameterMap="pushBbdTradeMap" statementType="CALLABLE">
         {call sp_postman_bbdpush_trade(?,?,?)}
     </update>
+
+    <select id="findAllByAreaCode"   resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `postmanuser` where areaCode = #{areaCode} and sta='1' and postrole='0'
+    </select>
 </mapper>

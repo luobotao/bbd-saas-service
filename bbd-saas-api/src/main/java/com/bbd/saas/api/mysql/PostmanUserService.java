@@ -88,9 +88,9 @@ public interface PostmanUserService {
     /**
      * 根据派件员id集合查询所有派件员的经纬度
      * @param ids 派件员id集合
-     * @return 派件员VO集合
+     * @return Map<id, UserVo{id, lat, lon}>
      */
-    public List<UserVO> findLatAndLngByIds(List<Integer> ids);
+    public Map<Integer, UserVO> findLatAndLngByIds(List<Integer> ids);
 
     public Map<String, Object> getIntegral(String areaCode, String phone);
 
@@ -116,4 +116,6 @@ public interface PostmanUserService {
      * @return
      */
     int updateSitenameBySiteId(String siteid, String siteName);
+
+    List<PostmanUser> findAllByAreaCode(String areaCode);
 }

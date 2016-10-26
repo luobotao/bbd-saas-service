@@ -15,7 +15,7 @@ public class UserVO implements Serializable{
     private String loginName;
     private String realName;
     private String staffId;
-	private Long postManId;
+	private Integer postManId;
 	private BigDecimal lat;//纬度
 	private BigDecimal lng;//经度
 	private String siteName;
@@ -81,11 +81,11 @@ public class UserVO implements Serializable{
 		this.siteName = siteName;
 	}
 
-	public Long getPostManId() {
+	public Integer getPostManId() {
 		return postManId;
 	}
 
-	public void setPostManId(Long postManId) {
+	public void setPostManId(Integer postManId) {
 		this.postManId = postManId;
 	}
 }

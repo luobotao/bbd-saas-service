@@ -211,18 +211,20 @@ User user = (User)request.getAttribute("user");
 	<div class="b-con-bot"></div>
 </div>
 <!-- E content -->
-
 <!-- S pop -->
 <div id="mask"></div>
 <!--S 引导页-->
-<div class="j-guide-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<jsp:include page="live-guide.jsp"/>
+<c:if test="${user.loginCount==1 && user.role== 'SITEMASTER'}">
+	<div class="j-guide-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<jsp:include page="live-guide.jsp"/>
+			</div>
 		</div>
 	</div>
-</div>
+</c:if>
 <!--E 引导页-->
+
 
 <!--S 修改密码-->
 <div class="j-pwd-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

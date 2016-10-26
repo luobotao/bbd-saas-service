@@ -14,6 +14,7 @@ import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,7 +46,12 @@ public class PostmanUserTest {
 		ids.add(3);
 		ids.add(4);
 		ids.add(5);
-		List<UserVO> userVOList = postmanUserService.findLatAndLngByIds(ids);
+		Map<Integer, UserVO> userVOMap= postmanUserService.findLatAndLngByIds(ids);
+		Assert.isTrue(true);//无用
+	}
+	@Test
+	public void testFindLatAndLngByCompanyId() throws Exception{
+		List<UserVO> userVOMap= postmanUserService.findLatAndLngByCompanyId("99");
 		Assert.isTrue(true);//无用
 	}
 

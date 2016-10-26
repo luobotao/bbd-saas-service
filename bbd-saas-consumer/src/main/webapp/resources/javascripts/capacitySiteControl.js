@@ -43,6 +43,7 @@ $(document).ready(function() {
 		getSiteListByAddr();
 		$(".all-area").show();
 	});
+
 });
 //站点列表和站点地图(显示站点和派件员)更新
 function updateSite(center){
@@ -113,7 +114,11 @@ function getSiteIdStr(ulId){
 	return siteIds.join(",");
 }
 
-function getSiteAndUserList(){
+function getSiteAndUserList(pageNo){
+	if(pageNo == undefined){
+		pageNo = 0;
+		//console.log("pageNo : "+pageNo);
+	}
 	$.ajax({
 		type : "GET",  //提交方式
 		url : mapDataUrl,//路径
@@ -122,9 +127,13 @@ function getSiteAndUserList(){
 			"city" :  $("#addr_control .city").val(),
 			"area" :  $("#addr_control .dist").val(),
 			"siteIdStr" :  getSiteIdStr(),//站点id集合
+			"pageNo" :  pageNo//当前页数
 		},//数据，这里使用的是Json格式进行传输
 		success : function(data) {//返回数据
-			capamap.clearOverlays();
+			var pageNo = data.pageNo;
+			if(pageNo == 1){//第一次查询需要清空
+				capamap.clearOverlays();
+			}
 			if($("#addr_control .prov").val() == null || $("#addr_control .prov").val() == ""){
 				capamap.centerAndZoom(defaultPoint, 8);
 			}
@@ -132,6 +141,16 @@ function getSiteAndUserList(){
 				//更新地图（站点和派件员）
 				showSiteAndUsers(data.siteList, data.userList);
 			}
+			//console.log(pageNo);
+			if(pageNo == 1){
+				var pageCount = data.pageCount;
+				//console.log(pageNo+","+pageCount);
+				while(pageNo < pageCount){
+					window.setTimeout("getSiteAndUserList(" + pageNo + ")", 350*pageNo);
+					pageNo++;
+				}
+			}
+
 		},
 		error : function() {
 			ioutDiv("服务器繁忙，请稍后再试");

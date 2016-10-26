@@ -7,15 +7,20 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.SiteStatus;
 import com.bbd.saas.enums.UserStatus;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
+import com.bbd.saas.utils.MathEval;
+import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
+import com.google.common.collect.Lists;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +34,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 运力分布
@@ -57,65 +66,42 @@ public class CapacityDistributionController {
      * @return
      */
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String getAllSiteAndCourier(final HttpServletRequest request, Model model) {
+	public String toPage(final HttpServletRequest request, Model model) {
 		try {
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
-			//查询登录用户的公司下的所有站点
-			List<SiteVO> siteVOList = siteService.findAllSiteVOByCompanyId(currUser.getCompanyId(), SiteStatus.APPROVE);
-			//查询登录用户的公司下的所有派件员信息
-			List<UserVO> userVOList = postmanUserService.findLatAndLngByCompanyId(currUser.getCompanyId());
-			//设置站点名称
-			setUserSiteName(userVOList, currUser.getCompanyId());
-			//setUserSiteName(userVOList, null);
-			logger.info("=====运力分布站点===" + siteVOList);
-			String companyAddress = "";
-			Postcompany company = new Postcompany();
-			if (currUser.getCompanyId() != null ){
-				company = postCompanyService.selectPostmancompanyById(Integer.parseInt(currUser.getCompanyId()));
-				if(company != null){
-					StringBuffer  addressBS = new StringBuffer();
-					addressBS.append(StringUtil.initStr(company.getProvince(),""));
-					addressBS.append(StringUtil.initStr(company.getCity(),""));
-					addressBS.append(StringUtil.initStr(company.getArea(),""));
-					addressBS.append(StringUtil.initStr(company.getAddress(),""));
-					companyAddress = addressBS.toString();
+			if(!Constants.BBD_COMPANYID.equals(currUser.getCompanyId())){//棒棒达公司的默认不显示所有站点的所有数据，只有点击的时候才会显示
+				Map<String, Object> map = this.getAllSiteAndCourier(null, null, null,null, null, request);
+				if(map != null && map.size() > 0){
+					model.addAttribute("siteList", map.get("siteList"));
+					model.addAttribute("userList", map.get("userList"));
+					model.addAttribute("pageNo", map.get("pageNo"));//当前页
+					model.addAttribute("pageCount", map.get("pageCount"));//总页数
 				}
 			}
+			//logger.info("=====运力分布站点===" + map);
 			//设置地图默认的中心点
-			SiteVO centerSite = getDefaultPoint(companyAddress);
+			SiteVO centerSite = getDefaultPoint(this.getCmpAddressByCmpId(currUser.getCompanyId()));
 			model.addAttribute("centerSite", centerSite);
-			model.addAttribute("siteList", siteVOList);
-			model.addAttribute("userList", userVOList);
 			return "map/capacityDistribution";
 		} catch (Exception e) {
 			logger.error("===跳转到运力分布页面==出错 :" + e.getMessage());
 		}
 		return "map/capacityDistribution";
 	}
-
-	/**
-	 * 设置派件员站点名称
-	 * @param userVOList
-	 */
-	private void setUserSiteName(List<UserVO> userVOList, String companyId){
-		if(userVOList != null && userVOList.size() > 0){
-			List<Long> postManIdList = new ArrayList<Long>();
-			for (UserVO userVO : userVOList){
-				if(!StringUtils.isEmpty(userVO.getPostManId())){
-					postManIdList.add(userVO.getPostManId());
-					//System.out.println("postmanId ==入参== " + userVO.getPostManId());
-				}
-			}
-			Map<Long, String> map = userService.findUserSiteMap(postManIdList, companyId);
-			/*for (Map.Entry<Long, String> entry : map.entrySet()) {
-				System.out.println("postmanId = " + entry.getKey() + ", siteName = " + entry.getValue());
-			}*/
-			for (UserVO userVO : userVOList){
-				//logger.info("username="+userVO.getRealName() + "  siteName==="+map.get(userVO.getPostManId()));
-				userVO.setSiteName(map.get(userVO.getPostManId()));
+	private String getCmpAddressByCmpId(String companyId){
+		if (companyId != null ){
+			Postcompany company = postCompanyService.selectPostmancompanyById(Integer.parseInt(companyId));
+			if(company != null){
+				StringBuffer  addressBS = new StringBuffer();
+				addressBS.append(StringUtil.initStr(company.getProvince(),""));
+				addressBS.append(StringUtil.initStr(company.getCity(),""));
+				addressBS.append(StringUtil.initStr(company.getArea(),""));
+				addressBS.append(StringUtil.initStr(company.getAddress(),""));
+				return  addressBS.toString();
 			}
 		}
+		return null;
 	}
 
 	//地图默认中心位置--公司公司经纬度
@@ -159,10 +145,11 @@ public class CapacityDistributionController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/getSiteAndCourierList", method=RequestMethod.GET)
-	public Map<String, Object> getAllSiteAndCourier(String prov, String city, String area, String siteIdStr, final HttpServletRequest request) {
+	public Map<String, Object> getAllSiteAndCourier(String prov, String city, String area, String siteIdStr, Integer pageNo, final HttpServletRequest request) {
 		//查询数据
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
+			pageNo = Numbers.defaultIfNull(pageNo, 0);
 			//当前登录的用户信息
 			User currUser = adminService.get(UserSession.get(request));
 			List<ObjectId> siteIdList = null;
@@ -178,38 +165,74 @@ public class CapacityDistributionController {
 			List<SiteStatus> statusList = new ArrayList<SiteStatus>();
 			statusList.add(SiteStatus.APPROVE);
 			//查询登录用户的公司下的所有站点
-			List<Site> siteList = siteService.findByCompanyIdAndAddress(currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
-			if(siteList != null && !siteList.isEmpty()){
-				List<User> userList = userService.findUsersBySite(siteList, null, UserStatus.VALID);//所有小件员
-				if (userList != null && userList.size() >0){
-					List<Integer> postmanIdList = new ArrayList<Integer>();
-					for (User user : userList){
-						postmanIdList.add(user.getPostmanuserId());
+			PageModel<Site> pageModel = new PageModel<Site>();
+			pageModel.setPageNo(pageNo);
+			pageModel.setPageSize(Constants.PAGESIZE_CAPACITY);
+			pageModel = siteService.findPageByCompanyIdAndAddress(pageModel,currUser.getCompanyId(), prov, city, area, siteIdList, statusList);
+			if(pageModel.getDatas() != null && !pageModel.getDatas().isEmpty()){
+				List<UserVO> userVOList = Lists.newArrayList();
+				int siteSize = pageModel.getDatas().size();
+				logger.info("getSiteAndCourierList : siteSize =" + siteSize);
+				int index = 0, step = 100, max = 0;
+				while (index < siteSize){//一次查询step条站点的派件员
+					max = index + step;
+					if(max > siteSize){
+						max = siteSize;
 					}
-					List<UserVO> userVOList = postmanUserService.findLatAndLngByIds(postmanIdList);
-					//设置站点名称
-					setUserSiteName(userVOList, currUser.getCompanyId());
-					map.put("userList", userVOList);
-					logger.error("==all===userVOList:" + userVOList.size());
+					logger.info("getSiteAndCourierList : index =" + index +", max="+max);
+					List<Site> subSiteList = pageModel.getDatas().subList(index, max);//一次处理step个站点
+					List<User> userList = userService.findUsersBySite(subSiteList, null, UserStatus.VALID);//所有小件员
+					if (userList != null && userList.size() >0){
+						List<Integer> postmanIdList = new ArrayList<Integer>();
+						for (User user : userList){
+							postmanIdList.add(user.getPostmanuserId());
+						}
+						//获取经纬度，Map<id, UserVo{id, lat, lon}>
+						Map<Integer, UserVO> latAndLngMap = postmanUserService.findLatAndLngByIds(postmanIdList);
+						//转化为UserVO
+						for (User user : userList){
+							//设置经纬度
+							UserVO userVO2 = latAndLngMap.get(user.getPostmanuserId());
+							UserVO userVO = userToUserVO(user, userVO2);
+							userVOList.add(userVO);
+						}
+						logger.error("=getSiteAndCourierList=one===userVOList:" + userVOList.size());
+					}
+					index += step;
 				}
-				map.put("siteList", siteListToSiteVO(siteList));
+				map.put("userList", userVOList);
+				map.put("siteList", siteListToSiteVO(pageModel.getDatas()));
 			}
+			map.put("pageNo", pageNo + 1);//当前页
+			map.put("pageCount", pageModel.getTotalPages());//总页数
 		} catch (Exception e) {
 			logger.error("===ajax查询所有站点和派件员经纬度===出错:" + e.getMessage());
 		}
 		return map;
 	}
 
-	private SiteVO siteToSiteVO(Site site){
-		SiteVO siteVo = new SiteVO();
-		BeanUtils.copyProperties(site, siteVo);
-		siteVo.setId(site.getId().toString());
-		/*siteVo.setAreaCode(site.getAreaCode());
-		siteVo.setName(site.getName());
-		siteVo.setLng(site.getLng());
-		siteVo.setLat(site.getLat());
-		siteVo.setDeliveryArea(site.getDeliveryArea());*/
-		return siteVo;
+	/**
+	 * 转化为UserVO
+	 * @param user 设置基本信息
+	 * @param userVO2 携带经纬度信息
+     * @return UserVO
+     */
+	private UserVO userToUserVO(User user, UserVO userVO2){
+		UserVO userVO = new UserVO();
+		userVO.setPostManId(user.getPostmanuserId());
+		userVO.setLoginName(user.getLoginName());
+		userVO.setRealName(user.getRealName());
+		userVO.setSiteName(user.getSite().getName());
+		BigDecimal temp = new BigDecimal(0.000000);
+		//设置经纬度
+		if(userVO2 == null || userVO2.getLat() == null || userVO2.getLng() == null || userVO2.getLat() == temp || userVO2.getLng() == temp){//默认为站点的经纬度
+			userVO.setLat(MathEval.stringToBigDecimal(user.getSite().getLat()));
+			userVO.setLng(MathEval.stringToBigDecimal(user.getSite().getLng()));
+		}else{
+			userVO.setLat(userVO2.getLat());
+			userVO.setLng(userVO2.getLng());
+		}
+		return userVO;
 	}
 	private List<SiteVO> siteListToSiteVO(List<Site> siteList){
 		List<SiteVO> siteVoList = null;

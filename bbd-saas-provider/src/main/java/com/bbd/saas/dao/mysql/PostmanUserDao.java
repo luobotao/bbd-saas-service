@@ -117,4 +117,6 @@ import java.util.Map;
     List<PostmanUser> findPostmanUsers(String sql);
 
     void pushBbdTrade(Map<String, Object> map);
-}
+
+    List<PostmanUser> findAllByAreaCode(@Param("areaCode") String areaCode);
+ }

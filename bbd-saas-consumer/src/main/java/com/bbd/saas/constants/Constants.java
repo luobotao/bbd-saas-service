@@ -39,6 +39,9 @@ public class Constants {
     //public static String BBD_COMPANYID = "8";
     public static int UPPERLIMIT = 300;
     public static int LOWERLIMIT = 50;
+    //运力分布每次查询站点的数量
+    public static int PAGESIZE_CAPACITY = 200;
+
 /*
     //派件员有到站分派权限 -- mongodb库User表
     public static int HAVE_DISPATCH_PERMISSION = 1;

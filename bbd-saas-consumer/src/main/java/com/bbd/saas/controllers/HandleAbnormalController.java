@@ -19,7 +19,10 @@ import com.bbd.saas.vo.*;
 import com.google.common.collect.Lists;
 import flexjson.JSONSerializer;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.mongodb.morphia.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +32,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.*;
 
 @Controller
@@ -208,7 +208,9 @@ public class HandleAbnormalController {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 }*/
                 express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-                smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
+                if(!Srcs.PINHAOHUO.equals(order.getSrc())){
+                    smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
+                }
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
                 expressList.add(express);
@@ -613,6 +615,9 @@ public class HandleAbnormalController {
                     //刷新列表
                     map.put("orderPage", getPageData(currUser.getSite().getAreaCode(), status, pageIndex, arriveBetween));
                 }else if(selfAreaCode.equals(order.getAreaCode()) && (OrderStatus.RETENTION  == order.getOrderStatus() || OrderStatus.REJECTION == order.getOrderStatus())){
+                    if(otherExpsAmount == null){
+                        otherExpsAmount = 0.00;
+                    }
                     //查询运单信息
                     order = updExpressForToOtherCmp(order, companyId, mailNumNew, otherExpsAmount, currUser);
                     Sender sender = order.getSender();
@@ -652,9 +657,7 @@ public class HandleAbnormalController {
                                 map.put("msg", "转运信息添加失败，请稍候再试");
                             }
                         }*/
-                        if(otherExpsAmount == null){
-                            otherExpsAmount = 0.00;
-                        }
+
 
                         //更新运单
                         Key<Order> r = orderService.save(order);

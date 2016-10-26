@@ -210,6 +210,18 @@ public interface SiteService {
      */
     List<Site> findByCompanyIdAndAddress(String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
 
+    /**
+     * 分页查询指定公司的不同地区的特定站点状态的站点集合
+     * @param pageModel 分页信息
+     * @param companyId 公司Id
+     * @param prov 省
+     * @param city 市
+     * @param area 区
+     * @param siteIdList 站点集合
+     * @param statusList 站点状态集合
+     * @return 站点集合
+     */
+    PageModel<Site> findPageByCompanyIdAndAddress(PageModel<Site> pageModel, String companyId, String prov, String city, String area, List<ObjectId> siteIdList, List<SiteStatus> statusList);
 
     /**
      * 获取热门公司列表

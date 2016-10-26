@@ -37,4 +37,6 @@ public interface SmsInfoService {
      * @return
      */
     String checkToSendsms(String phone, String ip);
+
+    void saveSmsInfo(String args, String phone, String tpl_id, String type);
 }

@@ -162,7 +162,7 @@ public interface UserService {
      * @param companyId 公司Id
      * @return map<postmanUserId, siteName>
      */
-    public Map<Long, String> findUserSiteMap(List<Long> staffidList, String companyId);
+    public Map<Long, String> findUserSiteMap(List<Integer> staffidList, String companyId);
 
     /**
      * 根据站点和到站权限，查询符合条件的数目
