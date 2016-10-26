@@ -45,6 +45,30 @@
         </layout>
     </appender>
 
+    <!-- [zookeeper日志APPENDER] -->
+    <appender name="ZOOKEEPER-APPENDER"
+              class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/data/logs/saas-provider-zookeeper.log" />
+        <param name="Append" value="true" />
+        <param name="encoding" value="UTF-8" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %d %-5p %c{2} - %m%n" />
+        </layout>
+    </appender>
+
+    <!-- [mongodb日志APPENDER] -->
+    <appender name="MONGODB-APPENDER"
+              class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/data/logs/saas-provider-mongo.log" />
+        <param name="Append" value="true" />
+        <param name="encoding" value="UTF-8" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %d %-5p %c{2} - %m%n" />
+        </layout>
+    </appender>
+
     <appender name="all" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="/data/logs/saas-provider-system.log" />
         <param name="Append" value="true" />
@@ -67,6 +91,23 @@
         <appender-ref ref="DEFAULT-APPENDER" />
         <appender-ref ref="ERROR-APPENDER" />
     </logger>
+
+    <!--zookeeper-->
+    <logger name="org.apache.zookeeper">
+        <level value="${loggingLevel}" />
+        <appender-ref ref="ZOOKEEPER-APPENDER" />
+    </logger>
+    <!--mongodb-->
+    <logger name="org.mongodb.morphia">
+        <level value="${loggingLevel}" />
+        <appender-ref ref="MONGODB-APPENDER" />
+    </logger>
+    <!--mongodb-->
+    <logger name="com.mongodb">
+        <level value="${loggingLevel}" />
+        <appender-ref ref="MONGODB-APPENDER" />
+    </logger>
+
 
     <!-- Root Logger -->
     <root>
