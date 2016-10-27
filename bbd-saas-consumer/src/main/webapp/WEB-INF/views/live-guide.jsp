@@ -1,5 +1,6 @@
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="com.bbd.saas.enums.SiteType" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%--<%@ include file="main.jsp"%>--%>
@@ -29,7 +30,9 @@
 		<ul class="b-tit b-guide-tab">
 			<li class="guide-cur">01<span class="c-line">|</span>配送范围</li>
 			<li>02<span class="c-line">|</span>绘制电子围栏</li>
-			<li >03<span class="c-line">|</span>导入地址关键词</li>
+			<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+				<li >03<span class="c-line">|</span>导入地址关键词</li>
+			</c:if>
 		</ul>
 		<div class="b-tab-all">
 			<div class="b-tab-con b-guide-con form-inline form-inline-n">
@@ -77,74 +80,76 @@
 					</div>
 				</div>
 				<!-- E 绘制电子围栏 -->
-				<!-- S 导入地址关键词 -->
-				<div class="clearfix step step3">
-					<div class="row pb20">
-						<form action="" method="post" id="siteKeywordForm" >
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>导入时间：</label>
-								<input id="between" name="between" type="text" class="form-control w150" placeholder="请选择导入时间"/>
-							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<label>关键词：</label>
-								<input id="keyword" name="keyword" type="text" class="form-control w150" placeholder="请输入关键词" />
-							</div>
-							<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-								<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
-							</div>
-							<input type="hidden" id="page" name="page">
-						</form>
-					</div>
-					<div class="row">
-						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<form action="" method="post" enctype="multipart/form-data" id="importFileForm">
-								<label class="ser-btn b fileup_ui fl">
-									<span>导入地址关键词</span>
-									<input type="file" name="file" class="import-guid-file" />
-								</label>
 
-								<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
+				<!-- S 导入地址关键词 只有快递柜才有此功能-->
+				<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+					<div class="clearfix step step3">
+						<div class="row pb20">
+							<form action="" method="post" id="siteKeywordForm" >
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<label>导入时间：</label>
+									<input id="between" name="between" type="text" class="form-control w150" placeholder="请选择导入时间"/>
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<label>关键词：</label>
+									<input id="keyword" name="keyword" type="text" class="form-control w150" placeholder="请输入关键词" />
+								</div>
+								<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+									<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
+								</div>
+								<input type="hidden" id="page" name="page">
 							</form>
 						</div>
-					</div>
+						<div class="row">
+							<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<form action="" method="post" enctype="multipart/form-data" id="importFileForm">
+									<label class="ser-btn b fileup_ui fl">
+										<span>导入地址关键词</span>
+										<input type="file" name="file" class="import-guid-file" />
+									</label>
 
-					<!-- S table -->
-					<div class="tab-bod mt20">
-						<div class="table-responsive y-scroll">
-							<table class="table mb0" id="guide-table">
-								<thead>
-								<tr>
-									<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox" id="selectAll" /></th>
-									<th>导入日期</th>
-									<th>省</th>
-									<th>市</th>
-									<th>区</th>
-									<th>地址关键词</th>
-									<th>操作</th>
-								</tr>
-								</thead>
-								<tbody id="dataList">
-
-								</tbody>
-							</table>
-						</div>
-						<!-- E table -->
-						<!-- S tableBot -->
-						<div class="clearfix mt20">
-							<!-- S button -->
-							<div class="clearfix fl ml12">
-								<a href="javascript:void(0);" id="piliangDel" class="ser-btn l">批量删除</a>
+									<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
+								</form>
 							</div>
-							<!-- E button -->
-
 						</div>
-						<!-- S page -->
-						<div id="pagin" class="clearfix pb20"></div>
-						<!-- E page -->
-						<!-- E tableBot -->
-					</div>
-				</div>
 
+						<!-- S table -->
+						<div class="tab-bod mt20">
+							<div class="table-responsive y-scroll">
+								<table class="table mb0" id="guide-table">
+									<thead>
+									<tr>
+										<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox" id="selectAll" /></th>
+										<th>导入日期</th>
+										<th>省</th>
+										<th>市</th>
+										<th>区</th>
+										<th>地址关键词</th>
+										<th>操作</th>
+									</tr>
+									</thead>
+									<tbody id="dataList">
+
+									</tbody>
+								</table>
+							</div>
+							<!-- E table -->
+							<!-- S tableBot -->
+							<div class="clearfix mt20">
+								<!-- S button -->
+								<div class="clearfix fl ml12">
+									<a href="javascript:void(0);" id="piliangDel" class="ser-btn l">批量删除</a>
+								</div>
+								<!-- E button -->
+
+							</div>
+							<!-- S page -->
+							<div id="pagin" class="clearfix pb20"></div>
+							<!-- E page -->
+							<!-- E tableBot -->
+						</div>
+					</div>
+				</c:if>
 				<!-- E 导入地址关键词 -->
 			</div>
 		</div>

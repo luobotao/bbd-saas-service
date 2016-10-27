@@ -11,6 +11,7 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteType;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
@@ -92,31 +93,33 @@ public class IndexController {
         User user = adminService.get(UserSession.get(request));
         model.addAttribute("user", user);
         try{
+
             if (user.getRole()== UserRole.SITEMASTER && user.getLoginCount() == 1) {
                 //--------panel 1-----------------------
                 Site site = siteService.findSite(user.getSite().getId().toString());
-                String between = request.getParameter("between");
-                String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
-                int page = Numbers.parseInt(request.getParameter("page"), 0);
-                //导入地址关键词
-                //--------panel 3-----------------------
-                PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-                if (org.apache.commons.lang3.StringUtils.isNotBlank(between)) {//预计到站时间
-                    DateBetween dateBetween = new DateBetween(between);
-                    logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
-                    //导入地址关键词
-                    siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", dateBetween.getStart(), dateBetween.getEnd(), page, 10, keyword);
-                } else {
-                    siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
+                //导入地址关键词 -- 快递柜有此功能
+                if(user.getSite().getSitetype() == SiteType.EXPRESS_CABINET){
+                    String between = request.getParameter("between");
+                    String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
+                    int page = Numbers.parseInt(request.getParameter("page"), 0);
+                    //--------panel 3-----------------------
+                    PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(between)) {//预计到站时间
+                        DateBetween dateBetween = new DateBetween(between);
+                        logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
+                        //导入地址关键词
+                        siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", dateBetween.getStart(), dateBetween.getEnd(), page, 10, keyword);
+                    } else {
+                        siteKeywordPage = siteKeywordApi.findSiteKeyword(site.getId() + "", null, null, page, 10, keyword);
+                    }
+                    model.addAttribute("between", between);
+                    model.addAttribute("keyword", keyword);
+                    model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
+                    model.addAttribute("page", siteKeywordPage.getPage());
+                    model.addAttribute("pageNum", siteKeywordPage.getPageNum());
+                    model.addAttribute("pageCount", siteKeywordPage.getCount());
                 }
                 model.addAttribute("site", site);
-                model.addAttribute("between", between);
-                model.addAttribute("keyword", keyword);
-                model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
-                model.addAttribute("page", siteKeywordPage.getPage());
-                model.addAttribute("pageNum", siteKeywordPage.getPageNum());
-                model.addAttribute("pageCount", siteKeywordPage.getCount());
-
                 List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());
                 String siteStr = dealSitePoints(sitePoints);
                 model.addAttribute("sitePoints", siteStr);

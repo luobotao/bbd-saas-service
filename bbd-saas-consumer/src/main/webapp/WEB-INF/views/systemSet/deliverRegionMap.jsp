@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.enums.SiteSrc" %>
+<%@ page import="com.bbd.saas.enums.SiteType" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -70,7 +71,7 @@
 					<ul class="clearfix b-tab">
 						<li <c:if test="${activeNum eq '1'}"> class="tab-cur"</c:if>><a href="#send-range">配送区域</a></li>
 						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map" >绘制电子围栏</a></li>
-						<c:if test="${site.siteSrc != SiteSrc.QXSH}">
+						<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
 							<li <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
 						</c:if>
 					</ul>
@@ -125,84 +126,85 @@
 						</div>
 						<!-- E 绘制电子围栏 -->
 						<!-- S 导入地址关键词 -->
-						<div class="clearfix tab-pane fade" id="import-key">
-							<div class="row pb20">
-								<c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
-								<form action="${ctx}/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-										<label>导入时间：</label>
-										<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
-									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
-										<label>关键词：</label>
-										<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
-									</div>
-									<div class="form-group col-xs-12 col-sm-6 col-md-2 col-lg-2">
-										<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
-									</div>
-									<input type="hidden" id="page" value="${page}" name="page">
-								</form>
-							</div>
-							<div class="row pb20">
-								<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
-									<form action="${importSiteKeywordFileUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
-										<label class="ser-btn b fileup_ui fl">
-											<span>导入地址关键词</span>
-											<input type="file" name="file" class="import-file" />
-										</label>
-
-										<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
-										<a href="${ctx}/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
+						<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
+							<div class="clearfix tab-pane fade" id="import-key">
+								<div class="row pb20">
+									<c:url var="importSiteKeywordFileUrl" value="/site/importSiteKeywordFile?${_csrf.parameterName}=${_csrf.token}"/>
+									<form action="${ctx}/deliverRegion/map/3" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
+										<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+											<label>导入时间：</label>
+											<input id="between" name="between" type="text" class="form-control" placeholder="请选择导入时间范围" value="${between}"/>
+										</div>
+										<div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-4">
+											<label>关键词：</label>
+											<input id="keyword" name="keyword" type="text" class="form-control" placeholder="请输入关键词" value="${keyword}"/>
+										</div>
+										<div class="form-group col-xs-12 col-sm-6 col-md-2 col-lg-2">
+											<a href="javascript:void(0)" class="ser-btn l" id="querySiteBtn"><i class="b-icon p-query p-ser"></i>查询</a>
+										</div>
+										<input type="hidden" id="page" value="${page}" name="page">
 									</form>
 								</div>
-							</div>
+								<div class="row pb20">
+									<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+										<form action="${importSiteKeywordFileUrl}" method="post" enctype="multipart/form-data" id="importFileForm">
+											<label class="ser-btn b fileup_ui fl">
+												<span>导入地址关键词</span>
+												<input type="file" name="file" class="import-file" />
+											</label>
 
-							<!-- S table -->
-							<div class="tab-bod mt20">
-								<div class="table-responsive">
-									<table class="table" id="dis-table">
-										<thead>
-										<tr>
-											<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox" id="selectAll" /></th>
-											<th>导入日期</th>
-											<th>省</th>
-											<th>市</th>
-											<th>区</th>
-											<th>地址关键词</th>
-											<th>操作</th>
-										</tr>
-										</thead>
-										<tbody id="dataList">
-										<c:forEach items="${siteKeywordPageList}" var="siteKeyword">
-											<tr>
-												<td><input type="checkbox" value="${siteKeyword.id}" name="inputC" class="c-cbox"/></td>
-												<td>${Dates.formatDateTime_New(siteKeyword.createAt)}</td>
-												<td>${siteKeyword.province}</td>
-												<td>${siteKeyword.city}</td>
-												<td>${siteKeyword.distict}</td>
-												<td>${siteKeyword.keyword}</td>
-												<td><a href="javascript:if(confirm('确认删除？'))location='${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}'" class="orange">删除</a></td>
-											</tr>
-										</c:forEach>
-										</tbody>
-									</table>
-								</div>
-								<!-- E table -->
-								<!-- S tableBot -->
-								<div class="clearfix">
-									<!-- S button -->
-									<div class="clearfix fl pad20">
-										<a href="javascript:void(0);" id="piliangDel" class="ser-btn l">批量删除</a>
+											<a href="${ctx}/site/downloadSiteKeywordTemplate" class="ser-btn b ml6">下载导入模板</a>
+											<a href="${ctx}/site/exportSiteKeywordFile" class="ser-btn b ml10">导出地址关键词</a>
+										</form>
 									</div>
-									<!-- E button -->
-									<!-- S page -->
-									<div id="pagin"></div>
-									<!-- E page -->
 								</div>
-								<!-- E tableBot -->
-							</div>
-						</div>
 
+								<!-- S table -->
+								<div class="tab-bod mt20">
+									<div class="table-responsive">
+										<table class="table" id="dis-table">
+											<thead>
+											<tr>
+												<th><input type="checkbox" name="inputA" class="j-sel-all c-cbox" id="selectAll" /></th>
+												<th>导入日期</th>
+												<th>省</th>
+												<th>市</th>
+												<th>区</th>
+												<th>地址关键词</th>
+												<th>操作</th>
+											</tr>
+											</thead>
+											<tbody id="dataList">
+											<c:forEach items="${siteKeywordPageList}" var="siteKeyword">
+												<tr>
+													<td><input type="checkbox" value="${siteKeyword.id}" name="inputC" class="c-cbox"/></td>
+													<td>${Dates.formatDateTime_New(siteKeyword.createAt)}</td>
+													<td>${siteKeyword.province}</td>
+													<td>${siteKeyword.city}</td>
+													<td>${siteKeyword.distict}</td>
+													<td>${siteKeyword.keyword}</td>
+													<td><a href="javascript:if(confirm('确认删除？'))location='${ctx}/site/deleteSitePoiKeyword/${siteKeyword.id}'" class="orange">删除</a></td>
+												</tr>
+											</c:forEach>
+											</tbody>
+										</table>
+									</div>
+									<!-- E table -->
+									<!-- S tableBot -->
+									<div class="clearfix">
+										<!-- S button -->
+										<div class="clearfix fl pad20">
+											<a href="javascript:void(0);" id="piliangDel" class="ser-btn l">批量删除</a>
+										</div>
+										<!-- E button -->
+										<!-- S page -->
+										<div id="pagin"></div>
+										<!-- E page -->
+									</div>
+									<!-- E tableBot -->
+								</div>
+							</div>
+						</c:if>
 						<!-- E 导入地址关键词 -->
 					</div>
 				</div>
@@ -227,31 +229,31 @@
 	</div>
 </div>
 
-<!-- S pop -->
-<!--S 提示-->
-<div class="j-import-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog b-modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-				<h4 class="modal-title tc">导入</h4>
-			</div>
-			<div class="modal-body">
-				<div class="col-md-12">
-					<span>确定要导入吗？</span>
+<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
+	<!-- S pop -->
+	<!--S 提示-->
+	<div class="j-import-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog b-modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+					<h4 class="modal-title tc">导入</h4>
 				</div>
-			</div>
-			<div class="modal-footer mt20 bod0">
-				<a href="javascript:void(0);" class="ser-btn g" id="cancelBtn">取消</a>
-				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
+				<div class="modal-body">
+					<div class="col-md-12">
+						<span>确定要导入吗？</span>
+					</div>
+				</div>
+				<div class="modal-footer mt20 bod0">
+					<a href="javascript:void(0);" class="ser-btn g" id="cancelBtn">取消</a>
+					<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-
-<!--E 提示-->
-
-<!-- E pop -->
+	<!--E 提示-->
+	<!-- E pop -->
+</c:if>
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
@@ -260,18 +262,8 @@
 <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
 <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.css" />
 <script type="text/javascript">
-	// 导入文件
-	$(".import-file").on("change",function(){
-		$(".j-import-pop").modal();
-	})
-	$("input[type='checkbox']").iCheck({
-		checkboxClass : 'icheckbox_square-blue'
-	});
-	$("#selectAll").on('ifUnchecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
-	}).on('ifChecked', function() {
-		$("input[type='checkbox']", "#dis-table").iCheck("check");
-	});
+
+
 	//保存站点配送范围信息
 	$("#saveSiteBtn").click(function(){
 		var radiusVal = $("#radius option:selected").val();
@@ -294,19 +286,13 @@
 				}
 			});
 		}
-	})
-	$("#importBtn").click(function(){
-		$(this).parents(".j-import-pop").hide();
-		$(".spinner").show();
-		$("#importFileForm").submit();
-		$("[name='file']").val("");
-	})
+	});
+
 	//更改配送范围
 	$("#radius").change(function(){
 		var radius = $("#radius option:selected").val();
 		showMap(radius*1000);
-	})
-
+	});
 
 	//展示配送范围
 	function showMap(radius){
@@ -335,54 +321,6 @@
 		allmapPs.addOverlay(circle);            //增加圆
 		allmapPs.enableScrollWheelZoom(true);
 	}
-
-	//--------------------panel 3------------------------------------
-	$("#between").daterangepicker({
-		locale: {
-			applyLabel: '确定',
-			cancelLabel: '取消',
-			fromLabel: '开始',
-			toLabel: '结束',
-			weekLabel: 'W',
-			customRangeLabel: 'Custom Range',
-			showDropdowns: true
-		},
-		format: 'YYYY/MM/DD'
-	});
-	$("#querySiteBtn").click(function(){
-		$("#page").val("0");
-		$("#siteKeywordForm").submit();
-	})
-	//批量删除
-	$("#piliangDel").click(function(){
-		var id_array=new Array();
-		$('input[name="inputC"]:checked').each(function(){
-			id_array.push($(this).val());//向数组中添加元素
-		});
-		var delIds = id_array.join(',');
-		if(delIds==""){
-			ioutDiv("请选择要删除的站点关键词");
-			return false;
-		}
-		if(confirm("确认批量删除所选站点关键词？")){
-			window.location.href="${ctx}/site/piliangDeleteSitePoiKeyword/"+delIds
-		}
-	})
-
-	//显示分页条
-	var pageStr = paginNav(${page}, ${pageNum}, ${pageCount});
-	$("#pagin").html(pageStr);
-
-	//加载带有查询条件的指定页的数据
-	function gotoPage(pageIndex,keyword,between) {
-		$("#page").val(pageIndex);
-		$("#siteKeywordForm").submit();
-	}
-	$("#cancelBtn").click(function(){
-		$(".j-import-pop").modal('hide');
-		$("[name='file']").val("");
-	})
-
 	//--------------------panel 2------------------------------------
 
 	var bmapArr = [];
@@ -720,8 +658,70 @@
 			$(this).removeClass("b-back-full").addClass("b-forward-full");
 		}
 	})
-
-
+	//--------------------panel 3------------------------------------
+	<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
+		// 导入文件
+		$(".import-file").on("change",function(){
+			$(".j-import-pop").modal();
+		});
+		$("input[type='checkbox']").iCheck({
+			checkboxClass : 'icheckbox_square-blue'
+		});
+		$("#selectAll").on('ifUnchecked', function() {
+			$("input[type='checkbox']", "#dis-table").iCheck("uncheck");
+		}).on('ifChecked', function() {
+			$("input[type='checkbox']", "#dis-table").iCheck("check");
+		});
+		$("#between").daterangepicker({
+			locale: {
+				applyLabel: '确定',
+				cancelLabel: '取消',
+				fromLabel: '开始',
+				toLabel: '结束',
+				weekLabel: 'W',
+				customRangeLabel: 'Custom Range',
+				showDropdowns: true
+			},
+			format: 'YYYY/MM/DD'
+		});
+		$("#querySiteBtn").click(function(){
+			$("#page").val("0");
+			$("#siteKeywordForm").submit();
+		});
+		$("#importBtn").click(function(){
+			$(this).parents(".j-import-pop").hide();
+			$(".spinner").show();
+			$("#importFileForm").submit();
+			$("[name='file']").val("");
+		});
+		$("#cancelBtn").click(function(){
+			$(".j-import-pop").modal('hide');
+			$("[name='file']").val("");
+		});
+		//批量删除
+		$("#piliangDel").click(function(){
+			var id_array=new Array();
+			$('input[name="inputC"]:checked').each(function(){
+				id_array.push($(this).val());//向数组中添加元素
+			});
+			var delIds = id_array.join(',');
+			if(delIds==""){
+				ioutDiv("请选择要删除的站点关键词");
+				return false;
+			}
+			if(confirm("确认批量删除所选站点关键词？")){
+				window.location.href="${ctx}/site/piliangDeleteSitePoiKeyword/"+delIds
+			}
+		});
+		//显示分页条
+		var pageStr = paginNav(${page}, ${pageNum}, ${pageCount});
+		$("#pagin").html(pageStr);
+		//加载带有查询条件的指定页的数据
+		function gotoPage(pageIndex,keyword,between) {
+			$("#page").val(pageIndex);
+			$("#siteKeywordForm").submit();
+		}
+	</c:if>
 </script>
 </body>
 </html>

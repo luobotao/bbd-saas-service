@@ -214,7 +214,7 @@ User user = (User)request.getAttribute("user");
 <!-- S pop -->
 <div id="mask"></div>
 <!--S 引导页-->
-<c:if test="${user.loginCount==1 && user.role== 'SITEMASTER'}">
+<c:if test="${user.loginCount==1 && user.role== UserRole.SITEMASTER}">
 	<div class="j-guide-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
@@ -276,12 +276,11 @@ User user = (User)request.getAttribute("user");
 </footer>
 <!-- E footer -->
 <script type="application/javascript">
-	if(${user.loginCount==1} && ${user.role=="SITEMASTER"}){
+	if(${user.loginCount == 1} && ${user.role == UserRole.SITEMASTER}){
 		$(".j-guide-pop").show().addClass("in");
 		$("#mask").show();
 	}
 	$("#saveUserBtn").click(function(){
-
 		var passwordOld = $.trim($('input[name="passwordOld"]').val());
 		if(passwordOld==""){
 			outDiv("请输入原始密码");
