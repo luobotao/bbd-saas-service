@@ -25,6 +25,7 @@
 <!-- iCheck -->
 <script src="<c:url value="/resources/adminLTE/plugins/iCheck/icheck.min.js?_123" />" type="text/javascript"></script>
 <script src="<c:url value="/resources/javascripts/page/pageBar.js" />"> </script>
+<script src="<c:url value="/resources/javascripts/main.js" />"> </script>
 <div class="modal-header b-modal-header">
 	<button type="button" class="close j-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 	<h4 class="modal-title tc">设置站点配送区域</h4>
@@ -176,6 +177,28 @@
 						<!-- E tableBot -->
 					</div>
 				</div>
+
+				<!--S 提示-->
+				<div class="j-import-guid-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+					<div class="modal-dialog b-modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close closeP"><span aria-hidden="true">×</span></button>
+								<h4 class="modal-title tc">导入</h4>
+							</div>
+							<div class="modal-body">
+								<div class="col-md-12">
+									<span>确定要导入吗？</span>
+								</div>
+							</div>
+							<div class="modal-footer mt20 bod0">
+								<a href="javascript:void(0);" class="ser-btn g cancelImportBtn">取消</a>
+								<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--E 提示-->
 			</c:if>
 			<!-- E 导入地址关键词 -->
 		</div>
@@ -190,27 +213,12 @@
 	</div>
 </div>
 <!-- S pop -->
-<!--S 提示-->
-<div class="j-import-guid-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog b-modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close closeP"><span aria-hidden="true">×</span></button>
-				<h4 class="modal-title tc">导入</h4>
-			</div>
-			<div class="modal-body">
-				<div class="col-md-12">
-					<span>确定要导入吗？</span>
-				</div>
-			</div>
-			<div class="modal-footer mt20 bod0">
-				<a href="javascript:void(0);" class="ser-btn g cancelImportBtn">取消</a>
-				<a href="javascript:void(0);" class="ser-btn l" id="importBtn">确定</a>
-			</div>
-		</div>
-	</div>
+
+<!--S 提示信息-->
+<div class="b-prompt">
+	<div class="b-prompt-txt"><i></i></div>
 </div>
-<!--E 提示-->
+<!--E 提示信息-->
 <!-- E footer -->
 <div class="b-loading">
 	<div class="spinner" style="display:none">
@@ -397,6 +405,7 @@
 					}else{
 						console.log("error:"+data);
 					}*/
+					console.log(data);
 					if(data != null){
 						outDiv(data.msg);
 					}else {
