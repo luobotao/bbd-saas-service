@@ -11,16 +11,16 @@
 <script src="<c:url value="/resources/bootstrap/js/bootstrap-datetimepicker.zh-CN.js" />" type="text/javascript"></script>
 <!-- Date Picker  Daterange picker -->
 
-<link href="<c:url value="/resources/adminLTE/plugins/datepicker/datepicker3.css" />" rel="stylesheet"  type="text/css" />
-<link href="<c:url value="/resources/adminLTE/plugins/daterangepicker/daterangepicker-bs3.css" />" rel="stylesheet"  type="text/css" />
-<script src="<c:url value="/resources/adminLTE/plugins/daterangepicker/daterangepicker.js" />" type="text/javascript"></script>
-<script src="<c:url value="/resources/adminLTE/plugins/datepicker/bootstrap-datepicker.js" />" type="text/javascript"></script>
-
+<link href="<c:url value="/resources/adminLTE/plugins/datepicker/datepicker3.css?_123" />" rel="stylesheet"  type="text/css" />
+<link href="<c:url value="/resources/adminLTE/plugins/daterangepicker/daterangepicker-bs3.css?_123" />" rel="stylesheet"  type="text/css" />
+<script src="<c:url value="/resources/adminLTE/plugins/daterangepicker/daterangepicker.js?_123" />" type="text/javascript"></script>
+<script src="<c:url value="/resources/adminLTE/plugins/datepicker/bootstrap-datepicker.js?_123" />" type="text/javascript"></script>
+<script src="<c:url value="/resources/javascripts/timeUtil.js?_123" />"> </script>
 <!-- iCheck -->
-<link href="<c:url value="/resources/adminLTE/plugins/iCheck/flat/blue.css" />" rel="stylesheet"  type="text/css" />
-<link href="<c:url value="/resources/adminLTE/plugins/iCheck/square/blue.css" />" rel="stylesheet"  type="text/css" />
+<link href="<c:url value="/resources/adminLTE/plugins/iCheck/flat/blue.css?_123" />" rel="stylesheet"  type="text/css" />
+<link href="<c:url value="/resources/adminLTE/plugins/iCheck/square/blue.css?_123" />" rel="stylesheet"  type="text/css" />
 <!-- iCheck -->
-<script src="<c:url value="/resources/adminLTE/plugins/iCheck/icheck.min.js" />" type="text/javascript"></script>
+<script src="<c:url value="/resources/adminLTE/plugins/iCheck/icheck.min.js?_123" />" type="text/javascript"></script>
 
 <div class="modal-header b-modal-header">
 		<button type="button" class="close j-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
