@@ -114,10 +114,11 @@ public class IndexController {
                     }
                     model.addAttribute("between", between);
                     model.addAttribute("keyword", keyword);
-                    model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
+                    model.addAttribute("keywordPage", siteKeywordPage);
+                    /*model.addAttribute("siteKeywordPageList", siteKeywordPage.list);
                     model.addAttribute("page", siteKeywordPage.getPage());
                     model.addAttribute("pageNum", siteKeywordPage.getPageNum());
-                    model.addAttribute("pageCount", siteKeywordPage.getCount());
+                    model.addAttribute("pageCount", siteKeywordPage.getCount());*/
                 }
                 model.addAttribute("site", site);
                 List<List<MapPoint>> sitePoints = sitePoiApi.getSiteEfence(user.getSite().getId().toString());

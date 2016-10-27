@@ -1,11 +1,14 @@
-<%@ page import="com.bbd.saas.utils.Dates" %>
+<%@ page import="com.bbd.poi.api.vo.PageList" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="com.bbd.poi.api.vo.SiteKeyword" %>
 <%@ page import="com.bbd.saas.enums.SiteType" %>
+<%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%--<%@ include file="main.jsp"%>--%>
 <!-- Date Picker  Daterange picker -->
-
+<!-- DATA TABLES -->
+<link href="<c:url value="/resources/adminLTE/plugins/datatables/dataTables.bootstrap.css" />" rel="stylesheet"  type="text/css" />
 <link href="<c:url value="/resources/bootstrap/css/bootstrap-datetimepicker.min.css" />" rel="stylesheet"  type="text/css" />
 <script src="<c:url value="/resources/bootstrap/js/bootstrap-datetimepicker.js" />" type="text/javascript"></script>
 <script src="<c:url value="/resources/bootstrap/js/bootstrap-datetimepicker.zh-CN.js" />" type="text/javascript"></script>
@@ -80,7 +83,9 @@
 				</div>
 			</div>
 			<!-- E 绘制电子围栏 -->
-
+			<%
+				PageList<SiteKeyword> pageModel = (PageList<SiteKeyword>)request.getAttribute("keywordPage");
+			%>
 			<!-- S 导入地址关键词 只有快递柜才有此功能-->
 			<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
 				<div class="clearfix step step3">
@@ -129,7 +134,29 @@
 								</tr>
 								</thead>
 								<tbody id="dataList">
-
+								<%
+									if(pageModel==null || pageModel.getList() == null){
+								%>
+									<tr>
+										<td colspan="7">没有符合查询条件的数据</td>
+									</tr>
+								<%
+									}else{
+										for(SiteKeyword keyword : pageModel.getList()){
+								%>
+								<tr>
+									<td><input type='checkbox' value='<%=keyword.getId()%>' name='inputC' class='c-cbox'/></td>
+									<td><%=Dates.formatDateTime_New(keyword.getCreateAt())%></td>
+									<td><%=keyword.getProvince()%></td>
+									<td><%=keyword.getCity()%></td>
+									<td><%=keyword.getDistict()%></td>
+									<td><%=keyword.getKeyword()%></td>
+									<td><a href="javascript:void(0);" class="orange" onclick="delSiteKeywordWithTr('<%=keyword.getId()%>')">删除</a></td>
+								</tr>
+								<%
+										}//for
+									}//else
+								%>
 								</tbody>
 							</table>
 						</div>
@@ -141,11 +168,11 @@
 								<a href="javascript:void(0);" id="piliangDel" class="ser-btn l">批量删除</a>
 							</div>
 							<!-- E button -->
-
+							<!-- S page -->
+							<div id="pagin" class="clearfix fr pb20 mr15"></div>
+							<!-- E page -->
 						</div>
-						<!-- S page -->
-						<div id="pagin" class="clearfix pb20"></div>
-						<!-- E page -->
+
 						<!-- E tableBot -->
 					</div>
 				</div>
@@ -168,7 +195,7 @@
 	<div class="modal-dialog b-modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close cancelImportBtn"><span aria-hidden="true">×</span></button>
+				<button type="button" class="close closeP"><span aria-hidden="true">×</span></button>
 				<h4 class="modal-title tc">导入</h4>
 			</div>
 			<div class="modal-body">
@@ -205,23 +232,34 @@
 	$(".b-guide-con .step:eq(2)").show();
 	//点击保存
 	mcount = 0;
+	total = 0;
+	<c:choose>
+		<c:when test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+			total = 3;
+		</c:when>
+		<c:otherwise>
+			total = 2;
+		</c:otherwise>
+	</c:choose>
 	$('.next-step').click(function () {
 		$('.pre-step').show();
 		mcount += 1
 		// 3的倍数
-		if (mcount >= 3) {
+		if (mcount >= total) {
 			$(".j-guide-pop").hide().removeClass("in");
 			$("#mask").hide();
-		} else if (mcount < 3) {
-
+		} else if (mcount < total) {
 			if(mcount==1) {
 				//保存最新站点值
 				saveSiteFunc();
 				window.setTimeout(function(){
 					bmap.map.panTo(new BMap.Point(${site.lng},${site.lat}));
 				}, 500);
-			}else if (mcount == 2)  {
+			}/*else if (mcount == 2)  {
 				$("#saveBtn").html("完成")
+			}*/
+			if(mcount == total -1){
+				$("#saveBtn").html("完成");
 			}
 			$(".b-guide-tab li").eq(mcount).addClass("guide-cur");
 		}
@@ -565,18 +603,21 @@
 
 	<!-- S 导入地址关键词 只有快递柜才有此功能-->
 	<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+	//显示分页条
+		var pageStr = paginNavMin(<%=pageModel.getPage()%>, <%=pageModel.getPageNum()%>, <%=pageModel.getCount()%>);
+		$("#pagin").html(pageStr);
 		$(".b-guide-tab li").css("margin-left","85px");
 		$("input[type='checkbox']").iCheck({
 			checkboxClass : 'icheckbox_square-blue'
 		});
 		// 导入文件
 		$(".import-guid-file").on("change",function(){
-			$(".j-import-guid-pop").addClass("in").show();
 
+			showCoverLeverTwo(".j-import-guid-pop")
 
 		});
 		$(".cancelImportBtn").click(function(){
-			$(".j-import-guid-pop").hide();
+			$(".j-import-guid-pop,#mask2").hide();
 			$(".import-guid-file").val("");
 		});
 		$("#importBtn").click(function(){
@@ -585,17 +626,17 @@
 			$("#importFileForm").ajaxSubmit({
 				type: 'post',
 				url: "${ctx}/site/importSiteKeywordFileWithAjax?${_csrf.parameterName}=${_csrf.token}",
-				data : $( '#importFileF orm').serialize(),
+				data : $( '#importFileForm').serialize(),
 				dataType : 'json',
 				timeout: 0,
 				success: function(data){
 					updateDataList(data);
 					$(".import-guid-file").val("");
-					$(".spinner").hide();
+					$(".spinner,#mask2").hide();
 
 				},
 				error: function(JsonHttpRequest, textStatus, errorThrown){
-					$(".spinner").hide();
+					$(".spinner,#mask2").hide();
 					$(".table-responsive").addClass("guide-tab");
 					querySiteKey();
 				}
@@ -675,7 +716,11 @@
 					type: 'get',
 					cache: false,
 					dataType: "json",
-					data: {},
+					data: {
+						"page" : getCurrPage(),
+						"between" : $("#between").val(),
+						"keyword" :  $("#addr_control .city").val()
+					},
 					success: function(data){
 						updateDataList(data);
 						$("input[name=inputA]").prop("checked", false);
@@ -693,7 +738,11 @@
 					type: 'get',
 					cache: false,
 					dataType: "json",
-					data: {},
+					data: {
+						"page" : getCurrPage(),
+						"between" : $("#between").val(),
+						"keyword" :  $("#addr_control .city").val()
+					},
 					success: function(data){
 						updateDataList(data);
 					},
@@ -704,4 +753,16 @@
 			}
 		}
 	</c:if>
+
+	function showCoverLeverTwo(ele){
+		var zNum = 2000;
+		$(ele).addClass("in").show();
+		$(ele).css({zIndex:zNum})
+		$("#mask2").show();
+	}
+
+	$(".closeP").on("click",function(){
+		$(this).parent().parent().parent().parent().removeClass("in").hide();
+		$("#mask2").hide();
+	})
 </script>

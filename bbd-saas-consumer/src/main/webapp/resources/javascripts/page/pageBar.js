@@ -61,13 +61,16 @@ function setPageString(start, end, currPage){
 	}
 	return numstr;
 }
+//获取当前页
+function getCurrPage(){
+	return parseInt($(".pagination .active").text())-1;
+}
 //***************显示连续的页码*********结束******************/
 
 /********currPage, totalPage, count 传入数字类型的参数*********/
 //***************分页条 小型******开始**********/
 function paginNavMin(currPage, totalPage, count){
 	var pagestr = "";
-	pagestr += "<div class='fr'>"; /* pagecon pagination pagination-centered */
 	pagestr += "<div class='dataTables_info fl  c-disable' id='userTable_info'>页码：";
 	pagestr += (currPage + 1) + "/" + totalPage + " &nbsp;&nbsp; 共" + count + "条";
 	pagestr += "</div>";
@@ -108,7 +111,7 @@ function paginNavMin(currPage, totalPage, count){
 		pagestr += "<li><a href='#' title='下一页'  onclick=\"gotoPage(" + (currPage + 1) + ");\"><em class='glyphicon glyphicon-triangle-right'></em></a></li>";
 		pagestr += "<li><a href='#' onclick=\"gotoPage(" + (totalPage - 1) + ");\" title='尾页'>尾页</a></li>";
 	}
-	pagestr += "</ul></div></div>";
+	pagestr += "</ul></div>";
 	return pagestr;
 }
 //***************分页条******结束**********/

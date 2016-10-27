@@ -1,5 +1,5 @@
 $(function () {
-	
+
     // S sidebar\
     var inithei = $(window).height();
     var dochei = $(document).height();
@@ -429,8 +429,8 @@ function yscroll(){
             $(".y-scroll").css({height:"200px",overflowY:"scroll"})
         }
     }else{
-        if(yhei>=300){
-            $(".y-scroll").css({height:"300px",overflowY:"scroll"})
+        if(yhei>=420){
+            $(".y-scroll").css({height:"420px",overflowY:"scroll"})
         }
     }
 }
