@@ -30,7 +30,7 @@ public class PostmanUser implements Serializable {
 	
 	private Integer poststatus=0;//1开启
 
-	private Integer postrole=0;//0:默认 1：分拣 2：司机 ……
+	private Integer postrole=0;//0:默认 1：分拣 2：司机 4站长角色类型 0快递员 1仓库管理员（分拣） 2司机 4站长
 
 	private Date dateNew;
 	private Date dateUpd;

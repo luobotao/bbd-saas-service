@@ -48,7 +48,7 @@
     <!-- [zookeeper日志APPENDER] -->
     <appender name="ZOOKEEPER-APPENDER"
               class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/data/logs/saas-provider-zookeeper.log" />
+        <param name="File" value="/data/logs/saas/saas-provider-zookeeper.log" />
         <param name="Append" value="true" />
         <param name="encoding" value="UTF-8" />
         <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
@@ -60,7 +60,7 @@
     <!-- [mongodb日志APPENDER] -->
     <appender name="MONGODB-APPENDER"
               class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="/data/logs/saas-provider-mongo.log" />
+        <param name="File" value="/data/logs/saas/saas-provider-mongo.log" />
         <param name="Append" value="true" />
         <param name="encoding" value="UTF-8" />
         <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />

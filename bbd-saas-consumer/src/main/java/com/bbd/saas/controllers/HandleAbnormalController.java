@@ -67,6 +67,8 @@ public class HandleAbnormalController {
 
     @Value("${bbd.contact}")
     private String contact;
+    @Value("${longUrl.dispatch}")
+    private String longUrl_dispatch ;
     @Value("${EPREE100_KEY}")
     private String EPREE100_KEY ;
     @Value("${EPREE100_CALLBACK_URL}")
@@ -209,7 +211,15 @@ public class HandleAbnormalController {
                 }*/
                 express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 if(!Srcs.PINHAOHUO.equals(order.getSrc())){
-                    smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
+                    String oldUrl=longUrl_dispatch+order.getMailNum();
+                    String shortUrl = ShortUrl.generateShortUrl(oldUrl);
+                    logger.info("生成的短链："+shortUrl);
+                    //旧短信内容
+//                    smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
+                    //新短信内容
+                    smsInfoService.sendToSendingNew(order.getSrcMessage(),order.getMailNum(),courier.getLoginName(),shortUrl,order.getReciever().getPhone());
+
+
                 }
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());

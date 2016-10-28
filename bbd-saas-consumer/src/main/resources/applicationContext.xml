@@ -22,7 +22,7 @@
 	<beans:bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<beans:property name="locations">
 			<beans:list>
-				<beans:value>classpath:common.properties</beans:value>
+				<beans:value>classpath:${common.properties}</beans:value>
 			</beans:list>
 		</beans:property>
 	</beans:bean>

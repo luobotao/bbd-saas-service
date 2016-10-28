@@ -62,7 +62,8 @@ public class PackageDispatchController {
 	CommonService commonService;
 	@Value("${bbd.contact}")
 	private String contact;
-
+	@Value("${longUrl.dispatch}")
+	private String longUrl_dispatch ;
 	/**
 	 * Description: 跳转到包裹分派页面
 	 * @param pageIndex 当前页
@@ -194,7 +195,13 @@ public class PackageDispatchController {
 		if(r != null){
 			saveOneOrUpdatePost(order, user);
 			if(!Srcs.PINHAOHUO.equals(order.getSrc())){
-				smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
+				String oldUrl=longUrl_dispatch+order.getMailNum();
+				String shortUrl = ShortUrl.generateShortUrl(oldUrl);
+				logger.info(shortUrl);
+				//旧短信内容
+//				smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
+				//新短信内容
+				smsInfoService.sendToSendingNew(order.getSrcMessage(),order.getMailNum(),user.getLoginName(),shortUrl,order.getReciever().getPhone());
 			}
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())||Srcs.QIANGXIANSH.equals(order.getSrc())){
 				commonService.doSaveExpressExChange(order, user.getRealName(), user.getLoginName());

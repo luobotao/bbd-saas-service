@@ -153,6 +153,23 @@ public class SmsInfoServiceImpl implements SmsInfoService {
         saveSmsInfo(args, receiverPhone, tpl_id, type);
     }
 
+    /**
+     * 已分派揽件员 正在派送短信
+     * 模板id：1613212
+     * 内容：【棒棒达】您的#scr#订单#mailnum#正在由棒棒达快递派送，快递员电话#phone#。查看物流详情：#url#
+     * @param src
+     * @param mailnum
+     * @param phone
+     * @param url
+     */
+    @Override
+    public void  sendToSendingNew(String src, String mailnum, String phone,  String url, String receiverPhone) {
+        String args = "#src#=" + src + "&#mailnum#=" + mailnum + "&#phone#=" + phone+ "&#url#=" + url;
+        String tpl_id = "1613212";
+        String type = "1";
+        saveSmsInfo(args, receiverPhone, tpl_id, type);
+    }
+
 
 
 
