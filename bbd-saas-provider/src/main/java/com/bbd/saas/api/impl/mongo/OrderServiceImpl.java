@@ -874,11 +874,9 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public PageModel<OrderHoldToStoreVo> findPageOrdersForHoldToStore(Integer pageIndex,  OrderQueryVO orderQueryVO) {
-
         if (orderQueryVO == null) {
             return null;
         }
-
         //根据站点查询出订单的 收货人相关信息
         PageModel<Order> pageOrders = new PageModel<Order>();
         pageOrders.setPageNo(pageIndex);
@@ -896,7 +894,6 @@ public class OrderServiceImpl implements OrderService {
             String mailNum = order.getMailNum();
             String name = order.getReciever().getName();
             String phone = order.getReciever().getPhone();
-
             //获取Trade对象
             String tradeNo = order.getTradeNo();
             OrderSetStatus orderSetStatus = order.getOrderSetStatus();
@@ -913,14 +910,11 @@ public class OrderServiceImpl implements OrderService {
                 orderHoldToStoreVo.setUserName("");
                 orderHoldToStoreVo.setPhone("");
             }
-
-
             //把收件人相关信息，和揽件员相关信息从新封装到orderHoldToStoreVo 中
             orderHoldToStoreVo.setMailNum(mailNum);
             orderHoldToStoreVo.setRecieverName(name);
             orderHoldToStoreVo.setRecieverPhone(phone);
             orderHoldToStoreVo.setRecieverAddress(address);
-
             orderHoldToStoreVo.setOrderSetStatus(orderSetStatus);
             orderHoldToStoreVo.setAreaCode(order.getAreaCode());
             orderHoldToStoreList.add(orderHoldToStoreVo);
@@ -931,7 +925,6 @@ public class OrderServiceImpl implements OrderService {
         pageModel.setTotalCount(pageOrders.getTotalCount());
         pageModel.setDatas(orderHoldToStoreList);
         return pageModel;
-
     }
 
     /**

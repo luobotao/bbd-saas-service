@@ -79,7 +79,7 @@
 						<li id="arrive" class="lv1"><a href="<c:url value="/packageToSite" />" target="iframe1" ><i class="b-icon p-package"></i>包裹到站</a></li>
 						<li id="asign" class="lv1"><a href="<c:url value="/packageDispatch" />" target="iframe1" ><i class="b-icon p-aign"></i>运单分派</a></li>
 						<li id="error" class="lv1"><a href="<c:url value="/handleAbnormal" />" target="iframe1" ><i class="b-icon p-error"></i>异常件处理</a></li>
-					<li id="tostore" class="lv1"><a href="<c:url value="/holdToStoreController" />" target="iframe1" ><i class="b-icon p-store"></i>揽件入库</a></li>
+						<li id="tostore" class="lv1"><a href="<c:url value="/holdToStore" />" target="iframe1" ><i class="b-icon p-store"></i>揽件入库</a></li>
 						<li class="lv1"><a href="#"><i class="b-icon p-query"></i>数据查询</a></li>
 						<ul class="menu dn">
 							<li id="complaint"><a href="<c:url value="/complaint" />" target="iframe1" >站点投诉管理</a></li>

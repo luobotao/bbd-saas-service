@@ -37,7 +37,7 @@ import java.util.Map;
  * 揽件入库
  */
 @Controller
-@RequestMapping("/holdToStoreController")
+@RequestMapping("/holdToStore")
 public class HoldToStoreController {
 
     @Autowired
@@ -148,12 +148,10 @@ public class HoldToStoreController {
             Date end =  Dates.getEndOfDay(new Date());
             orderQueryVO.between = new DateBetween(start,end).toString();
         }
-
         //首页进行默认值设置
         pageIndex = Numbers.defaultIfNull(pageIndex, 0);
-        //根据embraceId查询tradeNo ，每一个radeNo对应一个Order  封装到tradeNoList 中
+        //根据embraceId查询tradeNo ，每一个tradeNo对应一个Order  封装到tradeNoList 中
         PageModel<OrderHoldToStoreVo> orderHoldPageModel = orderService.findPageOrdersForHoldToStore(pageIndex,  orderQueryVO);
-
         return orderHoldPageModel;
     }
 

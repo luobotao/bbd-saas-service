@@ -270,7 +270,7 @@
         var orderSetStatus = $('#orderSetStatus option:selected').val();
         $.ajax({
             type: "GET",  //提交方式
-            url: "<c:url value="/holdToStoreController/getList" />",//路径
+            url: "<c:url value="/holdToStore/getList" />",//路径
             data: {
                 "pageIndex": pageIndex,
                 "orderSetStatus": orderSetStatus,
@@ -418,7 +418,7 @@
 
         if (mailNum != "") {
             $.ajax({
-                url: "<%=request.getContextPath()%>/holdToStoreController/checkHoldToStoreByMailNum?mailNum=" + mailNum,
+                url: "<%=request.getContextPath()%>/holdToStore/checkHoldToStoreByMailNum?mailNum=" + mailNum,
                 type: 'GET',
                 cache: false,
                 success: function (response) {
@@ -452,7 +452,7 @@
     //更新数据统计的数据
     function updateOrderHoldToStoreNumVO() {
         $.ajax({
-            url: '<%=request.getContextPath()%>/holdToStoreController/updateOrderHoldToStoreNumVO',
+            url: '<%=request.getContextPath()%>/holdToStore/updateOrderHoldToStoreNumVO',
             type: 'GET',
             cache: false,
             dataType: "json",
