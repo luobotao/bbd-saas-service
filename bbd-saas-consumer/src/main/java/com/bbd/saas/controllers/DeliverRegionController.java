@@ -9,6 +9,7 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteSrc;
 import com.bbd.saas.enums.SiteType;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
@@ -28,6 +29,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * 配送区域 -- 站点
+ */
 @Controller
 @RequestMapping("/deliverRegion")
 @SessionAttributes("deliverRegion")
@@ -60,7 +64,7 @@ public class DeliverRegionController {
 				//--------panel 1-----------------------
 				Site site = siteService.findSite(user.getSite().getId().toString());
 				//导入地址关键词 --------panel 3------ 快递柜有此功能
-				if(user.getSite().getSitetype() == SiteType.EXPRESS_CABINET){
+				if(user.getSite().getSitetype() == SiteType.EXPRESS_CABINET && user.getSite().getSiteSrc() != SiteSrc.QXSH){
 					String between = request.getParameter("between");
 					String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
 					int page = Numbers.parseInt(request.getParameter("page"), 0);

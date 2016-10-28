@@ -11,6 +11,7 @@ import com.bbd.saas.api.mongo.SiteService;
 import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.enums.SiteSrc;
 import com.bbd.saas.enums.SiteType;
 import com.bbd.saas.enums.UserRole;
 import com.bbd.saas.mongoModels.Site;
@@ -98,7 +99,7 @@ public class IndexController {
                 //--------panel 1-----------------------
                 Site site = siteService.findSite(user.getSite().getId().toString());
                 //导入地址关键词 -- 快递柜有此功能
-                if(user.getSite().getSitetype() == SiteType.EXPRESS_CABINET){
+                if(user.getSite().getSitetype() == SiteType.EXPRESS_CABINET && user.getSite().getSiteSrc() != SiteSrc.QXSH){
                     String between = request.getParameter("between");
                     String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
                     int page = Numbers.parseInt(request.getParameter("page"), 0);
