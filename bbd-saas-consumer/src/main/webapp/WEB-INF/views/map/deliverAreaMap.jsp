@@ -1109,17 +1109,18 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					//console.log(data);
-					if(data.code == 0){
+					console.log(data);
+					ioutDiv(data.msg);
+					/*if(data.code == 0){
 						ioutDiv(data.msg);
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);
 					}else{
 						ioutDiv('抱歉，电子围栏暂不支持交叉绘制');
-					}
+					}*/
 				},
 				error: function(){
-					ioutDiv('抱歉，电子围栏暂不支持交叉绘制');
+					ioutDiv('电子围栏保存失败，请刷新页面重试！');
 				}
 			});
 
