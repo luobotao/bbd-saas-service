@@ -817,6 +817,8 @@
         <c:if test="${companyId == Constants.BBD_COMPANYID}">
         $("input[name='sitetype'][value='ORDERNARY']").attr("checked",true);
         changeSitetype(false);
+        $('#lowerlimit').val('50');
+        $('#upperlimit').val('300');
         </c:if>
         var defprov = "北京";
         var defcity = "北京";
@@ -851,8 +853,8 @@
                     document.getElementById("siteForm").reset();
                     <c:if test="${companyId == Constants.BBD_COMPANYID}">
                     $("input[name='sitetype'][value='" + data.sitetype + "']").prop("checked", true);
-                    $("#upperlimit").val(data.upperlimit == null ? 0 : data.upperlimit);
-                    $("#lowerlimit").val(data.lowerlimit == null ? 0 : data.lowerlimit);
+                    $("#upperlimit").val(data.upperlimit == null ? 300 : data.upperlimit);
+                    $("#lowerlimit").val(data.lowerlimit == null ? 50 : data.lowerlimit);
                     if(data.sitetype == "<%=SiteType.EXPRESS_CABINET%>"){//快递柜显示站点来源
                         $("#siteSrc").val(data.siteSrc);
                         changeSitetype(true);
