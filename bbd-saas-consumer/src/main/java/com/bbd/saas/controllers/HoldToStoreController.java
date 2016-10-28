@@ -212,7 +212,7 @@ public class HoldToStoreController {
             doToStore(request, order);
             status = true;
             msg = "扫描成功，完成入库。请到App中进行【分拣】操作";
-        } else if (StringUtils.isBlank(user.getSite().getType())||"0".equals(user.getSite().getType())) {//不是分拨站点
+        } else if (StringUtils.isBlank(user.getSite().getType())||"0".equals(user.getSite().getType())) {//运单号存在且属于此站且不是分拨站点
             //入库
             order.setOrderSetStatus(OrderSetStatus.WAITSET);
             List<SiteTime> siteTimes = order.getSiteTimes();
