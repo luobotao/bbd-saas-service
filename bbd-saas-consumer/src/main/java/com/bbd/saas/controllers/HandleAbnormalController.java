@@ -451,6 +451,7 @@ public class HandleAbnormalController {
                 //更新预计到站时间
                 order.setDateMayArrive(Dates.addDays(new Date(), 1));
                 order.setDateArrived(null);
+                order.setParcelCode(null);
                 //更新运单
                 Key<Order> r = orderService.save(order);
                 if (r != null) {
