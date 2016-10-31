@@ -608,7 +608,7 @@ public class SiteManageController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/updateLoaction", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateLoaction", method = RequestMethod.GET)
 	public void updateLoaction() throws Exception {
 		List<Site> siteList = siteService.findAllSiteList();
 		siteList.forEach(site -> {
