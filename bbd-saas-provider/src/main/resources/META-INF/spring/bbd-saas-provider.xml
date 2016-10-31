@@ -15,13 +15,11 @@
     <!-- 用dubbo协议在20880端口暴露服务 此处动态获取 -->
     <dubbo:protocol name="dubbo" port="-1"/>
 
+    <import resource="classpath:META-INF/spring/bbd-saas-service.xml" />
     <!--sitePoiApi Service-->
     <dubbo:reference id="sitePoiApi" interface="com.bbd.poi.api.SitePoiApi" />
     <dubbo:reference id="siteKeywordApi" interface="com.bbd.poi.api.SiteKeywordApi" />
     <dubbo:reference id="geo" interface="com.bbd.poi.api.Geo" />
-
-    <import resource="classpath:META-INF/spring/bbd-saas-service.xml" />
-
 
     <!-- 声明需要暴露的服务接口-->
     <dubbo:service interface="com.bbd.saas.api.mongo.AdminUserService" ref="adminUserService" />

@@ -35,6 +35,17 @@ public interface SiteService {
     Key<Site> save(Site site);
 
     /**
+     * 把站点信息同步到SPOI表中，并更新站点表的经纬度信息
+     * @param siteId 站点id
+     */
+    void addSPOIAndSetLatAndLng(String siteId);
+
+    /**
+     * 如果SPOI表中没有站点信息，则调用addSPOIAndSetLatAndLng进行同步
+     */
+    void checkAndUpdateSiteToPoi();
+
+    /**
      * 根据ID获取Site
      * @param id 站点_id
      * @return 站点

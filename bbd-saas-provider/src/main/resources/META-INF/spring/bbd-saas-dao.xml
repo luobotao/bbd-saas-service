@@ -26,6 +26,14 @@
     <bean id="siteDao" class="com.bbd.saas.dao.mongo.SiteDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <!-- spoidao-->
+    <bean id="stPOIDao" class="com.bbd.saas.dao.mongo.StPOIDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
+    <!-- sitePOIKeywodDAO-->
+    <bean id="stPOIKeywodDao" class="com.bbd.saas.dao.mongo.StPOIKeywodDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
     <!-- orderParcel DAO-->
     <bean id="orderParcelDao" class="com.bbd.saas.dao.mongo.OrderParcelDao">
         <constructor-arg ref="datastore"/>

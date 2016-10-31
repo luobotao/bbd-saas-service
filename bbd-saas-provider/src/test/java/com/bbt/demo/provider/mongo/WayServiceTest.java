@@ -1,7 +1,7 @@
-package com.bbt.demo.provider.mysql;
+package com.bbt.demo.provider.mongo;
 
-import com.bbd.saas.api.mysql.ExpressCompanyService;
-import com.bbd.saas.models.ExpressCompany;
+import com.bbd.saas.api.mongo.WayService;
+import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,9 @@ import org.springframework.util.Assert;
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
 public class WayServiceTest {
 	@Autowired
-	private ExpressCompanyService expressCompanyService;
+	private WayService wayService;
+
+	private ObjectId uId = new ObjectId("573c5f421e06c8275c08183c");
 	//junit.framework.TestCase时用
 	public void setUp() throws Exception{
         System.out.println("set up");
@@ -27,8 +29,8 @@ public class WayServiceTest {
 
 	@Test
 	public void testSave() throws Exception{
-		ExpressCompany company = expressCompanyService.getExpressCompanyById(5);
-		System.out.println(company);
+		long num = wayService.findWayBySiteId("57202f80c35cc57f53be7d4c");
+		System.out.println(num);
 		Assert.isTrue(true);//无用
 	}
 	@Test

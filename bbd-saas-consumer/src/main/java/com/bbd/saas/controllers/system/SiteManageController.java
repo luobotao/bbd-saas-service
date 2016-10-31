@@ -291,7 +291,8 @@ public class SiteManageController {
 		}
 		site.setDateUpd(new Date());
 		Key<Site> siteKey = siteService.save(site);//保存站点
-		setLatAndLng(siteKey.getId().toString());//设置经纬度
+		this.siteService.addSPOIAndSetLatAndLng(siteKey.getId().toString());//设置经纬度
+		//setLatAndLng(siteKey.getId().toString());//设置经纬度
 		site.setId(new ObjectId(siteKey.getId().toString()));
 		//向用户表插入登录用户
 		this.addUser(user, site, postmanUser, siteForm, newPhone, oldPhone);
@@ -368,10 +369,31 @@ public class SiteManageController {
 		userMysqlService.deleteByPhoneAndId(newPhone, user.getPostmanuserId());
 		if (StringUtils.isNotBlank(areaCode)) {//修改
 			postmanUser.setPhone(newPhone);
-			userMysqlService.updateByPhone(postmanUser, oldPhone);
-			userMysqlService.updateSitenameBySiteId(postmanUser.getSiteid(), postmanUser.getSubstation());
+			int count = 0;
+			while(count < 3){//保存失败，最多尝试3次
+				count++;
+				int n = userMysqlService.updateByPhone(postmanUser, oldPhone);
+				if(n > 0){//保存成功
+					break;
+				}
+			}
+			count = 0;
+			while(count < 3){//保存失败，最多尝试3次
+				count++;
+				int m = userMysqlService.updateSitenameBySiteId(postmanUser.getSiteid(), postmanUser.getSubstation());
+				if(m > 0){//保存成功
+					break;
+				}
+			}
 		} else {//新增
-			postmanUser = userMysqlService.insertUser(postmanUser);
+			int count = 0;
+			while(count < 3){//保存失败，最多尝试3次
+				count++;
+				postmanUser = userMysqlService.insertUser(postmanUser);
+				if(postmanUser.getId() != null && postmanUser.getId() > 0){//保存成功
+					break;
+				}
+			}
 		}
 		return postmanUser;
 	}
@@ -400,16 +422,15 @@ public class SiteManageController {
 		Site site = siteService.findSiteByUserName(phone);
 		logger.info("审核通过站点：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
 		siteService.validSite(site.getId().toHexString());//审核通过站点
-		setLatAndLng(site.getId().toHexString());//设置经纬度
-
+		//setLatAndLng(site.getId().toHexString());//设置经纬度
+		this.siteService.addSPOIAndSetLatAndLng(site.getId().toHexString());//设置经纬度
 		//将用户设置为有效
 		try{
 			User user = userService.findUserByLoginName(phone);
-
 			PostmanUser postmanUser = userMysqlService.selectPostmanUserByPhone(phone, 0);
-
-			if(postmanUser==null)
+			if(postmanUser==null) {
 				postmanUser = new PostmanUser();
+			}
 			postmanUser.setSta("1");//对应mongdb user表中的userStatus,默认1位有效
 			postmanUser.setHeadicon("");
 			postmanUser.setCardidno("");
@@ -450,27 +471,6 @@ public class SiteManageController {
 		}
 
 		return true;
-	}
-
-	private void setLatAndLng(String siteId) {
-		//设置经纬度
-		Site site = siteService.findSite(siteId);
-		String siteAddress = site.getProvince() + site.getCity() + site.getArea() + site.getAddress();
-		logger.info(site.getId().toString());
-		try {
-			Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(), site.getCompanyId(), site.getSiteSrc().getStatus(), site.getName(), siteAddress, 0, site.getSitetype() != null ? site.getSitetype().getStatus() : 1);
-			//更新站点的经度和纬度
-			logger.info("[addSitePOI]result :" + result.toString());
-			if (result.code == 0 && result.data != null) {
-				double[] data = result.data;
-				site.setLng(data[0] + "");    //经度
-				site.setLat(data[1] + "");    //纬度
-				site.setDeliveryArea("0");
-				siteService.save(site);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -587,7 +587,7 @@ public class SiteManageController {
 						return 1;
 					}else{//-1：站点不存在
 						//往POI表中增加站点记录,默认是启用状态
-						setLatAndLng(site.getId().toString());
+						this.siteService.addSPOIAndSetLatAndLng(site.getId().toString());//设置经纬度
 						if(areaFlag == 0){//停用需要更新一下状态
 							result = sitePoiApi.disableSite(site.getId().toString());
 							logger.info("配送区域停用：" + site.getId().toHexString()+",IP地址："+ StringUtil.getIpAddr(request));
@@ -613,10 +613,7 @@ public class SiteManageController {
 		List<Site> siteList = siteService.findAllSiteList();
 		siteList.forEach(site -> {
 			logger.info(site.getAreaCode());
-			setLatAndLng(site.getId().toHexString());
+			this.siteService.addSPOIAndSetLatAndLng(site.getId().toHexString());
 		});
-
 	}
-
-
 }

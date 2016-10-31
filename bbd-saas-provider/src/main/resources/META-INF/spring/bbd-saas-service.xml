@@ -62,6 +62,9 @@
         <property name="bbtAddressDao">
             <ref bean="bbtAddressDao"/>
         </property>
+        <property name="stPOIDao">
+            <ref bean="stPOIDao"/>
+        </property>
     </bean>
     <!-- ToOtherSiteLog Service-->
     <bean id="toOtherSiteLogService" class="com.bbd.saas.api.impl.mongo.ToOtherSiteLogServiceImpl">
