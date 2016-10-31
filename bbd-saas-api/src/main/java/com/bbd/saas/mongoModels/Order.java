@@ -38,6 +38,8 @@ public class Order implements Serializable {
     @Embedded
     private Reciever reciever;
     private String userId;//派单时的小件员ID
+    private String postmanUser;//派单时的小件员姓名
+    private String postmanPhone;//派单时的小件员手机号
     private Srcs src;
     private String srcRmk;//真实来源（揽件后需求变化所致）
     private OrderStatus orderStatus;
@@ -183,6 +185,22 @@ public class Order implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getPostmanUser() {
+        return postmanUser;
+    }
+
+    public void setPostmanUser(String postmanUser) {
+        this.postmanUser = postmanUser;
+    }
+
+    public String getPostmanPhone() {
+        return postmanPhone;
+    }
+
+    public void setPostmanPhone(String postmanPhone) {
+        this.postmanPhone = postmanPhone;
     }
 
     public Srcs getSrc() {
@@ -524,6 +542,8 @@ public class Order implements Serializable {
         orderVo.setSender(sender);
         orderVo.setReciever(reciever);
         orderVo.setUserId(userId);
+        orderVo.setPostmanPhone(postmanPhone);
+        orderVo.setPostmanUser(postmanUser);
         orderVo.setSrc(src);
         orderVo.setOrderStatus(orderStatus);
         orderVo.setExpressStatus(expressStatus);

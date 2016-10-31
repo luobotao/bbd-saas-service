@@ -29,6 +29,8 @@ public class OrderVO implements Serializable {
     @Embedded
     private Reciever reciever;
     private String userId;//派单时的小件员ID
+    private String postmanUser;//派单时的小件员姓名
+    private String postmanPhone;//派单时的小件员手机号
     private Srcs src;
     private OrderStatus orderStatus;
     private ExpressStatus expressStatus;
@@ -152,6 +154,22 @@ public class OrderVO implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getPostmanUser() {
+        return postmanUser;
+    }
+
+    public void setPostmanUser(String postmanUser) {
+        this.postmanUser = postmanUser;
+    }
+
+    public String getPostmanPhone() {
+        return postmanPhone;
+    }
+
+    public void setPostmanPhone(String postmanPhone) {
+        this.postmanPhone = postmanPhone;
     }
 
     public Srcs getSrc() {
