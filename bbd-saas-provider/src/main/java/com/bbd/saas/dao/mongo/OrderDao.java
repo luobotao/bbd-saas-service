@@ -386,8 +386,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         //分页信息
         query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
         //查询数据
-        List<Order> orderList = find(query).asList();
-        pageModel.setDatas(orderList);
+        pageModel.setDatas(find(query).asList());
         return pageModel;
     }
 
