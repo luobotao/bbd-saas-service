@@ -98,7 +98,7 @@
 					<ul class="clearfix b-tab">
 						<li <c:if test="${activeNum eq '1'}"> class="tab-cur"</c:if>><a href="#send-range">配送区域</a></li>
 						<li <c:if test="${activeNum eq '2'}"> class="tab-cur"</c:if>><a href="#draw-map" >绘制电子围栏</a></li>
-						<li id="keywordLabel" <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>
+						<%--<li id="keywordLabel" <c:if test="${activeNum eq '3'}"> class="tab-cur"</c:if>><a href="#import-key">导入地址关键词</a></li>--%>
 					</ul>
 					<div class="b-tab-con form-inline form-inline-n tab-content capacity-map">
 						<!-- S 配送区域 -->
@@ -205,7 +205,7 @@
 						</div>
 						<!-- E 绘制电子围栏 -->
 						<!-- S 导入地址关键词 -->
-						<div class="clearfix tab-pane fade" id="import-key">
+						<%--<div class="clearfix tab-pane fade" id="import-key">
 							<c:url var="importKeywordUrl" value="/siteKeyWord/importKeyword?${_csrf.parameterName}=${_csrf.token}"/>
 							<form action="${ctx}/deliverArea/queryKeyWord" method="get" id="siteKeywordForm" name="siteKeywordForm" class="form-inline form-inline-n">
 								<div class="row col-md-12 pb20" id="keywordAddr">
@@ -257,7 +257,7 @@
 								<input id="between_expt" name="between" type="hidden" />
 								<input id="keyword_expt" name="keyword" type="hidden" />
 							</form>
-							<%----%>
+							&lt;%&ndash;&ndash;%&gt;
 
 							<!-- S table -->
 							<div class="tab-bod mt20">
@@ -307,7 +307,7 @@
 								<!-- E tableBot -->
 							</div>
 						</div>
-
+--%>
 						<!-- E 导入地址关键词 -->
 					</div>
 				</div>
@@ -324,15 +324,14 @@
 	<em class="b-copy">京ICP备 465789765 号 版权所有 &copy; 2016-2020 棒棒达       北京棒棒达科技有限公司</em>
 </footer>
 <!-- E footer -->
+<%--导入关键词--%>
+<!--S 提示-->
+<%--
 <div class="b-loading">
 	<div class="spinner" style="display:none">
 		<i class="prompt-txt" ><img src="${ctx}/resources/images/loading.gif" width="30" class="mr10 load-img" />正在导入，请稍候...</i>
 	</div>
 </div>
-
-<!-- S pop -->
-
-<!--S 提示-->
 <div class="j-import-pop modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog b-modal-dialog" role="document">
 		<div class="modal-content">
@@ -352,10 +351,9 @@
 		</div>
 	</div>
 </div>
-
 <!--E 提示-->
+--%>
 
-<!-- E pop -->
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=5LVr5CieSP2a11pR4sHAtWGU"></script>
 <!--加载鼠标绘制工具-->
 <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
@@ -512,7 +510,7 @@
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
-					showKeywordLabel(site.siteSrc);
+					//showKeywordLabel(site.siteSrc);
 					//设置地图中心点和放大级别
 					areaMap.centerAndZoom(center, zoom);
 					//显示站点和配送区域
@@ -530,16 +528,7 @@
 			}
 		});
 	}
-	//抢鲜生活需要隐藏导入地址关键词栏
-	function showKeywordLabel(siteSrc){
-		var obj = $("#keywordLabel");
-		//console.log("siteSrc=="+siteSrc+"  display=="+obj.css("display"));
-		if(siteSrc != "<%=SiteSrc.QXSH.toString()%>"){//显示
-			obj.show();
-		}else{//隐藏
-			obj.hide();
-		}
-	}
+
 	function loadSiteData(selectId, siteList){
 		var obj = $("#" + selectId);
 		//清空数据
@@ -1073,7 +1062,7 @@
 					var site = dataObject.site;
 					var center = getPointBySite(site);
 					var zoom = getMapZoom(site.deliveryArea);
-					showKeywordLabel(site.siteSrc);
+					//showKeywordLabel(site.siteSrc);
 					//设置地图中心点和放大级别
 					fenceObj.map.centerAndZoom(center, zoom);
 					//显示站点和围栏
@@ -1120,17 +1109,18 @@
 					"jsonStr" : jsonStr
 				},
 				success: function(data){
-					//console.log(data);
-					if(data.code == 0){
+					console.log(data);
+					ioutDiv(data.msg);
+					/*if(data.code == 0){
 						ioutDiv(data.msg);
 						//重新加载地图
 						//eFenceMapChangeSite(siteId);
 					}else{
 						ioutDiv('抱歉，电子围栏暂不支持交叉绘制');
-					}
+					}*/
 				},
 				error: function(){
-					ioutDiv('抱歉，电子围栏暂不支持交叉绘制');
+					ioutDiv('电子围栏保存失败，请刷新页面重试！');
 				}
 			});
 
@@ -1216,11 +1206,54 @@
 			}
 		}
 	}
+
+	//--------------------panel 2------------------------------------
+	// 地图全屏显示
+	parentE=$('#psrE',window.parent.document);
+	var winhei2=parentE.height();
+	var inithei=$("#fenceMap").height();
+	var winwid=window.screen.availWidth;
+	var bbd3=parentE.find(".bbd-md-3").width();
+	var initwid=winwid-bbd3-108;
+	$(".j-full-btn").on("click",function(){
+		var parentD=$('#psrE',window.parent.document);
+		if($(this).hasClass("b-forward-full")){
+			parentD.find(".i-hei").attr("scrolling","no");
+			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2});
+			parentD.find(".pos-footer").hide();
+			$("#fenceMap,.b-map").css({width:winwid,height:winhei2,marginLeft:"-10px"});
+			$(".j-full-div").css({left:"-16%"});
+			$(".b-f-screen,.pos-adr").css({right:"25px"});
+			$(".draw-btn").css({marginLeft:"-7px"})
+			$(".full-screen").addClass("full-map");
+			$(this).addClass("b-back-full").removeClass("b-forward-full");
+		}else{
+			parentD.find(".i-hei").attr("scrolling","auto");
+			parentD.find(".pos-footer").show();
+			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2-146});
+			$("#fenceMap,.b-map").css({width:initwid,height:inithei,margin:0});
+			$(".j-full-div").css({left:"0"});
+			$(".b-f-screen,.pos-adr").css({right:"15px"});
+			$(".draw-btn").css({marginLeft:"0"})
+			$(".full-screen").removeClass("full-map");
+			$(this).removeClass("b-back-full").addClass("b-forward-full");
+		}
+	});
 	/************************ 绘制电子围栏 ************* end **************************/
 
 	/************************ 导入地址关键词 ************* start **************************/
-
-		//绘制电子地图 === 初始化省市区下拉框
+	//抢鲜生活需要隐藏导入地址关键词栏
+	function showKeywordLabel(siteSrc){
+		var obj = $("#keywordLabel");
+		//console.log("siteSrc=="+siteSrc+"  display=="+obj.css("display"));
+		if(siteSrc != "<%=SiteSrc.QXSH.toString()%>"){//显示
+			obj.show();
+		}else{//隐藏
+			obj.hide();
+		}
+	}
+	/*
+		//导入地址关键词 === 初始化省市区下拉框
 	$("#keywordAddr").citySelect({
 		prov: "",
 		city: "",
@@ -1228,24 +1261,25 @@
 		nodata: "none"
 	});
 
-	//绘制电子地图 == 省改变
+	//导入地址关键词 == 省改变
 	$('#keywordAddr .prov').change(function(){
 		provChange(this.value, "keywordAddr");
 		//更新站点下拉框
 		getSiteListByAddr();
 	}) ;
-	//绘制电子地图 == 市改变
+	//导入地址关键词 == 市改变
 	$('#keywordAddr .city').change(function(){
 		cityChange(this.value, "keywordAddr");
 		//更新站点下拉框
 		getSiteListByAddr();
 	}) ;
-	//绘制电子地图 == 区改变
+	//导入地址关键词 == 区改变
 	$('#keywordAddr .dist').change(function(){
 		//更新站点下拉框
 		getSiteListByAddr();
 	}) ;
 
+	//加载下拉列表站点数据
 	function getSiteListByAddr(){
 		var  siteUrl = "<c:url value="/site/getSiteList"/>";
 		$.ajax({
@@ -1328,7 +1362,7 @@
 		format: 'YYYY/MM/DD'
 	});
 	$("#querySiteBtn").click(function(){
-		/*$("#siteKeywordForm").submit();*/
+		/!*$("#siteKeywordForm").submit();*!/
 		gotoPage(0);
 	})
 	//批量删除
@@ -1454,38 +1488,7 @@
 			}
 		});
 	}
-	//--------------------panel 2------------------------------------
-	// 地图全屏显示
-	parentE=$('#psrE',window.parent.document);
-	var winhei2=parentE.height();
-	var inithei=$("#fenceMap").height();
-	var winwid=window.screen.availWidth;
-	var bbd3=parentE.find(".bbd-md-3").width();
-	var initwid=winwid-bbd3-108;
-	$(".j-full-btn").on("click",function(){
-		var parentD=$('#psrE',window.parent.document);
-		if($(this).hasClass("b-forward-full")){
-			parentD.find(".i-hei").attr("scrolling","no");
-			parentD.find(".i-hei").css({zIndex:5,top:0,height:winhei2});
-			parentD.find(".pos-footer").hide();
-			$("#fenceMap,.b-map").css({width:winwid,height:winhei2,marginLeft:"-10px"});
-			$(".j-full-div").css({left:"-16%"});
-			$(".b-f-screen,.pos-adr").css({right:"25px"});
-			$(".draw-btn").css({marginLeft:"-7px"})
-			$(".full-screen").addClass("full-map");
-			$(this).addClass("b-back-full").removeClass("b-forward-full");
-		}else{
-			parentD.find(".i-hei").attr("scrolling","auto");
-			parentD.find(".pos-footer").show();
-			parentD.find(".i-hei").css({zIndex:3,top:"60px",height:winhei2-146});
-			$("#fenceMap,.b-map").css({width:initwid,height:inithei,margin:0});
-			$(".j-full-div").css({left:"0"});
-			$(".b-f-screen,.pos-adr").css({right:"15px"});
-			$(".draw-btn").css({marginLeft:"0"})
-			$(".full-screen").removeClass("full-map");
-			$(this).removeClass("b-back-full").addClass("b-forward-full");
-		}
-	})
+
 
 	//导出关键词
 	function exportKeyword() {
@@ -1493,10 +1496,7 @@
 		$("#between_expt").val($("#between").val());
 		$("#keyword_expt").val($("#keyword").val());
 		$("#exptForm").submit();
-	}
-
-
-
+	}*/
 	/************************ 导入地址关键词 ************* end **************************/
 
 </script>

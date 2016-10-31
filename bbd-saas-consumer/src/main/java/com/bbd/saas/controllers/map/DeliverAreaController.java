@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 配送区域
+ * 配送区域 -- 公司账号
  */
 @Controller
 @RequestMapping("/deliverArea")
@@ -92,8 +92,8 @@ public class DeliverAreaController {
 					}
 				}
 				/******************绘制电子围栏****************end****************/
-
-				/******************关键词*****************start****************/
+/*
+				*//******************关键词*****************start****************//*
 				//获取参数
 				String between = request.getParameter("between");
 				String keyword = StringUtil.initStr(request.getParameter("keyword"), "");
@@ -130,7 +130,9 @@ public class DeliverAreaController {
 				model.addAttribute("pageIndex", siteKeywordPage.getPage());
 				model.addAttribute("pageNum", siteKeywordPage.getPageNum());
 				model.addAttribute("pageCount", siteKeywordPage.getCount());
-				/******************关键词*****************end****************/
+				*//******************关键词*****************end****************//*
+			*/
+
 				//公共
 				model.addAttribute("siteList", siteVOList);
 				return "map/deliverAreaMap";
@@ -319,7 +321,7 @@ public class DeliverAreaController {
 
 
 	/**
-	 * 获取站点关键词
+	 * 获取站点关键词 --  不需要了
 	 * @param siteId 站点Id
 	 * @param request 请求
 	 * @return

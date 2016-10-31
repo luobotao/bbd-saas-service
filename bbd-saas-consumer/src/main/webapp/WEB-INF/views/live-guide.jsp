@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="com.bbd.poi.api.vo.SiteKeyword" %>
 <%@ page import="com.bbd.saas.enums.SiteType" %>
+<%@ page import="com.bbd.saas.enums.SiteSrc" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page session="false" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -34,7 +35,7 @@
 	<ul class="b-tit b-guide-tab">
 		<li class="guide-cur">01<span class="c-line">|</span>配送范围</li>
 		<li>02<span class="c-line">|</span>绘制电子围栏</li>
-		<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+		<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
 			<li >03<span class="c-line">|</span>导入地址关键词</li>
 		</c:if>
 	</ul>
@@ -87,8 +88,8 @@
 			<%
 				PageList<SiteKeyword> pageModel = (PageList<SiteKeyword>)request.getAttribute("keywordPage");
 			%>
-			<!-- S 导入地址关键词 只有快递柜才有此功能-->
-			<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+			<!-- S 导入地址关键词 只有非抢鲜生活的快递柜才有此功能-->
+			<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
 				<div class="clearfix step step3">
 					<div class="row pb20">
 						<form action="" method="post" id="siteKeywordForm" >
@@ -242,7 +243,7 @@
 	mcount = 0;
 	total = 0;
 	<c:choose>
-		<c:when test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+		<c:when test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
 			total = 3;
 		</c:when>
 		<c:otherwise>
@@ -610,8 +611,8 @@
 		return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
 	}
 
-	<!-- S 导入地址关键词 只有快递柜才有此功能-->
-	<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET}">
+	<!-- S 导入地址关键词 只有非抢鲜生活的快递柜才有此功能-->
+	<c:if test="${site.sitetype  == SiteType.EXPRESS_CABINET && site.siteSrc != SiteSrc.QXSH}">
 	//显示分页条
 		var pageStr = paginNavMin(<%=pageModel.getPage()%>, <%=pageModel.getPageNum()%>, <%=pageModel.getCount()%>);
 		$("#pagin").html(pageStr);

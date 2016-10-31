@@ -376,7 +376,7 @@
 								$("#mailNumP").html("重复扫描，此运单已经扫描过啦");
 								$("#mailNumP").attr("style", "color:red");
 							} else {
-								if (order.orderSetStatus != null && (order.orderSetStatus != "<%=OrderSetStatus.DRIVERSENDING%>" && order.orderSetStatus != "<%=OrderSetStatus.ARRIVED%>")) {
+								if (order.orderSetStatus != null && (order.orderSetStatus != "<%=OrderSetStatus.DRIVERSENDING%>" && order.orderSetStatus != "<%=OrderSetStatus.WAITDRIVERTOSEND%>" && order.orderSetStatus != "<%=OrderSetStatus.ARRIVED%>")) {
 									$("#mailNumP").html("请进行揽件入库操作");
 									$("#mailNumP").attr("style", "color:red");
 								} else {
@@ -457,7 +457,6 @@
 				dataType: "json",
 				data: {},
 				success: function(response){
-
 					if(response==null){
 						$("#parcelCodeP").html("【异常扫描】包裹号不存在") ;
 						$("#parcelCodeP").attr("style","color:red");

@@ -212,6 +212,10 @@ public class SiteManageController {
 		PostmanUser postmanUser = new PostmanUser();
 		String newPhone = siteForm.getPhone();
 		String oldPhone = "";
+		if(!Constants.BBD_COMPANYID.equals(userNow.getCompanyId())){//非棒棒达公司，保存时默认值下限单量和上限单量分别存为“50、300”
+			siteForm.setLowerlimit(50);
+			siteForm.setUpperlimit(300);
+		}
 		if (StringUtils.isNotBlank(siteForm.getAreaCode())) {//公司用户对站点进行修改
 			site = siteService.findSiteByAreaCode(siteForm.getAreaCode());//更新操作
 			oldPhone = site.getUsername();
