@@ -150,7 +150,7 @@ public class PackageToSiteController {
 		if(StringUtils.isNotBlank(mailNum)){//进行运单到站操作
 			Order order = orderService.findOneByMailNum(mailNum);
 			if(order!=null){
-				if(order.getAreaCode() != user.getSite().getAreaCode()){//跨站强制到站
+				if(!order.getAreaCode().equals(user.getSite().getAreaCode())){//跨站强制到站
 					order.setAreaCode(user.getSite().getAreaCode());
 					Site site = user.getSite();
 					order.setAreaRemark(commonService.getAddress(site.getProvince(), site.getCity(), site.getArea(), site.getAddress(), ""));
