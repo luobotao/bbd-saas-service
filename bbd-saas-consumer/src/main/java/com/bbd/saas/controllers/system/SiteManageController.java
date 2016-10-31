@@ -603,4 +603,16 @@ public class SiteManageController {
 		return 0;
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/updateLoaction", method = RequestMethod.POST)
+	public void updateLoaction() throws Exception {
+		List<Site> siteList = siteService.findAllSiteList();
+		siteList.forEach(site -> {
+			logger.info(site.getAreaCode());
+			setLatAndLng(site.getId().toHexString());
+		});
+
+	}
+
+
 }

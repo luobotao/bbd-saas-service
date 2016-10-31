@@ -1,13 +1,11 @@
 package com.bbd.saas.mongoModels;
 
-import com.bbd.saas.enums.ExpressExchangeStatus;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 站点编码转换
