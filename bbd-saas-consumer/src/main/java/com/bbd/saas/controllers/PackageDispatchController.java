@@ -194,15 +194,7 @@ public class PackageDispatchController {
 		Key<Order> r = orderService.save(order);
 		if(r != null){
 			saveOneOrUpdatePost(order, user);
-			if(!Srcs.PINHAOHUO.equals(order.getSrc())){
-				String oldUrl=longUrl_dispatch+order.getMailNum();
-				String shortUrl = ShortUrl.generateShortUrl(oldUrl);
-				logger.info(shortUrl);
-				//旧短信内容
-//				smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
-				//新短信内容
-				smsInfoService.sendToSendingNew(order.getSrcMessage(),order.getMailNum(),user.getLoginName(),shortUrl,order.getReciever().getPhone());
-			}
+			OrderCommon.sendSmsInfo(order, longUrl_dispatch, smsInfoService, user.getLoginName());
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())||Srcs.QIANGXIANSH.equals(order.getSrc())){
 				commonService.doSaveExpressExChange(order, user.getRealName(), user.getLoginName());
 			}

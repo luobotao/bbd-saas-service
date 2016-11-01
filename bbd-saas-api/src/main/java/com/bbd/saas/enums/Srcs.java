@@ -73,5 +73,9 @@ public enum Srcs {
         if(srcs != null){
             System.out.println(srcs.getMessage());
         }
+
+        if(Srcs.PINHAOHUO != srcs){
+            System.out.println("sendsms");
+        }
     }
 }

@@ -10,7 +10,6 @@ import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.enums.AuditStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
-import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.models.ExpressCompany;
 import com.bbd.saas.models.PostDelivery;
 import com.bbd.saas.mongoModels.*;
@@ -210,17 +209,7 @@ public class HandleAbnormalController {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 }*/
                 express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-                if(!Srcs.PINHAOHUO.equals(order.getSrc())){
-                    String oldUrl=longUrl_dispatch+order.getMailNum();
-                    String shortUrl = ShortUrl.generateShortUrl(oldUrl);
-                    logger.info("生成的短链："+shortUrl);
-                    //旧短信内容
-//                    smsInfoService.sendToSending(order.getSrc().getMessage(),order.getMailNum(),courier.getRealName(),courier.getLoginName(),contact,order.getReciever().getPhone());
-                    //新短信内容
-                    smsInfoService.sendToSendingNew(order.getSrcMessage(),order.getMailNum(),courier.getLoginName(),shortUrl,order.getReciever().getPhone());
-
-
-                }
+                OrderCommon.sendSmsInfo(order, longUrl_dispatch,smsInfoService, courier.getLoginName());
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
                 expressList.add(express);

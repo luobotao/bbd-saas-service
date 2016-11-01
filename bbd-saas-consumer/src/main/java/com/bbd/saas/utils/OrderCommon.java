@@ -1,9 +1,13 @@
 package com.bbd.saas.utils;
 
+import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.enums.ExpressStatus;
+import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.vo.Express;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +17,7 @@ import java.util.List;
  * Created by luobotao on 16/6/29.
  */
 public class OrderCommon {
+    public static final Logger logger = LoggerFactory.getLogger(OrderCommon.class);
     /**
      * 增加订单物流信息
      * @param expressStatus 物流状态
@@ -44,6 +49,22 @@ public class OrderCommon {
         if (expressIsNotAdd) {//防止多次添加
             expressList.add(express);
             order.setExpresses(expressList);
+        }
+    }
+
+    /**
+     * 发送短信
+     *
+     */
+    public static  void sendSmsInfo(Order order, String longUrl_dispatch, SmsInfoService smsInfoService, String courierPhone){
+        if(Srcs.PINHAOHUO != order.getSrc()){
+            String oldUrl=longUrl_dispatch+Base64.getBase64(order.getMailNum());
+            String shortUrl = ShortUrl.generateShortUrl(oldUrl);
+            logger.info("生成的短链："+shortUrl);
+            //旧短信内容
+//				smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
+            //新短信内容
+            smsInfoService.sendToSendingNew(order.getSrcMessage(),order.getMailNum(),courierPhone,shortUrl,order.getReciever().getPhone());
         }
     }
 }
