@@ -119,6 +119,22 @@ public class HandleAbnormalController {
             orderQueryVO.arriveBetween = arriveBetween;
             orderQueryVO.areaCode = user.getSite().getAreaCode();
             orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+            this.commonService.setCourierNameAndPhone(orderPage);
+            /*//查询派件员姓名电话
+            if (orderPage != null && orderPage.getDatas() != null) {
+                List<Order> dataList = orderPage.getDatas();
+                for (Order order : dataList) {
+                    if(StringUtil.isEmpty(order.getPostmanUser())){
+                        User courier = userService.findOne(order.getUserId());
+                        if (courier != null) {
+                            UserVO userVO = new UserVO();
+                            userVO.setLoginName(courier.getLoginName());
+                            userVO.setRealName(courier.getRealName());
+                            order.setUserVO(userVO);
+                        }
+                    }
+                }
+            }*/
         } catch (Exception e) {
             logger.error("===分页Ajax更新列表数据===出错:" + e.getMessage());
         }
@@ -335,6 +351,7 @@ public class HandleAbnormalController {
         orderQueryVO.areaCode = areaCode;
         //查询数据
         PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+        this.commonService.setCourierNameAndPhone(orderPage);
         return orderPage;
     }
     /**************************重新分派***************结束***********************************/

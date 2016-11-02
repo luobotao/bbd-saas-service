@@ -174,7 +174,6 @@ public class BbdExpressApiController {
 			try {
 				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
 				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
-
 				MapPoint mapPoint = geo.getGeoInfo(str);//起点地址
 				if (areaCodeList != null && areaCodeList.size() > 0) {
 					//通过积分获取优选区域码

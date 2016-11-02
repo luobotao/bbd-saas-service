@@ -128,6 +128,7 @@ public class PackageDispatchController {
 		pageModel.setPageNo(pageIndex);
 		pageModel.setPageSize(50);
 		PageModel<Order> orderPage = orderService.findPageOrders(pageModel, orderQueryVO);
+		this.commonService.setCourierNameAndPhone(orderPage);
 		return orderPage;
 	}
 	/**

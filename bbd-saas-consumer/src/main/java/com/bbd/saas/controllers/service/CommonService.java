@@ -2,6 +2,7 @@ package com.bbd.saas.controllers.service;
 
 import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderParcelService;
+import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliverySmsLogService;
 import com.bbd.saas.api.mysql.PostmanUserService;
@@ -11,9 +12,13 @@ import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.models.PostDeliverySmsLog;
 import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Base64;
+import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.utils.ShortUrl;
+import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.Express;
+import com.bbd.saas.vo.UserVO;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,6 +43,8 @@ public class CommonService {
     PostmanUserService postmanUserService;
     @Autowired
     OrderParcelService orderParcelService;
+    @Autowired
+    UserService userService;
     @Autowired
     ExpressExchangeService expressExchangeService;
     @Autowired
@@ -207,5 +214,30 @@ public class CommonService {
             //新短信内容
             this.smsInfoService.sendToSendingNew2(order.getSrcMessage(),order.getMailNum(),courierPhone,shortUrl,order.getReciever().getPhone());
         }
+    }
+
+    /**
+     * 设置派件员快递和电话
+     */
+    public PageModel<Order> setCourierNameAndPhone(PageModel<Order> orderPage){
+        //设置派件员快递和电话
+        if(orderPage != null && orderPage.getDatas() != null){
+            List<Order> dataList = orderPage.getDatas();
+            User courier = null;
+            UserVO userVO = null;
+            for(Order order : dataList){
+                if(StringUtil.isEmpty(order.getPostmanUser())){
+                    //设置派件员快递和电话
+                    courier = userService.findOne(order.getUserId());
+                    if(courier != null){
+                        userVO = new UserVO();
+                        userVO.setLoginName(courier.getLoginName());
+                        userVO.setRealName(courier.getRealName());
+                        order.setUserVO(userVO);
+                    }
+                }
+            }
+        }
+        return orderPage;
     }
 }

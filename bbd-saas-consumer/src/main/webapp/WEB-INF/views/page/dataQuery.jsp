@@ -133,15 +133,25 @@
 									%>
 									<%-- 签收时间  end --%>
 									<%
-										if(order.getUserId() == null || order.getPostmanUser() == null){//未分派
+										if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
 									%>
 											<td></td>
 											<td></td>
 									<%
-										}else{
+										}else if(order.getPostmanUser() != null && !"".equals(order.getPostmanUser())){//分派
 									%>
 											<td><%=order.getPostmanUser()%></td>
 											<td><%=order.getPostmanPhone()%></td>
+									<%
+									    }else if(order.getUserVO() != null){//分派
+									%>
+											<td><%=order.getUserVO().getRealName()%></td>
+											<td><%=order.getUserVO().getLoginName()%></td>
+									<%
+										}else{
+									%>
+											<td></td>
+											<td></td>
 									<%
 										}
 										//样式
@@ -316,12 +326,18 @@ function getRowHtml(data){
 	}
 	<%-- 签收时间  end --%>
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userId == null || data.postmanUser == null){//未分派||派件员没有查询到
+	if(data.userId == null || data.userId == ""){//未分派||派件员没有查询到
 		row += "<td></td><td></td>";
-	}else{
+	}else if(data.postmanUser != null && data.postmanUser != ""){
 		row += "<td>" + data.postmanUser + "</td>";
 		row += "<td>" + data.postmanPhone + "</td>";
+	}else if(data.userVO != null && data.userVO != ""){
+		row += "<td>" + data.userVO.realName + "</td>";
+		row += "<td>" + data.userVO.loginName + "</td>";
+	}else{
+		row += "<td></td><td></td>";
 	}
+
 	//状态
 	row += "<td><em class='" + getStatusCss(data.orderStatus) + "'>" + data.orderStatusMsg + "</em></td>";
 	row += "<td><a href='<%=path%>/dataQuery/getOrderMail?mailNum=" + data.mailNum + "' target='_blank' class='orange'>查看物流信息 </a></td>";

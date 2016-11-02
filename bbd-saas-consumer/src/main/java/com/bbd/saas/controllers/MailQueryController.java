@@ -127,6 +127,15 @@ public class MailQueryController {
 					order.setParcelCode(parcelCodeTemp);//设置包裹号*/
 					//站点名称
 					order.setAreaName(siteMap.get(order.getAreaCode()));
+					if(StringUtil.isEmpty(order.getPostmanUser())){
+						courier = userService.findOne(order.getUserId());
+						if(courier != null){
+							userVO = new UserVO();
+							userVO.setLoginName(courier.getLoginName());
+							userVO.setRealName(courier.getRealName());
+							order.setUserVO(userVO);
+						}
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -264,6 +273,15 @@ public class MailQueryController {
 					if(StringUtil.isNotEmpty(order.getUserId()) && StringUtil.isNotEmpty(order.getPostmanUser())){
 						row.add(order.getPostmanUser());
 						row.add(order.getPostmanPhone());
+					}else if(StringUtil.isNotEmpty(order.getUserId())){
+						User courier = userService.findOne(order.getUserId());
+						if(courier != null){
+							row.add(courier.getRealName());
+							row.add(courier.getLoginName());
+						}else{
+							row.add("");
+							row.add("");
+						}
 					}else{
 						row.add("");
 						row.add("");

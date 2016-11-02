@@ -4,6 +4,7 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.controllers.service.CommonService;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
@@ -41,14 +42,15 @@ public class UpdateOrderStatusController {
 	UserService userService;
 	@Autowired
 	AdminService adminService;
+	@Autowired
+	CommonService commonService;
 	
 	/**
 	 * Description: 跳转到包裹分派页面
 	 * @param pageIndex 当前页
 	 * @param status 状态
 	 * @param arriveBetween 到站时间
-	 * @param courier 派件员
-	 * @param redirectAttrs
+	 * @param courierId 派件员
 	 * @param model
 	 * @return
 	 * @author: liyanlei
@@ -85,6 +87,7 @@ public class UpdateOrderStatusController {
 		orderQueryVO.areaCode = user.getSite().getAreaCode();
 		//查询数据
 		PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+		this.commonService.setCourierNameAndPhone(orderPage);
 		return orderPage;
 	}
 	
@@ -145,6 +148,7 @@ public class UpdateOrderStatusController {
 				orderQueryVO.areaCode = currUser.getSite().getAreaCode();
 				//查询数据
 				PageModel<Order> orderPage = orderService.findPageOrders(0, orderQueryVO);
+				this.commonService.setCourierNameAndPhone(orderPage);
 				map.put("orderPage", orderPage); 
 			}else{
 				map.put("operFlag", 3);//3:分派失败

@@ -84,15 +84,25 @@
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getPostmanUser()==null ||order.getUserId() == null && !"".equals(order.getUserId())){//未分派
+									if(order.getUserId() == null || "".equals(order.getUserId())){//未分派
 								%>
-								<td></td>
-								<td></td>
+									<td></td>
+									<td></td>
 								<%
-								}else{
+									}else if(order.getPostmanUser() != null && !"".equals(order.getPostmanUser())){//分派
 								%>
-								<td><%=order.getPostmanUser()%></td>
-								<td><%=order.getPostmanPhone()%></td>
+									<td><%=order.getPostmanUser()%></td>
+									<td><%=order.getPostmanPhone()%></td>
+								<%
+									}else if(order.getUserVO() != null){//分派
+								%>
+									<td><%=order.getUserVO().getRealName()%></td>
+									<td><%=order.getUserVO().getLoginName()%></td>
+								<%
+									}else{
+								%>
+									<td></td>
+									<td></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.RETENTION || order.getOrderStatus() == null){
@@ -355,12 +365,18 @@
 		 row += "<td>" + data.user.loginName + "</td>";
 		 */
 		//派件员==未分派，不需要显示派件员姓名和电话
-		if(data.userId == null || data.postmanUser == null){//未分派||派件员没有查询到
+		if(data.userId == null){//未分派||派件员没有查询到
 			row += "<td></td><td></td>";
-		}else{
+		}else if(data.postmanUser != null && data.postmanUser != ""){
 			row += "<td>" + data.postmanUser + "</td>";
 			row += "<td>" + data.postmanPhone + "</td>";
+		}else if(data.userVO != null && data.userVO != ""){
+			row += "<td>" + data.userVO.realName + "</td>";
+			row += "<td>" + data.userVO.loginName + "</td>";
+		}else{
+			row += "<td></td><td></td>";
 		}
+
 		//状态
 		if(data.orderStatus == "<%=OrderStatus.RETENTION %>" || data.orderStatus==null){
 			row += "<td><%=AbnormalStatus.RETENTION.getMessage()%></td>";

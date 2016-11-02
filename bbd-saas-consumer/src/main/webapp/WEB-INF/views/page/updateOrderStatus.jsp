@@ -315,12 +315,18 @@ function getRowHtml(data){
 	row += "<td>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userId == null || data.postmanUser == null){//未分派||派件员没有查询到
+	if(data.userId == null){//未分派||派件员没有查询到
 		row += "<td></td><td></td>";
-	}else{
+	}else if(data.postmanUser != null && data.postmanUser != ""){
 		row += "<td>" + data.postmanUser + "</td>";
 		row += "<td>" + data.postmanPhone + "</td>";
+	}else if(data.userVO != null && data.userVO != ""){
+		row += "<td>" + data.userVO.realName + "</td>";
+		row += "<td>" + data.userVO.loginName + "</td>";
+	}else{
+		row += "<td></td><td></td>";
 	}
+
 	//状态
 	row += "<td>" + getStatus(data.orderStatus) + "</td>";
 	row += "</tr>";

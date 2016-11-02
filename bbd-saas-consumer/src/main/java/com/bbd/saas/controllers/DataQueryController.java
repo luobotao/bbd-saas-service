@@ -9,6 +9,7 @@ import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostcompanyService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.controllers.service.CommonService;
 import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.models.Postcompany;
 import com.bbd.saas.mongoModels.AdminUser;
@@ -44,6 +45,8 @@ public class DataQueryController {
 	OrderService orderService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	CommonService commonService;
 	@Autowired
 	AdminService adminService;
 	@Autowired
@@ -130,6 +133,25 @@ public class DataQueryController {
 				orderQueryVO.orderStatusList = orderStatusList;
 			}
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
+			this.commonService.setCourierNameAndPhone(orderPage);
+			/*//设置派件员快递和电话
+			if(orderPage != null && orderPage.getDatas() != null){
+				List<Order> dataList = orderPage.getDatas();
+				User courier = null;
+				UserVO userVO = null;
+				for(Order order : dataList){
+					if(StringUtil.isEmpty(order.getPostmanUser())){
+						//设置派件员快递和电话
+						courier = userService.findOne(order.getUserId());
+						if(courier != null){
+							userVO = new UserVO();
+							userVO.setLoginName(courier.getLoginName());
+							userVO.setRealName(courier.getRealName());
+							order.setUserVO(userVO);
+						}
+					}
+				}
+			}*/
 		} catch (Exception e) {
 			logger.error("===分页查询，Ajax查询列表数据===出错:" + e.getMessage());
 		}
@@ -287,6 +309,15 @@ public class DataQueryController {
 					if(StringUtil.isNotEmpty(order.getUserId()) && StringUtil.isNotEmpty(order.getPostmanUser())){
 						row.add(order.getPostmanUser());
 						row.add(order.getPostmanPhone());
+					}else if(StringUtil.isNotEmpty(order.getUserId())){
+						User courier = userService.findOne(order.getUserId());
+						if(courier != null){
+							row.add(courier.getRealName());
+							row.add(courier.getLoginName());
+						}else{
+							row.add("");
+							row.add("");
+						}
 					}else{
 						row.add("");
 						row.add("");
@@ -317,6 +348,14 @@ public class DataQueryController {
 		} catch (Exception e) {
 			logger.error("===数据导出===出错:" + e.getMessage());
 		}
-	
+	}
+
+	void setCourier(String userId, List<String> row){
+		if(userId == null || "".equals(userId)){
+			row.add("");
+			row.add("");
+		}else{
+
+		}
 	}
 }
