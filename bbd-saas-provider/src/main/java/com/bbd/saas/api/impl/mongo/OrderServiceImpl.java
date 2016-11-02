@@ -280,15 +280,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PageModel<Order> findPageOrders(Integer pageIndex, OrderQueryVO orderQueryVO) {
-        /*if (orderQueryVO == null) {
+        if (orderQueryVO == null) {
             return null;
         }
         PageModel<Order> pageModel = new PageModel<Order>();
         pageModel.setPageNo(pageIndex);
-        return orderDao.findPageOrders(pageModel, orderQueryVO);*/
-        PageModel<Order> pageModel = new PageModel<Order>();
-        pageModel.setPageNo(pageIndex);
-        return orderDao.findAllPageOrders(pageModel);
+        return orderDao.findPageOrders(pageModel, orderQueryVO);
     }
 
     @Override
