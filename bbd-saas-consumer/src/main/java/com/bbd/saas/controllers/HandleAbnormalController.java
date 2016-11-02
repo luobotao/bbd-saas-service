@@ -5,8 +5,8 @@ import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.*;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
-import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.controllers.service.CommonService;
 import com.bbd.saas.enums.AuditStatus;
 import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.enums.OrderStatus;
@@ -62,7 +62,7 @@ public class HandleAbnormalController {
     @Autowired
     ExpressCompanyService expressCompanyService;
     @Autowired
-    SmsInfoService smsInfoService;
+    CommonService commonService;
 
     @Value("${bbd.contact}")
     private String contact;
@@ -209,7 +209,8 @@ public class HandleAbnormalController {
                     express.setRemark("配送员正在为您重新派件，预计明天12:00前送达，请注意查收。配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
                 }*/
                 express.setRemark("配送员正在为您重新派件，配送员电话：" + courier.getRealName() + " " + courier.getLoginName());
-                OrderCommon.sendSmsInfo(order, longUrl_dispatch,smsInfoService, courier.getLoginName());
+                commonService.sendSmsInfo(order, longUrl_dispatch, courier.getLoginName());
+                //OrderCommon.sendSmsInfo(order, longUrl_dispatch,smsInfoService, courier.getLoginName(), postDeliverySmsLogService);
                 express.setLat(currUser.getSite().getLat());//站点经纬度
                 express.setLon(currUser.getSite().getLng());
                 expressList.add(express);

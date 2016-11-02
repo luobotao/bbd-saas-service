@@ -49,6 +49,7 @@
     <dubbo:reference id="userMysqlService" interface="com.bbd.saas.api.mysql.PostmanUserService"/>
     <dubbo:reference id="postcompanyService" interface="com.bbd.saas.api.mysql.PostcompanyService"/>
     <dubbo:reference id="postDeliveryService" interface="com.bbd.saas.api.mysql.PostDeliveryService"/>
+    <dubbo:reference id="postDeliverySmsLogService" interface="com.bbd.saas.api.mysql.PostDeliverySmsLogService"/>
     <dubbo:reference id="openUserMysqlService" interface="com.bbd.saas.api.mysql.OpenUserService"/>
     <dubbo:reference id="smsInfoService" interface="com.bbd.saas.api.mysql.SmsInfoService"/>
     <dubbo:reference id="orderLogService" interface="com.bbd.saas.api.mysql.OrderLogService"/>

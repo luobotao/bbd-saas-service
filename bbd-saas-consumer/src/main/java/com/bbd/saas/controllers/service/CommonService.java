@@ -3,11 +3,16 @@ package com.bbd.saas.controllers.service;
 import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mysql.ExpressCompanyService;
+import com.bbd.saas.api.mysql.PostDeliverySmsLogService;
 import com.bbd.saas.api.mysql.PostmanUserService;
+import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.Srcs;
+import com.bbd.saas.models.PostDeliverySmsLog;
 import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
+import com.bbd.saas.utils.Base64;
+import com.bbd.saas.utils.ShortUrl;
 import com.bbd.saas.vo.Express;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +42,10 @@ public class CommonService {
     ExpressExchangeService expressExchangeService;
     @Autowired
     ExpressCompanyService expressCompanyService;
+    @Autowired
+    SmsInfoService smsInfoService;
+    @Autowired
+    PostDeliverySmsLogService postDeliverySmsLogService;
 
     @Value("${EPREE100_KEY}")
     private String EPREE100_KEY ;
@@ -175,5 +184,28 @@ public class CommonService {
         return address_SB.toString();
     }
 
-
+    /**
+     * 发送短信
+     *
+     */
+    public void sendSmsInfo(Order order, String longUrl_dispatch, String courierPhone){
+        if(Srcs.PINHAOHUO != order.getSrc()){
+            String oldUrl=longUrl_dispatch+ Base64.getBase64(order.getMailNum());
+            String shortUrl = ShortUrl.generateShortUrl(oldUrl);
+            logger.info("生成的短链："+shortUrl);
+            //写短信发送日志
+            PostDeliverySmsLog postDeliverySmsLog = new PostDeliverySmsLog();
+            postDeliverySmsLog.setDate_new(new Date());
+            postDeliverySmsLog.setPhone(order.getReciever().getPhone());
+            postDeliverySmsLog.setMailnum(order.getMailNum());
+            postDeliverySmsLog.setBase64num(Base64.getBase64(order.getMailNum()));
+            postDeliverySmsLog.setUrl(oldUrl);
+            postDeliverySmsLog.setShorturl(shortUrl);
+            this.postDeliverySmsLogService.add(postDeliverySmsLog);
+            //旧短信内容
+            //smsInfoService.sendToSending(order.getSrcMessage(),order.getMailNum(),user.getRealName(),user.getLoginName(),contact,order.getReciever().getPhone());
+            //新短信内容
+            this.smsInfoService.sendToSendingNew2(order.getSrcMessage(),order.getMailNum(),courierPhone,shortUrl,order.getReciever().getPhone());
+        }
+    }
 }

@@ -145,6 +145,11 @@
             <ref bean="postDeliveryDao"/>
         </property>
     </bean>
+    <bean id="postDeliverySmsLogService" class="com.bbd.saas.api.impl.mysql.PostDeliverySmsLogServiceImpl">
+        <property name="postDeliverySmsLogDao">
+            <ref bean="postDeliverySmsLogDao"/>
+        </property>
+    </bean>
     <bean id="openUserService" class="com.bbd.saas.api.impl.mysql.OpenUserServiceImpl">
         <property name="openUserDao">
             <ref bean="openUserDao"/>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.PostDeliverySmsLogDao">
+    <resultMap id="baseResultMap" type="com.bbd.saas.models.PostDeliverySmsLog">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="date_new" property="date_new" jdbcType="TIMESTAMP"/>
+		<result column="phone" property="phone" jdbcType="VARCHAR"/>
+		<result column="mailnum" property="mailnum" jdbcType="VARCHAR"/>
+		<result column="base64num" property="base64num" jdbcType="VARCHAR"/>
+		<result column="url" property="url" jdbcType="VARCHAR"/>
+		<result column="shorturl" property="shorturl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+	<sql id="baseColumnList">
+    	id,
+    	date_new,
+		phone,
+		mailnum,
+		base64num,
+		url,
+		shorturl
+    </sql>
+	<!-- 插入一条记录  开始  -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.bbd.saas.models.PostDeliverySmsLog" >
+		INSERT INTO `post_deliverysms_log`(
+		<include refid="baseColumnList"/>
+		)
+		VALUES (
+		#{id},
+		#{date_new},
+		#{phone},
+		#{mailnum},
+		#{base64num},
+		#{url},
+		#{shorturl}
+		)
+	</insert>
+	<!-- 插入一条记录  结束  -->
+
+	<!-- 查询指定运单号的记录的条数  结束   -->
+	<select id="selectCountByMailNum" resultType="java.lang.Integer"> <!-- resultType="_int" -->
+		SELECT COUNT(*) FROM `post_deliverysms_log`  WHERE mailnum = #{mailnum}
+	</select>
+	<!-- 查询指定运单号的记录的条数  结束   -->
+
+	<!-- 通过id查询记录  开始  -->
+	<select id="selectOneById" resultMap="baseResultMap">
+		SELECT <include refid="baseColumnList"/>
+		FROM `post_deliverysms_log` where id = #{id}
+	</select>
+	<!-- 通过id查询记录  结束  -->
+
+	<!-- 通过运单号查询记录  开始  -->
+	<select id="selectOneByMailNum" resultMap="baseResultMap">
+		SELECT * FROM `post_deliverysms_log` where mailnum = #{mailnum}
+	</select>
+	<!-- 通过运单号查询记录  结束  -->
+</mapper>

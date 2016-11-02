@@ -5,7 +5,6 @@ import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderService;
 import com.bbd.saas.api.mongo.UserService;
 import com.bbd.saas.api.mysql.PostDeliveryService;
-import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.UserSession;
 import com.bbd.saas.controllers.service.CommonService;
 import com.bbd.saas.enums.ExpressStatus;
@@ -56,8 +55,6 @@ public class PackageDispatchController {
 	PostDeliveryService postDeliveryService;
 	@Autowired
 	ExpressExchangeService expressExchangeService;
-	@Autowired
-	SmsInfoService smsInfoService;
 	@Autowired
 	CommonService commonService;
 	@Value("${bbd.contact}")
@@ -194,7 +191,8 @@ public class PackageDispatchController {
 		Key<Order> r = orderService.save(order);
 		if(r != null){
 			saveOneOrUpdatePost(order, user);
-			OrderCommon.sendSmsInfo(order, longUrl_dispatch, smsInfoService, user.getLoginName());
+			commonService.sendSmsInfo(order, longUrl_dispatch, user.getLoginName());
+			//OrderCommon.sendSmsInfo(order, longUrl_dispatch, smsInfoService, user.getLoginName(), postDeliverySmsLogService);
 			if(Srcs.DANGDANG.equals(order.getSrc())||Srcs.PINHAOHUO.equals(order.getSrc())||Srcs.DDKY.equals(order.getSrc())||Srcs.QIANGXIANSH.equals(order.getSrc())){
 				commonService.doSaveExpressExChange(order, user.getRealName(), user.getLoginName());
 			}

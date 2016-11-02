@@ -170,8 +170,13 @@ public class SmsInfoServiceImpl implements SmsInfoService {
         saveSmsInfo(args, receiverPhone, tpl_id, type);
     }
 
-
-
+    @Override
+    public void sendToSendingNew2(String src, String mailnum, String phone, String url, String receiverPhone) {
+        String args = "#src#=" + src + "&#mailnum#=" + mailnum + "&#url#=" + url;
+        String tpl_id = "1616440";
+        String type = "1";
+        saveSmsInfo(args, receiverPhone, tpl_id, type);
+    }
 
     public void saveSmsInfo(String args, String phone, String tpl_id, String type) {
         logger.info("args is " + args + "; Phone is " + phone + ";tpl_id is " + tpl_id);
