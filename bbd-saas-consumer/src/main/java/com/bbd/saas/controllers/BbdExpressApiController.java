@@ -150,7 +150,11 @@ public class BbdExpressApiController {
 	@RequestMapping(value="/getDistance")
 	@ResponseBody
 	public String getDistance(String city, String start, String ends) throws IOException {
+		if(start == null || ends == null){
+			return "0";
+		}
 		logger.info("getDistance with info, city:"+city+" start:"+start+" ends:"+ends);
+		//getDistance with info, city:北京市 start:{"lng":"116.31807926386","lat":"39.938949605151"} ends:[{"lng":"116.337341","lat":"39.949164"}]
 		Gson gson = new Gson();
 		MapPoint mapPoint  = gson.fromJson(start, MapPoint.class);
 		List<MapPoint> mapPointList = gson.fromJson(ends, new TypeToken<List<MapPoint>>(){}.getType());
