@@ -133,15 +133,15 @@
 									%>
 									<%-- 签收时间  end --%>
 									<%
-										if(order.getUserVO() == null){//未分派
+										if(order.getUserId() == null || order.getPostmanUser() == null){//未分派
 									%>
 											<td></td>
 											<td></td>
 									<%
 										}else{
 									%>
-											<td><%=order.getUserVO().getRealName()%></td>
-											<td><%=order.getUserVO().getLoginName()%></td>
+											<td><%=order.getPostmanUser()%></td>
+											<td><%=order.getPostmanPhone()%></td>
 									<%
 										}
 										//样式
@@ -316,11 +316,11 @@ function getRowHtml(data){
 	}
 	<%-- 签收时间  end --%>
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userVO==null){//未分派||派件员没有查询到
+	if(data.userId == null || data.postmanUser == null){//未分派||派件员没有查询到
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.userVO.realName + "</td>";
-		row += "<td>" + data.userVO.loginName + "</td>";
+		row += "<td>" + data.postmanUser + "</td>";
+		row += "<td>" + data.postmanPhone + "</td>";
 	}
 	//状态
 	row += "<td><em class='" + getStatusCss(data.orderStatus) + "'>" + data.orderStatusMsg + "</em></td>";

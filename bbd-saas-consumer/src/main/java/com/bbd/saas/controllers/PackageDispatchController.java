@@ -128,11 +128,6 @@ public class PackageDispatchController {
 		pageModel.setPageNo(pageIndex);
 		pageModel.setPageSize(50);
 		PageModel<Order> orderPage = orderService.findPageOrders(pageModel, orderQueryVO);
-		//查询派件员姓名电话
-		if(orderPage != null && orderPage.getDatas() != null){
-			List<Order> orderList = formatOrder(orderPage.getDatas()) ;
-			orderPage.setDatas(orderList);
-		}
 		return orderPage;
 	}
 	/**
@@ -182,6 +177,8 @@ public class PackageDispatchController {
 
 		//运单分派给派件员
 		order.setUserId(user.getId().toString());
+		order.setPostmanUser(user.getRealName());
+		order.setPostmanPhone(user.getLoginName());
 		//更新物流信息
 		setOrderExpress(order, user);
 		//更新运单状态--已分派
@@ -379,28 +376,6 @@ public class PackageDispatchController {
 		}
 		return userVoList;
 	}
-
-
-	/**
-	 * 格式化orderList给item加入用户信息
-	 * @param orderList
-	 * @return
-     */
-	public List<Order> formatOrder(List<Order> orderList){
-		User courier = null;
-		UserVO userVO = null;
-		for(Order order1 : orderList){
-			courier = userService.findOne(order1.getUserId());
-			if(courier!=null){
-				userVO = new UserVO();
-				userVO.setLoginName(courier.getLoginName());
-				userVO.setRealName(courier.getRealName());
-				order1.setUserVO(userVO);
-			}
-		}
-		return orderList;
-	}
-
 	/**
 	 * 运单取消分派
 	 * @param mailNum 运单号
@@ -484,6 +459,8 @@ public class PackageDispatchController {
 	private Map<String, Object> saveOrderMail(Order order, User currUser, Map<String, Object> map){
 		//运单分派给派件员
 		order.setUserId(null);
+		order.setPostmanUser(null);
+		order.setPostmanPhone(null);
 		//更新物流信息
 		//OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, currUser, "取消分派");
 		//更新运单状态--未分派

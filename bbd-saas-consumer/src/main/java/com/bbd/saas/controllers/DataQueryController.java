@@ -130,22 +130,6 @@ public class DataQueryController {
 				orderQueryVO.orderStatusList = orderStatusList;
 			}
 			orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-			//设置派件员快递和电话
-			if(orderPage != null && orderPage.getDatas() != null){
-				List<Order> dataList = orderPage.getDatas();
-				User courier = null;
-				UserVO userVO = null;
-				for(Order order : dataList){
-					//设置派件员快递和电话
-					courier = userService.findOne(order.getUserId());
-					if(courier != null){
-						userVO = new UserVO();
-						userVO.setLoginName(courier.getLoginName());
-						userVO.setRealName(courier.getRealName());
-						order.setUserVO(userVO);
-					}
-				}
-			}
 		} catch (Exception e) {
 			logger.error("===分页查询，Ajax查询列表数据===出错:" + e.getMessage());
 		}
@@ -299,7 +283,14 @@ public class DataQueryController {
 						row.add("");
 					}
 					//签收时间  end
-					setCourier(order.getUserId(), row);
+					//派件员
+					if(StringUtil.isNotEmpty(order.getUserId()) && StringUtil.isNotEmpty(order.getPostmanUser())){
+						row.add(order.getPostmanUser());
+						row.add(order.getPostmanPhone());
+					}else{
+						row.add("");
+						row.add("");
+					}
 					if(order.getOrderStatus() == null){
 						row.add("未到站");
 					}else{
@@ -327,22 +318,5 @@ public class DataQueryController {
 			logger.error("===数据导出===出错:" + e.getMessage());
 		}
 	
-	}	
-	
-	void setCourier(String userId, List<String> row){
-		if(userId == null || "".equals(userId)){
-			row.add("");
-			row.add("");
-		}else{
-			User courier = userService.findOne(userId);
-			if(courier != null){
-				row.add(courier.getRealName());
-				row.add(courier.getLoginName());
-			}else{
-				row.add("");
-				row.add("");
-			}
-		}
 	}
-
 }

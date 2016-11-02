@@ -390,6 +390,21 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         return pageModel;
     }
 
+    public PageModel<Order> findAllPageOrders(PageModel<Order> pageModel) {
+        //设置查询条件
+        Query<Order> query =  createQuery();
+        query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        query.filter("userId <>", null).filter("userId <>", "");//运单号不能为空
+        //总数量
+        pageModel.setTotalCount(count());
+        //分页信息
+        //query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
+
+        //查询数据
+        pageModel.setDatas(find(query).asList());
+        return pageModel;
+    }
+
     public List<Order> findOrders(OrderQueryVO orderQueryVO) {
         //设置查询条件,并按照更新时间倒叙
         Query<Order> query = getQuery(orderQueryVO);

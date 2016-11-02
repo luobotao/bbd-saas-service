@@ -136,15 +136,15 @@
 								<td class="tl"><%=order.getReciever().getProvince()%> <%=order.getReciever().getCity()%> <%=order.getReciever().getArea()%> <%=order.getReciever().getAddress()%></td>
 								<td><%=Dates.formatDateTime_New(order.getDateArrived())%></td>
 								<%
-									if(order.getUserVO()==null){//未分派||派件员没有查询到
+									if(order.getUserId() == null || order.getPostmanUser() == null){//未分派||派件员没有查询到
 								%>
 										<td></td>
 										<td></td>
 								<%
 									}else{
 								%>
-										<td><%=order.getUserVO().getRealName()%></td>
-										<td><%=order.getUserVO().getLoginName()%></td>
+										<td><%=order.getPostmanUser()%></td>
+										<td><%=order.getPostmanPhone()%></td>
 								<%
 									}
 									if(order.getOrderStatus() == OrderStatus.NOTDISPATCH){
@@ -474,11 +474,11 @@ function getRowHtml(data){
 	row += "<td class='tl'>" + data.reciever.province + data.reciever.city + data.reciever.area + data.reciever.address + "</td>";
 	row += "<td>" + getDate1(data.dateArrived) + "</td>";
 	//派件员==未分派，不需要显示派件员姓名和电话
-	if(data.userVO == null){//未分派||派件员没有查询到
+	if(data.userId == null || data.postmanUser == null){//未分派||派件员没有查询到
 		row += "<td></td><td></td>";
 	}else{
-		row += "<td>" + data.userVO.realName + "</td>";
-		row += "<td>" + data.userVO.loginName + "</td>";
+		row += "<td>" + data.postmanUser + "</td>";
+		row += "<td>" + data.postmanPhone + "</td>";
 	}
 	//状态
 	if(data.orderStatus == "<%=OrderStatus.NOTDISPATCH %>" || data.orderStatus==null){

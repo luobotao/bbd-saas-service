@@ -108,6 +108,13 @@ public interface OrderService {
      */
     PageModel<Order> findPageOrders(PageModel<Order> pageModel, OrderQueryVO orderQueryVO);
 
+    /**
+     * 分页查询所有运单
+     * @param pageModel
+     * @return
+     */
+    PageModel<Order> findAllPageOrders(PageModel<Order> pageModel);
+
 
     /**
      * 保存或者更新订单

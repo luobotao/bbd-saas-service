@@ -127,13 +127,6 @@ public class MailQueryController {
 					order.setParcelCode(parcelCodeTemp);//设置包裹号*/
 					//站点名称
 					order.setAreaName(siteMap.get(order.getAreaCode()));
-					courier = userService.findOne(order.getUserId());
-					if(courier != null){
-						userVO = new UserVO();
-						userVO.setLoginName(courier.getLoginName());
-						userVO.setRealName(courier.getRealName());
-						order.setUserVO(userVO);
-					}
 				}
 			}
 		} catch (Exception e) {
@@ -267,8 +260,14 @@ public class MailQueryController {
 					}else{
 						row.add("");
 					}
-					//签收时间  end
-					setCourier(order.getUserId(), row);
+					//派件员
+					if(StringUtil.isNotEmpty(order.getUserId()) && StringUtil.isNotEmpty(order.getPostmanUser())){
+						row.add(order.getPostmanUser());
+						row.add(order.getPostmanPhone());
+					}else{
+						row.add("");
+						row.add("");
+					}
 					if(order.getOrderStatus() == null){
 						row.add("未到站");
 					}else{
@@ -298,26 +297,4 @@ public class MailQueryController {
 		}
 	
 	}
-
-	/**
-	 * 设置订单的派件员信息
-	 * @param userId
-	 * @param row
-     */
-	private void setCourier(String userId, List<String> row){
-		if(userId == null || "".equals(userId)){
-			row.add("");
-			row.add("");
-		}else{
-			User courier = userService.findOne(userId);
-			if(courier != null){
-				row.add(courier.getRealName());
-				row.add(courier.getLoginName());
-			}else{
-				row.add("");
-				row.add("");
-			}
-		}
-	}
-
 }

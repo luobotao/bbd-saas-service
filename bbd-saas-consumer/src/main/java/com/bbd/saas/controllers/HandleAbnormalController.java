@@ -119,19 +119,6 @@ public class HandleAbnormalController {
             orderQueryVO.arriveBetween = arriveBetween;
             orderQueryVO.areaCode = user.getSite().getAreaCode();
             orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-            //查询派件员姓名电话
-            if (orderPage != null && orderPage.getDatas() != null) {
-                List<Order> dataList = orderPage.getDatas();
-                for (Order order : dataList) {
-                    User courier = userService.findOne(order.getUserId());
-                    if (courier != null) {
-                        UserVO userVO = new UserVO();
-                        userVO.setLoginName(courier.getLoginName());
-                        userVO.setRealName(courier.getRealName());
-                        order.setUserVO(userVO);
-                    }
-                }
-            }
         } catch (Exception e) {
             logger.error("===分页Ajax更新列表数据===出错:" + e.getMessage());
         }
@@ -193,6 +180,8 @@ public class HandleAbnormalController {
                 //查询派件员
                 User courier = userService.findOne(userId);
                 order.setUserId(userId);
+                order.setPostmanUser(courier.getRealName());
+                order.setPostmanPhone(courier.getLoginName());
                 order.setOrderStatus(OrderStatus.DISPATCHED);//更新运单状态--已分派
                 //更新物流信息
                 order.setExpressStatus(ExpressStatus.Delivering);
@@ -346,21 +335,6 @@ public class HandleAbnormalController {
         orderQueryVO.areaCode = areaCode;
         //查询数据
         PageModel<Order> orderPage = orderService.findPageOrders(pageIndex, orderQueryVO);
-        //查询派件员姓名电话
-        if (orderPage != null && orderPage.getDatas() != null) {
-            List<Order> dataList = orderPage.getDatas();
-            User courier = null;
-            for (Order order : dataList) {
-                courier = userService.findOne(order.getUserId());
-                UserVO userVO = new UserVO();
-                if(courier!=null){
-                    userVO.setLoginName(courier.getLoginName());
-                    userVO.setRealName(courier.getRealName());
-                }
-
-                order.setUserVO(userVO);
-            }
-        }
         return orderPage;
     }
     /**************************重新分派***************结束***********************************/
@@ -431,7 +405,9 @@ public class HandleAbnormalController {
                 remark.append(site.getAddress());
                 order.setAreaRemark(remark.toString());//站点的具体地址
                 order.setOrderStatus(OrderStatus.NOTARR);//状态--为未到站
-                order.setUserId("");//未分派
+                order.setUserId(null);//未分派
+                order.setPostmanUser(null);
+                order.setPostmanPhone(null);
                 order.setParcelCode("");//将包裹号至成空
                 order.setDateUpd(new Date());//更新时间
                 //更新物流信息
