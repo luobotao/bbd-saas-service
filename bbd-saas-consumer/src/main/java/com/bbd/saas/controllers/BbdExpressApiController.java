@@ -1,6 +1,7 @@
 package com.bbd.saas.controllers;
 
 import ch.hsr.geohash.GeoHash;
+import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.json.JSON;
 import com.bbd.poi.api.Geo;
 import com.bbd.poi.api.PostmanPoiApi;
@@ -138,6 +139,37 @@ public class BbdExpressApiController {
 				return JSON.json(mapPoint);
 			}else{
 				logger.info("[address]:" + address + " [search geo result] null,无法获取经纬度");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.info("[address]:" + address + " [search geo result] exception,异常");
+		}
+		return str;
+	}
+
+	/**
+	 * 通过post方式获取地址经纬度（支持地址进行编码和不进行编码的情况）
+	 * @param address 地址
+	 * @return 经纬度信息
+     */
+	@RequestMapping(value="/getGeoInfoByPost", method=RequestMethod.POST)
+	@ResponseBody
+	public String getGeoInfoByPost(String address) {
+		//args :company address
+		String str = "";
+		try {
+			MapPoint mapPoint = geo.getGeoInfo(URL.decode(address));//对地址进行解码
+			if (mapPoint != null) {
+				logger.info("[address]:" + URL.decode(address) + " [search geo result] 经度:" + mapPoint.getLng() + ",纬度："+ mapPoint.getLat());
+				return JSON.json(mapPoint);
+			}else{
+				mapPoint = geo.getGeoInfo(address);//地址无需解码
+				if (mapPoint != null) {
+					logger.info("[address]:" + address + " [search geo result] 经度:" + mapPoint.getLng() + ",纬度：" + mapPoint.getLat());
+					return JSON.json(mapPoint);
+				}else{
+					logger.info("[address]:" + address + " [search geo result] null,无法获取经纬度");
+				}
 			}
 		}catch(Exception e){
 			e.printStackTrace();
