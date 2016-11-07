@@ -31,7 +31,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,28 +67,42 @@ public class BbdExpressApiController {
 	@RequestMapping(value="/addSitePOI/{siteId}", method=RequestMethod.GET)
 	@ResponseBody
 	public String addSitePOI(@PathVariable String siteId, HttpServletRequest request ) {
-		Site site = siteService.findSite(siteId);
-		String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
-		logger.info(site.getId().toString());
-		//siteId companyId siteName siteAddress radius
-		Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getSiteSrc().getStatus(),site.getName(),siteAddress,0,site.getSitetype() != null ? site.getSitetype().getStatus() : 1);
-		//更新站点的经度和纬度
-		logger.info("[addSitePOI]result :"+result.toString());
-		if(result.code==0&&result.data!=null) {
-			double[] data = result.data;
-			site.setLng(data[0] + "");    //经度
-			site.setLat(data[1] + "");    //纬度
-			site.setDeliveryArea("0");
-			siteService.save(site);
+		try {
+			Site site = siteService.findSite(siteId);
+			String siteAddress = site.getProvince()+site.getCity()+site.getArea()+site.getAddress();
+			logger.info(site.getId().toString());
+			//siteId companyId siteName siteAddress radius
+			Result<double[]> result = sitePoiApi.addSitePOI(site.getId().toString(),"",site.getSiteSrc().getStatus(),site.getName(),siteAddress,0,site.getSitetype() != null ? site.getSitetype().getStatus() : 1);
+			//更新站点的经度和纬度
+			logger.info("[addSitePOI]result :"+result.toString());
+			if(result.code==0&&result.data!=null) {
+                double[] data = result.data;
+                site.setLng(data[0] + "");    //经度
+                site.setLat(data[1] + "");    //纬度
+                site.setDeliveryArea("0");
+                siteService.save(site);
+            }
+			return result.code+"";
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("[addSitePOI] Exception:"+e.getMessage());
+			return "0";
 		}
-		return result.code+"";
 	}
 
 	@RequestMapping(value="/getAreaCode/{address}", method=RequestMethod.GET)
 	@ResponseBody
 	public String getAreaCode(@PathVariable String address, HttpServletRequest request ) {
 		//args :company address
-		return orderService.findBestSiteWithAddress(address);
+
+		try {
+			return orderService.findBestSiteWithAddress(address);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("[getAreaCode] Exception:"+e.getMessage());
+			return "9999-999";
+		}
+
 		/*List<String> areaCodeList = sitePoiApi.searchSiteByAddress("",address);
 		logger.info(address);
 		logger.info(areaCodeList.size()+"");
@@ -103,28 +116,34 @@ public class BbdExpressApiController {
 
 	@RequestMapping(value="/postAllAreaCode",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
 	@ResponseBody
-	public String postAllAreaCode(@RequestParam String address) throws UnsupportedEncodingException {
+	public String postAllAreaCode(@RequestParam String address) {
 		//args :company address
-		String[] addes = address.split(";");
-		StringBuffer sb = new StringBuffer();
-		for (String str: addes) {
-			try {
-				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
-				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
-				if (areaCodeList != null && areaCodeList.size() > 0) {
-					//通过积分获取优选区域码，暂时用第一个
-					String siteId = orderService.findBestSiteWithAddress(str);
-					Site site = siteService.findSite(siteId);
-					sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\n");
-				}else{
-					sb.append(str).append("\t").append("").append("\t").append("").append("\n");
-				}
-			}catch(Exception e){
-				sb.append(str).append("\t").append("").append("\t").append("").append("\n");
-			}
+		try {
+			String[] addes = address.split(";");
+			StringBuffer sb = new StringBuffer();
+			for (String str: addes) {
+                try {
+                    List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
+                    logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
+                    if (areaCodeList != null && areaCodeList.size() > 0) {
+                        //通过积分获取优选区域码，暂时用第一个
+                        String siteId = orderService.findBestSiteWithAddress(str);
+                        Site site = siteService.findSite(siteId);
+                        sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\n");
+                    }else{
+                        sb.append(str).append("\t").append("").append("\t").append("").append("\n");
+                    }
+                }catch(Exception e){
+                    sb.append(str).append("\t").append("").append("\t").append("").append("\n");
+                }
+            }
+			String str = sb.toString();
+			return str;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("[postAllAreaCode] Exception:"+e.getMessage());
+			return "";
 		}
-		String str = sb.toString();
-		return str;
 	}
 
 	@RequestMapping(value="/getGeoInfo/{address}", method=RequestMethod.GET)
@@ -207,92 +226,103 @@ public class BbdExpressApiController {
 
 	@RequestMapping(value="/postAllAreaCodeWithIntegral",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
 	@ResponseBody
-	public String postAllAreaCodeWithIntegral(@RequestParam String address) throws UnsupportedEncodingException {
+	public String postAllAreaCodeWithIntegral(@RequestParam String address){
 		//args :company address
-
-		String[] addes = address.split(";");
-		StringBuffer sb = new StringBuffer();
-		sb.append("地址").append("\t").append("区域码").append("\t").append("区域名称").append("\t").append("距离（米）").append("\t").append("入驻时间积分").append("\t").append("7日妥投率积分").append("\t").append("7日平均派件时长积分").append("\t").append("站点人数积分").append("\t").append("站点积分").append("\t").append("最终积分").append("\n");
-		for (String str: addes) {
-			try {
-				List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
-				logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
-				MapPoint mapPoint = geo.getGeoInfo(str);//起点地址
-				if (areaCodeList != null && areaCodeList.size() > 0) {
-					//通过积分获取优选区域码
-					for (String siteId: areaCodeList) {
-						Site site = siteService.findSite(siteId);
-						if(site!=null) {
-							//获取当前位置到站点的距离，
-							/*List mapPointList = Lists.newArrayList();
-							mapPointList.add(new MapPoint(Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())));
-							long length = geo.getDistance(city, mapPoint, mapPointList, false);*/
-							//获取当前位置到站点的距离，
-							double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
-							//获取站点的日均积分
-							Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
-							//int integral = userMysqlService.getIntegral("101010-016","17710174098");
-							logger.info("积分："+result.toString());
-							int integral = 0;
-							if(result.containsKey("totalscore")){
-								 integral = (int) result.get("totalscore");
-							}
-							int integralVal = 0;
-							//根据地址到站点的距离计算积分
-							if (length < 3000) {
-								integralVal = integral + 5;
-							} else if (length < 5000) {
-								integralVal = integral + 3;
-							} else {
-								integralVal = integral + 2;
-							}
-							//保存站点和积分，按照积分进行排序
-							sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(result.get("timscore")).append("\t").append(result.get("perscore")).append("\t").append(result.get("deliveryscore")).append("\t").append(result.get("userscore")).append("\t").append(integral).append("\t").append(integralVal).append("\n");
-						}
-					}
-				}else{
-					sb.append(str).append("\t").append("").append("\t").append("").append("\n");
-				}
-			}catch(Exception e){
-				sb.append(str).append("\t").append("").append("\t").append("").append("\n");
-			}
+		try {
+			String[] addes = address.split(";");
+			StringBuffer sb = new StringBuffer();
+			sb.append("地址").append("\t").append("区域码").append("\t").append("区域名称").append("\t").append("距离（米）").append("\t").append("入驻时间积分").append("\t").append("7日妥投率积分").append("\t").append("7日平均派件时长积分").append("\t").append("站点人数积分").append("\t").append("站点积分").append("\t").append("最终积分").append("\n");
+			for (String str: addes) {
+                try {
+                    List<String> areaCodeList = sitePoiApi.searchSiteByAddress("", str);
+                    logger.info("[address]:" + str + " [search poi result] :" + areaCodeList.size() + "");
+                    MapPoint mapPoint = geo.getGeoInfo(str);//起点地址
+                    if (areaCodeList != null && areaCodeList.size() > 0) {
+                        //通过积分获取优选区域码
+                        for (String siteId: areaCodeList) {
+                            Site site = siteService.findSite(siteId);
+                            if(site!=null) {
+                                //获取当前位置到站点的距离，
+                                /*List mapPointList = Lists.newArrayList();
+                                mapPointList.add(new MapPoint(Double.parseDouble(site.getLng()), Double.parseDouble(site.getLat())));
+                                long length = geo.getDistance(city, mapPoint, mapPointList, false);*/
+                                //获取当前位置到站点的距离，
+                                double length = GeoUtil.getDistance(mapPoint.getLng(),mapPoint.getLat(),Double.parseDouble(site.getLng()),Double.parseDouble(site.getLat()));
+                                //获取站点的日均积分
+                                Map<String, Object> result = userMysqlService.getIntegral(site.getAreaCode(),site.getUsername());
+                                //int integral = userMysqlService.getIntegral("101010-016","17710174098");
+                                logger.info("积分："+result.toString());
+                                int integral = 0;
+                                if(result.containsKey("totalscore")){
+                                     integral = (int) result.get("totalscore");
+                                }
+                                int integralVal = 0;
+                                //根据地址到站点的距离计算积分
+                                if (length < 3000) {
+                                    integralVal = integral + 5;
+                                } else if (length < 5000) {
+                                    integralVal = integral + 3;
+                                } else {
+                                    integralVal = integral + 2;
+                                }
+                                //保存站点和积分，按照积分进行排序
+                                sb.append(str).append("\t").append(site.getAreaCode()).append("\t").append(site.getName()).append("\t").append(length).append("\t").append(result.get("timscore")).append("\t").append(result.get("perscore")).append("\t").append(result.get("deliveryscore")).append("\t").append(result.get("userscore")).append("\t").append(integral).append("\t").append(integralVal).append("\n");
+                            }
+                        }
+                    }else{
+                        sb.append(str).append("\t").append("").append("\t").append("").append("\n");
+                    }
+                }catch(Exception e){
+                    sb.append(str).append("\t").append("").append("\t").append("").append("\n");
+                }
+            }
+			String str = sb.toString();
+			return str;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("getDistance exceptioin:"+e.getMessage());
+			return "";
 		}
-		String str = sb.toString();
-		return str;
 	}
 
 	@RequestMapping(value="/updateSiteWithOrder",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
 	@ResponseBody
-	public String updateSiteWithOrder(@RequestParam String orderNoStr) throws UnsupportedEncodingException {
+	public String updateSiteWithOrder(@RequestParam String orderNoStr) {
 		//args :company address
-		String[] orderNoes = orderNoStr.split(";");
-		StringBuffer sb = new StringBuffer();
-		for (String orderNo: orderNoes) {
-			try {
-				Order order = orderService.findByOrderNo(orderNo);
-				if(order!=null){
-					//更新订单的运单号
-					order = orderService.reduceAreaCodeWithOrder(order);
-					logger.info("[order]:" + order + " [reduce areacode result] :" + order.getAreaCode() + "");
-					sb.append(orderNo).append("\t").append(order.getAreaCode()).append("\t").append(order.getAreaRemark()).append("\n");
-				}else{
-					sb.append(orderNo).append("\t").append("not match site").append("\t").append("").append("\n");
-				}
-			}catch(Exception e){
-				sb.append(orderNo).append("\t").append("error").append("\t").append("").append("\n");
-			}
+		try {
+			String[] orderNoes = orderNoStr.split(";");
+			StringBuffer sb = new StringBuffer();
+			for (String orderNo: orderNoes) {
+                try {
+                    Order order = orderService.findByOrderNo(orderNo);
+                    if(order!=null){
+                        //更新订单的运单号
+                        order = orderService.reduceAreaCodeWithOrder(order);
+                        logger.info("[order]:" + order + " [reduce areacode result] :" + order.getAreaCode() + "");
+                        sb.append(orderNo).append("\t").append(order.getAreaCode()).append("\t").append(order.getAreaRemark()).append("\n");
+                    }else{
+                        sb.append(orderNo).append("\t").append("not match site").append("\t").append("").append("\n");
+                    }
+                }catch(Exception e){
+                    sb.append(orderNo).append("\t").append("error").append("\t").append("").append("\n");
+                }
+            }
+			String str = sb.toString();
+			return str;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("updateSiteWithOrder exceptioin:"+e.getMessage());
+			return "";
 		}
-		String str = sb.toString();
-		return str;
 	}
 
 	@RequestMapping(value="/updateOrderWithAreaCode/{orderNo}",method=RequestMethod.GET)
 	@ResponseBody
-	public String updateOrderWithAreaCode(@PathVariable String orderNo) throws UnsupportedEncodingException {
+	public String updateOrderWithAreaCode(@PathVariable String orderNo) {
 		logger.info("当即更新订单"+orderNo+"的区域码");
 		String result = "";
-		if(StringUtils.isNotBlank(orderNo)) {
-			try {
+		try {
+			if(StringUtils.isNotBlank(orderNo)) {
 				Order order = orderService.findByOrderNo(orderNo);
 				if (order != null) {
 					//更新订单的运单号
@@ -302,29 +332,32 @@ public class BbdExpressApiController {
 				} else {
 					result = "failed";
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = "exception";
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = "exception";
+			logger.info("updateOrderWithAreaCode exceptioin:"+e.getMessage());
 		}
 		return result;
 	}
 
 	@RequestMapping(value="/updateOrderWithDealParcel/{orderNo}",method=RequestMethod.GET)
 	@ResponseBody
-	public String updateOrderWithDealParcel(@PathVariable String orderNo) throws UnsupportedEncodingException {
+	public String updateOrderWithDealParcel(@PathVariable String orderNo){
 		logger.info("当即打印订单"+orderNo+"后生成包裹");
 		String result = "";
-		if(StringUtils.isNotBlank(orderNo)) {
-			try {
+		try {
+			if(StringUtils.isNotBlank(orderNo)) {
+
 				Order order = orderService.findByOrderNo(orderNo);
 				//针对订单进一步处理orderParcel
 				logger.info(String.format("订单%s生成区域码%s完成,开始匹配包裹",order.getOrderNo(),order.getAreaCode()));
 				result = orderService.updateParcelWithOrder(order);
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = "exception";
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = "exception";
+			logger.info("updateOrderWithDealParcel exceptioin:"+e.getMessage());
 		}
 		return result;
 	}
@@ -334,21 +367,26 @@ public class BbdExpressApiController {
 	public String reduceGeoRecHisto(@PathVariable String dateStr, HttpServletRequest request ) {
 		logger.info("处理收件人信息");
 		//Date date = Dates.parseDate(dateStr,"yyyy-MM-dd");
-
-		List<String> dateList = Dates.getAfterNoDays(dateStr,1,"yyyy-MM-dd");
-		for (String str: dateList) {
-			Date date = Dates.parseDate(str,"yyyy-MM-dd");
-			logger.info("当前处理时间："+Dates.formatDate(date));
-			//data 的格式为yyyy-MM-dd
-			if(date != null){
-				List<Order> orderList = orderService.findByDateAdd(date);
-				logger.info(String.format("日期：%s 处理订单数：%s",Dates.formatDate2(date),orderList.size()));
-				dealGeoRecWithOrder(orderList);
-			}
-			logger.info("geo deal date:"+date+"cover Reciver address to geo finish");
+		try {
+			List<String> dateList = Dates.getAfterNoDays(dateStr,1,"yyyy-MM-dd");
+			for (String str: dateList) {
+                Date date = Dates.parseDate(str,"yyyy-MM-dd");
+                logger.info("当前处理时间："+Dates.formatDate(date));
+                //data 的格式为yyyy-MM-dd
+                if(date != null){
+                    List<Order> orderList = orderService.findByDateAdd(date);
+                    logger.info(String.format("日期：%s 处理订单数：%s",Dates.formatDate2(date),orderList.size()));
+                    dealGeoRecWithOrder(orderList);
+                }
+                logger.info("geo deal date:"+date+"cover Reciver address to geo finish");
+            }
+			logger.info(" reduceGeoRecHisto success");
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("reduceGeoRecHisto exceptioin:"+e.getMessage());
+			return "fail";
 		}
-		logger.info(" reduceGeoRecHisto success");
-		return "success";
 	}
 	private void dealGeoRecWithOrder(List<Order> orderList) {
 		for (Order order : orderList) {
@@ -389,18 +427,23 @@ public class BbdExpressApiController {
 
 	@RequestMapping(value="/postmanEfence", method=RequestMethod.GET)
 	public String postmanEfence(Model model, HttpServletRequest request ) {
-		String phone = request.getParameter("phone");
-		String siteStr = "";
-		if(StringUtils.isNotBlank(phone)){
-			//查找用户postmanuser
-			PostmanUser postmanUser = postmanUserService.selectPostmanUserByPhone(phone,0);
-			if(postmanUser!=null){
-				List<List<MapPoint>> mapPointList = postmanPoiApi.getSiteEfence(postmanUser.getId());
-				siteStr = dealPostmanUserPoints(mapPointList);
-			}
+		try {
+			String phone = request.getParameter("phone");
+			String siteStr = "";
+			if(StringUtils.isNotBlank(phone)){
+                //查找用户postmanuser
+                PostmanUser postmanUser = postmanUserService.selectPostmanUserByPhone(phone,0);
+                if(postmanUser!=null){
+                    List<List<MapPoint>> mapPointList = postmanPoiApi.getSiteEfence(postmanUser.getId());
+                    siteStr = dealPostmanUserPoints(mapPointList);
+                }
+            }
+			model.addAttribute("sitePoints", siteStr);
+			model.addAttribute("phone",phone);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("postmanEfence exceptioin:"+e.getMessage());
 		}
-		model.addAttribute("sitePoints", siteStr);
-		model.addAttribute("phone",phone);
 		return "geo/postmanRegionMap";
 	}
 
@@ -465,7 +508,8 @@ public class BbdExpressApiController {
 			model.addAttribute("address", address);//当前查询的地址
 			logger.info("Express_geoMatchSite：  keyword=" + keyword + ",  address=" + address + ",  model=" + model);
 		} catch (Exception e) {
-			logger.info("Express_geoMatchSite： message_erro=" + e.getMessage());
+			e.printStackTrace();
+			logger.info("geoMatchSite： message_erro=" + e.getMessage());
 		}
 		return "geo/geoMatchSite";
 	}
@@ -473,19 +517,25 @@ public class BbdExpressApiController {
 	@RequestMapping(value="/fixAddress", method=RequestMethod.POST)
 	public Result fixAddress(String address, String source, String lng, String lat) {
 		Result result  = new Result();
-		if(StringUtils.isBlank(address)){
-			return new Result(-1, "地址不能为空");
+		try {
+			if(StringUtils.isBlank(address)){
+                return new Result(-1, "地址不能为空");
+            }
+			if(StringUtils.isBlank(source)){
+                return new Result(-1, "请选择来源");
+            }
+			if(StringUtils.isBlank(lng)){
+                return new Result(-1, "经度不能为空");
+            }
+			if(StringUtils.isBlank(lat)){
+                return new Result(-1, "纬度不能为空");
+            }
+			MapPoint point = new MapPoint(Double.parseDouble(lng), Double.parseDouble(lat));
+			return geo.fixAddressGeo(address, source, point);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			logger.info("geoMatchSite： message_erro=" + e.getMessage());
+			return new Result(-1, "发生异常");
 		}
-		if(StringUtils.isBlank(source)){
-			return new Result(-1, "请选择来源");
-		}
-		if(StringUtils.isBlank(lng)){
-			return new Result(-1, "经度不能为空");
-		}
-		if(StringUtils.isBlank(lat)){
-			return new Result(-1, "纬度不能为空");
-		}
-		MapPoint point = new MapPoint(Double.parseDouble(lng), Double.parseDouble(lat));
-		return geo.fixAddressGeo(address, source, point);
 	}
 }
