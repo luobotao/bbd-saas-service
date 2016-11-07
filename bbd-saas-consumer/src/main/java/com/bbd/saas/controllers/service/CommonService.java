@@ -1,5 +1,6 @@
 package com.bbd.saas.controllers.service;
 
+import com.bbd.saas.Services.RedisService;
 import com.bbd.saas.api.mongo.ExpressExchangeService;
 import com.bbd.saas.api.mongo.OrderParcelService;
 import com.bbd.saas.api.mongo.UserService;
@@ -7,6 +8,7 @@ import com.bbd.saas.api.mysql.ExpressCompanyService;
 import com.bbd.saas.api.mysql.PostDeliverySmsLogService;
 import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.api.mysql.SmsInfoService;
+import com.bbd.saas.constants.Constants;
 import com.bbd.saas.enums.ExpressExchangeStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.models.PostDeliverySmsLog;
@@ -38,7 +40,8 @@ import java.util.List;
 public class CommonService {
     public static final Logger logger = LoggerFactory.getLogger(CommonService.class);
 
-
+    @Autowired
+    RedisService redisService;
     @Autowired
     PostmanUserService postmanUserService;
     @Autowired
@@ -197,9 +200,12 @@ public class CommonService {
      */
     public void sendSmsInfo(Order order, String longUrl_dispatch, String courierPhone){
         if(Srcs.PINHAOHUO != order.getSrc()){
-            String oldUrl=longUrl_dispatch+ Base64.getBase64(order.getMailNum());
+            String mailNumBase64 = Base64.getBase64(order.getMailNum());
+            String oldUrl=longUrl_dispatch+ mailNumBase64;
             String shortUrl = ShortUrl.generateShortUrl(oldUrl);
             logger.info("生成的短链："+shortUrl);
+            redisService.set(Constants.ORDER_INFO_TIME_LONG + mailNumBase64, mailNumBase64, 60*60*12 );//写入redis 12小时有效
+
             //写短信发送日志
             PostDeliverySmsLog postDeliverySmsLog = new PostDeliverySmsLog();
             postDeliverySmsLog.setDate_new(new Date());

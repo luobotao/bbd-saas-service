@@ -11,6 +11,7 @@ public class Constants {
 
     public static final String BBD_SAAS_VERIFY_CODE = "BBD_SAAS_VERIFY_CODE_";//verifycode id Key in redis
     public static final String BBD_SAAS_VERIFY_CODE_TIME = "BBD_SAAS_VERIFY_CODE_TIME_";//60秒发送间隔
+    public static final String ORDER_INFO_TIME_LONG = "o_info_tm.";//发送时间（生命周期60*60*12秒）12小时
 
     //日期格式==>年-月
     public static final String DATE_PATTERN_YM = "yyyy-MM";

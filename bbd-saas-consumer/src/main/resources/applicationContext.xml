@@ -34,7 +34,7 @@
 	<!-- Only needed because we require fileupload in the org.springframework.samples.mvc.fileupload package -->
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
-	<beans:bean id="jedisConnFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:usePool="true" p:hostName="182.92.227.140" p:port="6379" p:password="redisAdminMaster123"/>
+	<beans:bean id="jedisConnFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:usePool="true" p:hostName="${redis.url}" p:port="${redis.port}" p:password="${redis.pass}"/>
 
 	<!-- redis template definition -->
 	<beans:bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" p:connectionFactory-ref="jedisConnFactory"/>
