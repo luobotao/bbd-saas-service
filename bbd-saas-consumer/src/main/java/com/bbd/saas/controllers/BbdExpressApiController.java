@@ -20,6 +20,7 @@ import com.bbd.saas.utils.Dates;
 import com.bbd.saas.utils.GeoUtil;
 import com.bbd.saas.vo.Reciever;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
@@ -181,21 +181,28 @@ public class BbdExpressApiController {
 
 	@RequestMapping(value="/getDistance")
 	@ResponseBody
-	public String getDistance(String city, String start, String ends) throws IOException {
-		if(start == null || ends == null){
+	public String getDistance(String city, String start, String ends) {
+		long length = 0;
+		try {
+			if(start == null || ends == null){
+                return "0";
+            }
+			logger.info("getDistance with info, city:"+city+" start:"+start+" ends:"+ends);
+			//getDistance with info, city:北京市 start:{"lng":"116.31807926386","lat":"39.938949605151"} ends:[{"lng":"116.337341","lat":"39.949164"}]
+			Gson gson = new Gson();
+			MapPoint mapPoint  = gson.fromJson(start, MapPoint.class);
+			List<MapPoint> mapPointList = gson.fromJson(ends, new TypeToken<List<MapPoint>>(){}.getType());
+			length = 0;
+			if(!"".equals(city)&&mapPoint!=null&&mapPointList!=null&&mapPointList.size()>0) {
+                length = geo.getDistance(city, mapPoint, mapPointList,false);
+                logger.info("getDistance with info [success] distance:"+length);
+            }
+		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
+			logger.info("getDistance exceptioin:"+e.getMessage());
 			return "0";
 		}
-		logger.info("getDistance with info, city:"+city+" start:"+start+" ends:"+ends);
-		//getDistance with info, city:北京市 start:{"lng":"116.31807926386","lat":"39.938949605151"} ends:[{"lng":"116.337341","lat":"39.949164"}]
-		Gson gson = new Gson();
-		MapPoint mapPoint  = gson.fromJson(start, MapPoint.class);
-		List<MapPoint> mapPointList = gson.fromJson(ends, new TypeToken<List<MapPoint>>(){}.getType());
-		long length = 0;
-		if(!"".equals(city)&&mapPoint!=null&&mapPointList!=null&&mapPointList.size()>0) {
-			length = geo.getDistance(city, mapPoint, mapPointList,false);
-			logger.info("getDistance with info [success] distance:"+length);
-		}
-		return JSON.json(length);
+		return length+"";
 	}
 
 	@RequestMapping(value="/postAllAreaCodeWithIntegral",produces = "text/html;charset=UTF-8",method=RequestMethod.POST)
