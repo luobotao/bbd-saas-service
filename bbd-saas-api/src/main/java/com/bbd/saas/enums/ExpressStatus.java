@@ -70,4 +70,14 @@ public enum ExpressStatus {
         }
         return "";
     }
+
+    public static ExpressStatus obj2ExpressStatus(String expressStatus){
+        ExpressStatus[] stas = ExpressStatus.values();
+        for (ExpressStatus s : stas) {
+            if (expressStatus.equals(s.toString())) {
+                return s;
+            }
+        }
+        return null;
+    }
 }
