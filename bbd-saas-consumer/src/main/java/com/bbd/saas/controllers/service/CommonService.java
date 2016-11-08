@@ -204,7 +204,7 @@ public class CommonService {
             String oldUrl=longUrl_dispatch+ mailNumBase64;
             String shortUrl = ShortUrl.generateShortUrl(oldUrl);
             logger.info("生成的短链："+shortUrl);
-            redisService.set(Constants.ORDER_INFO_TIME_LONG + mailNumBase64, mailNumBase64, 60*60*12 );//写入redis 12小时有效
+            redisService.set(Constants.ORDER_INFO_TIME_LONG + mailNumBase64, mailNumBase64, 60*3 );//写入redis 12小时有效 60*60*12
 
             //写短信发送日志
             PostDeliverySmsLog postDeliverySmsLog = new PostDeliverySmsLog();
