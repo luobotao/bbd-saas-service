@@ -203,7 +203,8 @@ public class BbdExpressApiController {
 	public String getDistance(String city, String start, String ends) {
 		long length = 0;
 		try {
-			if(start == null || ends == null){
+			//getDistance with info, city:深圳 start:{} ends:[{}]
+			if(start == null || ends == null || "{}".equals(start) || "[{}]".equals(ends)){
                 return "0";
             }
 			logger.info("getDistance with info, city:"+city+" start:"+start+" ends:"+ends);
