@@ -434,4 +434,21 @@ public interface OrderService {
 	public long findCountByAppOrderQuery(AppOrderQueryVO appOrderQueryVO) throws Exception;
 
     public List<Order> findOrdersByAreaCodeAndExpressStatusAndDateAdd(List<String> areaCodes,List<ExpressStatus> expressStatuses,Date startDate,Date endDate,String dateTyp);
+
+    /**
+     * 根据运单号集合查询运单集合
+     * @param mailNums 运单号集合
+     * @return  运单集合
+     * @throws Exception
+     */
+    public List<Order> findListByMailNums(String [] mailNums) throws Exception;
+
+    /**
+     * 根据运单号集合查询运单集合 -- 没有用到
+     * @param pageModel 分页信息
+     * @param mailNums 运单号集合
+     * @return 分页信息和当前页的数据
+     * @throws Exception
+     */
+    public PageModel<Order> findPageByMailNums(PageModel pageModel, String [] mailNums) throws Exception;
 }

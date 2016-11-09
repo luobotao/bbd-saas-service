@@ -42,6 +42,9 @@
     <!--Way Service-->
     <dubbo:reference id="wayService" interface="com.bbd.saas.api.mongo.WayService"/>
 
+    <!--DangDangGetSiteLog Service-->
+    <dubbo:reference id="dangDangGetSiteLogService" interface="com.bbd.saas.api.mongo.DangDangGetSiteLogService"/>
+
     <!--expressExchangeService Service-->
     <dubbo:reference id="expressExchangeService" interface="com.bbd.saas.api.mongo.ExpressExchangeService"/>
     <!--start mysql services-->

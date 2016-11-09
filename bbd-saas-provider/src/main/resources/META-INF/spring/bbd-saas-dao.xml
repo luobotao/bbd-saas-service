@@ -76,6 +76,9 @@
     <bean id="relationDao" class="com.bbd.saas.dao.mongo.RelationDao">
         <constructor-arg ref="datastore"/>
     </bean>
+    <bean id="dangDangGetSiteLogDao" class="com.bbd.saas.dao.mongo.DangDangGetSiteLogDao">
+        <constructor-arg ref="datastore"/>
+    </bean>
 	<!--  end mongodb daos  -->
 
     <!--  start mysql daos  -->

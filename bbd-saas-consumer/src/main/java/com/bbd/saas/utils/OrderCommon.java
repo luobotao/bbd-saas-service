@@ -4,6 +4,8 @@ import com.bbd.saas.enums.ExpressStatus;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.vo.Express;
+import com.bbd.saas.vo.Reciever;
+import com.bbd.saas.vo.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,4 +51,58 @@ public class OrderCommon {
             order.setExpresses(expressList);
         }
     }
+
+    /**
+     * 获得收件人详细地址
+     * @param reciever 收件人
+     * @return 详细地址字符串
+     */
+    public static String getRCVAddress(Reciever reciever){
+        if(reciever == null){
+            return "";
+        }
+        return getAddress(reciever.getProvince(), reciever.getCity(), reciever.getArea(), reciever.getAddress(), " ");
+    }
+    /**
+     * 获得发件人详细地址
+     * @param sender 发件人
+     * @return 详细地址字符串
+     */
+    public static String getSenderAddress(Sender sender){
+        if(sender == null){
+            return "";
+        }
+        return getAddress(sender.getProvince(), sender.getCity(), sender.getArea(), sender.getAddress(), "");
+    }
+
+    /**
+     * 获得详细地址字符串
+     * @param province 省
+     * @param city 市
+     * @param district 区
+     * @param address 详细地址
+     * @return 详细地址字符串
+     */
+    public static String getAddress(String province, String city, String district, String address, String jointStr){
+        StringBuffer address_SB= new StringBuffer("");
+        if(StringUtil.isNotEmpty(province)){
+            address_SB.append(province);
+            address_SB.append(jointStr);
+        }
+        if(StringUtil.isNotEmpty(city)){
+            address_SB.append(city);
+            address_SB.append(jointStr);
+        }
+        if(StringUtil.isNotEmpty(district)){
+            address_SB.append(district);
+            address_SB.append(jointStr);
+        }
+        if(StringUtil.isNotEmpty(address)){
+            address_SB.append(address);
+        }
+        return address_SB.toString();
+    }
+
+
+
 }

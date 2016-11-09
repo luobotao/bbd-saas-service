@@ -1017,4 +1017,14 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findOrdersByAreaCodeAndExpressStatusAndDateAdd(List<String> areaCodes, List<ExpressStatus> expressStatuses, Date startDate, Date endDate,String typ) {
         return this.orderDao.findOrdersByAreaCodeAndExpressStatusAndDateAdd(areaCodes,expressStatuses,startDate,endDate,typ);
     }
+
+    @Override
+    public List<Order> findListByMailNums(String [] mailNums) throws Exception {
+        return this.orderDao.selectListByMailNums(mailNums);
+    }
+
+    @Override
+    public PageModel<Order> findPageByMailNums(PageModel pageModel, String [] mailNums) throws Exception {
+        return this.orderDao.selectPageByMailNums(pageModel, mailNums);
+    }
 }

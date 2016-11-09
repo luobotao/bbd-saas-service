@@ -16,8 +16,8 @@ import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.MathEval;
 import com.bbd.saas.utils.Numbers;
+import com.bbd.saas.utils.OrderCommon;
 import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.StringUtil;
 import com.bbd.saas.vo.SiteVO;
 import com.bbd.saas.vo.UserVO;
 import com.google.common.collect.Lists;
@@ -93,12 +93,7 @@ public class CapacityDistributionController {
 		if (companyId != null ){
 			Postcompany company = postCompanyService.selectPostmancompanyById(Integer.parseInt(companyId));
 			if(company != null){
-				StringBuffer  addressBS = new StringBuffer();
-				addressBS.append(StringUtil.initStr(company.getProvince(),""));
-				addressBS.append(StringUtil.initStr(company.getCity(),""));
-				addressBS.append(StringUtil.initStr(company.getArea(),""));
-				addressBS.append(StringUtil.initStr(company.getAddress(),""));
-				return  addressBS.toString();
+				return  OrderCommon.getAddress(company.getProvince(), company.getCity(), company.getArea(), company.getAddress(), "");
 			}
 		}
 		return null;

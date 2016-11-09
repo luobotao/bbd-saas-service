@@ -1,6 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
+<%@ page import="com.bbd.saas.utils.Constants" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -67,7 +68,10 @@
 	  						<div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	  							<a href="javascript:void(0)" class="ser-btn l" onclick="gotoPage(0);"><i class="b-icon p-query p-ser"></i>查询</a>
 	  							<a href="javascript:void(0)" class="ser-btn d ml16" onclick="exportData();"><i class="glyphicon glyphicon-off f16 mr10"></i>导出</a>
-	  							
+								<c:if test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+									<a href="<%=path%>/superAreaHandle/index" target="_blank" class="ser-btn l ml16"><i class="b-icon p-query p-ser f16 mr10"></i>查询运单超区地址</a>
+									<a href="<%=path%>/superAreaHandle/dangdang" target="_blank" class="ser-btn l ml16"><i class="b-icon p-query p-ser f16 mr10"></i>查询当当运单站点日志表</a>
+								</c:if>
 	  						</div>
 	  					</div>
 	  				</div>

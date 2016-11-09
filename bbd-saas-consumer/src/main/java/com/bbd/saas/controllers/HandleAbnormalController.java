@@ -613,24 +613,9 @@ public class HandleAbnormalController {
                     }
                     //查询运单信息
                     order = updExpressForToOtherCmp(order, companyId, mailNumNew, otherExpsAmount, currUser);
-                    Sender sender = order.getSender();
-                    Reciever reciever = order.getReciever();
-                    StringBuffer fromSB = new StringBuffer();
-                    StringBuffer toSB = new StringBuffer();
-                    if (sender != null) {
-                        fromSB.append(sender.getProvince());
-                        fromSB.append(sender.getCity());
-                        fromSB.append(sender.getArea());
-                        fromSB.append(sender.getAddress());
-                    }
-                    if (reciever != null) {
-                        toSB.append(reciever.getProvince());
-                        toSB.append(reciever.getCity());
-                        toSB.append(reciever.getArea());
-                        toSB.append(reciever.getAddress());
-                    }
+
                     ResultResposeDTO resposeDTO = goTo100Subscribe("", "", companyId, mailNum,
-                            fromSB.toString(), toSB.toString(), mailNumNew);
+                            OrderCommon.getSenderAddress(order.getSender()), OrderCommon.getRCVAddress(order.getReciever()), mailNumNew);
                     if (resposeDTO != null) {
                         String message = resposeDTO.getMessage();
                         /*if(message.contains("重复订阅")) {//失败

@@ -153,7 +153,7 @@ public class PackageToSiteController {
 				if(!order.getAreaCode().equals(user.getSite().getAreaCode())){//跨站强制到站
 					order.setAreaCode(user.getSite().getAreaCode());
 					Site site = user.getSite();
-					order.setAreaRemark(commonService.getAddress(site.getProvince(), site.getCity(), site.getArea(), site.getAddress(), ""));
+					order.setAreaRemark(OrderCommon.getAddress(site.getProvince(), site.getCity(), site.getArea(), site.getAddress(), ""));
 					orderToSite(order,user,true);//到站
 				}else{
 					orderToSite(order,user,false);//到站

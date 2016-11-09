@@ -36,6 +36,7 @@
     <dubbo:service interface="com.bbd.saas.api.mongo.SiteExchangeService" ref="siteExchangeService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.WayService" ref="wayService" />
     <dubbo:service interface="com.bbd.saas.api.mongo.RelationService" ref="relationService" />
+    <dubbo:service interface="com.bbd.saas.api.mongo.DangDangGetSiteLogService" ref="dangDangGetSiteLogService" />
 
     <!--start mysql services -->
     <dubbo:service interface="com.bbd.saas.api.mysql.PostcompanyService" ref="postcompanyService" />

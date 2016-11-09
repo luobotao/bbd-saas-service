@@ -84,6 +84,9 @@ public class DataQueryController {
 				String parcelCodeTemp = orderPacelService.findParcelCodeByOrderId(order.getId().toHexString());
 				order.setParcelCode(parcelCodeTemp);//设置包裹号
 			}*/
+			//当前登录的用户信息
+			User user = adminService.get(UserSession.get(request));
+			model.addAttribute("areaCode", user.getSite().getAreaCode());
 			logger.info("=====数据查询页面列表===" + orderPage);
 			model.addAttribute("orderPage", orderPage);
 			model.addAttribute("arriveBetween", arriveBetween);
@@ -185,12 +188,7 @@ public class DataQueryController {
 						if (currUser.getCompanyId() != null ){
 							Postcompany company = postCompanyService.selectPostmancompanyById(Integer.parseInt(currUser.getCompanyId()));
 							if(company != null){
-								StringBuffer  addressBS = new StringBuffer();
-								addressBS.append(StringUtil.initStr(company.getProvince(),""));
-								addressBS.append(StringUtil.initStr(company.getCity(),""));
-								addressBS.append(StringUtil.initStr(company.getArea(),""));
-								addressBS.append(StringUtil.initStr(company.getAddress(),""));
-								companyAddress = addressBS.toString();
+								companyAddress = OrderCommon.getAddress(company.getProvince(), company.getCity(), company.getArea(), company.getAddress(), "");
 							}
 						}
 						//设置地图默认的中心点
@@ -278,84 +276,10 @@ public class DataQueryController {
 			//查询数据
 			List<Order> orderList = orderService.findOrders(orderQueryVO);
 			//导出==数据写到Excel中并写入response下载
-			//表格数据
-			List<List<String>> dataList = new ArrayList<List<String>>();
-			List<String> row = null;
-			if(orderList != null){
-				for(Order order : orderList){
-					row = new ArrayList<String>();
-					row.add(siteName);
-					row.add(areaCode);
-					row.add(order.getMailNum());
-					row.add(order.getReciever().getName());
-					row.add(order.getReciever().getPhone());
-					StringBuffer address = new StringBuffer();
-					address.append(order.getReciever().getProvince());
-					address.append(order.getReciever().getCity());
-					address.append(order.getReciever().getArea());
-					address.append(order.getReciever().getAddress());
-					row.add(address.toString());
-					row.add(Dates.formatDateTime_New(order.getDateDriverGeted()));
-					row.add(Dates.formatDate2(order.getDateMayArrive()));
-					row.add(Dates.formatDateTime_New(order.getDateArrived()));
-					//签收时间 start
-					if(order.getOrderStatus() != null && order.getOrderStatus() == OrderStatus.SIGNED){
-						row.add(Dates.formatDateTime_New(order.getDateUpd()));
-					}else{
-						row.add("");
-					}
-					//签收时间  end
-					//派件员
-					if(StringUtil.isNotEmpty(order.getUserId()) && StringUtil.isNotEmpty(order.getPostmanUser())){
-						row.add(order.getPostmanUser());
-						row.add(order.getPostmanPhone());
-					}else if(StringUtil.isNotEmpty(order.getUserId())){
-						User courier = userService.findOne(order.getUserId());
-						if(courier != null){
-							row.add(courier.getRealName());
-							row.add(courier.getLoginName());
-						}else{
-							row.add("");
-							row.add("");
-						}
-					}else{
-						row.add("");
-						row.add("");
-					}
-					if(order.getOrderStatus() == null){
-						row.add("未到站");
-					}else{
-						row.add(order.getOrderStatus().getMessage());
-					}
-					//异常单子展示异常信息
-					if(order.getOrderStatus()==OrderStatus.RETENTION || order.getOrderStatus()==OrderStatus.REJECTION){
-						List<Express> expresses = order.getExpresses();
-						if(expresses!=null && expresses.size()>0){
-							Express express= expresses.get(expresses.size()-1);
-							String reson = express.getRemark()==null?"":express.getRemark().replaceAll("订单已被滞留，滞留原因：","").replaceAll("订单已被拒收，拒收原因:","");
-							row.add(reson);
-						}
-
-					}
-					dataList.add(row);
-				}
-			}
-			
-			//表头
-			String[] titles = {  "站点名称", "站点编码","运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态","异常原因" };
-			int[] colWidths = {   6000, 3500,5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500, 3000, 3500, 3000,4000};
-			ExportUtil.exportExcel(siteName + "_数据导出", dataList, titles, colWidths, response);
+			commonService.exportOneSiteToExcel(orderList, siteName, response);
 		} catch (Exception e) {
 			logger.error("===数据导出===出错:" + e.getMessage());
 		}
 	}
 
-	void setCourier(String userId, List<String> row){
-		if(userId == null || "".equals(userId)){
-			row.add("");
-			row.add("");
-		}else{
-
-		}
-	}
 }

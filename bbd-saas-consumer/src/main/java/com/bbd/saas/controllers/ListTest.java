@@ -17,6 +17,22 @@ public class ListTest {
             }
         }
         System.out.println("end");
+        /*String mailNumStr="34357567647\n" +
+                "34358197489\n" +
+                "34357705501\n" +
+                "34386720512";*/
+        String mailNumStr="BBD186387937\r\n" +
+                "34358197489\n" +
+                "34357705501\n" +
+                "BBD186866422\r\n" +
+                "BBD186866457\r\n" +
+                "34358197489\n" +
+                "34357705501\n" +
+                "BBD186866463";
+        String [] mailNums = mailNumStr.split("\n|\r\n");
+        for(String mailNum : mailNums){
+            System.out.println(mailNum);
+        }
     }
     private static void testList(List<String> nameList){
         if(nameList == null){

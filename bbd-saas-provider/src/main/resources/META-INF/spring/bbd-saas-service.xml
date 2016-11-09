@@ -127,6 +127,11 @@
             <ref bean="relationDao"/>
         </property>
     </bean>
+    <bean id="dangDangGetSiteLogService" class="com.bbd.saas.api.impl.mongo.DangDangGetSiteLogServiceImpl">
+        <property name="dangDangGetSiteLogDao">
+            <ref bean="dangDangGetSiteLogDao"/>
+        </property>
+    </bean>
     <!--   end mongodb services    -->
  
     <!--   start mysql services   -->

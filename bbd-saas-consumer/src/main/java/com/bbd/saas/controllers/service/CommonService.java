@@ -10,27 +10,27 @@ import com.bbd.saas.api.mysql.PostmanUserService;
 import com.bbd.saas.api.mysql.SmsInfoService;
 import com.bbd.saas.constants.Constants;
 import com.bbd.saas.enums.ExpressExchangeStatus;
+import com.bbd.saas.enums.OrderStatus;
 import com.bbd.saas.enums.Srcs;
 import com.bbd.saas.models.PostDeliverySmsLog;
 import com.bbd.saas.mongoModels.ExpressExchange;
 import com.bbd.saas.mongoModels.Order;
 import com.bbd.saas.mongoModels.User;
-import com.bbd.saas.utils.Base64;
-import com.bbd.saas.utils.PageModel;
-import com.bbd.saas.utils.ShortUrl;
-import com.bbd.saas.utils.StringUtil;
+import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.Express;
+import com.bbd.saas.vo.Reciever;
 import com.bbd.saas.vo.UserVO;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  with redis
@@ -64,80 +64,6 @@ public class CommonService {
     @Value("${EPREE100_URL}")
     private String EPREE100_URL;
 
-
-
-
-
-    /**
-     * 设置物流信息
-     * @param remark 物流描述
-     * @param pmu_lat 当前登录的派件员纬度
-     * @param pmu_lon 当前登录的派件员经度
-     * @param lat 参数_纬度
-     * @param lon 参数—经度
-     * @return 物流信息
-     */
-    public Express getExpress(String remark, Double pmu_lat, Double pmu_lon, String lat, String lon) {
-        Express express = new Express();
-        express.setDateAdd(new Date());
-        express.setRemark(remark);
-        if (StringUtils.isNotBlank(lat) || lat.indexOf("E") >= 0) {
-            express.setLat(lat);
-        } else {
-            express.setLat(pmu_lat + "");
-        }
-        if (StringUtils.isNotBlank(lon) || lon.indexOf("E") >= 0) {
-            express.setLon(lon);
-        } else {
-            express.setLon(pmu_lon + "");
-        }
-        return express;
-    }
-
-    /**
-     * 运单添加物流信息
-     * @param order 运单
-     * @param express 物流信息
-     * @return 运单
-     */
-    public Order addExpressToOrder(Order order, Express express) {
-        if (order.getExpresses() != null) {
-            order.getExpresses().add(express);
-        } else {
-            List<Express> expressList = Lists.newArrayList();
-            expressList.add(express);
-            order.setExpresses(expressList);
-        }
-        return order;
-    }
-
-    /**
-     * 运单添加物流信息 -- 防止进入多次物流信息
-     * @param order 运单
-     * @param express 物流信息
-     * @return 运单
-     */
-    public Order addSingleExpressToOrder(Order order, Express express) {
-        if (order.getExpresses() != null) {
-            //防止进入多次物流信息
-            boolean flag = true;
-            for (Express exp : order.getExpresses()) {
-                if (exp.getRemark().equals(express.getRemark())) {  // 防止进入多次物流信息
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                order.getExpresses().add(express);
-            }
-        } else {
-            List<Express> expressList = Lists.newArrayList();
-            expressList.add(express);
-            order.setExpresses(expressList);
-        }
-        return order;
-    }
-
     /**
      * 物流同步
      * @param order 订单
@@ -164,34 +90,6 @@ public class CommonService {
         expressExchange.setStatus(ExpressExchangeStatus.waiting);
         expressExchange.setDateAdd(new Date());
         expressExchangeService.save(expressExchange);
-    }
-
-    /**
-     * 获得详细地址字符串
-     * @param province 省
-     * @param city 市
-     * @param district 区
-     * @param address 详细地址
-     * @return 详细地址字符串
-     */
-    public String getAddress(String province, String city, String district, String address, String jointStr){
-        StringBuffer address_SB= new StringBuffer("");
-        if(!com.alibaba.dubbo.common.utils.StringUtils.isBlank(province)){
-            address_SB.append(province);
-            address_SB.append(jointStr);
-        }
-        if(!com.alibaba.dubbo.common.utils.StringUtils.isBlank(city)){
-            address_SB.append(city);
-            address_SB.append(jointStr);
-        }
-        if(!com.alibaba.dubbo.common.utils.StringUtils.isBlank(district)){
-            address_SB.append(district);
-            address_SB.append(jointStr);
-        }
-        if(!com.alibaba.dubbo.common.utils.StringUtils.isBlank(address)){
-            address_SB.append(address);
-        }
-        return address_SB.toString();
     }
 
     /**
@@ -245,5 +143,86 @@ public class CommonService {
             }
         }
         return orderPage;
+    }
+
+    public  List<String> getRowByOrder(Order order, String siteName){
+        List<String> row = new ArrayList<String>();
+        row.add(siteName);
+        row.add(order.getAreaCode());
+        row.add(order.getMailNum());
+        if(order.getReciever() == null){
+            order.setReciever(new Reciever());
+        }
+        row.add(StringUtil.initStr(order.getReciever().getName(), ""));
+        row.add(StringUtil.initStr(order.getReciever().getPhone(), ""));
+        row.add(OrderCommon.getRCVAddress(order.getReciever()));
+        row.add(Dates.formatDateTime_New(order.getDateDriverGeted()));
+        row.add(Dates.formatDate2(order.getDateMayArrive()));
+        row.add(Dates.formatDateTime_New(order.getDateArrived()));
+        //签收时间 start
+        if(order.getOrderStatus() != null && order.getOrderStatus() == OrderStatus.SIGNED){
+            row.add(Dates.formatDateTime_New(order.getDateUpd()));
+        }else{
+            row.add("");
+        }
+        //派件员
+        if(StringUtil.isNotEmpty(order.getUserId()) && StringUtil.isNotEmpty(order.getPostmanUser())){
+            row.add(order.getPostmanUser());
+            row.add(order.getPostmanPhone());
+        }else if(StringUtil.isNotEmpty(order.getUserId())){
+            User courier = userService.findOne(order.getUserId());
+            if(courier != null){
+                row.add(courier.getRealName());
+                row.add(courier.getLoginName());
+            }else{
+                row.add("");
+                row.add("");
+            }
+        }else{
+            row.add("");
+            row.add("");
+        }
+        if(order.getOrderStatus() == null){
+            row.add("未到站");
+        }else{
+            row.add(order.getOrderStatus().getMessage());
+        }
+        //异常单子展示异常信息
+        if(order.getOrderStatus()==OrderStatus.RETENTION || order.getOrderStatus()==OrderStatus.REJECTION){
+            List<Express> expresses = order.getExpresses();
+            if(expresses!=null && expresses.size()>0){
+                Express express= expresses.get(expresses.size()-1);
+                String reson = express.getRemark()==null?"":express.getRemark().replaceAll("订单已被滞留，滞留原因：","").replaceAll("订单已被拒收，拒收原因:","");
+                row.add(reson);
+            }
+
+        }
+        return row;
+    }
+    public  void exportOneSiteToExcel(List<Order> orderList, String siteName, final HttpServletResponse response){
+        List<List<String>> dataList = new ArrayList<List<String>>();
+        siteName = StringUtil.initStr(siteName, "");
+        if(orderList != null){
+            for(Order order : orderList){
+                dataList.add(getRowByOrder(order, siteName));
+            }
+        }
+        //表头
+        String[] titles = {  "站点名称", "站点编码","运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态","异常原因" };
+        int[] colWidths = {   6000, 3500,5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500, 3000, 3500, 3000,4000};
+        ExportUtil.exportExcel(siteName + "_数据导出", dataList, titles, colWidths, response);
+    }
+    public  void exportSitesToExcel(List<Order> orderList, Map<String, String> siteMap, final HttpServletResponse response){
+        List<List<String>> dataList = new ArrayList<List<String>>();
+        if(orderList != null){
+            for(Order order : orderList){
+                dataList.add(getRowByOrder(order, StringUtil.initStr(siteMap.get(order.getAreaCode()), "")));
+            }
+        }
+        //表头
+        String[] titles = { "站点名称","站点编码",  "运单号", "收货人", "收货人手机" , "收货人地址" , "司机取货时间" , "预计到站时间", "到站时间", "签收时间", "派送员", "派送员手机", "状态" ,"异常原因" };
+        int[] colWidths = {  6000, 3500, 5000, 3000, 3500, 12000, 5500, 3500, 5500, 5500,  3000,  3500, 3000,4000};
+        ExportUtil exportUtil = new ExportUtil();
+        exportUtil.exportExcel("运单查询导出", dataList, titles, colWidths, response);
     }
 }

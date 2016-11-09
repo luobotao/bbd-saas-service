@@ -1333,4 +1333,29 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.order("-dateUpd");
         return  find(query).asList();
     }
+
+    public List<Order> selectListByMailNums(String [] mailNums){
+        Query<Order> query = createQuery();
+        query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        if (mailNums != null && mailNums.length > 0) {
+            query.filter("mailNum in", mailNums);
+        }
+        //query.retrievedFields(true, "mailNum", "reciever");
+        return find(query).asList();
+    }
+    public PageModel<Order> selectPageByMailNums(PageModel<Order> pageModel, String [] mailNums){
+        Query<Order> query = createQuery();
+        query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+        if (mailNums != null && mailNums.length > 0) {
+            query.filter("mailNum in", mailNums);
+        }
+        logger.info("OrderDao.selectPageByAppOrderQuery().query="+query.toString());
+        pageModel.setTotalCount(count(query));
+        //分页信息
+        if(pageModel.getPageNo() > -1 && pageModel.getPageSize() > 0){
+            query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize());
+        }
+        pageModel.setDatas(find(query).asList());
+        return  pageModel;
+    }
 }
