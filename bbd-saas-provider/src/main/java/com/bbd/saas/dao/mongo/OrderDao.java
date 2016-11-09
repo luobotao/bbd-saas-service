@@ -7,6 +7,7 @@ import com.bbd.saas.mongoModels.OrderGroup;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.*;
 import com.bbd.saas.vo.*;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
 import org.apache.commons.collections4.map.HashedMap;
@@ -1297,5 +1298,39 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = this.getAppQuery(appOrderQueryVO);
         logger.info("OrderDao.selectCountByAppOrderQuery().query="+query.toString());
         return  count(query);
+    }
+
+    /**
+     * 根据条件查询订单信息
+     * @param areaCodes
+     * @param expressStatuses
+     * @param startDate
+     * @param endDate
+     * @param dateTyp
+     * @return
+     */
+    public List<Order> findOrdersByAreaCodeAndExpressStatusAndDateAdd(List<String> areaCodes, List<ExpressStatus> expressStatuses, Date startDate, Date endDate, String dateTyp) {
+        Query<Order> query = createQuery();
+        if(areaCodes!=null&&areaCodes.size()>0){
+            Map<String, Object> inQuery = new HashMap<>();
+            inQuery.put("$in", areaCodes);
+            query.filter("areaCode", inQuery);
+        }
+        if(expressStatuses!=null&&expressStatuses.size()>0){
+            Map<String, Object> inQuery1 = new HashMap<>();
+            inQuery1.put("$in", expressStatuses);
+            query.filter("expressStatus", inQuery1);
+        }
+        if(!Strings.isNullOrEmpty(dateTyp)){
+            if(startDate!=null){
+                query.filter(dateTyp +" >=", startDate);
+            }
+            if(endDate!=null){
+                query.filter(dateTyp +" <=", endDate);
+            }
+        }
+        logger.info("OrderDao.findOrdersByAreaCodeAndExpressStatusAndDateAdd().query="+query.toString());
+        query.order("-dateUpd");
+        return  find(query).asList();
     }
 }

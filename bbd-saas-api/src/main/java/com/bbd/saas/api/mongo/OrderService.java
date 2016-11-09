@@ -433,4 +433,5 @@ public interface OrderService {
 	 */
 	public long findCountByAppOrderQuery(AppOrderQueryVO appOrderQueryVO) throws Exception;
 
+    public List<Order> findOrdersByAreaCodeAndExpressStatusAndDateAdd(List<String> areaCodes,List<ExpressStatus> expressStatuses,Date startDate,Date endDate,String dateTyp);
 }

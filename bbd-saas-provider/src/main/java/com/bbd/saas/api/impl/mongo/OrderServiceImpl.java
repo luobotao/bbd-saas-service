@@ -1012,4 +1012,9 @@ public class OrderServiceImpl implements OrderService {
     public long findCountByAppOrderQuery(AppOrderQueryVO appOrderQueryVO) throws Exception {
         return this.orderDao.selectCountByAppOrderQuery(appOrderQueryVO);
     }
+
+    @Override
+    public List<Order> findOrdersByAreaCodeAndExpressStatusAndDateAdd(List<String> areaCodes, List<ExpressStatus> expressStatuses, Date startDate, Date endDate,String typ) {
+        return this.orderDao.findOrdersByAreaCodeAndExpressStatusAndDateAdd(areaCodes,expressStatuses,startDate,endDate,typ);
+    }
 }
