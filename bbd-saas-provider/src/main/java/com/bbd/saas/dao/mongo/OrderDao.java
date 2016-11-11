@@ -110,7 +110,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     public OrderNumVO getOrderNumVO(String areaCode) {
         OrderNumVO orderNumVO = new OrderNumVO();
         Query<Order> query = createQuery().filter("areaCode", areaCode).filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
-        query.filter("orderStatus", OrderStatus.NOTARR).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);
+        query.filter("orderStatus", OrderStatus.NOTARR).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.OutHouse).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);
         query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
 
         orderNumVO.setNoArriveHis(count(query));//历史未到站
