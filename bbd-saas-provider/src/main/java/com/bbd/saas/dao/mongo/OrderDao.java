@@ -53,6 +53,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         Query<Order> query = createQuery().order("-dateUpd");
         if (orderQueryVO != null) {
             query.filter("mailNum <>", null).filter("mailNum <>", "");//运单号不能为空
+            query.filter("expressStatus <>", ExpressStatus.OutHouse);//
             if (StringUtils.isNotBlank(orderQueryVO.areaCode)) {
                 query.filter("areaCode", orderQueryVO.areaCode);
             }
