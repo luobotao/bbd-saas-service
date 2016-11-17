@@ -2,11 +2,12 @@
 <%@ page import="com.bbd.saas.enums.DispatchStatus" %>
 <%@ page import="com.bbd.saas.enums.OrderStatus" %>
 <%@ page import="com.bbd.saas.mongoModels.Order" %>
-<%@ page import="com.bbd.saas.utils.Constants" %>
+<%@ page import="com.bbd.saas.constants.Constants" %>
 <%@ page import="com.bbd.saas.utils.Dates" %>
 <%@ page import="com.bbd.saas.utils.PageModel" %>
 <%@ page import="java.util.Date" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
 	<jsp:include page="../main.jsp" flush="true" />
@@ -77,7 +78,7 @@
   						<thead>
   							<tr>
 								<c:choose>
-									<c:when test="${areaCode != null && areaCode == Constants.NO_SITE_AREACODE}">
+									<c:when test="${not empty areaCode && fn:contains(Constants.AREACODES_WITH_SELECT_ALL, areaCode)}">
 										<th width="4%"><input type="checkbox"  id="selectAll" name="selectAll" class="j-sel-all" /></th>
 									</c:when>
 									<c:otherwise><th width="4%"></th></c:otherwise>

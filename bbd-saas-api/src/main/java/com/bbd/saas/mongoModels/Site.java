@@ -53,6 +53,7 @@ public class Site implements Serializable {
     private Date dateAdd;      //创建时间
     private Date dateUpd;      //更新时间
     private String type;   //1 为分拨站点，0 为普通站点
+    private String interchangeCode; //接驳点
     @Transient
     private String statusMessage;//JS展示状态
     @Transient
@@ -349,5 +350,11 @@ public class Site implements Serializable {
         this.integralInfo = integralInfo;
     }
 
+    public String getInterchangeCode() {
+        return interchangeCode;
+    }
 
+    public void setInterchangeCode(String interchangeCode) {
+        this.interchangeCode = interchangeCode;
+    }
 }
