@@ -1,6 +1,7 @@
 package com.bbd.saas.mongoModels;
 
 import com.bbd.saas.enums.AppealStatus;
+import com.bbd.saas.enums.ComplaintSrc;
 import com.bbd.saas.enums.ComplaintStatus;
 import com.bbd.saas.enums.ComplaintType;
 import org.bson.types.ObjectId;
@@ -46,7 +47,7 @@ public class Complaint {
     private String areaName;         //站点名称
     private String complaintHandler; //投诉处理人
     private String complaintHandlerId; //投诉处理人id
-
+    public ComplaintSrc complaintSrc;         //投诉来源
 
     public ObjectId getId() {
         return id;
@@ -238,5 +239,13 @@ public class Complaint {
 
     public void setDealResult(String dealResult) {
         this.dealResult = dealResult;
+    }
+
+    public ComplaintSrc getComplaintSrc() {
+        return complaintSrc;
+    }
+
+    public void setComplaintSrc(ComplaintSrc complaintSrc) {
+        this.complaintSrc = complaintSrc;
     }
 }
