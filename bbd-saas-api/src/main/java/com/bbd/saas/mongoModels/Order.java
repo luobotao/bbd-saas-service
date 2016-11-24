@@ -633,4 +633,28 @@ public class Order implements Serializable {
     public void setOtherInfo(Map<String, Object> otherInfo) {
         this.otherInfo = otherInfo;
     }
+
+    public Date getDatePackaged() {
+        return datePackaged;
+    }
+
+    public void setDatePackaged(Date datePackaged) {
+        this.datePackaged = datePackaged;
+    }
+
+    public Date getDateDelivery() {
+        return dateDelivery;
+    }
+
+    public void setDateDelivery(Date dateDelivery) {
+        this.dateDelivery = dateDelivery;
+    }
+
+    public String getExchangeFlag() {
+        return exchangeFlag;
+    }
+
+    public void setExchangeFlag(String exchangeFlag) {
+        this.exchangeFlag = exchangeFlag;
+    }
 }
