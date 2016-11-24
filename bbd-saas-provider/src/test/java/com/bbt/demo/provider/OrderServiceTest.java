@@ -15,6 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import java.util.Date;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
@@ -69,6 +71,7 @@ public class OrderServiceTest {
 						if(courier != null){
 							order.setPostmanUser(courier.getRealName());
 							order.setPostmanPhone(courier.getLoginName());
+							order.setDateDelivery(new Date());
 						}
 						orderService.save(order);
 					}

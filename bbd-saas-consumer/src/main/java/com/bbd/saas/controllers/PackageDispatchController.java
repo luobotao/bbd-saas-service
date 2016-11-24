@@ -180,6 +180,7 @@ public class PackageDispatchController {
 		order.setUserId(user.getId().toString());
 		order.setPostmanUser(user.getRealName());
 		order.setPostmanPhone(user.getLoginName());
+		order.setDateDelivery(new Date());
 		//更新物流信息
 		setOrderExpress(order, user);
 		//更新运单状态--已分派
@@ -462,6 +463,7 @@ public class PackageDispatchController {
 		order.setUserId(null);
 		order.setPostmanUser(null);
 		order.setPostmanPhone(null);
+		order.setDateDelivery(null);
 		//更新物流信息
 		//OrderCommon.addOrderExpress(ExpressStatus.ArriveStation, order, currUser, "取消分派");
 		//更新运单状态--未分派
