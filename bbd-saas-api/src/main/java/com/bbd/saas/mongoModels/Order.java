@@ -78,6 +78,9 @@ public class Order implements Serializable {
     private String billIncomeId;
     private IncomeStatus billIncomeStatus;
     private Date dateSigned;//签收时间
+    private Date datePackaged;//打包时间
+    private Date dateDelivery;//分派时间
+    private String exchangeFlag;    //转兜底配送状态，默认为"" 成功 1 失败 2
     private Map<String,Object> otherInfo;//订单其他信息集合，快递柜信息集合
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
@@ -629,5 +632,29 @@ public class Order implements Serializable {
 
     public void setOtherInfo(Map<String, Object> otherInfo) {
         this.otherInfo = otherInfo;
+    }
+
+    public Date getDatePackaged() {
+        return datePackaged;
+    }
+
+    public void setDatePackaged(Date datePackaged) {
+        this.datePackaged = datePackaged;
+    }
+
+    public Date getDateDelivery() {
+        return dateDelivery;
+    }
+
+    public void setDateDelivery(Date dateDelivery) {
+        this.dateDelivery = dateDelivery;
+    }
+
+    public String getExchangeFlag() {
+        return exchangeFlag;
+    }
+
+    public void setExchangeFlag(String exchangeFlag) {
+        this.exchangeFlag = exchangeFlag;
     }
 }

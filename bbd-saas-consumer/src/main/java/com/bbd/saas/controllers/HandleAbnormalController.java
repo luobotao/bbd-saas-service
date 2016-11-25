@@ -199,6 +199,7 @@ public class HandleAbnormalController {
                 order.setPostmanUser(courier.getRealName());
                 order.setPostmanPhone(courier.getLoginName());
                 order.setOrderStatus(OrderStatus.DISPATCHED);//更新运单状态--已分派
+                order.setDateDelivery(new Date());
                 //更新物流信息
                 order.setExpressStatus(ExpressStatus.Delivering);
                 //添加一条物流信息
@@ -425,6 +426,7 @@ public class HandleAbnormalController {
                 order.setUserId(null);//未分派
                 order.setPostmanUser(null);
                 order.setPostmanPhone(null);
+                order.setDateDelivery(null);
                 order.setParcelCode("");//将包裹号至成空
                 order.setDateUpd(new Date());//更新时间
                 //更新物流信息
