@@ -1380,7 +1380,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             flags.add("1");
             flags.add("2");
             Map<String, Object> inQuery = new HashMap<>();
-            inQuery.put("$ne", flags);
+            inQuery.put("$nin", flags);
             query.filter("exchangeFlag", inQuery);
         }
         logger.info("OrderDao.findOrdersByAreaCodeAndExpressStatusAndExchangeFlag().query="+query.toString());
