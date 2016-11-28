@@ -451,4 +451,7 @@ public interface OrderService {
      * @throws Exception
      */
     public PageModel<Order> findPageByMailNums(PageModel pageModel, String [] mailNums) throws Exception;
+
+    public List<Order> findOrdersByAreaCodeAndExpressStatusAndExchangeFlag(List<String> areaCodes,List<ExpressStatus> expressStatuses,String exchangeFlag);
+
 }

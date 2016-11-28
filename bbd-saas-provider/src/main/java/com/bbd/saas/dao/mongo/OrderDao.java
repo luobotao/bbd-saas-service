@@ -1359,4 +1359,31 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         pageModel.setDatas(find(query).asList());
         return  pageModel;
     }
+
+    public List<Order> findOrdersByAreaCodeAndExpressStatusAndExchangeFlag(List<String> areaCodes, List<ExpressStatus> expressStatuses, String exchangeFlag) {
+        Query<Order> query = createQuery();
+        if(areaCodes!=null&&areaCodes.size()>0){
+            Map<String, Object> inQuery = new HashMap<>();
+            inQuery.put("$in", areaCodes);
+            query.filter("areaCode", inQuery);
+        }
+        if(expressStatuses!=null&&expressStatuses.size()>0){
+            Map<String, Object> inQuery1 = new HashMap<>();
+            inQuery1.put("$in", expressStatuses);
+            query.filter("expressStatus", inQuery1);
+        }
+        if(Strings.isNullOrEmpty(exchangeFlag)) {
+            List<String> flags = Lists.newArrayList();
+            flags.add("");
+            flags.add("null");
+            Map<String, Object> inQuery = new HashMap<>();
+            inQuery.put("$in", flags);
+            query.filter("exchangeFlag", inQuery);
+        }else{
+            query.filter("exchangeFlag", exchangeFlag);
+        }
+        logger.info("OrderDao.findOrdersByAreaCodeAndExpressStatusAndExchangeFlag().query="+query.toString());
+        query.order("-dateUpd");
+        return  find(query).asList();
+    }
 }
