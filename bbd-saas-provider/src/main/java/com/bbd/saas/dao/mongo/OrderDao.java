@@ -1372,15 +1372,16 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             inQuery1.put("$in", expressStatuses);
             query.filter("expressStatus", inQuery1);
         }
-        if(Strings.isNullOrEmpty(exchangeFlag)) {
-            List<String> flags = Lists.newArrayList();
-            flags.add("");
-            flags.add("null");
-            Map<String, Object> inQuery = new HashMap<>();
-            inQuery.put("$in", flags);
-            query.filter("exchangeFlag", inQuery);
-        }else{
+        if(!Strings.isNullOrEmpty(exchangeFlag)) {
             query.filter("exchangeFlag", exchangeFlag);
+        }else{
+            List<String> flags = Lists.newArrayList();
+            flags.add("0");
+            flags.add("1");
+            flags.add("2");
+            Map<String, Object> inQuery = new HashMap<>();
+            inQuery.put("$ne", flags);
+            query.filter("exchangeFlag", inQuery);
         }
         logger.info("OrderDao.findOrdersByAreaCodeAndExpressStatusAndExchangeFlag().query="+query.toString());
         query.order("-dateUpd");
