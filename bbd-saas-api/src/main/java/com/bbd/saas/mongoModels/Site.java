@@ -9,7 +9,6 @@ import org.mongodb.morphia.annotations.*;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 站点表
@@ -55,7 +54,8 @@ public class Site implements Serializable {
     private Date dateUpd;      //更新时间
     private String type;   //1 为分拨站点，0 为普通站点
     private String interchangeCode; //接驳点
-    private List<ServiceTime> serviceTimes;//接驳点服务时间集合
+    private String beginTime;//接驳点开始时间
+    private String endTime;//接驳点结束时间
     @Transient
     private String statusMessage;//JS展示状态
     @Transient
@@ -360,9 +360,19 @@ public class Site implements Serializable {
         this.interchangeCode = interchangeCode;
     }
 
+    public String getBeginTime() {
+        return beginTime;
+    }
 
-    public static class  ServiceTime{
-        public String beginTime;//接驳点开始时间
-        public String endTime;//接驳点结束时间
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }
