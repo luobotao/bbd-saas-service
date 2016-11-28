@@ -54,6 +54,8 @@ public class Site implements Serializable {
     private Date dateUpd;      //更新时间
     private String type;   //1 为分拨站点，0 为普通站点
     private String interchangeCode; //接驳点
+    private String beginTime;//接驳点开始时间
+    private String endTime;//接驳点结束时间
     @Transient
     private String statusMessage;//JS展示状态
     @Transient
@@ -356,5 +358,21 @@ public class Site implements Serializable {
 
     public void setInterchangeCode(String interchangeCode) {
         this.interchangeCode = interchangeCode;
+    }
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

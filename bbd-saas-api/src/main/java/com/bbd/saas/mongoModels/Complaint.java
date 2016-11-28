@@ -47,7 +47,7 @@ public class Complaint {
     private String areaName;         //站点名称
     private String complaintHandler; //投诉处理人
     private String complaintHandlerId; //投诉处理人id
-    public ComplaintSrc complaintSrc;         //投诉来源
+    private ComplaintSrc complaintSrc;         //投诉来源
 
     public ObjectId getId() {
         return id;

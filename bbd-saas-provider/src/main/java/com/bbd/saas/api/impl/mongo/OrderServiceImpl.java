@@ -1027,4 +1027,9 @@ public class OrderServiceImpl implements OrderService {
     public PageModel<Order> findPageByMailNums(PageModel pageModel, String [] mailNums) throws Exception {
         return this.orderDao.selectPageByMailNums(pageModel, mailNums);
     }
+
+    @Override
+    public List<Order> findOrdersByAreaCodeAndExpressStatusAndExchangeFlag(List<String> areaCodes, List<ExpressStatus> expressStatuses, String exchangeFlag) {
+        return this.orderDao.findOrdersByAreaCodeAndExpressStatusAndExchangeFlag(areaCodes, expressStatuses, exchangeFlag);
+    }
 }
