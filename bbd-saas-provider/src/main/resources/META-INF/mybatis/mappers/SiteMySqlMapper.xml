@@ -17,7 +17,10 @@
         <result column="upperlimit" property="upperlimit" jdbcType="INTEGER"/>
         <result column="lowerlimit" property="lowerlimit" jdbcType="INTEGER"/>
         <result column="daycnt" property="daycnt" jdbcType="INTEGER"/>
+        <result column="ismaster" property="ismaster" jdbcType="VARCHAR"/>
         <result column="sitetype" property="sitetype" jdbcType="INTEGER"/>
+        <result column="sitescore" property="sitescore" jdbcType="DOUBLE"/>
+        <result column="lastmonthscore" property="lastmonthscore" jdbcType="DOUBLE"/>
     </resultMap>
     
     <sql id="baseColumnList">
@@ -36,7 +39,10 @@
         upperlimit,
         lowerlimit,
         daycnt,
-        sitetype
+        ismaster,
+        sitetype,
+        sitescore,
+        lastmonthscore
     </sql>
     
 	<select id="selectIdBySiteId" resultMap="baseResultMap">
@@ -70,7 +76,10 @@
             #{upperlimit},
             #{lowerlimit},
             #{daycnt},
-            #{sitetype}
+            #{ismaster},
+            #{sitetype},
+            #{sitescore},
+            #{lastmonthscore}
         )
     </insert>
     <!-- 插入一条记录  结束  -->
@@ -120,8 +129,17 @@
             <if test="daycnt != null and daycnt != 0">
                 daycnt = #{daycnt},
             </if>
+            <if test="ismaster != null and ismaster != 0">
+                ismaster = #{ismaster},
+            </if>
             <if test="sitetype != null ">
                 sitetype = #{sitetype}
+            </if>
+            <if test="sitescore != null and sitescore != 0">
+                sitescore = #{sitescore},
+            </if>
+            <if test="lastmonthscore != null and lastmonthscore != 0">
+                lastmonthscore = #{lastmonthscore},
             </if>
         </set>
         WHERE siteid = #{siteid}
