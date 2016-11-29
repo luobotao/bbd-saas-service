@@ -38,19 +38,18 @@ public class ComplaintDealServiceImpl implements ComplaintDealService {
         Map<String, String> map = new HashMap<String, String>();
         StringBuffer dealSB = null;
         int amount;
-        double score;
+        BigDecimal score;
         for(Map<String, Object> dealMap : complaintDealVOList){
             dealSB = new StringBuffer();
             amount = (Integer)dealMap.get("amount");
-            score = (Double)dealMap.get("score");
-            if(amount > 0){
-                dealSB.append("-");
+            score = (BigDecimal)dealMap.get("score");
+            if(amount != 0){
                 dealSB.append(Numbers.intToStringWithDiv(amount, 100));
                 dealSB.append("元");
             }
-            if(score > 0){
+            if(score.doubleValue() != 0){
                 if(dealSB.length() > 0){
-                    dealSB.append(",");
+                    dealSB.append("，");
                 }
                 dealSB.append("-");
                 dealSB.append(score);

@@ -140,7 +140,7 @@ public class ComplaintController {
             pageModel.setPageNo(pageIndex);
             //当前页的数据
             complaintPage = complaintService.findPageDatas(pageModel, complaintQueryVO);
-//            this.setDealResult(complaintPage);
+            this.setDealResult(complaintPage);
         } catch (Exception e) {
             logger.error("===分页查询，Ajax查询列表数据===出错:" + e.getMessage());
         }
