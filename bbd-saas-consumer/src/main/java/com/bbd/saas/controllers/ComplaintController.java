@@ -3,7 +3,9 @@ package com.bbd.saas.controllers;
 import com.bbd.saas.Services.AdminService;
 import com.bbd.saas.api.mongo.ComplaintService;
 import com.bbd.saas.api.mongo.UserService;
+import com.bbd.saas.api.mysql.SiteMySqlService;
 import com.bbd.saas.constants.UserSession;
+import com.bbd.saas.models.SiteMySql;
 import com.bbd.saas.mongoModels.Complaint;
 import com.bbd.saas.mongoModels.User;
 import com.bbd.saas.utils.Dates;
@@ -33,6 +35,8 @@ public class ComplaintController {
     UserService userService;
     @Autowired
     AdminService adminService;
+    @Autowired
+    SiteMySqlService siteMySqlService;
 
     /**
      * 跳转到投诉管理页面
@@ -56,8 +60,11 @@ public class ComplaintController {
             //查询数据
             PageModel<ComplaintVO> complaintPage = this.getList(pageIndex, complaintStatus,appealStatus, reason, between,mailNum,request);
             logger.info("=====投诉管理页面列表===" + complaintPage);
+            //当前登录的用户信息
+            User user = adminService.get(UserSession.get(request));
+            SiteMySql siteMySql = siteMySqlService.selectIdBySiteId(user.getSite().getId().toString());
             model.addAttribute("dataPage", complaintPage);
-            model.addAttribute("grade", 100);
+            model.addAttribute("grade", siteMySql != null ? siteMySql.getSitescore() : 0);
             model.addAttribute("between", between);
             return "page/complaint";
         } catch (Exception e) {
