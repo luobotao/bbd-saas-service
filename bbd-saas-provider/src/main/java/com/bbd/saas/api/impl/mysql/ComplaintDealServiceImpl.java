@@ -2,6 +2,7 @@ package com.bbd.saas.api.impl.mysql;
 
 import com.bbd.saas.api.mysql.ComplaintDealService;
 import com.bbd.saas.dao.mysql.ComplaintDealDao;
+import com.bbd.saas.utils.Numbers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,7 @@ public class ComplaintDealServiceImpl implements ComplaintDealService {
             score = (Double)dealMap.get("score");
             if(amount > 0){
                 dealSB.append("-");
-                dealSB.append(amount);
+                dealSB.append(Numbers.intToStringWithDiv(amount, 100));
                 dealSB.append("元");
             }
             if(score > 0){
