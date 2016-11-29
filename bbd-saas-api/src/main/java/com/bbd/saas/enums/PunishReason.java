@@ -7,24 +7,24 @@ import com.bbd.saas.utils.Htmls;
  * 投诉理由||处罚理由
  */
 public enum PunishReason {
-    XJQS(0, "虚假签收"),
-    CZSWYXSX(1, "操作失误影响时效"),
-    LRXXYSJBF(2, "录入信息与实际不符"),
-    APPCZBGF(3, "APP操作不规范"),
-    CWCNHWZQYDKH(4, "错误承诺或未正确引导客户"),
-    WLXKH(5, "未联系客户/非本人签收"),
-    WJSGJ(6, "未及时跟进/知会"),
+    XJQS(0, "APP手机端做虚假签收"),
+    CZSWYXSX(1, "操作失误影响包裹时效"),
+    LRXXYSJBF(2, "信息报备不符"),
+    APPCZBGF(3, "未做或做错APP扫描"),
+    CWCNHWZQYDKH(4, "错误承诺客户"),
+    WLXKH(5, "未与客户取得联系私自放包裹"),
+    WJSGJ(6, "未及时处理客户投诉及客户需求"),
     CZBFGZKJPS(7, "装卸/分拣操作不规范致快件破损"),
     DZJWBZPS(8, "到站件外包装破损未及时上报"),
     PJTZYS(9, "派件途中遗失"),
     ZDNYS(10, "站点内遗失"),
-    WASPSZDCP(11, "未按时派送遭到催派"),
+    WASPSZDCP(11, "客户多次催派未及时处理"),
     YWPJ(12, "延误派件"),
-    BSHSM(13, "不送货上门"),
+    BSHSM(13, "拒绝送货上门"),
     WZJL(14, "伪造记录"),
     YXJZBD(15, "言行举止不当"),
     WLYQKH(16, "无理要求客户"),
-    YKHFSMC(17, "与客户发生摩擦"),
+    YKHFSMC(17, "言行冲突"),
     XXBFHYQ(18, "形象不符合要求");
 
     private int status;
