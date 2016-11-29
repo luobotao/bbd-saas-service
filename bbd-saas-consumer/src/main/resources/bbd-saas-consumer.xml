@@ -66,4 +66,5 @@
 
     <dubbo:reference id="balanceService" interface="com.bbd.saas.api.mysql.BalanceService"/>
     <dubbo:reference id="geoRecHistoService" interface="com.bbd.saas.api.mysql.GeoRecHistoService"/>
+    <dubbo:reference id="complaintDealService" interface="com.bbd.saas.api.mysql.ComplaintDealService"/>
 </beans>

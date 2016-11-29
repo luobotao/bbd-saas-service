@@ -33,20 +33,20 @@
 			<!-- S detail -->
 			<div class="b-detail col-xs-12 col-sm-12 bbd-md-9">
 				<!-- S 信息展示 -->
-				<%--<div class="b-total">
-					本月分数
-					<c:choose>
-						<c:when test="${grade >= 80}">
-							<span class="b-grade c-greens">
-						</c:when>
-						<c:otherwise>
-							<span class="b-grade c-red">
-						</c:otherwise>
-					</c:choose>
-					<fmt:formatNumber type="number" value="${grade}" pattern="0.0" maxFractionDigits="1"/></span>
-					分
-					<span class="b-alls">总分100分</span>
-				</div>--%>
+				<%--<div class="b-total">--%>
+					<%--本月分数--%>
+					<%--<c:choose>--%>
+						<%--<c:when test="${grade >= 80}">--%>
+							<%--<span class="b-grade c-greens">--%>
+						<%--</c:when>--%>
+						<%--<c:otherwise>--%>
+							<%--<span class="b-grade c-red">--%>
+						<%--</c:otherwise>--%>
+					<%--</c:choose>--%>
+					<%--<fmt:formatNumber type="number" value="${grade}" pattern="0.0" maxFractionDigits="1"/></span>--%>
+					<%--分--%>
+					<%--<span class="b-alls">总分100分</span>--%>
+				<%--</div>--%>
 				<!-- E 信息展示 -->
 
 				<!-- S 搜索区域 -->
@@ -144,7 +144,12 @@
 											<td><%=complaint.getComplaintStatusMsg()%></td>
 											<td>暂无处罚</td>
 										<%
-											}else{//投诉成立+撤销
+											}else if(complaint.getComplaintStatus() == ComplaintStatus.COMPLAINT_CANCEL){//投诉撤销
+										%>
+											<td><%=complaint.getComplaintStatusMsg()%></td>
+											<td>退还金额/分数</td>
+										<%
+											}else{//投诉成立
 										%>
 											<td><%=complaint.getComplaintStatusMsg()%></td>
 											<td><%=complaint.getDealResult()%></td>
@@ -258,13 +263,16 @@ function getRowHtml(data){
 	row += "<td>" + data.respondent + "</td>";//被投诉人
 	row += "<td>" + data.appealStatusMsg + "</td>";//申诉状态
 	if(data.complaintStatus != null){
-		if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_WAIT %>"){
+		if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_WAIT %>"){//等待客服处理
 			row += "<td>客服处理中</td>";
 			row += "<td>暂无处罚</td>";
-		}else if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_CLOSE %>"){
+		}else if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_CLOSE %>"){//投诉关闭
 			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
 			row += "<td>暂无处罚</td>";
-		}else {
+		}else if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_CANCEL %>"){//投诉撤销
+			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
+			row += "<td>退还金额/分数</td>";
+		}else {//投诉成立
 			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
 			row += "<td>" + data.dealResult + "</td>";//处罚结果
 		}
