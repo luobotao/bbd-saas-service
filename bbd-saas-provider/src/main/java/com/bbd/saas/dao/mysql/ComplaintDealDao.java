@@ -18,9 +18,16 @@ public interface ComplaintDealDao {
     Map<String, Object> selectByMailNum(@Param("mailNum")String mailNum);
 
     /**
-     * 根据订单号查询投诉处理结果
+     * 根据订单号查询扣钱情况
      * @param mailNumList 运单号集合
      * @return 投诉处理结果集合
      */
-    List<Map<String, Object>> selectListByMailNums(@Param("mailNumList")List<String> mailNumList);
+    List<Map<String, Object>> selectMoneyListByMailNums(@Param("mailNumList")List<String> mailNumList);
+
+    /**
+     * 根据订单号查询扣分情况
+     * @param mailNumList 运单号集合
+     * @return 投诉处理结果集合
+     */
+    List<Map<String, Object>> selectScoreListByMailNums(@Param("mailNumList")List<String> mailNumList);
 }
