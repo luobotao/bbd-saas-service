@@ -54,7 +54,7 @@ public class ComplaintDealServiceImpl implements ComplaintDealService {
         if((scoreList != null && !scoreList.isEmpty()) ){
             for(Map<String, Object> dealMap : scoreList){
                 dealSB = new StringBuffer();
-                dealSB.append(dealMap.get("score") == null ? "0.00" : dealMap.get("score"));
+                dealSB.append(dealMap.get("score") == null ? "0.0" : dealMap.get("score"));
                 dealSB.append("分");
                 scoreMap.put((String)dealMap.get("mailNum"), dealSB.toString());
             }
@@ -71,9 +71,9 @@ public class ComplaintDealServiceImpl implements ComplaintDealService {
             //拼接分
             result = scoreMap.get(mailNum);
             if(result == null){
-                dealSB.append("0.00分");
+                dealSB.append("0.0分");
             }else{
-                dealSB.append(result);
+                dealSB.append(result.replace("0分", "分"));
             }
             map.put(mailNum, dealSB.toString());
         }
