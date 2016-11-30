@@ -9,7 +9,7 @@
 
     <select id="selectMoneyListByMailNums" resultType="java.util.HashMap">
         SELECT out_trade_no mailNum, amount
-        FROM balance_income WHERE out_trade_no IN
+        FROM balance_income WHERE src='BBD_complain' AND out_trade_no IN
         <foreach item="item" index="index" collection="mailNumList" open="(" separator="," close=")">
             #{item}
         </foreach>

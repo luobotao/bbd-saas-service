@@ -37,7 +37,7 @@ public class ComplaintDealServiceImpl implements ComplaintDealService {
             return map;
         }
         List<Map<String, Object>> moneyList = this.complaintDealDao.selectMoneyListByMailNums(mailNumList);
-        List<Map<String, Object>> scoreList = this.complaintDealDao.selectMoneyListByMailNums(mailNumList);
+        List<Map<String, Object>> scoreList = this.complaintDealDao.selectScoreListByMailNums(mailNumList);
         Map<String, String> moneyMap = new HashMap<String, String>();
         Map<String, String> scoreMap = new HashMap<String, String>();
         StringBuffer dealSB = null;
@@ -47,12 +47,13 @@ public class ComplaintDealServiceImpl implements ComplaintDealService {
                 dealSB = new StringBuffer();
                 dealSB.append(Numbers.intToStringWithDiv((Integer)dealMap.get("amount"), 100));
                 dealSB.append("元");
-                moneyMap.put((String)moneyMap.get("mailNum"), dealSB.toString());
+                moneyMap.put((String)dealMap.get("mailNum"), dealSB.toString());
             }
         }
         //扣分
         if((scoreList != null && !scoreList.isEmpty()) ){
             for(Map<String, Object> dealMap : scoreList){
+                dealSB = new StringBuffer();
                 dealSB.append(dealMap.get("score") == null ? "0.00" : dealMap.get("score"));
                 dealSB.append("分");
                 scoreMap.put((String)dealMap.get("mailNum"), dealSB.toString());
