@@ -96,9 +96,9 @@
   						<thead>
   							<tr>
 								<th>运单号</th>
-								<th width="15%">投诉理由</th>
-								<th>发起投诉理由</th>
+								<th width="15%">发起投诉理由</th>
 								<th>投诉成立理由</th>
+								<th>发起投诉时间</th>
 								<th>被投诉人</th>
 								<th>申诉状态</th>
 								<th>投诉状态</th>
