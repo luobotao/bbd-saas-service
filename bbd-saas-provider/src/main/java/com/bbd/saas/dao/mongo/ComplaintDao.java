@@ -43,7 +43,7 @@ public class ComplaintDao extends BaseDAO<Complaint, ObjectId> {
     public PageModel<Complaint> selectPageDatas(PageModel<Complaint> pageModel, ComplaintQueryVO complaintQueryVO) {
         Query<Complaint> query = this.getQuery(complaintQueryVO);
         pageModel.setTotalCount(count(query));//数据总条数
-        query.retrievedFields(true, "mailNum", "complaintStatus", "dateAdd", "reason", "postmanPhone", "appealStatus", "complaintStatus", "dealResult");
+        query.retrievedFields(true, "mailNum", "complaintStatus", "dateAdd", "reason", "punishReason", "postmanPhone", "appealStatus", "complaintStatus", "dealResult");
         query.order("-dateAdd");//投诉时间倒叙排序
         List<Complaint> complaintList = find(query.offset(pageModel.getPageNo() * pageModel.getPageSize()).limit(pageModel.getPageSize())).asList();
         pageModel.setDatas(complaintList);//当前页的数据

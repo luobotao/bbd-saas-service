@@ -2,6 +2,7 @@ package com.bbd.saas.vo.entity;
 
 import com.bbd.saas.enums.AppealStatus;
 import com.bbd.saas.enums.ComplaintStatus;
+import com.bbd.saas.utils.StringUtil;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -106,7 +107,7 @@ public class ComplaintVO implements Serializable {
     }
 
     public String getPunishReason() {
-        return punishReason;
+        return StringUtil.initStr(punishReason, "");
     }
 
     public void setPunishReason(String punishReason) {
