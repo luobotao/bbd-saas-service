@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bbd.saas.dao.mysql.ComplaintDealDao">
+
+    <select id="selectByMailNum" resultType="java.util.HashMap">
+        SELECT s.mailNum mailNum,b.amount amount,s.score score FROM balance_income b,tb_complaint_score_log s
+        WHERE b.out_trade_no=s.mailNum AND s.mailNum=#{mailNum} AND b.src='BBD_complain'
+    </select>
+
+    <select id="selectMoneyListByMailNums" resultType="java.util.HashMap">
+        SELECT out_trade_no mailNum, amount
+        FROM balance_income WHERE src='BBD_complain' AND out_trade_no IN
+        <foreach item="item" index="index" collection="mailNumList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectScoreListByMailNums" resultType="java.util.HashMap">
+        SELECT mailNum,score
+        FROM tb_complaint_score_log WHERE mailNum IN
+        <foreach item="item" index="index" collection="mailNumList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

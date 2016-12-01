@@ -12,6 +12,9 @@ public class Numbers {
 	 * @return
 	 */
 	public static String intToStringWithDiv(Integer src,Integer div){
+		if(src == null){
+			src = 0;
+		}
 		double srcD = Double.valueOf(src);
 		double divD = Double.valueOf(div);
 		Double result =srcD/divD;

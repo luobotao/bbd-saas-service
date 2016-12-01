@@ -131,6 +131,7 @@ public class SubscribeBackController {
                                                 //更改订单为签收状态
                                                 order.setOrderStatus(OrderStatus.SIGNED);
                                                 order.setExpressStatus(ExpressStatus.Success);
+                                                order.setDateSigned(new Date());
                                             }
                                         }
                                         // 当message为“3天查询无记录”或“60天无变化时”，status= abort，即监控中止。
@@ -140,6 +141,7 @@ public class SubscribeBackController {
                                                 //更改订单为签收状态
                                                 order.setOrderStatus(OrderStatus.SIGNED);
                                                 order.setExpressStatus(ExpressStatus.Success);
+                                                order.setDateSigned(new Date());
                                             }
                                         }
                                         order.setDateUpd(new Date());

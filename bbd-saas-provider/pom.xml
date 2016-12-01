@@ -61,6 +61,7 @@
         <dependency>
             <groupId>com.github.sgroschupf</groupId>
             <artifactId>zkclient</artifactId>
+            <version>0.1</version>
         </dependency>
         <!-- 引入sharding-jdbc核心模块 -->
         <dependency>
@@ -113,6 +114,7 @@
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
+            <version>0.9.3</version>
         </dependency>
         <!-- Logging -->
         <dependency>

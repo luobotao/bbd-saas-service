@@ -150,5 +150,9 @@
         <property name="mapperInterface" value="com.bbd.saas.dao.mysql.GeoRecHistoDao"></property>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
     </bean>
+    <bean id="complaintDealDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.bbd.saas.dao.mysql.ComplaintDealDao"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
     <!--  end mysql daos  -->
 </beans>

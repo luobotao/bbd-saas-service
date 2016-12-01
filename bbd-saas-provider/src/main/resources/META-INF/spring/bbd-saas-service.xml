@@ -210,5 +210,11 @@
             <ref bean="siteDao"/>
         </property>
     </bean>
+
+    <bean id="complaintDealService" class="com.bbd.saas.api.impl.mysql.ComplaintDealServiceImpl">
+        <property name="complaintDealDao">
+            <ref bean="complaintDealDao"/>
+        </property>
+    </bean>
     <!--    end mysql services   -->
 </beans>

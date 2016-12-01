@@ -20,7 +20,10 @@ public class SiteMySql implements Serializable {
     private Integer upperlimit;
     private Integer lowerlimit;
     private Integer daycnt;
+    private String ismaster;
     private int sitetype;
+    private double sitescore;//当前分数
+    private double lastmonthscore;//上个月分数
 
 
     public String getName() {
@@ -149,5 +152,29 @@ public class SiteMySql implements Serializable {
 
     public void setSitetype(int sitetype) {
         this.sitetype = sitetype;
+    }
+
+    public String getIsmaster() {
+        return ismaster;
+    }
+
+    public void setIsmaster(String ismaster) {
+        this.ismaster = ismaster;
+    }
+
+    public double getSitescore() {
+        return sitescore;
+    }
+
+    public void setSitescore(double sitescore) {
+        this.sitescore = sitescore;
+    }
+
+    public double getLastmonthscore() {
+        return lastmonthscore;
+    }
+
+    public void setLastmonthscore(double lastmonthscore) {
+        this.lastmonthscore = lastmonthscore;
     }
 }
