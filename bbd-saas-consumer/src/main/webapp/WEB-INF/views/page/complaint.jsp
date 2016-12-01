@@ -66,7 +66,7 @@
 								</select>
 	  						</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-4">
-								<label>投诉理由：</label>
+								<label>发起投诉理由：</label>
 								<select id="reason" name="reason" class="form-control form-con-new">
 									<%=PunishReason.Srcs2HTML(-1)%>
 								</select>
@@ -97,7 +97,8 @@
   							<tr>
 								<th>运单号</th>
 								<th width="15%">投诉理由</th>
-								<th>投诉时间</th>
+								<th>发起投诉理由</th>
+								<th>投诉成立理由</th>
 								<th>被投诉人</th>
 								<th>申诉状态</th>
 								<th>投诉状态</th>
@@ -119,6 +120,7 @@
 								<tr>
 									<td><%=complaint.getMailNum()%></td>
 									<td><%=complaint.getReason()%></td>
+									<td><%=complaint.getPunishReason()%></td>
 									<td><%=Dates.formatDateTime_New(complaint.getDateAdd())%></td>
 									<td><%=complaint.getRespondent()%></td>
 									<%
@@ -259,6 +261,7 @@ function getRowHtml(data){
 		row += "<td>" + data.mailNum.replace(mailNum, "<span class='font-bg-color'>" + mailNum + "</span>") + "</td>";
 	}
 	row += "<td>" + data.reason + "</td>";
+	row += "<td>" + data.punishReason + "</td>";
 	row += "<td>" + getDate1(data.dateAdd) + "</td>";
 	row += "<td>" + data.respondent + "</td>";//被投诉人
 	row += "<td>" + data.appealStatusMsg + "</td>";//申诉状态
