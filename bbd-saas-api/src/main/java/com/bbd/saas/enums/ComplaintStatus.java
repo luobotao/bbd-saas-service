@@ -6,7 +6,7 @@ import com.bbd.saas.utils.Htmls;
  * 投诉状态
  */
 public enum ComplaintStatus {
-    COMPLAINT_WAIT(0, "待处理投诉"),
+    COMPLAINT_WAIT(0, "客服处理中"),
     COMPLAINT_SUCCESS(1, "投诉成立"),
     COMPLAINT_CLOSE(2, "投诉关闭"),
     COMPLAINT_CANCEL(3, "投诉撤销");
