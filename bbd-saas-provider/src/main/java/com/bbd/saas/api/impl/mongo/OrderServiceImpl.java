@@ -775,6 +775,7 @@ public class OrderServiceImpl implements OrderService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("address:" + address +"方法在sass端异常： " + e.getMessage());
         }
         long totalEndTime = System.currentTimeMillis(); //获取结束时间
         logger.info("address:" + address +"方法在sass端总体运行时间： " + (totalEndTime - totalStartTime) + "ms");
