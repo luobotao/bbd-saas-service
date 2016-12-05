@@ -44,6 +44,7 @@ public class OrderParcel implements Serializable {
     private List<Order> orderList;
     private Date dateAdd;
     private Date dateUpd;
+    private Date dateParcel;
     //包裹类型 0：配件包裹（默认） 1：集包
     private String parceltyp;
     // 运单号
@@ -251,4 +252,11 @@ public class OrderParcel implements Serializable {
         this.wayname = wayname;
     }
 
+    public Date getDateParcel() {
+        return dateParcel;
+    }
+
+    public void setDateParcel(Date dateParcel) {
+        this.dateParcel = dateParcel;
+    }
 }

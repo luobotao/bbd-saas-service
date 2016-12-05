@@ -66,7 +66,7 @@
 								</select>
 	  						</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-4">
-								<label>投诉理由：</label>
+								<label>发起投诉理由：</label>
 								<select id="reason" name="reason" class="form-control form-con-new">
 									<%=PunishReason.Srcs2HTML(-1)%>
 								</select>
@@ -96,8 +96,9 @@
   						<thead>
   							<tr>
 								<th>运单号</th>
-								<th width="15%">投诉理由</th>
-								<th>投诉时间</th>
+								<th width="15%">发起投诉理由</th>
+								<th>投诉成立理由</th>
+								<th>发起投诉时间</th>
 								<th>被投诉人</th>
 								<th>申诉状态</th>
 								<th>投诉状态</th>
@@ -119,6 +120,7 @@
 								<tr>
 									<td><%=complaint.getMailNum()%></td>
 									<td><%=complaint.getReason()%></td>
+									<td><%=complaint.getPunishReason()%></td>
 									<td><%=Dates.formatDateTime_New(complaint.getDateAdd())%></td>
 									<td><%=complaint.getRespondent()%></td>
 									<%
@@ -133,26 +135,19 @@
 										}
 										if(complaint.getComplaintStatus() != null){//投诉状态
 									%>
+										<td><%=complaint.getComplaintStatusMsg()%></td>
 										<%
-											if(complaint.getComplaintStatus() == ComplaintStatus.COMPLAINT_WAIT){//等待客服处理
+											if(complaint.getComplaintStatus() == ComplaintStatus.COMPLAINT_SUCCESS){//投诉成立
 										%>
-											<td>客服处理中</td>
-											<td>暂无处罚</td>
-										<%
-											}else if(complaint.getComplaintStatus() == ComplaintStatus.COMPLAINT_CLOSE){//投诉关闭
-										%>
-											<td><%=complaint.getComplaintStatusMsg()%></td>
-											<td>暂无处罚</td>
+											<td><%=complaint.getDealResult()%></td>
 										<%
 											}else if(complaint.getComplaintStatus() == ComplaintStatus.COMPLAINT_CANCEL){//投诉撤销
 										%>
-											<td><%=complaint.getComplaintStatusMsg()%></td>
 											<td>退还金额/分数</td>
 										<%
-											}else{//投诉成立
+											}else{//客服处理中 || 投诉关闭
 										%>
-											<td><%=complaint.getComplaintStatusMsg()%></td>
-											<td><%=complaint.getDealResult()%></td>
+											<td>暂无处罚</td>
 										<%
 											}
 										%>
@@ -259,22 +254,18 @@ function getRowHtml(data){
 		row += "<td>" + data.mailNum.replace(mailNum, "<span class='font-bg-color'>" + mailNum + "</span>") + "</td>";
 	}
 	row += "<td>" + data.reason + "</td>";
+	row += "<td>" + data.punishReason + "</td>";
 	row += "<td>" + getDate1(data.dateAdd) + "</td>";
 	row += "<td>" + data.respondent + "</td>";//被投诉人
 	row += "<td>" + data.appealStatusMsg + "</td>";//申诉状态
 	if(data.complaintStatus != null){
-		if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_WAIT %>"){//等待客服处理
-			row += "<td>客服处理中</td>";
-			row += "<td>暂无处罚</td>";
-		}else if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_CLOSE %>"){//投诉关闭
-			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
-			row += "<td>暂无处罚</td>";
-		}else if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_CANCEL %>"){//投诉撤销
-			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
-			row += "<td>退还金额/分数</td>";
-		}else {//投诉成立
-			row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
+		row += "<td>" + data.complaintStatusMsg + "</td>";//投诉状态
+		if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_SUCCESS %>"){//投诉成立
 			row += "<td>" + data.dealResult + "</td>";//处罚结果
+		}else if(data.complaintStatus == "<%=ComplaintStatus.COMPLAINT_CANCEL %>"){//投诉撤销
+			row += "<td>退还金额/分数</td>";
+		}else {//等待客服处理 || 投诉关闭
+			row += "<td>暂无处罚</td>";
 		}
 	}else{
 		row += "<td></td>";
