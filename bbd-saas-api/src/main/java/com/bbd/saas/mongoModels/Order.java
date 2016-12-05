@@ -82,6 +82,7 @@ public class Order implements Serializable {
     private Date dateDelivery;//分派时间
     private String exchangeFlag;    //转兜底配送状态，默认为"" 待推送 0 成功 1 失败 2
     private Map<String,Object> otherInfo;//订单其他信息集合，快递柜信息集合
+    private String parentCode;      //对当当来讲的母运单号
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -534,53 +535,14 @@ public class Order implements Serializable {
         this.siteTimes = siteTimes;
     }
 
-    public OrderVO coverOrderVo() {
-        OrderVO orderVo = new OrderVO();
-        orderVo.setAdminUserId(adminUserId);
-        orderVo.setMailNum(mailNum);
-        orderVo.setOrderNo(orderNo);
-        orderVo.setAreaName(areaName);
-        orderVo.setAreaCode(areaCode);//站点编码
-        orderVo.setAreaRemark(areaRemark);//站点地址
-        orderVo.setSender(sender);
-        orderVo.setReciever(reciever);
-        orderVo.setUserId(userId);
-        orderVo.setPostmanPhone(postmanPhone);
-        orderVo.setPostmanUser(postmanUser);
-        orderVo.setSrc(src);
-        orderVo.setOrderStatus(orderStatus);
-        orderVo.setExpressStatus(expressStatus);
-        orderVo.setPrintStatus(printStatus);
-        orderVo.setErrorFlag(errorFlag);//异常面单？ 0否 1是
-        orderVo.setErrorRemark(errorRemark);//异常信息
-        orderVo.setGoods(goods);
-        orderVo.setExpresses(expresses);
-        orderVo.setOtherExprees(otherExprees);
-        orderVo.setRtnReason(rtnReason);//退货原因
-        orderVo.setRtnRemark(rtnRemark);//退货原因备注（退货原因为其他时，此字段不为空）
-        orderVo.setDateAplyRtn(dateAplyRtn);//申请退货时间
-        orderVo.setOrderCreate(orderCreate);//订单创建时间
-        orderVo.setOrderPay(orderPay);     //订单支付时间
-        orderVo.setDateAdd(dateAdd);
-        orderVo.setDatePrint(datePrint);//物流单打印时间
-        orderVo.setDateMayArrive(dateMayArrive);//预计到站时间
-        orderVo.setDateArrived(dateArrived);//到站时间
-        orderVo.setDateDriverGeted(dateDriverGeted);//司机取货时间
-        orderVo.setDateUpd(dateUpd);//
-        orderVo.setSynsFlag(synsFlag);//与易普同步状态0未同步 1已同步 2同步失败
-        orderVo.setTransportStatus(transportStatus);//运输状态
-        orderVo.setTradeNo(tradeNo);//商户订单号(我们自己生成的支付订单号)
-        orderVo.setuId(uId);//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
-        orderVo.setIsRemoved(isRemoved);//是否被移除？ 0：未被移除； 1：被移除
-        orderVo.setRemoveReason(removeReason);//移除原因
-        orderVo.setOrderSetStatus(orderSetStatus);//运单集包状态
-        orderVo.setParcelCode(parcelCode);//包裹号码默认为空
-        orderVo.setTradeStationId(tradeStationId);//揽件员站点id
-        orderVo.setEmbraceId(embraceId);//揽件员id
-        orderVo.setDisAreaCode(disAreaCode);//分拨中心Code
-        orderVo.setSiteTimes(siteTimes);//揽件时间的集合
-        return orderVo;
+    public String getParentCode() {
+        return parentCode;
     }
+
+    public void setParentCode(String parentCode) {
+        this.parentCode = parentCode;
+    }
+
 
     public String toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE);//      return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE).append("xml", xml).toString();
@@ -656,5 +618,53 @@ public class Order implements Serializable {
 
     public void setExchangeFlag(String exchangeFlag) {
         this.exchangeFlag = exchangeFlag;
+    }
+    public OrderVO coverOrderVo() {
+        OrderVO orderVo = new OrderVO();
+        orderVo.setAdminUserId(adminUserId);
+        orderVo.setMailNum(mailNum);
+        orderVo.setOrderNo(orderNo);
+        orderVo.setAreaName(areaName);
+        orderVo.setAreaCode(areaCode);//站点编码
+        orderVo.setAreaRemark(areaRemark);//站点地址
+        orderVo.setSender(sender);
+        orderVo.setReciever(reciever);
+        orderVo.setUserId(userId);
+        orderVo.setPostmanPhone(postmanPhone);
+        orderVo.setPostmanUser(postmanUser);
+        orderVo.setSrc(src);
+        orderVo.setOrderStatus(orderStatus);
+        orderVo.setExpressStatus(expressStatus);
+        orderVo.setPrintStatus(printStatus);
+        orderVo.setErrorFlag(errorFlag);//异常面单？ 0否 1是
+        orderVo.setErrorRemark(errorRemark);//异常信息
+        orderVo.setGoods(goods);
+        orderVo.setExpresses(expresses);
+        orderVo.setOtherExprees(otherExprees);
+        orderVo.setRtnReason(rtnReason);//退货原因
+        orderVo.setRtnRemark(rtnRemark);//退货原因备注（退货原因为其他时，此字段不为空）
+        orderVo.setDateAplyRtn(dateAplyRtn);//申请退货时间
+        orderVo.setOrderCreate(orderCreate);//订单创建时间
+        orderVo.setOrderPay(orderPay);     //订单支付时间
+        orderVo.setDateAdd(dateAdd);
+        orderVo.setDatePrint(datePrint);//物流单打印时间
+        orderVo.setDateMayArrive(dateMayArrive);//预计到站时间
+        orderVo.setDateArrived(dateArrived);//到站时间
+        orderVo.setDateDriverGeted(dateDriverGeted);//司机取货时间
+        orderVo.setDateUpd(dateUpd);//
+        orderVo.setSynsFlag(synsFlag);//与易普同步状态0未同步 1已同步 2同步失败
+        orderVo.setTransportStatus(transportStatus);//运输状态
+        orderVo.setTradeNo(tradeNo);//商户订单号(我们自己生成的支付订单号)
+        orderVo.setuId(uId);//用户ID,网站端进行改版加入账号体系,数据将从User里获取(adminUserId将不再使用)
+        orderVo.setIsRemoved(isRemoved);//是否被移除？ 0：未被移除； 1：被移除
+        orderVo.setRemoveReason(removeReason);//移除原因
+        orderVo.setOrderSetStatus(orderSetStatus);//运单集包状态
+        orderVo.setParcelCode(parcelCode);//包裹号码默认为空
+        orderVo.setTradeStationId(tradeStationId);//揽件员站点id
+        orderVo.setEmbraceId(embraceId);//揽件员id
+        orderVo.setDisAreaCode(disAreaCode);//分拨中心Code
+        orderVo.setSiteTimes(siteTimes);//揽件时间的集合
+        orderVo.setParentCode(parentCode);//设置母订单号
+        return orderVo;
     }
 }

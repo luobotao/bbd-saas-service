@@ -776,6 +776,7 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("address:" + address +"方法在sass端异常： " + e.getMessage());
+            logger.info("address:" + address +"方法在sass端异常1： " + e.toString());
         }
         long totalEndTime = System.currentTimeMillis(); //获取结束时间
         logger.info("address:" + address +"方法在sass端总体运行时间： " + (totalEndTime - totalStartTime) + "ms");
@@ -1032,5 +1033,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findOrdersByAreaCodeAndExpressStatusAndExchangeFlag(List<String> areaCodes, List<ExpressStatus> expressStatuses, String exchangeFlag) {
         return this.orderDao.findOrdersByAreaCodeAndExpressStatusAndExchangeFlag(areaCodes, expressStatuses, exchangeFlag);
+    }
+
+    @Override
+    public List<Order> findListByParentCode(String parentCode) {
+        return this.orderDao.findListByParentCode(parentCode);
     }
 }

@@ -454,4 +454,5 @@ public interface OrderService {
 
     public List<Order> findOrdersByAreaCodeAndExpressStatusAndExchangeFlag(List<String> areaCodes,List<ExpressStatus> expressStatuses,String exchangeFlag);
 
+    public List<Order> findListByParentCode(String parentCode);
 }

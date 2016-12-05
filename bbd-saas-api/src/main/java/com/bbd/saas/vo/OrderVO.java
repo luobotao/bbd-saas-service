@@ -63,6 +63,7 @@ public class OrderVO implements Serializable {
     private String embraceId;//揽件员id
     private String disAreaCode;//分拨中心Code
     private List<SiteTime> siteTimes;//揽件时间的集合
+    private String parentCode;      //对当当来讲的母运单号
     @Transient
     private String srcMessage;//前台JSP页面中的JS无法根据枚举来获取message -- 运单来源
     @Transient
@@ -493,5 +494,13 @@ public class OrderVO implements Serializable {
 
     public void setSiteTimes(List<SiteTime> siteTimes) {
         this.siteTimes = siteTimes;
+    }
+
+    public String getParentCode() {
+        return parentCode;
+    }
+
+    public void setParentCode(String parentCode) {
+        this.parentCode = parentCode;
     }
 }

@@ -1387,4 +1387,12 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
         query.order("-dateUpd");
         return  find(query).asList();
     }
+
+    public List<Order> findListByParentCode(String parentCode) {
+        Query<Order> query = createQuery();
+        query.filter("parentCode", parentCode);
+        logger.info("OrderDao.findListByParentCode().query="+query.toString());
+        query.order("-dateUpd");
+        return  find(query).asList();
+    }
 }
