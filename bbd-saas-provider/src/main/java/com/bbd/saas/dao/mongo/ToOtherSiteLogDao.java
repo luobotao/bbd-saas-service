@@ -51,7 +51,7 @@ public class ToOtherSiteLogDao extends BaseDAO<ToOtherSiteLog, ObjectId> {
         return  selectCountByQuery(query, between);
     }
     private long selectCountByQuery(Query<ToOtherSiteLog> query, String between){
-        if(StringUtils.isNotBlank(between)){//预计到站时间
+        if(StringUtils.isNotBlank(between)){//预计站点入库时间
             Date date = Dates.parseDate(between);
             Date startDate = Dates.getBeginOfDay(date);
             Date endDate = Dates.getEndOfDay(date);

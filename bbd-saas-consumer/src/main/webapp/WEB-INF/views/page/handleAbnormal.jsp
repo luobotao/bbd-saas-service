@@ -38,8 +38,8 @@
 								</select>
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
-								<label>到站时间：</label>
-								<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择到站时间" class="form-control c-disable"  />
+								<label>站点入库时间：</label>
+								<input id="arriveBetween" name="arriveBetween" value="${arriveBetween}" type="text" placeholder="请选择站点入库时间" class="form-control c-disable"  />
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 								<a href="javascript:void(0)" onclick="gotoPage(0);" class="ser-btn l"><i class="b-icon p-query p-ser"></i>查询</a>
@@ -57,7 +57,7 @@
 								<th>运单号</th>
 								<th>收货人</th>
 								<th width="20%">收货人地址</th>
-								<th>到站时间</th>
+								<th>站点入库时间</th>
 								<th>派送员姓名</th>
 								<th>派送员手机</th>
 								<th>状态</th>
@@ -293,7 +293,7 @@
 		var pageStr = paginNav(<%=orderPage.getPageNo()%>, <%=orderPage.getTotalPages()%>, <%=orderPage.getTotalCount()%>);
 		$("#pagin").html(pageStr);
 
-		//初始化到站时间框
+		//初始化站点入库时间框
 		$("#arriveBetween").daterangepicker({
 			locale: {
 				applyLabel: '确定',

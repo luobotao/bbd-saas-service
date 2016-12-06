@@ -193,7 +193,7 @@ $(document).ready(function() {
 	var pageStr = paginNav(<%=dataPage.getPageNo()%>, <%=dataPage.getTotalPages()%>, <%=dataPage.getTotalCount()%>);
 	$("#pagin").html(pageStr);
 	
-	//初始化到站时间框
+	//初始化站点入库时间框
 	$("#between").daterangepicker({
 		locale: {
 			applyLabel: '确定',

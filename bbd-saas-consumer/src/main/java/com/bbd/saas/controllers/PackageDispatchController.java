@@ -65,7 +65,7 @@ public class PackageDispatchController {
 	 * Description: 跳转到包裹分派页面
 	 * @param pageIndex 当前页
 	 * @param status 状态
-	 * @param arriveBetween 到站时间
+	 * @param arriveBetween 站点入库时间
 	 * @param request
 	 * @param model
 	 * @return
@@ -77,7 +77,7 @@ public class PackageDispatchController {
 		try {
 			//设置默认查询条件
 			status = Numbers.defaultIfNull(status, -1);//未分派
-			//到站时间前天、昨天和今天
+			//站点入库时间前天、昨天和今天
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, request);
@@ -97,7 +97,7 @@ public class PackageDispatchController {
 	 * 分页Ajax更新
 	 * @param pageIndex 当前页
 	 * @param status 状态
-	 * @param arriveBetween 到站时间范围
+	 * @param arriveBetween 站点入库时间范围
 	 * @param request 请求
      * @return 当前页的数据和分页信息
      */
@@ -289,7 +289,7 @@ public class PackageDispatchController {
 	 * @param courierId 派件员
 	 * @param pageIndex 当前页
 	 * @param status 状态
-	 * @param arriveBetween 到站时间范围
+	 * @param arriveBetween 站点入库时间范围
 	 * @param request 请求
      * @return 批量有问题的运单（mgs:mailNum-结果值;mailNum-结果值;---; msg=0，全部分派失败）
 	 * 和分派成功后列表数据（orderPage）-只要有一个运单分派成功，就刷新列表数据

@@ -58,8 +58,8 @@
 								</select>
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-5 col-lg-5">
-								<label>预计到站时间：</label>
-								<input id="between" name="between" type="text" class="form-control c-disable" placeholder="请选择预计到站时间" value="${between}"/>
+								<label>预计站点入库时间：</label>
+								<input id="between" name="between" type="text" class="form-control c-disable" placeholder="请选择预计站点入库时间" value="${between}"/>
 							</div>
 							<div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
 								<a href="javascript:void(0)" class="ser-btn l" onclick="searchOrder()"><i class="b-icon p-query p-ser"></i>查询</a>
@@ -101,7 +101,7 @@
 								<th width="6%">收货人</th>
 								<th>收货人电话</th>
 								<th width="10%">地址</th>
-								<th>预计到站时间</th>
+								<th>预计站点入库时间</th>
 								<th>状态</th>
 								<th>操作</th>
 							</tr>

@@ -157,7 +157,7 @@ public class SiteKeyWordController {
 			if(siteVOList != null && siteVOList.size() > 0){
 				PageList<SiteKeyword> siteKeywordPageList = null;
 				List<SiteKeyword> keywordList = null;
-				if(StringUtils.isNotBlank(between)) {//预计到站时间
+				if(StringUtils.isNotBlank(between)) {//预计站点入库时间
 					logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
 					for (SiteVO siteVO : siteVOList){
 						siteKeywordPageList = siteKeywordApi.findSiteKeyword(siteVO.getId()+"", dateBetween.getStart(), dateBetween.getEnd(), 0, MAXSIZE, keyword);
@@ -175,7 +175,7 @@ public class SiteKeyWordController {
 			}
 		}else{//单个站点
 			PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-			if(StringUtils.isNotBlank(between)) {//预计到站时间
+			if(StringUtils.isNotBlank(between)) {//预计站点入库时间
 				logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
 				//导入地址关键词
 				siteKeywordPage = siteKeywordApi.findSiteKeyword(siteId,dateBetween.getStart(),dateBetween.getEnd(), 0, MAXSIZE, keyword);
@@ -378,7 +378,7 @@ public class SiteKeyWordController {
 		String keyword = request.getParameter("keyword")==null?"":request.getParameter("keyword");
 		int pageIndex = Numbers.parseInt(request.getParameter("pageIndex"),0);
 		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-		if(StringUtils.isNotBlank(between)) {//预计到站时间
+		if(StringUtils.isNotBlank(between)) {//预计站点入库时间
 			DateBetween dateBetween = new DateBetween(between);
 			logger.info(dateBetween.getStart()+":"+dateBetween.getEnd());
 			//导入地址关键词

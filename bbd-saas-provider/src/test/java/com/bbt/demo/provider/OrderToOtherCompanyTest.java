@@ -223,7 +223,7 @@ public class OrderToOtherCompanyTest {
                 addOrderExpress(ExpressStatus.DriverGeted, order, user, "司机已取货，正在运输。", dateTemp);
                 addExpressExchange(order, user);
 
-                String arriveDate = ExcelReader.getDateCellValue(row.getCell(29));//到站时间
+                String arriveDate = ExcelReader.getDateCellValue(row.getCell(29));//站点入库时间
                 dateTemp = Dates.parseDate(arriveDate, "yyyy-MM-dd HH:mm:ss");
                 order.setDateUpd(dateTemp);
                 order.setDateArrived(dateTemp);

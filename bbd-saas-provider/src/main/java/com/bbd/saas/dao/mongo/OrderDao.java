@@ -62,7 +62,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     query.filter("orderStatus <>", OrderStatus.NOTARR).filter("orderStatus <>", null).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);;
                     query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
 
-                    if (StringUtils.isNotBlank(orderQueryVO.between)) {//到站时间
+                    if (StringUtils.isNotBlank(orderQueryVO.between)) {//站点入库时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateArrived >=", dateBetween.getStart());
                         query.filter("dateArrived <=", dateBetween.getEnd());
@@ -71,7 +71,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     query.filter("orderStatus", OrderStatus.NOTARR).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);;
                     query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
 
-                    if (StringUtils.isNotBlank(orderQueryVO.between)) {//预计到站时间
+                    if (StringUtils.isNotBlank(orderQueryVO.between)) {//预计站点入库时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                         query.filter("dateMayArrive >=", dateBetween.getStart());
                         query.filter("dateMayArrive <=", dateBetween.getEnd());
@@ -80,7 +80,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             } else {//全部（已到站||未到站）
                 query.filter("orderStatus <>", null).filter("expressStatus <>", ExpressStatus.Suspense).filter("expressStatus <>", ExpressStatus.Separating).filter("expressStatus <>", ExpressStatus.Packed);
                 query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
-                if (StringUtils.isNotBlank(orderQueryVO.between)) {//预计到站时间
+                if (StringUtils.isNotBlank(orderQueryVO.between)) {//预计站点入库时间
                     DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                     query.filter("dateMayArrive >=", dateBetween.getStart());
                     query.filter("dateMayArrive <=", dateBetween.getEnd());
@@ -148,7 +148,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             //query.filter("orderStatus",orderStatusOld);
         }
         UpdateOperations<Order> ops = createUpdateOperations().set("orderStatus", orderStatusNew).set("dateUpd", new Date());
-        if (orderStatusOld == OrderStatus.NOTARR) {//若是做到站操作，需要更新下到站时间
+        if (orderStatusOld == OrderStatus.NOTARR) {//若是做到站操作，需要更新下站点入库时间
             ops.set("dateArrived", new Date());
         }
         return update(query, ops);
@@ -195,7 +195,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
             } else {
                 query.or(query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERGETED), query.criteria("orderSetStatus").equal(OrderSetStatus.DRIVERSENDING), query.criteria("orderSetStatus").equal(OrderSetStatus.WAITTOIN), query.criteria("orderSetStatus").equal(OrderSetStatus.ARRIVED), query.criteria("orderSetStatus").equal(null));
             }
-            //预计到站时间
+            //预计站点入库时间
             if (StringUtils.isNotBlank(orderQueryVO.between)) {
                 DateBetween dateBetween = new DateBetween(orderQueryVO.between);
                 query.filter("dateMayArrive >=", dateBetween.getStart());
@@ -235,21 +235,21 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                     query.filter("orderStatus =", OrderStatus.status2Obj(orderQueryVO.abnormalStatus));
                 }
             }
-            //到站时间和状态
-            if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){//根据到站时间查询
+            //站点入库时间和状态
+            if(StringUtils.isNotBlank(orderQueryVO.arriveBetween)){//根据站点入库时间查询
                 if(orderQueryVO.orderStatus != null){//单个状态
                     if(orderQueryVO.orderStatus == OrderStatus.NOTARR.getStatus()){//未到站--OrderStatus=0
                         query.filter("orderStatus", OrderStatus.NOTARR);
                     }else{//已到站
                         this.getOrderStatusQuery(query, orderQueryVO);//单个状态
-                        //到站时间，只有已到站的订单才会有到站时间
+                        //站点入库时间，只有已到站的订单才会有站点入库时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
                     }
                 }else if(orderQueryVO.orderStatusList != null) {//查询多个状态
                     if(orderQueryVO.orderStatusList.contains(OrderStatus.NOTARR)){
-                        //未到站的记录(未到站的运单，到站时间为空)
+                        //未到站的记录(未到站的运单，站点入库时间为空)
                         Criteria notArriveCS = query.criteria("orderStatus").equal(OrderStatus.NOTARR);
                         //按照时间查询--已到站的记录
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
@@ -271,7 +271,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         query.or(notArriveCS, arrivedC);
                     }else{//已到站
                         this.getOrderStatusListQuery(query, orderQueryVO);//多个状态
-                        //到站时间，只有已到站的订单才会有到站时间
+                        //站点入库时间，只有已到站的订单才会有站点入库时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
@@ -279,7 +279,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                 }else {//orderQueryVO.orderStatus == null, orderQueryVO.orderStatusList == null 全部
                     //到站的运单，根据时间查询；未到站，时间为空
                     if(orderQueryVO.arriveStatus!=null && orderQueryVO.arriveStatus.intValue()==1){//到站的订单
-                        //到站时间，只有已到站的订单才会有到站时间
+                        //站点入库时间，只有已到站的订单才会有站点入库时间
                         DateBetween dateBetween = new DateBetween(orderQueryVO.arriveBetween);
                         query.filter("dateArrived >=",dateBetween.getStart());
                         query.filter("dateArrived <=",dateBetween.getEnd());
@@ -287,7 +287,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
                         this.setQueryDateArrived(query, orderQueryVO.arriveBetween);
                     }
                 }
-            }else{//不根据到站时间查询
+            }else{//不根据站点入库时间查询
                 this.getOrderStatusQuery(query, orderQueryVO);//单个状态
                 this.getOrderStatusListQuery(query, orderQueryVO);//多个状态
             }
@@ -362,7 +362,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      */
     private void setQueryDateArrived(Query<Order> query, String arriveBetween) {
         if (StringUtils.isNotBlank(arriveBetween)) {
-            //时间为空query--未到站的记录(未到站的运单，到站时间为空)
+            //时间为空query--未到站的记录(未到站的运单，站点入库时间为空)
             Criteria notArriveC = query.criteria("orderStatus").equal(OrderStatus.NOTARR);
             //按照时间查询--已到站的记录
             DateBetween dateBetween = new DateBetween(arriveBetween);
@@ -964,7 +964,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     /**
      * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数) -- 多个站点
      *
-     * @param dateArrived  到站时间
+     * @param dateArrived  站点入库时间
      * @param areaCodeList 站点编号集合
      * @return Map<areaCode, MailStatisticVO>
      */
@@ -1043,7 +1043,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
     /**
      * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)--单个站点
      *
-     * @param dateArrived 到站时间
+     * @param dateArrived 站点入库时间
      * @param areaCode    站点编号
      * @return MailStatisticVO
      */
@@ -1076,7 +1076,7 @@ public class OrderDao extends BaseDAO<Order, ObjectId> {
      * 根据站点编号集合和时间查询各个站点的不同状态的运单的汇总信息(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)
      *
      * @param areaCodeList 站点编号集合
-     * @param dateArrived  到站时间
+     * @param dateArrived  站点入库时间
      * @return 不同状态的运单的汇总信息
      */
     public MailStatisticVO selectSummaryByAreaCodesAndTime(List<String> areaCodeList, String dateArrived) {

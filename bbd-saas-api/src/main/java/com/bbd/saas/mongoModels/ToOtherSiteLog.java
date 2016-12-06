@@ -23,7 +23,7 @@ public class ToOtherSiteLog implements Serializable {
     private String mailNum;//运单号
     private String fromAreaCode;//转站源站点编码
     private String toAreaCode;//转站目的站点编码
-    private Date dateArrived;//到站时间
+    private Date dateArrived;//站点入库时间
     private Date operTime;//转站时间
 
     public static long getSerialVersionUID() {

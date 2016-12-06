@@ -78,7 +78,7 @@ public class GeoMailManageController {
 	@RequestMapping(value="/getDataList", method=RequestMethod.GET)
 	public Map<String, Object> getMailMapList(String prov, String city, String area, String dateBetween, Integer pageIndex) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		//到站时间
+		//站点入库时间
 		dateBetween = StringUtil.initStr(dateBetween, Dates.getBetweenTime(new Date(), -1));
 		String [] dates = dateBetween.split(" - ");
 		if(pageIndex == null){//toPage调用

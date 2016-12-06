@@ -156,7 +156,7 @@ $(document).ready(function() {
 	var pageStr = paginNav(<%=pageModel.getPageNo()%>, <%=pageModel.getTotalPages()%>, <%=pageModel.getTotalCount()%>);
 	$("#pagin").html(pageStr);
 	
-	//初始化到站时间框
+	//初始化站点入库时间框
 	//$("#time").datetimepicker();
 	$("#time").datetimepicker({
 		minView: "month", //选择日期后，不会再跳转去选择时分秒
