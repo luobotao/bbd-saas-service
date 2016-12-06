@@ -29,4 +29,6 @@ public interface BbtAddressDao {
      * @param code
      */
     void updateMaxstationcodeByCode(@Param("maxstationcode") String maxstationcode, @Param("code") String code);
+
+    BbtAddress findOneWithNameAndTier(String name, String tier);
 }

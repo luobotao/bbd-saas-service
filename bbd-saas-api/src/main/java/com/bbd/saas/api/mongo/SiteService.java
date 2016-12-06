@@ -1,6 +1,7 @@
 package com.bbd.saas.api.mongo;
 
 import com.bbd.saas.enums.SiteStatus;
+import com.bbd.saas.models.BbtAddress;
 import com.bbd.saas.mongoModels.Site;
 import com.bbd.saas.utils.PageModel;
 import com.bbd.saas.vo.Option;
@@ -246,5 +247,5 @@ public interface SiteService {
      */
     long findOtherSiteCount(String companyId, String areaCode);
 
-
+    BbtAddress findOneWithNameAndTier(String name, String tier);
 }

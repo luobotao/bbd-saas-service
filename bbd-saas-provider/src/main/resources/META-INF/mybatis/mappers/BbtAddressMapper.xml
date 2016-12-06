@@ -25,6 +25,12 @@
         <include refid="baseColumnList"/>
         FROM `bbtaddress` where #{province,jdbcType=VARCHAR} like CONCAT(NAME,'%') ORDER BY tier,id ASC
     </select>
+    <!--根据区域信息ID查询地址-->
+    <select id="findOneWithNameAndTier" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumnList"/>
+        FROM `bbtaddress` where #{name,jdbcType=VARCHAR} like CONCAT(NAME,'%') AND  tier = #{tier,jdbcType=VARCHAR} ORDER BY tier,id ASC
+    </select>
     <!--根据地址ID查询地址-->
     <select id="getBbtAddressWithId" resultMap="baseResultMap">
         SELECT

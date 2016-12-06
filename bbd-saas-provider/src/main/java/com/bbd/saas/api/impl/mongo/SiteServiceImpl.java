@@ -431,4 +431,9 @@ public class SiteServiceImpl implements SiteService {
     public long findOtherSiteCount(String companyId, String areaCode) {
         return this.siteDao.selectOtherSiteCount(companyId, areaCode);
     }
+    @Override
+    public BbtAddress findOneWithNameAndTier(String name,String tier){
+        return this.bbtAddressDao.findOneWithNameAndTier(name,tier);
+    }
+
 }
