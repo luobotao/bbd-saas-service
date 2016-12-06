@@ -62,7 +62,7 @@ public class DataQueryController {
 	 * Description: 跳转到数据查询页面
 	 * @param pageIndex 页数
 	 * @param statusStr 状态集合status1,status2---
-	 * @param arriveBetween 到站时间
+	 * @param arriveBetween 站点入库时间
 	 * @param mailNum 运单号
 	 * @param request
 	 * @param model
@@ -76,7 +76,7 @@ public class DataQueryController {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
 			}
-			//到站时间
+			//站点入库时间
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = this.getList(pageIndex, statusStr, arriveBetween, mailNum, request);
@@ -101,7 +101,7 @@ public class DataQueryController {
 	 * Description: 分页查询，Ajax更新列表
 	 * @param pageIndex 页数
 	 * @param statusStr 状态集合status1,status2---
-	 * @param arriveBetween 到站时间
+	 * @param arriveBetween 站点入库时间
 	 * @param mailNum 运单号
 	 * @param request
 	 * @return

@@ -56,7 +56,7 @@ public class MailQueryController {
 	 * @param pageIndex 当前页,默认第一页
 	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
 	 * @param statusStr 运单状态集合status1,status2---
-	 * @param arriveBetween 到站时间范围
+	 * @param arriveBetween 站点入库时间范围
 	 * @param mailNum 运单号
 	 * @param request 请求
      * @param model 携带数据
@@ -70,7 +70,7 @@ public class MailQueryController {
 			if(mailNum != null){
 				mailNum = mailNum.trim();
 			}
-			//到站时间
+			//站点入库时间
 			arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -2));
 			//查询数据
 			PageModel<Order> orderPage = getList(null, null, null, pageIndex, areaCodeStr, statusStr, arriveBetween, mailNum, siteStatus, areaFlag, request);
@@ -95,7 +95,7 @@ public class MailQueryController {
 	 * @param pageIndex 页数
 	 * @param areaCodeStr 站点编号集合areaCode1,areaCode2---
 	 * @param statusStr 运单状态集合status1,status2---
-	 * @param arriveBetween 到站时间
+	 * @param arriveBetween 站点入库时间
 	 * @param mailNum 运单号
 	 * @param request 请求
 	 * @return

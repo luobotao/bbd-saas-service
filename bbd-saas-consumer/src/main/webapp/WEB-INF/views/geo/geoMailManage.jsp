@@ -113,7 +113,7 @@
 	$(document).ready(function() {
 		//console.log("center==="+center);
 		addrMap.centerAndZoom(center);
-		//初始化到站时间框
+		//初始化站点入库时间框
 		$("#dateBetween").daterangepicker({
 			locale: {
 				applyLabel: '确定',

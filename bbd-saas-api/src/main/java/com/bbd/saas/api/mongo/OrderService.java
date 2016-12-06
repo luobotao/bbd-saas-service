@@ -206,7 +206,7 @@ public interface OrderService {
     int updateOrder(OrderUpdateVO orderUpdateVO, OrderQueryVO orderQueryVO);
 
     /**
-     * 根据站点编码和到站时间获取该站点已分派的订单数 -- 暂时没有用到（接口实现还有问题）
+     * 根据站点编码和站点入库时间获取该站点已分派的订单数 -- 暂时没有用到（接口实现还有问题）
      *
      * @param areaCode    站点编号
      * @param betweenTime 查询时间范围
@@ -250,7 +250,7 @@ public interface OrderService {
     /**
      * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数) -- 多个站点
      *
-     * @param dateArrived  到站时间
+     * @param dateArrived  站点入库时间
      * @param areaCodeList 站点编号集合
      * @return Map<areaCode, MailStatisticVO>
      */
@@ -259,7 +259,7 @@ public interface OrderService {
     /**
      * 根据站点和状态分组统计(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)--单个站点
      *
-     * @param dateArrived 到站时间
+     * @param dateArrived 站点入库时间
      * @param areaCode    站点编号
      * @return MailStatisticVO
      */
@@ -269,7 +269,7 @@ public interface OrderService {
      * 根据站点编号集合和时间查询各个站点的不同状态的运单的汇总信息(缺少历史未到站 && 已到站订单数 && 转其他站点的订单数)
      *
      * @param areaCodeList 站点编号集合
-     * @param dateArrived  到站时间
+     * @param dateArrived  站点入库时间
      * @return 不同状态的运单的汇总信息
      */
     MailStatisticVO findSummaryByAreaCodesAndTime(List<String> areaCodeList, String dateArrived);

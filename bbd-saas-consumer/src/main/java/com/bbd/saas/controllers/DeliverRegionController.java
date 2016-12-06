@@ -69,7 +69,7 @@ public class DeliverRegionController {
 					String keyword = request.getParameter("keyword") == null ? "" : request.getParameter("keyword");
 					int page = Numbers.parseInt(request.getParameter("page"), 0);
 					PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-					if (StringUtils.isNotBlank(between)) {//预计到站时间
+					if (StringUtils.isNotBlank(between)) {//预计站点入库时间
 						DateBetween dateBetween = new DateBetween(between);
 						logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
 						//导入地址关键词

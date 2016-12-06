@@ -103,7 +103,7 @@ public class DeliverAreaController {
 					siteId = siteVOList.get(0).getId();
 				}
 				PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-				if (StringUtils.isNotBlank(between)) {//预计到站时间
+				if (StringUtils.isNotBlank(between)) {//预计站点入库时间
 					DateBetween dateBetween = new DateBetween(between);
 					logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
 					//导入地址关键词
@@ -336,7 +336,7 @@ public class DeliverAreaController {
 		int pageIndex = Numbers.parseInt(request.getParameter("pageIndex"), 0);
 		//--------panel 3-----------------------
 		PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-		if (StringUtils.isNotBlank(between)) {//预计到站时间
+		if (StringUtils.isNotBlank(between)) {//预计站点入库时间
 			DateBetween dateBetween = new DateBetween(between);
 			logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
 			//导入地址关键词

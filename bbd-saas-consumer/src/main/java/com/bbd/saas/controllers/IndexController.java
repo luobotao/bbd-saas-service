@@ -105,7 +105,7 @@ public class IndexController {
                     int page = Numbers.parseInt(request.getParameter("page"), 0);
                     //--------panel 3-----------------------
                     PageList<SiteKeyword> siteKeywordPage = new PageList<SiteKeyword>();
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(between)) {//预计到站时间
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(between)) {//预计站点入库时间
                         DateBetween dateBetween = new DateBetween(between);
                         logger.info(dateBetween.getStart() + ":" + dateBetween.getEnd());
                         //导入地址关键词

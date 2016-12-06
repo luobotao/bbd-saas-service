@@ -88,7 +88,7 @@ public class HandleAbnormalController {
         try {
             //设置默认查询条件
             status = Numbers.defaultIfNull(status, -1);//全部，滞留和拒收
-            //到站时间前天、昨天和今天
+            //站点入库时间前天、昨天和今天
             arriveBetween = StringUtil.initStr(arriveBetween, Dates.getBetweenTime(new Date(), -10));
             //查询数据
             PageModel<Order> orderPage = getList(pageIndex, status, arriveBetween, request);
@@ -170,7 +170,7 @@ public class HandleAbnormalController {
      * @param userId        派件员员工Id
      * @param status        更新列表参数--状态
      * @param pageIndex     更新列表参数--页数
-     * @param arriveBetween 更新列表参数--到站时间
+     * @param arriveBetween 更新列表参数--站点入库时间
      * @param request
      * @return
      * @author: liyanlei
@@ -339,7 +339,7 @@ public class HandleAbnormalController {
      * @param areaCode      站点编号
      * @param status        状态
      * @param pageIndex     页码
-     * @param arriveBetween 到站时间
+     * @param arriveBetween 站点入库时间
      * @return
      * @author: liyanlei
      * 2016年4月18日上午11:58:26
@@ -386,7 +386,7 @@ public class HandleAbnormalController {
      * @param siteId        站点号
      * @param status        更新列表参数--状态
      * @param pageIndex     更新列表参数--页码
-     * @param arriveBetween 更新列表参数--到站时间
+     * @param arriveBetween 更新列表参数--站点入库时间
      * @param request
      * @return
      * @author: liyanlei
@@ -433,7 +433,7 @@ public class HandleAbnormalController {
                 //订单已由【A站点】出库，正在转送到【B站点】进行配送
                 String expRemark = "订单已由【" + currUser.getSite().getName() + "】出库，正在转送到【" + order.getAreaName() + "】进行配送。";
                 OrderCommon.addOrderExpress(ExpressStatus.DriverGeted, order, currUser, expRemark);
-                //更新预计到站时间
+                //更新预计站点入库时间
                 order.setDateMayArrive(Dates.addDays(new Date(), 1));
                 order.setDateArrived(null);
                 //更新运单
@@ -498,7 +498,7 @@ public class HandleAbnormalController {
      * @param rtnRemark 其他原因--原因详情
      * @param status 状态
      * @param pageIndex 当前页
-     * @param arriveBetween 到站时间
+     * @param arriveBetween 站点入库时间
      * @param request 请求
      * @return  operFlag=1，orderPage = 当前页的数据； operFlag=0
      */
@@ -588,7 +588,7 @@ public class HandleAbnormalController {
      * @param mailNumNew 新运单号
      * @param status 分页查询-运单状态
      * @param pageIndex 分页查询-当前页数
-     * @param arriveBetween 分页查询-到站时间范围
+     * @param arriveBetween 分页查询-站点入库时间范围
      * @param request 请求
      * @return success：true|false（成功|失败）; msg: 信息详情
      */
