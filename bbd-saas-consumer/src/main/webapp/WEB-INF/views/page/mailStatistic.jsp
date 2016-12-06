@@ -75,8 +75,8 @@
 								<c:if test="${role == UserRole.COMPANY}">
 									<th>站点</th>
 								</c:if>
-  								<th>未到站订单数</th>
-								<th>已到站订单数</th>
+  								<th>未入库订单数</th>
+								<th>已入库订单数</th>
 								<th>未分派</th>
 								<th>已分派</th>
 								<th>正在派送</th>
